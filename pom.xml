@@ -137,11 +137,6 @@
 			<version>0.6.3</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-serialization</artifactId>
-			<version>1.0.3.GA</version>
-		</dependency>
 
 	</dependencies>
 
