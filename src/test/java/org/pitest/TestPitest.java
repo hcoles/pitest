@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.pitest.containers.UnContainer;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.Configurations;
 import org.pitest.testutil.AfterAnnotationForTesting;
 import org.pitest.testutil.AfterClassAnnotationForTest;
 import org.pitest.testutil.BeforeAnnotationForTesting;
@@ -41,8 +41,7 @@ public class TestPitest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new Pitest(Configurations.singleThreaded(),
-        new ConfigurationForTesting());
+    this.testee = new Pitest(new UnContainer(), new ConfigurationForTesting());
     this.testee.addListener(this.listener);
   }
 

@@ -126,7 +126,7 @@ public class SlaveListener implements Listener {
 
   private void cleanupRun(final RunDetails run) {
 
-    getContainer(run).shutdown();
+    getContainer(run).shutdownWhenProcessingComplete();
 
   }
 

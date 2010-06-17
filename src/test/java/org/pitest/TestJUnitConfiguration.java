@@ -16,8 +16,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.containers.UnContainer;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.common.Configurations;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestJUnitConfiguration {
@@ -31,7 +31,7 @@ public class TestJUnitConfiguration {
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
-    this.pitest = new Pitest(Configurations.singleThreaded(), this.testee);
+    this.pitest = new Pitest(new UnContainer(), this.testee);
     this.pitest.addListener(this.listener);
   }
 

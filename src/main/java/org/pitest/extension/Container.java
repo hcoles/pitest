@@ -15,23 +15,23 @@
 
 package org.pitest.extension;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 import org.pitest.TestGroup;
-import org.pitest.TestResult;
 
 public interface Container {
 
   public void submit(TestGroup c);
 
-  public void shutdown();
+  public void shutdownWhenProcessingComplete();
 
-  public boolean awaitTermination(int i, TimeUnit milliseconds)
-      throws InterruptedException;
+  // public boolean awaitTermination(int i, TimeUnit milliseconds)
+  // throws InterruptedException;
 
   public void setMaxThreads(int maxThreads);
 
-  public BlockingQueue<TestResult> feedbackQueue();
+  public ResultSource getResultSource();
+
+  public boolean awaitCompletion();
+
+  // public BlockingQueue<TestResult> feedbackQueue();
 
 }

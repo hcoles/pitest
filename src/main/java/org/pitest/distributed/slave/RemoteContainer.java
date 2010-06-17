@@ -20,17 +20,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.pitest.TestGroup;
-import org.pitest.TestResult;
 import org.pitest.distributed.DistributedCacheRoot;
 import org.pitest.distributed.RemoteRoot;
 import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.Container;
+import org.pitest.extension.ResultSource;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
@@ -94,23 +92,12 @@ public class RemoteContainer implements Container {
     return tu;
   }
 
-  public boolean awaitTermination(final int i, final TimeUnit milliseconds)
-      throws InterruptedException {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  public BlockingQueue<TestResult> feedbackQueue() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
   public void setMaxThreads(final int maxThreads) {
     // TODO Auto-generated method stub
 
   }
 
-  public void shutdown() {
+  public void shutdownWhenProcessingComplete() {
     // TODO Auto-generated method stub
 
   }
@@ -156,6 +143,14 @@ public class RemoteContainer implements Container {
 
   public RunDetails getRun() {
     return this.run;
+  }
+
+  public boolean awaitCompletion() {
+    return true;
+  }
+
+  public ResultSource getResultSource() {
+    return null;
   }
 
 }

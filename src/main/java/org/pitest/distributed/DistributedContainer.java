@@ -107,8 +107,8 @@ public class DistributedContainer extends BaseThreadPoolContainer {
   }
 
   @Override
-  public void shutdown() {
-    super.shutdown();
+  public void shutdownWhenProcessingComplete() {
+    super.shutdownWhenProcessingComplete();
     // nothing to do ??????
   }
 

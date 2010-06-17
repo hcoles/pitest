@@ -21,34 +21,27 @@ import java.util.Set;
 import org.pitest.annotations.PIT;
 import org.pitest.annotations.PITContainer;
 import org.pitest.extension.Container;
-import org.pitest.extension.StaticConfiguration;
 import org.pitest.functional.Option;
 import org.pitest.reflection.IsAnotatedWith;
 import org.pitest.reflection.Reflection;
 
-public class StaticConfigParser {
+public class ContainerParser {
 
   private final Class<?> clazz;
 
-  public StaticConfigParser(final Class<?> clazz) {
+  public ContainerParser(final Class<?> clazz) {
     this.clazz = clazz;
   }
 
-  public StaticConfiguration create(final StaticConfiguration staticConfig) {
+  public Container create(final Container defaultContainer) {
 
-    return new StaticConfiguration() {
+    final Container c = determineContainer().getOrElse(defaultContainer);
+    if (determineNoThreads().hasSome()) {
+      c.setMaxThreads(determineNoThreads().value());
+    }
 
-      public Container container() {
-        final Container c = determineContainer().getOrElse(
-            staticConfig.container());
-        if (determineNoThreads().hasSome()) {
-          c.setMaxThreads(determineNoThreads().value());
-        }
+    return c;
 
-        return c;
-      }
-
-    };
   }
 
   private Option<Integer> determineNoThreads() {

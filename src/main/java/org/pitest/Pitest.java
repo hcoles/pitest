@@ -18,12 +18,10 @@ package org.pitest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
-import org.pitest.extension.StaticConfiguration;
+import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
@@ -31,32 +29,30 @@ import org.pitest.functional.Common;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ConfigParser;
-import org.pitest.internal.StaticConfigParser;
+import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 
 public class Pitest {
 
   // things that cannot be overridden by child suites
-  private final List<TestListener>  resultListeners = new ArrayList<TestListener>();
-  private final ResultClassifier    classifier      = new ResultClassifier();
+  private final List<TestListener> resultListeners = new ArrayList<TestListener>();
+  private final ResultClassifier   classifier      = new ResultClassifier();
   // test filters
 
-  private final StaticConfiguration staticConfig;
-  private final Configuration       initialConfig;
+  private final Container          defaultContainer;
+  private final Configuration      initialConfig;
 
-  public Pitest(final StaticConfiguration config,
-      final Configuration initialConfig) {
+  public Pitest(final Container container, final Configuration initialConfig) {
     this.resultListeners.add(ConsoleResultListener.instance());
-    this.staticConfig = config;
+    this.defaultContainer = container;
     this.initialConfig = initialConfig;
   }
 
   public void run(final Class<?>... classes) {
     for (final Class<?> c : classes) {
-      final StaticConfiguration config = new StaticConfigParser(c)
-          .create(this.staticConfig);
-      run(config.container(), findTestUnitsForAllSuppliedClasses(
-          this.initialConfig, c));
+      final Container container = new ContainerParser(c)
+          .create(this.defaultContainer);
+      run(container, findTestUnitsForAllSuppliedClasses(this.initialConfig, c));
     }
   }
 
@@ -82,22 +78,22 @@ public class Pitest {
 
   private void processResultsFromQueue(final Container container,
       final Thread feederThread) {
-    try {
-      while (!container.awaitTermination(10, TimeUnit.MILLISECONDS)) {
-        readResultsQueue(container.feedbackQueue());
-      }
-    } catch (final InterruptedException e) {
-      System.out.println("Interrupted");
-    }
 
-    while (!container.feedbackQueue().isEmpty() || feederThread.isAlive()) {
+    final ResultSource results = container.getResultSource();
+
+    while (feederThread.isAlive()) {
       try {
-        feederThread.join(100);
+        feederThread.join(20);
       } catch (final InterruptedException e) {
         // swallow
       }
+      processResults(results);
+    }
 
-      readResultsQueue(container.feedbackQueue());
+    container.shutdownWhenProcessingComplete();
+
+    while (!container.awaitCompletion() || results.resultsAvailable()) {
+      processResults(results);
     }
 
   }
@@ -155,7 +151,6 @@ public class Pitest {
           container.submit(group);
         }
         callables.clear();
-        container.shutdown();
       }
     };
     final Thread feederThread = new Thread(feeder);
@@ -163,11 +158,8 @@ public class Pitest {
     return feederThread;
   }
 
-  private void readResultsQueue(final BlockingQueue<TestResult> resultsQueue) {
-    final List<TestResult> results = new ArrayList<TestResult>();
-
-    resultsQueue.drainTo(results);
-
+  private void processResults(final ResultSource source) {
+    final List<TestResult> results = source.getAvailableResults();
     for (final TestResult result : results) {
       final ResultType classifiedResult = this.classifier.apply(result);
       FCollection.forEach(this.resultListeners, classifiedResult

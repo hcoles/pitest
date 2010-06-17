@@ -14,7 +14,7 @@
  */
 package org.pitest.internal;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Collection;
 
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
@@ -23,9 +23,9 @@ import org.pitest.testunit.TestUnitState;
 
 public final class ConcreteResultCollector implements ResultCollector {
 
-  private final BlockingQueue<TestResult> feedback;
+  private final Collection<TestResult> feedback;
 
-  public ConcreteResultCollector(final BlockingQueue<TestResult> feedback) {
+  public ConcreteResultCollector(final Collection<TestResult> feedback) {
     this.feedback = feedback;
   }
 

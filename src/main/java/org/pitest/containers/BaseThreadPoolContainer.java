@@ -15,6 +15,8 @@
 
 package org.pitest.containers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -25,6 +27,7 @@ import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Container;
+import org.pitest.extension.ResultSource;
 import org.pitest.internal.TestUnitExecutor;
 
 public class BaseThreadPoolContainer implements Container {
@@ -46,7 +49,7 @@ public class BaseThreadPoolContainer implements Container {
     return this.executor.awaitTermination(i, milliseconds);
   }
 
-  public void shutdown() {
+  public void shutdownWhenProcessingComplete() {
     this.executor.shutdown();
   }
 
@@ -67,6 +70,31 @@ public class BaseThreadPoolContainer implements Container {
   public void submit(final TestGroup c) {
     this
         .submit(new TestUnitExecutor(this.loaderFactory, c, this.feedbackQueue));
+  }
+
+  public boolean awaitCompletion() {
+    try {
+      return awaitTermination(10, TimeUnit.MILLISECONDS);
+    } catch (final InterruptedException e) {
+      // swallow
+    }
+    return false;
+  }
+
+  public ResultSource getResultSource() {
+    return new ResultSource() {
+
+      public List<TestResult> getAvailableResults() {
+        final List<TestResult> results = new ArrayList<TestResult>();
+        BaseThreadPoolContainer.this.feedbackQueue.drainTo(results);
+        return results;
+      }
+
+      public boolean resultsAvailable() {
+        return !BaseThreadPoolContainer.this.feedbackQueue.isEmpty();
+      }
+
+    };
   }
 
   public BlockingQueue<TestResult> feedbackQueue() {

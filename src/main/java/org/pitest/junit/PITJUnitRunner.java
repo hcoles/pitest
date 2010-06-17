@@ -18,9 +18,9 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.Pitest;
+import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.Configurations;
 import org.pitest.internal.TestClass;
 
 /**
@@ -38,7 +38,7 @@ public class PITJUnitRunner extends Runner {
 
   public PITJUnitRunner(final Class<?> clazz) {
     this.root = clazz;
-    this.pitest = new Pitest(Configurations.singleThreaded(), this.config);
+    this.pitest = new Pitest(new UnisolatedThreadPoolContainer(1), this.config);
 
     this.description = Description.createSuiteDescription(clazz);
 

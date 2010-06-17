@@ -12,15 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-
 package org.pitest.extension;
 
-public interface StaticConfiguration {
+import java.util.List;
 
-  // TODO move this to dynamic config if we
-  // want mutation testing
-  public Container container();
+import org.pitest.TestResult;
 
-  // listeners?
+public interface ResultSource {
+
+  public boolean resultsAvailable();
+
+  public List<TestResult> getAvailableResults();
 
 }

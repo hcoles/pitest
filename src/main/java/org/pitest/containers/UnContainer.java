@@ -15,30 +15,26 @@
 
 package org.pitest.containers;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.Container;
+import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.ConcreteResultCollector;
 
 public class UnContainer implements Container {
 
-  private final BlockingQueue<TestResult> feedbackQueue = new LinkedBlockingQueue<TestResult>();
-
-  public boolean awaitTermination(final int i, final TimeUnit milliseconds)
-      throws InterruptedException {
-    return true;
-  }
+  private final LinkedBlockingQueue<TestResult> feedbackQueue = new LinkedBlockingQueue<TestResult>();
 
   public void setMaxThreads(final int maxThreads) {
     // ignore
   }
 
-  public void shutdown() {
+  public void shutdownWhenProcessingComplete() {
     // ignore
   }
 
@@ -50,8 +46,24 @@ public class UnContainer implements Container {
     }
   }
 
-  public BlockingQueue<TestResult> feedbackQueue() {
-    return this.feedbackQueue;
+  public boolean awaitCompletion() {
+    return true;
+  }
+
+  public ResultSource getResultSource() {
+    return new ResultSource() {
+
+      public List<TestResult> getAvailableResults() {
+        final List<TestResult> results = new ArrayList<TestResult>();
+        UnContainer.this.feedbackQueue.drainTo(results);
+        return results;
+      }
+
+      public boolean resultsAvailable() {
+        return !UnContainer.this.feedbackQueue.isEmpty();
+      }
+
+    };
   }
 
 }
