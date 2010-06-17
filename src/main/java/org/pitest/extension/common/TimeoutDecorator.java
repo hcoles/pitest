@@ -18,7 +18,7 @@ import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 
-public class TimeoutDecorator extends TestUnitDecorator {
+public final class TimeoutDecorator extends TestUnitDecorator {
 
   private static final long serialVersionUID = 1L;
 

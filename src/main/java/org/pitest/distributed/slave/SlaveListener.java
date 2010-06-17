@@ -100,10 +100,6 @@ public class SlaveListener implements Listener {
     final ITopic<HandlerNotificationMessage> handlerNotificationTopic = this.client
         .getTopic(SharedNames.TEST_HANDLER_NOTIFICATION);
 
-    // final ITopic<ControlMessage> topic = Hazelcast
-    // .getTopic(SharedNames.TEST_CONTROL);
-    // topic.addMessageListener(this);
-
     try {
       while (true) {
 
@@ -124,11 +120,9 @@ public class SlaveListener implements Listener {
 
   }
 
-  private void cleanupRun(final RunDetails run) {
-
-    getContainer(run).shutdownWhenProcessingComplete();
-
-  }
+  // private void cleanupRun(final RunDetails run) {
+  // getContainer(run).shutdownWhenProcessingComplete();
+  // }
 
   public void stop() {
     this.client.shutdown();

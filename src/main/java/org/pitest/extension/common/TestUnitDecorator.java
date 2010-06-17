@@ -28,10 +28,6 @@ public abstract class TestUnitDecorator implements TestUnit {
     this.child = child;
   }
 
-  // public Configuration configuration() {
-  // return this.child.configuration();
-  // }
-
   public Option<TestUnit> dependsOn() {
     return this.child.dependsOn();
   }
@@ -47,37 +43,6 @@ public abstract class TestUnitDecorator implements TestUnit {
 
   protected TestUnit child() {
     return this.child;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result
-        + ((this.child == null) ? 0 : this.child.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final TestUnitDecorator other = (TestUnitDecorator) obj;
-    if (this.child == null) {
-      if (other.child != null) {
-        return false;
-      }
-    } else if (!this.child.equals(other.child)) {
-      return false;
-    }
-    return true;
   }
 
 }

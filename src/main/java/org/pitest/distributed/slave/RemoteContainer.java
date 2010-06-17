@@ -108,13 +108,10 @@ public class RemoteContainer implements Container {
     // use a new thread to ensure that tests run with correct
     // context class loader but framework code retains it's own
     final Thread t = new Thread(r);
-    // t.setContextClassLoader(this.loader);
     t.start();
     while (t.isAlive()) {
       try {
         t.join(30 * 1000);
-        // keep connection alive
-        // this.master.completedTests();
       } catch (final InterruptedException ex) {
         // swallow
       }

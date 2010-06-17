@@ -23,17 +23,16 @@ import java.util.NoSuchElementException;
 
 import org.pitest.internal.ClassPath;
 
-public class LocalFileClassloader extends ClassLoader {
+public class PITClassloader extends ClassLoader {
 
   private final ClassPath classPath;
 
-  public LocalFileClassloader(final ClassPath cp, final ClassLoader parent) {
+  public PITClassloader(final ClassPath cp, final ClassLoader parent) {
     super(parent);
     this.classPath = cp;
   }
 
-  public LocalFileClassloader(final Collection<File> files,
-      final ClassLoader parent) {
+  public PITClassloader(final Collection<File> files, final ClassLoader parent) {
     this(new ClassPath(files), parent);
   }
 

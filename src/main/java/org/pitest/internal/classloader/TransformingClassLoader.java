@@ -18,7 +18,7 @@ import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.Transformation;
 import org.pitest.internal.ClassPath;
 
-public class TransformingClassLoader extends LocalFileClassloader {
+public class TransformingClassLoader extends PITClassloader {
 
   private final Transformation    transformation;
   private final IsolationStrategy isolationStrategy;
