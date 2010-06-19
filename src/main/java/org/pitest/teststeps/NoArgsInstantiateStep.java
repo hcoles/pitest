@@ -25,7 +25,7 @@ import org.pitest.internal.IsolationUtils;
  * @author henry
  * 
  */
-public class InstantiateStep implements TestStep {
+public final class NoArgsInstantiateStep implements TestStep {
 
   /**
    * 
@@ -33,11 +33,11 @@ public class InstantiateStep implements TestStep {
   private static final long serialVersionUID = 1L;
   private final Class<?>    clazz;
 
-  public static InstantiateStep instantiate(final Class<?> clazz) {
-    return new InstantiateStep(clazz);
+  public static NoArgsInstantiateStep instantiate(final Class<?> clazz) {
+    return new NoArgsInstantiateStep(clazz);
   }
 
-  public InstantiateStep(final Class<?> clazz) {
+  public NoArgsInstantiateStep(final Class<?> clazz) {
     this.clazz = clazz;
   }
 
@@ -55,6 +55,37 @@ public class InstantiateStep implements TestStep {
 
   public Option<TestMethod> method() {
     return Option.none();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final NoArgsInstantiateStep other = (NoArgsInstantiateStep) obj;
+    if (this.clazz == null) {
+      if (other.clazz != null) {
+        return false;
+      }
+    } else if (!this.clazz.equals(other.clazz)) {
+      return false;
+    }
+    return true;
   }
 
 }

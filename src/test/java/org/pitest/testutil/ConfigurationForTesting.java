@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.pitest.TestMethod;
@@ -47,10 +48,6 @@ public class ConfigurationForTesting implements Configuration {
         IgnoreAnnotationForTesting.class));
   }
 
-  public InstantiationStrategy instantiationStrategy() {
-    return new NoArgsConstructorInstantiationStrategy();
-  }
-
   public Set<TestUnitFinder> testUnitFinders() {
     final Set<MethodFinder> beforeClassFinders = Collections
         .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
@@ -82,6 +79,11 @@ public class ConfigurationForTesting implements Configuration {
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
     return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder());
+  }
+
+  public List<InstantiationStrategy> instantiationStrategies() {
+    return Arrays
+        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
   }
 
 }

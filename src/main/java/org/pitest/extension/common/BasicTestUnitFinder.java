@@ -26,6 +26,7 @@ import java.util.Set;
 import org.pitest.Description;
 import org.pitest.TestMethod;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestStep;
 import org.pitest.extension.TestUnit;
@@ -37,7 +38,6 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.internal.EqualitySet;
 import org.pitest.internal.SignatureEqualityStrategy;
 import org.pitest.internal.TestClass;
-import org.pitest.internal.TestMethodInstantiationPair;
 import org.pitest.reflection.Reflection;
 import org.pitest.teststeps.CallStep;
 import org.pitest.testunit.SteppedTestUnit;
@@ -62,19 +62,29 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public Collection<TestUnit> apply(final TestClass a,
+  public Collection<TestUnit> apply(final TestClass testClass,
       final Configuration config) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
-          this.beforeMethodFinders, a.getClazz());
+          this.beforeMethodFinders, testClass.getClazz());
       final Collection<TestMethod> afters = findTestMethods(
-          this.afterMethodFinders, a.getClazz());
-      final Collection<TestMethodInstantiationPair> tests = findTestMethodsInstantiations(
-          this.testMethodFinders, a, config);
+          this.afterMethodFinders, testClass.getClazz());
 
-      final List<TestUnit> units = createClassTestUnits(befores, afters, tests,
-          a, config);
+      final List<TestUnit> units = new ArrayList<TestUnit>();
+      final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(
+          config, testClass.getClazz());
+      final List<TestStep> instantiations = instantiationStrategy
+          .instantiations(testClass.getClazz());
+      for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
+        for (final TestMethod m : findTestMethods(this.testMethodFinders,
+            testClass.getClazz())) {
+          final TestStep step = instantiations.get(instantiation);
+          units.add(createTestUnitForInstantiation(step, getNamePrefix(
+              instantiations.size(), instantiation), befores, afters,
+              testClass, config, m));
+        }
+      }
 
       dependOnFirst(units);
 
@@ -82,6 +92,14 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
     } catch (final Exception ex) {
       throw new RuntimeException(ex);
+    }
+  }
+
+  private String getNamePrefix(final int size, final int i) {
+    if (size == 1) {
+      return "";
+    } else {
+      return "[" + i + "] ";
     }
   }
 
@@ -100,62 +118,49 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
   }
 
-  private List<TestUnit> createClassTestUnits(
-      final Collection<TestMethod> befores,
-      final Collection<TestMethod> afters,
-      final Collection<TestMethodInstantiationPair> tests,
-      final TestClass testClass, final Configuration config) {
-    final F<TestMethodInstantiationPair, TestUnit> fMethodToTestUnit = new F<TestMethodInstantiationPair, TestUnit>() {
-      public TestUnit apply(final TestMethodInstantiationPair m) {
-        return createTestUnitForInstantiation(m, befores, afters, testClass,
-            config);
-      }
-
-    };
-
-    final List<TestUnit> units = FCollection.map(tests, fMethodToTestUnit);
-    return units;
-  }
-
   private TestUnit createTestUnitForInstantiation(
-      final TestMethodInstantiationPair m,
+      final TestStep instantiationStep, final String namePrefix,
       final Collection<TestMethod> befores,
       final Collection<TestMethod> afters, final TestClass testClass,
-      final Configuration config) {
+      final Configuration config, final TestMethod testMethod) {
 
     final List<TestStep> steps = new ArrayList<TestStep>();
 
-    steps.add(m.getInstantiation());
+    steps.add(instantiationStep);
 
     for (final TestMethod each : befores) {
       steps.add(new CallStep(each));
     }
 
-    steps.add(new CallStep(m.getMethod()));
+    steps.add(new CallStep(testMethod));
 
     for (final TestMethod each : afters) {
       steps.add(new CallStep(each));
     }
 
-    final TestUnit unit = new SteppedTestUnit(new Description(m.getMethod()
-        .getName(), testClass.getClazz(), m.getMethod()), steps, m.getMethod()
-        .getExpected());
+    final TestUnit unit = new SteppedTestUnit(new Description(namePrefix
+        + testMethod.getName(), testClass.getClazz(), testMethod), steps,
+        testMethod.getExpected());
     return unit;
 
   }
 
-  private Collection<TestMethodInstantiationPair> findTestMethodsInstantiations(
-      final Set<MethodFinder> finders, final TestClass clazz,
-      final Configuration config) {
+  private InstantiationStrategy findInstantiationStrategy(
+      final Configuration config, final Class<?> clazz) {
+    final F<InstantiationStrategy, Boolean> p = new F<InstantiationStrategy, Boolean>() {
 
-    final List<TestMethodInstantiationPair> values = new ArrayList<TestMethodInstantiationPair>();
-    for (final TestStep i : config.instantiationStrategy().instantiations(
-        clazz.getClazz())) {
-      for (final TestMethod m : findTestMethods(finders, clazz.getClazz())) {
-        values.add(new TestMethodInstantiationPair(i, m));
+      public Boolean apply(final InstantiationStrategy a) {
+        return a.canInstantiate(clazz);
       }
+
+    };
+    final List<InstantiationStrategy> strategies = FCollection.filter(config
+        .instantiationStrategies(), p);
+    if (strategies.isEmpty()) {
+      throw new RuntimeException("Cannot instantiate " + clazz);
+    } else {
+      return strategies.get(0);
     }
-    return values;
   }
 
   private Collection<TestMethod> findTestMethods(

@@ -19,20 +19,25 @@ import java.util.List;
 
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.TestStep;
-import org.pitest.teststeps.NoArgsInstantiateStep;
+import org.pitest.teststeps.NameStringConstructorInstantiateStep;
 
-public class NoArgsConstructorInstantiationStrategy implements
+public class NamedTestSingleStringConstructorInstantiationStrategy implements
     InstantiationStrategy {
 
-  public List<TestStep> instantiations(final Class<?> clazz) {
-    return Collections.<TestStep> singletonList(NoArgsInstantiateStep
-        .instantiate(clazz));
+  public boolean canInstantiate(final Class<?> clazz) {
+    final Class<?>[] oneString = { String.class };
+    try {
+      clazz.getDeclaredConstructor(oneString);
+      return true;
+    } catch (final Exception e) {
+      return false;
+    }
   }
 
-  public boolean canInstantiate(final Class<?> clazz) {
-    // unwise premature optimization
-    // don't check if a no-args constructor is present
-    return true;
+  public List<TestStep> instantiations(final Class<?> clazz) {
+    return Collections
+        .<TestStep> singletonList(new NameStringConstructorInstantiateStep(
+            clazz));
   }
 
 }

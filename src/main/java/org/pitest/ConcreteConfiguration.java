@@ -32,18 +32,14 @@ import org.pitest.extension.TestUnitProcessor;
  */
 public final class ConcreteConfiguration implements Configuration {
 
-  /**
-   * 
-   */
-  private static final long            serialVersionUID = 1L;
-  private final boolean                allowConfigurationChange;
-  private final InstantiationStrategy  instantiationStrategy;
-  private final Set<TestUnitProcessor> testProcessors   = new LinkedHashSet<TestUnitProcessor>();
-  private final Set<TestUnitFinder>    testUnitFinders  = new LinkedHashSet<TestUnitFinder>();
-  private final List<TestSuiteFinder>  testSuiteFinders = new LinkedList<TestSuiteFinder>();
+  private final boolean                     allowConfigurationChange;
+  private final List<InstantiationStrategy> instantiationStrategy;
+  private final Set<TestUnitProcessor>      testProcessors   = new LinkedHashSet<TestUnitProcessor>();
+  private final Set<TestUnitFinder>         testUnitFinders  = new LinkedHashSet<TestUnitFinder>();
+  private final List<TestSuiteFinder>       testSuiteFinders = new LinkedList<TestSuiteFinder>();
 
   public ConcreteConfiguration(final boolean allowConfigurationChange,
-      final InstantiationStrategy instantiationStrategy,
+      final List<InstantiationStrategy> instantiationStrategy,
       final Collection<TestUnitProcessor> testVisitors,
       final Collection<TestUnitFinder> testUnitFinders,
       final Collection<TestSuiteFinder> testSuiteFinders) {
@@ -62,16 +58,16 @@ public final class ConcreteConfiguration implements Configuration {
     return this.testProcessors;
   }
 
-  public InstantiationStrategy instantiationStrategy() {
-    return this.instantiationStrategy;
-  }
-
   public boolean allowConfigurationChange() {
     return this.allowConfigurationChange;
   }
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
     return this.testSuiteFinders;
+  }
+
+  public List<InstantiationStrategy> instantiationStrategies() {
+    return this.instantiationStrategy;
   }
 
 }

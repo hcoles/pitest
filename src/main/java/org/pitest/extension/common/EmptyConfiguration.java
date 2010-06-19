@@ -14,8 +14,10 @@
  */
 package org.pitest.extension.common;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.pitest.containers.UnisolatedThreadPoolContainer;
@@ -32,8 +34,9 @@ import org.pitest.extension.TestUnitProcessor;
  */
 public class EmptyConfiguration implements Configuration {
 
-  public InstantiationStrategy instantiationStrategy() {
-    return new NoArgsConstructorInstantiationStrategy();
+  public List<InstantiationStrategy> instantiationStrategies() {
+    return Arrays
+        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
   }
 
   public Container container() {

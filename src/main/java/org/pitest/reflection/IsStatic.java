@@ -12,29 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.reflection;
 
-package org.pitest.internal;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
-import org.pitest.TestMethod;
-import org.pitest.extension.TestStep;
+import org.pitest.functional.predicate.Predicate;
 
-public class TestMethodInstantiationPair {
+public class IsStatic implements Predicate<Method> {
 
-  private final TestMethod method;
-  private final TestStep   instantiation;
+  private final static IsStatic instance = new IsStatic();
 
-  public TestMethodInstantiationPair(final TestStep instantiation,
-      final TestMethod method) {
-    this.method = method;
-    this.instantiation = instantiation;
+  public Boolean apply(final Method a) {
+    return Modifier.isStatic(a.getModifiers());
   }
 
-  public TestMethod getMethod() {
-    return this.method;
-  }
-
-  public TestStep getInstantiation() {
-    return this.instantiation;
+  public static IsStatic instance() {
+    return instance;
   }
 
 }

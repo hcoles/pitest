@@ -16,13 +16,14 @@
 package org.pitest.extension;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public interface Configuration {
 
   public boolean allowConfigurationChange();
 
-  public InstantiationStrategy instantiationStrategy();
+  public List<InstantiationStrategy> instantiationStrategies();
 
   public Set<TestUnitProcessor> testUnitProcessors();
 

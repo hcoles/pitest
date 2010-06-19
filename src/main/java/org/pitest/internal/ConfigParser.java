@@ -15,6 +15,7 @@
 package org.pitest.internal;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
@@ -36,8 +37,8 @@ public class ConfigParser {
 
     if (baseConfig.allowConfigurationChange()) {
 
-      final InstantiationStrategy is = determineInstantiationStrategy(
-          this.clazz).getOrElse(baseConfig.instantiationStrategy());
+      final List<InstantiationStrategy> is = determineInstantiationStrategy(
+          this.clazz).getOrElse(baseConfig.instantiationStrategies());
 
       final Collection<TestUnitProcessor> visitors = determineTestUnitProcessors(
           this.clazz).getOrElse(baseConfig.testUnitProcessors());
@@ -58,7 +59,7 @@ public class ConfigParser {
     return Option.none();
   }
 
-  private Option<InstantiationStrategy> determineInstantiationStrategy(
+  private Option<List<InstantiationStrategy>> determineInstantiationStrategy(
       final Class<?> clazz) {
     return Option.none();
   }

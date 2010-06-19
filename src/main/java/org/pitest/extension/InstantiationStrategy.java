@@ -15,10 +15,12 @@
 
 package org.pitest.extension;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface InstantiationStrategy {
 
-  public Collection<TestStep> instantiations(Class<?> clazz);
+  public boolean canInstantiate(Class<?> clazz);
+
+  public List<TestStep> instantiations(Class<?> clazz);
 
 }

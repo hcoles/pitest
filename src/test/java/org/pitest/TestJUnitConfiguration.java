@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
@@ -14,6 +16,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
@@ -270,6 +275,33 @@ public class TestJUnitConfiguration {
   public void testTimesTestsOut() {
     this.pitest.run(HideFromJunit6.TestWithTimeout.class);
     verify(this.listener).onTestError(any(TestResult.class));
+  }
+
+  static abstract class HideFromJUnit7 {
+    @RunWith(Parameterized.class)
+    public static class ParameterisedTest {
+
+      public ParameterisedTest(final int i) {
+
+      }
+
+      @Parameters
+      public static Collection<Object[]> params() {
+        return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
+      }
+
+      @Test
+      public void test() {
+
+      }
+
+    }
+  }
+
+  @Test
+  public void testCreatesTestsForEachJUnitParameter() {
+    this.pitest.run(HideFromJUnit7.ParameterisedTest.class);
+    verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
 }

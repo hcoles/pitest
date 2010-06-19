@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.pitest.extension.Configuration;
@@ -28,6 +29,7 @@ import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
+import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.PITStaticMethodSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
@@ -39,10 +41,6 @@ public class JUnitCompatibleConfiguration implements Configuration {
     tups.add(new IgnoreTestProcessor(org.junit.Ignore.class));
     tups.add(new TimeoutProcessor());
     return tups;
-  }
-
-  public InstantiationStrategy instantiationStrategy() {
-    return new NoArgsConstructorInstantiationStrategy();
   }
 
   public Set<TestUnitFinder> testUnitFinders() {
@@ -80,6 +78,14 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
     return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder());
+  }
+
+  public List<InstantiationStrategy> instantiationStrategies() {
+    // order is important
+    return Arrays.<InstantiationStrategy> asList(
+        new ParameterizedInstantiationStrategy(),
+        new NamedTestSingleStringConstructorInstantiationStrategy(),
+        new NoArgsConstructorInstantiationStrategy());
   }
 
 }

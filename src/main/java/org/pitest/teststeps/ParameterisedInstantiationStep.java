@@ -14,6 +14,8 @@
  */
 package org.pitest.teststeps;
 
+import java.util.Arrays;
+
 import org.pitest.CanNotCreateTestClassException;
 import org.pitest.Description;
 import org.pitest.TestMethod;
@@ -21,17 +23,16 @@ import org.pitest.extension.TestStep;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
-/**
- * @author henry
- * 
- */
-public final class NameStringConstructorInstantiateStep implements TestStep {
+public final class ParameterisedInstantiationStep implements TestStep {
 
   private static final long serialVersionUID = 1L;
   private final Class<?>    clazz;
+  private final Object[]    args;
 
-  public NameStringConstructorInstantiateStep(final Class<?> clazz) {
+  public ParameterisedInstantiationStep(final Class<?> clazz,
+      final Object[] args) {
     this.clazz = clazz;
+    this.args = args;
   }
 
   public Object execute(final ClassLoader loader,
@@ -39,10 +40,7 @@ public final class NameStringConstructorInstantiateStep implements TestStep {
     try {
       final Class<?> c = IsolationUtils.convertForClassLoader(loader,
           this.clazz);
-      final Class<?> parameterTypes[] = { String.class };
-      final Object arglist[] = { testDescription.getName() };
-      return c.getConstructor(parameterTypes).newInstance(arglist);
-
+      return c.getConstructors()[0].newInstance(this.args);
     } catch (final Throwable e) {
       throw new CanNotCreateTestClassException(e);
     }
@@ -52,14 +50,11 @@ public final class NameStringConstructorInstantiateStep implements TestStep {
     return Option.none();
   }
 
-  public Class<?> getClazz() {
-    return this.clazz;
-  }
-
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + Arrays.hashCode(this.args);
     result = prime * result
         + ((this.clazz == null) ? 0 : this.clazz.hashCode());
     return result;
@@ -76,7 +71,10 @@ public final class NameStringConstructorInstantiateStep implements TestStep {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final NameStringConstructorInstantiateStep other = (NameStringConstructorInstantiateStep) obj;
+    final ParameterisedInstantiationStep other = (ParameterisedInstantiationStep) obj;
+    if (!Arrays.deepEquals(this.args, other.args)) {
+      return false;
+    }
     if (this.clazz == null) {
       if (other.clazz != null) {
         return false;
