@@ -12,20 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package com.example;
 
-package org.pitest.distributed;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.pitest.functional.Option;
-
-public interface ResourceCache {
-
-  public Option<URL> getResource(final String name) throws IOException;
-
-  public URL cacheResource(String name, byte[] data) throws IOException;
-
-  public void destroy();
+@RunWith(Suite.class)
+@SuiteClasses( { TestA1.class, TestA2.class })
+public class JUnit4SuiteA {
 
 }

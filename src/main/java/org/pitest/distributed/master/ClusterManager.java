@@ -39,19 +39,6 @@ import com.hazelcast.core.MessageListener;
 public class ClusterManager implements
     MessageListener<HandlerNotificationMessage>, MembershipListener {
 
-  private static class TestGroupMemberRecord {
-    public TestGroupMemberRecord(final long id, final TestGroup testGroup,
-        final Option<InetSocketAddress> handler) {
-      this.id = id;
-      this.group = testGroup;
-      this.handler = handler;
-    }
-
-    public long                      id;
-    public TestGroup                 group;
-    public Option<InetSocketAddress> handler;
-  }
-
   private final Map<Long, TestGroupMemberRecord>       inprogressTestGroupHandlers = new ConcurrentHashMap<Long, TestGroupMemberRecord>();
 
   private final ITopic<HandlerNotificationMessage>     notificationTopic;
@@ -64,18 +51,31 @@ public class ClusterManager implements
   private long                                         counter                     = 0;
 
   public ClusterManager(final RunDetails run, final HazelcastInstance hazelcast) {
+    this(
+        run,
+        hazelcast,
+        hazelcast.getCluster(),
+        hazelcast
+            .<HandlerNotificationMessage> getTopic(SharedNames.TEST_HANDLER_NOTIFICATION),
+        hazelcast.<TestGroupExecuteMessage> getQueue(SharedNames.TEST_REQUEST));
+  }
+
+  public ClusterManager(final RunDetails run,
+      final HazelcastInstance hazelcast, final Cluster cluster,
+      final ITopic<HandlerNotificationMessage> notificationTopic,
+      final BlockingQueue<TestGroupExecuteMessage> executeQueue) {
     this.run = run;
     this.hazelcast = hazelcast;
-    this.cluster = hazelcast.getCluster();
-    this.notificationTopic = hazelcast
-        .getTopic(SharedNames.TEST_HANDLER_NOTIFICATION);
-    this.queue = hazelcast.getQueue(SharedNames.TEST_REQUEST);
+    this.cluster = cluster;
+    this.notificationTopic = notificationTopic;
+    this.queue = executeQueue;
   }
 
   public void start() {
     this.cluster.addMembershipListener(this);
     this.notificationTopic.addMessageListener(this);
 
+    // does this actually do anything?
     final MapConfig cacheConfig = this.hazelcast.getConfig().getMapConfig(
         this.run.getIdentifier());
     cacheConfig.setBackupCount(0);
@@ -125,7 +125,7 @@ public class ClusterManager implements
 
   private void handleReceived(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
-    record.handler = Option.someOrNone(message.getHandler());
+    record.setHandler(Option.someOrNone(message.getHandler()));
   }
 
   public long registerGroup(final TestGroup testGroup) {
@@ -151,11 +151,11 @@ public class ClusterManager implements
           .getInetSocketAddress();
       for (final TestGroupMemberRecord each : this.inprogressTestGroupHandlers
           .values()) {
-        if (each.handler.hasSome()) {
-          if (each.handler.value().equals(leaverAddress)) {
-            each.handler = Option.none();
-            System.out.println("Reassigning group id " + each.id);
-            submitTestGroupToGrid(each.id, each.group);
+        if (each.getHandler().hasSome()) {
+          if (each.getHandler().value().equals(leaverAddress)) {
+            each.setHandler(Option.<InetSocketAddress> none());
+            System.out.println("Reassigning group id " + each.getId());
+            submitTestGroupToGrid(each.getId(), each.getGroup());
           }
         }
       }

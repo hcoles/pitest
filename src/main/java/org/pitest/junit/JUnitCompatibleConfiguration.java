@@ -31,8 +31,8 @@ import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
-import org.pitest.extension.common.PITStaticMethodSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
+import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -77,7 +77,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
-    return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder());
+    return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder(),
+        new JUnit4SuiteFinder());
   }
 
   public List<InstantiationStrategy> instantiationStrategies() {

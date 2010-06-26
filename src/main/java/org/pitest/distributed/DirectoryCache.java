@@ -22,6 +22,7 @@ import java.net.URL;
 
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.functional.Option;
+import org.pitest.util.FileUtil;
 
 public class DirectoryCache implements ResourceCache {
 
@@ -77,6 +78,15 @@ public class DirectoryCache implements ResourceCache {
             + resource);
       }
     }
+  }
+
+  public void destroy() {
+    try {
+      FileUtil.deleteDirectory(this.cacheDirectory);
+    } catch (final Throwable t) {
+      t.printStackTrace();
+    }
+
   }
 
 }

@@ -12,20 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package com.example;
 
-package org.pitest.distributed;
+import junit.framework.TestCase;
 
-import java.io.IOException;
-import java.net.URL;
+public class TestA1 extends TestCase {
 
-import org.pitest.functional.Option;
+  public void test1() {
 
-public interface ResourceCache {
+  }
 
-  public Option<URL> getResource(final String name) throws IOException;
+  public void test2() {
 
-  public URL cacheResource(String name, byte[] data) throws IOException;
+  }
 
-  public void destroy();
+  public void test3() {
 
+  }
+
+  public void test4() {
+
+  }
+
+  public void test5() {
+
+  }
+
+  public void test6() {
+
+  }
 }

@@ -12,20 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.reflection;
 
-package org.pitest.distributed;
+import org.pitest.functional.predicate.Predicate;
+import org.pitest.internal.TestClass;
 
-import java.io.IOException;
-import java.net.URL;
+public class IsSubclassOf implements Predicate<TestClass> {
 
-import org.pitest.functional.Option;
+  private final Class<?> superClass;
 
-public interface ResourceCache {
+  public IsSubclassOf(final Class<?> superClass) {
+    this.superClass = superClass;
+  }
 
-  public Option<URL> getResource(final String name) throws IOException;
-
-  public URL cacheResource(String name, byte[] data) throws IOException;
-
-  public void destroy();
+  public Boolean apply(final TestClass clazz) {
+    return this.superClass.isAssignableFrom(clazz.getClazz());
+  }
 
 }

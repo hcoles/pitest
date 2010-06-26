@@ -37,6 +37,7 @@ public class SlaveResultCollector implements ResultCollector {
   }
 
   public void notifyEnd(final TestResult testResult) {
+    System.out.println("Test complete " + testResult);
     this.publish(testResult);
   }
 

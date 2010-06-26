@@ -18,8 +18,8 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
-import org.pitest.extension.common.PITStaticMethodSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
+import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
 
 public class ConfigurationForTesting implements Configuration {

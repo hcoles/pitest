@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 
 import org.pitest.util.Base64;
 
-public class RunDetails implements Serializable {
+public final class RunDetails implements Serializable {
 
   private static final long       serialVersionUID = 1L;
   private final InetSocketAddress master;
@@ -75,7 +75,7 @@ public class RunDetails implements Serializable {
     return true;
   }
 
-  public Object getInetSocketAddress() {
+  public InetSocketAddress getInetSocketAddress() {
     return this.master;
   }
 

@@ -12,20 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.extension.common.testsuitefinder;
 
-package org.pitest.distributed;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.io.IOException;
-import java.net.URL;
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE })
+public @interface ClassNameRegexFilter {
 
-import org.pitest.functional.Option;
-
-public interface ResourceCache {
-
-  public Option<URL> getResource(final String name) throws IOException;
-
-  public URL cacheResource(String name, byte[] data) throws IOException;
-
-  public void destroy();
-
+  String[] value();
 }

@@ -14,6 +14,7 @@
  */
 package org.pitest.functional.predicate;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,10 +27,14 @@ public class And<A> implements Predicate<A> {
   private final Set<Predicate<A>> ps = new LinkedHashSet<Predicate<A>>();
 
   public final static <A> And<A> instance(final Predicate<A>... ps) {
+    return new And<A>(Arrays.asList(ps));
+  }
+
+  public final static <A> And<A> instance(final Iterable<Predicate<A>> ps) {
     return new And<A>(ps);
   }
 
-  public And(final Predicate<A>... ps) {
+  public And(final Iterable<Predicate<A>> ps) {
     for (final Predicate<A> each : ps) {
       this.ps.add(each);
     }

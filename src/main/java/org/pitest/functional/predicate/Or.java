@@ -14,6 +14,7 @@
  */
 package org.pitest.functional.predicate;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,10 +27,14 @@ public class Or<A> implements Predicate<A> {
   private final Set<Predicate<A>> ps = new LinkedHashSet<Predicate<A>>();
 
   public final static <A> Or<A> instance(final Predicate<A>... ps) {
+    return new Or<A>(Arrays.asList(ps));
+  }
+
+  public final static <A> Or<A> instance(final Iterable<Predicate<A>> ps) {
     return new Or<A>(ps);
   }
 
-  public Or(final Predicate<A>... ps) {
+  public Or(final Iterable<Predicate<A>> ps) {
     for (final Predicate<A> each : ps) {
       this.ps.add(each);
     }

@@ -12,20 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.distributed.slave;
 
-package org.pitest.distributed;
+import org.pitest.distributed.ControlMessage;
+import org.pitest.distributed.ControlMessage.Type;
 
-import java.io.IOException;
-import java.net.URL;
+import com.hazelcast.core.MessageListener;
 
-import org.pitest.functional.Option;
+public class SlaveController implements MessageListener<ControlMessage> {
 
-public interface ResourceCache {
+  private final Slave slave;
 
-  public Option<URL> getResource(final String name) throws IOException;
+  public SlaveController(final Slave slave) {
+    this.slave = slave;
+  }
 
-  public URL cacheResource(String name, byte[] data) throws IOException;
+  public void onMessage(final ControlMessage msg) {
+    final Type type = msg.getType();
+    switch (type) {
+    case RUN_COMPLETE:
+      this.slave.endRun(msg.getRun());
+    }
 
-  public void destroy();
+  }
 
 }

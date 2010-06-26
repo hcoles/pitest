@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -56,12 +59,25 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   @Override
   public String toString() {
-    return "ArchiveClassPathRoot [root=" + this.root + "]";
+    return "ArchiveClassPathRoot [root=" + this.root.getName() + "]";
   }
 
   public Collection<String> classNames() {
-    // TODO Auto-generated method stub
-    return null;
+    final List<String> names = new ArrayList<String>();
+    final Enumeration<? extends ZipEntry> entries = this.root.entries();
+    while (entries.hasMoreElements()) {
+      final ZipEntry entry = entries.nextElement();
+      if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+        names.add(stringToClassName(entry.getName()));
+      }
+    }
+    return names;
+
+  }
+
+  private String stringToClassName(final String name) {
+    return name.substring(0, (name.length() - ".class".length())).replace('/',
+        '.');
   }
 
 }

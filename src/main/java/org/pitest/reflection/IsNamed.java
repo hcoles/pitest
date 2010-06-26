@@ -12,20 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.reflection;
 
-package org.pitest.distributed;
+import java.lang.reflect.Method;
 
-import java.io.IOException;
-import java.net.URL;
+import org.pitest.functional.predicate.Predicate;
 
-import org.pitest.functional.Option;
+public class IsNamed implements Predicate<Method> {
 
-public interface ResourceCache {
+  private final String name;
 
-  public Option<URL> getResource(final String name) throws IOException;
+  public IsNamed(final String name) {
+    this.name = name;
+  }
 
-  public URL cacheResource(String name, byte[] data) throws IOException;
+  public Boolean apply(final Method a) {
+    return a.getName().equals(this.name);
+  }
 
-  public void destroy();
+  public static IsNamed instance(final String name) {
+    return new IsNamed(name);
+  }
 
 }

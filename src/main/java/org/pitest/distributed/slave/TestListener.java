@@ -12,20 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.distributed.slave;
 
-package org.pitest.distributed;
+import org.pitest.distributed.message.TestGroupExecuteMessage;
 
-import java.io.IOException;
-import java.net.URL;
+import com.hazelcast.core.MessageListener;
 
-import org.pitest.functional.Option;
+public class TestListener implements MessageListener<TestGroupExecuteMessage> {
 
-public interface ResourceCache {
+  public void onMessage(final TestGroupExecuteMessage arg0) {
+    // TODO Auto-generated method stub
 
-  public Option<URL> getResource(final String name) throws IOException;
-
-  public URL cacheResource(String name, byte[] data) throws IOException;
-
-  public void destroy();
+  }
 
 }

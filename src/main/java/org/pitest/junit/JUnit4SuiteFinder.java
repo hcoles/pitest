@@ -12,47 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension.common;
+package org.pitest.junit;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
 
-import org.pitest.annotations.PITSuiteMethod;
+import org.junit.runners.Suite.SuiteClasses;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
-import org.pitest.reflection.IsAnotatedWith;
-import org.pitest.reflection.Reflection;
 
-public class PITStaticMethodSuiteFinder implements TestSuiteFinder {
+public class JUnit4SuiteFinder implements TestSuiteFinder {
 
-  @SuppressWarnings("unchecked")
-  public Collection<TestClass> apply(final TestClass root) {
-    final List<TestClass> result = new ArrayList<TestClass>();
-
-    try {
+  public Collection<TestClass> apply(final TestClass a) {
+    final SuiteClasses annotation = a.getClazz().getAnnotation(
+        SuiteClasses.class);
+    if (annotation != null) {
       final F<Class<?>, TestClass> fClassToTestClass = new F<Class<?>, TestClass>() {
         public TestClass apply(final Class<?> a) {
           return new TestClass(a);
         }
       };
-
-      final Set<Method> suites = Reflection.publicMethods(root.getClazz(),
-          IsAnotatedWith.instance(PITSuiteMethod.class));
-      for (final Method suiteMethod : suites) {
-        final Collection<Class<?>> testClasses = (Collection<Class<?>>) suiteMethod
-            .invoke(null);
-        FCollection.map(testClasses, fClassToTestClass, result);
-      }
-
-      return result;
-
-    } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      return FCollection.map(Arrays.asList(annotation.value()),
+          fClassToTestClass);
+    } else {
+      return Collections.emptyList();
     }
   }
 
