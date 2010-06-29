@@ -14,6 +14,7 @@
  */
 package org.pitest.extension.common.testsuitefinder;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,8 +72,20 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
 
   @SuppressWarnings("unchecked")
   private F<TestClass, Boolean> createPredicate(final Class<?> clazz) {
-    return And.instance(createExcludePredicate(clazz),
-        createIncludePredicate(clazz));
+    return And.instance(createStandardExcludes(clazz),
+        createExcludePredicate(clazz), createIncludePredicate(clazz));
+  }
+
+  private Predicate<TestClass> createStandardExcludes(final Class<?> clazz) {
+    return new Predicate<TestClass>() {
+
+      public Boolean apply(final TestClass a) {
+        final Class<?> candidateClass = a.getClazz();
+        return !Modifier.isAbstract(candidateClass.getModifiers())
+            && !clazz.getName().equals(candidateClass.getName());
+      }
+
+    };
   }
 
   private Predicate<TestClass> createExcludePredicate(final Class<?> clazz) {

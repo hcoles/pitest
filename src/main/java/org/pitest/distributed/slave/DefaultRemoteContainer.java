@@ -27,7 +27,6 @@ import org.pitest.distributed.RemoteRoot;
 import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
-import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.internal.ClassPath;
@@ -39,14 +38,15 @@ import org.pitest.reflection.Reflection;
 
 import com.hazelcast.core.HazelcastInstance;
 
-public class RemoteContainer implements Container {
+public class DefaultRemoteContainer implements RemoteContainer {
 
   private final HazelcastInstance   hazelcast;
   private final RunDetails          run;
   private final ClassLoader         loader;
   private final Map<String, String> environment;
+  private final ResourceCache       resourceCache;
 
-  public RemoteContainer(final RunDetails run,
+  public DefaultRemoteContainer(final RunDetails run,
       final HazelcastInstance hazelcast, final MasterService master,
       final ResourceCache cache, final Map<String, String> environment) {
     this(run, hazelcast, master, cache, new TransformingClassLoader(
@@ -57,14 +57,14 @@ public class RemoteContainer implements Container {
             .getContextClassLoader()), environment);
   }
 
-  public RemoteContainer(final RunDetails run,
+  public DefaultRemoteContainer(final RunDetails run,
       final HazelcastInstance hazelcast, final MasterService master,
       final ResourceCache cache, final ClassLoader loader,
       final Map<String, String> environment) {
     // this.master = master;
     this.loader = loader;
     this.environment = environment;
-    // this.cache = cache;
+    this.resourceCache = cache;
     this.run = run;
     this.hazelcast = hazelcast;
     initEnvironment(loader);
@@ -148,6 +148,10 @@ public class RemoteContainer implements Container {
 
   public ResultSource getResultSource() {
     return null;
+  }
+
+  public void destroy() {
+    this.resourceCache.destroy();
   }
 
 }

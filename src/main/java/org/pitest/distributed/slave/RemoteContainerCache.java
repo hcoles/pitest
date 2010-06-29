@@ -14,26 +14,37 @@
  */
 package org.pitest.distributed.slave;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.pitest.distributed.message.RunDetails;
-import org.pitest.util.RingBuffer;
+import org.pitest.functional.Option;
 
 public class RemoteContainerCache {
 
-  private final RingBuffer<RemoteContainer> runs = new RingBuffer<RemoteContainer>(
-                                                     3);
+  private final int                   maxSize;
+  private final List<RemoteContainer> runs = new ArrayList<RemoteContainer>();
 
-  public RemoteContainer getCachedContainer(final RunDetails run) {
-    for (final RemoteContainer container : this.runs) {
-      if (container.getRun().equals(run)) {
-        return container;
+  public RemoteContainerCache(final int maxSize) {
+    this.maxSize = maxSize;
+  }
+
+  public Option<RemoteContainer> getCachedContainer(final RunDetails run) {
+    for (final RemoteContainer each : this.runs) {
+      if (each.getRun().equals(run)) {
+        return Option.someOrNone(each);
       }
     }
-    return null;
+    return Option.none();
   }
 
   public void enqueue(final RemoteContainer container) {
-    this.runs.enqueue(container);
-
+    if (this.runs.size() >= this.maxSize) {
+      final RemoteContainer dead = this.runs.get(0);
+      this.runs.remove(0);
+      dead.destroy();
+    }
+    this.runs.add(container);
   }
 
 }

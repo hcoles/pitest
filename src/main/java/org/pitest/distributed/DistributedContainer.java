@@ -84,6 +84,8 @@ public class DistributedContainer extends BaseThreadPoolContainer {
         hazelcast, this.feedbackQueue());
     this.resultListener.start();
 
+    System.out.println("Main thread is " + Thread.currentThread());
+
     CONTAINER_INSTANCES.put(this.runDetails, this);
 
   }

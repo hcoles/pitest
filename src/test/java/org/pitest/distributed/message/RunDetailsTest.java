@@ -28,7 +28,7 @@ import org.junit.Test;
 public class RunDetailsTest {
 
   private RunDetails testee;
-  
+
   @Before
   public void setUp() {
     this.testee = new RunDetails(new InetSocketAddress(0), 1);
@@ -49,9 +49,9 @@ public class RunDetailsTest {
       fail();
     }
   }
-  
+
   @Test
   public void testIdentifierContainsOnlyAlphaNumericCharacters() {
-    assertTrue(testee.getIdentifier().matches("[A-Za-z0-9]*"));
+    assertTrue(this.testee.getIdentifier().matches("[A-Za-z0-9]*"));
   }
 }

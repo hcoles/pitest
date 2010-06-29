@@ -37,7 +37,7 @@ public class Slave {
         .getTopic(SharedNames.TEST_HANDLER_NOTIFICATION);
     this.controlTopic = this.client.getTopic(SharedNames.TEST_CONTROL);
     this.groupExecutor = new TestGroupExecutor(client,
-        new RemoteContainerCache());
+        new RemoteContainerCache(3));
   }
 
   public static void main(final String[] args) {

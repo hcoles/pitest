@@ -18,37 +18,27 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.runner.RunWith;
-import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
-import org.pitest.distributed.DistributedContainer;
-import org.pitest.extension.Container;
 import org.pitest.junit.PITJUnitRunner;
 
 @RunWith(PITJUnitRunner.class)
 public class TopLevelSuite {
 
-  @PITContainer
-  public static Container container() {
-    // Config config = new Config();
-    // NetworkConfig nc = new NetworkConfig();
-    // Join join = new Join();
-    // MulticastConfig multicastConfig = new MulticastConfig();
-    // multicastConfig.setEnabled(false);
-    // join.setMulticastConfig(multicastConfig);
-    // TcpIpConfig tcpIpConfig = new TcpIpConfig();
-    // tcpIpConfig.setMembers(Arrays.asList("127.0.0.1:5702"));
-    // join.setTcpIpConfig(tcpIpConfig);
-    // nc.setJoin(join);
-    // config.setNetworkConfig(nc);
-    // config.setPort(5701);
-    // return new DistributedContainer(config);
-    return new DistributedContainer();
-  }
+  // @PITContainer
+  // public static Container container() {
+  // return new DistributedContainer();
+  // }
 
   @SuppressWarnings("unchecked")
   @PITSuiteMethod
   public static Collection<Class<?>> children() {
-    return Arrays.asList(JUnit4SuiteB.class, JUnit4SuiteA.class);
+    return Arrays.asList(JUnit4SuiteB.class, JUnit4SuiteA.class,
+        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
+        JUnit4SuiteA.class, JUnit4SuiteB.class, JUnit4SuiteA.class,
+        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
+        JUnit4SuiteA.class, JUnit4SuiteB.class, JUnit4SuiteA.class,
+        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
+        JUnit4SuiteA.class);
   }
 
 }

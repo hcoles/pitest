@@ -26,6 +26,10 @@ import org.pitest.internal.TestClass;
 interface Exclude {
 }
 
+abstract class Abstract {
+
+}
+
 class Foo {
 
 }
@@ -73,6 +77,31 @@ public class ClasspathSuiteFinderTest {
 
     assertEquals(Arrays.asList(new TestClass(Foo.class)), this.testee
         .apply(new TestClass(Suite.class)));
+  }
+
+  @ClasspathSuite
+  @ClassNameRegexFilter(value = { "org.pitest.extension.common.testsuitefinder.ClasspathSuiteFinderTest\\$ExampleSuite" })
+  public static class ExampleSuite {
+
+  }
+
+  @Test
+  public void testNameFilterNeverReturnsParentClass() {
+    System.out.println(ExampleSuite.class);
+    assertEquals(Collections.emptyList(), this.testee.apply(new TestClass(
+        ExampleSuite.class)));
+  }
+
+  @Test
+  public void testNameFilterNeverReturnsAbstractClass() {
+    @ClasspathSuite
+    @ClassNameRegexFilter(value = { "org.pitest.extension.common.testsuitefinder.Abstract" })
+    class Suite {
+
+    }
+
+    assertEquals(Collections.emptyList(), this.testee.apply(new TestClass(
+        Suite.class)));
   }
 
   @Test

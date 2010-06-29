@@ -51,6 +51,7 @@ public class MasterResultQueueListener implements
   }
 
   public void onMessage(final ResultMessage message) {
+    System.out.println("Received on thread " + Thread.currentThread());
     if (message.getRun().equals(this.run)) {
       this.feedbackQueue.add(message.getResult());
     }

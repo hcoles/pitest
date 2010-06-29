@@ -23,15 +23,10 @@ public interface Container {
 
   public void shutdownWhenProcessingComplete();
 
-  // public boolean awaitTermination(int i, TimeUnit milliseconds)
-  // throws InterruptedException;
-
   public void setMaxThreads(int maxThreads);
 
   public ResultSource getResultSource();
 
   public boolean awaitCompletion();
-
-  // public BlockingQueue<TestResult> feedbackQueue();
 
 }

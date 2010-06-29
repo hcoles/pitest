@@ -60,21 +60,21 @@ public class TestGroupExecutor {
   private RemoteContainer getContainer(final RunDetails run) {
 
     // fixme thread safety
-    if (this.cache.getCachedContainer(run) == null) {
+    if (this.cache.getCachedContainer(run).hasNone()) {
       System.out.println("Creating new container");
       final ResourceCache cache = new DirectoryCache(run);
 
       final MasterService master = new MasterClient(this.client, run);
 
       final Map<String, String> environment = master.getEnvironmentSettings();
-      final RemoteContainer m = new RemoteContainer(run, this.client, master,
-          cache, environment);
+      final DefaultRemoteContainer m = new DefaultRemoteContainer(run,
+          this.client, master, cache, environment);
 
       this.cache.enqueue(m);
 
     }
 
-    return this.cache.getCachedContainer(run);
+    return this.cache.getCachedContainer(run).value();
 
   }
 
