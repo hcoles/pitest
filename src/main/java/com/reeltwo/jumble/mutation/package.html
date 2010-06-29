@@ -1,0 +1,44 @@
+<body>
+Mutation tester to work in conjunction with JUnit.
+
+What does a "T" output mean?
+
+The mutation caused the unit tests to take longer than expected
+(possibly having put the code into an infinite loop).  Jumble gives
+the coder the benefit of the doubt in such situations.
+
+
+
+Can Jumble ever incorrectly report an arithmetic problem?
+
+Yes.  Certain combinations of operations and constants give the same
+result for different examples.  For example,
+
+<pre>
+y = x * sign;
+y = x / sign;
+</pre>
+
+give the same result for sign = +1 or sign = -1.
+
+
+
+Can Jumble ever incorrectly report a conditional problem?
+
+Yes.  Certain pieces of code can be modified without invalidating the
+code.  One example of this is where a condition is used to select
+different code for performance reasons rather than correctness.
+Suppose f1(x) and f2(x) compute the same function but are exhibit
+different performance depending on x.  Valid code might then be
+
+<pre>
+int foo(int x) {
+    return x < 10 ? f1(x) : f2(x);
+}
+</pre>
+
+mutating the condition x < 10 would not change the correctness of the
+code only the speed.  Unless there is a very sensitive speed test this
+modification is likely to pass unit tests.
+
+</body>
