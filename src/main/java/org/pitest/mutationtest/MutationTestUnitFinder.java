@@ -51,12 +51,16 @@ public class MutationTestUnitFinder implements TestUnitFinder {
 
   }
 
+  public boolean canHandle(final boolean alreadyHandled) {
+    return alreadyHandled;
+  }
+
   public List<TestUnit> processChildUnits(final List<TestUnit> tus,
       final TestClass testClass) {
     return tus;
   }
 
-  public Collection<TestUnit> apply(final TestClass testClass,
+  public Collection<TestUnit> findTestUnits(final TestClass testClass,
       final Configuration config) {
     final F<Method, Collection<TestUnit>> f = new F<Method, Collection<TestUnit>>() {
       public Collection<TestUnit> apply(final Method a) {

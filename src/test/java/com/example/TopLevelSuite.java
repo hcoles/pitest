@@ -29,16 +29,9 @@ public class TopLevelSuite {
   // return new DistributedContainer();
   // }
 
-  @SuppressWarnings("unchecked")
   @PITSuiteMethod
   public static Collection<Class<?>> children() {
-    return Arrays.asList(JUnit4SuiteB.class, JUnit4SuiteA.class,
-        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
-        JUnit4SuiteA.class, JUnit4SuiteB.class, JUnit4SuiteA.class,
-        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
-        JUnit4SuiteA.class, JUnit4SuiteB.class, JUnit4SuiteA.class,
-        JUnit4SuiteB.class, JUnit4SuiteA.class, JUnit4SuiteB.class,
-        JUnit4SuiteA.class);
+    return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
   }
 
 }

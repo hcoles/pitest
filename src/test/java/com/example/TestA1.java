@@ -16,12 +16,29 @@ package com.example;
 
 import junit.framework.TestCase;
 
+import org.junit.Ignore;
+import org.pitest.annotations.MutationTest;
+import org.pitest.mutationtest.MutationConfig;
+
+
 public class TestA1 extends TestCase {
 
-  public void test1() {
-
+  public static class Testee {
+    public static int returnOne() {
+      return 1;
+    }
   }
 
+  @MutationTest(mutateClass = Testee.class)
+  public static MutationConfig config() {
+    return new MutationConfig();
+  }
+
+  public void test1() {
+    assertEquals(1, Testee.returnOne());
+  }
+
+  @Ignore
   public void test2() {
 
   }

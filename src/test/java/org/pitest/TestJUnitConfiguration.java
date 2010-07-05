@@ -16,6 +16,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -302,6 +305,25 @@ public class TestJUnitConfiguration {
   public void testCreatesTestsForEachJUnitParameter() {
     this.pitest.run(HideFromJUnit7.ParameterisedTest.class);
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
+  }
+
+  @RunWith(Theories.class)
+  public static class TheoriesTest {
+
+    @DataPoint
+    public static int i = 1;
+
+    @Theory
+    public void testTheory(final int i) {
+      assertEquals(1, i);
+    }
+
+  }
+
+  @Test
+  public void testRunsTestsCreatedByCustomRunners() {
+    this.pitest.run(TheoriesTest.class);
+    verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
 }

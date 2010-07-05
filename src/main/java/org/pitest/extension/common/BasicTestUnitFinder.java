@@ -62,7 +62,11 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public Collection<TestUnit> apply(final TestClass testClass,
+  public boolean canHandle(final boolean alreadyHandled) {
+    return true;
+  }
+
+  public Collection<TestUnit> findTestUnits(final TestClass testClass,
       final Configuration config) {
     try {
 
@@ -181,6 +185,11 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     return set.toCollection();
   }
 
+  
+  // FIXME why can this method not be dropped from interface?
+  // If we need before after class across all test units could use a processor
+  // if this internal to this finder, do this in findTestUnits
+  
   public List<TestUnit> processChildUnits(final List<TestUnit> tus,
       final TestClass testClass) {
 

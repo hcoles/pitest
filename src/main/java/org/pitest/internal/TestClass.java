@@ -53,15 +53,13 @@ public final class TestClass implements Serializable {
       }
     };
 
-    final F<TestUnitFinder, Collection<TestUnit>> f = new F<TestUnitFinder, Collection<TestUnit>>() {
-      public Collection<TestUnit> apply(final TestUnitFinder a) {
-        return a.apply(TestClass.this, config);
+    final Collection<TestUnit> units = new ArrayList<TestUnit>();
+    for (final TestUnitFinder each : config.testUnitFinders()) {
+      if (each.canHandle(!units.isEmpty())) {
+        units.addAll(each.findTestUnits(TestClass.this, config));
       }
-    };
-    final Collection<TestUnit> units = FCollection.flatMap(config
-        .testUnitFinders(), f);
+    }
 
-    // return units;
     return FCollection.map(units, applyProcessors);
   }
 

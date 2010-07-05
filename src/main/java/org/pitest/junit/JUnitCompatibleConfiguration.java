@@ -33,6 +33,7 @@ import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiation
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
+import org.pitest.mutationtest.MutationTestUnitFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -63,12 +64,20 @@ public class JUnitCompatibleConfiguration implements Configuration {
     afterMethodFinders.add(new JUnit3NameBasedMethodFinder("tearDown"));
 
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
+
     tmfs.add(JUnit4TestMethodFinder.instance());
     tmfs.add(JUnit3TestMethodFinder.instance());
 
     final Set<TestUnitFinder> tus = new LinkedHashSet<TestUnitFinder>();
+
     tus.add(new BasicTestUnitFinder(tmfs, beforeMethodFinders,
         afterMethodFinders, beforeClassFinders, afterClassFinders));
+
+    tus.add(new JUnitCustomRunnerTestUnitFinder());
+
+    // must be last in list
+    tus.add(MutationTestUnitFinder.instance());
+
     return tus;
   }
 

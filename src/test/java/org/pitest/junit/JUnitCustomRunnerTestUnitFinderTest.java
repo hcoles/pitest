@@ -12,22 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.junit;
 
-package org.pitest.extension;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.pitest.internal.TestClass;
+public class JUnitCustomRunnerTestUnitFinderTest {
 
-public interface TestUnitFinder {
+  private JUnitCustomRunnerTestUnitFinder testee;
 
-  public boolean canHandle(boolean alreadyHandled);
+  @Before
+  public void setup() {
+    this.testee = new JUnitCustomRunnerTestUnitFinder();
+  }
 
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
-      final Configuration configuration);
+  @Test
+  public void testWillNotHandlePreviouslyHandledClass() {
+    assertFalse(this.testee.canHandle(true));
+  }
 
-  public List<TestUnit> processChildUnits(final List<TestUnit> tus,
-      TestClass testClass);
-
+  @Test
+  public void testWillHandleHandledClass() {
+    assertTrue(this.testee.canHandle(false));
+  }
 }

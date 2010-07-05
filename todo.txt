@@ -1,0 +1,5 @@
+1 two stage pass for custom runner adapter. Find desriptions with one runner,
+possibly create a second using correct class loader when executing
+2 can we run just one test within a runner?
+3 move before after class our of basic test unit finder and into processor
+4 fix mutation test

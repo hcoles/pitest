@@ -19,7 +19,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses( { TestA1.class, TestA2.class })
+@SuiteClasses( { TestA1.class })
 public class JUnit4SuiteA {
 
 }
