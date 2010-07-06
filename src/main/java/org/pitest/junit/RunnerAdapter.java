@@ -16,31 +16,44 @@ package org.pitest.junit;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.internal.builders.AnnotatedBuilder;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
-import org.junit.runner.notification.RunNotifier;
 import org.pitest.TestMethod;
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
+
+import com.thoughtworks.xstream.XStream;
 
 public class RunnerAdapter {
 
-  private Runner                          runner;
-  private final List<TestUnit>            tus     = new ArrayList<TestUnit>();
-  private final Map<Description, Failure> results = new HashMap<Description, Failure>();
+  private Runner                 runner;
+  private Map<String, Throwable> results;
 
-  public RunnerAdapter(final Runner runner) {
-    this.runner = runner;
-    gatherTestUnits(this.tus, runner.getDescription());
+  private final List<TestUnit>   tus = new ArrayList<TestUnit>();
+  private final Class<?>         clazz;
+
+  public RunnerAdapter(final Class<?> clazz) {
+    this.clazz = clazz;
+    this.runner = createRunner(clazz);
+    gatherTestUnits(this.tus, this.runner.getDescription());
+  }
+
+  private Runner createRunner(final Class<?> clazz) {
+    final AnnotatedBuilder builder = new AnnotatedBuilder(
+        new AllDefaultPossibilitiesBuilder(true));
+    try {
+      return builder.runnerForClass(clazz);
+    } catch (final Exception ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   public List<TestUnit> getTestUnits() {
@@ -69,15 +82,18 @@ public class RunnerAdapter {
   public void execute(final ClassLoader loader,
       final RunnerAdapterTestUnit testUnit, final ResultCollector rc) {
     rc.notifyStart(testUnit);
-    runIfRequired();
+    runIfRequired(loader);
     notify(testUnit, rc);
   }
 
   private void notify(final RunnerAdapterTestUnit testUnit,
       final ResultCollector rc) {
-    final Failure f = this.results.get(testUnit.getJunitDescription());
-    if (f != null) {
-      final TestResult testResult = new TestResult(testUnit, f.getException());
+    final Throwable t = this.results.get(CustomRunnerExecutor
+        .descriptionToString(testUnit.getJunitDescription()));
+    if (t != null) {
+      // TODO translate the throwable + isn't there a potential classloader leak
+      // here?
+      final TestResult testResult = new TestResult(testUnit, t);
       rc.notifyEnd(testResult);
     } else {
       final TestResult testResult = new TestResult(testUnit, null);
@@ -86,54 +102,37 @@ public class RunnerAdapter {
 
   }
 
-  private void runIfRequired() {
+  @SuppressWarnings("unchecked")
+  private void runIfRequired(final ClassLoader loader) {
 
     if (this.runner != null) {
+      final CustomRunnerExecutor ce = new CustomRunnerExecutor(this.runner);
+      Object foreignCe = ce;
+      if (IsolationUtils.fromDifferentLoader(this.runner.getClass(), loader)) {
+        foreignCe = cloneExecutorForLoader(ce, loader);
+      }
+      final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
+      try {
+        this.results = (Map<String, Throwable>) run.invoke(foreignCe);
+      } catch (final Exception e) {
+        throw new RuntimeException(e);
+      }
 
-      final RunNotifier rn = new RunNotifier();
-      final RunListener listener = new RunListener() {
-
-        @Override
-        public void testRunStarted(final Description description)
-            throws Exception {
-
-        }
-
-        @Override
-        public void testRunFinished(final Result result) throws Exception {
-
-        }
-
-        @Override
-        public void testStarted(final Description description) throws Exception {
-
-        }
-
-        @Override
-        public void testFinished(final Description description)
-            throws Exception {
-
-        }
-
-        @Override
-        public void testFailure(final Failure failure) throws Exception {
-
-        }
-
-        @Override
-        public void testAssumptionFailure(final Failure failure) {
-
-        }
-
-        @Override
-        public void testIgnored(final Description description) throws Exception {
-          // fixme no support
-        }
-
-      };
-      rn.addFirstListener(listener);
-      this.runner.run(rn);
       this.runner = null;
+    }
+
+  }
+
+  private Object cloneExecutorForLoader(final CustomRunnerExecutor ce,
+      final ClassLoader loader) {
+    try {
+      final XStream xstream = new XStream();
+      final String xml = xstream.toXML(ce);
+      final XStream foreginXstream = new XStream();
+      foreginXstream.setClassLoader(loader);
+      return foreginXstream.fromXML(xml);
+    } catch (final Exception ex) {
+      throw new RuntimeException(ex);
     }
 
   }

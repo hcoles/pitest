@@ -25,6 +25,15 @@ import org.pitest.reflection.Reflection;
 
 public class IsolationUtils {
 
+  public static boolean fromDifferentLoader(final Class<?> clazz,
+      final ClassLoader loader) {
+    try {
+      return clazz != loader.loadClass(clazz.getName());
+    } catch (final ClassNotFoundException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
   private static Class<?> convertForClassLoader(final ClassLoader loader,
       final String name) {
     try {

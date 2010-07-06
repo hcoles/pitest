@@ -16,7 +16,6 @@ package org.pitest.internal;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
@@ -43,7 +42,7 @@ public class ConfigParser {
       final Collection<TestUnitProcessor> visitors = determineTestUnitProcessors(
           this.clazz).getOrElse(baseConfig.testUnitProcessors());
 
-      final Set<TestUnitFinder> finders = baseConfig.testUnitFinders();
+      final List<TestUnitFinder> finders = baseConfig.testUnitFinders();
       // final Set<TestUnitFinder> finders = determineTestUnitFinder(this.clazz)
       // .getOrElse(baseConfig.testUnitFinders());
 

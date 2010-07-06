@@ -185,11 +185,10 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     return set.toCollection();
   }
 
-  
   // FIXME why can this method not be dropped from interface?
   // If we need before after class across all test units could use a processor
   // if this internal to this finder, do this in findTestUnits
-  
+
   public List<TestUnit> processChildUnits(final List<TestUnit> tus,
       final TestClass testClass) {
 

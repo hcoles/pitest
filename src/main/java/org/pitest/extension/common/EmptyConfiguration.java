@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
@@ -47,12 +46,12 @@ public class EmptyConfiguration implements Configuration {
     return 1;
   }
 
-  public Set<TestUnitProcessor> testUnitProcessors() {
-    return Collections.emptySet();
+  public List<TestUnitProcessor> testUnitProcessors() {
+    return Collections.emptyList();
   }
 
-  public Set<TestUnitFinder> testUnitFinders() {
-    return Collections.emptySet();
+  public List<TestUnitFinder> testUnitFinders() {
+    return Collections.emptyList();
   }
 
   public boolean allowConfigurationChange() {

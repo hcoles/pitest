@@ -40,7 +40,6 @@ public enum Mutation implements SideEffect2<Mutater, Boolean> {
   RETURN_VALS("Mutate return values.", new SideEffect2<Mutater, Boolean>() {
     public void apply(final Mutater a, final Boolean value) {
       a.setMutateReturnValues(value);
-
     }
   }), INLINE_CONSTS("Mutate inline constants.",
       new SideEffect2<Mutater, Boolean>() {

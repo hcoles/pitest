@@ -14,11 +14,10 @@
  */
 package org.pitest;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.InstantiationStrategy;
@@ -34,8 +33,8 @@ public final class ConcreteConfiguration implements Configuration {
 
   private final boolean                     allowConfigurationChange;
   private final List<InstantiationStrategy> instantiationStrategy;
-  private final Set<TestUnitProcessor>      testProcessors   = new LinkedHashSet<TestUnitProcessor>();
-  private final Set<TestUnitFinder>         testUnitFinders  = new LinkedHashSet<TestUnitFinder>();
+  private final List<TestUnitProcessor>     testProcessors   = new ArrayList<TestUnitProcessor>();
+  private final List<TestUnitFinder>        testUnitFinders  = new ArrayList<TestUnitFinder>();
   private final List<TestSuiteFinder>       testSuiteFinders = new LinkedList<TestSuiteFinder>();
 
   public ConcreteConfiguration(final boolean allowConfigurationChange,
@@ -50,11 +49,11 @@ public final class ConcreteConfiguration implements Configuration {
     this.testSuiteFinders.addAll(testSuiteFinders);
   }
 
-  public Set<TestUnitFinder> testUnitFinders() {
+  public List<TestUnitFinder> testUnitFinders() {
     return this.testUnitFinders;
   }
 
-  public Set<TestUnitProcessor> testUnitProcessors() {
+  public List<TestUnitProcessor> testUnitProcessors() {
     return this.testProcessors;
   }
 

@@ -14,6 +14,7 @@
  */
 package org.pitest.junit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,14 +38,14 @@ import org.pitest.mutationtest.MutationTestUnitFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
-  public Set<TestUnitProcessor> testUnitProcessors() {
-    final Set<TestUnitProcessor> tups = new LinkedHashSet<TestUnitProcessor>();
+  public List<TestUnitProcessor> testUnitProcessors() {
+    final List<TestUnitProcessor> tups = new ArrayList<TestUnitProcessor>();
     tups.add(new IgnoreTestProcessor(org.junit.Ignore.class));
     tups.add(new TimeoutProcessor());
     return tups;
   }
 
-  public Set<TestUnitFinder> testUnitFinders() {
+  public List<TestUnitFinder> testUnitFinders() {
     final Set<MethodFinder> beforeClassFinders = Collections
         .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
             org.junit.BeforeClass.class));
@@ -68,7 +69,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
     tmfs.add(JUnit4TestMethodFinder.instance());
     tmfs.add(JUnit3TestMethodFinder.instance());
 
-    final Set<TestUnitFinder> tus = new LinkedHashSet<TestUnitFinder>();
+    final List<TestUnitFinder> tus = new ArrayList<TestUnitFinder>();
 
     tus.add(new BasicTestUnitFinder(tmfs, beforeMethodFinders,
         afterMethodFinders, beforeClassFinders, afterClassFinders));

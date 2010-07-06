@@ -1,6 +1,7 @@
 package org.pitest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -307,23 +308,37 @@ public class TestJUnitConfiguration {
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
-  @RunWith(Theories.class)
-  public static class TheoriesTest {
+  static abstract class HideFromJUnit8 {
+    @RunWith(Theories.class)
+    public static class TheoriesTest {
 
-    @DataPoint
-    public static int i = 1;
+      @DataPoint
+      public static int i = 1;
 
-    @Theory
-    public void testTheory(final int i) {
-      assertEquals(1, i);
+      @Theory
+      public void testTheory(final int i) {
+        assertEquals(1, i);
+      }
+
+      @Theory
+      public void failingTheory(final int i) {
+        fail();
+      }
+
+      @Theory
+      public void errorTheory(final int i) {
+        throw new NullPointerException();
+      }
+
     }
-
   }
 
   @Test
   public void testRunsTestsCreatedByCustomRunners() {
-    this.pitest.run(TheoriesTest.class);
+    this.pitest.run(HideFromJUnit8.TheoriesTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
+    // failing theories are actually errors
+    verify(this.listener, times(2)).onTestError(any(TestResult.class));
   }
 
 }

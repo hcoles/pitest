@@ -17,6 +17,7 @@ package org.pitest.mutationtest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.bcel.classfile.JavaClass;
@@ -104,7 +105,7 @@ public class MutationTestUnitFinder implements TestUnitFinder {
         return createTestUnitGroup(testClass, configuration, annotation, tm, m,
             name, unmodifiedClass, mutationCount);
       } else {
-        return null;
+        return Collections.emptyList();
       }
 
     } catch (final Exception ex) {

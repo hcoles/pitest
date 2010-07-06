@@ -18,8 +18,8 @@ import junit.framework.TestCase;
 
 import org.junit.Ignore;
 import org.pitest.annotations.MutationTest;
+import org.pitest.mutationtest.Mutation;
 import org.pitest.mutationtest.MutationConfig;
-
 
 public class TestA1 extends TestCase {
 
@@ -31,7 +31,7 @@ public class TestA1 extends TestCase {
 
   @MutationTest(mutateClass = Testee.class)
   public static MutationConfig config() {
-    return new MutationConfig();
+    return new MutationConfig(Mutation.RETURN_VALS);
   }
 
   public void test1() {
@@ -58,4 +58,5 @@ public class TestA1 extends TestCase {
   public void test6() {
 
   }
+
 }

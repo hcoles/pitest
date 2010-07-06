@@ -17,7 +17,6 @@ package org.pitest.extension;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface Configuration {
 
@@ -25,9 +24,9 @@ public interface Configuration {
 
   public List<InstantiationStrategy> instantiationStrategies();
 
-  public Set<TestUnitProcessor> testUnitProcessors();
+  public List<TestUnitProcessor> testUnitProcessors();
 
-  public Set<TestUnitFinder> testUnitFinders();
+  public List<TestUnitFinder> testUnitFinders();
 
   public Collection<TestSuiteFinder> testSuiteFinders();
 

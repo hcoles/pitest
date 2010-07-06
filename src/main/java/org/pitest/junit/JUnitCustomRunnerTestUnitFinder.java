@@ -18,10 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.internal.builders.AnnotatedBuilder;
 import org.junit.runner.RunWith;
-import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
@@ -46,15 +43,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     if ((runWith != null) && !runWith.value().equals(PITJUnitRunner.class)
         && !runWith.value().equals(Suite.class)) {
 
-      final AnnotatedBuilder builder = new AnnotatedBuilder(
-          new AllDefaultPossibilitiesBuilder(true));
-      try {
-        final Runner runner = builder.runnerForClass(a.getClazz());
-        final RunnerAdapter adapter = new RunnerAdapter(runner);
-        return adapter.getTestUnits();
-      } catch (final Exception ex) {
-        throw new RuntimeException(ex);
-      }
+      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
+      return adapter.getTestUnits();
 
     }
 

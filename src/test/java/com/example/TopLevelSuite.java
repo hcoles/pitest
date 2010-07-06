@@ -16,18 +16,30 @@ package com.example;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
+import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
+import org.pitest.containers.BaseThreadPoolContainer;
+import org.pitest.extension.Container;
+import org.pitest.extension.IsolationStrategy;
+import org.pitest.extension.Transformation;
+import org.pitest.extension.common.AllwaysIsolateStrategy;
+import org.pitest.internal.TransformingClassLoaderFactory;
+import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.PITJUnitRunner;
 
 @RunWith(PITJUnitRunner.class)
 public class TopLevelSuite {
 
-  // @PITContainer
-  // public static Container container() {
-  // return new DistributedContainer();
-  // }
+  @PITContainer
+  public static Container container() {
+    final IsolationStrategy i = new AllwaysIsolateStrategy();
+    final Transformation t = new IdentityTransformation();
+    return new BaseThreadPoolContainer(2, new TransformingClassLoaderFactory(t,
+        i), Executors.defaultThreadFactory());
+  }
 
   @PITSuiteMethod
   public static Collection<Class<?>> children() {

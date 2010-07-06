@@ -137,6 +137,11 @@
 			<version>0.6.3</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.2</version>
+		</dependency>
 
 	</dependencies>
 

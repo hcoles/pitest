@@ -43,12 +43,13 @@ public class ConfigurationForTesting implements Configuration {
 
   };
 
-  public Set<TestUnitProcessor> testUnitProcessors() {
-    return Collections.<TestUnitProcessor> singleton(new IgnoreTestProcessor(
-        IgnoreAnnotationForTesting.class));
+  public List<TestUnitProcessor> testUnitProcessors() {
+    return Collections
+        .<TestUnitProcessor> singletonList(new IgnoreTestProcessor(
+            IgnoreAnnotationForTesting.class));
   }
 
-  public Set<TestUnitFinder> testUnitFinders() {
+  public List<TestUnitFinder> testUnitFinders() {
     final Set<MethodFinder> beforeClassFinders = Collections
         .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
             BeforeClassAnnotationForTest.class));
@@ -68,8 +69,8 @@ public class ConfigurationForTesting implements Configuration {
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
     tmfs.add(new TestFinder());
 
-    return Collections.<TestUnitFinder> singleton(new BasicTestUnitFinder(tmfs,
-        beforeMethodFinders, afterMethodFinders, beforeClassFinders,
+    return Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
+        tmfs, beforeMethodFinders, afterMethodFinders, beforeClassFinders,
         afterClassFinders));
   }
 

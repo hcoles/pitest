@@ -16,29 +16,18 @@ package com.example;
 
 import junit.framework.TestCase;
 
+import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
+
+@RunWith(Theories.class)
 public class TestA2 extends TestCase {
+  @DataPoint
+  public static int i = 1;
 
-  public void test1() {
-
-  }
-
-  public void test2() {
-
-  }
-
-  public void test3() {
-
-  }
-
-  public void test4() {
-
-  }
-
-  public void test5() {
-
-  }
-
-  public void test6() {
-
+  @Theory
+  public void testTheory(final int i) {
+    assertEquals(1, i);
   }
 }
