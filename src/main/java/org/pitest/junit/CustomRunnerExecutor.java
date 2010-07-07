@@ -32,6 +32,8 @@ public class CustomRunnerExecutor {
   }
 
   public Map<String, Throwable> run() {
+    // map against string representation of description to avoid
+    // equality issues with multiple classloaders
     final Map<String, Throwable> results = new HashMap<String, Throwable>();
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new RunListener() {

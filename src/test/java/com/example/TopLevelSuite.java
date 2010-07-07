@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
 import org.pitest.containers.BaseThreadPoolContainer;
+import org.pitest.distributed.DistributedContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.Transformation;
@@ -33,12 +34,17 @@ import org.pitest.junit.PITJUnitRunner;
 @RunWith(PITJUnitRunner.class)
 public class TopLevelSuite {
 
-  @PITContainer
-  public static Container container() {
+  // @PITContainer
+  public static Container isolated() {
     final IsolationStrategy i = new AllwaysIsolateStrategy();
     final Transformation t = new IdentityTransformation();
     return new BaseThreadPoolContainer(2, new TransformingClassLoaderFactory(t,
         i), Executors.defaultThreadFactory());
+  }
+
+  @PITContainer
+  public static Container distributed() {
+    return new DistributedContainer();
   }
 
   @PITSuiteMethod

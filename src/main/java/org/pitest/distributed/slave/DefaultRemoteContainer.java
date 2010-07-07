@@ -15,9 +15,6 @@
 
 package org.pitest.distributed.slave;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -70,28 +67,6 @@ public class DefaultRemoteContainer implements RemoteContainer {
     initEnvironment(loader);
   }
 
-  public void submit(final byte[] testGroupBytes) {
-
-    TestGroup tg;
-    try {
-      tg = bytesToTestGroup(testGroupBytes, this.loader);
-      this.submit(tg);
-    } catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
-
-  }
-
-  private TestGroup bytesToTestGroup(final byte[] bytes, final ClassLoader cl)
-      throws IOException, ClassNotFoundException {
-    final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-    final ObjectInputStream ois = new ForeignClassLoaderObjectInputStream(bis,
-        cl);
-    final TestGroup tu = (TestGroup) ois.readObject();
-    ois.close();
-    return tu;
-  }
-
   public void setMaxThreads(final int maxThreads) {
     // TODO Auto-generated method stub
 
@@ -102,9 +77,9 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   }
 
-  public void submit(final TestGroup c) {
-    final RemoteExecutor r = new RemoteExecutor(c, this.run, this.hazelcast,
-        this.loader);
+  public void submit(final byte[] testGroupBytes) {
+    final RemoteExecutor r = new RemoteExecutor(testGroupBytes, this.run,
+        this.hazelcast, this.loader);
     // use a new thread to ensure that tests run with correct
     // context class loader but framework code retains it's own
     final Thread t = new Thread(r);
@@ -152,6 +127,11 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   public void destroy() {
     this.resourceCache.destroy();
+  }
+
+  public void submit(final TestGroup c) {
+    // TODO Auto-generated method stub
+
   }
 
 }

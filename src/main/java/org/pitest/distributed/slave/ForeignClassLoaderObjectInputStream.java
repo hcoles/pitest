@@ -19,6 +19,7 @@ public class ForeignClassLoaderObjectInputStream extends ObjectInputStream {
   protected Class<?> resolveClass(final ObjectStreamClass desc)
       throws IOException, ClassNotFoundException {
     final String className = desc.getName();
+
     try {
       return Class.forName(className);
     } catch (final ClassNotFoundException exc) {

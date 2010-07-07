@@ -14,6 +14,9 @@
  */
 package org.pitest.junit;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +34,17 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider;
 
-public class RunnerAdapter {
+public class RunnerAdapter implements Serializable {
 
-  private Runner                 runner;
-  private Map<String, Throwable> results;
+  private static final long                serialVersionUID = 1L;
 
-  private final List<TestUnit>   tus = new ArrayList<TestUnit>();
-  private final Class<?>         clazz;
+  private transient Runner                 runner;
+  private transient Map<String, Throwable> results;
+  private transient List<TestUnit>         tus              = new ArrayList<TestUnit>();
+
+  private final Class<?>                   clazz;
 
   public RunnerAdapter(final Class<?> clazz) {
     this.clazz = clazz;
@@ -71,7 +77,18 @@ public class RunnerAdapter {
   }
 
   private TestUnit descriptionToTestUnit(final Description d) {
-    final Method m = Reflection.publicMethod(d.getTestClass(), d
+
+    Class<?> descriptionTestClass;
+    try {
+      // it would be nice is junit could use the context class loader . . .
+      descriptionTestClass = Class.forName(d.getClassName(), true, Thread
+          .currentThread().getContextClassLoader());
+    } catch (final ClassNotFoundException e) {
+      descriptionTestClass = null;
+    }
+    System.out.println("m is " + descriptionTestClass);
+
+    final Method m = Reflection.publicMethod(descriptionTestClass, d
         .getMethodName());
     final TestMethod tm = new TestMethod(m, null);
     final org.pitest.Description pitDescription = new org.pitest.Description(d
@@ -128,13 +145,39 @@ public class RunnerAdapter {
     try {
       final XStream xstream = new XStream();
       final String xml = xstream.toXML(ce);
-      final XStream foreginXstream = new XStream();
+      final XStream foreginXstream = new XStream(new Sun14ReflectionProvider());
       foreginXstream.setClassLoader(loader);
+
       return foreginXstream.fromXML(xml);
     } catch (final Exception ex) {
       throw new RuntimeException(ex);
     }
 
+  }
+
+  private void readObject(final ObjectInputStream aInputStream)
+      throws ClassNotFoundException, IOException {
+
+    aInputStream.defaultReadObject();
+    this.runner = createRunner(this.clazz);
+    this.tus = new ArrayList<TestUnit>();
+    gatherTestUnits(this.tus, this.runner.getDescription());
+
+  }
+
+  public Class<?> getClazz() {
+    return this.clazz;
+  }
+
+  public Description getTestUnitDescriptionForString(final String description) {
+    for (final TestUnit each : this.tus) {
+      final RunnerAdapterTestUnit rutu = (RunnerAdapterTestUnit) each;
+      if (CustomRunnerExecutor.descriptionToString(rutu.getJunitDescription())
+          .equals(description)) {
+        return rutu.getJunitDescription();
+      }
+    }
+    return null;
   }
 
 }

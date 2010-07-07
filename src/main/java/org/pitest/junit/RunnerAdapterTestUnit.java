@@ -14,6 +14,10 @@
  */
 package org.pitest.junit;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -21,9 +25,10 @@ import org.pitest.testunit.AbstractTestUnit;
 
 public class RunnerAdapterTestUnit extends AbstractTestUnit {
 
-  private static final long                  serialVersionUID = 1L;
-  private final RunnerAdapter                runner;
-  private final org.junit.runner.Description junitDescription;
+  private static final long                      serialVersionUID = 1L;
+
+  private transient org.junit.runner.Description junitDescription;
+  private final RunnerAdapter                    runner;
 
   public RunnerAdapterTestUnit(final RunnerAdapter runner,
       final org.junit.runner.Description junitDescription,
@@ -40,6 +45,24 @@ public class RunnerAdapterTestUnit extends AbstractTestUnit {
 
   public org.junit.runner.Description getJunitDescription() {
     return this.junitDescription;
+  }
+
+  private void readObject(final ObjectInputStream aInputStream)
+      throws ClassNotFoundException, IOException {
+
+    aInputStream.defaultReadObject();
+    final String description = (String) aInputStream.readObject();
+    this.junitDescription = this.runner
+        .getTestUnitDescriptionForString(description);
+
+  }
+
+  private void writeObject(final ObjectOutputStream aOutputStream)
+      throws IOException {
+
+    aOutputStream.defaultWriteObject();
+    aOutputStream.writeObject(CustomRunnerExecutor
+        .descriptionToString(this.junitDescription));
   }
 
 }

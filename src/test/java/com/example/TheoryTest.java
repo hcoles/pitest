@@ -22,12 +22,22 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
-public class TestA2 extends TestCase {
+public class TheoryTest extends TestCase {
   @DataPoint
-  public static int i = 1;
+  public static Integer i = 1;
 
   @Theory
-  public void testTheory(final int i) {
-    assertEquals(1, i);
+  public void testTheory1(final Integer i) {
+    assertEquals(1, i.intValue());
+  }
+
+  @Theory
+  public void testTheory2(final Integer i) {
+
+  }
+
+  @Theory
+  public void testTheory3(final Integer i) {
+
   }
 }
