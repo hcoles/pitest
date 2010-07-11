@@ -49,9 +49,10 @@
 								<jarjar destfile="${build.directory}/${build.finalName}-all.jar"
 									update="true">
 									<rule pattern="org.objectweb.asm.**" result="org.pitest.objectweb.asm.@1" />
-									<!--  <rule pattern="org.apache.bcel.**" result="org.pitest.apache.bcel.@1" /> -->
+									<rule pattern="com.thoughtworks.xstream.**" result="org.pitest.thoughtworks.xstream.@1" /> -->
 									<fileset dir="target/classes" />
 									<fileset dir="target/dependency/org/objectweb" />
+									<fileset dir="target/dependency/com/thoughtworks" />
 									<!--  <fileset dir="target/dependency/org/apache/bcel" /> -->
 								</jarjar>
 							</tasks>

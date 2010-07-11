@@ -35,4 +35,7 @@ public @interface MutationTest {
 
   Class<?>[] testClasses() default USE_PARENT.class;
 
+  // Mutation[] mutations() default {Mutation.INCREMENTS, Mutation.RETURN_VALS,
+  // Mutation.SWITCHES};
+
 }

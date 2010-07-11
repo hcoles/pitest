@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +34,9 @@ public class RemoteRootTest {
     this.testee = new RemoteRoot(this.service, this.cache);
   }
 
-  @Test
-  public void testReturnsEmptyListOfClassNames() {
-    assertEquals(Collections.emptyList(), this.testee.classNames());
+  @Test(expected = UnsupportedOperationException.class)
+  public void testGetClassNamesThrowsUnsupportedOperationException() {
+    this.testee.classNames();
   }
 
   @Test

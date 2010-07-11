@@ -27,6 +27,7 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NamedClassesIsolationStrategy;
+import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
 import org.pitest.internal.TransformingClassLoaderFactory;
 
@@ -35,9 +36,10 @@ public class JumbleContainer implements Container {
   private final TransformingClassLoaderFactory factory;
   private final BlockingQueue<TestResult>      feedbackQueue = new LinkedBlockingQueue<TestResult>();
 
-  public JumbleContainer(final JavaClass target) {
-    this.factory = new TransformingClassLoaderFactory(new JumbleTransformation(
-        target), new NamedClassesIsolationStrategy(target.getClassName()));
+  public JumbleContainer(final ClassPath classPath, final JavaClass target) {
+    this.factory = new TransformingClassLoaderFactory(classPath,
+        new JumbleTransformation(target), new NamedClassesIsolationStrategy(
+            target.getClassName()));
   }
 
   public void setMaxThreads(final int maxThreads) {

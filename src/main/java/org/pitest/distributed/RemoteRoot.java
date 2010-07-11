@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.pitest.distributed.master.MasterService;
 import org.pitest.functional.Option;
@@ -39,7 +38,7 @@ public class RemoteRoot implements ClassPathRoot {
   }
 
   public Collection<String> classNames() {
-    return Collections.<String> emptyList();
+    throw new UnsupportedOperationException();
   }
 
   public InputStream getData(final String name) throws IOException {

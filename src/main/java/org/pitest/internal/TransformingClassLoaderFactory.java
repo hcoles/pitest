@@ -26,13 +26,20 @@ public class TransformingClassLoaderFactory implements ClassLoaderFactory {
 
   private final Transformation           transformation;
   private final IsolationStrategy        s;
+  private final ClassPath                classpath;
 
   private final ThreadLocal<ClassLoader> loader = new ThreadLocal<ClassLoader>();
 
   public TransformingClassLoaderFactory(final Transformation t,
       final IsolationStrategy s) {
+    this(new ClassPath(), t, s);
+  }
+
+  public TransformingClassLoaderFactory(final ClassPath classPath,
+      final Transformation t, final IsolationStrategy s) {
     this.transformation = t;
     this.s = s;
+    this.classpath = classPath;
   }
 
   public ClassLoader get() {
@@ -41,8 +48,9 @@ public class TransformingClassLoaderFactory implements ClassLoaderFactory {
           .doPrivileged(new PrivilegedAction<TransformingClassLoader>() {
             public TransformingClassLoader run() {
               return new TransformingClassLoader(
+                  TransformingClassLoaderFactory.this.classpath,
                   TransformingClassLoaderFactory.this.transformation,
-                  TransformingClassLoaderFactory.this.s);
+                  TransformingClassLoaderFactory.this.s, null);
             }
           }));
       Thread.currentThread().setContextClassLoader(this.loader.get());

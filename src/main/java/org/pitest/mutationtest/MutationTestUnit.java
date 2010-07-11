@@ -25,7 +25,9 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.Option;
+import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConfigParser;
+import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
 import org.pitest.mutationtest.loopbreak.LoopBreakTestUnitProcessor;
 import org.pitest.testunit.AbstractTestUnit;
 
@@ -39,7 +41,6 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final List<TestUnit>             tests;
 
   private final Option<MutationTestUnit>   unmutatedTest;
-  // private final Class<?>[] testClasses;
   private final JavaClass                  mutatedClass;
   private final MutationTestResultListener listener;
   private final MutationDetails            details;
@@ -49,7 +50,6 @@ public class MutationTestUnit extends AbstractTestUnit {
       final MutationTestResultListener listener, final Class<?>[] tests,
       final Description description, final Configuration config) {
     super(description, unmutatedTest);
-    // this.testClasses = tests;
     this.unmutatedTest = Option.someOrNone(unmutatedTest);
     this.mutatedClass = mutatedClass;
     this.listener = listener;
@@ -105,7 +105,10 @@ public class MutationTestUnit extends AbstractTestUnit {
     // new LoopBreakTestUnitProcessor(this.getTimeOut()));
 
     // config.testUnitFinders().remove(MutationTestUnitFinder.instance());
-    final JumbleContainer c = new JumbleContainer(
+    final ClassPath classPath = new ClassPath(
+        new OtherClassLoaderClassPathRoot(Thread.currentThread()
+            .getContextClassLoader()));
+    final JumbleContainer c = new JumbleContainer(classPath,
         MutationTestUnit.this.mutatedClass);
     final Pitest pit = new Pitest(c, new EmptyConfiguration());
 
