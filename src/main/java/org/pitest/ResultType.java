@@ -102,7 +102,7 @@ public enum ResultType {
   public static SideEffect1<TestListener> started(final TestResult result) {
     return new SideEffect1<TestListener>() {
       public void apply(final TestListener a) {
-        a.onTestStart(result.getTest());
+        a.onTestStart(result.getDescription());
       }
     };
   }

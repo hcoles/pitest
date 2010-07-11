@@ -27,23 +27,29 @@ public class TestResult implements Serializable {
 
   private static final long   serialVersionUID = 1L;
 
-  private final TestUnit      test;
+  private final Description   description;
+
   private final Throwable     throwable;
   private final TestUnitState state;
 
   public TestResult(final TestUnit tu, final Throwable t) {
-    this(tu, t, TestUnitState.FINISHED);
+    this(tu.description(), t);
   }
 
   public TestResult(final TestUnit tu, final Throwable t,
       final TestUnitState state) {
-    this.test = tu;
-    this.throwable = t;
-    this.state = state;
+    this(tu.description(), t, state);
   }
 
-  public TestUnit getTest() {
-    return this.test;
+  public TestResult(final Description description, final Throwable t) {
+    this(description, t, TestUnitState.FINISHED);
+  }
+
+  public TestResult(final Description description, final Throwable t,
+      final TestUnitState state) {
+    this.description = description;
+    this.throwable = t;
+    this.state = state;
   }
 
   public Throwable getThrowable() {
@@ -54,10 +60,14 @@ public class TestResult implements Serializable {
     return this.state;
   }
 
+  public Description getDescription() {
+    return this.description;
+  }
+
   @Override
   public String toString() {
-    return "TestResult [state=" + this.state + ", test=" + this.test
-        + ", throwable=" + this.throwable + "]";
+    return "TestResult [description=" + this.description + ", state="
+        + this.state + ", throwable=" + this.throwable + "]";
   }
 
 }

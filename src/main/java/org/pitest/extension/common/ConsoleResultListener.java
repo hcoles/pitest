@@ -14,9 +14,9 @@
  */
 package org.pitest.extension.common;
 
+import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 
 /**
  * @author henry
@@ -49,8 +49,8 @@ public class ConsoleResultListener implements TestListener {
 
   }
 
-  public void onTestStart(final TestUnit tu) {
-    System.out.println("Started " + tu);
+  public void onTestStart(final Description d) {
+    System.out.println("Started " + d);
   }
 
 }

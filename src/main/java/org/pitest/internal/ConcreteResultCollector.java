@@ -34,11 +34,13 @@ public final class ConcreteResultCollector implements ResultCollector {
   }
 
   public void notifyStart(final TestUnit tu) {
-    this.feedback.add(new TestResult(tu, null, TestUnitState.STARTED));
+    this.feedback.add(new TestResult(tu.description(), null,
+        TestUnitState.STARTED));
   }
 
   public void notifySkipped(final TestUnit tu) {
-    this.feedback.add(new TestResult(tu, null, TestUnitState.NOT_RUN));
+    this.feedback.add(new TestResult(tu.description(), null,
+        TestUnitState.NOT_RUN));
   }
 
 }

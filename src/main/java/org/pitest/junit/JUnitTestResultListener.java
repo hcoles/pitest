@@ -19,7 +19,6 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 
 /**
  * @author henry
@@ -30,12 +29,13 @@ public class JUnitTestResultListener implements TestListener {
   private final RunNotifier notifier;
 
   public static Description methodToDescription(final TestResult tr) {
-    return unitToDescription(tr.getTest());
+    return descriptionToDescription(tr.getDescription());
   }
 
-  public static Description unitToDescription(final TestUnit tu) {
-    return Description.createTestDescription(tu.description().getTestClass(),
-        tu.description().getName());
+  public static Description descriptionToDescription(
+      final org.pitest.Description description) {
+    return Description.createTestDescription(description.getTestClass(),
+        description.getName());
   }
 
   public JUnitTestResultListener(final RunNotifier notifier) {
@@ -62,8 +62,8 @@ public class JUnitTestResultListener implements TestListener {
     this.notifier.fireTestFinished(methodToDescription(tr));
   }
 
-  public void onTestStart(final TestUnit tu) {
-    this.notifier.fireTestStarted(unitToDescription(tu));
+  public void onTestStart(final org.pitest.Description description) {
+    this.notifier.fireTestStarted(descriptionToDescription(description));
   }
 
 }

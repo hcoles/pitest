@@ -30,12 +30,12 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
 import org.pitest.annotations.PITSuiteMethod;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
 
@@ -128,14 +128,14 @@ public class TestContainersSendCorrectNotifications {
   @Test
   public void testNotificationsReceivedForSinglePassingTest() {
     this.pit.run(OnePassingTest.class);
-    verify(this.listener).onTestStart(any(TestUnit.class));
+    verify(this.listener).onTestStart(any(Description.class));
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testNotificationsReceivedForSingleFailingTest() {
     this.pit.run(OneFailingTest.class);
-    verify(this.listener).onTestStart(any(TestUnit.class));
+    verify(this.listener).onTestStart(any(Description.class));
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
@@ -143,7 +143,7 @@ public class TestContainersSendCorrectNotifications {
   public void testNotificationsReceivedForParallizableSuite() {
     this.pit.run(LargeSuite.class);
     verify(this.listener, times(LargeSuite.SUITE_SIZE * 2)).onTestStart(
-        any(TestUnit.class));
+        any(Description.class));
     verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestSuccess(
         any(TestResult.class));
     verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestFailure(

@@ -62,7 +62,7 @@ public class ResultTypeTest {
   @Test
   public void testStartedListenerFunctionCallsListenerStart() {
     callListenerFunction(ResultType.STARTED);
-    verify(this.listener).onTestStart(this.result.getTest());
+    verify(this.listener).onTestStart(this.result.getDescription());
   }
 
   private void callListenerFunction(final ResultType testee) {

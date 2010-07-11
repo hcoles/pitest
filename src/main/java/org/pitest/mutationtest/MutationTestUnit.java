@@ -81,7 +81,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       }
 
     } catch (final Throwable ex) {
-      rc.notifyEnd(new TestResult(this, ex));
+      rc.notifyEnd(new TestResult(this.description(), ex));
     } finally {
       this.duration = System.currentTimeMillis() - t0;
     }
@@ -122,14 +122,14 @@ public class MutationTestUnit extends AbstractTestUnit {
       // this.listener.error().value().getThrowable());
       // rc.notifyEnd(new TestResult(this, t));
       // for now treat all errors as a succesfully detected mutation
-      rc.notifyEnd(new TestResult(this, null));
+      rc.notifyEnd(new TestResult(this.description(), null));
       this.passed = true;
     } else if (this.listener.resultIndicatesSuccess()) {
-      rc.notifyEnd(new TestResult(this, null));
+      rc.notifyEnd(new TestResult(this.description(), null));
       this.passed = true;
     } else {
 
-      rc.notifyEnd(new TestResult(this, createAssertionError()));
+      rc.notifyEnd(new TestResult(this.description(), createAssertionError()));
     }
 
   }

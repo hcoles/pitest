@@ -14,6 +14,7 @@
  */
 package org.pitest.extension;
 
+import org.pitest.Description;
 import org.pitest.TestResult;
 
 /**
@@ -22,7 +23,7 @@ import org.pitest.TestResult;
  */
 public interface TestListener {
 
-  public void onTestStart(TestUnit tu);
+  public void onTestStart(Description d);
 
   public void onTestFailure(TestResult tr);
 

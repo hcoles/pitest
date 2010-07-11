@@ -14,9 +14,9 @@
  */
 package org.pitest.mutationtest;
 
+import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 
 public class CheckAllTestsPassedResultsListener implements TestListener,
@@ -46,7 +46,7 @@ public class CheckAllTestsPassedResultsListener implements TestListener,
 
   }
 
-  public void onTestStart(final TestUnit tu) {
+  public void onTestStart(final Description d) {
     // TODO Auto-generated method stub
 
   }

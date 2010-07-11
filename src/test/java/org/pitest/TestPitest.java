@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.testutil.AfterAnnotationForTesting;
 import org.pitest.testutil.AfterClassAnnotationForTest;
 import org.pitest.testutil.BeforeAnnotationForTesting;
@@ -57,8 +56,8 @@ public class TestPitest {
     final TestListener listener2 = Mockito.mock(TestListener.class);
     this.testee.addListener(listener2);
     this.testee.run(PassingTest.class);
-    verify(this.listener).onTestStart(any(TestUnit.class));
-    verify(listener2).onTestStart(any(TestUnit.class));
+    verify(this.listener).onTestStart(any(Description.class));
+    verify(listener2).onTestStart(any(Description.class));
   }
 
   @Test

@@ -11,7 +11,7 @@ public class TestResultTest {
   @Test
   public void testCanBeSerializedAndDeserialized() throws Exception {
     try {
-      final TestResult testee = new TestResult(null, null,
+      final TestResult testee = new TestResult((Description) null, null,
           TestUnitState.FINISHED);
       SerializationUtils.clone(testee);
     } catch (final Throwable t) {

@@ -35,7 +35,7 @@ public class TestA1 extends TestCase {
   }
 
   public void test1() {
-     assertEquals(1, Testee.returnOne());
+    assertEquals(1, Testee.returnOne());
   }
 
   @Ignore
