@@ -23,17 +23,17 @@ public class TestGroupExecuteMessage implements Serializable {
 
   private final RunDetails  run;
   private final long        id;
-  private final byte[]      bytes;
+  private final String      xml;
 
   public TestGroupExecuteMessage(final RunDetails run, final long id,
-      final byte[] bytes) {
-    this.bytes = bytes;
+      final String xml) {
+    this.xml = xml;
     this.id = id;
     this.run = run;
   }
 
-  public byte[] getBytes() {
-    return this.bytes;
+  public String getXML() {
+    return this.xml;
   }
 
   public RunDetails getRun() {

@@ -40,7 +40,7 @@ public class TestGroupExecutor {
   }
 
   public void executeTestGroup(final RunDetails run, final long id,
-      final byte[] testGroup,
+      final String testGroup,
       final ITopic<HandlerNotificationMessage> handlerNotificationTopic,
       final InetSocketAddress socket) {
     System.out.println("Thread is " + Thread.currentThread());

@@ -9,9 +9,6 @@
 
 package org.pitest.distributed.slave;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-
 import org.pitest.TestGroup;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.SharedNames;
@@ -21,17 +18,18 @@ import org.pitest.extension.TestUnit;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
+import com.thoughtworks.xstream.XStream;
 
 public class RemoteExecutor implements Runnable {
 
-  private final byte[]            group;
+  private final String            groupXML;
   private final RunDetails        run;
   private final ClassLoader       loader;
   private final HazelcastInstance hazelcast;
 
-  public RemoteExecutor(final byte[] group, final RunDetails run,
+  public RemoteExecutor(final String testGroupXML, final RunDetails run,
       final HazelcastInstance hazelcast, final ClassLoader loader) {
-    this.group = group;
+    this.groupXML = testGroupXML;
     this.run = run;
     this.hazelcast = hazelcast;
     this.loader = loader;
@@ -42,7 +40,7 @@ public class RemoteExecutor implements Runnable {
         .getTopic(SharedNames.TEST_RESULTS);
     final ResultCollector rc = new SlaveResultCollector(this.run, topic);
     Thread.currentThread().setContextClassLoader(this.loader);
-    final TestGroup deserializedGroup = bytesToTestGroup(this.group,
+    final TestGroup deserializedGroup = xmlToTestGroup(this.groupXML,
         this.loader);
     for (final TestUnit each : deserializedGroup) {
       each.execute(this.loader, rc);
@@ -50,14 +48,12 @@ public class RemoteExecutor implements Runnable {
 
   }
 
-  private TestGroup bytesToTestGroup(final byte[] bytes, final ClassLoader cl) {
+  private TestGroup xmlToTestGroup(final String xml, final ClassLoader cl) {
     try {
-      final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-      final ObjectInputStream ois = new ForeignClassLoaderObjectInputStream(
-          bis, cl);
-      final TestGroup tu = (TestGroup) ois.readObject();
-      ois.close();
-      return tu;
+      final XStream xstream = new XStream();
+      xstream.setClassLoader(cl);
+      return (TestGroup) xstream.fromXML(xml);
+
     } catch (final Exception ex) {
       throw new RuntimeException(ex);
     }

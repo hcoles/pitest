@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.pitest.TestGroup;
 import org.pitest.distributed.HandlerNotificationMessage;
 import org.pitest.distributed.SharedNames;
@@ -35,6 +34,7 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import com.hazelcast.core.MessageListener;
+import com.thoughtworks.xstream.XStream;
 
 public class ClusterManager implements
     MessageListener<HandlerNotificationMessage>, MembershipListener {
@@ -170,7 +170,7 @@ public class ClusterManager implements
 
   private void submitTestGroupToGrid(final long id, final TestGroup group) {
     submitTestGroupToGrid(new TestGroupExecuteMessage(this.run, id,
-        testGroupToByteArray(group)));
+        testGroupToXML(group)));
 
   }
 
@@ -178,8 +178,9 @@ public class ClusterManager implements
     submitTestGroupToGrid(registerGroup(testGroup), testGroup);
   }
 
-  private byte[] testGroupToByteArray(final TestGroup each) {
-    return SerializationUtils.serialize(each);
+  private String testGroupToXML(final TestGroup each) {
+    final XStream xstream = new XStream();
+    return xstream.toXML(each);
   }
 
   public void endRun() {

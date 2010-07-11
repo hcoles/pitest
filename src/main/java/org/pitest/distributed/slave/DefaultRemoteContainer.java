@@ -77,8 +77,8 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   }
 
-  public void submit(final byte[] testGroupBytes) {
-    final RemoteExecutor r = new RemoteExecutor(testGroupBytes, this.run,
+  public void submit(final String testGroupXML) {
+    final RemoteExecutor r = new RemoteExecutor(testGroupXML, this.run,
         this.hazelcast, this.loader);
     // use a new thread to ensure that tests run with correct
     // context class loader but framework code retains it's own

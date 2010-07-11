@@ -19,7 +19,7 @@ import org.pitest.extension.Container;
 
 public interface RemoteContainer extends Container {
 
-  public void submit(final byte[] testGroupBytes);
+  public void submit(final String testGroupXML);
 
   public RunDetails getRun();
 

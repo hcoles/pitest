@@ -60,8 +60,8 @@ public class Slave {
               .publish(new HandlerNotificationMessage(message.getRun(), message
                   .getId(), myAddress, GroupState.RECEIVED));
           this.groupExecutor.executeTestGroup(message.getRun(),
-              message.getId(), message.getBytes(),
-              this.handlerNotificationTopic, myAddress);
+              message.getId(), message.getXML(), this.handlerNotificationTopic,
+              myAddress);
         }
       }
     } catch (final InterruptedException ex) {

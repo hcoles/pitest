@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
+import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.DistributedContainer;
@@ -41,7 +42,7 @@ public class TopLevelSuite {
         i), Executors.defaultThreadFactory());
   }
 
-  // @PITContainer
+  @PITContainer
   public static Container distributed() {
     return new DistributedContainer();
   }
