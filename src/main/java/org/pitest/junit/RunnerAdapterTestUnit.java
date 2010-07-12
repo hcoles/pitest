@@ -65,4 +65,8 @@ public class RunnerAdapterTestUnit extends AbstractTestUnit {
         .descriptionToString(this.junitDescription));
   }
 
+  RunnerAdapter getAdapter() {
+    return this.runner;
+  }
+
 }

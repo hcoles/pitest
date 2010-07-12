@@ -73,4 +73,5 @@ public class TestGroupTest {
     this.testee.add(this.emptyTestUnit);
     assertTrue(this.testee.contains(this.emptyTestUnit));
   }
+
 }
