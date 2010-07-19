@@ -36,11 +36,6 @@ public class SlaveResultCollector implements ResultCollector {
 
   }
 
-  public void notifyEnd(final TestResult testResult) {
-    System.out.println("Test complete " + testResult);
-    this.publish(testResult);
-  }
-
   public void notifySkipped(final TestUnit tu) {
 
     this.publish(new TestResult(tu, null, TestUnitState.NOT_RUN));
@@ -48,7 +43,19 @@ public class SlaveResultCollector implements ResultCollector {
 
   public void notifyStart(final TestUnit tu) {
     this.publish(new TestResult(tu, null, TestUnitState.STARTED));
+  }
 
+  public void notifyEnd(final TestUnit tu, final Throwable t) {
+    notifyEnd(new TestResult(tu, t));
+  }
+
+  public void notifyEnd(final TestUnit tu) {
+    notifyEnd(new TestResult(tu, null));
+  }
+
+  public void notifyEnd(final TestResult testResult) {
+    System.out.println("Test complete " + testResult);
+    this.publish(testResult);
   }
 
 };

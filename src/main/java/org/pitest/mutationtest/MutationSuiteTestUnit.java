@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.bcel.classfile.JavaClass;
 import org.pitest.Description;
 import org.pitest.Pitest;
-import org.pitest.TestResult;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -71,7 +70,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
       rc.notifyStart(this);
       runTests(rc);
     } catch (final Throwable ex) {
-      rc.notifyEnd(new TestResult(this.description(), ex));
+      rc.notifyEnd(this, ex);
     }
 
   }
@@ -141,9 +140,9 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
         last.initCause(each);
         last = each;
       }
-      rc.notifyEnd(new TestResult(this.description(), ae));
+      rc.notifyEnd(this, ae);
     } else {
-      rc.notifyEnd(new TestResult(this.description(), null));
+      rc.notifyEnd(this);
     }
 
   }

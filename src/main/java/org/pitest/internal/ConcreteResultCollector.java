@@ -29,10 +29,6 @@ public final class ConcreteResultCollector implements ResultCollector {
     this.feedback = feedback;
   }
 
-  public void notifyEnd(final TestResult testResult) {
-    this.feedback.add(testResult);
-  }
-
   public void notifyStart(final TestUnit tu) {
     this.feedback.add(new TestResult(tu.description(), null,
         TestUnitState.STARTED));
@@ -41,6 +37,14 @@ public final class ConcreteResultCollector implements ResultCollector {
   public void notifySkipped(final TestUnit tu) {
     this.feedback.add(new TestResult(tu.description(), null,
         TestUnitState.NOT_RUN));
+  }
+
+  public void notifyEnd(final TestUnit tu, final Throwable t) {
+    this.feedback.add(new TestResult(tu, t));
+  }
+
+  public void notifyEnd(final TestUnit tu) {
+    this.feedback.add(new TestResult(tu, null));
   }
 
 }

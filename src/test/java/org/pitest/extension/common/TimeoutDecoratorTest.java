@@ -14,6 +14,7 @@
  */
 package org.pitest.extension.common;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
-import org.pitest.TestResult;
 import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -52,14 +52,14 @@ public class TimeoutDecoratorTest {
     final TestUnit quickComplete = new AbstractTestUnit(this.description) {
       @Override
       public void execute(final ClassLoader loader, final ResultCollector rc) {
-        rc.notifyEnd(TestResult.Success(TimeoutDecoratorTest.this.description));
+        rc.notifyEnd(this);
       }
 
     };
 
     this.testee = new TimeoutDecorator(quickComplete, 100);
     this.testee.execute(this.loader, this.rc);
-    verify(this.rc).notifyEnd(eq(TestResult.Success(this.description)));
+    verify(this.rc).notifyEnd(eq(quickComplete));
   }
 
   @Test
@@ -72,7 +72,7 @@ public class TimeoutDecoratorTest {
         } catch (final InterruptedException e) {
           // swallow
         }
-        rc.notifyEnd(TestResult.Success(TimeoutDecoratorTest.this.description));
+        rc.notifyEnd(this);
       }
 
     };
@@ -80,12 +80,9 @@ public class TimeoutDecoratorTest {
     this.testee = new TimeoutDecorator(slowComplete, 100);
     this.testee.execute(this.loader, this.rc);
 
-    verify(this.rc).notifyEnd(
-        eq(new TestResult(slowComplete, new TimeoutException(
-            "Test timed out after 100 milliseconds"))));
+    verify(this.rc).notifyEnd(eq(this.testee), any(TimeoutException.class));
 
-    verify(this.rc, never())
-        .notifyEnd(eq(TestResult.Success(this.description)));
+    verify(this.rc, never()).notifyEnd(eq(slowComplete));
 
   }
 

@@ -23,7 +23,7 @@ import org.pitest.testunit.TestUnitState;
  * @author henry
  * 
  */
-public final class TestResult implements Serializable {
+public class TestResult implements Serializable {
 
   private static final long   serialVersionUID = 1L;
 
@@ -43,10 +43,6 @@ public final class TestResult implements Serializable {
 
   public TestResult(final Description description, final Throwable t) {
     this(description, t, TestUnitState.FINISHED);
-  }
-
-  public static TestResult Success(final Description description) {
-    return new TestResult(description, null);
   }
 
   public TestResult(final Description description, final Throwable t,

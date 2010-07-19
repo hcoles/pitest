@@ -19,7 +19,6 @@ import java.util.List;
 import org.apache.bcel.classfile.JavaClass;
 import org.pitest.Description;
 import org.pitest.Pitest;
-import org.pitest.TestResult;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -79,7 +78,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       }
 
     } catch (final Throwable ex) {
-      rc.notifyEnd(new TestResult(this.description(), ex));
+      rc.notifyEnd(this, ex);
     } finally {
       this.duration = System.currentTimeMillis() - t0;
     }
@@ -120,14 +119,14 @@ public class MutationTestUnit extends AbstractTestUnit {
       // this.listener.error().value().getThrowable());
       // rc.notifyEnd(new TestResult(this, t));
       // for now treat all errors as a succesfully detected mutation
-      rc.notifyEnd(new TestResult(this.description(), null));
+      rc.notifyEnd(this);
       this.passed = true;
     } else if (this.listener.resultIndicatesSuccess()) {
-      rc.notifyEnd(new TestResult(this.description(), null));
+      rc.notifyEnd(this);
       this.passed = true;
     } else {
 
-      rc.notifyEnd(new TestResult(this.description(), createAssertionError()));
+      rc.notifyEnd(this, createAssertionError());
     }
 
   }

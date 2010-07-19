@@ -29,7 +29,6 @@ import org.junit.internal.builders.AnnotatedBuilder;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.pitest.TestMethod;
-import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.IsolationUtils;
@@ -112,11 +111,9 @@ public class RunnerAdapter implements Serializable {
     if (t != null) {
       // TODO translate the throwable + isn't there a potential classloader leak
       // here?
-      final TestResult testResult = new TestResult(testUnit, t);
-      rc.notifyEnd(testResult);
+      rc.notifyEnd(testUnit, t);
     } else {
-      final TestResult testResult = new TestResult(testUnit, null);
-      rc.notifyEnd(testResult);
+      rc.notifyEnd(testUnit);
     }
 
   }

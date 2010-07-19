@@ -14,11 +14,12 @@
  */
 package org.pitest.extension;
 
-import org.pitest.TestResult;
 
 public interface ResultCollector {
 
-  public void notifyEnd(final TestResult testResult);
+  public void notifyEnd(final TestUnit tu, Throwable t);
+
+  public void notifyEnd(final TestUnit tu);
 
   public void notifyStart(final TestUnit tu);
 

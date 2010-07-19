@@ -18,7 +18,6 @@ import java.util.Collection;
 
 import org.pitest.Description;
 import org.pitest.TestExecutionException;
-import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestStep;
 import org.pitest.internal.IsolationUtils;
@@ -72,7 +71,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
     tResult = updateResultForExpectations(loader, tResult);
 
-    rc.notifyEnd(new TestResult(this, tResult));
+    rc.notifyEnd(this, tResult);
   }
 
   private Throwable updateResultForExpectations(final ClassLoader loader,
