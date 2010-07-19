@@ -15,6 +15,8 @@
 
 package org.pitest;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -46,7 +48,7 @@ public final class JavaMethod implements Serializable {
     try {
       this.method = clazz.getDeclaredMethod(name, params);
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw translateCheckedException(e);
     }
 
   }

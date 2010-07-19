@@ -9,6 +9,8 @@
 
 package org.pitest.distributed.slave;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import org.pitest.TestGroup;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.SharedNames;
@@ -55,7 +57,7 @@ public class RemoteExecutor implements Runnable {
       return (TestGroup) xstream.fromXML(xml);
 
     } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 

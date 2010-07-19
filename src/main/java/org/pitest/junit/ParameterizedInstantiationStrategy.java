@@ -14,6 +14,8 @@
  */
 package org.pitest.junit;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class ParameterizedInstantiationStrategy implements
     try {
       return (List<Object[]>) getParametersMethod(clazz).invoke(null);
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw translateCheckedException(e);
     }
   }
 

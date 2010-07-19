@@ -15,6 +15,8 @@
 
 package org.pitest.internal;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -66,7 +68,7 @@ public class ContainerParser {
       }
 
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw translateCheckedException(e);
     }
   }
 

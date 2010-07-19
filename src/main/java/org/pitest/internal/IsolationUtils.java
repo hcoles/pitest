@@ -15,6 +15,8 @@
 
 package org.pitest.internal;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +32,7 @@ public class IsolationUtils {
     try {
       return clazz != loader.loadClass(clazz.getName());
     } catch (final ClassNotFoundException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 
@@ -39,7 +41,7 @@ public class IsolationUtils {
     try {
       return Class.forName(name, true, loader);
     } catch (final ClassNotFoundException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 

@@ -14,6 +14,8 @@
  */
 package org.pitest.junit;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -58,7 +60,7 @@ public class RunnerAdapter implements Serializable {
     try {
       return builder.runnerForClass(clazz);
     } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 
@@ -132,7 +134,7 @@ public class RunnerAdapter implements Serializable {
       try {
         this.results = (Map<String, Throwable>) run.invoke(foreignCe);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
 
       this.runner = null;
@@ -150,7 +152,7 @@ public class RunnerAdapter implements Serializable {
 
       return foreginXstream.fromXML(xml);
     } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
 
   }

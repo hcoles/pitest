@@ -29,8 +29,6 @@ import org.pitest.internal.IsolationUtils;
  */
 public class SteppedTestUnit extends AbstractTestUnit {
 
-  private static final long                serialVersionUID = 1L;
-
   private final Collection<TestStep>       steps;
   private final Class<? extends Throwable> expected;
 

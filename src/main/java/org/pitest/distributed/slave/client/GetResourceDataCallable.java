@@ -1,5 +1,7 @@
 package org.pitest.distributed.slave.client;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
@@ -38,8 +40,7 @@ public class GetResourceDataCallable implements Callable<Option<byte[]>>,
         return Option.none();
       }
     } catch (final IOException ex) {
-      throw new RuntimeException(ex);
-      // return Option.none();
+      throw translateCheckedException(ex);
     }
 
   }

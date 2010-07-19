@@ -14,6 +14,8 @@
  */
 package org.pitest.internal;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,7 +42,7 @@ public class IsolatingClassLoader extends URLClassLoader {
       try {
         us.add(new File(each).toURL());
       } catch (final MalformedURLException e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
 
     }

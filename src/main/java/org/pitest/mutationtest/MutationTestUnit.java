@@ -33,9 +33,7 @@ import org.pitest.testunit.AbstractTestUnit;
 
 public class MutationTestUnit extends AbstractTestUnit {
 
-  private static final long                serialVersionUID = 1L;
-
-  private boolean                          passed           = false;
+  private boolean                          passed = false;
   private long                             duration;
 
   private final List<TestUnit>             tests;

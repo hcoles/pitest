@@ -27,10 +27,8 @@ import org.pitest.teststeps.CallStep;
 
 public class BeforeAfterDecorator extends TestUnitDecorator {
 
-  private static final long    serialVersionUID = 1L;
-
-  private final List<CallStep> before           = new LinkedList<CallStep>();
-  private final List<CallStep> after            = new LinkedList<CallStep>();
+  private final List<CallStep> before = new LinkedList<CallStep>();
+  private final List<CallStep> after  = new LinkedList<CallStep>();
 
   public BeforeAfterDecorator(final TestUnit child,
       final Collection<CallStep> before, final Collection<CallStep> after) {

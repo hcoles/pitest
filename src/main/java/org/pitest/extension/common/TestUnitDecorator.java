@@ -20,9 +20,7 @@ import org.pitest.functional.Option;
 
 public abstract class TestUnitDecorator implements TestUnit {
 
-  private static final long serialVersionUID = 1L;
-
-  private final TestUnit    child;
+  private final TestUnit child;
 
   protected TestUnitDecorator(final TestUnit child) {
     this.child = child;

@@ -15,6 +15,8 @@
 
 package org.pitest.distributed;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +71,7 @@ public class RemoteRoot implements ClassPathRoot {
       }
 
     } catch (final IOException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
 
   }

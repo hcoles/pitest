@@ -14,8 +14,6 @@
  */
 package org.pitest.extension;
 
-import java.io.Serializable;
-
 import org.pitest.Description;
 import org.pitest.functional.Option;
 
@@ -23,7 +21,7 @@ import org.pitest.functional.Option;
  * @author henry
  * 
  */
-public interface TestUnit extends Serializable {
+public interface TestUnit {
 
   public void execute(ClassLoader loader, ResultCollector rc);
 

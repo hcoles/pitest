@@ -17,13 +17,15 @@ package org.pitest.junit;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.testunit.AbstractTestUnit;
 
-public class RunnerAdapterTestUnit extends AbstractTestUnit {
+public class RunnerAdapterTestUnit extends AbstractTestUnit implements
+    Serializable {
 
   private static final long                      serialVersionUID = 1L;
 

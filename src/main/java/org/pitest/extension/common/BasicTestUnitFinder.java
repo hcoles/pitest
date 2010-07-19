@@ -15,6 +15,8 @@
 
 package org.pitest.extension.common;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,7 +97,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       return units;
 
     } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 

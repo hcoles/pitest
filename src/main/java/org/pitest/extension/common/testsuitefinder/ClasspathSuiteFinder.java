@@ -14,6 +14,8 @@
  */
 package org.pitest.extension.common.testsuitefinder;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,7 +59,7 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
         try {
           return new TestClass(cl.loadClass(a));
         } catch (final ClassNotFoundException cnf) {
-          throw new RuntimeException(cnf);
+          throw translateCheckedException(cnf);
         }
       }
 

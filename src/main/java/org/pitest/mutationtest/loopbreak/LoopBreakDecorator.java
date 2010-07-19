@@ -14,6 +14,8 @@
  */
 package org.pitest.mutationtest.loopbreak;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 
 import org.pitest.extension.ResultCollector;
@@ -24,9 +26,7 @@ import org.pitest.internal.IsolationUtils;
 
 public class LoopBreakDecorator extends TestUnitDecorator {
 
-  private static final long serialVersionUID = 1L;
-
-  private final long        maxEndTime;
+  private final long maxEndTime;
 
   public LoopBreakDecorator(final TestUnit child, final long maxEndTime) {
     super(child);
@@ -52,7 +52,7 @@ public class LoopBreakDecorator extends TestUnitDecorator {
     try {
       m.invoke(null, params);
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw translateCheckedException(e);
     }
 
     this.child().execute(loader, rc);

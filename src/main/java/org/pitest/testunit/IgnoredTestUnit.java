@@ -19,8 +19,6 @@ import org.pitest.extension.TestUnit;
 
 public class IgnoredTestUnit extends AbstractTestUnit {
 
-  private static final long serialVersionUID = 1L;
-
   public IgnoredTestUnit(final TestUnit child) {
     super(child.description(), null);
   }

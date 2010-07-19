@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -53,7 +54,7 @@ public class EnvironmentAccessTransformationTest {
       try {
         return (String) m.invoke(this.foreign, key);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
 
     }
@@ -69,7 +70,7 @@ public class EnvironmentAccessTransformationTest {
       try {
         return (Properties) m.invoke(this.foreign);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
     }
 
@@ -84,7 +85,7 @@ public class EnvironmentAccessTransformationTest {
       try {
         m.invoke(this.foreign, key, value);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
 
     }
@@ -100,7 +101,7 @@ public class EnvironmentAccessTransformationTest {
       try {
         m.invoke(this.foreign, props);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
 
     }
@@ -117,7 +118,7 @@ public class EnvironmentAccessTransformationTest {
       try {
         return (String) m.invoke(this.foreign, key, defaultValue);
       } catch (final Exception e) {
-        throw new RuntimeException(e);
+        throw translateCheckedException(e);
       }
     }
 

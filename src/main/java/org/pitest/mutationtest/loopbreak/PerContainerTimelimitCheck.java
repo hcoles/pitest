@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.loopbreak;
 
-import org.pitest.mutationtest.TimeoutException;
+import org.pitest.TimeoutException;
 
 public class PerContainerTimelimitCheck {
 
@@ -25,7 +25,7 @@ public class PerContainerTimelimitCheck {
 
   public static void breakIfTimelimitExceeded() {
     if ((System.currentTimeMillis() > maxTime) && (maxTime != 0)) {
-      throw new TimeoutException();
+      throw new TimeoutException("Stopping test as max time exceeded");
     }
   }
 

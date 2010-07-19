@@ -18,14 +18,20 @@ import junit.framework.TestCase;
 
 import org.junit.Ignore;
 import org.pitest.annotations.MutationTest;
+import org.pitest.annotations.TestClass;
 import org.pitest.mutationtest.Mutation;
 import org.pitest.mutationtest.MutationConfig;
 
+@TestClass(TestA1.Testee.class)
 public class TestA1 extends TestCase {
 
   public static class Testee {
     public static int returnOne() {
       return 1;
+    }
+
+    public static int returnTwo() {
+      return 2;
     }
   }
 

@@ -25,11 +25,13 @@ import org.pitest.functional.Option;
  */
 public abstract class AbstractTestUnit implements TestUnit {
 
-  private static final long serialVersionUID = 1L;
-
   private final Description description;
   // private final Configuration configuration;
   private Option<TestUnit>  dependsOn;
+
+  public AbstractTestUnit(final Description description) {
+    this(description, null);
+  }
 
   public AbstractTestUnit(final Description description,
       final TestUnit dependsOn) {

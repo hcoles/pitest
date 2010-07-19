@@ -15,6 +15,8 @@
 
 package org.pitest.distributed.slave;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -108,7 +110,7 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
       }
     } catch (final Exception ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
 
   }

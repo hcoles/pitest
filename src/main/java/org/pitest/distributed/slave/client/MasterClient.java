@@ -1,5 +1,7 @@
 package org.pitest.distributed.slave.client;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -47,9 +49,9 @@ public class MasterClient implements MasterService {
       return bytes;
 
     } catch (final InterruptedException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     } catch (final ExecutionException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 
@@ -74,9 +76,9 @@ public class MasterClient implements MasterService {
       return task.get();
 
     } catch (final InterruptedException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     } catch (final ExecutionException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 
@@ -106,9 +108,9 @@ public class MasterClient implements MasterService {
       return task.get();
 
     } catch (final InterruptedException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     } catch (final ExecutionException ex) {
-      throw new RuntimeException(ex);
+      throw translateCheckedException(ex);
     }
   }
 

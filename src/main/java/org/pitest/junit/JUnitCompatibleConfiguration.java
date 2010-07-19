@@ -34,7 +34,7 @@ import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiation
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
-import org.pitest.mutationtest.MutationTestUnitFinder;
+import org.pitest.mutationtest.MutationSuiteFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -77,7 +77,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
     tus.add(new JUnitCustomRunnerTestUnitFinder());
 
     // must be last in list
-    tus.add(MutationTestUnitFinder.instance());
+    // tus.add(MutationTestUnitFinder.instance());
+    tus.add(new MutationSuiteFinder());
 
     return tus;
   }

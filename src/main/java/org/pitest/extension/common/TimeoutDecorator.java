@@ -15,6 +15,7 @@
 package org.pitest.extension.common;
 
 import org.pitest.TestResult;
+import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 
@@ -87,8 +88,8 @@ public final class TimeoutDecorator extends TestUnitDecorator {
   }
 
   private Throwable createTimeoutError() {
-    return new Exception(String.format("Test timed out after %d milliseconds",
-        this.timeout));
+    return new TimeoutException(String.format(
+        "Test timed out after %d milliseconds", this.timeout));
   }
 
 }
