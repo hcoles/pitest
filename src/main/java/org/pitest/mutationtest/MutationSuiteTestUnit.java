@@ -67,10 +67,10 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
-      rc.notifyStart(this);
+      rc.notifyStart(this.description());
       runTests(rc);
     } catch (final Throwable ex) {
-      rc.notifyEnd(this, ex);
+      rc.notifyEnd(this.description(), ex);
     }
 
   }
@@ -119,7 +119,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
         reportResults(mutationCount, failures, rc);
 
       } else {
-        rc.notifySkipped(this);
+        rc.notifySkipped(this.description());
       }
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
@@ -140,9 +140,9 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
         last.initCause(each);
         last = each;
       }
-      rc.notifyEnd(this, ae);
+      rc.notifyEnd(this.description(), ae);
     } else {
-      rc.notifyEnd(this);
+      rc.notifyEnd(this.description());
     }
 
   }

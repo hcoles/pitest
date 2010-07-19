@@ -49,14 +49,14 @@ public class SteppedTestUnit extends AbstractTestUnit {
     if (!this.steps().isEmpty()) {
       executeStepsAndReport(loader, rc);
     } else {
-      rc.notifySkipped(this);
+      rc.notifySkipped(this.description());
     }
 
   }
 
   private void executeStepsAndReport(final ClassLoader loader,
       final ResultCollector rc) {
-    rc.notifyStart(this);
+    rc.notifyStart(this.description());
     Object o = null;
     Throwable tResult = null;
     try {
@@ -71,7 +71,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
     tResult = updateResultForExpectations(loader, tResult);
 
-    rc.notifyEnd(this, tResult);
+    rc.notifyEnd(this.description(), tResult);
   }
 
   private Throwable updateResultForExpectations(final ClassLoader loader,

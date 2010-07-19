@@ -99,7 +99,7 @@ public class RunnerAdapter implements Serializable {
 
   public void execute(final ClassLoader loader,
       final RunnerAdapterTestUnit testUnit, final ResultCollector rc) {
-    rc.notifyStart(testUnit);
+    rc.notifyStart(testUnit.description());
     runIfRequired(loader);
     notify(testUnit, rc);
   }
@@ -111,9 +111,9 @@ public class RunnerAdapter implements Serializable {
     if (t != null) {
       // TODO translate the throwable + isn't there a potential classloader leak
       // here?
-      rc.notifyEnd(testUnit, t);
+      rc.notifyEnd(testUnit.description(), t);
     } else {
-      rc.notifyEnd(testUnit);
+      rc.notifyEnd(testUnit.description());
     }
 
   }

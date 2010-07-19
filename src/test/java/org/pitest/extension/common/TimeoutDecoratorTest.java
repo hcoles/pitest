@@ -52,14 +52,14 @@ public class TimeoutDecoratorTest {
     final TestUnit quickComplete = new AbstractTestUnit(this.description) {
       @Override
       public void execute(final ClassLoader loader, final ResultCollector rc) {
-        rc.notifyEnd(this);
+        rc.notifyEnd(this.description());
       }
 
     };
 
     this.testee = new TimeoutDecorator(quickComplete, 100);
     this.testee.execute(this.loader, this.rc);
-    verify(this.rc).notifyEnd(eq(quickComplete));
+    verify(this.rc).notifyEnd(eq(this.description));
   }
 
   @Test
@@ -72,7 +72,7 @@ public class TimeoutDecoratorTest {
         } catch (final InterruptedException e) {
           // swallow
         }
-        rc.notifyEnd(this);
+        rc.notifyEnd(this.description());
       }
 
     };
@@ -80,9 +80,10 @@ public class TimeoutDecoratorTest {
     this.testee = new TimeoutDecorator(slowComplete, 100);
     this.testee.execute(this.loader, this.rc);
 
-    verify(this.rc).notifyEnd(eq(this.testee), any(TimeoutException.class));
+    verify(this.rc)
+        .notifyEnd(eq(this.description), any(TimeoutException.class));
 
-    verify(this.rc, never()).notifyEnd(eq(slowComplete));
+    verify(this.rc, never()).notifyEnd(eq(this.description));
 
   }
 

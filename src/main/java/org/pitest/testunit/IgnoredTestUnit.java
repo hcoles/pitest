@@ -25,7 +25,7 @@ public class IgnoredTestUnit extends AbstractTestUnit {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-    rc.notifySkipped(this);
+    rc.notifySkipped(this.description());
   }
 
 }

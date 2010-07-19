@@ -16,9 +16,9 @@ package org.pitest.internal;
 
 import java.util.Collection;
 
+import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.testunit.TestUnitState;
 
 public final class ConcreteResultCollector implements ResultCollector {
@@ -29,21 +29,19 @@ public final class ConcreteResultCollector implements ResultCollector {
     this.feedback = feedback;
   }
 
-  public void notifyStart(final TestUnit tu) {
-    this.feedback.add(new TestResult(tu.description(), null,
-        TestUnitState.STARTED));
+  public void notifyStart(final Description tu) {
+    this.feedback.add(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
-  public void notifySkipped(final TestUnit tu) {
-    this.feedback.add(new TestResult(tu.description(), null,
-        TestUnitState.NOT_RUN));
+  public void notifySkipped(final Description tu) {
+    this.feedback.add(new TestResult(tu, null, TestUnitState.NOT_RUN));
   }
 
-  public void notifyEnd(final TestUnit tu, final Throwable t) {
-    this.feedback.add(new TestResult(tu, t));
+  public void notifyEnd(final Description description, final Throwable t) {
+    this.feedback.add(new TestResult(description, t));
   }
 
-  public void notifyEnd(final TestUnit tu) {
+  public void notifyEnd(final Description tu) {
     this.feedback.add(new TestResult(tu, null));
   }
 

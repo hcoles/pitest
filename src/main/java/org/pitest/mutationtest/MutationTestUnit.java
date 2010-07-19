@@ -71,14 +71,14 @@ public class MutationTestUnit extends AbstractTestUnit {
     final long t0 = System.currentTimeMillis();
     try {
       if (this.unmutatedTest.hasSome() && !this.unmutatedTest.value().passed()) {
-        rc.notifySkipped(this);
+        rc.notifySkipped(this.description());
       } else {
-        rc.notifyStart(this);
+        rc.notifyStart(this.description());
         runTests(rc);
       }
 
     } catch (final Throwable ex) {
-      rc.notifyEnd(this, ex);
+      rc.notifyEnd(this.description(), ex);
     } finally {
       this.duration = System.currentTimeMillis() - t0;
     }
@@ -119,14 +119,14 @@ public class MutationTestUnit extends AbstractTestUnit {
       // this.listener.error().value().getThrowable());
       // rc.notifyEnd(new TestResult(this, t));
       // for now treat all errors as a succesfully detected mutation
-      rc.notifyEnd(this);
+      rc.notifyEnd(this.description());
       this.passed = true;
     } else if (this.listener.resultIndicatesSuccess()) {
-      rc.notifyEnd(this);
+      rc.notifyEnd(this.description());
       this.passed = true;
     } else {
 
-      rc.notifyEnd(this, createAssertionError());
+      rc.notifyEnd(this.description(), createAssertionError());
     }
 
   }

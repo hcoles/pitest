@@ -16,7 +16,6 @@ package org.pitest;
 
 import java.io.Serializable;
 
-import org.pitest.extension.TestUnit;
 import org.pitest.testunit.TestUnitState;
 
 /**
@@ -31,15 +30,6 @@ public class TestResult implements Serializable {
 
   private final Throwable     throwable;
   private final TestUnitState state;
-
-  public TestResult(final TestUnit tu, final Throwable t) {
-    this(tu.description(), t);
-  }
-
-  public TestResult(final TestUnit tu, final Throwable t,
-      final TestUnitState state) {
-    this(tu.description(), t, state);
-  }
 
   public TestResult(final Description description, final Throwable t) {
     this(description, t, TestUnitState.FINISHED);

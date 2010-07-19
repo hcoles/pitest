@@ -14,6 +14,7 @@
  */
 package org.pitest.extension.common;
 
+import org.pitest.Description;
 import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -39,13 +40,13 @@ public final class TimeoutDecorator extends TestUnitDecorator {
       this.child = child;
     }
 
-    public void notifySkipped(final TestUnit tu) {
+    public void notifySkipped(final Description tu) {
       if (this.reportResults) {
         this.child.notifySkipped(tu);
       }
     }
 
-    public void notifyStart(final TestUnit tu) {
+    public void notifyStart(final Description tu) {
       if (this.reportResults) {
         this.child.notifyStart(tu);
       }
@@ -55,14 +56,14 @@ public final class TimeoutDecorator extends TestUnitDecorator {
       this.reportResults = false;
     }
 
-    public void notifyEnd(final TestUnit tu, final Throwable t) {
+    public void notifyEnd(final Description description, final Throwable t) {
       if (this.reportResults) {
-        this.child.notifyEnd(tu, t);
+        this.child.notifyEnd(description, t);
       }
 
     }
 
-    public void notifyEnd(final TestUnit tu) {
+    public void notifyEnd(final Description tu) {
       if (this.reportResults) {
         this.child.notifyEnd(tu);
       }
@@ -88,7 +89,7 @@ public final class TimeoutDecorator extends TestUnitDecorator {
     }
     if (!this.run) {
       wrc.stopReporting();
-      rc.notifyEnd(this, createTimeoutError());
+      rc.notifyEnd(this.description(), createTimeoutError());
     }
 
   }

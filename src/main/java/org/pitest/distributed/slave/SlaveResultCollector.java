@@ -9,11 +9,11 @@
 
 package org.pitest.distributed.slave;
 
+import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.testunit.TestUnitState;
 
 import com.hazelcast.core.ITopic;
@@ -36,20 +36,20 @@ public class SlaveResultCollector implements ResultCollector {
 
   }
 
-  public void notifySkipped(final TestUnit tu) {
+  public void notifySkipped(final Description tu) {
 
     this.publish(new TestResult(tu, null, TestUnitState.NOT_RUN));
   }
 
-  public void notifyStart(final TestUnit tu) {
+  public void notifyStart(final Description tu) {
     this.publish(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
-  public void notifyEnd(final TestUnit tu, final Throwable t) {
-    notifyEnd(new TestResult(tu, t));
+  public void notifyEnd(final Description description, final Throwable t) {
+    notifyEnd(new TestResult(description, t));
   }
 
-  public void notifyEnd(final TestUnit tu) {
+  public void notifyEnd(final Description tu) {
     notifyEnd(new TestResult(tu, null));
   }
 
