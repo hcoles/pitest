@@ -16,16 +16,16 @@ public class MutationConfigTest {
   @Test
   public void testNoMutationsSetByDefault() {
     this.testee = new MutationConfig();
-    for (final Mutation each : Mutation.values()) {
+    for (final Mutator each : Mutator.values()) {
       assertFalse(this.testee.has(each));
     }
   }
 
   @Test
   public void testMutationsPassedToConstructorAreStored() {
-    this.testee = new MutationConfig(Mutation.CPOOL, Mutation.INCREMENTS);
-    assertTrue(this.testee.has(Mutation.CPOOL));
-    assertTrue(this.testee.has(Mutation.INCREMENTS));
+    this.testee = new MutationConfig(Mutator.CPOOL, Mutator.INCREMENTS);
+    assertTrue(this.testee.has(Mutator.CPOOL));
+    assertTrue(this.testee.has(Mutator.INCREMENTS));
   }
 
   @Test
@@ -49,7 +49,7 @@ public class MutationConfigTest {
 
   @Test
   public void testCreateMutatorReturnsAMutatorWithNoMutationSet() {
-    this.testee = new MutationConfig(Mutation.CPOOL, Mutation.SWITCHES);
+    this.testee = new MutationConfig(Mutator.CPOOL, Mutator.SWITCHES);
     final Mutater actual = this.testee.createMutator();
     assertNull(actual.getModification());
   }

@@ -41,7 +41,7 @@ public class MutationSuiteFinder implements TestUnitFinder {
       final Configuration updatedConfig = createCopyOfConfig(configuration);
       updatedConfig.testUnitFinders().remove(this);
       final MutationConfig mutationConfig = new MutationConfig(
-          Mutation.RETURN_VALS);
+          Mutator.RETURN_VALS);
       final Description d = new Description("mutation test", clazz.getClazz(),
           null);
       return Collections.<TestUnit> singleton(new MutationSuiteTestUnit(clazz

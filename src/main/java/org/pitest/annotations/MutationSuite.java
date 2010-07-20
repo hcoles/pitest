@@ -14,11 +14,11 @@
  */
 package org.pitest.annotations;
 
-import org.pitest.mutationtest.Mutation;
+import org.pitest.mutationtest.Mutator;
 
 public @interface MutationSuite {
 
-  Mutation[] mutations() default { Mutation.INCREMENTS, Mutation.RETURN_VALS,
-      Mutation.SWITCHES };
+  Mutator[] mutations() default { Mutator.INCREMENTS, Mutator.RETURN_VALS,
+      Mutator.SWITCHES };
 
 }

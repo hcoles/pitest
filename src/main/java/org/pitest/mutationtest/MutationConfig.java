@@ -22,19 +22,19 @@ import com.reeltwo.jumble.mutation.Mutater;
 
 public class MutationConfig {
 
-  private final Set<Mutation> mutations = new LinkedHashSet<Mutation>();
+  private final Set<Mutator> mutations = new LinkedHashSet<Mutator>();
 
-  public MutationConfig(final Mutation... mutations) {
+  public MutationConfig(final Mutator... mutations) {
     this.mutations.addAll(Arrays.asList(mutations));
   }
 
-  public Boolean has(final Mutation mutation) {
+  public Boolean has(final Mutator mutation) {
     return this.mutations.contains(mutation);
   }
 
   public Mutater createMutator() {
     final Mutater m = new Mutater(-1);
-    for (final Mutation each : Mutation.values()) {
+    for (final Mutator each : Mutator.values()) {
       final boolean enable = has(each);
       each.function().apply(m, enable);
     }

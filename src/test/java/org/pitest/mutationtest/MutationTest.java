@@ -21,49 +21,49 @@ public class MutationTest {
 
   @Test
   public void testReturnValsFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.RETURN_VALS);
+    callConfigFunction(Mutator.RETURN_VALS);
     verify(this.mutator).setMutateReturnValues(true);
     verify(this.mutator).setMutateReturnValues(false);
   }
 
   @Test
   public void testCPoolFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.CPOOL);
+    callConfigFunction(Mutator.CPOOL);
     verify(this.mutator).setMutateCPool(true);
     verify(this.mutator).setMutateCPool(false);
   }
 
   @Test
   public void testInlineConstsFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.INLINE_CONSTS);
+    callConfigFunction(Mutator.INLINE_CONSTS);
     verify(this.mutator).setMutateInlineConstants(true);
     verify(this.mutator).setMutateInlineConstants(false);
   }
 
   @Test
   public void testStoresFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.STORES);
+    callConfigFunction(Mutator.STORES);
     verify(this.mutator).setMutateStores(true);
     verify(this.mutator).setMutateStores(false);
   }
 
   @Test
   public void testIncrementsFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.INCREMENTS);
+    callConfigFunction(Mutator.INCREMENTS);
     verify(this.mutator).setMutateIncrements(true);
     verify(this.mutator).setMutateIncrements(false);
   }
 
   @Test
   public void testSwitchesFunctionCallsCorrectMethod() {
-    callConfigFunction(Mutation.SWITCHES);
+    callConfigFunction(Mutator.SWITCHES);
     verify(this.mutator).setMutateSwitch(true);
     verify(this.mutator).setMutateSwitch(false);
   }
 
   @Test
   public void testAllFunctionCallsAllMethods() {
-    callConfigFunction(Mutation.ALL);
+    callConfigFunction(Mutator.ALL);
     verify(this.mutator).setMutateSwitch(true);
     verify(this.mutator).setMutateSwitch(false);
     verify(this.mutator).setMutateIncrements(true);
@@ -78,7 +78,7 @@ public class MutationTest {
     verify(this.mutator).setMutateReturnValues(false);
   }
 
-  private void callConfigFunction(final Mutation mutation) {
+  private void callConfigFunction(final Mutator mutation) {
     mutation.apply(this.mutator, true);
     mutation.apply(this.mutator, false);
   }

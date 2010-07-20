@@ -18,11 +18,11 @@ import org.pitest.functional.SideEffect2;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
-public enum Mutation implements SideEffect2<Mutater, Boolean> {
+public enum Mutator implements SideEffect2<Mutater, Boolean> {
   ALL("All defined mutations", new SideEffect2<Mutater, Boolean>() {
 
     public void apply(final Mutater a, final Boolean b) {
-      for (final Mutation each : values()) {
+      for (final Mutator each : values()) {
         if (!each.equals(ALL)) {
           each.function().apply(a, b);
         }
@@ -69,7 +69,7 @@ public enum Mutation implements SideEffect2<Mutater, Boolean> {
     }
   });
 
-  Mutation(final String description, final SideEffect2<Mutater, Boolean> f) {
+  Mutator(final String description, final SideEffect2<Mutater, Boolean> f) {
     this.description = description;
     this.function = f;
   }
