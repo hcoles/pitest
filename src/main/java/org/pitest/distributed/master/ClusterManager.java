@@ -19,6 +19,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.pitest.TestGroup;
 import org.pitest.distributed.HandlerNotificationMessage;
@@ -38,6 +39,10 @@ import com.thoughtworks.xstream.XStream;
 
 public class ClusterManager implements
     MessageListener<HandlerNotificationMessage>, MembershipListener {
+
+  private static final Logger                          logger                      = Logger
+                                                                                       .getLogger(ClusterManager.class
+                                                                                           .getName());
 
   private final Map<Long, TestGroupMemberRecord>       inprogressTestGroupHandlers = new ConcurrentHashMap<Long, TestGroupMemberRecord>();
 
@@ -110,7 +115,7 @@ public class ClusterManager implements
 
   private void handleComplete(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
-    System.out.println("Group " + message.getTestGroupId() + " is complete ");
+    logger.info("Group " + message.getTestGroupId() + " is complete ");
     this.inprogressTestGroupHandlers.remove(message.getTestGroupId());
 
   }
@@ -118,7 +123,7 @@ public class ClusterManager implements
   private void handleError(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
     // FIXME should retry error cases at least once
-    System.out.println("Error reported handling test group by peer at "
+    logger.warning("Error reported handling test group by peer at "
         + message.getHandler());
     this.inprogressTestGroupHandlers.remove(message.getTestGroupId());
   }
@@ -154,7 +159,7 @@ public class ClusterManager implements
         if (each.getHandler().hasSome()) {
           if (each.getHandler().value().equals(leaverAddress)) {
             each.setHandler(Option.<InetSocketAddress> none());
-            System.out.println("Reassigning group id " + each.getId());
+            logger.info("Reassigning group id " + each.getId());
             submitTestGroupToGrid(each.getId(), each.getGroup());
           }
         }

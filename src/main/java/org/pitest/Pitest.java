@@ -18,6 +18,7 @@ package org.pitest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
@@ -33,6 +34,10 @@ import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 
 public class Pitest {
+
+  private final static Logger      logger          = Logger
+                                                       .getLogger(Pitest.class
+                                                           .getName());
 
   // things that cannot be overridden by child suites
   private final List<TestListener> resultListeners = new ArrayList<TestListener>();
@@ -105,7 +110,7 @@ public class Pitest {
     final List<TestGroup> groupedTests = new ArrayList<TestGroup>();
     createGroups(testUnits, groupedTests);
 
-    System.out.println("Tests will run as " + groupedTests.size() + " groups");
+    logger.info("Tests will run as " + groupedTests.size() + " groups");
 
     return groupedTests;
 

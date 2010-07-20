@@ -9,6 +9,8 @@
 
 package org.pitest.distributed.slave;
 
+import java.util.logging.Logger;
+
 import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.distributed.ResultMessage;
@@ -19,6 +21,10 @@ import org.pitest.testunit.TestUnitState;
 import com.hazelcast.core.ITopic;
 
 public class SlaveResultCollector implements ResultCollector {
+
+  private final static Logger         logger = Logger
+                                                 .getLogger(SlaveResultCollector.class
+                                                     .getName());
 
   private final RunDetails            run;
   private final ITopic<ResultMessage> resultsTopic;
@@ -54,7 +60,7 @@ public class SlaveResultCollector implements ResultCollector {
   }
 
   public void notifyEnd(final TestResult testResult) {
-    System.out.println("Test complete " + testResult);
+    logger.info("Test complete " + testResult);
     this.publish(testResult);
   }
 

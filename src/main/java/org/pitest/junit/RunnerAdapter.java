@@ -87,7 +87,6 @@ public class RunnerAdapter implements Serializable {
     } catch (final ClassNotFoundException e) {
       descriptionTestClass = null;
     }
-    System.out.println("m is " + descriptionTestClass);
 
     final Method m = Reflection.publicMethod(descriptionTestClass, d
         .getMethodName());

@@ -22,35 +22,4 @@ public class TimeoutException extends RuntimeException {
     super(message);
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result
-        + ((this.getMessage() == null) ? 0 : this.getMessage().hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final TimeoutException other = (TimeoutException) obj;
-    if (this.getMessage() == null) {
-      if (other.getMessage() != null) {
-        return false;
-      }
-    } else if (!this.getMessage().equals(other.getMessage())) {
-      return false;
-    }
-    return true;
-  }
-
 }

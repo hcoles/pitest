@@ -18,8 +18,10 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.util.ClassLoaderRepository;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
@@ -35,6 +37,10 @@ import org.pitest.testunit.AbstractTestUnit;
 import com.reeltwo.jumble.mutation.Mutater;
 
 public class MutationSuiteTestUnit extends AbstractTestUnit {
+
+  private static final Logger  logger = Logger
+                                          .getLogger(MutationSuiteTestUnit.class
+                                              .getName());
 
   private final Class<?>       test;
   private final Class<?>       classToMutate;
@@ -68,7 +74,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
       rc.notifyStart(this.description());
-      runTests(rc);
+      runTests(rc, loader);
     } catch (final Throwable ex) {
       rc.notifyEnd(this.description(), ex);
     }
@@ -81,9 +87,10 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
   }
 
-  private void runTests(final ResultCollector rc) {
+  private void runTests(final ResultCollector rc, final ClassLoader loader) {
 
     final Mutater m = this.config.createMutator();
+    m.setRepository(new ClassLoaderRepository(loader));
     final String name = this.classToMutate.getName();
 
     final int mutationCount = m.countMutationPoints(name);
@@ -93,7 +100,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
         // m.setMutationPoint(0);
         final long normalExecution = timeUnmutatedTests(m
-            .jumbler(this.classToMutate.getName()), findTestUnits(0));
+            .jumbler(this.classToMutate.getName()), findTestUnits(0), loader);
 
         final List<TestUnit> tests = findTestUnits(normalExecution);
         final List<AssertionError> failures = new ArrayList<AssertionError>();
@@ -104,7 +111,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
           final JavaClass mutatedClass = m
               .jumbler(this.classToMutate.getName());
 
-          if (!doTestsDetectMutation(mutatedClass, tests)) {
+          if (!doTestsDetectMutation(loader, mutatedClass, tests)) {
 
             final MutationDetails details = new MutationDetails(mutatedClass
                 .getClassName(), mutatedClass.getFileName(), m
@@ -119,6 +126,8 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
         reportResults(mutationCount, failures, rc);
 
       } else {
+        logger.info("Skipping test " + this.description()
+            + " as no mutations found");
         rc.notifySkipped(this.description());
       }
     } catch (final Exception ex) {
@@ -148,22 +157,21 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   }
 
   private long timeUnmutatedTests(final JavaClass unmutatedClass,
-      final List<TestUnit> list) {
+      final List<TestUnit> list, final ClassLoader loader) {
     final long t0 = System.currentTimeMillis();
-    if (doTestsDetectMutation(unmutatedClass, list)) {
+    if (doTestsDetectMutation(loader, unmutatedClass, list)) {
       throw new RuntimeException(
           "Cannot mutation test as tests do not pass without mutation");
     }
     return t0 - System.currentTimeMillis();
   }
 
-  private boolean doTestsDetectMutation(final JavaClass mutatedClass,
-      final List<TestUnit> tests) {
+  private boolean doTestsDetectMutation(final ClassLoader loader,
+      final JavaClass mutatedClass, final List<TestUnit> tests) {
     try {
       final MutationTestResultListener listener = new CheckTestHasFailedResultListener();
       final ClassPath classPath = new ClassPath(
-          new OtherClassLoaderClassPathRoot(Thread.currentThread()
-              .getContextClassLoader()));
+          new OtherClassLoaderClassPathRoot(loader));
 
       final JumbleContainer c = new JumbleContainer(classPath, mutatedClass);
 

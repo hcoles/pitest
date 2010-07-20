@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
@@ -20,6 +21,10 @@ import com.hazelcast.core.Member;
 import com.hazelcast.util.concurrent.ConcurrentSkipListSet;
 
 public class MasterClient implements MasterService {
+
+  private static final Logger        logger                = Logger
+                                                               .getLogger(MasterClient.class
+                                                                   .getName());
 
   private final HazelcastInstance    hazelcast;
   private final RunDetails           run;
@@ -97,7 +102,7 @@ public class MasterClient implements MasterService {
   }
 
   private Option<byte[]> getRemoteResourceData(final String name) {
-    System.out.println("Looking for remote resource " + name);
+    logger.info("Looking for remote resource " + name);
     final FutureTask<Option<byte[]>> task = new DistributedTask<Option<byte[]>>(
         new GetResourceDataCallable(this.run, name), getMaster(this.run));
 

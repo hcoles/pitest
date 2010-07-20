@@ -43,13 +43,13 @@ public class TestGroupExecutor {
       final String testGroup,
       final ITopic<HandlerNotificationMessage> handlerNotificationTopic,
       final InetSocketAddress socket) {
-    System.out.println("Thread is " + Thread.currentThread());
+
     try {
       final RemoteContainer container = getContainer(run);
       container.submit(testGroup);
       handlerNotificationTopic.publish(new HandlerNotificationMessage(run, id,
           socket, GroupState.COMPLETE));
-      System.out.println("Just run test in group " + id);
+
     } catch (final Throwable t) {
       t.printStackTrace();
       handlerNotificationTopic.publish(new HandlerNotificationMessage(run, id,
@@ -61,7 +61,7 @@ public class TestGroupExecutor {
 
     // fixme thread safety
     if (this.cache.getCachedContainer(run).hasNone()) {
-      System.out.println("Creating new container");
+
       final ResourceCache cache = new DirectoryCache(run);
 
       final MasterService master = new MasterClient(this.client, run);

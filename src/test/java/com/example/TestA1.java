@@ -33,6 +33,10 @@ public class TestA1 extends TestCase {
     public static int returnTwo() {
       return 2;
     }
+
+    public static int returnThree() {
+      return 3;
+    }
   }
 
   @MutationTest(mutateClass = Testee.class)
@@ -50,7 +54,7 @@ public class TestA1 extends TestCase {
   }
 
   public void test3() {
-
+    assertEquals(2, Testee.returnTwo());
   }
 
   public void test4() {

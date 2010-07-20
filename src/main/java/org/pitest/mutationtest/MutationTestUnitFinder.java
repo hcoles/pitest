@@ -38,13 +38,9 @@ import org.pitest.reflection.Reflection;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
-public class MutationTestUnitFinder implements TestUnitFinder {
+public final class MutationTestUnitFinder implements TestUnitFinder {
 
-  /**
-   * 
-   */
-  private static final long                   serialVersionUID = 1L;
-  private final static MutationTestUnitFinder instance         = new MutationTestUnitFinder();
+  private final static MutationTestUnitFinder instance = new MutationTestUnitFinder();
 
   public static MutationTestUnitFinder instance() {
     return instance;

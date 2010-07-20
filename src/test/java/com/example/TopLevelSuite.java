@@ -48,7 +48,8 @@ public class TopLevelSuite {
 
   @PITSuiteMethod
   public static Collection<Class<?>> children() {
-    return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
+    return Arrays.<Class<?>> asList(JUnit4SuiteA.class);// ,
+    // JUnit4SuiteB.class);
   }
 
 }

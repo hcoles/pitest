@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
 import org.pitest.functional.F;
@@ -36,7 +37,10 @@ import org.pitest.internal.classloader.DirectoryClassPathRoot;
 
 public class ClassPath {
 
-  private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
+  private static final Logger       logger = Logger.getLogger(ClassPath.class
+                                               .getName());
+
+  private final List<ClassPathRoot> roots  = new ArrayList<ClassPathRoot>();
 
   public ClassPath() {
     this(ClassPath.getClassPathElementsAsFiles());
@@ -77,7 +81,7 @@ public class ClassPath {
           try {
             rs.add(new ArchiveClassPathRoot(f));
           } catch (final ZipException ex) {
-            System.out.println("Warning - can't open the archive " + f);
+            logger.warning("Can't open the archive " + f);
           }
         }
       }

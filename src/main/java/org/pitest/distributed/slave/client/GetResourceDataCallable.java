@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 import org.pitest.distributed.DistributedContainer;
 import org.pitest.distributed.message.RunDetails;
@@ -15,12 +16,14 @@ import org.pitest.internal.ClassPath;
 public class GetResourceDataCallable implements Callable<Option<byte[]>>,
     Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-  private final RunDetails  run;
-  private final String      name;
+  private static final long   serialVersionUID = 1L;
+
+  private static final Logger logger           = Logger
+                                                   .getLogger(GetResourceDataCallable.class
+                                                       .getName());
+
+  private final RunDetails    run;
+  private final String        name;
 
   public GetResourceDataCallable(final RunDetails run, final String name) {
     this.run = run;
@@ -33,7 +36,7 @@ public class GetResourceDataCallable implements Callable<Option<byte[]>>,
     final URL url = container.getClassPath().findResource(this.name);
     try {
       if (url != null) {
-        System.out.println("Serving resource for " + this.name);
+        logger.info("Serving resource for " + this.name);
         return Option.someOrNone(ClassPath.streamToByteArray(url.openStream()));
 
       } else {
