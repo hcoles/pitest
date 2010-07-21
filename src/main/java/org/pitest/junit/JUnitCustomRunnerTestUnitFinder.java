@@ -16,7 +16,6 @@ package org.pitest.junit;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -26,12 +25,6 @@ import org.pitest.extension.TestUnitFinder;
 import org.pitest.internal.TestClass;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
-
-  public List<TestUnit> processChildUnits(final List<TestUnit> tus,
-      final TestClass testClass) {
-    // TODO Auto-generated method stub
-    return tus;
-  }
 
   public boolean canHandle(final boolean alreadyHandled) {
     return !alreadyHandled;

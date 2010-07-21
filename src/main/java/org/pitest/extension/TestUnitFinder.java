@@ -16,7 +16,6 @@
 package org.pitest.extension;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.pitest.internal.TestClass;
 
@@ -26,8 +25,5 @@ public interface TestUnitFinder {
 
   public Collection<TestUnit> findTestUnits(final TestClass clazz,
       final Configuration configuration);
-
-  public List<TestUnit> processChildUnits(final List<TestUnit> tus,
-      TestClass testClass);
 
 }

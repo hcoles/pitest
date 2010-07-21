@@ -99,12 +99,7 @@ public final class TestClass implements Serializable {
         startConfig, this);
 
     findTestUnits(tus, this, classConfig);
-    List<TestUnit> modifiedTus = tus;
-    for (final TestUnitFinder each : classConfig.testUnitFinders()) {
-      modifiedTus = each.processChildUnits(modifiedTus, this);
-    }
-
-    return modifiedTus;
+    return tus;
 
   }
 

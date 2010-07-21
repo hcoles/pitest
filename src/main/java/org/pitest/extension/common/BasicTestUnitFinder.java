@@ -94,7 +94,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
       dependOnFirst(units);
 
-      return units;
+      return processChildUnits(units, testClass);
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
@@ -191,7 +191,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   // If we need before after class across all test units could use a processor
   // if this internal to this finder, do this in findTestUnits
 
-  public List<TestUnit> processChildUnits(final List<TestUnit> tus,
+  private List<TestUnit> processChildUnits(final List<TestUnit> tus,
       final TestClass testClass) {
 
     final Collection<CallStep> beforeClasses = findMethodCalls(
