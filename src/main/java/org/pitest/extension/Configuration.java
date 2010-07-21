@@ -30,4 +30,6 @@ public interface Configuration {
 
   public Collection<TestSuiteFinder> testSuiteFinders();
 
+  public Collection<ConfigurationUpdater> configurationUpdaters();
+
 }

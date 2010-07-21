@@ -18,17 +18,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
-import org.pitest.internal.ConfigParser;
 import org.pitest.internal.TestClass;
 
 public class MutationSuiteFinder implements TestUnitFinder {
 
-  int THRESHOLD = 100;
+  private final int            threshold;
+  private final MutationConfig mutationConfig;
+
+  public MutationSuiteFinder(final int threshold, final MutationConfig config) {
+    this.threshold = threshold;
+    this.mutationConfig = config;
+  }
 
   public boolean canHandle(final boolean alreadyHandled) {
     return true;
@@ -40,13 +46,12 @@ public class MutationSuiteFinder implements TestUnitFinder {
     if (testee.hasSome()) {
       final Configuration updatedConfig = createCopyOfConfig(configuration);
       updatedConfig.testUnitFinders().remove(this);
-      final MutationConfig mutationConfig = new MutationConfig(
-          Mutator.RETURN_VALS);
+
       final Description d = new Description("mutation test", clazz.getClazz(),
           null);
       return Collections.<TestUnit> singleton(new MutationSuiteTestUnit(clazz
-          .getClazz(), testee.value(), mutationConfig, updatedConfig, d,
-          this.THRESHOLD));
+          .getClazz(), testee.value(), this.mutationConfig, updatedConfig, d,
+          this.threshold));
     } else {
       return Collections.emptyList();
     }
@@ -94,9 +99,7 @@ public class MutationSuiteFinder implements TestUnitFinder {
   }
 
   private Configuration createCopyOfConfig(final Configuration configuration) {
-    final Configuration config = new ConfigParser(this.getClass())
-        .create(configuration);
-    return config;
+    return new ConcreteConfiguration(configuration);
   }
 
 }

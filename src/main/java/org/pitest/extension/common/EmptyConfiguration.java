@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.Container;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.TestSuiteFinder;
@@ -60,6 +61,10 @@ public class EmptyConfiguration implements Configuration {
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
     return Collections.emptySet();
+  }
+
+  public Collection<ConfigurationUpdater> configurationUpdaters() {
+    return Collections.emptyList();
   }
 
 }

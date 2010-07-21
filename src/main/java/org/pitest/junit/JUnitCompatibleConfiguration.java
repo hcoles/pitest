@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.extension.Configuration;
+import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestSuiteFinder;
@@ -34,6 +35,7 @@ import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiation
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
+import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -77,7 +79,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
     // must be last in list
     // tus.add(MutationTestUnitFinder.instance());
-    //tus.add(new MutationSuiteFinder());
+    // tus.add(new MutationSuiteFinder());
 
     return tus;
   }
@@ -97,6 +99,11 @@ public class JUnitCompatibleConfiguration implements Configuration {
         new ParameterizedInstantiationStrategy(),
         new NamedTestSingleStringConstructorInstantiationStrategy(),
         new NoArgsConstructorInstantiationStrategy());
+  }
+
+  public Collection<ConfigurationUpdater> configurationUpdaters() {
+    return Collections
+        .<ConfigurationUpdater> singletonList(new MutationSuiteConfigUpdater());
   }
 
 }

@@ -20,10 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pitest.extension.Configuration;
+import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
+import org.pitest.internal.TestClass;
 
 /**
  * @author henry
@@ -31,22 +33,25 @@ import org.pitest.extension.TestUnitProcessor;
  */
 public final class ConcreteConfiguration implements Configuration {
 
-  private final boolean                     allowConfigurationChange;
-  private final List<InstantiationStrategy> instantiationStrategy;
-  private final List<TestUnitProcessor>     testProcessors   = new ArrayList<TestUnitProcessor>();
-  private final List<TestUnitFinder>        testUnitFinders  = new ArrayList<TestUnitFinder>();
-  private final List<TestSuiteFinder>       testSuiteFinders = new LinkedList<TestSuiteFinder>();
+  private final boolean                          allowConfigurationChange;
+  private final List<InstantiationStrategy>      instantiationStrategy = new ArrayList<InstantiationStrategy>();
+  private final List<TestUnitProcessor>          testProcessors        = new ArrayList<TestUnitProcessor>();
+  private final List<TestUnitFinder>             testUnitFinders       = new ArrayList<TestUnitFinder>();
+  private final List<TestSuiteFinder>            testSuiteFinders      = new LinkedList<TestSuiteFinder>();
+  private final Collection<ConfigurationUpdater> configurationUpdaters = new ArrayList<ConfigurationUpdater>();
 
-  public ConcreteConfiguration(final boolean allowConfigurationChange,
-      final List<InstantiationStrategy> instantiationStrategy,
-      final Collection<TestUnitProcessor> testVisitors,
-      final Collection<TestUnitFinder> testUnitFinders,
-      final Collection<TestSuiteFinder> testSuiteFinders) {
+  public ConcreteConfiguration(final boolean allowConfigurationChange) {
     this.allowConfigurationChange = allowConfigurationChange;
-    this.testUnitFinders.addAll(testUnitFinders);
-    this.instantiationStrategy = instantiationStrategy;
-    this.testProcessors.addAll(testVisitors);
-    this.testSuiteFinders.addAll(testSuiteFinders);
+  }
+
+  public ConcreteConfiguration(final Configuration configuration) {
+    this(configuration.allowConfigurationChange());
+
+    this.testUnitFinders.addAll(configuration.testUnitFinders());
+    this.instantiationStrategy.addAll(configuration.instantiationStrategies());
+    this.testProcessors.addAll(configuration.testUnitProcessors());
+    this.testSuiteFinders.addAll(configuration.testSuiteFinders());
+    this.configurationUpdaters.addAll(configuration.configurationUpdaters());
   }
 
   public List<TestUnitFinder> testUnitFinders() {
@@ -67,6 +72,23 @@ public final class ConcreteConfiguration implements Configuration {
 
   public List<InstantiationStrategy> instantiationStrategies() {
     return this.instantiationStrategy;
+  }
+
+  public Collection<ConfigurationUpdater> configurationUpdaters() {
+    return this.configurationUpdaters;
+  }
+
+  public static Configuration updateConfig(final Configuration startConfig,
+      final TestClass tc) {
+    if (!startConfig.allowConfigurationChange()) {
+      return startConfig;
+    }
+    Configuration newConfig = startConfig;
+    for (final ConfigurationUpdater each : startConfig.configurationUpdaters()) {
+      newConfig = each.updateConfiguration(tc.getClazz(), newConfig);
+    }
+
+    return newConfig;
   }
 
 }

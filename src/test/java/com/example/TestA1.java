@@ -17,10 +17,7 @@ package com.example;
 import junit.framework.TestCase;
 
 import org.junit.Ignore;
-import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
-import org.pitest.mutationtest.Mutator;
-import org.pitest.mutationtest.MutationConfig;
 
 @TestClass(TestA1.Testee.class)
 public class TestA1 extends TestCase {
@@ -37,11 +34,6 @@ public class TestA1 extends TestCase {
     public static int returnThree() {
       return 3;
     }
-  }
-
-  @MutationTest(mutateClass = Testee.class)
-  public static MutationConfig config() {
-    return new MutationConfig(Mutator.RETURN_VALS);
   }
 
   public void test1() {

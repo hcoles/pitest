@@ -17,6 +17,7 @@ package org.pitest.junit;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.pitest.ConcreteConfiguration;
 import org.pitest.Pitest;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
@@ -42,24 +43,29 @@ public class PITJUnitRunner extends Runner {
 
     this.description = Description.createSuiteDescription(clazz);
 
-    findAndDescribeTestUnits(new TestClass(clazz), this.description);
+    findAndDescribeTestUnits(new TestClass(clazz), this.description,
+        this.config);
   }
 
   private void findAndDescribeTestUnits(final TestClass root,
-      final Description description) {
+      final Description description, final Configuration startConfig) {
 
-    for (final TestUnit tu : root.getTestUnitsWithinClass(this.config)) {
+    for (final TestUnit tu : root.getTestUnitsWithinClass(startConfig)) {
       final Description d = Description.createTestDescription(tu.description()
           .getTestClass(), tu.description().getName());
       description.addChild(d);
+
     }
 
-    for (final TestClass tc : root.getChildren(this.config)) {
+    final Configuration updatedConfig = ConcreteConfiguration.updateConfig(
+        startConfig, root);
+
+    for (final TestClass tc : root.getChildren(updatedConfig)) {
       final Description childDesc = Description.createSuiteDescription(tc
           .getClazz());
       description.addChild(childDesc);
 
-      findAndDescribeTestUnits(tc, childDesc);
+      findAndDescribeTestUnits(tc, childDesc, updatedConfig);
 
     }
 

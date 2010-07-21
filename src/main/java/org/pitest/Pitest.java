@@ -29,7 +29,6 @@ import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.Common;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.internal.ConfigParser;
 import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 
@@ -75,8 +74,7 @@ public class Pitest {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
-      final Configuration classConfig = new ConfigParser(c).create(startConfig);
-      testUnits.addAll(new TestClass(c).getTestUnits(classConfig));
+      testUnits.addAll(new TestClass(c).getTestUnits(startConfig));
     }
     return testUnits;
   }

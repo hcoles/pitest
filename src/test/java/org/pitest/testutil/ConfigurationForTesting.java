@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.pitest.TestMethod;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestSuiteFinder;
@@ -85,6 +86,10 @@ public class ConfigurationForTesting implements Configuration {
   public List<InstantiationStrategy> instantiationStrategies() {
     return Arrays
         .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+  }
+
+  public Collection<ConfigurationUpdater> configurationUpdaters() {
+    return Collections.emptyList();
   }
 
 }

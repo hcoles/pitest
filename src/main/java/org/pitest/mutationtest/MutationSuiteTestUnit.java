@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassLoaderRepository;
+import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
@@ -29,7 +30,6 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.internal.ClassPath;
-import org.pitest.internal.ConfigParser;
 import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
 import org.pitest.mutationtest.loopbreak.LoopBreakTestUnitProcessor;
 import org.pitest.testunit.AbstractTestUnit;
@@ -175,6 +175,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
       final JumbleContainer c = new JumbleContainer(classPath, mutatedClass);
 
+      // why use empty config here? why not the updated one?
       final Pitest pit = new Pitest(c, new EmptyConfiguration());
 
       pit.addListener(listener);
@@ -198,9 +199,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   }
 
   private Configuration createCopyOfConfig(final Configuration configuration) {
-    final Configuration config = new ConfigParser(this.getClass())
-        .create(configuration);
-    return config;
+    return new ConcreteConfiguration(configuration);
   }
 
 }

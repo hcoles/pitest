@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
@@ -40,12 +41,16 @@ public final class TestClass implements Serializable {
     this.clazz = clazz;
   }
 
-  public Collection<TestUnit> getTestUnitsWithinClass(final Configuration config) {
+  public Collection<TestUnit> getTestUnitsWithinClass(
+      final Configuration startConfig) {
+
+    final Configuration classConfig = ConcreteConfiguration.updateConfig(
+        startConfig, this);
 
     final F<TestUnit, TestUnit> applyProcessors = new F<TestUnit, TestUnit>() {
       public TestUnit apply(final TestUnit tu) {
         TestUnit alteredTestUnit = tu;
-        for (final TestUnitProcessor tup : config.testUnitProcessors()) {
+        for (final TestUnitProcessor tup : classConfig.testUnitProcessors()) {
           alteredTestUnit = tup.apply(alteredTestUnit);
         }
 
@@ -54,9 +59,9 @@ public final class TestClass implements Serializable {
     };
 
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
-    for (final TestUnitFinder each : config.testUnitFinders()) {
+    for (final TestUnitFinder each : classConfig.testUnitFinders()) {
       if (each.canHandle(!units.isEmpty())) {
-        units.addAll(each.findTestUnits(TestClass.this, config));
+        units.addAll(each.findTestUnits(TestClass.this, classConfig));
       }
     }
 
@@ -67,29 +72,35 @@ public final class TestClass implements Serializable {
     return this.clazz;
   }
 
-  public Collection<TestClass> getChildren(final Configuration config) {
+  public Collection<TestClass> getChildren(final Configuration startConfig) {
+
     final List<TestClass> children = new ArrayList<TestClass>();
-    for (final TestSuiteFinder i : config.testSuiteFinders()) {
+    for (final TestSuiteFinder i : startConfig.testSuiteFinders()) {
       children.addAll(i.apply(this));
     }
     return children;
   }
 
   private void findTestUnits(final List<TestUnit> tus,
-      final TestClass suiteClass, final Configuration config) {
+      final TestClass suiteClass, final Configuration classConfig) {
 
-    final Collection<TestClass> tcs = suiteClass.getChildren(config);
+    final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
     for (final TestClass tc : tcs) {
-      findTestUnits(tus, tc, config);
+      findTestUnits(tus, tc, ConcreteConfiguration
+          .updateConfig(classConfig, tc));
     }
-    tus.addAll(suiteClass.getTestUnitsWithinClass(config));
+    tus.addAll(suiteClass.getTestUnitsWithinClass(classConfig));
   }
 
-  public Collection<TestUnit> getTestUnits(final Configuration config) {
+  public Collection<TestUnit> getTestUnits(final Configuration startConfig) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-    findTestUnits(tus, this, config);
+
+    final Configuration classConfig = ConcreteConfiguration.updateConfig(
+        startConfig, this);
+
+    findTestUnits(tus, this, classConfig);
     List<TestUnit> modifiedTus = tus;
-    for (final TestUnitFinder each : config.testUnitFinders()) {
+    for (final TestUnitFinder each : classConfig.testUnitFinders()) {
       modifiedTus = each.processChildUnits(modifiedTus, this);
     }
 
