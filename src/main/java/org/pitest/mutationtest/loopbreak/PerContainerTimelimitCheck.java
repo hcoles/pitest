@@ -20,7 +20,7 @@ public abstract class PerContainerTimelimitCheck {
 
   // allthough this is static, classloader
   // containment means that it is actual a per
-  // test case value
+  // test case value as there is a classloader per test
   private static long maxTime;
 
   public static void breakIfTimelimitExceeded() {
