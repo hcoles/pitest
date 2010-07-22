@@ -26,7 +26,6 @@ import org.pitest.functional.Option;
 public abstract class AbstractTestUnit implements TestUnit {
 
   private final Description description;
-  // private final Configuration configuration;
   private Option<TestUnit>  dependsOn;
 
   public AbstractTestUnit(final Description description) {

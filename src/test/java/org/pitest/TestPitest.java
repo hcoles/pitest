@@ -116,7 +116,7 @@ public class TestPitest {
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
-  public static class UnexpectedException {
+  public static class UnexpectedExceptionThrown {
     @TestAnnotationForTesting
     public void willFailWithError() throws Exception {
       throw new FileNotFoundException();
@@ -125,11 +125,11 @@ public class TestPitest {
 
   @Test
   public void testUnexpectedExceptionRecordedAsErrorWhenNoExpectationSet() {
-    this.testee.run(UnexpectedException.class);
+    this.testee.run(UnexpectedExceptionThrown.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
-  public static class WrongException {
+  public static class WrongExceptionThrown {
     @TestAnnotationForTesting(expected = NullPointerException.class)
     public void willFailWithError() throws Exception {
       throw new FileNotFoundException();
@@ -138,11 +138,11 @@ public class TestPitest {
 
   @Test
   public void testUnexpectedExceptionRecordedAsErrorWhenDifferentExpectationSet() {
-    this.testee.run(WrongException.class);
+    this.testee.run(WrongExceptionThrown.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
-  public static class SubclassOfExpectedException {
+  public static class SubclassOfExpectedExceptionThrown {
     @TestAnnotationForTesting(expected = Exception.class)
     public void shouldPass() throws Exception {
       throw new FileNotFoundException();
@@ -151,7 +151,7 @@ public class TestPitest {
 
   @Test
   public void testSubclassesOfExpectedExceptionRecordedAsSuccess() {
-    this.testee.run(SubclassOfExpectedException.class);
+    this.testee.run(SubclassOfExpectedExceptionThrown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 

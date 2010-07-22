@@ -22,25 +22,27 @@ import java.io.Serializable;
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.functional.Option;
 
-public class RunnerAdapterTestUnit extends AbstractTestUnit implements
+public class RunnerAdapterTestUnit implements TestUnit,
     Serializable {
 
   private static final long                      serialVersionUID = 1L;
 
+  private final Description description;
+  private Option<TestUnit>  dependsOn;
   private transient org.junit.runner.Description junitDescription;
   private final RunnerAdapter                    runner;
 
   public RunnerAdapterTestUnit(final RunnerAdapter runner,
       final org.junit.runner.Description junitDescription,
       final Description description, final TestUnit parent) {
-    super(description, parent);
+    this.description = description;
+    this.dependsOn = Option.someOrNone(parent);
     this.runner = runner;
     this.junitDescription = junitDescription;
   }
 
-  @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     this.runner.execute(loader, this, rc);
   }
@@ -69,6 +71,19 @@ public class RunnerAdapterTestUnit extends AbstractTestUnit implements
 
   RunnerAdapter getAdapter() {
     return this.runner;
+  }
+
+  public Option<TestUnit> dependsOn() {
+    return this.dependsOn;
+  }
+
+  public Description description() {
+    return this.description;
+  }
+
+  public void setDependency(TestUnit dependsOn) {
+    this.dependsOn = Option.someOrNone(dependsOn);
+    
   }
 
 }
