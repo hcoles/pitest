@@ -41,9 +41,7 @@ public class LoopBreakDecorator extends TestUnitDecorator {
     final Predicate<Method> p = new Predicate<Method>() {
 
       public Boolean apply(final Method a) {
-        // TODO Auto-generated method stub
         return a.getName().equals("setMaxEndTime");
-
       }
 
     };

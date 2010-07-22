@@ -62,25 +62,48 @@ public class MutationSuiteFinder implements TestUnitFinder {
     final org.pitest.annotations.TestClass annotation = test
         .getAnnotation(org.pitest.annotations.TestClass.class);
     if (annotation == null) {
-      final String name = test.getName();
-      final int testLength = "Test".length();
-      if (name.endsWith("Test")) {
-
-        Option<Class<?>> guessed = tryName(name.substring(0, name.length()
-            - testLength));
-        if (guessed.hasSome()) {
-          return guessed;
-        }
-
-        guessed = tryName(name.substring(testLength, name.length()));
-        return guessed;
-
-      }
+      return determineTesteeFromName(test);
     } else {
       return Option.<Class<?>> someOrNone(annotation.value());
     }
-    return Option.none();
+  }
 
+  private Option<Class<?>> determineTesteeFromName(final Class<?> test) {
+    final String name = test.getName();
+    final int testLength = "Test".length();
+    if (name.endsWith("Test")) {
+      final Option<Class<?>> guessed = tryName(name.substring(0, name.length()
+          - testLength));
+      if (guessed.hasSome()) {
+        return guessed;
+      }
+    }
+
+    final String className = getClassNameWithoutPackage(test);
+    if (className.startsWith("Test")) {
+      final String nameGuess = className.substring(testLength, className
+          .length());
+      final Option<Class<?>> guessed = tryName(test.getPackage().getName()
+          + "." + nameGuess);
+      if (guessed.hasNone()) {
+        return tryName(test.getEnclosingClass().getName() + "$" + nameGuess);
+      } else {
+        return guessed;
+      }
+    }
+
+    return Option.none();
+  }
+
+  private String getClassNameWithoutPackage(final Class<?> clazz) {
+    if (clazz.getEnclosingClass() == null) {
+      return clazz.getName().substring(
+          clazz.getPackage().getName().length() + 1, clazz.getName().length());
+    } else {
+      return clazz.getName().substring(
+          clazz.getEnclosingClass().getName().length() + 1,
+          clazz.getName().length());
+    }
   }
 
   private Option<Class<?>> tryName(final String name) {

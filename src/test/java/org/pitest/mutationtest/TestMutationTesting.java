@@ -158,23 +158,60 @@ public class TestMutationTesting {
 
   @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class OneMutationTest {
-    
+
   }
-  
+
   @Test
   public void testGuessesCorrectTesteeNameWhenTestNameEndsWithTest() {
     this.pit.run(OneMutationTest.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
-  
+
   @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
-  public static class TestOneMutation {
-    
+  public class TestOneMutation {
+
   }
-  
+
   @Test
-  public void testGuessesCorrectTesteeNameWhenTestNameStartsWithTest() {
+  public void testGuessesCorrectTesteeNameWhenTestNameStartsWithTestForInnerClass() {
     this.pit.run(TestOneMutation.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
+
+  @MutationSuite(threshold = 100, mutators = Mutator.SWITCHES)
+  public class TestMutable {
+
+  }
+
+  @Test
+  public void testGuessesCorrectTesteeNameWhenTestNameStartsWithTest() {
+    this.pit.run(TestMutable.class);
+    verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
+  }
+
+  public static class InfiniteLoop {
+    public static void loop() {
+      int i = 1;
+      do {
+        i++;
+        System.out.println("loop");
+      } while (i == 1);
+    }
+  }
+
+  @TestClass(InfiniteLoop.class)
+  @MutationSuite(threshold = 100, mutators = Mutator.INCREMENTS)
+  public static class InfiniteLoopTest {
+    @TestAnnotationForTesting()
+    public void pass() {
+      InfiniteLoop.loop();
+    }
+  }
+
+  @Test(timeout = 2000)
+  public void testInfiniteLoopsCausedByMutationsAreBroken() {
+    this.pit.run(InfiniteLoopTest.class);
+    // pass if we get here without a timeout
+  }
+
 }

@@ -16,7 +16,7 @@ package org.pitest.mutationtest.loopbreak;
 
 import org.pitest.TimeoutException;
 
-public class PerContainerTimelimitCheck {
+public abstract class PerContainerTimelimitCheck {
 
   // allthough this is static, classloader
   // containment means that it is actual a per

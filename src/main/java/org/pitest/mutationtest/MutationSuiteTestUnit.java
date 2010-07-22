@@ -63,7 +63,8 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   private List<TestUnit> findTestUnits(final long timeOut) {
     final Configuration updatedConfig = createCopyOfConfig(this.pitConfig);
 
-    if (timeOut > 0) {
+    if (timeOut >= 0) {
+      System.out.println("Adding loop break");
       updatedConfig.testUnitProcessors().add(
           new LoopBreakTestUnitProcessor(this.getTimeOut(timeOut)));
     }
@@ -100,7 +101,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
         // m.setMutationPoint(0);
         final long normalExecution = timeUnmutatedTests(m
-            .jumbler(this.classToMutate.getName()), findTestUnits(0), loader);
+            .jumbler(this.classToMutate.getName()), findTestUnits(-1), loader);
 
         final List<TestUnit> tests = findTestUnits(normalExecution);
         final List<AssertionError> failures = new ArrayList<AssertionError>();
@@ -163,7 +164,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
       throw new RuntimeException(
           "Cannot mutation test as tests do not pass without mutation");
     }
-    return t0 - System.currentTimeMillis();
+    return System.currentTimeMillis() - t0;
   }
 
   private boolean doTestsDetectMutation(final ClassLoader loader,
