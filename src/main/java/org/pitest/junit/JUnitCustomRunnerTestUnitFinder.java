@@ -16,6 +16,7 @@ package org.pitest.junit;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -23,6 +24,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.internal.TestClass;
+import org.pitest.util.Dependency;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -37,7 +39,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         && !runWith.value().equals(Suite.class)) {
 
       final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
-      return adapter.getTestUnits();
+      final List<TestUnit> units = adapter.getTestUnits();
+      Dependency.dependOnFirst(units);
+      return units;
 
     }
 

@@ -103,7 +103,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   public Collection<ConfigurationUpdater> configurationUpdaters() {
     return Collections
-        .<ConfigurationUpdater> singletonList(new MutationSuiteConfigUpdater());
+        .<ConfigurationUpdater> singletonList(MutationSuiteConfigUpdater
+            .instance());
   }
 
 }

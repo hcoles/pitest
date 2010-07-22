@@ -6,7 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TestAnnotationForTesting {
 
-  public abstract class NONE extends Throwable {
+  public class NONE extends Throwable {
+    private NONE() {
+    }
+
     private static final long serialVersionUID = 1L;
   }
 

@@ -22,6 +22,7 @@ import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class ConfigurationForTesting implements Configuration {
 
@@ -89,7 +90,9 @@ public class ConfigurationForTesting implements Configuration {
   }
 
   public Collection<ConfigurationUpdater> configurationUpdaters() {
-    return Collections.emptyList();
+    return Collections
+        .<ConfigurationUpdater> singletonList(MutationSuiteConfigUpdater
+            .instance());
   }
 
 }

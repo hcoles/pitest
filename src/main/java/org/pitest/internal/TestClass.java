@@ -82,25 +82,24 @@ public final class TestClass implements Serializable {
   }
 
   private void findTestUnits(final List<TestUnit> tus,
-      final TestClass suiteClass, final Configuration classConfig) {
+      final TestClass suiteClass, final Configuration startConfig) {
+
+    final Configuration classConfig = ConcreteConfiguration.updateConfig(
+        startConfig, suiteClass);
 
     final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc, ConcreteConfiguration
           .updateConfig(classConfig, tc));
     }
-    tus.addAll(suiteClass.getTestUnitsWithinClass(classConfig));
+    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig));
   }
 
   public Collection<TestUnit> getTestUnits(final Configuration startConfig) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
 
-    final Configuration classConfig = ConcreteConfiguration.updateConfig(
-        startConfig, this);
-
-    findTestUnits(tus, this, classConfig);
+    findTestUnits(tus, this, startConfig);
     return tus;
-
   }
 
   @Override

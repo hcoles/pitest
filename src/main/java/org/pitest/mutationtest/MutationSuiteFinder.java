@@ -45,6 +45,8 @@ public class MutationSuiteFinder implements TestUnitFinder {
     if (testee.hasSome()) {
       final Configuration updatedConfig = createCopyOfConfig(configuration);
       updatedConfig.testUnitFinders().remove(this);
+      updatedConfig.configurationUpdaters().remove(
+          MutationSuiteConfigUpdater.instance());
 
       final Description d = new Description("mutation test", clazz.getClazz(),
           null);

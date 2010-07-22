@@ -43,6 +43,7 @@ import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 import org.pitest.teststeps.CallStep;
 import org.pitest.testunit.SteppedTestUnit;
+import org.pitest.util.Dependency;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
@@ -92,7 +93,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         }
       }
 
-      dependOnFirst(units);
+      Dependency.dependOnFirst(units);
 
       return processChildUnits(units, testClass);
 
@@ -187,10 +188,6 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     return set.toCollection();
   }
 
-  // FIXME why can this method not be dropped from interface?
-  // If we need before after class across all test units could use a processor
-  // if this internal to this finder, do this in findTestUnits
-
   private List<TestUnit> processChildUnits(final List<TestUnit> tus,
       final TestClass testClass) {
 
@@ -208,31 +205,11 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final TestUnit last = tus.get(tus.size() - 1);
       tus.set(tus.size() - 1, new BeforeAfterDecorator(last, Collections
           .<CallStep> emptySet(), afterClasses));
-      chainDepencies(tus);
+      Dependency.chainDepencies(tus);
     }
 
     return tus;
 
-  }
-
-  private void chainDepencies(final List<TestUnit> tus) {
-    for (int i = 0; i != tus.size(); i++) {
-      if (i != 0) {
-        tus.get(i).setDependency(tus.get(i - 1));
-      }
-    }
-  }
-
-  private void dependOnFirst(final List<TestUnit> tus) {
-    if (tus.size() >= 1) {
-      final TestUnit firstUnit = tus.get(0);
-      final SideEffect1<TestUnit> e = new SideEffect1<TestUnit>() {
-        public void apply(final TestUnit a) {
-          a.setDependency(firstUnit);
-        }
-      };
-      FCollection.forEach(tus.subList(1, tus.size()), e);
-    }
   }
 
 }

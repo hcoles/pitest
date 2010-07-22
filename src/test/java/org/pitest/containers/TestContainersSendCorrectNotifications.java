@@ -117,7 +117,7 @@ public class TestContainersSendCorrectNotifications {
 
   public static class LargeSuite {
 
-    public static int SUITE_SIZE = 300;
+    public final static int SUITE_SIZE = 300;
 
     @PITSuiteMethod
     public static List<Class<?>> suite() {

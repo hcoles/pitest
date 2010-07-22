@@ -21,6 +21,16 @@ import org.pitest.extension.ConfigurationUpdater;
 
 public class MutationSuiteConfigUpdater implements ConfigurationUpdater {
 
+  private final static MutationSuiteConfigUpdater instance = new MutationSuiteConfigUpdater();
+
+  private MutationSuiteConfigUpdater() {
+
+  }
+
+  public static MutationSuiteConfigUpdater instance() {
+    return instance;
+  }
+
   public Configuration updateConfiguration(final Class<?> clazz,
       final Configuration current) {
     final MutationSuite annotation = clazz.getAnnotation(MutationSuite.class);
