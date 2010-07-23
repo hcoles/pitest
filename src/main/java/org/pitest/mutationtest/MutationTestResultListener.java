@@ -16,14 +16,10 @@ package org.pitest.mutationtest;
 
 import java.io.Serializable;
 
-import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.functional.Option;
 
 public interface MutationTestResultListener extends TestListener, Serializable {
 
   public boolean resultIndicatesSuccess();
-
-  public Option<TestResult> error();
 
 }

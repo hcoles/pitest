@@ -36,24 +36,21 @@ import org.pitest.testunit.AbstractTestUnit;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
-public class MutationSuiteTestUnit extends AbstractTestUnit {
+public class MutationTestUnit extends AbstractTestUnit {
 
-  private static final Logger  logger = Logger
-                                          .getLogger(MutationSuiteTestUnit.class
-                                              .getName());
+  private static final Logger  logger = Logger.getLogger(MutationTestUnit.class
+                                          .getName());
 
   private final Class<?>       test;
   private final Class<?>       classToMutate;
-  private final int            threshold;
+
   private final MutationConfig config;
   private final Configuration  pitConfig;
 
-  public MutationSuiteTestUnit(final Class<?> test,
-      final Class<?> classToMutate, final MutationConfig mutationConfig,
-      final Configuration pitConfig, final Description description,
-      final int threshold) {
+  public MutationTestUnit(final Class<?> test, final Class<?> classToMutate,
+      final MutationConfig mutationConfig, final Configuration pitConfig,
+      final Description description) {
     super(description, null);
-    this.threshold = threshold;
     this.classToMutate = classToMutate;
     this.test = test;
     this.config = mutationConfig;
@@ -66,7 +63,7 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
     if (timeOut >= 0) {
       System.out.println("Adding loop break");
       updatedConfig.testUnitProcessors().add(
-          new LoopBreakTestUnitProcessor(this.getTimeOut(timeOut)));
+          new LoopBreakTestUnitProcessor(this.getMaxDuration(timeOut)));
     }
     return Pitest.findTestUnitsForAllSuppliedClasses(updatedConfig, this.test);
   }
@@ -82,10 +79,8 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
   }
 
-  private long getTimeOut(final long testDuration) {
-
-    return System.currentTimeMillis() + (testDuration * 2) + 200;
-
+  private long getMaxDuration(final long testDuration) {
+    return (testDuration * 2) + 50;
   }
 
   private void runTests(final ResultCollector rc, final ClassLoader loader) {
@@ -140,11 +135,11 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
   private void reportResults(final int mutationCount,
       final List<AssertionError> failures, final ResultCollector rc) {
     final float percentageDetected = 100f - ((failures.size() / (float) mutationCount) * 100f);
-    if (percentageDetected < this.threshold) {
+    if (percentageDetected < this.config.getThreshold()) {
 
       final AssertionError ae = new AssertionError("Tests detected "
           + percentageDetected + "% of " + mutationCount
-          + " mutations. Threshold was " + this.threshold);
+          + " mutations. Threshold was " + this.config.getThreshold());
       AssertionError last = ae;
       for (final AssertionError each : failures) {
         last.initCause(each);
@@ -201,6 +196,10 @@ public class MutationSuiteTestUnit extends AbstractTestUnit {
 
   private Configuration createCopyOfConfig(final Configuration configuration) {
     return new ConcreteConfiguration(configuration);
+  }
+
+  public MutationConfig getMutationConfig() {
+    return this.config;
   }
 
 }

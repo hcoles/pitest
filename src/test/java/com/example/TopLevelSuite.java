@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
 import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.DistributedContainer;
@@ -33,11 +34,11 @@ import org.pitest.junit.PITJUnitRunner;
 import org.pitest.mutationtest.Mutator;
 
 @RunWith(PITJUnitRunner.class)
-@MutationSuite(threshold = 100, mutators = { Mutator.INCREMENTS,
+@MutationSuite(threshold = 50, mutators = { Mutator.INCREMENTS,
     Mutator.RETURN_VALS })
 public class TopLevelSuite {
 
-  // @PITContainer
+  @PITContainer
   public static Container isolated() {
     final IsolationStrategy i = new AllwaysIsolateStrategy();
     final Transformation t = new IdentityTransformation();
@@ -52,8 +53,7 @@ public class TopLevelSuite {
 
   @PITSuiteMethod
   public static Collection<Class<?>> children() {
-    return Arrays.<Class<?>> asList(JUnit4SuiteA.class);// ,
-    // JUnit4SuiteB.class);
+    return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
   }
 
 }

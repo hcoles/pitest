@@ -26,15 +26,14 @@ import org.pitest.internal.IsolationUtils;
 
 public class LoopBreakDecorator extends TestUnitDecorator {
 
-  private final long maxEndTime;
+  private final long maxDuration;
 
-  public LoopBreakDecorator(final TestUnit child, final long maxEndTime) {
+  public LoopBreakDecorator(final TestUnit child, final long maxDuration) {
     super(child);
-    this.maxEndTime = maxEndTime;
+    this.maxDuration = maxDuration;
   }
 
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-    // StaticTimerThatLimitsUsToASingleThread.setMaxEndTime(maxEndTime);
 
     final Class<?> c = IsolationUtils.convertForClassLoader(loader,
         PerContainerTimelimitCheck.class);
@@ -46,7 +45,10 @@ public class LoopBreakDecorator extends TestUnitDecorator {
 
     };
     final Method m = org.pitest.reflection.Reflection.publicMethod(c, p);
-    final Object[] params = { this.maxEndTime };
+
+    final long maxEndTime = calculateMaxEndTime();
+
+    final Object[] params = { maxEndTime };
     try {
       m.invoke(null, params);
     } catch (final Exception e) {
@@ -55,6 +57,10 @@ public class LoopBreakDecorator extends TestUnitDecorator {
 
     this.child().execute(loader, rc);
 
+  }
+
+  private long calculateMaxEndTime() {
+    return System.currentTimeMillis() + this.maxDuration;
   }
 
 }

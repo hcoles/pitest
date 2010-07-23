@@ -19,19 +19,18 @@ import java.util.Collections;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
+import org.pitest.annotations.MutationSuite;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
 import org.pitest.internal.TestClass;
 
-public class MutationSuiteFinder implements TestUnitFinder {
+public class MutationTestFinder implements TestUnitFinder {
 
-  private final int            threshold;
   private final MutationConfig mutationConfig;
 
-  public MutationSuiteFinder(final int threshold, final MutationConfig config) {
-    this.threshold = threshold;
+  public MutationTestFinder(final MutationConfig config) {
     this.mutationConfig = config;
   }
 
@@ -50,11 +49,24 @@ public class MutationSuiteFinder implements TestUnitFinder {
 
       final Description d = new Description("mutation test", clazz.getClazz(),
           null);
-      return Collections.<TestUnit> singleton(new MutationSuiteTestUnit(clazz
-          .getClazz(), testee.value(), this.mutationConfig, updatedConfig, d,
-          this.threshold));
+
+      final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
+
+      return Collections
+          .<TestUnit> singleton(new MutationTestUnit(clazz.getClazz(), testee
+              .value(), updatedMutationConfig, updatedConfig, d));
     } else {
       return Collections.emptyList();
+    }
+  }
+
+  private MutationConfig determineConfigToUse(final TestClass clazz) {
+    final MutationSuite annotation = clazz.getClazz().getAnnotation(
+        MutationSuite.class);
+    if (annotation != null) {
+      return new MutationConfig(annotation.threshold(), annotation.mutators());
+    } else {
+      return this.mutationConfig;
     }
   }
 
@@ -86,7 +98,9 @@ public class MutationSuiteFinder implements TestUnitFinder {
       final Option<Class<?>> guessed = tryName(test.getPackage().getName()
           + "." + nameGuess);
       if (guessed.hasNone()) {
-        return tryName(test.getEnclosingClass().getName() + "$" + nameGuess);
+        if (test.getEnclosingClass() != null) {
+          return tryName(test.getEnclosingClass().getName() + "$" + nameGuess);
+        }
       } else {
         return guessed;
       }

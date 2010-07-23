@@ -17,7 +17,6 @@ package org.pitest.mutationtest;
 import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.functional.Option;
 
 public class CheckTestHasFailedResultListener implements TestListener,
     MutationTestResultListener {
@@ -25,20 +24,17 @@ public class CheckTestHasFailedResultListener implements TestListener,
   private static final long serialVersionUID     = 1L;
 
   private boolean           atLeastOneTestFailed = false;
-  private TestResult        error;
 
   public boolean resultIndicatesSuccess() {
     return this.atLeastOneTestFailed;
   }
 
   public void onTestError(final TestResult tr) {
-    this.error = tr;
-
+    this.atLeastOneTestFailed = true;
   }
 
   public void onTestFailure(final TestResult tr) {
     this.atLeastOneTestFailed = true;
-
   }
 
   public void onTestSkipped(final TestResult tr) {
@@ -54,10 +50,6 @@ public class CheckTestHasFailedResultListener implements TestListener,
   public void onTestSuccess(final TestResult tr) {
     // TODO Auto-generated method stub
 
-  }
-
-  public Option<TestResult> error() {
-    return Option.someOrNone(this.error);
   }
 
 }

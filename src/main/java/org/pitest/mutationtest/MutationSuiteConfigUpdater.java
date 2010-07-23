@@ -43,9 +43,9 @@ public class MutationSuiteConfigUpdater implements ConfigurationUpdater {
 
   private Configuration update(final MutationSuite annotation,
       final Configuration current) {
-    final MutationConfig config = new MutationConfig(annotation.mutators());
-    final MutationSuiteFinder msf = new MutationSuiteFinder(annotation
-        .threshold(), config);
+    final MutationConfig config = new MutationConfig(annotation.threshold(),
+        annotation.mutators());
+    final MutationTestFinder msf = new MutationTestFinder(config);
     final Configuration copy = new ConcreteConfiguration(current);
     copy.testUnitFinders().add(msf);
     return copy;

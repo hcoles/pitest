@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class MutationConfigTest {
 
   @Test
   public void testNoMutationsSetByDefault() {
-    this.testee = new MutationConfig();
+    this.testee = new MutationConfig(100);
     for (final Mutator each : Mutator.values()) {
       assertFalse(this.testee.has(each));
     }
@@ -23,7 +24,7 @@ public class MutationConfigTest {
 
   @Test
   public void testMutationsPassedToConstructorAreStored() {
-    this.testee = new MutationConfig(Mutator.CPOOL, Mutator.INCREMENTS);
+    this.testee = new MutationConfig(100, Mutator.CPOOL, Mutator.INCREMENTS);
     assertTrue(this.testee.has(Mutator.CPOOL));
     assertTrue(this.testee.has(Mutator.INCREMENTS));
   }
@@ -31,7 +32,7 @@ public class MutationConfigTest {
   @Test
   public void testNoMutationsConfiguredInReturnedMutatorIfNonePassedToTheConstructor()
       throws Exception {
-    this.testee = new MutationConfig();
+    this.testee = new MutationConfig(100);
     final Mutater actual = this.testee.createMutator();
     class Canary {
       @SuppressWarnings("unused")
@@ -49,9 +50,14 @@ public class MutationConfigTest {
 
   @Test
   public void testCreateMutatorReturnsAMutatorWithNoMutationSet() {
-    this.testee = new MutationConfig(Mutator.CPOOL, Mutator.SWITCHES);
+    this.testee = new MutationConfig(100, Mutator.CPOOL, Mutator.SWITCHES);
     final Mutater actual = this.testee.createMutator();
     assertNull(actual.getModification());
+  }
+
+  @Test
+  public void testEqualsContractKept() {
+    EqualsVerifier.forClass(MutationConfig.class).verify();
   }
 
 }

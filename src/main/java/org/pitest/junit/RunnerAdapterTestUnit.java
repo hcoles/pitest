@@ -24,13 +24,12 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 
-public class RunnerAdapterTestUnit implements TestUnit,
-    Serializable {
+public class RunnerAdapterTestUnit implements TestUnit, Serializable {
 
   private static final long                      serialVersionUID = 1L;
 
-  private final Description description;
-  private Option<TestUnit>  dependsOn;
+  private final Description                      description;
+  private Option<TestUnit>                       dependsOn;
   private transient org.junit.runner.Description junitDescription;
   private final RunnerAdapter                    runner;
 
@@ -81,9 +80,9 @@ public class RunnerAdapterTestUnit implements TestUnit,
     return this.description;
   }
 
-  public void setDependency(TestUnit dependsOn) {
+  public void setDependency(final TestUnit dependsOn) {
     this.dependsOn = Option.someOrNone(dependsOn);
-    
+
   }
 
 }
