@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.MutationTest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.TestClass;
@@ -46,7 +46,7 @@ public class MutationTestFinderTest {
     }
   }
 
-  @MutationSuite(threshold = 66, mutators = Mutator.INCREMENTS)
+  @MutationTest(threshold = 66, mutators = Mutator.INCREMENTS)
   public static class TestOne {
     @Test
     public void test() {

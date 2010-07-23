@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.TestListener;
@@ -72,7 +72,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(OneMutation.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
@@ -87,7 +87,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(ThreeMutations.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class ThreeMutationsTwoTests {
     @TestAnnotationForTesting
     public void testReturnOne() {
@@ -109,7 +109,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(ThreeMutations.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class FailingTest {
     @TestAnnotationForTesting
     public void fail() {
@@ -125,7 +125,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(NoMutations.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class NoMutationsTest {
     @TestAnnotationForTesting
     public void pass() {
@@ -141,7 +141,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(ThreeMutations.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class NoTests {
     @TestAnnotationForTesting
     @IgnoreAnnotationForTesting
@@ -156,7 +156,7 @@ public class TestMutationTesting {
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class OneMutationTest {
 
   }
@@ -167,7 +167,7 @@ public class TestMutationTesting {
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
-  @MutationSuite(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public class TestOneMutation {
 
   }
@@ -178,7 +178,7 @@ public class TestMutationTesting {
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
-  @MutationSuite(threshold = 100, mutators = Mutator.SWITCHES)
+  @MutationTest(threshold = 100, mutators = Mutator.SWITCHES)
   public class TestMutable {
 
   }
@@ -200,7 +200,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(InfiniteLoop.class)
-  @MutationSuite(threshold = 100, mutators = Mutator.INCREMENTS)
+  @MutationTest(threshold = 100, mutators = Mutator.INCREMENTS)
   public static class InfiniteLoopTest {
     @TestAnnotationForTesting()
     public void pass() {

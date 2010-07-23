@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-
 package org.pitest.annotations;
 
 import java.lang.annotation.ElementType;
@@ -20,22 +19,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.pitest.mutationtest.Mutator;
+
 @Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
+@Target(value = { ElementType.TYPE })
 public @interface MutationTest {
 
-  Class<?> mutateClass();
+  Mutator[] mutators() default { Mutator.INCREMENTS, Mutator.RETURN_VALS,
+      Mutator.SWITCHES };
 
-  public class USE_PARENT extends Throwable {
-    private USE_PARENT() {
-    }
-
-    private static final long serialVersionUID = 1L;
-  }
-
-  Class<?>[] testClasses() default USE_PARENT.class;
-
-  // Mutation[] mutations() default {Mutation.INCREMENTS, Mutation.RETURN_VALS,
-  // Mutation.SWITCHES};
+  int threshold();
 
 }

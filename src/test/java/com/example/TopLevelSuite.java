@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
-import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuiteMethod;
 import org.pitest.containers.BaseThreadPoolContainer;
@@ -34,7 +34,7 @@ import org.pitest.junit.PITJUnitRunner;
 import org.pitest.mutationtest.Mutator;
 
 @RunWith(PITJUnitRunner.class)
-@MutationSuite(threshold = 50, mutators = { Mutator.INCREMENTS,
+@MutationTest(threshold = 50, mutators = { Mutator.INCREMENTS,
     Mutator.RETURN_VALS })
 public class TopLevelSuite {
 

@@ -19,7 +19,7 @@ import java.util.Collections;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
-import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.MutationTest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -61,8 +61,8 @@ public class MutationTestFinder implements TestUnitFinder {
   }
 
   private MutationConfig determineConfigToUse(final TestClass clazz) {
-    final MutationSuite annotation = clazz.getClazz().getAnnotation(
-        MutationSuite.class);
+    final MutationTest annotation = clazz.getClazz().getAnnotation(
+        MutationTest.class);
     if (annotation != null) {
       return new MutationConfig(annotation.threshold(), annotation.mutators());
     } else {

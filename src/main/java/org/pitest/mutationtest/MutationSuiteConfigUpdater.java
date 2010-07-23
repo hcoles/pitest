@@ -15,7 +15,7 @@
 package org.pitest.mutationtest;
 
 import org.pitest.ConcreteConfiguration;
-import org.pitest.annotations.MutationSuite;
+import org.pitest.annotations.MutationTest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
 
@@ -33,7 +33,7 @@ public class MutationSuiteConfigUpdater implements ConfigurationUpdater {
 
   public Configuration updateConfiguration(final Class<?> clazz,
       final Configuration current) {
-    final MutationSuite annotation = clazz.getAnnotation(MutationSuite.class);
+    final MutationTest annotation = clazz.getAnnotation(MutationTest.class);
     if (annotation != null) {
       return update(annotation, current);
     } else {
@@ -41,7 +41,7 @@ public class MutationSuiteConfigUpdater implements ConfigurationUpdater {
     }
   }
 
-  private Configuration update(final MutationSuite annotation,
+  private Configuration update(final MutationTest annotation,
       final Configuration current) {
     final MutationConfig config = new MutationConfig(annotation.threshold(),
         annotation.mutators());
