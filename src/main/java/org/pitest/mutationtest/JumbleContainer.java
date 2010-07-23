@@ -15,6 +15,9 @@
 
 package org.pitest.mutationtest;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -27,19 +30,25 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NamedClassesIsolationStrategy;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TransformingClassLoaderFactory;
+import org.pitest.mutationtest.loopbreak.PerContainerTimelimitCheck;
 
 public class JumbleContainer implements Container {
 
   private final TransformingClassLoaderFactory factory;
   private final BlockingQueue<TestResult>      feedbackQueue = new LinkedBlockingQueue<TestResult>();
+  private final long                           normalExecutionTime;
 
-  public JumbleContainer(final ClassPath classPath, final JavaClass target) {
+  public JumbleContainer(final ClassPath classPath, final JavaClass target,
+      final long normalExecutionTime) {
     this.factory = new TransformingClassLoaderFactory(classPath,
         new JumbleTransformation(target), new NamedClassesIsolationStrategy(
             target.getClassName()));
+    this.normalExecutionTime = normalExecutionTime;
   }
 
   public void setMaxThreads(final int maxThreads) {
@@ -54,6 +63,11 @@ public class JumbleContainer implements Container {
     final ClassLoader cl = this.factory.get();
     final ConcreteResultCollector rc = new ConcreteResultCollector(
         this.feedbackQueue);
+
+    if (this.normalExecutionTime > 0) {
+      resetLoopBreakTimer(cl);
+    }
+
     for (final TestUnit each : group) {
       each.execute(cl, rc);
     }
@@ -87,6 +101,34 @@ public class JumbleContainer implements Container {
   public void shutdownWhenProcessingComplete() {
     // TODO Auto-generated method stub
 
+  }
+
+  private void resetLoopBreakTimer(final ClassLoader loader) {
+    final Class<?> c = IsolationUtils.convertForClassLoader(loader,
+        PerContainerTimelimitCheck.class);
+    final Predicate<Method> p = new Predicate<Method>() {
+
+      public Boolean apply(final Method a) {
+        return a.getName().equals("setMaxEndTime");
+      }
+
+    };
+    final Method m = org.pitest.reflection.Reflection.publicMethod(c, p);
+
+    final long maxEndTime = calculateMaxEndTime(this.normalExecutionTime);
+
+    final Object[] params = { maxEndTime };
+    try {
+      m.invoke(null, params);
+    } catch (final Exception e) {
+      throw translateCheckedException(e);
+    }
+
+  }
+
+  private long calculateMaxEndTime(final long normalExecution) {
+    // TODO Auto-generated method stub
+    return System.currentTimeMillis() + (normalExecution * 2) + 50;
   }
 
 }

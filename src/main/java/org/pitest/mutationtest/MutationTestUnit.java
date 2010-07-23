@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassLoaderRepository;
-import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
@@ -31,7 +30,6 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
-import org.pitest.mutationtest.loopbreak.LoopBreakTestUnitProcessor;
 import org.pitest.testunit.AbstractTestUnit;
 
 import com.reeltwo.jumble.mutation.Mutater;
@@ -57,15 +55,8 @@ public class MutationTestUnit extends AbstractTestUnit {
     this.pitConfig = pitConfig;
   }
 
-  private List<TestUnit> findTestUnits(final long timeOut) {
-    final Configuration updatedConfig = createCopyOfConfig(this.pitConfig);
-
-    if (timeOut >= 0) {
-      System.out.println("Adding loop break");
-      updatedConfig.testUnitProcessors().add(
-          new LoopBreakTestUnitProcessor(this.getMaxDuration(timeOut)));
-    }
-    return Pitest.findTestUnitsForAllSuppliedClasses(updatedConfig, this.test);
+  private List<TestUnit> findTestUnits() {
+    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig, this.test);
   }
 
   @Override
@@ -79,10 +70,6 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   }
 
-  private long getMaxDuration(final long testDuration) {
-    return (testDuration * 2) + 50;
-  }
-
   private void runTests(final ResultCollector rc, final ClassLoader loader) {
 
     final Mutater m = this.config.createMutator();
@@ -94,20 +81,19 @@ public class MutationTestUnit extends AbstractTestUnit {
     try {
       if (mutationCount > 0) {
 
+        final List<TestUnit> tests = findTestUnits();
         // m.setMutationPoint(0);
         final long normalExecution = timeUnmutatedTests(m
-            .jumbler(this.classToMutate.getName()), findTestUnits(-1), loader);
-
-        final List<TestUnit> tests = findTestUnits(normalExecution);
+            .jumbler(this.classToMutate.getName()), tests, loader);
         final List<AssertionError> failures = new ArrayList<AssertionError>();
 
         for (int i = 0; i != mutationCount; i++) {
-
           m.setMutationPoint(i);
           final JavaClass mutatedClass = m
               .jumbler(this.classToMutate.getName());
 
-          if (!doTestsDetectMutation(loader, mutatedClass, tests)) {
+          if (!doTestsDetectMutation(loader, mutatedClass, tests,
+              normalExecution)) {
 
             final MutationDetails details = new MutationDetails(mutatedClass
                 .getClassName(), mutatedClass.getFileName(), m
@@ -155,7 +141,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private long timeUnmutatedTests(final JavaClass unmutatedClass,
       final List<TestUnit> list, final ClassLoader loader) {
     final long t0 = System.currentTimeMillis();
-    if (doTestsDetectMutation(loader, unmutatedClass, list)) {
+    if (doTestsDetectMutation(loader, unmutatedClass, list, -1)) {
       throw new RuntimeException(
           "Cannot mutation test as tests do not pass without mutation");
     }
@@ -163,13 +149,15 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private boolean doTestsDetectMutation(final ClassLoader loader,
-      final JavaClass mutatedClass, final List<TestUnit> tests) {
+      final JavaClass mutatedClass, final List<TestUnit> tests,
+      final long normalExecutionTime) {
     try {
-      final MutationTestResultListener listener = new CheckTestHasFailedResultListener();
+      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
       final ClassPath classPath = new ClassPath(
           new OtherClassLoaderClassPathRoot(loader));
 
-      final JumbleContainer c = new JumbleContainer(classPath, mutatedClass);
+      final JumbleContainer c = new JumbleContainer(classPath, mutatedClass,
+          normalExecutionTime);
 
       // why use empty config here? why not the updated one?
       final Pitest pit = new Pitest(c, new EmptyConfiguration());
@@ -192,10 +180,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     final StackTraceElement[] stackTrace = { md.stackTraceDescription() };
     ae.setStackTrace(stackTrace);
     return ae;
-  }
-
-  private Configuration createCopyOfConfig(final Configuration configuration) {
-    return new ConcreteConfiguration(configuration);
   }
 
   public MutationConfig getMutationConfig() {

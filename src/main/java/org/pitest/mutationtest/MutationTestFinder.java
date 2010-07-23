@@ -127,6 +127,10 @@ public class MutationTestFinder implements TestUnitFinder {
       return Option.<Class<?>> someOrNone(guessed);
     } catch (final ClassNotFoundException e) {
       return Option.none();
+    } catch (final NoClassDefFoundError e) {
+      // not clear why we get this occasionally
+      // when running with eclipse
+      return Option.none();
     }
   }
 

@@ -18,8 +18,7 @@ import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
 
-public class CheckTestHasFailedResultListener implements TestListener,
-    MutationTestResultListener {
+public class CheckTestHasFailedResultListener implements TestListener {
 
   private static final long serialVersionUID     = 1L;
 
