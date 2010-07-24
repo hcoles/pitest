@@ -101,4 +101,8 @@ public class BaseThreadPoolContainer implements Container {
     return this.feedbackQueue;
   }
 
+  public boolean canParallise() {
+    return this.executor.getMaximumPoolSize() > 1;
+  }
+
 }

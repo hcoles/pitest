@@ -136,4 +136,8 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   }
 
+  public boolean canParallise() {
+    return false;
+  }
+
 }

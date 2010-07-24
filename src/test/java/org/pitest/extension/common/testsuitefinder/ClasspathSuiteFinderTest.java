@@ -87,7 +87,6 @@ public class ClasspathSuiteFinderTest {
 
   @Test
   public void testNameFilterNeverReturnsParentClass() {
-    System.out.println(ExampleSuite.class);
     assertEquals(Collections.emptyList(), this.testee.apply(new TestClass(
         ExampleSuite.class)));
   }

@@ -17,16 +17,24 @@ package org.pitest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.pitest.extension.TestUnit;
 
 public class TestGroup implements Iterable<TestUnit>, Serializable {
 
-  private static final long    serialVersionUID = 1L;
+  private static final long          serialVersionUID = 1L;
 
-  private final List<TestUnit> children         = new ArrayList<TestUnit>();
+  private final Collection<TestUnit> children;
+
+  public TestGroup(final Collection<TestUnit> children) {
+    this.children = children;
+  }
+
+  public TestGroup() {
+    this(new ArrayList<TestUnit>());
+  }
 
   public void add(final TestUnit tu) {
     this.children.add(tu);

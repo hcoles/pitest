@@ -66,4 +66,8 @@ public class UnContainer implements Container {
     };
   }
 
+  public boolean canParallise() {
+    return false;
+  }
+
 }

@@ -29,4 +29,6 @@ public interface Container {
 
   public boolean awaitCompletion();
 
+  public boolean canParallise();
+
 }

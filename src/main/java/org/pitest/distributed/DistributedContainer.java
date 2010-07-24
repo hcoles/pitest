@@ -148,4 +148,9 @@ public class DistributedContainer extends BaseThreadPoolContainer {
     return this.environment;
   }
 
+  @Override
+  public boolean canParallise() {
+    return true;
+  }
+
 }

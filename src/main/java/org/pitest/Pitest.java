@@ -25,7 +25,6 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.Common;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -47,7 +46,7 @@ public class Pitest {
   private final Configuration      initialConfig;
 
   public Pitest(final Container container, final Configuration initialConfig) {
-    this.resultListeners.add(ConsoleResultListener.instance());
+    // this.resultListeners.add(ConsoleResultListener.instance());
     this.defaultContainer = container;
     this.initialConfig = initialConfig;
   }
@@ -63,8 +62,15 @@ public class Pitest {
   public void run(final Container container, final List<TestUnit> testUnits) {
     FCollection.forEach(testUnits, Common.print());
 
-    final Thread feederThread = startFeederThread(container,
-        createGroups(testUnits));
+    List<TestGroup> callables;
+    if (container.canParallise()) {
+      callables = createGroups(testUnits);
+    } else {
+      callables = new ArrayList<TestGroup>(1);
+      callables.add(new TestGroup(testUnits));
+    }
+
+    final Thread feederThread = startFeederThread(container, callables);
 
     processResultsFromQueue(container, feederThread);
   }

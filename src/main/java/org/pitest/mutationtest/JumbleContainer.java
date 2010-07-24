@@ -24,9 +24,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.bcel.classfile.JavaClass;
+import org.pitest.Description;
 import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.Container;
+import org.pitest.extension.ResultCollector;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NamedClassesIsolationStrategy;
@@ -42,6 +44,40 @@ public class JumbleContainer implements Container {
   private final TransformingClassLoaderFactory factory;
   private final BlockingQueue<TestResult>      feedbackQueue = new LinkedBlockingQueue<TestResult>();
   private final long                           normalExecutionTime;
+
+  private class ExitingResultCollector implements ResultCollector {
+
+    private final ResultCollector child;
+    private boolean               hadFailure = false;
+
+    ExitingResultCollector(final ResultCollector child) {
+      this.child = child;
+    }
+
+    public void notifyEnd(final Description description, final Throwable t) {
+      this.child.notifyEnd(description, t);
+      if (t != null) {
+        this.hadFailure = true;
+      }
+    }
+
+    public void notifyEnd(final Description description) {
+      this.child.notifyEnd(description);
+    }
+
+    public void notifySkipped(final Description description) {
+      this.child.notifySkipped(description);
+    }
+
+    public void notifyStart(final Description description) {
+      this.child.notifyStart(description);
+    }
+
+    public boolean isHadFailure() {
+      return this.hadFailure;
+    }
+
+  }
 
   public JumbleContainer(final ClassPath classPath, final JavaClass target,
       final long normalExecutionTime) {
@@ -61,8 +97,8 @@ public class JumbleContainer implements Container {
 
   public void submit(final TestGroup group) {
     final ClassLoader cl = this.factory.get();
-    final ConcreteResultCollector rc = new ConcreteResultCollector(
-        this.feedbackQueue);
+    final ExitingResultCollector rc = new ExitingResultCollector(
+        new ConcreteResultCollector(this.feedbackQueue));
 
     if (this.normalExecutionTime > 0) {
       resetLoopBreakTimer(cl);
@@ -70,6 +106,9 @@ public class JumbleContainer implements Container {
 
     for (final TestUnit each : group) {
       each.execute(cl, rc);
+      if (rc.isHadFailure()) {
+        break;
+      }
     }
 
   }
@@ -129,6 +168,10 @@ public class JumbleContainer implements Container {
   private long calculateMaxEndTime(final long normalExecution) {
     // TODO Auto-generated method stub
     return System.currentTimeMillis() + (normalExecution * 2) + 50;
+  }
+
+  public boolean canParallise() {
+    return false;
   }
 
 }
