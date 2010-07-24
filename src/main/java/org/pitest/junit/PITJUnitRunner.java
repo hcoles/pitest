@@ -39,7 +39,7 @@ public class PITJUnitRunner extends Runner {
 
   public PITJUnitRunner(final Class<?> clazz) {
     this.root = clazz;
-    this.pitest = new Pitest(new UnisolatedThreadPoolContainer(1), this.config);
+    this.pitest = new Pitest(this.config);
 
     this.description = Description.createSuiteDescription(clazz);
 
@@ -79,7 +79,7 @@ public class PITJUnitRunner extends Runner {
   @Override
   public void run(final RunNotifier notifier) {
     this.pitest.addListener(new JUnitTestResultListener(notifier));
-    this.pitest.run(this.root);
+    this.pitest.run(new UnisolatedThreadPoolContainer(1), this.root);
   }
 
 }

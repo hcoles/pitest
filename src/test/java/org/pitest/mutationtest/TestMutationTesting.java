@@ -28,6 +28,7 @@ import org.pitest.TestResult;
 import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
 import org.pitest.containers.UnContainer;
+import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
@@ -36,6 +37,7 @@ import org.pitest.testutil.TestAnnotationForTesting;
 public class TestMutationTesting {
 
   private Pitest       pit;
+  private Container    container;
 
   @Mock
   private TestListener listener;
@@ -43,7 +45,8 @@ public class TestMutationTesting {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.pit = new Pitest(new UnContainer(), new ConfigurationForTesting());
+    this.container = new UnContainer();
+    this.pit = new Pitest(new ConfigurationForTesting());
     this.pit.addListener(this.listener);
   }
 
@@ -82,7 +85,7 @@ public class TestMutationTesting {
 
   @Test
   public void testMutationTestPassesIfAllMutationsKilled() {
-    this.pit.run(OneMutationFullTest.class);
+    run(OneMutationFullTest.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -103,7 +106,7 @@ public class TestMutationTesting {
 
   @Test
   public void testMutationTestReportsFailIfDetectsLessThanThresholdPercentOfMutations() {
-    this.pit.run(ThreeMutationsTwoTests.class);
+    run(ThreeMutationsTwoTests.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
@@ -119,7 +122,7 @@ public class TestMutationTesting {
 
   @Test
   public void testReportsErrorInMutationTestIfTestsFailsWithoutMutation() {
-    this.pit.run(FailingTest.class);
+    run(FailingTest.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
     verify(this.listener, times(1)).onTestError((any(TestResult.class)));
   }
@@ -135,7 +138,7 @@ public class TestMutationTesting {
 
   @Test
   public void testSkipsTestIfNoMutationsPossible() {
-    this.pit.run(NoMutationsTest.class);
+    run(NoMutationsTest.class);
     verify(this.listener, times(1)).onTestSuccess((any(TestResult.class)));
     verify(this.listener, times(1)).onTestSkipped((any(TestResult.class)));
   }
@@ -152,7 +155,7 @@ public class TestMutationTesting {
 
   @Test
   public void testReportsFailureIfNoTestsAvailable() {
-    this.pit.run(NoTests.class);
+    run(NoTests.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
@@ -163,7 +166,7 @@ public class TestMutationTesting {
 
   @Test
   public void testGuessesCorrectTesteeNameWhenTestNameEndsWithTest() {
-    this.pit.run(OneMutationTest.class);
+    run(OneMutationTest.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
@@ -174,7 +177,7 @@ public class TestMutationTesting {
 
   @Test
   public void testGuessesCorrectTesteeNameWhenTestNameStartsWithTestForInnerClass() {
-    this.pit.run(TestOneMutation.class);
+    run(TestOneMutation.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
@@ -185,7 +188,7 @@ public class TestMutationTesting {
 
   @Test
   public void testGuessesCorrectTesteeNameWhenTestNameStartsWithTest() {
-    this.pit.run(TestMutable.class);
+    run(TestMutable.class);
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
   }
 
@@ -210,8 +213,12 @@ public class TestMutationTesting {
 
   @Test(timeout = 2000)
   public void testInfiniteLoopsCausedByMutationsAreBroken() {
-    this.pit.run(InfiniteLoopTest.class);
+    run(InfiniteLoopTest.class);
     // pass if we get here without a timeout
+  }
+
+  private void run(final Class<?> clazz) {
+    this.pit.run(this.container, clazz);
   }
 
 }

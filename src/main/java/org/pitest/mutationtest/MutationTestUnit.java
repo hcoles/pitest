@@ -160,7 +160,7 @@ public class MutationTestUnit extends AbstractTestUnit {
           normalExecutionTime);
 
       // why use empty config here? why not the updated one?
-      final Pitest pit = new Pitest(c, new EmptyConfiguration());
+      final Pitest pit = new Pitest(new EmptyConfiguration());
 
       pit.addListener(listener);
 

@@ -42,19 +42,16 @@ public class Pitest {
   private final ResultClassifier   classifier      = new ResultClassifier();
   // test filters
 
-  private final Container          defaultContainer;
   private final Configuration      initialConfig;
 
-  public Pitest(final Container container, final Configuration initialConfig) {
-    // this.resultListeners.add(ConsoleResultListener.instance());
-    this.defaultContainer = container;
+  public Pitest(final Configuration initialConfig) {
     this.initialConfig = initialConfig;
   }
 
-  public void run(final Class<?>... classes) {
+  public void run(final Container defaultContainer, final Class<?>... classes) {
     for (final Class<?> c : classes) {
       final Container container = new ContainerParser(c)
-          .create(this.defaultContainer);
+          .create(defaultContainer);
       run(container, findTestUnitsForAllSuppliedClasses(this.initialConfig, c));
     }
   }

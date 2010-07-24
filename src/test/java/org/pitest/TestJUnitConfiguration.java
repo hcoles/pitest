@@ -26,21 +26,24 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
+import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestJUnitConfiguration {
 
-  JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
-  Pitest                       pitest;
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
+  private Pitest                             pitest;
+  private Container                          container;
 
   @Mock
-  private TestListener         listener;
+  private TestListener                       listener;
 
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
-    this.pitest = new Pitest(new UnContainer(), this.testee);
+    this.container = new UnContainer();
+    this.pitest = new Pitest(this.testee);
     this.pitest.addListener(this.listener);
   }
 
@@ -53,7 +56,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testFindsJunit4Test() {
-    this.pitest.run(SimpleJUnit4Test.class);
+    run(SimpleJUnit4Test.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -80,7 +83,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testCallsSingleStringArgumentsConstructorWithTestName() {
-    this.pitest.run(JUnit3TestWithSingleStringConstructor.class);
+    run(JUnit3TestWithSingleStringConstructor.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -95,7 +98,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testFailsTestsThatDoNotThrowExpectedException() {
-    this.pitest.run(HideFromJunit1.JUnit4TestWithUnmetExpectations.class);
+    run(HideFromJunit1.JUnit4TestWithUnmetExpectations.class);
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
@@ -108,7 +111,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testPassesTestsThatThrowExpectedException() {
-    this.pitest.run(JUnit4TestWithExpectations.class);
+    run(JUnit4TestWithExpectations.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -123,7 +126,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testReportsErrorForTestsThatThrowWrongException() {
-    this.pitest.run(HideFromJunit2.JUnit4TestWithWrongExpectations.class);
+    run(HideFromJunit2.JUnit4TestWithWrongExpectations.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
@@ -135,7 +138,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testFindJUnit3Tests() {
-    this.pitest.run(SimpleJUnit3Test.class);
+    run(SimpleJUnit3Test.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -148,7 +151,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testOnlyOneTestRunIfMatchesBothJunit3And4Criteria() {
-    this.pitest.run(MixedJunit3And4Test.class);
+    run(MixedJunit3And4Test.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -179,13 +182,13 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testRunsTestsInheritedFromParent() {
-    this.pitest.run(HideFromJunit3.InheritedTest.class);
+    run(HideFromJunit3.InheritedTest.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testOverriddenTestsCalledOnlyOnce() {
-    this.pitest.run(HideFromJunit3.OverridesTestInParent.class);
+    run(HideFromJunit3.OverridesTestInParent.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -215,7 +218,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testBeforeAndAfterMethodsEligableForBothJUnit3And4CalledOnlyOnce() {
-    this.pitest.run(HideFromJunit4.MixedJUnit3And4SetupAndTearDown.class);
+    run(HideFromJunit4.MixedJUnit3And4SetupAndTearDown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
   }
@@ -258,8 +261,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testBeforeAndAfterMethodsCalledInCorrectOrder() {
-    this.pitest
-        .run(HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.class);
+    run(HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     assertEquals(5,
         HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.count);
@@ -277,7 +279,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testTimesTestsOut() {
-    this.pitest.run(HideFromJunit6.TestWithTimeout.class);
+    run(HideFromJunit6.TestWithTimeout.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
@@ -304,7 +306,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testCreatesTestsForEachJUnitParameter() {
-    this.pitest.run(HideFromJUnit7.ParameterisedTest.class);
+    run(HideFromJUnit7.ParameterisedTest.class);
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
@@ -335,10 +337,14 @@ public class TestJUnitConfiguration {
 
   @Test
   public void testRunsTestsCreatedByCustomRunners() {
-    this.pitest.run(HideFromJUnit8.TheoriesTest.class);
+    run(HideFromJUnit8.TheoriesTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     // failing theories are actually errors
     verify(this.listener, times(2)).onTestError(any(TestResult.class));
+  }
+
+  private void run(final Class<?> clazz) {
+    this.pitest.run(this.container, clazz);
   }
 
 }

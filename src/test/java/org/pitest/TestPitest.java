@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
+import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.testutil.AfterAnnotationForTesting;
 import org.pitest.testutil.AfterClassAnnotationForTest;
@@ -33,6 +34,7 @@ import org.pitest.testutil.TestAnnotationForTesting;
 public class TestPitest {
 
   private Pitest       testee;
+  private Container    container;
 
   @Mock
   private TestListener listener;
@@ -40,7 +42,8 @@ public class TestPitest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new Pitest(new UnContainer(), new ConfigurationForTesting());
+    this.container = new UnContainer();
+    this.testee = new Pitest(new ConfigurationForTesting());
     this.testee.addListener(this.listener);
   }
 
@@ -55,7 +58,7 @@ public class TestPitest {
   public void testAllListenersNotifiedOfTestStart() {
     final TestListener listener2 = Mockito.mock(TestListener.class);
     this.testee.addListener(listener2);
-    this.testee.run(PassingTest.class);
+    run(PassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(listener2).onTestStart(any(Description.class));
   }
@@ -64,14 +67,14 @@ public class TestPitest {
   public void testAllListenersNotifiedOfTestSuccess() {
     final TestListener listener2 = Mockito.mock(TestListener.class);
     this.testee.addListener(listener2);
-    this.testee.run(PassingTest.class);
+    run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     verify(listener2).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testReportsSuccessIfNoExceptionThrown() {
-    this.testee.run(PassingTest.class);
+    run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -84,7 +87,7 @@ public class TestPitest {
 
   @Test
   public void testAssertionReportedAsFail() {
-    this.testee.run(FailsAssertion.class);
+    run(FailsAssertion.class);
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
@@ -98,7 +101,7 @@ public class TestPitest {
 
   @Test
   public void testSucceedsIfExpectedExceptionThrown() {
-    this.testee.run(ExpectedExceptionThrown.class);
+    run(ExpectedExceptionThrown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
 
   }
@@ -112,7 +115,7 @@ public class TestPitest {
 
   @Test
   public void testFailsIfExpectedExceptionNotThrown() {
-    this.testee.run(ExpectedExceptionNotThrown.class);
+    run(ExpectedExceptionNotThrown.class);
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
@@ -125,7 +128,7 @@ public class TestPitest {
 
   @Test
   public void testUnexpectedExceptionRecordedAsErrorWhenNoExpectationSet() {
-    this.testee.run(UnexpectedExceptionThrown.class);
+    run(UnexpectedExceptionThrown.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
@@ -138,7 +141,7 @@ public class TestPitest {
 
   @Test
   public void testUnexpectedExceptionRecordedAsErrorWhenDifferentExpectationSet() {
-    this.testee.run(WrongExceptionThrown.class);
+    run(WrongExceptionThrown.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
@@ -151,7 +154,7 @@ public class TestPitest {
 
   @Test
   public void testSubclassesOfExpectedExceptionRecordedAsSuccess() {
-    this.testee.run(SubclassOfExpectedExceptionThrown.class);
+    run(SubclassOfExpectedExceptionThrown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -163,7 +166,7 @@ public class TestPitest {
 
   @Test
   public void testCanCallStaticTestMethod() {
-    this.testee.run(StaticTestCase.class);
+    run(StaticTestCase.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
@@ -199,7 +202,7 @@ public class TestPitest {
 
   @Test
   public void testCallsBeforeAndAfterClassMethods() {
-    this.testee.run(HasBeforeAndAfterClassMethods.class);
+    run(HasBeforeAndAfterClassMethods.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
     assertEquals(1, HasBeforeAndAfterClassMethods.beforeClassCallCount);
     assertEquals(1, HasBeforeAndAfterClassMethods.afterClassCallCount);
@@ -228,7 +231,7 @@ public class TestPitest {
 
   @Test
   public void testBeforeMethodsCalledOncePerTest() {
-    this.testee.run(HasBeforeMethod.class);
+    run(HasBeforeMethod.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -255,7 +258,7 @@ public class TestPitest {
 
   @Test
   public void testAfterMethodsCalledOncePerTest() {
-    this.testee.run(HasAfterMethod.class);
+    run(HasAfterMethod.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
     assertEquals(2, HasAfterMethod.callCount);
   }
@@ -277,7 +280,7 @@ public class TestPitest {
 
   @Test
   public void testAllTestsInIgnoredClassAreSkipped() {
-    this.testee.run(AnnotatedAsIgnored.class);
+    run(AnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
   }
 
@@ -304,9 +307,12 @@ public class TestPitest {
 
   @Test
   public void testAllMethodsAnnotatedAsIgnoredAreSkipped() {
-    this.testee.run(HasMethodAnnotatedAsIgnored.class);
+    run(HasMethodAnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
     verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
 
+  private void run(final Class<?> clazz) {
+    this.testee.run(this.container, clazz);
+  }
 }

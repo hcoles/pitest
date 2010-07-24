@@ -88,8 +88,7 @@ public class TestContainersSendCorrectNotifications {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.pit = new Pitest(this.containerFactory.getContainer(),
-        new ConfigurationForTesting());
+    this.pit = new Pitest(new ConfigurationForTesting());
     this.pit.addListener(this.listener);
   }
 
@@ -127,27 +126,31 @@ public class TestContainersSendCorrectNotifications {
 
   @Test
   public void testNotificationsReceivedForSinglePassingTest() {
-    this.pit.run(OnePassingTest.class);
+    run(OnePassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testNotificationsReceivedForSingleFailingTest() {
-    this.pit.run(OneFailingTest.class);
+    run(OneFailingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
   @Test
   public void testNotificationsReceivedForParallizableSuite() {
-    this.pit.run(LargeSuite.class);
+    run(LargeSuite.class);
     verify(this.listener, times(LargeSuite.SUITE_SIZE * 2)).onTestStart(
         any(Description.class));
     verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestSuccess(
         any(TestResult.class));
     verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestFailure(
         any(TestResult.class));
+  }
+
+  private void run(final Class<?> clazz) {
+    this.pit.run(this.containerFactory.getContainer(), clazz);
   }
 
 }
