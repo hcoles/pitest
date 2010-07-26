@@ -12,26 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-
 package org.pitest.extension;
 
-import java.util.Collection;
-import java.util.List;
+import org.pitest.StaticConfig;
+import org.pitest.functional.SideEffect2;
 
-public interface Configuration {
-
-  public boolean allowConfigurationChange();
-
-  public List<InstantiationStrategy> instantiationStrategies();
-
-  public List<TestUnitProcessor> testUnitProcessors();
-
-  public List<TestUnitFinder> testUnitFinders();
-
-  public Collection<TestSuiteFinder> testSuiteFinders();
-
-  public Collection<ConfigurationUpdater> configurationUpdaters();
-
-  public Collection<StaticConfigUpdater> staticConfigurationUpdaters();
+public interface StaticConfigUpdater extends
+    SideEffect2<StaticConfig, Class<?>> {
 
 }

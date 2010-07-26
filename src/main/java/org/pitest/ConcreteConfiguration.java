@@ -22,6 +22,7 @@ import java.util.List;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
+import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
@@ -34,11 +35,12 @@ import org.pitest.internal.TestClass;
 public final class ConcreteConfiguration implements Configuration {
 
   private final boolean                          allowConfigurationChange;
-  private final List<InstantiationStrategy>      instantiationStrategy = new ArrayList<InstantiationStrategy>();
-  private final List<TestUnitProcessor>          testProcessors        = new ArrayList<TestUnitProcessor>();
-  private final List<TestUnitFinder>             testUnitFinders       = new ArrayList<TestUnitFinder>();
-  private final List<TestSuiteFinder>            testSuiteFinders      = new LinkedList<TestSuiteFinder>();
-  private final Collection<ConfigurationUpdater> configurationUpdaters = new ArrayList<ConfigurationUpdater>();
+  private final List<InstantiationStrategy>      instantiationStrategy       = new ArrayList<InstantiationStrategy>();
+  private final List<TestUnitProcessor>          testProcessors              = new ArrayList<TestUnitProcessor>();
+  private final List<TestUnitFinder>             testUnitFinders             = new ArrayList<TestUnitFinder>();
+  private final List<TestSuiteFinder>            testSuiteFinders            = new LinkedList<TestSuiteFinder>();
+  private final Collection<ConfigurationUpdater> configurationUpdaters       = new ArrayList<ConfigurationUpdater>();
+  private final Collection<StaticConfigUpdater>  staticConfigurationUpdaters = new ArrayList<StaticConfigUpdater>();
 
   public ConcreteConfiguration(final boolean allowConfigurationChange) {
     this.allowConfigurationChange = allowConfigurationChange;
@@ -92,6 +94,12 @@ public final class ConcreteConfiguration implements Configuration {
     this.testProcessors.addAll(configuration.testUnitProcessors());
     this.testSuiteFinders.addAll(configuration.testSuiteFinders());
     this.configurationUpdaters.addAll(configuration.configurationUpdaters());
+    this.staticConfigurationUpdaters.addAll(configuration
+        .staticConfigurationUpdaters());
+  }
+
+  public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
+    return this.staticConfigurationUpdaters;
   }
 
 }

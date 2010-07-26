@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
-import org.pitest.extension.TestListener;
+import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -32,37 +32,52 @@ import org.pitest.internal.TestClass;
 
 public class Pitest {
 
-  private final static Logger     logger        = Logger.getLogger(Pitest.class
-                                                    .getName());
+  private final static Logger logger = Logger.getLogger(Pitest.class.getName());
+  private final Configuration initialConfig;                                     ;
 
-  // things that cannot be overridden by child suites
-  private final ResultClassifier  classifier    = new ResultClassifier();
-  public Collection<TestListener> testListeners = new ArrayList<TestListener>();
-  // test filters
-
-  private final Configuration     initialConfig;                                 ;
+  // private StaticConfig initialStaticConfig;
 
   public Pitest(final Configuration initialConfig) {
+    this(new StaticConfig(), initialConfig);
+  }
+
+  public Pitest(final StaticConfig initialStaticConfig,
+      final Configuration initialConfig) {
     this.initialConfig = new ConcreteConfiguration(initialConfig);
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
+    this.run(defaultContainer, new StaticConfig(), classes);
+  }
+
+  public void run(final Container defaultContainer,
+      final StaticConfig staticConfig, final Class<?>... classes) {
     for (final Class<?> c : classes) {
       final Container container = new ContainerParser(c)
           .create(defaultContainer);
-      run(container, findTestUnitsForAllSuppliedClasses(this.initialConfig, c));
+      for (final StaticConfigUpdater each : this.initialConfig
+          .staticConfigurationUpdaters()) {
+        each.apply(staticConfig, c);
+      }
+
+      run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
+          this.initialConfig, c));
     }
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    // FCollection.forEach(testUnits, Common.print());
+    this.run(container, new StaticConfig(), testUnits);
+  }
+
+  public void run(final Container container, final StaticConfig staticConfig,
+      final List<TestUnit> testUnits) {
 
     final List<TestGroup> callables = processDependenciesIfRequired(container,
         testUnits);
 
     final Thread feederThread = startFeederThread(container, callables);
 
-    processResultsFromQueue(container, feederThread);
+    processResultsFromQueue(container, feederThread, staticConfig);
   }
 
   private List<TestGroup> processDependenciesIfRequired(
@@ -90,7 +105,7 @@ public class Pitest {
   }
 
   private void processResultsFromQueue(final Container container,
-      final Thread feederThread) {
+      final Thread feederThread, final StaticConfig staticConfig) {
 
     final ResultSource results = container.getResultSource();
 
@@ -100,13 +115,13 @@ public class Pitest {
       } catch (final InterruptedException e) {
         // swallow
       }
-      processResults(results);
+      processResults(staticConfig, results);
     }
 
     container.shutdownWhenProcessingComplete();
 
     while (!container.awaitCompletion() || results.resultsAvailable()) {
-      processResults(results);
+      processResults(staticConfig, results);
     }
 
   }
@@ -171,18 +186,20 @@ public class Pitest {
     return feederThread;
   }
 
-  private void processResults(final ResultSource source) {
+  private void processResults(final StaticConfig staticConfig,
+      final ResultSource source) {
     final List<TestResult> results = source.getAvailableResults();
     for (final TestResult result : results) {
-      final ResultType classifiedResult = this.classifier.apply(result);
-      FCollection.forEach(this.testListeners, classifiedResult
+      final ResultType classifiedResult = staticConfig.getClassifier().apply(
+          result);
+      FCollection.forEach(staticConfig.getTestListeners(), classifiedResult
           .getListenerFunction(result));
     }
 
   }
 
-  public void addListener(final TestListener listener) {
-    this.testListeners.add(listener);
-  }
+  // public void addListener(final TestListener listener) {
+  // this.testListeners.add(listener);
+  // }
 
 }

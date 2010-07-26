@@ -19,6 +19,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Pitest;
+import org.pitest.StaticConfig;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
@@ -78,8 +79,11 @@ public class PITJUnitRunner extends Runner {
 
   @Override
   public void run(final RunNotifier notifier) {
-    this.pitest.addListener(new JUnitTestResultListener(notifier));
-    this.pitest.run(new UnisolatedThreadPoolContainer(1), this.root);
+    final StaticConfig staticConfig = new StaticConfig();
+    staticConfig.getTestListeners()
+        .add((new JUnitTestResultListener(notifier)));
+    this.pitest.run(new UnisolatedThreadPoolContainer(1), staticConfig,
+        this.root);
   }
 
 }

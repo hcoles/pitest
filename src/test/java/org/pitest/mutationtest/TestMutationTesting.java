@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Pitest;
+import org.pitest.StaticConfig;
 import org.pitest.TestResult;
 import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
@@ -41,13 +42,15 @@ public class TestMutationTesting {
 
   @Mock
   private TestListener listener;
+  private StaticConfig staticConfig;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.pit = new Pitest(new ConfigurationForTesting());
-    this.pit.addListener(this.listener);
+    this.staticConfig = new StaticConfig();
+    this.staticConfig.addTestListener(this.listener);
   }
 
   public static class NoMutations {
@@ -218,7 +221,7 @@ public class TestMutationTesting {
   }
 
   private void run(final Class<?> clazz) {
-    this.pit.run(this.container, clazz);
+    this.pit.run(this.container, this.staticConfig, clazz);
   }
 
 }

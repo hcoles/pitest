@@ -38,13 +38,15 @@ public class TestJUnitConfiguration {
 
   @Mock
   private TestListener                       listener;
+  private StaticConfig                       staticConfig;
 
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.pitest = new Pitest(this.testee);
-    this.pitest.addListener(this.listener);
+    this.staticConfig = new StaticConfig();
+    this.staticConfig.getTestListeners().add(this.listener);
   }
 
   public static class SimpleJUnit4Test {
@@ -344,7 +346,7 @@ public class TestJUnitConfiguration {
   }
 
   private void run(final Class<?> clazz) {
-    this.pitest.run(this.container, clazz);
+    this.pitest.run(this.container, this.staticConfig, clazz);
   }
 
 }

@@ -24,6 +24,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassLoaderRepository;
 import org.pitest.Description;
 import org.pitest.Pitest;
+import org.pitest.StaticConfig;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -161,8 +162,9 @@ public class MutationTestUnit extends AbstractTestUnit {
 
       final EmptyConfiguration conf = new EmptyConfiguration();
       final Pitest pit = new Pitest(conf);
-      pit.addListener(listener);
-      pit.run(c, tests);
+      final StaticConfig staticConfig = new StaticConfig();
+      staticConfig.addTestListener(listener);
+      pit.run(c, staticConfig, tests);
 
       return listener.resultIndicatesSuccess();
     } catch (final Exception ex) {

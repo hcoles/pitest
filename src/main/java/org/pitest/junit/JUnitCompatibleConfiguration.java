@@ -26,6 +26,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
+import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
@@ -105,6 +106,10 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public Collection<ConfigurationUpdater> configurationUpdaters() {
     return Arrays.<ConfigurationUpdater> asList(MutationSuiteConfigUpdater
         .instance(), new DefaultConfigurationUpdater());
+  }
+
+  public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
+    return Collections.emptyList();
   }
 
 }

@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
 import org.pitest.Pitest;
+import org.pitest.StaticConfig;
 import org.pitest.TestResult;
 import org.pitest.annotations.PITSuite;
 import org.pitest.extension.Container;
@@ -49,6 +50,7 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private final ContainerFactory containerFactory;
+  private StaticConfig           staticConfig;
   private Pitest                 pit;
 
   @Mock
@@ -89,8 +91,9 @@ public class TestContainersSendCorrectNotifications {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     final ConfigurationForTesting c = new ConfigurationForTesting();
+    this.staticConfig = new StaticConfig();
+    this.staticConfig.getTestListeners().add(this.listener);
     this.pit = new Pitest(c);
-    this.pit.addListener(this.listener);
   }
 
   public static class OnePassingTest {
@@ -151,7 +154,8 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private void run(final Class<?> clazz) {
-    this.pit.run(this.containerFactory.getContainer(), clazz);
+    this.pit
+        .run(this.containerFactory.getContainer(), this.staticConfig, clazz);
   }
 
 }

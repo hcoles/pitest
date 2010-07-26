@@ -38,13 +38,15 @@ public class TestPitest {
 
   @Mock
   private TestListener listener;
+  private StaticConfig staticConfig;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.testee = new Pitest(new ConfigurationForTesting());
-    this.testee.addListener(this.listener);
+    this.staticConfig = new StaticConfig();
+    this.staticConfig.getTestListeners().add(this.listener);
   }
 
   public static class PassingTest {
@@ -57,7 +59,7 @@ public class TestPitest {
   @Test
   public void testAllListenersNotifiedOfTestStart() {
     final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.testee.addListener(listener2);
+    this.staticConfig.addTestListener(listener2);
     run(PassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(listener2).onTestStart(any(Description.class));
@@ -66,7 +68,7 @@ public class TestPitest {
   @Test
   public void testAllListenersNotifiedOfTestSuccess() {
     final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.testee.addListener(listener2);
+    this.staticConfig.addTestListener(listener2);
     run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     verify(listener2).onTestSuccess(any(TestResult.class));
@@ -313,6 +315,6 @@ public class TestPitest {
   }
 
   private void run(final Class<?> clazz) {
-    this.testee.run(this.container, clazz);
+    this.testee.run(this.container, this.staticConfig, clazz);
   }
 }
