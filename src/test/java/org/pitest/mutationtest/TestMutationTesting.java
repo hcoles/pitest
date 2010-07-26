@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.StaticConfig;
 import org.pitest.TestResult;
 import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
@@ -37,19 +37,19 @@ import org.pitest.testutil.TestAnnotationForTesting;
 
 public class TestMutationTesting {
 
-  private Pitest       pit;
-  private Container    container;
+  private Pitest               pit;
+  private Container            container;
 
   @Mock
-  private TestListener listener;
-  private StaticConfig staticConfig;
+  private TestListener         listener;
+  private DefaultStaticConfig staticConfig;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.pit = new Pitest(new ConfigurationForTesting());
-    this.staticConfig = new StaticConfig();
+    this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.addTestListener(this.listener);
   }
 

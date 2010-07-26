@@ -23,11 +23,11 @@ import org.pitest.functional.F;
  * @author henry
  * 
  */
-public class ResultClassifier implements F<TestResult, ResultType> {
+public class DefaultResultClassifier implements F<TestResult, ResultType>, ResultClassifier {
 
   private final Set<String> assertionTypes = new LinkedHashSet<String>();
 
-  public ResultClassifier() {
+  public DefaultResultClassifier() {
     this.assertionTypes.add(java.lang.AssertionError.class.getName());
     this.assertionTypes.add(junit.framework.AssertionFailedError.class
         .getName());

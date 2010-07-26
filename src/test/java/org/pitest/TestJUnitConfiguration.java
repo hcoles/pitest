@@ -38,14 +38,14 @@ public class TestJUnitConfiguration {
 
   @Mock
   private TestListener                       listener;
-  private StaticConfig                       staticConfig;
+  private StaticConfiguration                staticConfig;
 
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.pitest = new Pitest(this.testee);
-    this.staticConfig = new StaticConfig();
+    this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
   }
 

@@ -35,23 +35,21 @@ public class Pitest {
   private final static Logger logger = Logger.getLogger(Pitest.class.getName());
   private final Configuration initialConfig;                                     ;
 
-  // private StaticConfig initialStaticConfig;
-
   public Pitest(final Configuration initialConfig) {
-    this(new StaticConfig(), initialConfig);
+    this(new DefaultStaticConfig(), initialConfig);
   }
 
-  public Pitest(final StaticConfig initialStaticConfig,
+  public Pitest(final StaticConfiguration initialStaticConfig,
       final Configuration initialConfig) {
     this.initialConfig = new ConcreteConfiguration(initialConfig);
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
-    this.run(defaultContainer, new StaticConfig(), classes);
+    this.run(defaultContainer, new DefaultStaticConfig(), classes);
   }
 
   public void run(final Container defaultContainer,
-      final StaticConfig staticConfig, final Class<?>... classes) {
+      final StaticConfiguration staticConfig, final Class<?>... classes) {
     for (final Class<?> c : classes) {
       final Container container = new ContainerParser(c)
           .create(defaultContainer);
@@ -66,11 +64,11 @@ public class Pitest {
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    this.run(container, new StaticConfig(), testUnits);
+    this.run(container, new DefaultStaticConfig(), testUnits);
   }
 
-  public void run(final Container container, final StaticConfig staticConfig,
-      final List<TestUnit> testUnits) {
+  public void run(final Container container,
+      final StaticConfiguration staticConfig, final List<TestUnit> testUnits) {
 
     final List<TestGroup> callables = processDependenciesIfRequired(container,
         testUnits);
@@ -105,7 +103,7 @@ public class Pitest {
   }
 
   private void processResultsFromQueue(final Container container,
-      final Thread feederThread, final StaticConfig staticConfig) {
+      final Thread feederThread, final StaticConfiguration staticConfig) {
 
     final ResultSource results = container.getResultSource();
 
@@ -186,7 +184,7 @@ public class Pitest {
     return feederThread;
   }
 
-  private void processResults(final StaticConfig staticConfig,
+  private void processResults(final StaticConfiguration staticConfig,
       final ResultSource source) {
     final List<TestResult> results = source.getAvailableResults();
     for (final TestResult result : results) {

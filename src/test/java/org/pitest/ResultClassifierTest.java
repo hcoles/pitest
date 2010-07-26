@@ -15,12 +15,12 @@ import org.pitest.testunit.TestUnitState;
  */
 public class ResultClassifierTest {
 
-  private ResultClassifier testee;
+  private DefaultResultClassifier testee;
   private Description      description;
 
   @Before
   public void setUp() {
-    this.testee = new ResultClassifier();
+    this.testee = new DefaultResultClassifier();
     this.description = new Description(null, null, null);
   }
 

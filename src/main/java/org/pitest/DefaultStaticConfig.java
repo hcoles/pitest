@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import org.pitest.extension.TestListener;
 
-public final class StaticConfig {
+public final class DefaultStaticConfig implements StaticConfiguration {
 
   // things that cannot be overridden by child suites
   private final ResultClassifier         classifier;
@@ -27,11 +27,11 @@ public final class StaticConfig {
 
   // test filters
 
-  public StaticConfig() {
-    this.classifier = new ResultClassifier();
+  public DefaultStaticConfig() {
+    this.classifier = new DefaultResultClassifier();
   }
 
-  public StaticConfig(final StaticConfig orig) {
+  public DefaultStaticConfig(final DefaultStaticConfig orig) {
     this.classifier = orig.classifier;
     this.testListeners.addAll(orig.testListeners);
   }

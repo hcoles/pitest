@@ -30,9 +30,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
-import org.pitest.StaticConfig;
+import org.pitest.StaticConfiguration;
 import org.pitest.TestResult;
 import org.pitest.annotations.PITSuite;
 import org.pitest.extension.Container;
@@ -50,7 +51,7 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private final ContainerFactory containerFactory;
-  private StaticConfig           staticConfig;
+  private StaticConfiguration    staticConfig;
   private Pitest                 pit;
 
   @Mock
@@ -91,7 +92,7 @@ public class TestContainersSendCorrectNotifications {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     final ConfigurationForTesting c = new ConfigurationForTesting();
-    this.staticConfig = new StaticConfig();
+    this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
     this.pit = new Pitest(c);
   }

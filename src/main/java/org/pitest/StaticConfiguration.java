@@ -12,12 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest;
 
-import org.pitest.StaticConfiguration;
-import org.pitest.functional.SideEffect2;
+import java.util.Collection;
 
-public interface StaticConfigUpdater extends
-    SideEffect2<StaticConfiguration, Class<?>> {
+import org.pitest.extension.TestListener;
+
+public interface StaticConfiguration {
+
+  public abstract Collection<TestListener> getTestListeners();
+
+  public abstract ResultClassifier getClassifier();
 
 }

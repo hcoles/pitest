@@ -33,19 +33,19 @@ import org.pitest.testutil.TestAnnotationForTesting;
 
 public class TestPitest {
 
-  private Pitest       testee;
-  private Container    container;
+  private Pitest               testee;
+  private Container            container;
 
   @Mock
-  private TestListener listener;
-  private StaticConfig staticConfig;
+  private TestListener         listener;
+  private DefaultStaticConfig staticConfig;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
     this.testee = new Pitest(new ConfigurationForTesting());
-    this.staticConfig = new StaticConfig();
+    this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
   }
 
