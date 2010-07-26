@@ -33,7 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.annotations.PITSuiteMethod;
+import org.pitest.annotations.PITSuite;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.testutil.ConfigurationForTesting;
@@ -88,7 +88,8 @@ public class TestContainersSendCorrectNotifications {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.pit = new Pitest(new ConfigurationForTesting());
+    final ConfigurationForTesting c = new ConfigurationForTesting();
+    this.pit = new Pitest(c);
     this.pit.addListener(this.listener);
   }
 
@@ -108,7 +109,7 @@ public class TestContainersSendCorrectNotifications {
 
   public static class SmallSuite {
     @SuppressWarnings("unchecked")
-    @PITSuiteMethod
+    @PITSuite
     public static List<Class<?>> suite() {
       return Arrays.asList(OnePassingTest.class, OneFailingTest.class);
     }
@@ -118,7 +119,7 @@ public class TestContainersSendCorrectNotifications {
 
     public final static int SUITE_SIZE = 300;
 
-    @PITSuiteMethod
+    @PITSuite
     public static List<Class<?>> suite() {
       return Collections.<Class<?>> nCopies(SUITE_SIZE, SmallSuite.class);
     }

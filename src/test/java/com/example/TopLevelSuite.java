@@ -19,15 +19,17 @@ import java.util.Collection;
 import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
+import org.pitest.annotations.ConfigurationClass;
 import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.PITContainer;
-import org.pitest.annotations.PITSuiteMethod;
+import org.pitest.annotations.PITSuite;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.DistributedContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.Transformation;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
+import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.PITJUnitRunner;
@@ -36,7 +38,8 @@ import org.pitest.mutationtest.Mutator;
 @RunWith(PITJUnitRunner.class)
 @MutationTest(threshold = 50, mutators = { Mutator.INCREMENTS,
     Mutator.RETURN_VALS })
-public class TopLevelSuite {
+@ConfigurationClass(TopLevelSuite.class)
+public class TopLevelSuite extends EmptyConfiguration {
 
   @PITContainer
   public static Container isolated() {
@@ -51,7 +54,7 @@ public class TopLevelSuite {
     return new DistributedContainer();
   }
 
-  @PITSuiteMethod
+  @PITSuite
   public static Collection<Class<?>> children() {
     return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
   }

@@ -30,6 +30,7 @@ import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
+import org.pitest.extension.common.DefaultConfigurationUpdater;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
@@ -102,9 +103,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   public Collection<ConfigurationUpdater> configurationUpdaters() {
-    return Collections
-        .<ConfigurationUpdater> singletonList(MutationSuiteConfigUpdater
-            .instance());
+    return Arrays.<ConfigurationUpdater> asList(MutationSuiteConfigUpdater
+        .instance(), new DefaultConfigurationUpdater());
   }
 
 }

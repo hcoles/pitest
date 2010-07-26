@@ -25,7 +25,6 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Common;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ContainerParser;
@@ -33,19 +32,18 @@ import org.pitest.internal.TestClass;
 
 public class Pitest {
 
-  private final static Logger      logger          = Logger
-                                                       .getLogger(Pitest.class
-                                                           .getName());
+  private final static Logger     logger        = Logger.getLogger(Pitest.class
+                                                    .getName());
 
   // things that cannot be overridden by child suites
-  private final List<TestListener> resultListeners = new ArrayList<TestListener>();
-  private final ResultClassifier   classifier      = new ResultClassifier();
+  private final ResultClassifier  classifier    = new ResultClassifier();
+  public Collection<TestListener> testListeners = new ArrayList<TestListener>();
   // test filters
 
-  private final Configuration      initialConfig;
+  private final Configuration     initialConfig;                                 ;
 
   public Pitest(final Configuration initialConfig) {
-    this.initialConfig = initialConfig;
+    this.initialConfig = new ConcreteConfiguration(initialConfig);
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
@@ -57,19 +55,28 @@ public class Pitest {
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    FCollection.forEach(testUnits, Common.print());
+    // FCollection.forEach(testUnits, Common.print());
 
-    List<TestGroup> callables;
-    if (container.canParallise()) {
-      callables = createGroups(testUnits);
-    } else {
-      callables = new ArrayList<TestGroup>(1);
-      callables.add(new TestGroup(testUnits));
-    }
+    final List<TestGroup> callables = processDependenciesIfRequired(container,
+        testUnits);
 
     final Thread feederThread = startFeederThread(container, callables);
 
     processResultsFromQueue(container, feederThread);
+  }
+
+  private List<TestGroup> processDependenciesIfRequired(
+      final Container container, final List<TestUnit> testUnits) {
+    // for this optimisation to work finders must
+    // return correctly ordered tests, they cannot rely
+    // on dependencies to enforce order, only grouping
+    if (container.canParallise()) {
+      return createGroups(testUnits);
+    } else {
+      final List<TestGroup> callables = new ArrayList<TestGroup>(1);
+      callables.add(new TestGroup(testUnits));
+      return callables;
+    }
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
@@ -168,14 +175,14 @@ public class Pitest {
     final List<TestResult> results = source.getAvailableResults();
     for (final TestResult result : results) {
       final ResultType classifiedResult = this.classifier.apply(result);
-      FCollection.forEach(this.resultListeners, classifiedResult
+      FCollection.forEach(this.testListeners, classifiedResult
           .getListenerFunction(result));
     }
 
   }
 
-  public void addListener(final TestListener l) {
-    this.resultListeners.add(l);
+  public void addListener(final TestListener listener) {
+    this.testListeners.add(listener);
   }
 
 }

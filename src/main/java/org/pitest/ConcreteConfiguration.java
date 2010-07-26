@@ -46,12 +46,7 @@ public final class ConcreteConfiguration implements Configuration {
 
   public ConcreteConfiguration(final Configuration configuration) {
     this(configuration.allowConfigurationChange());
-
-    this.testUnitFinders.addAll(configuration.testUnitFinders());
-    this.instantiationStrategy.addAll(configuration.instantiationStrategies());
-    this.testProcessors.addAll(configuration.testUnitProcessors());
-    this.testSuiteFinders.addAll(configuration.testSuiteFinders());
-    this.configurationUpdaters.addAll(configuration.configurationUpdaters());
+    addConfiguration(configuration);
   }
 
   public List<TestUnitFinder> testUnitFinders() {
@@ -89,6 +84,14 @@ public final class ConcreteConfiguration implements Configuration {
     }
 
     return newConfig;
+  }
+
+  public void addConfiguration(final Configuration configuration) {
+    this.testUnitFinders.addAll(configuration.testUnitFinders());
+    this.instantiationStrategy.addAll(configuration.instantiationStrategies());
+    this.testProcessors.addAll(configuration.testUnitProcessors());
+    this.testSuiteFinders.addAll(configuration.testSuiteFinders());
+    this.configurationUpdaters.addAll(configuration.configurationUpdaters());
   }
 
 }

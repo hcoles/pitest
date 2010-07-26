@@ -8,14 +8,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.annotations.PITSuiteMethod;
+import org.pitest.annotations.PITSuite;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.internal.TestClass;
 
 public class PITStaticMethodSuiteFinderTest {
 
   public static class HasAnnotatedMethod {
-    @PITSuiteMethod
+    @PITSuite
     public static List<Class<?>> suite() {
       return Arrays.<Class<?>> asList(String.class, Integer.class);
     }

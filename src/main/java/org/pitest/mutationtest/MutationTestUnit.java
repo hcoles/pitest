@@ -159,12 +159,9 @@ public class MutationTestUnit extends AbstractTestUnit {
       final JumbleContainer c = new JumbleContainer(classPath, mutatedClass,
           normalExecutionTime);
 
-      // why use empty config here? why not the updated one?
-      final Pitest pit = new Pitest(new EmptyConfiguration());
-
+      final EmptyConfiguration conf = new EmptyConfiguration();
+      final Pitest pit = new Pitest(conf);
       pit.addListener(listener);
-
-      // FIXME should abort test run as soon as 1 test fails
       pit.run(c, tests);
 
       return listener.resultIndicatesSuccess();

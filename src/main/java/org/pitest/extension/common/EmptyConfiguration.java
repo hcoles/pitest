@@ -19,10 +19,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
-import org.pitest.extension.Container;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
@@ -37,10 +35,6 @@ public class EmptyConfiguration implements Configuration {
   public List<InstantiationStrategy> instantiationStrategies() {
     return Arrays
         .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
-  }
-
-  public Container container() {
-    return new UnisolatedThreadPoolContainer(1);
   }
 
   public int maxParallelism() {

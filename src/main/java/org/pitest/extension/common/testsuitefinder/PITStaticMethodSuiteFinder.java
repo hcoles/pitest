@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.annotations.PITSuiteMethod;
+import org.pitest.annotations.PITSuite;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -44,7 +44,7 @@ public class PITStaticMethodSuiteFinder implements TestSuiteFinder {
       };
 
       final Set<Method> suites = Reflection.publicMethods(root.getClazz(),
-          IsAnotatedWith.instance(PITSuiteMethod.class));
+          IsAnotatedWith.instance(PITSuite.class));
       for (final Method suiteMethod : suites) {
         final Collection<Class<?>> testClasses = (Collection<Class<?>>) suiteMethod
             .invoke(null);

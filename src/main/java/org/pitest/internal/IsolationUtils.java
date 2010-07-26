@@ -58,34 +58,39 @@ public class IsolationUtils {
   public static Method convertForClassLoader(final ClassLoader loader,
       final Method m) {
 
-    final Class<?> c2 = convertForClassLoader(loader, m.getDeclaringClass());
+    if (loader != m.getDeclaringClass().getClassLoader()) {
+      final Class<?> c2 = convertForClassLoader(loader, m.getDeclaringClass());
 
-    final F<Class<?>, String> f = new F<Class<?>, String>() {
-      public String apply(final Class<?> a) {
-        return a.getName();
-      }
-    };
-
-    final List<String> params = FCollection.map(Arrays.asList(m
-        .getParameterTypes()), f);
-
-    final F<Method, Boolean> p = new F<Method, Boolean>() {
-      public Boolean apply(final Method a) {
-        if (a.getName().equals(m.getName())
-            && a.getReturnType().getName().equals(m.getReturnType().getName())) {
-          final List<String> parameters = FCollection.map(Arrays.asList(a
-              .getParameterTypes()), f);
-          return parameters.equals(params);
+      final F<Class<?>, String> f = new F<Class<?>, String>() {
+        public String apply(final Class<?> a) {
+          return a.getName();
         }
-        return false;
+      };
 
-      }
+      final List<String> params = FCollection.map(Arrays.asList(m
+          .getParameterTypes()), f);
 
-    };
-    final List<Method> matches = FCollection.filter(Reflection.allMethods(c2),
-        p);
-    // FIXME check length exactly 1
-    return matches.get(0);
+      final F<Method, Boolean> p = new F<Method, Boolean>() {
+        public Boolean apply(final Method a) {
+          if (a.getName().equals(m.getName())
+              && a.getReturnType().getName()
+                  .equals(m.getReturnType().getName())) {
+            final List<String> parameters = FCollection.map(Arrays.asList(a
+                .getParameterTypes()), f);
+            return parameters.equals(params);
+          }
+          return false;
+
+        }
+
+      };
+      final List<Method> matches = FCollection.filter(
+          Reflection.allMethods(c2), p);
+      // FIXME check length exactly 1
+      return matches.get(0);
+    } else {
+      return m;
+    }
 
   }
 
