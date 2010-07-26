@@ -15,8 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.isolation.IsolatedSystem;
 import org.pitest.internal.transformation.EnvironmentAccessTransformation;
-import org.pitest.internal.transformation.IsolatedSystem;
 
 public class TransformingClassLoaderTest {
 

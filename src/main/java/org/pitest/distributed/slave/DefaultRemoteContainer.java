@@ -31,8 +31,8 @@ import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.TransformingClassLoader;
+import org.pitest.internal.isolation.IsolatedSystem;
 import org.pitest.internal.transformation.EnvironmentAccessTransformation;
-import org.pitest.internal.transformation.IsolatedSystem;
 import org.pitest.reflection.Reflection;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -60,7 +60,7 @@ public class DefaultRemoteContainer implements RemoteContainer {
       final HazelcastInstance hazelcast, final MasterService master,
       final ResourceCache cache, final ClassLoader loader,
       final Map<String, String> environment) {
-    // this.master = master;
+
     this.loader = loader;
     this.environment = environment;
     this.resourceCache = cache;
@@ -97,9 +97,14 @@ public class DefaultRemoteContainer implements RemoteContainer {
   }
 
   private void initEnvironment(final ClassLoader classLoader) {
-    final Method m = IsolationUtils.convertForClassLoader(classLoader,
-        Reflection.publicMethod(IsolatedSystem.class, "setProperty"));
+
     try {
+      // Copy of environment created when IsolatedSystem is loaded 
+      Class.forName(IsolatedSystem.class.getName(), true, classLoader);
+      
+      final Method m = IsolationUtils.convertForClassLoader(classLoader,
+          Reflection.publicMethod(IsolatedSystem.class, "setProperty"));
+      
       for (final String key : this.environment.keySet()) {
         if (key != null) {
           final String value = this.environment.get(key);

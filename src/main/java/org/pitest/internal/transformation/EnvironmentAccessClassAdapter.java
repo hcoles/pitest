@@ -14,6 +14,9 @@
  */
 package org.pitest.internal.transformation;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,6 +25,10 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.internal.isolation.IsolatedBoolean;
+import org.pitest.internal.isolation.IsolatedInteger;
+import org.pitest.internal.isolation.IsolatedLong;
+import org.pitest.internal.isolation.IsolatedSystem;
 
 public class EnvironmentAccessClassAdapter extends ClassAdapter {
 
@@ -40,13 +47,32 @@ public class EnvironmentAccessClassAdapter extends ClassAdapter {
 
 class EnvironmentAccessMethodVisitor extends MethodAdapter {
 
-  private final static Set<String> replacedMethods = new TreeSet<String>();
+  private static class ReplacementClass {
+    ReplacementClass(final String name, final Set<String> replacedMethods) {
+      this.name = name;
+      this.replacedMethods = replacedMethods;
+    }
+
+    public String      name;
+    public Set<String> replacedMethods;
+  }
+
+  private final static Map<String, ReplacementClass> replacements = new HashMap<String, ReplacementClass>();
 
   static {
-    replacedMethods.add("getProperty");
-    replacedMethods.add("setProperty");
-    replacedMethods.add("getProperties");
-    replacedMethods.add("setProperties");
+    replaceCalls(System.class, IsolatedSystem.class, "getProperty",
+        "setProperty", "getProperties", "setProperties");
+    replaceCalls(Boolean.class, IsolatedBoolean.class, "getBoolean");
+    replaceCalls(Long.class, IsolatedLong.class, "getLong");
+    replaceCalls(Integer.class, IsolatedInteger.class, "getInteger");
+  }
+
+  private static void replaceCalls(final Class<?> oldClass,
+      final Class<?> newClass, final String... replacedMethodNames) {
+    final Set<String> replacedMethods = new TreeSet<String>();
+    replacedMethods.addAll(Arrays.asList(replacedMethodNames));
+    replacements.put(classToName(oldClass), new ReplacementClass(
+        classToName(newClass), replacedMethods));
   }
 
   public EnvironmentAccessMethodVisitor(final MethodVisitor mv) {
@@ -56,20 +82,20 @@ class EnvironmentAccessMethodVisitor extends MethodAdapter {
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc) {
-    if ((opcode == Opcodes.INVOKESTATIC) && owner.equals("java/lang/System")
-        && shouldReplaceMethodCall(name)) {
-      this.mv.visitMethodInsn(opcode, classToName(IsolatedSystem.class), name,
-          desc);
+    if ((opcode == Opcodes.INVOKESTATIC) && replacements.containsKey(owner)) {
+      final ReplacementClass replacement = replacements.get(owner);
+      if (replacement.replacedMethods.contains(name)) {
+        this.mv.visitMethodInsn(opcode, replacement.name, name, desc);
+      } else {
+        this.mv.visitMethodInsn(opcode, owner, name, desc);
+      }
+
     } else {
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     }
   }
 
-  private boolean shouldReplaceMethodCall(final String method) {
-    return replacedMethods.contains(method);
-  }
-
-  private String classToName(final Class<?> clazz) {
+  private static String classToName(final Class<?> clazz) {
     return clazz.getName().replace(".", "/");
   }
 

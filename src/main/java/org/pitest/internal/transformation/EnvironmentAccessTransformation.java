@@ -14,14 +14,35 @@
  */
 package org.pitest.internal.transformation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.extension.Transformation;
+import org.pitest.internal.isolation.IsolatedBoolean;
+import org.pitest.internal.isolation.IsolatedInteger;
+import org.pitest.internal.isolation.IsolatedLong;
+import org.pitest.internal.isolation.IsolatedSystem;
 
 public class EnvironmentAccessTransformation implements Transformation {
 
+  private final static Set<String> exclude = new HashSet<String>();
+
+  static {
+    exclude.add(IsolatedSystem.class.getName());
+    exclude.add(IsolatedLong.class.getName());
+    exclude.add(IsolatedBoolean.class.getName());
+    exclude.add(IsolatedInteger.class.getName());
+  }
+
   public byte[] transform(final String name, final byte[] bytes) {
+
+    if (exclude.contains(name)) {
+      return bytes;
+    }
+
     final ClassReader cr = new ClassReader(bytes);
     final ClassWriter cw = new ClassWriter(cr, 0);
     final ClassAdapter ca = new EnvironmentAccessClassAdapter(cw);

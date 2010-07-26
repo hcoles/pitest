@@ -1,153 +1,23 @@
 package org.pitest.internal.transformation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.extension.Transformation;
 import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.classloader.TransformingClassLoader;
-import org.pitest.reflection.Reflection;
+import org.pitest.internal.isolation.IsolatedLong;
+import org.pitest.internal.isolation.IsolatedSystem;
+
+import com.thoughtworks.xstream.XStream;
 
 public class EnvironmentAccessTransformationTest {
-
-  public static interface TestSystemPropertiesInterface {
-
-    public String get(String key);
-
-    public String get(String key, String defaultValue);
-
-    public void set(String key, String value);
-
-    public Properties getProperties();
-
-    public void setProperties(Properties props);
-
-  };
-
-  public static class TSPIWrapper implements TestSystemPropertiesInterface {
-
-    private final Object foreign;
-
-    public TSPIWrapper(final Object o) {
-      this.foreign = o;
-    }
-
-    public String get(final String key) {
-
-      final Predicate<Method> p = new Predicate<Method>() {
-        public Boolean apply(final Method a) {
-          return a.getName().equals("get")
-              && (a.getParameterTypes().length == 1);
-        }
-      };
-      final Method m = Reflection.publicMethod(this.foreign.getClass(), p);
-
-      try {
-        return (String) m.invoke(this.foreign, key);
-      } catch (final Exception e) {
-        throw translateCheckedException(e);
-      }
-
-    }
-
-    public Properties getProperties() {
-      final Predicate<Method> p = new Predicate<Method>() {
-        public Boolean apply(final Method a) {
-          return a.getName().equals("getProperties");
-        }
-      };
-      final Method m = Reflection.publicMethod(this.foreign.getClass(), p);
-
-      try {
-        return (Properties) m.invoke(this.foreign);
-      } catch (final Exception e) {
-        throw translateCheckedException(e);
-      }
-    }
-
-    public void set(final String key, final String value) {
-      final Predicate<Method> p = new Predicate<Method>() {
-        public Boolean apply(final Method a) {
-          return a.getName().equals("set");
-        }
-      };
-      final Method m = Reflection.publicMethod(this.foreign.getClass(), p);
-
-      try {
-        m.invoke(this.foreign, key, value);
-      } catch (final Exception e) {
-        throw translateCheckedException(e);
-      }
-
-    }
-
-    public void setProperties(final Properties props) {
-      final Predicate<Method> p = new Predicate<Method>() {
-        public Boolean apply(final Method a) {
-          return a.getName().equals("setProperties");
-        }
-      };
-      final Method m = Reflection.publicMethod(this.foreign.getClass(), p);
-
-      try {
-        m.invoke(this.foreign, props);
-      } catch (final Exception e) {
-        throw translateCheckedException(e);
-      }
-
-    }
-
-    public String get(final String key, final String defaultValue) {
-      final Predicate<Method> p = new Predicate<Method>() {
-        public Boolean apply(final Method a) {
-          return a.getName().equals("get")
-              && (a.getParameterTypes().length == 2);
-        }
-      };
-      final Method m = Reflection.publicMethod(this.foreign.getClass(), p);
-
-      try {
-        return (String) m.invoke(this.foreign, key, defaultValue);
-      } catch (final Exception e) {
-        throw translateCheckedException(e);
-      }
-    }
-
-  };
-
-  public static class CallsSystemGetAndSetProperty implements
-      TestSystemPropertiesInterface {
-
-    public String get(final String key) {
-      return System.getProperty(key);
-    }
-
-    public void set(final String key, final String value) {
-      System.setProperty(key, value);
-    }
-
-    public Properties getProperties() {
-      return System.getProperties();
-    }
-
-    public void setProperties(final Properties props) {
-      System.setProperties(props);
-    }
-
-    public String get(final String key, final String defaultValue) {
-      return System.getProperty(key, defaultValue);
-    }
-
-  };
 
   private Transformation testee;
 
@@ -157,76 +27,199 @@ public class EnvironmentAccessTransformationTest {
   }
 
   @Test
-  public void testCreatesAFunctionalClass() throws Exception {
-    final Object o = transformAndCreateObject(CallsSystemGetAndSetProperty.class);
-    assertNotNull(o.toString());
-  }
-
-  @Test
   public void testReplacesCallsToSystemDotGetProperty() throws Exception {
-    System.setProperty(getPropertyKeyForTest(), "foo");
-    final TestSystemPropertiesInterface o = transformAndCreateInstance(CallsSystemGetAndSetProperty.class);
-    assertEquals("foo", o.get(getPropertyKeyForTest()));
-    System.setProperty(getPropertyKeyForTest(), "bar");
-    assertEquals("foo", o.get(getPropertyKeyForTest()));
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return System.getProperty(getPropertyKeyForTest());
+      }
+    };
+
+    testEnvironmentIsIsolated(c, "foo", "bar");
+
   }
 
   @Test
   public void testReplacesCallsToSystemDotGetPropertyWithDefault()
       throws Exception {
-    System.setProperty(getPropertyKeyForTest(), "foo");
-    final TestSystemPropertiesInterface o = transformAndCreateInstance(CallsSystemGetAndSetProperty.class);
-    assertEquals("foo", o.get(getPropertyKeyForTest(), "default"));
-    System.setProperty(getPropertyKeyForTest(), "bar");
-    assertEquals("foo", o.get(getPropertyKeyForTest(), "default"));
-    assertEquals("default", o.get("unknown_key", "default"));
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return System.getProperty(getPropertyKeyForTest(), "default");
+      }
+    };
+
+    testEnvironmentIsIsolated(c, "foo", "bar");
   }
 
   @Test
   public void testReplacesCallsToSystemDotSetProperty() throws Exception {
-    System.setProperty(getPropertyKeyForTest(), "foo");
-    final TestSystemPropertiesInterface o = transformAndCreateInstance(CallsSystemGetAndSetProperty.class);
-    o.set(getPropertyKeyForTest(), "NewValue");
-    assertEquals("foo", System.getProperty(getPropertyKeyForTest()));
-    assertEquals("NewValue", o.get(getPropertyKeyForTest()));
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        System.setProperty(getPropertyKeyForTest(), "foo");
+        return null;
+      }
+    };
+    final ClassLoader loader = createClassLoaderAndEnsureIsolatedSystemIsLoaded();
+    final String expected = System.getProperty(getPropertyKeyForTest());
+    runInClassLoader(loader, c);
+    assertSame(expected, System.getProperty(getPropertyKeyForTest()));
   }
 
   @Test
   public void testReplacesCallsToGetProperties() throws Exception {
-    final TestSystemPropertiesInterface o = transformAndCreateInstance(CallsSystemGetAndSetProperty.class);
-    assertNotSame(System.getProperties(), o.getProperties());
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return System.getProperties();
+      }
+    };
+    final ClassLoader loader = createClassLoaderAndEnsureIsolatedSystemIsLoaded();
+    final Properties actual = (Properties) runInClassLoader(loader, c);
+    assertNotSame(c.call(), actual);
   }
 
   @Test
-  public void testReplacesCallsTosetProperties() throws Exception {
-    final TestSystemPropertiesInterface o = transformAndCreateInstance(CallsSystemGetAndSetProperty.class);
-    final Properties p = new Properties();
-    o.setProperties(p);
-    assertSame(p, o.getProperties());
-    assertNotSame(System.getProperties(), o.getProperties());
+  public void testReplacesCallsToSetProperties() throws Exception {
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        System.setProperties(new Properties());
+        return null;
+      }
+    };
+    final ClassLoader loader = createClassLoaderAndEnsureIsolatedSystemIsLoaded();
+    final Properties expected = System.getProperties();
+    runInClassLoader(loader, c);
+    assertSame(expected, System.getProperties());
+  }
+
+  @Test
+  public void testReplacesCallsToGetBoolean() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Boolean.getBoolean(getPropertyKeyForTest());
+      }
+    };
+
+    testEnvironmentIsIsolated(c, true, false);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetLong() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Long.getLong(getPropertyKeyForTest());
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1l, 2l);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetLongObjectLong() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Long.getLong(getPropertyKeyForTest(), new Long(Long.MAX_VALUE));
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1l, 2l);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetLongPrimitiveLong() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Long.getLong(getPropertyKeyForTest(), Long.MAX_VALUE);
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1l, 2l);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetInteger() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Integer.getInteger(getPropertyKeyForTest());
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1, 2);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetIntegerObjectInteger() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Integer.getInteger(getPropertyKeyForTest(), new Integer(1));
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1, 2);
+
+  }
+
+  @Test
+  public void testReplacesCallToGetIntegerPrimitiveInteger() throws Exception {
+
+    final Callable<Object> c = new Callable<Object>() {
+      public Object call() throws Exception {
+        return Integer.getInteger(getPropertyKeyForTest(), Integer.MAX_VALUE);
+      }
+
+    };
+    testEnvironmentIsIsolated(c, 1, 2);
+
+  }
+
+  private void testEnvironmentIsIsolated(final Callable<Object> c,
+      final Object valueOne, final Object valueTwo)
+      throws ClassNotFoundException, Exception {
+    System.setProperty(getPropertyKeyForTest(), valueOne.toString());
+    final ClassLoader loader = createClassLoaderAndEnsureIsolatedSystemIsLoaded();
+    assertEquals(valueOne, runInClassLoader(getNormalLoader(), c));
+    assertEquals(valueOne, runInClassLoader(loader, c));
+    System.setProperty(getPropertyKeyForTest(), valueTwo.toString());
+    assertEquals(valueTwo, runInClassLoader(getNormalLoader(), c));
+    assertEquals(valueOne, runInClassLoader(loader, c));
+  }
+
+  private ClassLoader getNormalLoader() {
+    return Thread.currentThread().getContextClassLoader();
+  }
+
+  private ClassLoader createClassLoaderAndEnsureIsolatedSystemIsLoaded()
+      throws ClassNotFoundException {
+    final TransformingClassLoader loader = new TransformingClassLoader(
+        this.testee, new ExcludedPrefixIsolationStrategy(IsolatedSystem.class
+            .getName(), IsolatedLong.class.getName()));
+    Class.forName(IsolatedSystem.class.getName(), true, loader);
+    return loader;
+  }
+
+  @SuppressWarnings("unchecked")
+  private Object runInClassLoader(final ClassLoader loader,
+      final Callable<Object> callable) throws Exception {
+    final XStream x = new XStream();
+    final String xml = x.toXML(callable);
+    final XStream foreign = new XStream();
+    foreign.setClassLoader(loader);
+    final Callable<Object> c = (Callable<Object>) foreign.fromXML(xml);
+    return c.call();
+
   }
 
   private static String getPropertyKeyForTest() {
     return EnvironmentAccessTransformationTest.class.getName();
-  }
-
-  private Object transformAndCreateObject(final Class<?> clazz)
-      throws ClassNotFoundException, InstantiationException,
-      IllegalAccessException {
-
-    final TransformingClassLoader isc = new TransformingClassLoader(
-        this.testee, new ExcludedPrefixIsolationStrategy(IsolatedSystem.class
-            .getName()));
-    final Class<?> actual = isc.loadClass(clazz.getName());
-    return actual.newInstance();
-
-  }
-
-  private TestSystemPropertiesInterface transformAndCreateInstance(
-      final Class<?> clazz) throws ClassNotFoundException,
-      InstantiationException, IllegalAccessException {
-    final Object o = transformAndCreateObject(clazz);
-    return new TSPIWrapper(o);
   }
 
 }
