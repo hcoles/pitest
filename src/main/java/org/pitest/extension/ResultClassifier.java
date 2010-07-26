@@ -14,8 +14,11 @@
  */
 package org.pitest.extension;
 
-public interface StaticConfigUpdater {
+import org.pitest.ResultType;
+import org.pitest.TestResult;
 
-  public StaticConfiguration apply(StaticConfiguration config, Class<?> clazz);
+public interface ResultClassifier {
+
+  public abstract ResultType classify(final TestResult result);
 
 }

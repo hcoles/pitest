@@ -16,7 +16,7 @@ import org.pitest.testunit.TestUnitState;
 public class ResultClassifierTest {
 
   private DefaultResultClassifier testee;
-  private Description      description;
+  private Description             description;
 
   @Before
   public void setUp() {
@@ -26,14 +26,14 @@ public class ResultClassifierTest {
 
   @Test
   public void testStartedTest() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, null, TestUnitState.STARTED));
     assertEquals(ResultType.STARTED, actual);
   }
 
   @Test
   public void testJavaAssertionClassifiedAsFailed() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, new java.lang.AssertionError(),
         TestUnitState.FINISHED));
     assertEquals(ResultType.FAIL, actual);
@@ -41,7 +41,7 @@ public class ResultClassifierTest {
 
   @Test
   public void testJUnitFrameworkAssertionFailedErrorClassifiedAsFailed() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, new junit.framework.AssertionFailedError(),
         TestUnitState.FINISHED));
     assertEquals(ResultType.FAIL, actual);
@@ -49,21 +49,21 @@ public class ResultClassifierTest {
 
   @Test
   public void testOtherThrowableClassifiedAsError() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, new NullPointerException(), TestUnitState.FINISHED));
     assertEquals(ResultType.ERROR, actual);
   }
 
   @Test
   public void testNoThrowableClassifiedAsPass() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, null, TestUnitState.FINISHED));
     assertEquals(ResultType.PASS, actual);
   }
 
   @Test
   public void testNotRunClassifiedAsSkipped() {
-    final ResultType actual = this.testee.apply(new TestResult(
+    final ResultType actual = this.testee.classify(new TestResult(
         this.description, null, TestUnitState.NOT_RUN));
     assertEquals(ResultType.SKIPPED, actual);
   }

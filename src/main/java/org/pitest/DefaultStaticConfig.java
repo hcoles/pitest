@@ -17,23 +17,22 @@ package org.pitest;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.pitest.extension.ResultClassifier;
+import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
 
-public final class DefaultStaticConfig implements StaticConfiguration {
+public class DefaultStaticConfig implements StaticConfiguration {
 
-  // things that cannot be overridden by child suites
-  private final ResultClassifier         classifier;
+  private ResultClassifier               classifier;
   private final Collection<TestListener> testListeners = new ArrayList<TestListener>();
-
-  // test filters
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
   }
 
-  public DefaultStaticConfig(final DefaultStaticConfig orig) {
-    this.classifier = orig.classifier;
-    this.testListeners.addAll(orig.testListeners);
+  public DefaultStaticConfig(final StaticConfiguration orig) {
+    this.classifier = orig.getClassifier();
+    this.testListeners.addAll(orig.getTestListeners());
   }
 
   public Collection<TestListener> getTestListeners() {
@@ -44,8 +43,13 @@ public final class DefaultStaticConfig implements StaticConfiguration {
     return this.classifier;
   }
 
-  public void addTestListener(final TestListener listener) {
+  public final void addTestListener(final TestListener listener) {
     this.testListeners.add(listener);
+  }
+
+  public final void addConfiguration(final StaticConfiguration orig) {
+    this.classifier = orig.getClassifier();
+    this.testListeners.addAll(orig.getTestListeners());
   }
 
 }

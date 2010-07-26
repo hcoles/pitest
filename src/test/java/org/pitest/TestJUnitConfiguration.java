@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
+import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 

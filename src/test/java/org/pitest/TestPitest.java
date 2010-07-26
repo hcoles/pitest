@@ -33,11 +33,11 @@ import org.pitest.testutil.TestAnnotationForTesting;
 
 public class TestPitest {
 
-  private Pitest               testee;
-  private Container            container;
+  private Pitest              testee;
+  private Container           container;
 
   @Mock
-  private TestListener         listener;
+  private TestListener        listener;
   private DefaultStaticConfig staticConfig;
 
   @Before

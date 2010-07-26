@@ -17,13 +17,13 @@ package org.pitest;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.pitest.functional.F;
+import org.pitest.extension.ResultClassifier;
 
 /**
  * @author henry
  * 
  */
-public class DefaultResultClassifier implements F<TestResult, ResultType>, ResultClassifier {
+public class DefaultResultClassifier implements ResultClassifier {
 
   private final Set<String> assertionTypes = new LinkedHashSet<String>();
 
@@ -33,7 +33,7 @@ public class DefaultResultClassifier implements F<TestResult, ResultType>, Resul
         .getName());
   }
 
-  public ResultType apply(final TestResult result) {
+  public ResultType classify(final TestResult result) {
 
     switch (result.getState()) {
     case STARTED:

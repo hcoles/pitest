@@ -20,9 +20,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.StaticConfiguration;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.TestClass;
 

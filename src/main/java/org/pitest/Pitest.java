@@ -24,6 +24,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfigUpdater;
+import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -49,13 +50,15 @@ public class Pitest {
   }
 
   public void run(final Container defaultContainer,
-      final StaticConfiguration staticConfig, final Class<?>... classes) {
+      final StaticConfiguration intialStaticConfig, final Class<?>... classes) {
     for (final Class<?> c : classes) {
       final Container container = new ContainerParser(c)
           .create(defaultContainer);
+      StaticConfiguration staticConfig = new DefaultStaticConfig(
+          intialStaticConfig);
       for (final StaticConfigUpdater each : this.initialConfig
           .staticConfigurationUpdaters()) {
-        each.apply(staticConfig, c);
+        staticConfig = each.apply(staticConfig, c);
       }
 
       run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
@@ -188,8 +191,8 @@ public class Pitest {
       final ResultSource source) {
     final List<TestResult> results = source.getAvailableResults();
     for (final TestResult result : results) {
-      final ResultType classifiedResult = staticConfig.getClassifier().apply(
-          result);
+      final ResultType classifiedResult = staticConfig.getClassifier()
+          .classify(result);
       FCollection.forEach(staticConfig.getTestListeners(), classifiedResult
           .getListenerFunction(result));
     }
