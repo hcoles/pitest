@@ -48,6 +48,9 @@ class BarDerived extends Bar {
 
 public class ClasspathSuiteFinderTest {
 
+  public static final String   FOO_NAME = "org.pitest.extension.common.testsuitefinder.Foo";
+  public static final String   BAR_NAME = "org.pitest.extension.common.testsuitefinder.Bar";
+
   private ClasspathSuiteFinder testee;
 
   @Before
@@ -57,7 +60,7 @@ public class ClasspathSuiteFinderTest {
 
   @Test
   public void testReturnsEmptyListIfClassPathSuiteAnnotationNotPresent() {
-    @ClassNameRegexFilter(value = { "[\\S]+" })
+    @ClassNameRegexFilter("[\\S]+")
     class Suite {
 
     }
@@ -68,9 +71,9 @@ public class ClasspathSuiteFinderTest {
   }
 
   @Test
-  public void testNameFilterFindsSingleClass() {
+  public void testRegexNameFilterFindsSingleClass() {
     @ClasspathSuite
-    @ClassNameRegexFilter(value = { "org.pitest.extension.common.testsuitefinder.Foo" })
+    @ClassNameRegexFilter(FOO_NAME)
     class Suite {
 
     }
@@ -80,13 +83,13 @@ public class ClasspathSuiteFinderTest {
   }
 
   @ClasspathSuite
-  @ClassNameRegexFilter(value = { "org.pitest.extension.common.testsuitefinder.ClasspathSuiteFinderTest\\$ExampleSuite" })
+  @ClassNameRegexFilter("org.pitest.extension.common.testsuitefinder.ClasspathSuiteFinderTest\\$ExampleSuite")
   public static class ExampleSuite {
 
   }
 
   @Test
-  public void testNameFilterNeverReturnsParentClass() {
+  public void testRegexNameFilterNeverReturnsParentClass() {
     assertEquals(Collections.emptyList(), this.testee.apply(new TestClass(
         ExampleSuite.class)));
   }
@@ -94,7 +97,7 @@ public class ClasspathSuiteFinderTest {
   @Test
   public void testNameFilterNeverReturnsAbstractClass() {
     @ClasspathSuite
-    @ClassNameRegexFilter(value = { "org.pitest.extension.common.testsuitefinder.Abstract" })
+    @ClassNameRegexFilter("org.pitest.extension.common.testsuitefinder.Abstract")
     class Suite {
 
     }
@@ -104,11 +107,9 @@ public class ClasspathSuiteFinderTest {
   }
 
   @Test
-  public void testNameFilterFindsMultipleClasses() {
+  public void testRegexNameFilterFindsMultipleClasses() {
     @ClasspathSuite
-    @ClassNameRegexFilter(value = {
-        "org.pitest.extension.common.testsuitefinder.Foo",
-        "org.pitest.extension.common.testsuitefinder.Bar" })
+    @ClassNameRegexFilter(value = { FOO_NAME, BAR_NAME })
     class Suite {
 
     }
@@ -118,7 +119,7 @@ public class ClasspathSuiteFinderTest {
   }
 
   @Test
-  public void testNameFilterReturnsRegexMatches() {
+  public void testRegexNameFilterReturnsRegexMatches() {
     @ClasspathSuite
     @ClassNameRegexFilter(value = { "[\\S]+testsuitefinder\\.(Foo|Bar)" })
     class Suite {
@@ -127,6 +128,74 @@ public class ClasspathSuiteFinderTest {
 
     assertEquals(Arrays.asList(new TestClass(Bar.class), new TestClass(
         Foo.class)), this.testee.apply(new TestClass(Suite.class)));
+  }
+
+  @Test
+  public void testGlobNameFilterFindsSingleClass() {
+    @ClasspathSuite
+    @ClassNameGlobFilter(FOO_NAME)
+    class Suite {
+
+    }
+
+    assertEquals(Arrays.asList(new TestClass(Foo.class)), this.testee
+        .apply(new TestClass(Suite.class)));
+  }
+
+  @Test
+  public void testGlobNameFilterFindsMultipleMatches() {
+    @ClasspathSuite
+    @ClassNameGlobFilter("org.pitest.extension.common.testsuitefinder.Foo*")
+    class Suite {
+
+    }
+
+    assertEquals(Arrays.asList(new TestClass(FooDerived.class), new TestClass(
+        Foo.class)), this.testee.apply(new TestClass(Suite.class)));
+  }
+
+  @Test
+  public void testGlobNameFilterAppliesMultipleFilters() {
+    @ClasspathSuite
+    @ClassNameGlobFilter(value = {
+        "org.pitest.extension.common.testsuitefinder.Foo*",
+        "org.pitest.extension.common.testsuitefinder.Bar*" })
+    class Suite {
+
+    }
+
+    assertEquals(Arrays.asList(new TestClass(FooDerived.class), new TestClass(
+        Bar.class), new TestClass(Foo.class), new TestClass(BarDerived.class)),
+        this.testee.apply(new TestClass(Suite.class)));
+  }
+
+  @Test
+  public void testCanMixGlobAndRegexFilters() {
+    @ClasspathSuite
+    @ClassNameGlobFilter(FOO_NAME)
+    @ClassNameRegexFilter(BAR_NAME)
+    class Suite {
+
+    }
+
+    assertEquals(Arrays.asList(new TestClass(Bar.class), new TestClass(
+        Foo.class)), this.testee.apply(new TestClass(Suite.class)));
+  }
+
+  public static class InnerClass {
+
+  }
+
+  @Test
+  public void testCanSearchForInnerClasses() {
+    @ClasspathSuite(excludeInnerClasses = false)
+    @ClassNameGlobFilter("org.pitest.extension.common.testsuitefinder.*Inner*")
+    class Suite {
+
+    }
+
+    assertEquals(Arrays.asList(new TestClass(InnerClass.class)), this.testee
+        .apply(new TestClass(Suite.class)));
   }
 
   @Test

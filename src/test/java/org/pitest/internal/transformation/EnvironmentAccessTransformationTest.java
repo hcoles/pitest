@@ -131,7 +131,8 @@ public class EnvironmentAccessTransformationTest {
   }
 
   @Test
-  @Ignore // not clear why this is failing, looks like a bug
+  @Ignore
+  // not clear why this is failing, looks like a bug
   // in ASM, but this seems unlikely. Revisit with additional coffee
   public void testReplacesCallToGetLongPrimitiveLong() throws Exception {
 

@@ -99,12 +99,12 @@ public class DefaultRemoteContainer implements RemoteContainer {
   private void initEnvironment(final ClassLoader classLoader) {
 
     try {
-      // Copy of environment created when IsolatedSystem is loaded 
+      // Copy of environment created when IsolatedSystem is loaded
       Class.forName(IsolatedSystem.class.getName(), true, classLoader);
-      
+
       final Method m = IsolationUtils.convertForClassLoader(classLoader,
           Reflection.publicMethod(IsolatedSystem.class, "setProperty"));
-      
+
       for (final String key : this.environment.keySet()) {
         if (key != null) {
           final String value = this.environment.get(key);

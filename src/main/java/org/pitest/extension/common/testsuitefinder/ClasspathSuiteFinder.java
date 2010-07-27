@@ -27,6 +27,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.And;
+import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Not;
 import org.pitest.functional.predicate.Or;
 import org.pitest.functional.predicate.Predicate;
@@ -43,13 +44,19 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
     if (marker == null) {
       return Collections.emptyList();
     } else {
-      return processClass(a.getClazz());
+      return processClass(a.getClazz(), marker.excludeInnerClasses());
     }
   }
 
-  private Collection<TestClass> processClass(final Class<?> clazz) {
-    final Predicate<String> filter = getNameFilter(Option.someOrNone(clazz
+  @SuppressWarnings("unchecked")
+  private Collection<TestClass> processClass(final Class<?> clazz,
+      final boolean excludeInnerClasses) {
+    final Predicate<String> regexFilter = getNameFilter(Option.someOrNone(clazz
         .getAnnotation(ClassNameRegexFilter.class)));
+    final Predicate<String> globFilter = getGlobFilter(Option.someOrNone(clazz
+        .getAnnotation(ClassNameGlobFilter.class)));
+
+    final Predicate<String> filter = Or.instance(regexFilter, globFilter);
 
     final ClassPath cp = new ClassPath();
 
@@ -67,24 +74,27 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
 
     final Iterable<String> unfiltered = cp.classNames();
     final List<String> nameMatches = FCollection.filter(unfiltered, filter);
-    final F<TestClass, Boolean> p = createPredicate(clazz);
+    final F<TestClass, Boolean> p = createPredicate(clazz, excludeInnerClasses);
     return FCollection.filter(FCollection.map(nameMatches, f), p);
 
   }
 
   @SuppressWarnings("unchecked")
-  private F<TestClass, Boolean> createPredicate(final Class<?> clazz) {
-    return And.instance(createStandardExcludes(clazz),
+  private F<TestClass, Boolean> createPredicate(final Class<?> clazz,
+      final boolean excludeInnerClasses) {
+    return And.instance(createStandardExcludes(clazz, excludeInnerClasses),
         createExcludePredicate(clazz), createIncludePredicate(clazz));
   }
 
-  private Predicate<TestClass> createStandardExcludes(final Class<?> clazz) {
+  private Predicate<TestClass> createStandardExcludes(final Class<?> clazz,
+      final boolean excludeInnerClasses) {
     return new Predicate<TestClass>() {
 
       public Boolean apply(final TestClass a) {
         final Class<?> candidateClass = a.getClazz();
         return !Modifier.isAbstract(candidateClass.getModifiers())
-            && !clazz.getName().equals(candidateClass.getName());
+            && !clazz.getName().equals(candidateClass.getName())
+            && (!excludeInnerClasses || !candidateClass.getName().contains("$"));
       }
 
     };
@@ -145,12 +155,59 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
         }
 
       };
-      return Or.<String> instance(FCollection.map(Arrays.asList(annotation
-          .value().value()), f));
-
+      return getFilter(f, annotation.value().value());
     } else {
-      return True.<String> instance();
+      return False.<String> instance();
     }
+  }
+
+  private Predicate<String> getGlobFilter(
+      final Option<ClassNameGlobFilter> annotation) {
+    if (annotation.hasSome()) {
+      final F<String, Predicate<String>> f = new F<String, Predicate<String>>() {
+        public Predicate<String> apply(final String pattern) {
+          return new Predicate<String>() {
+            public Boolean apply(final String a) {
+              return a.matches(convertGlobToRegex(pattern));
+            }
+
+          };
+        }
+      };
+      return getFilter(f, annotation.value().value());
+    } else {
+      return False.<String> instance();
+    }
+  }
+
+  private static String convertGlobToRegex(final String glob) {
+    String out = "^";
+    for (int i = 0; i < glob.length(); ++i) {
+      final char c = glob.charAt(i);
+      switch (c) {
+      case '*':
+        out += ".*";
+        break;
+      case '?':
+        out += '.';
+        break;
+      case '.':
+        out += "\\.";
+        break;
+      case '\\':
+        out += "\\\\";
+        break;
+      default:
+        out += c;
+      }
+    }
+    out += '$';
+    return out;
+  }
+
+  private Predicate<String> getFilter(final F<String, Predicate<String>> f,
+      final String[] filter) {
+    return Or.<String> instance(FCollection.map(Arrays.asList(filter), f));
   }
 
 }

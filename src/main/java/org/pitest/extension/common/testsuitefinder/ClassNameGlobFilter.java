@@ -21,8 +21,6 @@ import java.lang.annotation.Target;
 
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
-public @interface ClasspathSuite {
-
-  boolean excludeInnerClasses() default (true);
-
+public @interface ClassNameGlobFilter {
+  String[] value();
 }
