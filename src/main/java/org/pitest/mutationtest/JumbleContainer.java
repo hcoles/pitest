@@ -20,8 +20,8 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.pitest.Description;
@@ -42,10 +42,11 @@ import org.pitest.mutationtest.loopbreak.PerContainerTimelimitCheck;
 public class JumbleContainer implements Container {
 
   private final TransformingClassLoaderFactory factory;
-  private final BlockingQueue<TestResult>      feedbackQueue = new LinkedBlockingQueue<TestResult>();
+  private final BlockingQueue<TestResult>      feedbackQueue = new ArrayBlockingQueue<TestResult>(
+                                                                 BUFFER_SIZE);
   private final long                           normalExecutionTime;
 
-  private class ExitingResultCollector implements ResultCollector {
+  private static class ExitingResultCollector implements ResultCollector {
 
     private final ResultCollector child;
     private boolean               hadFailure = false;

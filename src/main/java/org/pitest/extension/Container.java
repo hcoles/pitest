@@ -19,6 +19,8 @@ import org.pitest.TestGroup;
 
 public interface Container {
 
+  public final int BUFFER_SIZE = 6000;
+
   public void submit(TestGroup c);
 
   public void shutdownWhenProcessingComplete();

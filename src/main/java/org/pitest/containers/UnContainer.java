@@ -17,7 +17,8 @@ package org.pitest.containers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import org.pitest.TestGroup;
 import org.pitest.TestResult;
@@ -28,7 +29,8 @@ import org.pitest.internal.ConcreteResultCollector;
 
 public class UnContainer implements Container {
 
-  private final LinkedBlockingQueue<TestResult> feedbackQueue = new LinkedBlockingQueue<TestResult>();
+  private final BlockingQueue<TestResult> feedbackQueue = new ArrayBlockingQueue<TestResult>(
+                                                            BUFFER_SIZE);
 
   public void setMaxThreads(final int maxThreads) {
     // ignore

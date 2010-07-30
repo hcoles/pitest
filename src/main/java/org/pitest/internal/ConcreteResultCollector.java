@@ -14,35 +14,45 @@
  */
 package org.pitest.internal;
 
-import java.util.Collection;
+import java.util.concurrent.BlockingQueue;
 
 import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.testunit.TestUnitState;
+import org.pitest.util.Unchecked;
 
 public final class ConcreteResultCollector implements ResultCollector {
 
-  private final Collection<TestResult> feedback;
+  private final BlockingQueue<TestResult> feedback;
 
-  public ConcreteResultCollector(final Collection<TestResult> feedback) {
+  public ConcreteResultCollector(final BlockingQueue<TestResult> feedback) {
     this.feedback = feedback;
   }
 
   public void notifyStart(final Description tu) {
-    this.feedback.add(new TestResult(tu, null, TestUnitState.STARTED));
+    put(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
   public void notifySkipped(final Description tu) {
-    this.feedback.add(new TestResult(tu, null, TestUnitState.NOT_RUN));
+    put(new TestResult(tu, null, TestUnitState.NOT_RUN));
   }
 
   public void notifyEnd(final Description description, final Throwable t) {
-    this.feedback.add(new TestResult(description, t));
+    put(new TestResult(description, t));
   }
 
   public void notifyEnd(final Description tu) {
-    this.feedback.add(new TestResult(tu, null));
+    put(new TestResult(tu, null));
+  }
+
+  private void put(final TestResult tr) {
+    try {
+      this.feedback.put(tr);
+    } catch (final InterruptedException e) {
+      Unchecked.translateCheckedException(e);
+    }
+
   }
 
 }

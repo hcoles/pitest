@@ -110,13 +110,16 @@ public class Pitest {
 
     final ResultSource results = container.getResultSource();
 
-    while (feederThread.isAlive()) {
+    boolean isAlive = feederThread.isAlive();
+    while (isAlive) {
+      processResults(staticConfig, results);
       try {
-        feederThread.join(20);
+        feederThread.join(100);
       } catch (final InterruptedException e) {
         // swallow
       }
-      processResults(staticConfig, results);
+      isAlive = feederThread.isAlive();
+
     }
 
     container.shutdownWhenProcessingComplete();
@@ -124,6 +127,8 @@ public class Pitest {
     while (!container.awaitCompletion() || results.resultsAvailable()) {
       processResults(staticConfig, results);
     }
+
+    logger.info("Finished");
 
   }
 

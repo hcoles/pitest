@@ -164,7 +164,7 @@ public class EnvironmentAccessTransformationTest {
 
     final Callable<Object> c = new Callable<Object>() {
       public Object call() throws Exception {
-        return Integer.getInteger(getPropertyKeyForTest(), new Integer(1));
+        return Integer.getInteger(getPropertyKeyForTest(), Integer.valueOf(1));
       }
 
     };

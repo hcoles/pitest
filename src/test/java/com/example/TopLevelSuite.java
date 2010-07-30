@@ -16,12 +16,10 @@ package com.example;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
@@ -29,18 +27,15 @@ import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.DistributedContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.IsolationStrategy;
-import org.pitest.extension.TestListener;
 import org.pitest.extension.Transformation;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
-import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.PITJUnitRunner;
-import org.pitest.mutationtest.Mutator;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(threshold = 50, mutators = { Mutator.INCREMENTS,
-    Mutator.RETURN_VALS })
+// @MutationTest(threshold = 100, mutators = { Mutator.INCREMENTS,
+// Mutator.RETURN_VALS })
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 
@@ -59,13 +54,14 @@ public class TopLevelSuite extends DefaultStaticConfig {
 
   @PITSuite
   public static Collection<Class<?>> children() {
-    return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
+    return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);// ,
+    // HeavySuite.class);
   }
 
-  @Override
-  public Collection<TestListener> getTestListeners() {
-    return Collections.<TestListener> singletonList(ConsoleResultListener
-        .instance());
-  }
+  // @Override
+  // public Collection<TestListener> getTestListeners() {
+  // return Collections.<TestListener> singletonList(ConsoleResultListener
+  // .instance());
+  // }
 
 }

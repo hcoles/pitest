@@ -17,6 +17,7 @@ package org.pitest.containers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -41,7 +42,7 @@ public class BaseThreadPoolContainer implements Container {
     this.executor = new ThreadPoolExecutor(threads, threads, 10,
         TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
     this.loaderFactory = loaderFactory;
-    this.feedbackQueue = new LinkedBlockingQueue<TestResult>();
+    this.feedbackQueue = new ArrayBlockingQueue<TestResult>(BUFFER_SIZE);
   }
 
   public boolean awaitTermination(final int i, final TimeUnit milliseconds)
