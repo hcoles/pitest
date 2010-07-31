@@ -34,9 +34,6 @@ import org.pitest.extension.TestUnit;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider;
-
 public class RunnerAdapter implements Serializable {
 
   private static final long                serialVersionUID = 1L;
@@ -47,13 +44,17 @@ public class RunnerAdapter implements Serializable {
 
   private final Class<?>                   clazz;
 
-  public RunnerAdapter(final Class<?> clazz) {
+  public RunnerAdapter(final Class<?> clazz, final Runner runner) {
     this.clazz = clazz;
-    this.runner = createRunner(clazz);
+    this.runner = runner;
     gatherTestUnits(this.tus, this.runner.getDescription());
   }
 
-  private Runner createRunner(final Class<?> clazz) {
+  public RunnerAdapter(final Class<?> clazz) {
+    this(clazz, createRunner(clazz));
+  }
+
+  private static Runner createRunner(final Class<?> clazz) {
     final AnnotatedBuilder builder = new AnnotatedBuilder(
         new AllDefaultPossibilitiesBuilder(true));
     try {
@@ -124,7 +125,7 @@ public class RunnerAdapter implements Serializable {
       final CustomRunnerExecutor ce = new CustomRunnerExecutor(this.runner);
       Object foreignCe = ce;
       if (IsolationUtils.fromDifferentLoader(this.runner.getClass(), loader)) {
-        foreignCe = cloneExecutorForLoader(ce, loader);
+        foreignCe = IsolationUtils.cloneForLoader(ce, loader);
       }
       final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
       try {
@@ -134,21 +135,6 @@ public class RunnerAdapter implements Serializable {
       }
 
       this.runner = null;
-    }
-
-  }
-
-  private Object cloneExecutorForLoader(final CustomRunnerExecutor ce,
-      final ClassLoader loader) {
-    try {
-      final XStream xstream = new XStream();
-      final String xml = xstream.toXML(ce);
-      final XStream foreginXstream = new XStream(new Sun14ReflectionProvider());
-      foreginXstream.setClassLoader(loader);
-
-      return foreginXstream.fromXML(xml);
-    } catch (final Exception ex) {
-      throw translateCheckedException(ex);
     }
 
   }

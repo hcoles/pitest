@@ -23,6 +23,7 @@ import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class ConfigurationForTesting implements Configuration {
@@ -73,8 +74,8 @@ public class ConfigurationForTesting implements Configuration {
     tmfs.add(new TestFinder());
 
     return Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
-        tmfs, beforeMethodFinders, afterMethodFinders, beforeClassFinders,
-        afterClassFinders));
+        True.<Class<?>> instance(), tmfs, beforeMethodFinders,
+        afterMethodFinders, beforeClassFinders, afterClassFinders));
   }
 
   public boolean allowConfigurationChange() {

@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
+import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -344,6 +345,36 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
     // failing theories are actually errors
     verify(this.listener, times(2)).onTestError(any(TestResult.class));
+  }
+
+  static abstract class HideFromJUnit9 {
+
+    public static class JMockTest extends MockObjectTestCase {
+      org.jmock.Mock mock;
+
+      @Override
+      public void setUp() {
+        this.mock = mock(Runnable.class);
+        this.mock.expects(once()).method("run");
+      }
+
+      public void testFails() {
+
+      }
+
+      public void testPasses() {
+        final Runnable r = (Runnable) this.mock.proxy();
+        r.run();
+      }
+    }
+
+  }
+
+  @Test
+  public void testRunsJMock1Tests() {
+    run(HideFromJUnit9.JMockTest.class);
+    verify(this.listener).onTestSuccess(any(TestResult.class));
+    verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
   private void run(final Class<?> clazz) {

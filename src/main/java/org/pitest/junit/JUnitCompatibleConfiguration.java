@@ -38,6 +38,7 @@ import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiation
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class JUnitCompatibleConfiguration implements Configuration {
@@ -75,10 +76,20 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
     final List<TestUnitFinder> tus = new ArrayList<TestUnitFinder>();
 
-    tus.add(new BasicTestUnitFinder(tmfs, beforeMethodFinders,
-        afterMethodFinders, beforeClassFinders, afterClassFinders));
+    final Predicate<Class<?>> excludeSpecialCases = new Predicate<Class<?>>() {
+
+      public Boolean apply(final Class<?> a) {
+        return !CustomJUnit3TestUnitFinder.isCustomJUnit3Class(a);
+      }
+
+    };
+
+    tus.add(new BasicTestUnitFinder(excludeSpecialCases, tmfs,
+        beforeMethodFinders, afterMethodFinders, beforeClassFinders,
+        afterClassFinders));
 
     tus.add(new JUnitCustomRunnerTestUnitFinder());
+    tus.add(new CustomJUnit3TestUnitFinder());
 
     // must be last in list
     // tus.add(MutationTestUnitFinder.instance());

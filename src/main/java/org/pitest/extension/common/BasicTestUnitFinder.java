@@ -37,6 +37,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.EqualitySet;
 import org.pitest.internal.SignatureEqualityStrategy;
 import org.pitest.internal.TestClass;
@@ -47,17 +48,20 @@ import org.pitest.util.Dependency;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
-  private final Set<MethodFinder> testMethodFinders   = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder> beforeMethodFinders = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder> afterMethodFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder> beforeClassFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder> afterClassFinders   = new LinkedHashSet<MethodFinder>();
+  private final Predicate<Class<?>> filter;
+  private final Set<MethodFinder>   testMethodFinders   = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>   beforeMethodFinders = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>   afterMethodFinders  = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>   beforeClassFinders  = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>   afterClassFinders   = new LinkedHashSet<MethodFinder>();
 
-  public BasicTestUnitFinder(final Set<MethodFinder> testMethodFinders,
+  public BasicTestUnitFinder(final Predicate<Class<?>> filter,
+      final Set<MethodFinder> testMethodFinders,
       final Set<MethodFinder> beforeMethodFinders,
       final Set<MethodFinder> afterMethodFinders,
       final Set<MethodFinder> beforeClassFinders,
       final Set<MethodFinder> afterClassFinders) {
+    this.filter = filter;
     this.testMethodFinders.addAll(testMethodFinders);
     this.beforeMethodFinders.addAll(beforeMethodFinders);
     this.afterMethodFinders.addAll(afterMethodFinders);
@@ -65,8 +69,8 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public boolean canHandle(final boolean alreadyHandled) {
-    return true;
+  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
+    return this.filter.apply(clazz);
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass testClass,

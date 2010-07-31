@@ -31,11 +31,11 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Test
   public void testWillNotHandlePreviouslyHandledClass() {
-    assertFalse(this.testee.canHandle(true));
+    assertFalse(this.testee.canHandle(null, true));
   }
 
   @Test
   public void testWillHandleHandledClass() {
-    assertTrue(this.testee.canHandle(false));
+    assertTrue(this.testee.canHandle(null, false));
   }
 }

@@ -14,38 +14,50 @@
  */
 package org.pitest.junit;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import junit.framework.Test;
+import junit.framework.TestCase;
+
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.internal.TestClass;
+import org.pitest.reflection.Reflection;
 import org.pitest.util.Dependency;
 
-public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
+public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
 
   public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return !alreadyHandled;
+    return isCustomJUnit3Class(clazz);
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass a,
       final Configuration b) {
-    final RunWith runWith = a.getClazz().getAnnotation(RunWith.class);
-    if ((runWith != null) && !runWith.value().equals(PITJUnitRunner.class)
-        && !runWith.value().equals(Suite.class)) {
 
-      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
+    if (isCustomJUnit3Class(a.getClazz())) {
+      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz(),
+          new JUnit38ClassRunner(a.getClazz()));
       final List<TestUnit> units = adapter.getTestUnits();
       Dependency.dependOnFirst(units);
       return units;
-
+    } else {
+      return Collections.emptyList();
     }
 
-    return Collections.emptyList();
+  }
+
+  public static boolean isCustomJUnit3Class(final Class<?> a) {
+    if (Test.class.isAssignableFrom(a)) {
+      final Method runBareMethod = Reflection.publicMethod(a, "runBare");
+      return runBareMethod.getDeclaringClass() != TestCase.class;
+    } else {
+      return false;
+    }
   }
 
 }

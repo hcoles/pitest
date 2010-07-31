@@ -34,7 +34,7 @@ public class MutationTestFinder implements TestUnitFinder {
     this.mutationConfig = config;
   }
 
-  public boolean canHandle(final boolean alreadyHandled) {
+  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
     return true;
   }
 

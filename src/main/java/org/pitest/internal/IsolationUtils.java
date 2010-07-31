@@ -25,7 +25,23 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;
 
+import com.thoughtworks.xstream.XStream;
+
 public class IsolationUtils {
+
+  public static Object cloneForLoader(final Object o, final ClassLoader loader) {
+    try {
+      final XStream xstream = new XStream();
+      final String xml = xstream.toXML(o);
+      final XStream foreginXstream = new XStream();
+      foreginXstream.setClassLoader(loader);
+
+      return foreginXstream.fromXML(xml);
+    } catch (final Exception ex) {
+      throw translateCheckedException(ex);
+    }
+
+  }
 
   public static boolean fromDifferentLoader(final Class<?> clazz,
       final ClassLoader loader) {

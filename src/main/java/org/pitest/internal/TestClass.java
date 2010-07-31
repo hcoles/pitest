@@ -60,7 +60,7 @@ public final class TestClass implements Serializable {
 
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     for (final TestUnitFinder each : classConfig.testUnitFinders()) {
-      if (each.canHandle(!units.isEmpty())) {
+      if (each.canHandle(TestClass.this.getClazz(), !units.isEmpty())) {
         units.addAll(each.findTestUnits(TestClass.this, classConfig));
       }
     }

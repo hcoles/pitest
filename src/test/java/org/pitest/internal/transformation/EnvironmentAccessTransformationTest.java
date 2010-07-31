@@ -12,11 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.extension.Transformation;
 import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.TransformingClassLoader;
 import org.pitest.internal.isolation.IsolatedLong;
 import org.pitest.internal.isolation.IsolatedSystem;
-
-import com.thoughtworks.xstream.XStream;
 
 public class EnvironmentAccessTransformationTest {
 
@@ -213,11 +212,8 @@ public class EnvironmentAccessTransformationTest {
   @SuppressWarnings("unchecked")
   private Object runInClassLoader(final ClassLoader loader,
       final Callable<Object> callable) throws Exception {
-    final XStream x = new XStream();
-    final String xml = x.toXML(callable);
-    final XStream foreign = new XStream();
-    foreign.setClassLoader(loader);
-    final Callable<Object> c = (Callable<Object>) foreign.fromXML(xml);
+    final Callable<Object> c = (Callable<Object>) IsolationUtils
+        .cloneForLoader(callable, loader);
     return c.call();
 
   }
