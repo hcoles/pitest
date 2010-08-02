@@ -22,7 +22,6 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
-import org.junit.internal.runners.JUnit38ClassRunner;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -40,8 +39,7 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
       final Configuration b) {
 
     if (isCustomJUnit3Class(a.getClazz())) {
-      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz(),
-          new JUnit38ClassRunner(a.getClazz()));
+      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
       final List<TestUnit> units = adapter.getTestUnits();
       Dependency.dependOnFirst(units);
       return units;

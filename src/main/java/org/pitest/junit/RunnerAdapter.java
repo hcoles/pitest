@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.internal.builders.AnnotatedBuilder;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.pitest.TestMethod;
@@ -55,11 +54,11 @@ public class RunnerAdapter implements Serializable {
   }
 
   private static Runner createRunner(final Class<?> clazz) {
-    final AnnotatedBuilder builder = new AnnotatedBuilder(
-        new AllDefaultPossibilitiesBuilder(true));
+    final AllDefaultPossibilitiesBuilder builder = // new AnnotatedBuilder(
+    new AllDefaultPossibilitiesBuilder(true);// );
     try {
       return builder.runnerForClass(clazz);
-    } catch (final Exception ex) {
+    } catch (final Throwable ex) {
       throw translateCheckedException(ex);
     }
   }
