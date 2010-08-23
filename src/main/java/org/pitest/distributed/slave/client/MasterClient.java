@@ -3,6 +3,7 @@ package org.pitest.distributed.slave.client;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -20,16 +21,20 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.core.Member;
 import com.hazelcast.util.concurrent.ConcurrentSkipListSet;
 
-public class MasterClient implements MasterService {
+public class MasterClient implements MasterService , Serializable{
 
   private static final Logger        logger                = Logger
                                                                .getLogger(MasterClient.class
                                                                    .getName());
+  
+  private static final long serialVersionUID = 1L;
 
-  private final HazelcastInstance    hazelcast;
+  private transient final HazelcastInstance    hazelcast;
+  private transient final IMap<String, byte[]> classPathCache;
+
+  
   private final RunDetails           run;
-  private final IMap<String, byte[]> classPathCache;
-
+ 
   private final Set<String>          knownMissingResources = new ConcurrentSkipListSet<String>();
 
   public MasterClient(final HazelcastInstance hazelcast, final RunDetails run) {

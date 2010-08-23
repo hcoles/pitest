@@ -63,7 +63,6 @@ public class TestGroupExecutor {
     if (this.cache.getCachedContainer(run).hasNone()) {
 
       final ResourceCache cache = new DirectoryCache(run);
-
       final MasterService master = new MasterClient(this.client, run);
 
       final Map<String, String> environment = master.getEnvironmentSettings();

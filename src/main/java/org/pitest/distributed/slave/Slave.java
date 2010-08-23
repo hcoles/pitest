@@ -20,7 +20,7 @@ public class Slave {
   private final HazelcastInstance                      client;
   private final BlockingQueue<TestGroupExecuteMessage> queue;
   private final ITopic<HandlerNotificationMessage>     handlerNotificationTopic;
-  private final ITopic<ControlMessage>                 controlTopic;
+//  private final ITopic<ControlMessage>                 controlTopic;
   private final TestGroupExecutor                      groupExecutor;
 
   // private final List<ControlMessage>
@@ -35,7 +35,7 @@ public class Slave {
 
     this.handlerNotificationTopic = this.client
         .getTopic(SharedNames.TEST_HANDLER_NOTIFICATION);
-    this.controlTopic = this.client.getTopic(SharedNames.TEST_CONTROL);
+ //   this.controlTopic = this.client.getTopic(SharedNames.TEST_CONTROL);
     this.groupExecutor = new TestGroupExecutor(client,
         new RemoteContainerCache(3));
   }

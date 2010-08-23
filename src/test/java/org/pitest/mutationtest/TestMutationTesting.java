@@ -127,6 +127,7 @@ public class TestMutationTesting {
   @Test
   public void testReportsErrorInMutationTestIfTestsFailsWithoutMutation() {
     run(FailingTest.class);
+    // one failure for the test, one error for the mutation test
     verify(this.listener, times(1)).onTestFailure((any(TestResult.class)));
     verify(this.listener, times(1)).onTestError((any(TestResult.class)));
   }
