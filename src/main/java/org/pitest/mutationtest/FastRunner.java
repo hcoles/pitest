@@ -27,6 +27,9 @@ import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
+import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.DefaultPITClassloader;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -41,25 +44,22 @@ public class FastRunner {
         System.in));
 
     try {
-      final String xml = stdIn.readLine();
+      final DefaultPITClassloader cl = createClassLoader(stdIn);
+      final List<TestUnit> tests = getTestList(stdIn, cl);
 
-      System.err.println("Got xml " + xml);
-
-      final List<TestUnit> tests = xmlToTestGroup(xml, Thread.currentThread()
-          .getContextClassLoader());
       final int mutationCount = Integer.parseInt(args[0]);
 
       // vmBreak();
 
       pauseBeforeUnmutatedTest();
-      runTestsWithCurrentlyTesteeImplementation(outStream, tests);
+
+      runTestsWithCurrentTesteeImplementation(outStream, tests);
       System.err.println("Ran unmutated tests ");
 
       for (int i = 0; i != mutationCount; i++) {
         System.err.println("Loop iteration " + i);
         pauseBeforeMutatedTestRun();
-        runTestsWithCurrentlyTesteeImplementation(outStream, tests);
-
+        runTestsWithCurrentTesteeImplementation(outStream, tests);
       }
     } catch (final IOException ex) {
       ex.printStackTrace();
@@ -67,14 +67,30 @@ public class FastRunner {
 
   }
 
-  private static void pauseBeforeMutatedTestRun() {
-    // TODO Auto-generated method stub
+  private static List<TestUnit> getTestList(final BufferedReader stdIn,
+      final DefaultPITClassloader cl) throws IOException {
+    final String xml = stdIn.readLine();
 
+    System.err.println("Got xml " + xml);
+
+    final List<TestUnit> tests = xmlToTestGroup(xml, cl);
+    return tests;
   }
 
-  private static void runTestsWithCurrentlyTesteeImplementation(
+  private static DefaultPITClassloader createClassLoader(
+      final BufferedReader stdIn) throws IOException {
+    final String classPathXML = stdIn.readLine();
+    final XStream xstream = new XStream();
+    final ClassPath cp = (ClassPath) xstream.fromXML(classPathXML);
+
+    final DefaultPITClassloader cl = new DefaultPITClassloader(cp,
+        IsolationUtils.getContextClassLoader());
+    return cl;
+  }
+
+  private static void runTestsWithCurrentTesteeImplementation(
       final PrintStream outStream, final List<TestUnit> tests) {
-    final long t0 = System.currentTimeMillis();
+
     final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
     final EmptyConfiguration conf = new EmptyConfiguration();
@@ -87,12 +103,6 @@ public class FastRunner {
     System.err.println("(child) Reporting  "
         + listener.resultIndicatesSuccess());
     outStream.println(listener.resultIndicatesSuccess());
-
-    // cycleTime = t0 - System.currentTimeMillis();
-  }
-
-  private static void pauseBeforeUnmutatedTest() {
-    // TODO Auto-generated method stub
 
   }
 
@@ -107,6 +117,16 @@ public class FastRunner {
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
+  }
+
+  private static void pauseBeforeMutatedTestRun() {
+    // DO NOT REMOVE OR RENAME THIS METHOD - a breakpoint
+    // is set on it by the controlling process
+  }
+
+  private static void pauseBeforeUnmutatedTest() {
+    // DO NOT REMOVE OR RENAME THIS METHOD - a breakpoint
+    // is set on it by the controlling process
   }
 
 }

@@ -29,6 +29,10 @@ import com.thoughtworks.xstream.XStream;
 
 public class IsolationUtils {
 
+  public static ClassLoader getContextClassLoader() {
+    return Thread.currentThread().getContextClassLoader();
+  }
+
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
     try {
       final XStream xstream = new XStream();
@@ -108,6 +112,11 @@ public class IsolationUtils {
       return m;
     }
 
+  }
+
+  public static String toXml(final Object o) {
+    final XStream xstream = new XStream();
+    return xstream.toXML(o);
   }
 
 }

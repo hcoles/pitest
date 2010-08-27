@@ -26,27 +26,49 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.pitest.functional.Option;
+import org.pitest.util.Unchecked;
+
 public class ArchiveClassPathRoot implements ClassPathRoot {
 
-  private final ZipFile root;
+  private final File      file;
+  private Option<ZipFile> root;
 
   public ArchiveClassPathRoot(final File file) throws IOException {
-    this.root = new ZipFile(file);
+    this.file = file;
+    this.root = Option.none();
+    if ( !file.canRead() ) {
+      throw new IOException("Can't read the file " + file);
+    }
+  }
+
+  private ZipFile getRoot() {
+    try {
+      synchronized (this.file) {
+        if (this.root.hasNone()) {
+          this.root = Option.someOrNone(new ZipFile(this.file));
+        }
+      }
+      return this.root.value();
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
   }
 
   public InputStream getData(final String name) throws IOException {
-    final ZipEntry entry = this.root
-        .getEntry(name.replace('.', '/') + ".class");
+    final ZipEntry entry = this.getRoot().getEntry(
+        name.replace('.', '/') + ".class");
     if (entry == null) {
       return null;
     }
-    return this.root.getInputStream(entry);
+    return this.getRoot().getInputStream(entry);
   }
 
   public URL getResource(final String name) throws MalformedURLException {
-    final ZipEntry entry = this.root.getEntry(name);
+    final ZipEntry entry = this.getRoot().getEntry(name);
     if (entry != null) {
-      return new URL("jar:file:" + this.root.getName() + "!/" + entry.getName());
+      return new URL("jar:file:" + this.getRoot().getName() + "!/"
+          + entry.getName());
     } else {
       return null;
     }
@@ -54,17 +76,22 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   }
 
   public void release() throws IOException {
-    this.root.close();
+    System.out.println("Closing");
+    System.out.flush();
+    if (this.root.hasSome()) {
+      this.root.value().close();
+    }
+    // this.root.close();
   }
 
   @Override
   public String toString() {
-    return "ArchiveClassPathRoot [root=" + this.root.getName() + "]";
+    return "ArchiveClassPathRoot [file=" + this.file.getName() + "]";
   }
 
   public Collection<String> classNames() {
     final List<String> names = new ArrayList<String>();
-    final Enumeration<? extends ZipEntry> entries = this.root.entries();
+    final Enumeration<? extends ZipEntry> entries = this.getRoot().entries();
     while (entries.hasMoreElements()) {
       final ZipEntry entry = entries.nextElement();
       if (!entry.isDirectory() && entry.getName().endsWith(".class")) {

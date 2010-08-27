@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 
 public class RemoteRootTest {
 
@@ -78,5 +79,13 @@ public class RemoteRootTest {
         Option.someOrNone(expected));
     this.testee.getResource("foo");
     verify(this.cache).cacheResource("foo", expected);
+  }
+
+  @Test
+  public void testCanSerializeToXmlAndBack() {
+    IsolationUtils.cloneForLoader(this.testee, IsolationUtils
+        .getContextClassLoader());
+    // pass if we get here
+
   }
 }

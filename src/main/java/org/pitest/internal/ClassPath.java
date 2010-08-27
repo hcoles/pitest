@@ -34,6 +34,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
+import org.pitest.internal.classloader.PITClassLoader;
 
 public class ClassPath {
 
@@ -57,6 +58,15 @@ public class ClassPath {
       }
     };
     this.roots.addAll(createRoots(FCollection.filter(files, exists)));
+  }
+
+  public static ClassPath createFrom(final ClassLoader loader) {
+    // hmm
+    if (loader instanceof PITClassLoader) {
+      return ((PITClassLoader) loader).getClassPath();
+    } else {
+      return new ClassPath();
+    }
   }
 
   public Collection<String> classNames() {

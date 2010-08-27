@@ -14,27 +14,26 @@
  */
 package org.pitest.internal.classloader;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
 import org.pitest.internal.ClassPath;
 
-public class PITClassloader extends ClassLoader {
+public class DefaultPITClassloader extends PITClassLoader {
 
   private final ClassPath classPath;
 
-  public PITClassloader(final ClassPath cp, final ClassLoader parent) {
+  public DefaultPITClassloader(final ClassPath cp, final ClassLoader parent) {
     super(parent);
     this.classPath = cp;
   }
 
-  public PITClassloader(final Collection<File> files, final ClassLoader parent) {
-    this(new ClassPath(files), parent);
-  }
+  // public DefaultPITClassloader(final Collection<File> files, final
+  // ClassLoader parent) {
+  // this(new ClassPath(files), parent);
+  // }
 
   @Override
   protected Class<?> findClass(final String name) throws ClassNotFoundException {
@@ -88,6 +87,11 @@ public class PITClassloader extends ClassLoader {
         throw new NoSuchElementException();
       }
     };
+  }
+
+  @Override
+  public ClassPath getClassPath() {
+    return this.classPath;
   }
 
 }

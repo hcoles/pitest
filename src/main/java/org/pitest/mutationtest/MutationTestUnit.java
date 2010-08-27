@@ -31,6 +31,8 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
+import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.HotSwap;
 import org.pitest.util.JavaProcess;
@@ -121,7 +123,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     try {
       if (mutationCount > 0) {
-        performMutationTesting(rc, m, name, mutationCount);
+        performMutationTesting(rc, m, name, mutationCount, loader);
       } else {
         logger.info("Skipping test " + this.description()
             + " as no mutations found");
@@ -134,8 +136,9 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void performMutationTesting(final ResultCollector rc,
-      final Mutater m, final String name, final int mutationCount)
-      throws IOException, IllegalConnectorArgumentsException, VMStartException,
+      final Mutater m, final String name, final int mutationCount,
+      final ClassLoader loader) throws IOException,
+      IllegalConnectorArgumentsException, VMStartException,
       InterruptedException, ClassNotFoundException, Exception {
     final List<TestUnit> tests = findTestUnits();
     final String testXML = listToXML(tests);
@@ -146,18 +149,20 @@ public class MutationTestUnit extends AbstractTestUnit {
     final List<AssertionError> failures = new ArrayList<AssertionError>();
 
     final long t0 = System.currentTimeMillis();
-    final JavaProcess p = hs.launchVM(FastRunner.class, rp, ""
-        + mutationCount);
+    final JavaProcess p = hs.launchVM(FastRunner.class, rp, "" + mutationCount);
     System.out.println("Process start time = "
         + (System.currentTimeMillis() - t0));
 
     final CountDownLatch beforeUnmutatedTestLatch = hs.setBreakPoint(
         FastRunner.class, "pauseBeforeUnmutatedTest");
-    CountDownLatch beforeMutatedTestLatch = hs.setBreakPoint(
-        FastRunner.class, "pauseBeforeMutatedTestRun");
+    CountDownLatch beforeMutatedTestLatch = hs.setBreakPoint(FastRunner.class,
+        "pauseBeforeMutatedTestRun");
     hs.resume();
 
     final PrintWriter stdIn = new PrintWriter(p.stdIn());
+    stdIn.append(IsolationUtils.toXml(ClassPath.createFrom(loader)).replace(
+        "\n", "")
+        + "\n");
     stdIn.append(testXML + "\n");
     stdIn.flush();
 
@@ -192,9 +197,8 @@ public class MutationTestUnit extends AbstractTestUnit {
       final JavaClass activeMutation = m.jumbler(name);
 
       final MutationDetails details = new MutationDetails(activeMutation
-          .getClassName(), activeMutation.getFileName(), m
-          .getModification(), m.getMutatedMethodName(this.classToMutate
-          .getName()));
+          .getClassName(), activeMutation.getFileName(), m.getModification(), m
+          .getMutatedMethodName(this.classToMutate.getName()));
 
       beforeMutatedTestLatch.await();
       hs.replace(activeMutation.getBytes(), name);
@@ -234,7 +238,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     }
 
   }
-
 
   private AssertionError createAssertionError(final MutationDetails md) {
     final AssertionError ae = new AssertionError("The mutation -> " + md

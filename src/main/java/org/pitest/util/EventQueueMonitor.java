@@ -36,8 +36,9 @@ public class EventQueueMonitor extends Thread {
 
   @Override
   public void run() {
-    while (this.run) {
-      try {
+    try {
+      while (this.run) {
+
         final EventSet es = this.eq.remove();
         for (final Event each : es) {
 
@@ -53,11 +54,10 @@ public class EventQueueMonitor extends Thread {
           }
 
         }
-      } catch (final Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
 
+      }
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
     }
   }
 

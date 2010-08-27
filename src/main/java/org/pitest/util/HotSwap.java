@@ -129,81 +129,6 @@ public class HotSwap {
     }
   }
 
-  public void prepareInitialHotSwap(final String name, final byte[] bytes) {
-
-    // vm.allThreads().get(0).
-    // vm.
-
-    final ClassPrepareRequest cpr = this.vm.eventRequestManager()
-        .createClassPrepareRequest();
-    // ReferenceType rt = vm.
-    cpr.addClassFilter(name);
-    cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-
-    final SideEffect1<Event> hook = new SideEffect1<Event>() {
-
-      public void apply(final Event a) {
-        final ClassPrepareEvent cpe = (ClassPrepareEvent) a;
-        System.out.println("Ref type is " + cpe.referenceType());
-        System.out.flush();
-
-        hotSwapClassOnVMBreak(name, bytes);
-        // a.virtualMachine().resume();
-
-      }
-
-    };
-
-    this.eqm.addHook(cpr, hook);
-
-    cpr.enable();
-
-  }
-
-  public void hotSwapClassOnVMBreak(final String name, final byte[] bytes) {
-    final List<ReferenceType> refs = this.vm.classesByName(VMBreak.class
-        .getName());
-    if (refs.isEmpty()) {
-      this.prepareInitialHotSwap(name, bytes);
-    } else {
-
-      final ReferenceType rt = refs.get(0);
-
-      for (final Method each : rt.methodsByName("pause")) {
-        final BreakpointRequest bp = this.vm.eventRequestManager()
-            .createBreakpointRequest(each.location());
-        final SideEffect1<Event> hook = new SideEffect1<Event>() {
-
-          public void apply(final Event a) {
-
-            try {
-
-              // final List<ReferenceType> refs = vm.classesByName(VMBreak.class
-              // .getName());
-              // Field f = refs.get(0).fieldByName("test");
-              // Value value = refs.get(0).getValue(f);
-
-              // System.out.println("Value is " + value);
-
-              replace(bytes, name);
-            } catch (final Exception e) {
-              Unchecked.translateCheckedException(e);
-            }
-
-            // a.virtualMachine().resume();
-          }
-
-        };
-
-        this.eqm.addHook(bp, hook);
-        bp.enable();
-        System.out.println("Enabled breakpoint at " + bp.location());
-      }
-
-    }
-
-  }
-
   // either host,port will be set, or name
   private void connect(final String host, final String port, final String name)
       throws Exception {
@@ -269,7 +194,9 @@ public class HotSwap {
       map.put(refType, classBytes);
       System.err.println(">>>>>>>>>>> !Hotswapping class " + className);
       System.err.flush();
+
       this.vm.redefineClasses(map);
+
     }
 
   }

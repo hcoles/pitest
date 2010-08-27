@@ -30,6 +30,7 @@ import org.pitest.extension.ResultSource;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.internal.classloader.TransformingClassLoader;
 import org.pitest.internal.isolation.IsolatedSystem;
 import org.pitest.internal.transformation.EnvironmentAccessTransformation;
@@ -41,7 +42,7 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   private final HazelcastInstance   hazelcast;
   private final RunDetails          run;
-  private final ClassLoader         loader;
+  private final PITClassLoader      loader;
   private final Map<String, String> environment;
   private final ResourceCache       resourceCache;
 
@@ -58,7 +59,7 @@ public class DefaultRemoteContainer implements RemoteContainer {
 
   public DefaultRemoteContainer(final RunDetails run,
       final HazelcastInstance hazelcast, final MasterService master,
-      final ResourceCache cache, final ClassLoader loader,
+      final ResourceCache cache, final PITClassLoader loader,
       final Map<String, String> environment) {
 
     this.loader = loader;

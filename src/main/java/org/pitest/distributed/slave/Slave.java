@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.pitest.distributed.ControlMessage;
 import org.pitest.distributed.GroupState;
 import org.pitest.distributed.HandlerNotificationMessage;
 import org.pitest.distributed.SharedNames;
@@ -20,7 +19,7 @@ public class Slave {
   private final HazelcastInstance                      client;
   private final BlockingQueue<TestGroupExecuteMessage> queue;
   private final ITopic<HandlerNotificationMessage>     handlerNotificationTopic;
-//  private final ITopic<ControlMessage>                 controlTopic;
+  // private final ITopic<ControlMessage> controlTopic;
   private final TestGroupExecutor                      groupExecutor;
 
   // private final List<ControlMessage>
@@ -35,7 +34,7 @@ public class Slave {
 
     this.handlerNotificationTopic = this.client
         .getTopic(SharedNames.TEST_HANDLER_NOTIFICATION);
- //   this.controlTopic = this.client.getTopic(SharedNames.TEST_CONTROL);
+    // this.controlTopic = this.client.getTopic(SharedNames.TEST_CONTROL);
     this.groupExecutor = new TestGroupExecutor(client,
         new RemoteContainerCache(3));
   }

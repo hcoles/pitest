@@ -3,7 +3,11 @@ package org.pitest.distributed.slave.client;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.StringBufferInputStream;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -15,32 +19,54 @@ import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.functional.Option;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.DistributedTask;
+import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.Member;
 import com.hazelcast.util.concurrent.ConcurrentSkipListSet;
 
-public class MasterClient implements MasterService , Serializable{
+public class MasterClient implements MasterService, Serializable {
 
-  private static final Logger        logger                = Logger
-                                                               .getLogger(MasterClient.class
-                                                                   .getName());
-  
-  private static final long serialVersionUID = 1L;
+  private static final Logger            logger                = Logger
+                                                                   .getLogger(MasterClient.class
+                                                                       .getName());
 
-  private transient final HazelcastInstance    hazelcast;
-  private transient final IMap<String, byte[]> classPathCache;
+  private static final long              serialVersionUID      = 1L;
 
-  
-  private final RunDetails           run;
- 
-  private final Set<String>          knownMissingResources = new ConcurrentSkipListSet<String>();
+  private transient HazelcastInstance    hazelcast;
+  private transient IMap<String, byte[]> classPathCache;
+
+  private final RunDetails               run;
+
+  private final Set<String>              knownMissingResources = new ConcurrentSkipListSet<String>();
 
   public MasterClient(final HazelcastInstance hazelcast, final RunDetails run) {
     this.hazelcast = hazelcast;
     this.run = run;
     this.classPathCache = hazelcast.getMap(run.getIdentifier());
+  }
+
+  private void readObject(final ObjectInputStream aInputStream)
+      throws ClassNotFoundException, IOException {
+
+    aInputStream.defaultReadObject();
+    final String hazelcastConfig = (String) aInputStream.readObject();
+    final InputStream in = new StringBufferInputStream(hazelcastConfig);
+    final XmlConfigBuilder xcb = new XmlConfigBuilder(in);
+    final Config config = xcb.build();
+    this.hazelcast = Hazelcast.newHazelcastInstance(config);
+    this.classPathCache = this.hazelcast.getMap(this.run.getIdentifier());
+
+  }
+
+  private void writeObject(final ObjectOutputStream aOutputStream)
+      throws IOException {
+
+    aOutputStream.defaultWriteObject();
+    aOutputStream.writeObject(this.hazelcast.getConfig().getXmlConfig());
   }
 
   public byte[] getClasspathData(final String name) throws IOException {

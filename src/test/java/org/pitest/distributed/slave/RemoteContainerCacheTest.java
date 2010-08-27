@@ -30,6 +30,7 @@ import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.functional.Option;
+import org.pitest.internal.classloader.DefaultPITClassloader;
 
 import com.hazelcast.core.HazelcastInstance;
 
@@ -91,8 +92,12 @@ public class RemoteContainerCacheTest {
 
   private RemoteContainer createContainer(final RunDetails run) {
     return new DefaultRemoteContainer(run, this.hazelcast, this.service,
-        this.resourceCache, Thread.currentThread().getContextClassLoader(),
-        new HashMap<String, String>());
+        this.resourceCache, getClassLoader(), new HashMap<String, String>());
+  }
+
+  private DefaultPITClassloader getClassLoader() {
+    return new DefaultPITClassloader(null, Thread.currentThread()
+        .getContextClassLoader());
   }
 
 }
