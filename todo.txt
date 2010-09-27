@@ -12,3 +12,5 @@ Mutation testing via hotswap lacks
   - support for remote class loading
   - support for use of single process
   - support to switch back to classloader model
+  
+  make ClassPath available in some sort of context?? Make it a property of the container??

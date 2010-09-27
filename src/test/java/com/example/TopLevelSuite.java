@@ -44,7 +44,7 @@ import org.pitest.mutationtest.Mutator;
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 
-  @PITContainer
+//  @PITContainer
   public static Container isolated() {
     final IsolationStrategy i = new AllwaysIsolateStrategy();
     final Transformation t = new IdentityTransformation();
@@ -52,7 +52,7 @@ public class TopLevelSuite extends DefaultStaticConfig {
         i), Executors.defaultThreadFactory());
   }
 
-  //@PITContainer
+  @PITContainer
   public static Container distributed() {
     return new DistributedContainer();
   }

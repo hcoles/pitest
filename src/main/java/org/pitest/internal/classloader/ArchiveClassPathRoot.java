@@ -37,7 +37,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   public ArchiveClassPathRoot(final File file) throws IOException {
     this.file = file;
     this.root = Option.none();
-    if ( !file.canRead() ) {
+    if (!file.canRead()) {
       throw new IOException("Can't read the file " + file);
     }
   }

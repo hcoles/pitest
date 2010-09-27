@@ -205,4 +205,8 @@ public class HotSwap {
     // nothing to do here?
   }
 
+  public void killProcess() {
+    this.vm.exit(-1);
+  }
+
 }

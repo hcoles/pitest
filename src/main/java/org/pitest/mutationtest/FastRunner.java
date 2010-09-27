@@ -19,6 +19,7 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -40,8 +41,21 @@ public class FastRunner {
   public static void main(final String[] args) {
 
     final PrintStream outStream = System.out;
+    final PrintStream errStream = System.err;
     final BufferedReader stdIn = new BufferedReader(new InputStreamReader(
         System.in));
+
+    final OutputStream os = new OutputStream() {
+      @Override
+      public void write(final int arg0) throws IOException {
+        // TODO Auto-generated method stub
+
+      }
+
+    };
+    final PrintStream nullStream = new PrintStream(os);
+    System.setOut(nullStream);
+    System.setErr(nullStream);
 
     try {
       final DefaultPITClassloader cl = createClassLoader(stdIn);
@@ -54,10 +68,10 @@ public class FastRunner {
       pauseBeforeUnmutatedTest();
 
       runTestsWithCurrentTesteeImplementation(outStream, tests);
-      System.err.println("Ran unmutated tests ");
+      errStream.println("Ran unmutated tests ");
 
       for (int i = 0; i != mutationCount; i++) {
-        System.err.println("Loop iteration " + i);
+        errStream.println("Loop iteration " + i);
         pauseBeforeMutatedTestRun();
         runTestsWithCurrentTesteeImplementation(outStream, tests);
       }
