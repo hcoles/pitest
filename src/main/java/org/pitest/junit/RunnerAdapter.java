@@ -87,8 +87,8 @@ public class RunnerAdapter implements Serializable {
     Class<?> descriptionTestClass;
     try {
       // it would be nice is junit could use the context class loader . . .
-      descriptionTestClass = Class.forName(d.getClassName(), false, Thread
-          .currentThread().getContextClassLoader());
+      descriptionTestClass = Class.forName(d.getClassName(), false,
+          IsolationUtils.getContextClassLoader());
     } catch (final ClassNotFoundException e) {
       descriptionTestClass = null;
     }

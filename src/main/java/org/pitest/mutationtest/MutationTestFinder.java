@@ -24,6 +24,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
 
 public class MutationTestFinder implements TestUnitFinder {
@@ -122,7 +123,7 @@ public class MutationTestFinder implements TestUnitFinder {
 
   private Option<Class<?>> tryName(final String name) {
     try {
-      final Class<?> guessed = Class.forName(name, true, Thread.currentThread()
+      final Class<?> guessed = Class.forName(name, true, IsolationUtils
           .getContextClassLoader());
       return Option.<Class<?>> someOrNone(guessed);
     } catch (final ClassNotFoundException e) {

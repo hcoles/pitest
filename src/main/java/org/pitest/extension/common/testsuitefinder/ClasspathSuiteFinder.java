@@ -33,6 +33,7 @@ import org.pitest.functional.predicate.Or;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
 import org.pitest.reflection.IsSubclassOf;
 
@@ -60,7 +61,7 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
 
     final ClassPath cp = new ClassPath();
 
-    final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    final ClassLoader cl = IsolationUtils.getContextClassLoader();
     final F<String, TestClass> f = new F<String, TestClass>() {
       public TestClass apply(final String a) {
         try {

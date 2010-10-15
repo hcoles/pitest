@@ -27,6 +27,7 @@ import org.pitest.Description;
 import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.testunit.AbstractTestUnit;
 
 public class TimeoutDecoratorTest {
@@ -43,7 +44,7 @@ public class TimeoutDecoratorTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.loader = Thread.currentThread().getContextClassLoader();
+    this.loader = IsolationUtils.getContextClassLoader();
     this.description = new Description("foo", TimeoutDecoratorTest.class, null);
   }
 

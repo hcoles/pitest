@@ -17,6 +17,7 @@ import org.pitest.distributed.SharedNames;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
+import org.pitest.internal.IsolationUtils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
@@ -41,7 +42,7 @@ public class RemoteExecutor implements Runnable {
     final ITopic<ResultMessage> topic = this.hazelcast
         .getTopic(SharedNames.TEST_RESULTS);
     final ResultCollector rc = new SlaveResultCollector(this.run, topic);
-    Thread.currentThread().setContextClassLoader(this.loader);
+    IsolationUtils.setContextClassLoader(this.loader);
     final TestGroup deserializedGroup = xmlToTestGroup(this.groupXML,
         this.loader);
     for (final TestUnit each : deserializedGroup) {

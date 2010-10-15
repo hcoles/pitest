@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -145,6 +146,17 @@ public class MutationTestUnit extends AbstractTestUnit {
       e.printStackTrace();
     }
 
+    int lastRunMutation = readResults(results, result);
+
+    inputfile.delete();
+    result.delete();
+
+    return lastRunMutation;
+
+  }
+
+  private int readResults(final Collection<AssertionError> results,
+      final File result) throws FileNotFoundException, IOException {
     final BufferedReader r = new BufferedReader(new InputStreamReader(
         new FileInputStream(result)));
     int lastRunMutation = -1;
@@ -162,12 +174,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     } finally {
       r.close();
     }
-
-    inputfile.delete();
-    result.delete();
-
     return lastRunMutation;
-
   }
 
   private Collection<AssertionError> runTestsInSeperateProcess(

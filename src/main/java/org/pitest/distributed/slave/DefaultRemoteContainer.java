@@ -51,7 +51,7 @@ public class DefaultRemoteContainer implements RemoteContainer {
     this(run, hazelcast, master, cache, new TransformingClassLoader(
         new ClassPath(new RemoteRoot(master, cache)),
         new EnvironmentAccessTransformation(), new AllwaysIsolateStrategy(),
-        Thread.currentThread().getContextClassLoader()), environment);
+        IsolationUtils.getContextClassLoader()), environment);
   }
 
   public DefaultRemoteContainer(final RunDetails run,

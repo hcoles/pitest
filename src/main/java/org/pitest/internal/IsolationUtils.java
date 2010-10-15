@@ -37,6 +37,10 @@ public class IsolationUtils {
     return Thread.currentThread().getContextClassLoader();
   }
 
+  public static void setContextClassLoader(final ClassLoader loader) {
+    Thread.currentThread().setContextClassLoader(loader);
+  }
+
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
     try {
       final XStream xstream = new XStream();

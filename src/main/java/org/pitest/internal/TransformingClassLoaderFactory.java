@@ -53,7 +53,7 @@ public class TransformingClassLoaderFactory implements ClassLoaderFactory {
                   TransformingClassLoaderFactory.this.s, null);
             }
           }));
-      Thread.currentThread().setContextClassLoader(this.loader.get());
+      IsolationUtils.setContextClassLoader(this.loader.get());
     }
     return this.loader.get();
   }

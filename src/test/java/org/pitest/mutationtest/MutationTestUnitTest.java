@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class MutationTestUnitTest {
@@ -96,8 +97,7 @@ public class MutationTestUnitTest {
     this.testee = new MutationTestUnit(TestOne.class, One.class,
         new MutationConfig(66, Mutator.INCREMENTS),
         new JUnitCompatibleConfiguration(), null);
-    this.testee
-        .execute(Thread.currentThread().getContextClassLoader(), this.rc);
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifyEnd(any(Description.class));
   }
 
@@ -106,8 +106,7 @@ public class MutationTestUnitTest {
     this.testee = new MutationTestUnit(TestOne.class, One.class,
         new MutationConfig(100, Mutator.INCREMENTS),
         new JUnitCompatibleConfiguration(), null);
-    this.testee
-        .execute(Thread.currentThread().getContextClassLoader(), this.rc);
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class));
   }
 
@@ -116,8 +115,7 @@ public class MutationTestUnitTest {
     this.testee = new MutationTestUnit(TestOne.class, One.class,
         new MutationConfig(66, Mutator.SWITCHES),
         new JUnitCompatibleConfiguration(), null);
-    this.testee
-        .execute(Thread.currentThread().getContextClassLoader(), this.rc);
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifySkipped(any(Description.class));
   }
 
@@ -135,8 +133,7 @@ public class MutationTestUnitTest {
     this.testee = new MutationTestUnit(HideFromJUnit.FailingTest.class,
         One.class, new MutationConfig(66, Mutator.INCREMENTS),
         new JUnitCompatibleConfiguration(), null);
-    this.testee
-        .execute(Thread.currentThread().getContextClassLoader(), this.rc);
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc)
         .notifyEnd(any(Description.class), any(AssertionError.class));
   }

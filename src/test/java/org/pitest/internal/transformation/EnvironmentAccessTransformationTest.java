@@ -197,7 +197,7 @@ public class EnvironmentAccessTransformationTest {
   }
 
   private ClassLoader getNormalLoader() {
-    return Thread.currentThread().getContextClassLoader();
+    return IsolationUtils.getContextClassLoader();
   }
 
   private ClassLoader createClassLoaderAndEnsureIsolatedSystemIsLoaded()

@@ -72,7 +72,7 @@ public class MutationTestSlave {
       final MutationConfig mutationConfig = (MutationConfig) IsolationUtils
           .fromTransportString(br.readLine());
       final DefaultPITClassloader loader = createClassLoader(br.readLine());
-      Thread.currentThread().setContextClassLoader(loader);
+      IsolationUtils.setContextClassLoader(loader);
 
       System.out.println("Mutating class " + className);
 

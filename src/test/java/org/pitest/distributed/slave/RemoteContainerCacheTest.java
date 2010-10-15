@@ -30,6 +30,7 @@ import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -96,7 +97,7 @@ public class RemoteContainerCacheTest {
   }
 
   private DefaultPITClassloader getClassLoader() {
-    return new DefaultPITClassloader(null, Thread.currentThread()
+    return new DefaultPITClassloader(null, IsolationUtils
         .getContextClassLoader());
   }
 
