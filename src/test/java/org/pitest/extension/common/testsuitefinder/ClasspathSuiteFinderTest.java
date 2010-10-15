@@ -16,8 +16,12 @@ package org.pitest.extension.common.testsuitefinder;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -150,8 +154,31 @@ public class ClasspathSuiteFinderTest {
 
     }
 
-    assertEquals(Arrays.asList(new TestClass(FooDerived.class), new TestClass(
-        Foo.class)), this.testee.apply(new TestClass(Suite.class)));
+    assertSameContentsIgnoringOrder(Arrays.asList(new TestClass(
+        FooDerived.class), new TestClass(Foo.class)), this.testee
+        .apply(new TestClass(Suite.class)));
+  }
+
+  private void assertSameContentsIgnoringOrder(
+      final Collection<TestClass> expected, final Collection<TestClass> actual) {
+    final List<TestClass> e = new ArrayList<TestClass>();
+    e.addAll(expected);
+    final List<TestClass> a = new ArrayList<TestClass>();
+    a.addAll(actual);
+
+    final Comparator<TestClass> c = new Comparator<TestClass>() {
+
+      public int compare(final TestClass o1, final TestClass o2) {
+        return o1.hashCode() - o2.hashCode();
+      }
+
+    };
+
+    Collections.sort(e, c);
+    Collections.sort(a, c);
+
+    assertEquals(e, a);
+
   }
 
   @Test
@@ -164,9 +191,10 @@ public class ClasspathSuiteFinderTest {
 
     }
 
-    assertEquals(Arrays.asList(new TestClass(FooDerived.class), new TestClass(
-        Bar.class), new TestClass(Foo.class), new TestClass(BarDerived.class)),
-        this.testee.apply(new TestClass(Suite.class)));
+    assertSameContentsIgnoringOrder(Arrays.asList(new TestClass(
+        FooDerived.class), new TestClass(Bar.class), new TestClass(Foo.class),
+        new TestClass(BarDerived.class)), this.testee.apply(new TestClass(
+        Suite.class)));
   }
 
   @Test
@@ -207,8 +235,9 @@ public class ClasspathSuiteFinderTest {
 
     }
 
-    assertEquals(Arrays.asList(new TestClass(FooDerived.class), new TestClass(
-        Foo.class)), this.testee.apply(new TestClass(Suite.class)));
+    assertSameContentsIgnoringOrder(Arrays.asList(new TestClass(
+        FooDerived.class), new TestClass(Foo.class)), this.testee
+        .apply(new TestClass(Suite.class)));
   }
 
   @Test

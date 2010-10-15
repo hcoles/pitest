@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runners.model.RunnerBuilder;
 import org.pitest.TestMethod;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -37,7 +37,8 @@ public class RunnerAdapter implements Serializable {
 
   private static final long                serialVersionUID = 1L;
 
-  private transient Runner                 runner;
+  // private transient Runner runner;
+  private transient ClassLoader            lastUsedClassLoader;
   private transient Map<String, Throwable> results;
   private transient List<TestUnit>         tus              = new ArrayList<TestUnit>();
 
@@ -45,8 +46,7 @@ public class RunnerAdapter implements Serializable {
 
   public RunnerAdapter(final Class<?> clazz, final Runner runner) {
     this.clazz = clazz;
-    this.runner = runner;
-    gatherTestUnits(this.tus, this.runner.getDescription());
+    gatherTestUnits(this.tus, createRunner(clazz).getDescription());
   }
 
   public RunnerAdapter(final Class<?> clazz) {
@@ -54,13 +54,18 @@ public class RunnerAdapter implements Serializable {
   }
 
   private static Runner createRunner(final Class<?> clazz) {
-    final AllDefaultPossibilitiesBuilder builder = // new AnnotatedBuilder(
-    new AllDefaultPossibilitiesBuilder(true);// );
+    final RunnerBuilder builder = createRunnerBuilder(clazz);
     try {
       return builder.runnerForClass(clazz);
     } catch (final Throwable ex) {
+      ex.printStackTrace();
       throw translateCheckedException(ex);
     }
+
+  }
+
+  private static RunnerBuilder createRunnerBuilder(final Class<?> clazz) {
+    return new PossibilitiesBuilder(true);
   }
 
   public List<TestUnit> getTestUnits() {
@@ -68,7 +73,7 @@ public class RunnerAdapter implements Serializable {
   }
 
   private void gatherTestUnits(final List<TestUnit> tus, final Description d) {
-    if (d.isTest()) {
+    if (d.isTest() && !d.getClassName().startsWith("junit.framework")) {
       tus.add(descriptionToTestUnit(d));
     } else {
       for (final Description each : d.getChildren()) {
@@ -82,7 +87,7 @@ public class RunnerAdapter implements Serializable {
     Class<?> descriptionTestClass;
     try {
       // it would be nice is junit could use the context class loader . . .
-      descriptionTestClass = Class.forName(d.getClassName(), true, Thread
+      descriptionTestClass = Class.forName(d.getClassName(), false, Thread
           .currentThread().getContextClassLoader());
     } catch (final ClassNotFoundException e) {
       descriptionTestClass = null;
@@ -91,8 +96,11 @@ public class RunnerAdapter implements Serializable {
     final Method m = Reflection.publicMethod(descriptionTestClass, d
         .getMethodName());
     final TestMethod tm = new TestMethod(m, null);
+
+    // FIXME check correct test class is being used here
     final org.pitest.Description pitDescription = new org.pitest.Description(d
-        .getDisplayName(), d.getTestClass(), tm);
+        .getDisplayName(), descriptionTestClass, tm);
+
     return new RunnerAdapterTestUnit(this, d, pitDescription, null);
   }
 
@@ -118,12 +126,14 @@ public class RunnerAdapter implements Serializable {
   }
 
   @SuppressWarnings("unchecked")
-  private void runIfRequired(final ClassLoader loader) {
+  private synchronized void runIfRequired(final ClassLoader loader) {
 
-    if (this.runner != null) {
-      final CustomRunnerExecutor ce = new CustomRunnerExecutor(this.runner);
+    if (this.lastUsedClassLoader != loader) {
+      this.lastUsedClassLoader = loader;
+      final Runner runner = createRunner(this.clazz);
+      final CustomRunnerExecutor ce = new CustomRunnerExecutor(runner);
       Object foreignCe = ce;
-      if (IsolationUtils.fromDifferentLoader(this.runner.getClass(), loader)) {
+      if (IsolationUtils.fromDifferentLoader(runner.getClass(), loader)) {
         foreignCe = IsolationUtils.cloneForLoader(ce, loader);
       }
       final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
@@ -133,7 +143,6 @@ public class RunnerAdapter implements Serializable {
         throw translateCheckedException(e);
       }
 
-      this.runner = null;
     }
 
   }
@@ -142,9 +151,9 @@ public class RunnerAdapter implements Serializable {
       throws ClassNotFoundException, IOException {
 
     aInputStream.defaultReadObject();
-    this.runner = createRunner(this.clazz);
+    // this.runner = createRunner(this.clazz);
     this.tus = new ArrayList<TestUnit>();
-    gatherTestUnits(this.tus, this.runner.getDescription());
+    gatherTestUnits(this.tus, createRunner(this.clazz).getDescription());
 
   }
 
@@ -153,6 +162,9 @@ public class RunnerAdapter implements Serializable {
   }
 
   public Description getTestUnitDescriptionForString(final String description) {
+    if (this.tus.isEmpty()) {
+      throw new AssertionError("No test units");
+    }
     for (final TestUnit each : this.tus) {
       final RunnerAdapterTestUnit rutu = (RunnerAdapterTestUnit) each;
       if (CustomRunnerExecutor.descriptionToString(rutu.getJunitDescription())

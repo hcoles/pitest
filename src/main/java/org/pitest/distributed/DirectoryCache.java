@@ -29,7 +29,8 @@ public class DirectoryCache implements ResourceCache {
   private final File cacheDirectory;
 
   public DirectoryCache(final RunDetails run) {
-    this.cacheDirectory = new File(run.getIdentifier());
+    this.cacheDirectory = new File("classpathCache" + File.separator
+        + run.getIdentifier());
     if (!this.cacheDirectory.exists() && !this.cacheDirectory.mkdirs()) {
       throw new RuntimeException("Could not create cache dir "
           + this.cacheDirectory.getAbsolutePath());

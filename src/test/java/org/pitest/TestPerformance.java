@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.annotations.PITSuite;
@@ -75,6 +76,7 @@ public class TestPerformance {
   }
 
   @Test
+  @Ignore
   public void testUncontainer() {
     this.testee = new Pitest(new JUnitCompatibleConfiguration());
     final long t0 = System.currentTimeMillis();
@@ -82,7 +84,7 @@ public class TestPerformance {
 
     // numbers will be highly system dependent delete this
     // test if becomes problematic
-    assertTrue((System.currentTimeMillis() - t0) < 2000);
+    assertTrue((System.currentTimeMillis() - t0) < 2500);
   }
 
 }

@@ -23,16 +23,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import org.pitest.distributed.master.MasterService;
 import org.pitest.functional.Option;
 import org.pitest.internal.classloader.ClassPathRoot;
 
 public class RemoteRoot implements ClassPathRoot {
-
-  private final static Logger logger = Logger.getLogger(RemoteRoot.class
-                                         .getName());
 
   private final MasterService service;
   private final ResourceCache cache;
@@ -48,7 +44,6 @@ public class RemoteRoot implements ClassPathRoot {
   }
 
   public InputStream getData(final String name) throws IOException {
-    logger.info("Getting data for " + name);
     final byte[] data = this.service.getClasspathData(name);
     if (data != null) {
       return new ByteArrayInputStream(data);

@@ -203,10 +203,10 @@ public class DD<T> {
 
 class DemoDD extends DD<Integer> {
 
-  public static final Integer ONE   = new Integer(1);
-  public static final Integer TWO   = new Integer(2);
-  public static final Integer THREE = new Integer(3);
-  public static final Integer FOUR  = new Integer(4);
+  public static final Integer ONE   = 1;
+  public static final Integer TWO   = 2;
+  public static final Integer THREE = 3;
+  public static final Integer FOUR  = 4;
 
   public static void main(final String[] args) {
     final LinkedList<Integer> config = new LinkedList<Integer>();

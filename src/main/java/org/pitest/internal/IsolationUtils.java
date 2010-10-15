@@ -17,6 +17,8 @@ package org.pitest.internal;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +26,8 @@ import java.util.List;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;
+import org.pitest.util.Base64;
+import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -117,6 +121,38 @@ public class IsolationUtils {
   public static String toXml(final Object o) {
     final XStream xstream = new XStream();
     return xstream.toXML(o);
+  }
+
+  public static String toTransportString(final Object o) {
+    try {
+      return Base64.encodeBytes(toXml(o).getBytes("UTF-8"));
+    } catch (final UnsupportedEncodingException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public static String decodeTransportString(final String encodedXml)
+      throws IOException {
+    return new String(Base64.decode(encodedXml), "UTF-8");
+  }
+
+  public static Object fromTransportString(final String encodedXml) {
+    try {
+      return fromXml(decodeTransportString(encodedXml));
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public static Object fromXml(final String xml) {
+    final XStream xstream = new XStream();
+    return xstream.fromXML(xml);
+  }
+
+  public static Object fromXml(final String xml, final ClassLoader loader) {
+    final XStream xstream = new XStream();
+    xstream.setClassLoader(loader);
+    return xstream.fromXML(xml);
   }
 
 }

@@ -15,6 +15,7 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -138,6 +139,13 @@ public class MutationTestUnitTest {
         .execute(Thread.currentThread().getContextClassLoader(), this.rc);
     verify(this.rc)
         .notifyEnd(any(Description.class), any(AssertionError.class));
+  }
+
+  @Test
+  public void testRandomFilenameReturnsFilenameWithNoDots() {
+    final String actual = MutationTestUnit.randomFilename();
+    assertTrue(actual.length() > 10);
+    assertFalse(actual.contains("."));
   }
 
 }

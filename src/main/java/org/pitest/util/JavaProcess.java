@@ -14,47 +14,95 @@
  */
 package org.pitest.util;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.pitest.functional.SideEffect1;
 
 public class JavaProcess {
 
   private final Process       process;
+
   private final StreamMonitor out;
   private final StreamMonitor err;
 
-  // private final Class<?> mainClass;
-
-  // private final ClassPath classPath;
-
   public JavaProcess(final Process process,
-      final SideEffect1<String> sysoutHandler) {
+      final SideEffect1<String> sysoutHandler,
+      final SideEffect1<String> syserrHandler) {
     this.process = process;
     this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);
-    this.err = new StreamMonitor(process.getErrorStream(), System.err);
-    // this.classPath = classPath;
+    this.err = new StreamMonitor(process.getErrorStream(), syserrHandler);
+
   }
 
-  public void waitToDie() throws InterruptedException {
-    this.process.waitFor();
+  public void destroy() {
+    this.process.destroy();
+  }
+
+  public int waitToDie() throws InterruptedException {
+    final int exitVal = this.process.waitFor();
+    this.out.requestStop();
+    this.err.requestStop();
+    return exitVal;
+  }
+
+  public boolean isAlive() {
+    try {
+      this.process.exitValue();
+      return false;
+    } catch (final IllegalThreadStateException e) {
+      return true;
+    }
   }
 
   public OutputStream stdIn() {
     return this.process.getOutputStream();
   }
 
-  // public void start() throws Exception {
-  //
-  // final String separator = System.getProperty("file.separator");
-  // final String classpath = System.getProperty("java.class.path");
-  // final String path = System.getProperty("java.home") + separator + "bin"
-  // + separator + "java";
-  // final ProcessBuilder processBuilder = new ProcessBuilder(path, "-cp",
-  // classpath, this.mainClass.getName());
-  // this.process = processBuilder.start();
-  // this.process.waitFor();
-  //
+  // public InputStream stdOut() {
+  // return this.process.getInputStream();
   // }
+
+  public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
+      final SideEffect1<String> sysErrHandler, final List<String> args,
+      final Class<?> mainClass, final List<String> programArgs)
+      throws IOException {
+    final String separator = System.getProperty("file.separator");
+    final String classpath = System.getProperty("java.class.path");
+    final String path = System.getProperty("java.home") + separator + "bin"
+        + separator + "java";
+    final List<String> cmd = new ArrayList<String>();
+    cmd.addAll(Arrays.asList(path, "-cp", classpath));
+    cmd.addAll(args);
+    cmd.add(mainClass.getName());
+    cmd.addAll(programArgs);
+
+    final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+    final Process process = processBuilder.start();
+
+    return new JavaProcess(process, systemOutHandler, sysErrHandler);
+  }
+
+  public static JavaProcess launch(final List<String> args,
+      final Class<?> mainClass, final List<String> programArgs)
+      throws IOException {
+
+    final SideEffect1<String> soh = new SideEffect1<String>() {
+      public void apply(final String a) {
+        System.out.println(a);
+      }
+    };
+
+    final SideEffect1<String> seh = new SideEffect1<String>() {
+      public void apply(final String a) {
+        System.err.println(a);
+      }
+    };
+
+    return launch(soh, seh, args, mainClass, programArgs);
+  }
 
 }

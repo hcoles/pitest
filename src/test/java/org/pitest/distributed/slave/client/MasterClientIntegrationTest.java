@@ -14,11 +14,13 @@
  */
 package org.pitest.distributed.slave.client;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.InetSocketAddress;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
 import org.pitest.distributed.message.RunDetails;
+import org.pitest.internal.IsolationUtils;
 
 import com.hazelcast.core.Hazelcast;
 
@@ -32,7 +34,11 @@ public class MasterClientIntegrationTest {
     final MasterClient testee = new MasterClient(
         Hazelcast.getDefaultInstance(), rd);
 
-    SerializationUtils.clone(testee);
+    final MasterClient actual = (MasterClient) IsolationUtils.cloneForLoader(
+        testee, IsolationUtils.getContextClassLoader());
+
+    assertNotNull(actual.getHazelCast());
+    assertNotNull(actual.getHazelCast().getCluster());
     // pass if we get here
 
   }

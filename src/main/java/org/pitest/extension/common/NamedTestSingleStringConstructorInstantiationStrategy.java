@@ -29,7 +29,7 @@ public class NamedTestSingleStringConstructorInstantiationStrategy implements
     try {
       clazz.getDeclaredConstructor(oneString);
       return true;
-    } catch (final Exception e) {
+    } catch (final Throwable e) {
       return false;
     }
   }

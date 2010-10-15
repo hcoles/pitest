@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.pitest.TestGroup;
-import org.pitest.distributed.DistributedCacheRoot;
 import org.pitest.distributed.RemoteRoot;
 import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
@@ -50,11 +49,9 @@ public class DefaultRemoteContainer implements RemoteContainer {
       final HazelcastInstance hazelcast, final MasterService master,
       final ResourceCache cache, final Map<String, String> environment) {
     this(run, hazelcast, master, cache, new TransformingClassLoader(
-        new ClassPath(new DistributedCacheRoot(hazelcast
-            .<String, byte[]> getMap(run.getIdentifier())), new RemoteRoot(
-            master, cache)), new EnvironmentAccessTransformation(),
-        new AllwaysIsolateStrategy(), Thread.currentThread()
-            .getContextClassLoader()), environment);
+        new ClassPath(new RemoteRoot(master, cache)),
+        new EnvironmentAccessTransformation(), new AllwaysIsolateStrategy(),
+        Thread.currentThread().getContextClassLoader()), environment);
   }
 
   public DefaultRemoteContainer(final RunDetails run,

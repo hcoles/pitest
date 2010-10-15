@@ -20,6 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -82,6 +83,7 @@ public class TestMutationTesting {
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
+      System.out.println("Called with " + OneMutation.returnOne());
       assertEquals(1, OneMutation.returnOne());
     }
   }
@@ -216,6 +218,7 @@ public class TestMutationTesting {
   }
 
   @Test(timeout = 2000)
+  @Ignore
   public void testInfiniteLoopsCausedByMutationsAreBroken() {
     run(InfiniteLoopTest.class);
     // pass if we get here without a timeout

@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.pitest.extension.Configuration;
@@ -50,7 +49,8 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
   }
 
   public static boolean isCustomJUnit3Class(final Class<?> a) {
-    if (Test.class.isAssignableFrom(a)) {
+    // treat junit three classes that override lifecycle methods as custom
+    if (TestCase.class.isAssignableFrom(a)) {
       final Method runBareMethod = Reflection.publicMethod(a, "runBare");
       return runBareMethod.getDeclaringClass() != TestCase.class;
     } else {

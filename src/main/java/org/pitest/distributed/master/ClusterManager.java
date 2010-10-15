@@ -27,6 +27,7 @@ import org.pitest.distributed.SharedNames;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.distributed.message.TestGroupExecuteMessage;
 import org.pitest.functional.Option;
+import org.pitest.util.ExitCodes;
 
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Cluster;
@@ -99,16 +100,26 @@ public class ClusterManager implements
     if (message.getRun().equals(this.run)) {
       final TestGroupMemberRecord record = this.inprogressTestGroupHandlers
           .get(message.getTestGroupId());
-      switch (message.getState()) {
-      case RECEIVED:
-        handleReceived(message, record);
-        break;
-      case COMPLETE:
-        handleComplete(message, record);
-        break;
-      case ERROR:
-        handleError(message, record);
-        break;
+
+      logger.info("Awaiting completion of "
+          + this.inprogressTestGroupHandlers.size() + " test groups.");
+
+      if (record == null) {
+        logger.warning("Could not find a matching record for test group id "
+            + message.getTestGroupId());
+      } else {
+
+        switch (message.getState()) {
+        case RECEIVED:
+          handleReceived(message, record);
+          break;
+        case COMPLETE:
+          handleComplete(message, record);
+          break;
+        case ERROR:
+          handleError(message, record);
+          break;
+        }
       }
     }
   }
@@ -130,6 +141,7 @@ public class ClusterManager implements
 
   private void handleReceived(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
+
     record.setHandler(Option.someOrNone(message.getHandler()));
   }
 
@@ -190,7 +202,24 @@ public class ClusterManager implements
 
   public void endRun() {
     this.hazelcast.getMap(this.run.getIdentifier()).destroy();
-    this.hazelcast.shutdown();
+    this.hazelcast.getLifecycleService().shutdown();
+
+    // FIXME this should not live here
+    // Give hazelcast 30 seconds to shutitself down
+    final Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          Thread.sleep(30 * 1000);
+        } catch (final InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        System.exit(ExitCodes.FORCED_EXIT);
+      }
+    };
+    t.setDaemon(true);
+    t.start();
   }
 
 }

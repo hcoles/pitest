@@ -54,7 +54,9 @@ public class RunnerAdapterTestUnit implements TestUnit, Serializable {
       throws ClassNotFoundException, IOException {
 
     aInputStream.defaultReadObject();
+
     final String description = (String) aInputStream.readObject();
+
     this.junitDescription = this.runner
         .getTestUnitDescriptionForString(description);
 

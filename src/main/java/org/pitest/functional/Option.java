@@ -140,6 +140,11 @@ public abstract class Option<T> implements Iterable<T>, Serializable {
       return true;
     }
 
+    @Override
+    public String toString() {
+      return "Some(" + this._value + ")";
+    }
+
   }
 
 }

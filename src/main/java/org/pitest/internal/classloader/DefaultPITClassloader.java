@@ -37,6 +37,7 @@ public class DefaultPITClassloader extends PITClassLoader {
 
   @Override
   protected Class<?> findClass(final String name) throws ClassNotFoundException {
+
     try {
       final byte[] b = this.classPath.getClassData(name);
       if (b == null) {

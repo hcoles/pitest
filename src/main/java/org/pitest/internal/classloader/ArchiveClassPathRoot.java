@@ -76,8 +76,6 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   }
 
   public void release() throws IOException {
-    System.out.println("Closing");
-    System.out.flush();
     if (this.root.hasSome()) {
       this.root.value().close();
     }

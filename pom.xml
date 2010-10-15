@@ -4,7 +4,7 @@
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
-	<version>0.11-alpha-SNAPSHOT</version>
+	<version>0.13-alpha-SNAPSHOT</version>
 	<name>pitest</name>
 	<url>http://maven.apache.org</url>
 	<build>
@@ -48,10 +48,12 @@
 								<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" />
 								<jarjar destfile="${build.directory}/${build.finalName}-all.jar"
 									update="true">
+							<!--		<rule pattern="org.xmlpull.**" result="org.pitest.xmlpull.@1" />	-->
 									<rule pattern="org.objectweb.asm.**" result="org.pitest.objectweb.asm.@1" />
 									<rule pattern="com.thoughtworks.xstream.**" result="org.pitest.thoughtworks.xstream.@1" /> -->
 									<fileset dir="target/classes" />
 									<fileset dir="target/dependency/org/objectweb" />
+							<!--		<fileset dir="target/dependency/org/xmlpull" /> -->
 									<fileset dir="target/dependency/com/thoughtworks" />
 									<!--  <fileset dir="target/dependency/org/apache/bcel" /> -->
 								</jarjar>
@@ -96,6 +98,8 @@
 	</repositories>
 
 	<dependencies>
+
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -125,12 +129,7 @@
 		<dependency>
 			<groupId>com.hazelcast</groupId>
 			<artifactId>hazelcast</artifactId>
-			<version>1.8.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.hazelcast</groupId>
-			<artifactId>hazelcast-client</artifactId>
-			<version>1.8.3</version>
+			<version>1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.jqno.equalsverifier</groupId>
