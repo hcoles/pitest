@@ -44,34 +44,20 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
-import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.JavaProcess;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
-public class MutationTestUnit extends AbstractTestUnit {
+public class MutationTestUnit extends AbstractMutationTestUnit {
 
-  private static final Logger  logger = Logger.getLogger(MutationTestUnit.class
-                                          .getName());
-
-  private final Class<?>       test;
-  private final Class<?>       classToMutate;
-
-  private final MutationConfig config;
-  private final Configuration  pitConfig;
+  private static final Logger logger = Logger.getLogger(MutationTestUnit.class
+                                         .getName());
 
   public MutationTestUnit(final Class<?> test, final Class<?> classToMutate,
       final MutationConfig mutationConfig, final Configuration pitConfig,
       final Description description) {
-    super(description, null);
-    this.classToMutate = classToMutate;
-    this.test = test;
-    this.config = mutationConfig;
-    this.pitConfig = pitConfig;
-  }
+    super(test, classToMutate, mutationConfig, pitConfig, description);
 
-  private List<TestUnit> findTestUnits() {
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig, this.test);
   }
 
   @Override
@@ -119,11 +105,6 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   }
 
-  public static String randomFilename() {
-    return System.currentTimeMillis()
-        + ("" + Math.random()).replaceAll("\\.", "");
-  }
-
   private int runTestInSeperateProcessForMutationRange(
       final Collection<AssertionError> results, final int start, final int end,
       final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
@@ -146,7 +127,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       e.printStackTrace();
     }
 
-    int lastRunMutation = readResults(results, result);
+    final int lastRunMutation = readResults(results, result);
 
     inputfile.delete();
     result.delete();
@@ -306,10 +287,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     final StackTraceElement[] stackTrace = { md.stackTraceDescription() };
     ae.setStackTrace(stackTrace);
     return ae;
-  }
-
-  public MutationConfig getMutationConfig() {
-    return this.config;
   }
 
 }

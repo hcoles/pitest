@@ -54,6 +54,52 @@ public class MutationTestSlave {
 
   protected static final int OUT_OF_MEMORY = -42;
 
+  protected void run(final int startMutation, final int endMutation,
+      final String className, final long normalExecutionTime,
+      final BufferedReader br, final Writer w) throws IOException,
+      ClassNotFoundException {
+
+    final MutationConfig mutationConfig = (MutationConfig) IsolationUtils
+        .fromTransportString(br.readLine());
+    final DefaultPITClassloader loader = createClassLoader(br.readLine());
+    IsolationUtils.setContextClassLoader(loader);
+
+    System.out.println("Mutating class " + className);
+
+    final List<TestUnit> tests = getTestList(br.readLine(), loader);
+    br.close();
+
+    final Mutater m = mutationConfig.createMutator();
+    m.setRepository(new ClassLoaderRepository(loader));
+    // final int mutationCount = m.countMutationPoints(className);
+
+    for (int i = startMutation; i != endMutation; i++) {
+      System.out.println("Running mutation " + i);
+
+      final JavaClass mutatedClass = getMutation(className, m, i);
+
+      final boolean mutationDetected = doTestsDetectMutation(loader,
+          mutatedClass, tests, normalExecutionTime);
+
+      w.write("" + i + "=" + mutationDetected + ","
+          + mutatedClass.getClassName() + "," + mutatedClass.getFileName()
+          + "," + m.getModification() + "," + m.getMutatedMethodName(className)
+          + "\n");
+
+      System.out.println("Mutation " + i + " of " + endMutation
+          + " detected = " + mutationDetected);
+    }
+
+    System.out.println(".....................");
+  }
+
+  protected JavaClass getMutation(final String className, final Mutater m,
+      final int i) throws ClassNotFoundException {
+    m.setMutationPoint(i);
+    final JavaClass mutatedClass = m.jumbler(className);
+    return mutatedClass;
+  }
+
   public static void main(final String[] args) {
 
     addMemoryWatchDog();
@@ -65,44 +111,15 @@ public class MutationTestSlave {
       final String className = args[2];
       final long normalExecutionTime = Long.parseLong(args[3]);
       final File input = new File(args[4]);
+      final File outputFile = new File(args[5]);
       System.out.println("Input file is " + input);
+      System.out.println("Output file is " + input);
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
-
-      final MutationConfig mutationConfig = (MutationConfig) IsolationUtils
-          .fromTransportString(br.readLine());
-      final DefaultPITClassloader loader = createClassLoader(br.readLine());
-      IsolationUtils.setContextClassLoader(loader);
-
-      System.out.println("Mutating class " + className);
-
-      final List<TestUnit> tests = getTestList(br.readLine(), loader);
-      br.close();
-
-      final File outputFile = new File(args[5]);
       w = new OutputStreamWriter(new FileOutputStream(outputFile));
-
-      final Mutater m = mutationConfig.createMutator();
-      m.setRepository(new ClassLoaderRepository(loader));
-      // final int mutationCount = m.countMutationPoints(className);
-
-      for (int i = startMutation; i != endMutation; i++) {
-        System.out.println("Running mutation " + i);
-        m.setMutationPoint(i);
-        final JavaClass mutatedClass = m.jumbler(className);
-        final boolean mutationDetected = doTestsDetectMutation(loader,
-            mutatedClass, tests, normalExecutionTime);
-
-        w.write("" + i + "=" + mutationDetected + ","
-            + mutatedClass.getClassName() + "," + mutatedClass.getFileName()
-            + "," + m.getModification() + ","
-            + m.getMutatedMethodName(className) + "\n");
-
-        System.out.println("Mutation " + i + " of " + endMutation
-            + " detected = " + mutationDetected);
-      }
-
-      System.out.println(".....................");
+      final MutationTestSlave instance = new MutationTestSlave();
+      instance.run(startMutation, endMutation, className, normalExecutionTime,
+          br, w);
 
     } catch (final Exception ex) {
       ex.printStackTrace(System.out);

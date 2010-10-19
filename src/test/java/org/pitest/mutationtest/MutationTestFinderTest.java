@@ -59,7 +59,8 @@ public class MutationTestFinderTest {
     final Collection<TestUnit> tus = this.testee.findTestUnits(new TestClass(
         TestOne.class), this.pitConfig);
     assertEquals(1, tus.size());
-    final MutationTestUnit actual = (MutationTestUnit) tus.iterator().next();
+    final AbstractMutationTestUnit actual = (AbstractMutationTestUnit) tus
+        .iterator().next();
     assertEquals(new MutationConfig(66, Mutator.INCREMENTS), actual
         .getMutationConfig());
   }

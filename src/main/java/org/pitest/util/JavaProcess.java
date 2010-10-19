@@ -62,24 +62,41 @@ public class JavaProcess {
     return this.process.getOutputStream();
   }
 
-  // public InputStream stdOut() {
-  // return this.process.getInputStream();
-  // }
+  public static JavaProcess launch(final Debugger debugger,
+      final SideEffect1<String> systemOutHandler,
+      final SideEffect1<String> sysErrHandler, final List<String> args,
+      final Class<?> mainClass, final List<String> programArgs)
+      throws IOException {
+
+    final List<String> cmd = createLaunchArgs("", args, mainClass, programArgs);
+    return new JavaProcess(debugger.launchProcess(cmd), systemOutHandler,
+        sysErrHandler);
+
+  }
+
+  private static List<String> createLaunchArgs(final String javaProcess,
+      final List<String> args, final Class<?> mainClass,
+      final List<String> programArgs) {
+
+    final String classpath = System.getProperty("java.class.path");
+
+    final List<String> cmd = new ArrayList<String>();
+    cmd.addAll(Arrays.asList(javaProcess, "-cp", classpath));
+    cmd.addAll(args);
+    cmd.add(mainClass.getName());
+    cmd.addAll(programArgs);
+    return cmd;
+  }
 
   public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs)
       throws IOException {
     final String separator = System.getProperty("file.separator");
-    final String classpath = System.getProperty("java.class.path");
-    final String path = System.getProperty("java.home") + separator + "bin"
+    final String javaProc = System.getProperty("java.home") + separator + "bin"
         + separator + "java";
-    final List<String> cmd = new ArrayList<String>();
-    cmd.addAll(Arrays.asList(path, "-cp", classpath));
-    cmd.addAll(args);
-    cmd.add(mainClass.getName());
-    cmd.addAll(programArgs);
-
+    final List<String> cmd = createLaunchArgs(javaProc, args, mainClass,
+        programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
     final Process process = processBuilder.start();
 

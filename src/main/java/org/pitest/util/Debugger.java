@@ -14,13 +14,24 @@
  */
 package org.pitest.util;
 
-public class VMBreak {
+import java.util.List;
 
-  public static String test = "foo";
+import org.pitest.functional.SideEffect1;
 
-  public static void pause() {
-    int i = 0;
-    i++;
-  }
+import com.sun.jdi.event.Event;
+
+public interface Debugger {
+
+  Process launchProcess(List<String> args);
+
+  public void hotSwapClass(final byte[] classBytes, final String className);
+
+  public void setBreakPoint(final Class<?> clazz, final String method,
+      SideEffect1<Event> hook);
+
+  public void setBreakPointOnLoadedClass(final Class<?> clazz,
+      final String method, SideEffect1<Event> hook);
+
+  public void resume();
 
 }

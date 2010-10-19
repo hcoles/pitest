@@ -12,20 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.util;
+package org.pitest.watchdog;
 
-public class Hello {
-
-  public static void main(final String[] args) {
-
-    // for ( int i = 0; i != 1000; i++ ) {
-    System.out.println("Hello");
-    // }
-
-    VMBreak.pause();
-
-    System.out.println("Hello again");
-
-  }
+public interface Watchdog {
 
 }

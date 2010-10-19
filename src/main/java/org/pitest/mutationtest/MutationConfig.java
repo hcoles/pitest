@@ -22,10 +22,18 @@ import com.reeltwo.jumble.mutation.Mutater;
 
 public final class MutationConfig {
 
+  private final boolean      useHotswap;
+
   private final int          threshold;
   private final Set<Mutator> mutations = new LinkedHashSet<Mutator>();
 
   public MutationConfig(final int threshold, final Mutator... mutations) {
+    this(true, threshold, mutations);
+  }
+
+  public MutationConfig(final boolean useHotSwap, final int threshold,
+      final Mutator... mutations) {
+    this.useHotswap = useHotSwap;
     this.threshold = threshold;
     this.mutations.addAll(Arrays.asList(mutations));
   }
@@ -80,6 +88,10 @@ public final class MutationConfig {
       return false;
     }
     return true;
+  }
+
+  public boolean isUseHotswap() {
+    return this.useHotswap;
   }
 
 }

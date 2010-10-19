@@ -31,10 +31,10 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class MutationTestUnitTest {
 
-  private MutationTestUnit testee;
+  private AbstractMutationTestUnit testee;
 
   @Mock
-  private ResultCollector  rc;
+  private ResultCollector          rc;
 
   @Before
   public void setup() {
@@ -140,7 +140,7 @@ public class MutationTestUnitTest {
 
   @Test
   public void testRandomFilenameReturnsFilenameWithNoDots() {
-    final String actual = MutationTestUnit.randomFilename();
+    final String actual = AbstractMutationTestUnit.randomFilename();
     assertTrue(actual.length() > 10);
     assertFalse(actual.contains("."));
   }

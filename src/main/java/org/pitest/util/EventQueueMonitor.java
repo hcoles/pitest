@@ -14,8 +14,6 @@
  */
 package org.pitest.util;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +27,7 @@ import com.sun.jdi.request.EventRequest;
 
 public class EventQueueMonitor extends Thread {
   private final EventQueue                            eq;
-  private final OutputStreamWriter                    out;
+
   private volatile boolean                            run   = true;
 
   private final Map<EventRequest, SideEffect1<Event>> hooks = new HashMap<EventRequest, SideEffect1<Event>>();
@@ -46,9 +44,6 @@ public class EventQueueMonitor extends Thread {
             this.run = false;
           }
 
-          this.out.write(each.toString());
-          this.out.flush();
-
           if (this.hooks.get(each.request()) != null) {
             this.hooks.get(each.request()).apply(each);
           }
@@ -61,10 +56,9 @@ public class EventQueueMonitor extends Thread {
     }
   }
 
-  public EventQueueMonitor(final EventQueue eq, final OutputStream out) {
+  public EventQueueMonitor(final EventQueue eq) {
     super();
     this.eq = eq;
-    this.out = new OutputStreamWriter(out);
     setDaemon(true);
     start();
   }

@@ -53,11 +53,22 @@ public class MutationTestFinder implements TestUnitFinder {
 
       final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
 
-      return Collections
-          .<TestUnit> singleton(new MutationTestUnit(clazz.getClazz(), testee
-              .value(), updatedMutationConfig, updatedConfig, d));
+      return Collections.<TestUnit> singleton(createTestUnit(clazz.getClazz(),
+          testee.value(), updatedMutationConfig, updatedConfig, d));
     } else {
       return Collections.emptyList();
+    }
+  }
+
+  private TestUnit createTestUnit(final Class<?> test,
+      final Class<?> classToMutate, final MutationConfig mutationConfig,
+      final Configuration pitConfig, final Description description) {
+    if (mutationConfig.isUseHotswap()) {
+      return new HotSwapMutationTestUnit(test, classToMutate, mutationConfig,
+          pitConfig, description);
+    } else {
+      return new MutationTestUnit(test, classToMutate, mutationConfig,
+          pitConfig, description);
     }
   }
 
@@ -65,7 +76,8 @@ public class MutationTestFinder implements TestUnitFinder {
     final MutationTest annotation = clazz.getClazz().getAnnotation(
         MutationTest.class);
     if (annotation != null) {
-      return new MutationConfig(annotation.threshold(), annotation.mutators());
+      return new MutationConfig(annotation.useHotSwap(),
+          annotation.threshold(), annotation.mutators());
     } else {
       return this.mutationConfig;
     }

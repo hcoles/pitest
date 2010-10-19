@@ -1,3 +1,5 @@
 
 syntax: regexp
 ^target$
+syntax: regexp
+^reports$
