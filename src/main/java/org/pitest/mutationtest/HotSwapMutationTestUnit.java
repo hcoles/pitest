@@ -153,29 +153,38 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
       e.printStackTrace();
     }
 
-    final int lastRunMutation = readResults(results, worker.getResult());
+    final int lastRunMutation = readResults(m, results, worker.getResult());
 
     return lastRunMutation;
 
   }
 
-  private int readResults(final Collection<AssertionError> results,
-      final File result) throws FileNotFoundException, IOException {
+  private int readResults(final Mutater m,
+      final Collection<AssertionError> results, final File result)
+      throws FileNotFoundException, IOException {
     final BufferedReader r = new BufferedReader(new InputStreamReader(
         new FileInputStream(result)));
     int lastRunMutation = -1;
     try {
       while (r.ready()) {
         final String line = r.readLine();
-        final String[] parts = line.split(",");
-        lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
-            .indexOf("=")));
-        if (parts[0].contains("false")) {
-          results.add(new AssertionError());
-          // results.add(arrayToAssertionError(parts));
+        final String parts[] = line.split("=");
+        lastRunMutation = Integer.parseInt(parts[0]);
+        if (parts[1].contains("false")) {
+          final String className = this.classToMutate.getName();
+          m.setMutationPoint(lastRunMutation);
+          final JavaClass mutatedClass = m.jumbler(className);
+
+          final MutationDetails details = new MutationDetails(
+              this.classToMutate.getName(), mutatedClass.getFileName(), m
+                  .getModification(), m.getMutatedMethodName(className));
+          results.add(createAssertionError(details));
+
         }
         System.out.println("Result from file " + line);
       }
+    } catch (final ClassNotFoundException e) {
+      throw Unchecked.translateCheckedException(e);
     } finally {
       r.close();
     }
@@ -301,13 +310,6 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
-
-  }
-
-  private AssertionError arrayToAssertionError(final String[] parts) {
-    final MutationDetails details = new MutationDetails(parts[1], parts[2],
-        parts[3], parts[4]);
-    return createAssertionError(details);
 
   }
 
