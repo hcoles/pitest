@@ -21,7 +21,6 @@ import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.containers.BaseThreadPoolContainer;
@@ -35,11 +34,12 @@ import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.PITJUnitRunner;
+import org.pitest.mutationtest.MutationTest;
 import org.pitest.mutationtest.Mutator;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(threshold = 50, mutators = { Mutator.INCREMENTS,
-    Mutator.RETURN_VALS })
+@MutationTest(useHotSwap = true, threshold = 50, mutators = {
+    Mutator.INCREMENTS, Mutator.RETURN_VALS })
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 

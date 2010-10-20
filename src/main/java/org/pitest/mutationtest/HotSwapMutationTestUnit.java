@@ -25,9 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -40,23 +38,24 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
-import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.util.Debugger;
 import org.pitest.util.DefaultDebugger;
-import org.pitest.util.JavaProcess;
+import org.pitest.util.Unchecked;
 
 import com.reeltwo.jumble.mutation.Mutater;
-import com.sun.jdi.event.Event;
 
 public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
-  private static final Logger logger = Logger
-                                         .getLogger(HotSwapMutationTestUnit.class
-                                             .getName());
+  // private static HotSwapWorker worker;
+  private final static ThreadLocal<HotSwapWorker> worker = new ThreadLocal<HotSwapWorker>();
+
+  private static final Logger                     logger = Logger
+                                                             .getLogger(HotSwapMutationTestUnit.class
+                                                                 .getName());
 
   public HotSwapMutationTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
@@ -84,6 +83,11 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
     final int mutationCount = m.countMutationPoints(name);
 
+    // missing things
+    // run unmutated test in process
+    // timeouts
+    // actually report on the mutation
+
     try {
       if (mutationCount > 0) {
 
@@ -93,7 +97,6 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
             .jumbler(this.classToMutate.getName()), tests, loader);
         final List<AssertionError> failures = new ArrayList<AssertionError>();
 
-        // for (int i = 0; i != mutationCount; i++) {
         failures.addAll(runTestsInSeperateProcess(loader, m, mutationCount,
             tests, normalExecution));
 
@@ -116,72 +119,41 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
         + ("" + Math.random()).replaceAll("\\.", "");
   }
 
+  private synchronized HotSwapWorker getWorker(final Debugger debugger,
+      final ClassPath cp) throws IOException {
+    final HotSwapWorker current = worker.get();
+    if (current == null) {
+      System.out.println(">>>>>>> Creating new worker for thread "
+          + Thread.currentThread());
+      worker.set(new HotSwapWorker(debugger, cp));
+    }
+    return worker.get();
+  }
+
   private int runTestInSeperateProcessForMutationRange(final Mutater m,
       final Collection<AssertionError> results, final int start, final int end,
       final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
       throws IOException {
 
-    final File inputfile = File.createTempFile(randomFilename(), ".data");
-    final File result = File.createTempFile(randomFilename(), ".results");
+    final HotSwapWorker worker = this.getWorker(new DefaultDebugger(), cp);
 
-    final String[] args = createSlaveArgs(start, end, tus, normalExecution,
-        inputfile, result, cp);
-
-    // hacked for hotswap
-    final Debugger debugger = new DefaultDebugger();
-    final SideEffect1<String> soh = new SideEffect1<String>() {
-      public void apply(final String a) {
-        System.out.println(a);
-      }
-    };
-
-    final SideEffect1<String> seh = new SideEffect1<String>() {
-      public void apply(final String a) {
-        System.err.println(a);
-      }
-    };
-    final JavaProcess worker = JavaProcess.launch(debugger, soh, seh,
-        Collections.<String> emptyList(), HotSwapMutationTestSlave.class,
-        Arrays.asList(args));
-
-    final SideEffect1<Event> hook = new SideEffect1<Event>() {
-      private int currentMutation = start;
-
-      public void apply(final Event a) {
-        // do not disable the break point
-        m.setMutationPoint(this.currentMutation);
-        JavaClass activeMutation;
-        try {
-          activeMutation = m.jumbler(HotSwapMutationTestUnit.this.classToMutate
-              .getName());
-          debugger.hotSwapClass(activeMutation.getBytes(),
-              HotSwapMutationTestUnit.this.classToMutate.getName());
-          this.currentMutation++;
-        } catch (final ClassNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        debugger.resume();
-
-      }
-
-    };
-    debugger.setBreakPoint(HotSwapMutationTestSlave.class, "receiveMutation",
-        hook);
-    debugger.resume();
+    createInputFile(start, end, tus, normalExecution, worker.getInputfile());
+    worker.reset(this.classToMutate, m, start);
+    worker.getDebugger().resume();
 
     try {
-      worker.waitToDie();
-      System.out.println("Worker has died");
+      while (!worker.isRunComplete()) {
+        Thread.sleep(500);
+      }
+      System.out.println("Worker has finished");
+      worker.getInputfile().delete(); // will trigger IOException and exit in
+      // slave when controlling thread dies
     } catch (final InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
-    final int lastRunMutation = readResults(results, result);
-
-    inputfile.delete();
-    result.delete();
+    final int lastRunMutation = readResults(results, worker.getResult());
 
     return lastRunMutation;
 
@@ -231,23 +203,41 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
       start = lastRunMutation + 1;
     }
 
+    resetClassToUnmutatedState(m);
+
     return results;
 
   }
 
-  private String[] createSlaveArgs(final int start, final int end,
-      final List<TestUnit> tus, final long normalExecution,
-      final File inputfile, final File result, final ClassPath cp)
+  private void resetClassToUnmutatedState(final Mutater m) {
+    try {
+      final HotSwapWorker current = worker.get();
+      if (current != null) {
+        m.setMutationPoint(-1);
+        current.getDebugger().hotSwapClass(
+            m.jumbler(this.classToMutate.getName()).getBytes(),
+            this.classToMutate.getName());
+      }
+    } catch (final ClassNotFoundException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+  }
+
+  private void createInputFile(final int start, final int end,
+      final List<TestUnit> tus, final long normalExecution, final File inputfile)
       throws IOException {
-    final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile));
-    bw.append(IsolationUtils.toTransportString(cp));
-    bw.newLine();
-    bw.append(IsolationUtils.toTransportString(tus));
+    final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile,
+        false));
+    final RunDetails rd = new RunDetails();
+    rd.setClassName(this.classToMutate.getName());
+    rd.setEndMutation(end);
+    rd.setStartMutation(start);
+    rd.setNormalExecutionTime(normalExecution);
+    rd.setTests(tus);
+    bw.append(IsolationUtils.toTransportString(rd));
     bw.newLine();
     bw.close();
-    final String[] args = createArgs(start, end, this.classToMutate,
-        normalExecution, inputfile, result);
-    return args;
+
   }
 
   private ClassPath createClassPath(final ClassLoader loader) {
@@ -258,16 +248,6 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
       cp = new ClassPath();
     }
     return cp;
-  }
-
-  private String[] createArgs(final int start, final int end,
-      final Class<?> clazz, final long normalExeution, final File input,
-      final File output) {
-
-    final String[] a = { "" + start, "" + end, clazz.getName(),
-        "" + normalExeution, input.getAbsolutePath(), output.getAbsolutePath() };
-
-    return a;
   }
 
   private void reportResults(final int mutationCount,

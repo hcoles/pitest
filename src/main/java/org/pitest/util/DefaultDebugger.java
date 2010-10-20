@@ -47,8 +47,6 @@ public class DefaultDebugger implements Debugger {
       final SideEffect1<Event> loadHook = new SideEffect1<Event>() {
 
         public void apply(final Event a) {
-          // final ClassPrepareEvent cpe = (ClassPrepareEvent) a;
-          // cpr.disable(); // is this needed ?
 
           hotSwapLoadedClass(classBytes, className);
           a.virtualMachine().resume();

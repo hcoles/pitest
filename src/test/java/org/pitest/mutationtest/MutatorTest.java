@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
-public class MutationTest {
+public class MutatorTest {
 
   @Mock
   private Mutater mutator;

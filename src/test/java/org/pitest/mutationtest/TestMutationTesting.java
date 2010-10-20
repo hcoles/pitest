@@ -27,7 +27,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.annotations.MutationTest;
 import org.pitest.annotations.TestClass;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
@@ -40,7 +39,6 @@ public class TestMutationTesting {
 
   private Pitest              pit;
   private Container           container;
-
   @Mock
   private TestListener        listener;
   private DefaultStaticConfig staticConfig;
@@ -95,7 +93,7 @@ public class TestMutationTesting {
   }
 
   @TestClass(ThreeMutations.class)
-  @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
+  @MutationTest(threshold = 67, mutators = Mutator.RETURN_VALS)
   public static class ThreeMutationsTwoTests {
     @TestAnnotationForTesting
     public void testReturnOne() {

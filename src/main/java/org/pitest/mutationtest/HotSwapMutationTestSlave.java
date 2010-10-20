@@ -44,39 +44,30 @@ import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCodes;
 import org.pitest.util.MemoryWatchdog;
-import org.pitest.util.Unchecked;
-
-import com.thoughtworks.xstream.XStream;
 
 /// FIXME copy and paste !
 public class HotSwapMutationTestSlave {
 
   protected static final int OUT_OF_MEMORY = -42;
 
-  protected void run(final int startMutation, final int endMutation,
-      final String className, final long normalExecutionTime,
-      final BufferedReader br, final Writer w) throws IOException,
-      ClassNotFoundException {
+  private static File        outputFile;
 
-    final DefaultPITClassloader loader = createClassLoader(br.readLine());
-    IsolationUtils.setContextClassLoader(loader);
+  protected void run(final DefaultPITClassloader loader, final RunDetails run,
+      final Writer w) throws IOException, ClassNotFoundException {
 
-    System.out.println("Slave Mutating class " + className);
-
-    final List<TestUnit> tests = getTestList(br.readLine(), loader);
-    br.close();
+    System.out.println("Slave Mutating class " + run.getClassName());
 
     final Container c = new UnContainer();
-    for (int i = startMutation; i != endMutation; i++) {
+    for (int i = run.getStartMutation(); i != run.getEndMutation(); i++) {
       receiveMutation();
       System.out.println("Slave Running mutation " + i);
 
-      final boolean mutationDetected = doTestsDetectMutation(c, loader, tests,
-          normalExecutionTime);
+      final boolean mutationDetected = doTestsDetectMutation(c, loader, run
+          .getTests(), run.getNormalExecutionTime());
 
-      w.write("" + i + "=" + mutationDetected);
+      w.write("" + i + "=" + mutationDetected + "\n");
 
-      System.out.println("Slave Mutation " + i + " of " + endMutation
+      System.out.println("Slave Mutation " + i + " of " + run.getEndMutation()
           + " detected = " + mutationDetected);
     }
 
@@ -88,26 +79,36 @@ public class HotSwapMutationTestSlave {
 
   }
 
+  private static void waitForInput() {
+    System.out.println("Receiving for input");
+  }
+
   public static void main(final String[] args) {
 
     addMemoryWatchDog();
+
+    final File input = new File(args[0]);
+    outputFile = new File(args[1]);
+    final String classPathXML = args[2];
+
+    System.out.println("Slave Input file is " + input);
+    System.out.println("Slave Output file is " + input);
+
     Writer w = null;
     try {
 
-      final int startMutation = Integer.parseInt(args[0]);
-      final int endMutation = Integer.parseInt(args[1]);
-      final String className = args[2];
-      final long normalExecutionTime = Long.parseLong(args[3]);
-      final File input = new File(args[4]);
-      final File outputFile = new File(args[5]);
-      System.out.println("Slave Input file is " + input);
-      System.out.println("Slave Output file is " + input);
-      final BufferedReader br = new BufferedReader(new InputStreamReader(
-          new FileInputStream(input)));
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
-      final HotSwapMutationTestSlave instance = new HotSwapMutationTestSlave();
-      instance.run(startMutation, endMutation, className, normalExecutionTime,
-          br, w);
+      final DefaultPITClassloader loader = createClassLoader(classPathXML);
+      IsolationUtils.setContextClassLoader(loader);
+
+      while (true) {
+        waitForInput();
+        final RunDetails run = readDetailsFromFile(input);
+        w = new OutputStreamWriter(new FileOutputStream(outputFile, false));
+        final HotSwapMutationTestSlave instance = new HotSwapMutationTestSlave();
+        instance.run(loader, run, w);
+        w.close();
+        w = null;
+      }
 
     } catch (final Exception ex) {
       ex.printStackTrace(System.out);
@@ -134,6 +135,25 @@ public class HotSwapMutationTestSlave {
 
     // sometimes hazelcast refuses to die. Kill explicitly
     System.exit(ExitCodes.OK);
+
+  }
+
+  private static RunDetails readDetailsFromFile(final File input)
+      throws IOException {
+    RunDetails rd = null;
+    final BufferedReader br = new BufferedReader(new InputStreamReader(
+        new FileInputStream(input)));
+    try {
+
+      rd = (RunDetails) IsolationUtils.fromTransportString(br.readLine());
+
+    } finally {
+
+      br.close();
+
+    }
+
+    return rd;
 
   }
 
@@ -183,12 +203,6 @@ public class HotSwapMutationTestSlave {
 
   }
 
-  private static List<TestUnit> getTestList(final String xml,
-      final DefaultPITClassloader cl) throws IOException {
-    final List<TestUnit> tests = xmlToTestGroup(xml, cl);
-    return tests;
-  }
-
   private static DefaultPITClassloader createClassLoader(
       final String classPathXML) throws IOException {
 
@@ -199,20 +213,6 @@ public class HotSwapMutationTestSlave {
     final DefaultPITClassloader cl = new DefaultPITClassloader(cp,
         IsolationUtils.getContextClassLoader());
     return cl;
-  }
-
-  @SuppressWarnings("unchecked")
-  private static List<TestUnit> xmlToTestGroup(final String encodedXml,
-      final ClassLoader cl) {
-    try {
-      final XStream xstream = new XStream();
-      xstream.setClassLoader(cl);
-      return (List<TestUnit>) xstream.fromXML(IsolationUtils
-          .decodeTransportString(encodedXml));
-
-    } catch (final Exception ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
   }
 
 }

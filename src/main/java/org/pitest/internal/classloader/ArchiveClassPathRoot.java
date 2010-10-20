@@ -45,6 +45,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   private ZipFile getRoot() {
     try {
       synchronized (this.file) {
+
         if (this.root.hasNone()) {
           this.root = Option.someOrNone(new ZipFile(this.file));
         }

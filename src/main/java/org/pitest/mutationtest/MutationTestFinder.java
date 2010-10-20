@@ -19,7 +19,6 @@ import java.util.Collections;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
-import org.pitest.annotations.MutationTest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;

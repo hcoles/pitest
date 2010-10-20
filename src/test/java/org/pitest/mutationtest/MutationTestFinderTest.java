@@ -20,7 +20,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.annotations.MutationTest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.TestClass;
