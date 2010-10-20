@@ -33,29 +33,35 @@ public class HotSwapWorker {
 
   private static class Hook implements SideEffect1<Event> {
 
-    private final Debugger  debugger;
-    private int             currentMutation;
-    private volatile String classToMutate;
-    private Mutater         m;
+    private final Debugger debugger;
+    private int            endMutation;
+    private int            currentMutation;
+    private String         classToMutate;
+    private Mutater        m;
 
     public Hook(final Debugger debugger) {
       this.debugger = debugger;
     }
 
     public void apply(final Event a) {
-      System.out.println("Hook setting mutation point " + this.currentMutation);
       this.m.setMutationPoint(this.currentMutation);
       JavaClass activeMutation;
       try {
         activeMutation = this.m.jumbler(this.classToMutate);
         this.debugger.hotSwapClass(activeMutation.getBytes(),
             this.classToMutate);
-        this.currentMutation++;
       } catch (final ClassNotFoundException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      this.debugger.resume();
+      // make sure we increment the mutation before we resume in case
+      // of a race
+      if (this.currentMutation <= this.endMutation) {
+        this.currentMutation++;
+        this.debugger.resume();
+      } else {
+        this.currentMutation++;
+      }
 
     }
 
@@ -115,11 +121,12 @@ public class HotSwapWorker {
   }
 
   public void reset(final Class<?> classToMutate, final Mutater m,
-      final int start) {
+      final int start, final int end) {
     this.runComplete = false;
     this.hook.classToMutate = classToMutate.getName();
     this.hook.m = m;
     this.hook.currentMutation = start;
+    this.hook.endMutation = end;
   }
 
   public JavaProcess getProcess() {
@@ -144,6 +151,17 @@ public class HotSwapWorker {
 
   public boolean isRunComplete() {
     return this.runComplete;
+  }
+
+  public void waitForRunToComplete() {
+    while (!isRunComplete()) {
+      try {
+        Thread.sleep(500);
+      } catch (final InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+
   }
 
 }

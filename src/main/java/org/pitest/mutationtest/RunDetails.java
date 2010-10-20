@@ -22,7 +22,7 @@ public class RunDetails {
   private int            startMutation;
   private int            endMutation;
   private String         className;
-  private long           normalExecutionTime;
+  // private long normalExecutionTime;
   private List<TestUnit> tests;
 
   public int getStartMutation() {
@@ -49,13 +49,13 @@ public class RunDetails {
     this.className = className;
   }
 
-  public long getNormalExecutionTime() {
-    return this.normalExecutionTime;
-  }
-
-  public void setNormalExecutionTime(final long normalExecutionTime) {
-    this.normalExecutionTime = normalExecutionTime;
-  }
+  // public long getNormalExecutionTime() {
+  // return this.normalExecutionTime;
+  // }
+  //
+  // public void setNormalExecutionTime(final long normalExecutionTime) {
+  // this.normalExecutionTime = normalExecutionTime;
+  // }
 
   public List<TestUnit> getTests() {
     return this.tests;
@@ -63,6 +63,13 @@ public class RunDetails {
 
   public void setTests(final List<TestUnit> tests) {
     this.tests = tests;
+  }
+
+  @Override
+  public String toString() {
+    return "RunDetails [className=" + this.className + ", endMutation="
+        + this.endMutation + ", startMutation=" + this.startMutation
+        + ", tests=" + this.tests + "]";
   }
 
 }

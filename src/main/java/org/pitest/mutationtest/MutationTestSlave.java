@@ -52,8 +52,6 @@ import com.thoughtworks.xstream.XStream;
 
 public class MutationTestSlave {
 
-  protected static final int OUT_OF_MEMORY = -42;
-
   protected void run(final int startMutation, final int endMutation,
       final String className, final long normalExecutionTime,
       final BufferedReader br, final Writer w) throws IOException,
@@ -163,7 +161,7 @@ public class MutationTestSlave {
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());
 
-          System.exit(OUT_OF_MEMORY);
+          System.exit(ExitCodes.OUT_OF_MEMORY);
 
         } else {
           System.out.println("Unknown notification: " + notification);

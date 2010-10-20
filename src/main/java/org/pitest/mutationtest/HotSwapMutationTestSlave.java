@@ -45,12 +45,9 @@ import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCodes;
 import org.pitest.util.MemoryWatchdog;
 
-/// FIXME copy and paste !
 public class HotSwapMutationTestSlave {
 
-  protected static final int OUT_OF_MEMORY = -42;
-
-  private static File        outputFile;
+  private static File outputFile;
 
   protected void run(final DefaultPITClassloader loader, final RunDetails run,
       final Writer w) throws IOException, ClassNotFoundException {
@@ -63,7 +60,7 @@ public class HotSwapMutationTestSlave {
       System.out.println("Slave Running mutation " + i);
 
       final boolean mutationDetected = doTestsDetectMutation(c, loader, run
-          .getTests(), run.getNormalExecutionTime());
+          .getTests());
 
       w.write("" + i + "=" + mutationDetected + "\n");
 
@@ -80,7 +77,7 @@ public class HotSwapMutationTestSlave {
   }
 
   private static void waitForInput() {
-    System.out.println("Receiving for input");
+    System.out.println("Received for input");
   }
 
   public static void main(final String[] args) {
@@ -101,6 +98,7 @@ public class HotSwapMutationTestSlave {
       IsolationUtils.setContextClassLoader(loader);
 
       while (true) {
+        System.out.println("About to wait for input");
         waitForInput();
         final RunDetails run = readDetailsFromFile(input);
         w = new OutputStreamWriter(new FileOutputStream(outputFile, false));
@@ -146,6 +144,7 @@ public class HotSwapMutationTestSlave {
     try {
 
       rd = (RunDetails) IsolationUtils.fromTransportString(br.readLine());
+      System.out.println("Running with " + rd);
 
     } finally {
 
@@ -171,7 +170,7 @@ public class HotSwapMutationTestSlave {
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());
 
-          System.exit(OUT_OF_MEMORY);
+          System.exit(ExitCodes.OUT_OF_MEMORY);
 
         } else {
           System.out.println("Unknown notification: " + notification);
@@ -185,8 +184,7 @@ public class HotSwapMutationTestSlave {
   }
 
   private static boolean doTestsDetectMutation(final Container c,
-      final ClassLoader loader, final List<TestUnit> tests,
-      final long normalExecutionTime) {
+      final ClassLoader loader, final List<TestUnit> tests) {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 

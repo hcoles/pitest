@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,16 +30,13 @@ import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassLoaderRepository;
-import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
-import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.EmptyConfiguration;
+import org.pitest.functional.F3;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.OtherClassLoaderClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.util.Debugger;
 import org.pitest.util.DefaultDebugger;
@@ -93,8 +89,7 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
         final List<TestUnit> tests = findTestUnits();
         // m.setMutationPoint(0);
-        final long normalExecution = timeUnmutatedTests(m
-            .jumbler(this.classToMutate.getName()), tests, loader);
+        final long normalExecution = timeUnmutatedTests(tests, m, loader);
         final List<AssertionError> failures = new ArrayList<AssertionError>();
 
         failures.addAll(runTestsInSeperateProcess(loader, m, mutationCount,
@@ -125,47 +120,50 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
     if (current == null) {
       System.out.println(">>>>>>> Creating new worker for thread "
           + Thread.currentThread());
-      worker.set(new HotSwapWorker(debugger, cp));
+      final HotSwapWorker w = new HotSwapWorker(debugger, cp);
+      worker.set(w);
+      w.waitForRunToComplete();
+
     }
     return worker.get();
   }
 
-  private int runTestInSeperateProcessForMutationRange(final Mutater m,
-      final Collection<AssertionError> results, final int start, final int end,
-      final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
+  private int runTestInSeperateProcessForMutationRange(
+      final Mutater m,
+      final Collection<AssertionError> results,
+      final int start,
+      final int end,
+      final ClassPath cp,
+      final List<TestUnit> tus,
+      final long normalExecution,
+      final F3<Mutater, Collection<AssertionError>, File, Integer> reportFunction)
       throws IOException {
 
     final HotSwapWorker worker = this.getWorker(new DefaultDebugger(), cp);
+    createInputFile(start, end, tus, worker.getInputfile());
 
-    createInputFile(start, end, tus, normalExecution, worker.getInputfile());
-    worker.reset(this.classToMutate, m, start);
+    worker.reset(this.classToMutate, m, start, end);
+
     worker.getDebugger().resume();
 
-    try {
-      while (!worker.isRunComplete()) {
-        Thread.sleep(500);
-      }
-      System.out.println("Worker has finished");
-      worker.getInputfile().delete(); // will trigger IOException and exit in
-      // slave when controlling thread dies
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    worker.waitForRunToComplete();
+    System.out.println("Worker has finished");
+    worker.getInputfile().delete(); // will trigger IOException and exit in
 
-    final int lastRunMutation = readResults(m, results, worker.getResult());
+    final int lastRunMutation = reportFunction.apply(m, results, worker
+        .getResult());
+    // readResults(m, results, worker.getResult());
 
     return lastRunMutation;
 
   }
 
   private int readResults(final Mutater m,
-      final Collection<AssertionError> results, final File result)
-      throws FileNotFoundException, IOException {
-    final BufferedReader r = new BufferedReader(new InputStreamReader(
-        new FileInputStream(result)));
+      final Collection<AssertionError> results, final File result) {
+    BufferedReader r = null;
     int lastRunMutation = -1;
     try {
+      r = new BufferedReader(new InputStreamReader(new FileInputStream(result)));
       while (r.ready()) {
         final String line = r.readLine();
         final String parts[] = line.split("=");
@@ -185,8 +183,14 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
       }
     } catch (final ClassNotFoundException e) {
       throw Unchecked.translateCheckedException(e);
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
     } finally {
-      r.close();
+      try {
+        r.close();
+      } catch (final IOException e) {
+        throw Unchecked.translateCheckedException(e);
+      }
     }
     return lastRunMutation;
   }
@@ -204,11 +208,21 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
     final int end = mutationCount;
     int lastRunMutation = -1;
 
+    final F3<Mutater, Collection<AssertionError>, File, Integer> reporter = new F3<Mutater, Collection<AssertionError>, File, Integer>() {
+
+      public Integer apply(final Mutater a, final Collection<AssertionError> b,
+          final File c) {
+        return readResults(a, b, c);
+      }
+
+    };
+
     while (start != mutationCount) {
       System.out.println("Testing mutations " + start + " to " + end + " of "
           + mutationCount);
+
       lastRunMutation = runTestInSeperateProcessForMutationRange(m, results,
-          start, end, cp, tus, normalExecution);
+          start, end, cp, tus, normalExecution, reporter);
       start = lastRunMutation + 1;
     }
 
@@ -233,15 +247,14 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
   }
 
   private void createInputFile(final int start, final int end,
-      final List<TestUnit> tus, final long normalExecution, final File inputfile)
-      throws IOException {
+      final List<TestUnit> tus, final File inputfile) throws IOException {
     final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile,
         false));
     final RunDetails rd = new RunDetails();
     rd.setClassName(this.classToMutate.getName());
     rd.setEndMutation(end);
+    System.out.println("Writing input file staritng at " + start);
     rd.setStartMutation(start);
-    rd.setNormalExecutionTime(normalExecution);
     rd.setTests(tus);
     bw.append(IsolationUtils.toTransportString(rd));
     bw.newLine();
@@ -279,38 +292,49 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
   }
 
-  private long timeUnmutatedTests(final JavaClass unmutatedClass,
-      final List<TestUnit> list, final ClassLoader loader) {
+  private long timeUnmutatedTests(final List<TestUnit> list, final Mutater m,
+      final ClassLoader loader) throws IOException {
+    final Collection<AssertionError> results = new ArrayList<AssertionError>();
+    final ClassPath cp = createClassPath(loader);
     final long t0 = System.currentTimeMillis();
-    if (doTestsDetectMutation(loader, unmutatedClass, list, -1)) {
+    final F3<Mutater, Collection<AssertionError>, File, Integer> reportFunction = new F3<Mutater, Collection<AssertionError>, File, Integer>() {
+
+      public Integer apply(final Mutater m,
+          final Collection<AssertionError> results, final File result) {
+        BufferedReader r = null;
+        final int lastRunMutation = -1;
+        try {
+          r = new BufferedReader(new InputStreamReader(new FileInputStream(
+              result)));
+          while (r.ready()) {
+            final String line = r.readLine();
+            if (line.contains("true")) {
+              results
+                  .add(new AssertionError("Test failed with unmutated class"));
+            }
+            System.out.println("Result from file " + line);
+          }
+        } catch (final IOException e) {
+          throw Unchecked.translateCheckedException(e);
+        } finally {
+          try {
+            r.close();
+          } catch (final IOException e) {
+            throw Unchecked.translateCheckedException(e);
+          }
+        }
+        return lastRunMutation;
+      }
+
+    };
+
+    runTestInSeperateProcessForMutationRange(m, results, -1, 0, cp, list, 0,
+        reportFunction);
+    if (!results.isEmpty()) {
       throw new RuntimeException(
           "Cannot mutation test as tests do not pass without mutation");
     }
     return System.currentTimeMillis() - t0;
-  }
-
-  private boolean doTestsDetectMutation(final ClassLoader loader,
-      final JavaClass mutatedClass, final List<TestUnit> tests,
-      final long normalExecutionTime) {
-    try {
-      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
-      final ClassPath classPath = new ClassPath(
-          new OtherClassLoaderClassPathRoot(loader));
-
-      final JumbleContainer c = new JumbleContainer(classPath, mutatedClass,
-          normalExecutionTime);
-
-      final EmptyConfiguration conf = new EmptyConfiguration();
-      final Pitest pit = new Pitest(conf);
-      final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-      staticConfig.addTestListener(listener);
-      pit.run(c, staticConfig, tests);
-
-      return listener.resultIndicatesSuccess();
-    } catch (final Exception ex) {
-      throw translateCheckedException(ex);
-    }
-
   }
 
   private AssertionError createAssertionError(final MutationDetails md) {
