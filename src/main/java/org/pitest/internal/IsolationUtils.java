@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -34,7 +35,8 @@ import com.thoughtworks.xstream.XStream;
 public class IsolationUtils {
 
   private final static XStream xstreamInstance = new XStream();
-
+  private final static WeakHashMap<ClassLoader,XStream> cache = new WeakHashMap<ClassLoader,XStream>();
+  
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
   }
@@ -46,14 +48,26 @@ public class IsolationUtils {
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
     try {
       final String xml = toXml(o);
-      final XStream foreginXstream = new XStream();
-      foreginXstream.setClassLoader(loader);
-
-      return foreginXstream.fromXML(xml);
+      final XStream foreginXstream = getXStreamForLoader(loader);
+        return foreginXstream.fromXML(xml);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
 
+  }
+
+  private static XStream getXStreamForLoader(ClassLoader loader) {
+    XStream foreginXstream = cache.get(loader);
+    if ( foreginXstream == null ) {
+      foreginXstream = new XStream();
+      foreginXstream.setClassLoader(loader);
+      // possible that more than one instance will be created
+      // per loader, but probably better than synchronizing the whole method
+      synchronized ( cache ) {
+        cache.put(loader, foreginXstream);
+      }
+    }
+    return foreginXstream;
   }
 
   public static boolean fromDifferentLoader(final Class<?> clazz,
@@ -153,8 +167,7 @@ public class IsolationUtils {
   }
 
   public static Object fromXml(final String xml, final ClassLoader loader) {
-    final XStream xstream = new XStream();
-    xstream.setClassLoader(loader);
+    final XStream xstream = getXStreamForLoader(loader);
     return xstream.fromXML(xml);
   }
 
