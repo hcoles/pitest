@@ -50,7 +50,6 @@ import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.Unchecked;
 
 import com.reeltwo.jumble.mutation.Mutater;
-import com.thoughtworks.xstream.XStream;
 
 public class MutationTestSlave {
 
@@ -222,10 +221,9 @@ public class MutationTestSlave {
   private static List<TestUnit> xmlToTestGroup(final String encodedXml,
       final ClassLoader cl) {
     try {
-      final XStream xstream = new XStream();
-      xstream.setClassLoader(cl);
-      return (List<TestUnit>) xstream.fromXML(IsolationUtils
-          .decodeTransportString(encodedXml));
+
+      return (List<TestUnit>) IsolationUtils.fromXml(IsolationUtils
+          .decodeTransportString(encodedXml), cl);
 
     } catch (final Exception ex) {
       throw Unchecked.translateCheckedException(ex);

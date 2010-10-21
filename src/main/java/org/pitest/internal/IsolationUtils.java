@@ -33,6 +33,8 @@ import com.thoughtworks.xstream.XStream;
 
 public class IsolationUtils {
 
+  private final static XStream xstreamInstance = new XStream();
+
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
   }
@@ -43,8 +45,7 @@ public class IsolationUtils {
 
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
     try {
-      final XStream xstream = new XStream();
-      final String xml = xstream.toXML(o);
+      final String xml = toXml(o);
       final XStream foreginXstream = new XStream();
       foreginXstream.setClassLoader(loader);
 
@@ -123,8 +124,7 @@ public class IsolationUtils {
   }
 
   public static String toXml(final Object o) {
-    final XStream xstream = new XStream();
-    return xstream.toXML(o);
+    return xstreamInstance.toXML(o);
   }
 
   public static String toTransportString(final Object o) {
@@ -149,8 +149,7 @@ public class IsolationUtils {
   }
 
   public static Object fromXml(final String xml) {
-    final XStream xstream = new XStream();
-    return xstream.fromXML(xml);
+    return xstreamInstance.fromXML(xml);
   }
 
   public static Object fromXml(final String xml, final ClassLoader loader) {

@@ -27,6 +27,7 @@ import org.pitest.distributed.SharedNames;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.distributed.message.TestGroupExecuteMessage;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.util.ExitCodes;
 
 import com.hazelcast.config.MapConfig;
@@ -36,7 +37,6 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import com.hazelcast.core.MessageListener;
-import com.thoughtworks.xstream.XStream;
 
 public class ClusterManager implements
     MessageListener<HandlerNotificationMessage>, MembershipListener {
@@ -196,8 +196,7 @@ public class ClusterManager implements
   }
 
   private String testGroupToXML(final TestGroup each) {
-    final XStream xstream = new XStream();
-    return xstream.toXML(each);
+    return IsolationUtils.toXml(each);
   }
 
   public void endRun() {

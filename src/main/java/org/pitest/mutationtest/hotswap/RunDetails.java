@@ -19,10 +19,10 @@ import java.util.List;
 import org.pitest.extension.TestUnit;
 
 public class RunDetails {
+
   private int            startMutation;
   private int            endMutation;
-  private String         className;
-  // private long normalExecutionTime;
+  private String         className;     ;
   private List<TestUnit> tests;
 
   public int getStartMutation() {

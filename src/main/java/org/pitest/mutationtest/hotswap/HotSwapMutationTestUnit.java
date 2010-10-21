@@ -82,23 +82,23 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
     final int mutationCount = m.countMutationPoints(name);
 
-    // missing things
-    // run unmutated test in process
-    // timeouts
-    // actually report on the mutation
-
     try {
       if (mutationCount > 0) {
 
         final List<TestUnit> tests = findTestUnits();
-        // m.setMutationPoint(0);
-        final long normalExecution = timeUnmutatedTests(tests, m, loader);
-        final List<AssertionError> failures = new ArrayList<AssertionError>();
 
-        failures.addAll(runTestsInSeperateProcess(loader, m, mutationCount,
-            tests, normalExecution));
+        if (!tests.isEmpty()) {
+          final long normalExecution = timeUnmutatedTests(tests, m, loader);
+          final List<AssertionError> failures = new ArrayList<AssertionError>();
 
-        reportResults(mutationCount, failures, rc);
+          failures.addAll(runTestsInSeperateProcess(loader, m, mutationCount,
+              tests, normalExecution));
+
+          reportResults(mutationCount, failures, rc);
+        } else {
+          rc.notifyEnd(this.description(), new AssertionError(
+              "No tests to mutation test"));
+        }
 
       } else {
         logger.info("Skipping test " + this.description()
@@ -158,7 +158,7 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
     System.out.println("Worker has finished. TimedOut = " + timedOut);
     worker.getInputfile().delete(); // will trigger IOException and exit in
-                                    // slave
+    // slave
     if (timedOut) {
       worker.getProcess().destroy();
       threadWorker.set(null);

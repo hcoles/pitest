@@ -107,8 +107,9 @@ public class DefaultDebugger implements Debugger {
         public void apply(final Event a) {
 
           setBreakPointOnLoadedClass(clazz, method, hook);
+          a.virtualMachine().eventRequestManager().deleteEventRequest(
+              a.request());
           a.virtualMachine().resume();
-
         }
 
       };

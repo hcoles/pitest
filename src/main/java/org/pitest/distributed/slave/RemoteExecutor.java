@@ -21,7 +21,6 @@ import org.pitest.internal.IsolationUtils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
-import com.thoughtworks.xstream.XStream;
 
 public class RemoteExecutor implements Runnable {
 
@@ -53,10 +52,7 @@ public class RemoteExecutor implements Runnable {
 
   private TestGroup xmlToTestGroup(final String xml, final ClassLoader cl) {
     try {
-      final XStream xstream = new XStream();
-      xstream.setClassLoader(cl);
-      return (TestGroup) xstream.fromXML(xml);
-
+      return (TestGroup) IsolationUtils.fromXml(xml, cl);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }

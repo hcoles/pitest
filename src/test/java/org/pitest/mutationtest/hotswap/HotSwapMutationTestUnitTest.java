@@ -29,7 +29,6 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.Mutator;
-import org.pitest.mutationtest.hotswap.HotSwapMutationTestUnit;
 
 public class HotSwapMutationTestUnitTest {
 
