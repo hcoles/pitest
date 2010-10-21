@@ -39,6 +39,8 @@ public class JavaProcess {
   }
 
   public void destroy() {
+    this.out.requestStop();
+    this.err.requestStop();
     this.process.destroy();
   }
 

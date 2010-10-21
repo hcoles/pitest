@@ -63,6 +63,7 @@ public class HotSwapMutationTestSlave {
           .getTests());
 
       w.write("" + i + "=" + mutationDetected + "\n");
+      w.flush();
 
       System.out.println("Slave Mutation " + i + " of " + run.getEndMutation()
           + " detected = " + mutationDetected);

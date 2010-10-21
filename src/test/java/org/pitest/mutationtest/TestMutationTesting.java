@@ -20,7 +20,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -201,7 +200,7 @@ public class TestMutationTesting {
       int i = 1;
       do {
         i++;
-        System.out.println("loop");
+        System.out.print(".");
       } while (i == 1);
     }
   }
@@ -215,8 +214,7 @@ public class TestMutationTesting {
     }
   }
 
-  @Test(timeout = 2000)
-  @Ignore
+  @Test(timeout = 10000)
   public void testInfiniteLoopsCausedByMutationsAreBroken() {
     run(InfiniteLoopTest.class);
     // pass if we get here without a timeout

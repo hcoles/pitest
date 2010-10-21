@@ -47,11 +47,11 @@ import com.reeltwo.jumble.mutation.Mutater;
 public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
   // private static HotSwapWorker worker;
-  private final static ThreadLocal<HotSwapWorker> worker = new ThreadLocal<HotSwapWorker>();
+  private final static ThreadLocal<HotSwapWorker> threadWorker = new ThreadLocal<HotSwapWorker>();
 
-  private static final Logger                     logger = Logger
-                                                             .getLogger(HotSwapMutationTestUnit.class
-                                                                 .getName());
+  private static final Logger                     logger       = Logger
+                                                                   .getLogger(HotSwapMutationTestUnit.class
+                                                                       .getName());
 
   public HotSwapMutationTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
@@ -116,16 +116,19 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
   private synchronized HotSwapWorker getWorker(final Debugger debugger,
       final ClassPath cp) throws IOException {
-    final HotSwapWorker current = worker.get();
-    if (current == null) {
+    final HotSwapWorker current = threadWorker.get();
+    if ((current == null) || current.getProcess().isAlive()) {
       System.out.println(">>>>>>> Creating new worker for thread "
           + Thread.currentThread());
       final HotSwapWorker w = new HotSwapWorker(debugger, cp);
-      worker.set(w);
-      w.waitForRunToComplete();
+      threadWorker.set(w);
+      if (!w.waitForRunToComplete(60 * 1000)) {
+        w.getProcess().destroy();
+        throw new RuntimeException("Worker failed to respond");
+      }
 
     }
-    return worker.get();
+    return threadWorker.get();
   }
 
   private int runTestInSeperateProcessForMutationRange(
@@ -146,15 +149,27 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
     worker.getDebugger().resume();
 
-    worker.waitForRunToComplete();
-    System.out.println("Worker has finished");
+    final long timeout = (normalExecution + 100) * (end - start + 1);
+    final boolean timedOut = !worker.waitForRunToComplete(timeout)
+        && !(normalExecution == 0);
+
+    System.out.println("Worker has finished. TimedOut = " + timedOut);
     worker.getInputfile().delete(); // will trigger IOException and exit in
+                                    // slave
+    if (timedOut) {
+      worker.getProcess().destroy();
+      threadWorker.set(null);
+    }
 
     final int lastRunMutation = reportFunction.apply(m, results, worker
         .getResult());
     // readResults(m, results, worker.getResult());
 
-    return lastRunMutation;
+    if (timedOut) {
+      return lastRunMutation + 1;
+    } else {
+      return lastRunMutation;
+    }
 
   }
 
@@ -234,7 +249,7 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
 
   private void resetClassToUnmutatedState(final Mutater m) {
     try {
-      final HotSwapWorker current = worker.get();
+      final HotSwapWorker current = threadWorker.get();
       if (current != null) {
         m.setMutationPoint(-1);
         current.getDebugger().hotSwapClass(

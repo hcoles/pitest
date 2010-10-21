@@ -153,14 +153,19 @@ public class HotSwapWorker {
     return this.runComplete;
   }
 
-  public void waitForRunToComplete() {
+  public boolean waitForRunToComplete(final long timeout) {
+    final long t0 = System.currentTimeMillis();
     while (!isRunComplete()) {
       try {
-        Thread.sleep(500);
+        Thread.sleep(1);
+        if (System.currentTimeMillis() - t0 > timeout) {
+          return false;
+        }
       } catch (final InterruptedException e) {
         e.printStackTrace();
       }
     }
+    return true;
 
   }
 
