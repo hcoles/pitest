@@ -28,6 +28,7 @@ import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.classloader.MutationTestUnit;
 
 public class MutationTestUnitTest {
 

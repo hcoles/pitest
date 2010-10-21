@@ -25,6 +25,8 @@ import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
+import org.pitest.mutationtest.classloader.MutationTestUnit;
+import org.pitest.mutationtest.hotswap.HotSwapMutationTestUnit;
 
 public class MutationTestFinder implements TestUnitFinder {
 

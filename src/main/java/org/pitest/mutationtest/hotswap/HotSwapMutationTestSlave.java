@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.hotswap;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
@@ -41,6 +41,7 @@ import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCodes;
 import org.pitest.util.MemoryWatchdog;

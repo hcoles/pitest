@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.hotswap;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
@@ -38,6 +38,9 @@ import org.pitest.functional.F3;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.PITClassLoader;
+import org.pitest.mutationtest.AbstractMutationTestUnit;
+import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
 import org.pitest.util.Debugger;
 import org.pitest.util.DefaultDebugger;
 import org.pitest.util.Unchecked;
