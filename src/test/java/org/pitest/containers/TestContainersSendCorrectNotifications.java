@@ -94,7 +94,7 @@ public class TestContainersSendCorrectNotifications {
     final ConfigurationForTesting c = new ConfigurationForTesting();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
-    this.pit = new Pitest(c);
+    this.pit = new Pitest(this.staticConfig, c);
   }
 
   public static class OnePassingTest {
@@ -155,8 +155,7 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private void run(final Class<?> clazz) {
-    this.pit
-        .run(this.containerFactory.getContainer(), this.staticConfig, clazz);
+    this.pit.run(this.containerFactory.getContainer(), clazz);
   }
 
 }

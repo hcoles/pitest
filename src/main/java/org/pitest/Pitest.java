@@ -25,6 +25,7 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -33,44 +34,40 @@ import org.pitest.internal.TestClass;
 
 public class Pitest {
 
-  private final static Logger logger = Logger.getLogger(Pitest.class.getName());
-  private final Configuration initialConfig;                                     ;
+  private final static Logger       logger = Logger.getLogger(Pitest.class
+                                               .getName());
 
-  public Pitest(final Configuration initialConfig) {
-    this(new DefaultStaticConfig(), initialConfig);
-  }
+  private final Configuration       initialConfig;
+  private final StaticConfiguration initialStaticConfig;
 
   public Pitest(final StaticConfiguration initialStaticConfig,
       final Configuration initialConfig) {
     this.initialConfig = new ConcreteConfiguration(initialConfig);
+    this.initialStaticConfig = initialStaticConfig;
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
-    this.run(defaultContainer, new DefaultStaticConfig(), classes);
-  }
-
-  public void run(final Container defaultContainer,
-      final StaticConfiguration intialStaticConfig, final Class<?>... classes) {
     for (final Class<?> c : classes) {
       final Container container = new ContainerParser(c)
           .create(defaultContainer);
       StaticConfiguration staticConfig = new DefaultStaticConfig(
-          intialStaticConfig);
+          this.initialStaticConfig);
       for (final StaticConfigUpdater each : this.initialConfig
           .staticConfigurationUpdaters()) {
         staticConfig = each.apply(staticConfig, c);
       }
 
       run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
-          this.initialConfig, c));
+          this.initialConfig, staticConfig.getDiscoveryListeners(), c));
     }
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    this.run(container, new DefaultStaticConfig(), testUnits);
+    this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
+        testUnits);
   }
 
-  public void run(final Container container,
+  private void run(final Container container,
       final StaticConfiguration staticConfig, final List<TestUnit> testUnits) {
 
     final List<TestGroup> callables = processDependenciesIfRequired(container,
@@ -96,11 +93,13 @@ public class Pitest {
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
-      final Configuration startConfig, final Class<?>... classes) {
+      final Configuration startConfig,
+      final Collection<TestDiscoveryListener> listeners,
+      final Class<?>... classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
-      testUnits.addAll(new TestClass(c).getTestUnits(startConfig));
+      testUnits.addAll(new TestClass(c).getTestUnits(startConfig, listeners));
     }
     return testUnits;
   }

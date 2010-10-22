@@ -19,12 +19,14 @@ import java.util.Collection;
 
 import org.pitest.extension.ResultClassifier;
 import org.pitest.extension.StaticConfiguration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestListener;
 
 public class DefaultStaticConfig implements StaticConfiguration {
 
-  private ResultClassifier               classifier;
-  private final Collection<TestListener> testListeners = new ArrayList<TestListener>();
+  private ResultClassifier                        classifier;
+  private final Collection<TestListener>          testListeners          = new ArrayList<TestListener>();
+  private final Collection<TestDiscoveryListener> testDiscoveryListeners = new ArrayList<TestDiscoveryListener>();
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
@@ -33,6 +35,7 @@ public class DefaultStaticConfig implements StaticConfiguration {
   public DefaultStaticConfig(final StaticConfiguration orig) {
     this.classifier = orig.getClassifier();
     this.testListeners.addAll(orig.getTestListeners());
+    testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
   }
 
   public Collection<TestListener> getTestListeners() {
@@ -47,9 +50,17 @@ public class DefaultStaticConfig implements StaticConfiguration {
     this.testListeners.add(listener);
   }
 
+  public final void addDiscoveryListener(final TestDiscoveryListener tdl) {
+    this.testDiscoveryListeners.add(tdl);
+  }
+
   public final void addConfiguration(final StaticConfiguration orig) {
     this.classifier = orig.getClassifier();
     this.testListeners.addAll(orig.getTestListeners());
+  }
+
+  public Collection<TestDiscoveryListener> getDiscoveryListeners() {
+    return this.testDiscoveryListeners;
   }
 
 }

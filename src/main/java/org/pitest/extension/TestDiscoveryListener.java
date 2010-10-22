@@ -16,12 +16,12 @@ package org.pitest.extension;
 
 import java.util.Collection;
 
-public interface StaticConfiguration {
+public interface TestDiscoveryListener {
 
-  public abstract Collection<TestListener> getTestListeners();
+  public void enterClass(Class<?> clazz);
 
-  public abstract ResultClassifier getClassifier();
+  public void leaveClass(Class<?> clazz);
 
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
+  public void reciveTests(Class<?> currentClass, Collection<TestUnit> testUnits);
 
 }

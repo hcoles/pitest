@@ -44,9 +44,9 @@ public class TestPitest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.testee = new Pitest(new ConfigurationForTesting());
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
+    this.testee = new Pitest(this.staticConfig, new ConfigurationForTesting());
   }
 
   public static class PassingTest {
@@ -315,6 +315,6 @@ public class TestPitest {
   }
 
   private void run(final Class<?> clazz) {
-    this.testee.run(this.container, this.staticConfig, clazz);
+    this.testee.run(this.container, clazz);
   }
 }

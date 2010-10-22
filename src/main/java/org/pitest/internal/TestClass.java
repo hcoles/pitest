@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -42,7 +43,8 @@ public final class TestClass implements Serializable {
   }
 
   public Collection<TestUnit> getTestUnitsWithinClass(
-      final Configuration startConfig) {
+      final Configuration startConfig,
+      final Collection<TestDiscoveryListener> listeners) {
 
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, this);
@@ -61,7 +63,14 @@ public final class TestClass implements Serializable {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     for (final TestUnitFinder each : classConfig.testUnitFinders()) {
       if (each.canHandle(TestClass.this.getClazz(), !units.isEmpty())) {
-        units.addAll(each.findTestUnits(TestClass.this, classConfig));
+        final Collection<TestUnit> newTests = each.findTestUnits(
+            TestClass.this, classConfig);
+
+        for (final TestDiscoveryListener l : listeners) {
+          l.reciveTests(this.getClazz(), newTests);
+        }
+
+        units.addAll(newTests);
       }
     }
 
@@ -82,23 +91,30 @@ public final class TestClass implements Serializable {
   }
 
   private void findTestUnits(final List<TestUnit> tus,
-      final TestClass suiteClass, final Configuration startConfig) {
+      final TestClass suiteClass, final Configuration startConfig,
+      final Collection<TestDiscoveryListener> listeners) {
 
+    for (final TestDiscoveryListener each : listeners) {
+      each.enterClass(suiteClass.getClazz());
+    }
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, suiteClass);
 
     final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc, ConcreteConfiguration
-          .updateConfig(classConfig, tc));
+          .updateConfig(classConfig, tc), listeners);
     }
-    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig));
+    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig, listeners));
+    for (final TestDiscoveryListener each : listeners) {
+      each.leaveClass(suiteClass.getClazz());
+    }
   }
 
-  public Collection<TestUnit> getTestUnits(final Configuration startConfig) {
+  public Collection<TestUnit> getTestUnits(final Configuration startConfig,
+      final Collection<TestDiscoveryListener> listeners) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-
-    findTestUnits(tus, this, startConfig);
+    findTestUnits(tus, this, startConfig, listeners);
     return tus;
   }
 

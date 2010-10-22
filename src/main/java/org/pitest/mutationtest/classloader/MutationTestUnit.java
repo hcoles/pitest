@@ -266,10 +266,10 @@ public class MutationTestUnit extends AbstractMutationTestUnit {
           normalExecutionTime);
 
       final EmptyConfiguration conf = new EmptyConfiguration();
-      final Pitest pit = new Pitest(conf);
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
-      pit.run(c, staticConfig, tests);
+      final Pitest pit = new Pitest(staticConfig, conf);
+      pit.run(c, tests);
 
       return listener.resultIndicatesSuccess();
     } catch (final Exception ex) {

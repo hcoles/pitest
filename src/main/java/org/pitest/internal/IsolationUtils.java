@@ -34,9 +34,9 @@ import com.thoughtworks.xstream.XStream;
 
 public class IsolationUtils {
 
-  private final static XStream xstreamInstance = new XStream();
-  private final static WeakHashMap<ClassLoader,XStream> cache = new WeakHashMap<ClassLoader,XStream>();
-  
+  private final static XStream                           xstreamInstance = new XStream();
+  private final static WeakHashMap<ClassLoader, XStream> cache           = new WeakHashMap<ClassLoader, XStream>();
+
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
   }
@@ -49,21 +49,21 @@ public class IsolationUtils {
     try {
       final String xml = toXml(o);
       final XStream foreginXstream = getXStreamForLoader(loader);
-        return foreginXstream.fromXML(xml);
+      return foreginXstream.fromXML(xml);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
 
   }
 
-  private static XStream getXStreamForLoader(ClassLoader loader) {
+  private static XStream getXStreamForLoader(final ClassLoader loader) {
     XStream foreginXstream = cache.get(loader);
-    if ( foreginXstream == null ) {
+    if (foreginXstream == null) {
       foreginXstream = new XStream();
       foreginXstream.setClassLoader(loader);
       // possible that more than one instance will be created
       // per loader, but probably better than synchronizing the whole method
-      synchronized ( cache ) {
+      synchronized (cache) {
         cache.put(loader, foreginXstream);
       }
     }

@@ -46,9 +46,9 @@ public class TestMutationTesting {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.pit = new Pitest(new ConfigurationForTesting());
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.addTestListener(this.listener);
+    this.pit = new Pitest(this.staticConfig, new ConfigurationForTesting());
   }
 
   public static class NoMutations {
@@ -221,7 +221,7 @@ public class TestMutationTesting {
   }
 
   private void run(final Class<?> clazz) {
-    this.pit.run(this.container, this.staticConfig, clazz);
+    this.pit.run(this.container, clazz);
   }
 
 }

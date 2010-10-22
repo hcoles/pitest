@@ -14,17 +14,24 @@
  */
 package org.pitest.junit;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
+
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.TestGroup;
+import org.pitest.TestResult;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.StaticConfiguration;
+import org.pitest.extension.Container;
+import org.pitest.extension.ResultSource;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.internal.TestClass;
 
 /**
  * Custom runner to run tests with Pit but report back to junit.
@@ -34,43 +41,92 @@ import org.pitest.internal.TestClass;
  */
 public class PITJUnitRunner extends Runner {
 
-  private final Description   description;
-  private final Pitest        pitest;
-  private final Class<?>      root;
-  private final Configuration config = new JUnitCompatibleConfiguration();
+  private final Description description;
+  private final Class<?>    root;
 
   public PITJUnitRunner(final Class<?> clazz) {
     this.root = clazz;
-    this.pitest = new Pitest(this.config);
+    this.description = createDescription();
 
-    this.description = Description.createSuiteDescription(clazz);
-
-    findAndDescribeTestUnits(new TestClass(clazz), this.description,
-        this.config);
   }
 
-  private void findAndDescribeTestUnits(final TestClass root,
-      final Description description, final Configuration startConfig) {
+  private Description createDescription() {
+    final Stack<Description> descriptions = new Stack<Description>();
+    descriptions.push(Description.createSuiteDescription(this.root));
 
-    for (final TestUnit tu : root.getTestUnitsWithinClass(startConfig)) {
-      final Description d = Description.createTestDescription(tu.description()
-          .getTestClass(), tu.description().getName());
-      description.addChild(d);
+    final TestDiscoveryListener describer = new TestDiscoveryListener() {
 
-    }
+      public void enterClass(final Class<?> clazz) {
+        final Description childDesc = Description.createSuiteDescription(clazz);
+        descriptions.add(childDesc);
+      }
 
-    final Configuration updatedConfig = ConcreteConfiguration.updateConfig(
-        startConfig, root);
+      public void leaveClass(final Class<?> clazz) {
+        final Description thisDescription = descriptions.pop();
+        // FIXME allthough this works should empty tests not be filtered out
+        // before they get here??
+        if (!thisDescription.getChildren().isEmpty()) {
+          descriptions.peek().addChild(thisDescription);
+        }
+      }
 
-    for (final TestClass tc : root.getChildren(updatedConfig)) {
-      final Description childDesc = Description.createSuiteDescription(tc
-          .getClazz());
-      description.addChild(childDesc);
+      public void reciveTests(final Class<?> currentClass,
+          final Collection<TestUnit> testUnits) {
+        for (final TestUnit each : testUnits) {
+          final Description d = Description.createTestDescription(each
+              .description().getTestClass(), each.description().getName());
+          descriptions.peek().addChild(d);
+        }
 
-      findAndDescribeTestUnits(tc, childDesc, updatedConfig);
+      }
 
-    }
+    };
 
+    final Container c = new Container() {
+
+      public boolean awaitCompletion() {
+        return true;
+      }
+
+      public boolean canParallise() {
+        return false;
+      }
+
+      public ResultSource getResultSource() {
+        return new ResultSource() {
+
+          public List<TestResult> getAvailableResults() {
+            return Collections.emptyList();
+          }
+
+          public boolean resultsAvailable() {
+            return false;
+          }
+
+        };
+      }
+
+      public void setMaxThreads(final int maxThreads) {
+
+      }
+
+      public void shutdownWhenProcessingComplete() {
+
+      }
+
+      public void submit(final TestGroup c) {
+
+      }
+
+    };
+    final Configuration conf = new JUnitCompatibleConfiguration();
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    staticConfig.addDiscoveryListener(describer);
+    final Pitest pitest = new Pitest(staticConfig, conf);
+
+    pitest.run(c, this.root);
+
+    return descriptions.peek().getChildren().get(0);
   }
 
   @Override
@@ -80,11 +136,13 @@ public class PITJUnitRunner extends Runner {
 
   @Override
   public void run(final RunNotifier notifier) {
-    final StaticConfiguration staticConfig = new DefaultStaticConfig();
+    final Configuration conf = new JUnitCompatibleConfiguration();
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     staticConfig.getTestListeners()
         .add((new JUnitTestResultListener(notifier)));
-    this.pitest.run(new UnisolatedThreadPoolContainer(1), staticConfig,
-        this.root);
+    final Pitest pitest = new Pitest(staticConfig, conf);
+
+    pitest.run(new UnisolatedThreadPoolContainer(1), this.root);
   }
 
 }

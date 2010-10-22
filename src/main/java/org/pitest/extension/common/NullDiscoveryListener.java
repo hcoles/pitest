@@ -12,16 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest.extension.common;
 
 import java.util.Collection;
 
-public interface StaticConfiguration {
+import org.pitest.extension.TestDiscoveryListener;
+import org.pitest.extension.TestUnit;
 
-  public abstract Collection<TestListener> getTestListeners();
+public class NullDiscoveryListener implements TestDiscoveryListener {
 
-  public abstract ResultClassifier getClassifier();
+  public void enterClass(final Class<?> clazz) {
+    // TODO Auto-generated method stub
 
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
+  }
+
+  public void leaveClass(final Class<?> clazz) {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void reciveTests(final Class<?> currentClass,
+      final Collection<TestUnit> testUnits) {
+    // TODO Auto-generated method stub
+
+  }
 
 }

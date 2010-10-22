@@ -14,11 +14,13 @@
  */
 package org.pitest.mutationtest;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.testunit.AbstractTestUnit;
 
@@ -46,7 +48,8 @@ public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
   }
 
   protected List<TestUnit> findTestUnits() {
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig, this.test);
+    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
+        Collections.<TestDiscoveryListener> emptyList(), this.test);
   }
 
   public MutationConfig getMutationConfig() {

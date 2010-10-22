@@ -30,7 +30,9 @@ import org.pitest.junit.PITJUnitRunner;
 public class TestPerformance {
 
   public static void main(final String[] args) {
-    final Pitest p = new Pitest(new JUnitCompatibleConfiguration());
+    final Pitest p = new Pitest(new DefaultStaticConfig(),
+        new JUnitCompatibleConfiguration());
+
     p.run(new UnContainer(), RepetativeSuite.class);
 
   }
@@ -78,7 +80,8 @@ public class TestPerformance {
   @Test
   @Ignore
   public void testUncontainer() {
-    this.testee = new Pitest(new JUnitCompatibleConfiguration());
+    this.testee = new Pitest(new DefaultStaticConfig(),
+        new JUnitCompatibleConfiguration());
     final long t0 = System.currentTimeMillis();
     this.testee.run(new UnContainer(), RepetativeSuite.class);
 
