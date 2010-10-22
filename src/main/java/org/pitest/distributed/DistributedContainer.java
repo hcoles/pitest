@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.pitest.TestGroup;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.master.ClusterManager;
 import org.pitest.distributed.master.MasterResultQueueListener;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ClassLoaderFactory;
+import org.pitest.extension.TestUnit;
 import org.pitest.internal.ClassPath;
 
 import com.hazelcast.config.Config;
@@ -136,7 +136,7 @@ public class DistributedContainer extends BaseThreadPoolContainer {
   }
 
   @Override
-  public void submit(final TestGroup testGroup) {
+  public void submit(final TestUnit testGroup) {
     this.cluster.submitTestGroupToGrid(testGroup);
   }
 
@@ -146,11 +146,6 @@ public class DistributedContainer extends BaseThreadPoolContainer {
 
   public Map<String, String> getEnvironment() {
     return this.environment;
-  }
-
-  @Override
-  public boolean canParallise() {
-    return true;
   }
 
 }

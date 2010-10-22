@@ -25,7 +25,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.pitest.Description;
-import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultCollector;
@@ -96,7 +95,7 @@ public class JumbleContainer implements Container {
 
   }
 
-  public void submit(final TestGroup group) {
+  public void submit(final TestUnit group) {
     final ClassLoader cl = this.factory.get();
     final ExitingResultCollector rc = new ExitingResultCollector(
         new ConcreteResultCollector(this.feedbackQueue));
@@ -105,12 +104,15 @@ public class JumbleContainer implements Container {
       resetLoopBreakTimer(cl);
     }
 
-    for (final TestUnit each : group) {
-      each.execute(cl, rc);
-      if (rc.isHadFailure()) {
-        break;
-      }
-    }
+    // for (final TestUnit each : group) {
+
+    group.execute(cl, rc);
+
+    // FIXME need to reimplement this
+    // if (rc.isHadFailure()) {
+    // break;
+    // }
+    // }
 
   }
 
@@ -167,12 +169,7 @@ public class JumbleContainer implements Container {
   }
 
   private long calculateMaxEndTime(final long normalExecution) {
-    // TODO Auto-generated method stub
     return System.currentTimeMillis() + (normalExecution * 2) + 50;
-  }
-
-  public boolean canParallise() {
-    return false;
   }
 
 }

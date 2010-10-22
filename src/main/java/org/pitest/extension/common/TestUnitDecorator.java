@@ -14,9 +14,11 @@
  */
 package org.pitest.extension.common;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.pitest.Description;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 
 public abstract class TestUnitDecorator implements TestUnit {
 
@@ -26,21 +28,17 @@ public abstract class TestUnitDecorator implements TestUnit {
     this.child = child;
   }
 
-  public Option<TestUnit> dependsOn() {
-    return this.child.dependsOn();
-  }
-
   public Description description() {
     return this.child.description();
   }
 
-  public void setDependency(final TestUnit dependsOn) {
-    this.child.setDependency(dependsOn);
-
-  }
-
   protected TestUnit child() {
     return this.child;
+  }
+
+  public Iterator<TestUnit> children() {
+    // do not return our child as it is not a real one
+    return Collections.<TestUnit> emptyList().iterator();
   }
 
 }

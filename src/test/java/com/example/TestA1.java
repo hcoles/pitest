@@ -16,7 +16,6 @@ package com.example;
 
 import junit.framework.TestCase;
 
-import org.junit.Ignore;
 import org.pitest.annotations.TestClass;
 
 @TestClass(TestA1.Testee.class)
@@ -34,19 +33,21 @@ public class TestA1 extends TestCase {
     public static int returnThree() {
       return 3;
     }
+
   }
 
   public void test1() {
+    System.out.println("returnOne = " + Testee.returnOne());
     assertEquals(1, Testee.returnOne());
   }
 
-  @Ignore
   public void test2() {
-
+    System.out.println("returnTwo = " + Testee.returnTwo());
+    assertEquals(2, Testee.returnTwo());
   }
 
   public void test3() {
-    assertEquals(2, Testee.returnTwo());
+
   }
 
   public void test4() {

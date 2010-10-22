@@ -18,26 +18,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Iterator;
 
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 
 public class RunnerAdapterTestUnit implements TestUnit, Serializable {
 
   private static final long                      serialVersionUID = 1L;
 
   private final Description                      description;
-  private Option<TestUnit>                       dependsOn;
   private transient org.junit.runner.Description junitDescription;
   private final RunnerAdapter                    runner;
 
   public RunnerAdapterTestUnit(final RunnerAdapter runner,
       final org.junit.runner.Description junitDescription,
-      final Description description, final TestUnit parent) {
+      final Description description) {
     this.description = description;
-    this.dependsOn = Option.someOrNone(parent);
     this.runner = runner;
     this.junitDescription = junitDescription;
   }
@@ -74,17 +73,12 @@ public class RunnerAdapterTestUnit implements TestUnit, Serializable {
     return this.runner;
   }
 
-  public Option<TestUnit> dependsOn() {
-    return this.dependsOn;
-  }
-
   public Description description() {
     return this.description;
   }
 
-  public void setDependency(final TestUnit dependsOn) {
-    this.dependsOn = Option.someOrNone(dependsOn);
-
+  public Iterator<TestUnit> children() {
+    return Collections.<TestUnit> emptyList().iterator();
   }
 
 }

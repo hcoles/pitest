@@ -16,7 +16,6 @@
 package org.pitest;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,8 +26,8 @@ import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.CompoundTestDiscoveryListener;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 
@@ -58,11 +57,13 @@ public class Pitest {
       }
 
       run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
-          this.initialConfig, staticConfig.getDiscoveryListeners(), c));
+          this.initialConfig, new CompoundTestDiscoveryListener(staticConfig
+              .getDiscoveryListeners()), c));
     }
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
+    System.out.println("Running " + testUnits.size() + " tests");
     this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
         testUnits);
   }
@@ -70,36 +71,18 @@ public class Pitest {
   private void run(final Container container,
       final StaticConfiguration staticConfig, final List<TestUnit> testUnits) {
 
-    final List<TestGroup> callables = processDependenciesIfRequired(container,
-        testUnits);
-
-    final Thread feederThread = startFeederThread(container, callables);
+    final Thread feederThread = startFeederThread(container, testUnits);
 
     processResultsFromQueue(container, feederThread, staticConfig);
   }
 
-  private List<TestGroup> processDependenciesIfRequired(
-      final Container container, final List<TestUnit> testUnits) {
-    // for this optimisation to work finders must
-    // return correctly ordered tests, they cannot rely
-    // on dependencies to enforce order, only grouping
-    if (container.canParallise()) {
-      return createGroups(testUnits);
-    } else {
-      final List<TestGroup> callables = new ArrayList<TestGroup>(1);
-      callables.add(new TestGroup(testUnits));
-      return callables;
-    }
-  }
-
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
-      final Configuration startConfig,
-      final Collection<TestDiscoveryListener> listeners,
+      final Configuration startConfig, final TestDiscoveryListener listener,
       final Class<?>... classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
-      testUnits.addAll(new TestClass(c).getTestUnits(startConfig, listeners));
+      testUnits.addAll(new TestClass(c).getTestUnits(startConfig, listener));
     }
     return testUnits;
   }
@@ -131,59 +114,13 @@ public class Pitest {
 
   }
 
-  private List<TestGroup> createGroups(
-
-  final Collection<TestUnit> testUnits) {
-
-    final List<TestGroup> groupedTests = new ArrayList<TestGroup>();
-    createGroups(testUnits, groupedTests);
-
-    logger.info("Tests will run as " + groupedTests.size() + " groups");
-
-    return groupedTests;
-
-  }
-
-  private void createGroups(final Collection<TestUnit> tus,
-      final List<TestGroup> groups) {
-    final List<TestUnit> remainder = new ArrayList<TestUnit>();
-    for (final TestUnit tu : tus) {
-      if (tu.dependsOn().hasNone()) {
-        final TestGroup l = new TestGroup();
-        l.add(tu);
-        groups.add(l);
-      } else {
-        for (final TestUnit each : addToGroupIfPossible(tu, groups)) {
-          remainder.add(each);
-        }
-
-      }
-    }
-
-    if (!remainder.isEmpty()) {
-      createGroups(remainder, groups);
-    }
-  }
-
-  private Option<TestUnit> addToGroupIfPossible(final TestUnit tu,
-      final List<TestGroup> groups) {
-    for (final TestGroup group : groups) {
-      if (group.contains(tu.dependsOn().value())) {
-        group.add(tu);
-        return Option.none();
-      }
-    }
-    return Option.someOrNone(tu);
-  }
-
   private Thread startFeederThread(final Container container,
-      final List<TestGroup> callables) {
+      final List<TestUnit> callables) {
     final Runnable feeder = new Runnable() {
       public void run() {
-        for (final TestGroup group : callables) {
-          container.submit(group);
+        for (final TestUnit unit : callables) {
+          container.submit(unit);
         }
-        callables.clear();
       }
     };
     final Thread feederThread = new Thread(feeder);

@@ -29,25 +29,25 @@ import org.pitest.extension.TestUnit;
 public class TestGroupTest {
 
   @Mock
-  private TestUnit  emptyTestUnit;
-  private TestGroup testee;
+  private TestUnit          emptyTestUnit;
+  private MultipleTestGroup testee;
 
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
 
-    this.testee = new TestGroup();
+    this.testee = new MultipleTestGroup();
   }
 
   @Test
   public void testIteratorReturnsNoValuesWhenNoneAdded() {
-    assertFalse(this.testee.iterator().hasNext());
+    assertFalse(this.testee.children().hasNext());
   }
 
   @Test
   public void testIteratorReturnsAddedNoValues() {
     this.testee.add(this.emptyTestUnit);
-    assertSame(this.emptyTestUnit, this.testee.iterator().next());
+    assertSame(this.emptyTestUnit, this.testee.children().next());
   }
 
   @Test

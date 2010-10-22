@@ -14,10 +14,12 @@
  */
 package org.pitest.testunit;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 
 /**
  * @author henry
@@ -26,17 +28,13 @@ import org.pitest.functional.Option;
 public abstract class AbstractTestUnit implements TestUnit {
 
   private final Description description;
-  private Option<TestUnit>  dependsOn;
 
   public AbstractTestUnit(final Description description) {
-    this(description, null);
+    this.description = description;
   }
 
-  public AbstractTestUnit(final Description description,
-      final TestUnit dependsOn) {
-    this.description = description;
-    // this.configuration = config;
-    this.dependsOn = Option.someOrNone(dependsOn);
+  public Iterator<TestUnit> children() {
+    return Collections.<TestUnit> emptyList().iterator();
   }
 
   public abstract void execute(final ClassLoader loader,
@@ -44,18 +42,6 @@ public abstract class AbstractTestUnit implements TestUnit {
 
   public final Description description() {
     return this.description;
-  }
-
-  // public Configuration configuration() {
-  // return this.configuration;
-  // }
-
-  public Option<TestUnit> dependsOn() {
-    return this.dependsOn;
-  }
-
-  public void setDependency(final TestUnit tu) {
-    this.dependsOn = Option.someOrNone(tu);
   }
 
 }

@@ -15,13 +15,11 @@
 
 package org.pitest.extension;
 
-import org.pitest.TestGroup;
-
 public interface Container {
 
   public final int BUFFER_SIZE = 6000;
 
-  public void submit(TestGroup c);
+  public void submit(TestUnit c);
 
   public void shutdownWhenProcessingComplete();
 
@@ -30,7 +28,5 @@ public interface Container {
   public ResultSource getResultSource();
 
   public boolean awaitCompletion();
-
-  public boolean canParallise();
 
 }

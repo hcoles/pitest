@@ -20,12 +20,12 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.pitest.TestGroup;
 import org.pitest.distributed.RemoteRoot;
 import org.pitest.distributed.ResourceCache;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultSource;
+import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
@@ -134,13 +134,9 @@ public class DefaultRemoteContainer implements RemoteContainer {
     this.resourceCache.destroy();
   }
 
-  public void submit(final TestGroup c) {
+  public void submit(final TestUnit c) {
     // TODO Auto-generated method stub
 
-  }
-
-  public boolean canParallise() {
-    return false;
   }
 
 }

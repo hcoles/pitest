@@ -14,14 +14,13 @@
  */
 package org.pitest.mutationtest;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.testunit.AbstractTestUnit;
 
 public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
@@ -39,7 +38,7 @@ public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
   public AbstractMutationTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
       final Configuration pitConfig, final Description description) {
-    super(description, null);
+    super(description);
     this.classToMutate = classToMutate;
     this.test = test;
     this.config = mutationConfig;
@@ -49,7 +48,7 @@ public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
 
   protected List<TestUnit> findTestUnits() {
     return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        Collections.<TestDiscoveryListener> emptyList(), this.test);
+        new NullDiscoveryListener(), this.test);
   }
 
   public MutationConfig getMutationConfig() {

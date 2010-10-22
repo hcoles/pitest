@@ -39,7 +39,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
   public SteppedTestUnit(final Description description,
       final Collection<TestStep> steps,
       final Class<? extends Throwable> expected) {
-    super(description, null);
+    super(description);
     this.steps = steps;
     this.expected = expected;
   }
@@ -136,8 +136,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
   @Override
   public String toString() {
     return "SteppedTestUnit [expected=" + this.expected + ", steps="
-        + this.steps + ", dependsOn()=" + dependsOn() + ", description()="
-        + description() + "]";
+        + this.steps + "]";
   }
 
 }

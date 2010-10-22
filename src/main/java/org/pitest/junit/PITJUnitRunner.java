@@ -24,7 +24,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
@@ -70,8 +69,7 @@ public class PITJUnitRunner extends Runner {
         }
       }
 
-      public void reciveTests(final Class<?> currentClass,
-          final Collection<TestUnit> testUnits) {
+      public void reciveTests(final Collection<TestUnit> testUnits) {
         for (final TestUnit each : testUnits) {
           final Description d = Description.createTestDescription(each
               .description().getTestClass(), each.description().getName());
@@ -86,10 +84,6 @@ public class PITJUnitRunner extends Runner {
 
       public boolean awaitCompletion() {
         return true;
-      }
-
-      public boolean canParallise() {
-        return false;
       }
 
       public ResultSource getResultSource() {
@@ -114,7 +108,7 @@ public class PITJUnitRunner extends Runner {
 
       }
 
-      public void submit(final TestGroup c) {
+      public void submit(final TestUnit c) {
 
       }
 

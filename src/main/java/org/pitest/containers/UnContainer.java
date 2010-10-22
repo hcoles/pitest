@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
@@ -40,12 +39,12 @@ public class UnContainer implements Container {
     // ignore
   }
 
-  public void submit(final TestGroup group) {
+  public void submit(final TestUnit group) {
     final ConcreteResultCollector rc = new ConcreteResultCollector(
         this.feedbackQueue);
-    for (final TestUnit each : group) {
-      each.execute(this.getClass().getClassLoader(), rc);
-    }
+    // for (final TestUnit each : group) {
+    group.execute(this.getClass().getClassLoader(), rc);
+    // }
   }
 
   public boolean awaitCompletion() {
@@ -66,10 +65,6 @@ public class UnContainer implements Container {
       }
 
     };
-  }
-
-  public boolean canParallise() {
-    return false;
   }
 
 }

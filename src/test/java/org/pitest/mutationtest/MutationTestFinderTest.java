@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.internal.TestClass;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
@@ -56,7 +57,7 @@ public class MutationTestFinderTest {
   @Test
   public void testUsesConfigInAnnotatedChildInPreferenceToParentSuiteConfig() {
     final Collection<TestUnit> tus = this.testee.findTestUnits(new TestClass(
-        TestOne.class), this.pitConfig);
+        TestOne.class), this.pitConfig, new NullDiscoveryListener());
     assertEquals(1, tus.size());
     final AbstractMutationTestUnit actual = (AbstractMutationTestUnit) tus
         .iterator().next();

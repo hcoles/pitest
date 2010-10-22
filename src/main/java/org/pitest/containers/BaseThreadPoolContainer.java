@@ -24,11 +24,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
+import org.pitest.extension.TestUnit;
 import org.pitest.internal.TestUnitExecutor;
 
 public class BaseThreadPoolContainer implements Container {
@@ -68,7 +68,7 @@ public class BaseThreadPoolContainer implements Container {
 
   }
 
-  public void submit(final TestGroup c) {
+  public void submit(final TestUnit c) {
     this
         .submit(new TestUnitExecutor(this.loaderFactory, c, this.feedbackQueue));
   }
@@ -100,10 +100,6 @@ public class BaseThreadPoolContainer implements Container {
 
   public BlockingQueue<TestResult> feedbackQueue() {
     return this.feedbackQueue;
-  }
-
-  public boolean canParallise() {
-    return this.executor.getMaximumPoolSize() > 1;
   }
 
 }

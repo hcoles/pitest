@@ -16,23 +16,18 @@ package org.pitest.internal;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.pitest.TestGroup;
 import org.pitest.TestResult;
 import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.TestUnit;
 
-/**
- * @author henry
- * 
- */
 public class TestUnitExecutor implements Runnable {
 
-  private final TestGroup                 group;
+  private final TestUnit                  group;
   private final BlockingQueue<TestResult> feedback;
   private final ClassLoaderFactory        loaderFactory;
 
   public TestUnitExecutor(final ClassLoaderFactory loaderFactory,
-      final TestGroup group, final BlockingQueue<TestResult> feedbackQueue) {
+      final TestUnit group, final BlockingQueue<TestResult> feedbackQueue) {
     this.feedback = feedbackQueue;
     this.group = group;
     this.loaderFactory = loaderFactory;
@@ -42,9 +37,7 @@ public class TestUnitExecutor implements Runnable {
     final ConcreteResultCollector rc = new ConcreteResultCollector(
         this.feedback);
 
-    for (final TestUnit each : this.group) {
-      each.execute(this.loaderFactory.get(), rc);
-    }
+    this.group.execute(this.loaderFactory.get(), rc);
 
   }
 

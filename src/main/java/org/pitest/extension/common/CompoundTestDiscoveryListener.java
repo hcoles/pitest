@@ -19,21 +19,31 @@ import java.util.Collection;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 
-public class NullDiscoveryListener implements TestDiscoveryListener {
+public class CompoundTestDiscoveryListener implements TestDiscoveryListener {
+  private final Collection<TestDiscoveryListener> children;
+
+  public CompoundTestDiscoveryListener(
+      final Collection<TestDiscoveryListener> children) {
+    this.children = children;
+  }
 
   public void enterClass(final Class<?> clazz) {
-    // TODO Auto-generated method stub
+    for (final TestDiscoveryListener each : this.children) {
+      each.enterClass(clazz);
+    }
 
   }
 
   public void leaveClass(final Class<?> clazz) {
-    // TODO Auto-generated method stub
-
+    for (final TestDiscoveryListener each : this.children) {
+      each.leaveClass(clazz);
+    }
   }
 
   public void reciveTests(final Collection<TestUnit> testUnits) {
-    // TODO Auto-generated method stub
-
+    for (final TestDiscoveryListener each : this.children) {
+      each.reciveTests(testUnits);
+    }
   }
 
 }

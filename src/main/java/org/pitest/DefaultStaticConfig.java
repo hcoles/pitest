@@ -35,7 +35,7 @@ public class DefaultStaticConfig implements StaticConfiguration {
   public DefaultStaticConfig(final StaticConfiguration orig) {
     this.classifier = orig.getClassifier();
     this.testListeners.addAll(orig.getTestListeners());
-    testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
+    this.testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
   }
 
   public Collection<TestListener> getTestListeners() {

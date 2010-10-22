@@ -14,8 +14,9 @@
  */
 package org.pitest.extension;
 
+import java.util.Iterator;
+
 import org.pitest.Description;
-import org.pitest.functional.Option;
 
 /**
  * @author henry
@@ -27,8 +28,6 @@ public interface TestUnit {
 
   public Description description();
 
-  // toodo move out of the test unit and into a node or something
-  public Option<TestUnit> dependsOn();
+  public abstract Iterator<TestUnit> children();
 
-  public void setDependency(TestUnit dependsOn);
 }

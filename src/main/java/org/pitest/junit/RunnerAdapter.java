@@ -101,7 +101,7 @@ public class RunnerAdapter implements Serializable {
     final org.pitest.Description pitDescription = new org.pitest.Description(d
         .getDisplayName(), descriptionTestClass, tm);
 
-    return new RunnerAdapterTestUnit(this, d, pitDescription, null);
+    return new RunnerAdapterTestUnit(this, d, pitDescription);
   }
 
   public void execute(final ClassLoader loader,

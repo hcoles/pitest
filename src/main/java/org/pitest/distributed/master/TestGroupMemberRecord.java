@@ -16,11 +16,11 @@ package org.pitest.distributed.master;
 
 import java.net.InetSocketAddress;
 
-import org.pitest.TestGroup;
+import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 
 class TestGroupMemberRecord {
-  public TestGroupMemberRecord(final long id, final TestGroup testGroup,
+  public TestGroupMemberRecord(final long id, final TestUnit testGroup,
       final Option<InetSocketAddress> handler) {
     this.id = id;
     this.group = testGroup;
@@ -28,7 +28,7 @@ class TestGroupMemberRecord {
   }
 
   private long                      id;
-  private TestGroup                 group;
+  private TestUnit                  group;
   private Option<InetSocketAddress> handler;
 
   public long getId() {
@@ -39,11 +39,11 @@ class TestGroupMemberRecord {
     this.id = id;
   }
 
-  public TestGroup getGroup() {
+  public TestUnit getGroup() {
     return this.group;
   }
 
-  public void setGroup(final TestGroup group) {
+  public void setGroup(final TestUnit group) {
     this.group = group;
   }
 

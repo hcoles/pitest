@@ -43,8 +43,7 @@ public final class TestClass implements Serializable {
   }
 
   public Collection<TestUnit> getTestUnitsWithinClass(
-      final Configuration startConfig,
-      final Collection<TestDiscoveryListener> listeners) {
+      final Configuration startConfig, final TestDiscoveryListener listener) {
 
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, this);
@@ -64,11 +63,7 @@ public final class TestClass implements Serializable {
     for (final TestUnitFinder each : classConfig.testUnitFinders()) {
       if (each.canHandle(TestClass.this.getClazz(), !units.isEmpty())) {
         final Collection<TestUnit> newTests = each.findTestUnits(
-            TestClass.this, classConfig);
-
-        for (final TestDiscoveryListener l : listeners) {
-          l.reciveTests(this.getClazz(), newTests);
-        }
+            TestClass.this, classConfig, listener);
 
         units.addAll(newTests);
       }
@@ -92,29 +87,28 @@ public final class TestClass implements Serializable {
 
   private void findTestUnits(final List<TestUnit> tus,
       final TestClass suiteClass, final Configuration startConfig,
-      final Collection<TestDiscoveryListener> listeners) {
+      final TestDiscoveryListener listener) {
 
-    for (final TestDiscoveryListener each : listeners) {
-      each.enterClass(suiteClass.getClazz());
-    }
+    listener.enterClass(suiteClass.getClazz());
+
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, suiteClass);
 
     final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc, ConcreteConfiguration
-          .updateConfig(classConfig, tc), listeners);
+          .updateConfig(classConfig, tc), listener);
     }
-    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig, listeners));
-    for (final TestDiscoveryListener each : listeners) {
-      each.leaveClass(suiteClass.getClazz());
-    }
+    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig, listener));
+
+    listener.leaveClass(suiteClass.getClazz());
+
   }
 
   public Collection<TestUnit> getTestUnits(final Configuration startConfig,
-      final Collection<TestDiscoveryListener> listeners) {
+      final TestDiscoveryListener listener) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-    findTestUnits(tus, this, startConfig, listeners);
+    findTestUnits(tus, this, startConfig, listener);
     return tus;
   }
 

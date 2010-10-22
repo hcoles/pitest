@@ -11,7 +11,6 @@ package org.pitest.distributed.slave;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import org.pitest.TestGroup;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.SharedNames;
 import org.pitest.distributed.message.RunDetails;
@@ -42,17 +41,17 @@ public class RemoteExecutor implements Runnable {
         .getTopic(SharedNames.TEST_RESULTS);
     final ResultCollector rc = new SlaveResultCollector(this.run, topic);
     IsolationUtils.setContextClassLoader(this.loader);
-    final TestGroup deserializedGroup = xmlToTestGroup(this.groupXML,
+    final TestUnit deserializedGroup = xmlToTestGroup(this.groupXML,
         this.loader);
-    for (final TestUnit each : deserializedGroup) {
-      each.execute(this.loader, rc);
-    }
+    // for (final TestUnit each : deserializedGroup) {
+    deserializedGroup.execute(this.loader, rc);
+    // }
 
   }
 
-  private TestGroup xmlToTestGroup(final String xml, final ClassLoader cl) {
+  private TestUnit xmlToTestGroup(final String xml, final ClassLoader cl) {
     try {
-      return (TestGroup) IsolationUtils.fromXml(xml, cl);
+      return (TestUnit) IsolationUtils.fromXml(xml, cl);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }

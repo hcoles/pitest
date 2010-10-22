@@ -20,11 +20,12 @@ import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.pitest.MultipleTestGroup;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.internal.TestClass;
-import org.pitest.util.Dependency;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -33,15 +34,16 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass a,
-      final Configuration b) {
+      final Configuration b, final TestDiscoveryListener listener) {
     final RunWith runWith = a.getClazz().getAnnotation(RunWith.class);
     if ((runWith != null) && !runWith.value().equals(PITJUnitRunner.class)
         && !runWith.value().equals(Suite.class)) {
 
       final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
       final List<TestUnit> units = adapter.getTestUnits();
-      Dependency.dependOnFirst(units);
-      return units;
+      listener.reciveTests(units);
+      // Dependency.dependOnFirst(units);
+      return Collections.<TestUnit> singletonList(new MultipleTestGroup(units));
 
     }
 

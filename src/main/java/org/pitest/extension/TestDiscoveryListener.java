@@ -22,6 +22,6 @@ public interface TestDiscoveryListener {
 
   public void leaveClass(Class<?> clazz);
 
-  public void reciveTests(Class<?> currentClass, Collection<TestUnit> testUnits);
+  public void reciveTests(Collection<TestUnit> testUnits);
 
 }

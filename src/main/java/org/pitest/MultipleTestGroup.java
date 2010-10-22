@@ -15,24 +15,29 @@
 
 package org.pitest;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 
-public class TestGroup implements Iterable<TestUnit>, Serializable {
+public class MultipleTestGroup implements TestUnit {
+
+  private final static Description   groupDescription = new Description(
+                                                          "MultiGroup",
+                                                          MultipleTestGroup.class,
+                                                          null);
 
   private static final long          serialVersionUID = 1L;
 
   private final Collection<TestUnit> children;
 
-  public TestGroup(final Collection<TestUnit> children) {
+  public MultipleTestGroup(final Collection<TestUnit> children) {
     this.children = children;
   }
 
-  public TestGroup() {
+  public MultipleTestGroup() {
     this(new ArrayList<TestUnit>());
   }
 
@@ -49,8 +54,19 @@ public class TestGroup implements Iterable<TestUnit>, Serializable {
     return false;
   }
 
-  public Iterator<TestUnit> iterator() {
+  public Iterator<TestUnit> children() {
     return this.children.iterator();
+  }
+
+  public Description description() {
+    return groupDescription;
+  }
+
+  public void execute(final ClassLoader loader, final ResultCollector rc) {
+    for (final TestUnit each : this.children) {
+      each.execute(loader, rc);
+    }
+
   }
 
 }

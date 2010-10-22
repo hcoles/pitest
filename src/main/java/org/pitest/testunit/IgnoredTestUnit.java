@@ -20,7 +20,7 @@ import org.pitest.extension.TestUnit;
 public class IgnoredTestUnit extends AbstractTestUnit {
 
   public IgnoredTestUnit(final TestUnit child) {
-    super(child.description(), null);
+    super(child.description());
   }
 
   @Override

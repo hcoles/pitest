@@ -16,10 +16,12 @@ package org.pitest.mutationtest;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
@@ -41,7 +43,7 @@ public class MutationTestFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass clazz,
-      final Configuration configuration) {
+      final Configuration configuration, final TestDiscoveryListener listener) {
     final Option<Class<?>> testee = determineTestee(clazz.getClazz());
     if (testee.hasSome()) {
       final Configuration updatedConfig = createCopyOfConfig(configuration);
@@ -54,8 +56,11 @@ public class MutationTestFinder implements TestUnitFinder {
 
       final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
 
-      return Collections.<TestUnit> singleton(createTestUnit(clazz.getClazz(),
-          testee.value(), updatedMutationConfig, updatedConfig, d));
+      final Set<TestUnit> units = Collections
+          .<TestUnit> singleton(createTestUnit(clazz.getClazz(),
+              testee.value(), updatedMutationConfig, updatedConfig, d));
+      listener.reciveTests(units);
+      return units;
     } else {
       return Collections.emptyList();
     }

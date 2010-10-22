@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.TestGroup;
+import org.pitest.MultipleTestGroup;
 import org.pitest.extension.TestUnit;
 
 import com.example.TheoryTest;
@@ -39,18 +39,15 @@ public class RunnerAdapterTestUnitTest {
   @Test
   public void testXStreamSerializationDoesNotDuplicateAdapter() {
     final List<TestUnit> tus = this.adapter.getTestUnits();
-    final TestGroup group = new TestGroup();
-    for (final TestUnit each : tus) {
-      group.add(each);
-    }
+    final MultipleTestGroup group = new MultipleTestGroup(tus);
 
     final XStream xstream = new XStream();
     final String xml = xstream.toXML(group);
 
     final XStream xstream2 = new XStream();
-    final TestGroup actual = (TestGroup) xstream2.fromXML(xml);
+    final MultipleTestGroup actual = (MultipleTestGroup) xstream2.fromXML(xml);
 
-    final Iterator<TestUnit> it = actual.iterator();
+    final Iterator<TestUnit> it = actual.children();
     RunnerAdapterTestUnit tu = (RunnerAdapterTestUnit) it.next();
     final RunnerAdapter firstAdapter = tu.getAdapter();
     tu = (RunnerAdapterTestUnit) it.next();

@@ -21,11 +21,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.pitest.TestGroup;
 import org.pitest.distributed.HandlerNotificationMessage;
 import org.pitest.distributed.SharedNames;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.distributed.message.TestGroupExecuteMessage;
+import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.ExitCodes;
@@ -145,7 +145,7 @@ public class ClusterManager implements
     record.setHandler(Option.someOrNone(message.getHandler()));
   }
 
-  public long registerGroup(final TestGroup testGroup) {
+  public long registerGroup(final TestUnit testGroup) {
     final long id = this.counter++;
     this.inprogressTestGroupHandlers.put(id, new TestGroupMemberRecord(id,
         testGroup, Option.<InetSocketAddress> none()));
@@ -185,17 +185,17 @@ public class ClusterManager implements
 
   }
 
-  private void submitTestGroupToGrid(final long id, final TestGroup group) {
+  private void submitTestGroupToGrid(final long id, final TestUnit group) {
     submitTestGroupToGrid(new TestGroupExecuteMessage(this.run, id,
         testGroupToXML(group)));
 
   }
 
-  public void submitTestGroupToGrid(final TestGroup testGroup) {
+  public void submitTestGroupToGrid(final TestUnit testGroup) {
     submitTestGroupToGrid(registerGroup(testGroup), testGroup);
   }
 
-  private String testGroupToXML(final TestGroup each) {
+  private String testGroupToXML(final TestUnit each) {
     return IsolationUtils.toXml(each);
   }
 

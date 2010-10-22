@@ -26,10 +26,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.Description;
+import org.pitest.MultipleTestGroup;
 import org.pitest.TestMethod;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
+import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestStep;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -44,7 +46,6 @@ import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 import org.pitest.teststeps.CallStep;
 import org.pitest.testunit.SteppedTestUnit;
-import org.pitest.util.Dependency;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
@@ -74,7 +75,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass testClass,
-      final Configuration config) {
+      final Configuration config, final TestDiscoveryListener listener) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
@@ -97,7 +98,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         }
       }
 
-      Dependency.dependOnFirst(units);
+      listener.reciveTests(units);
 
       return processChildUnits(units, testClass);
 
@@ -209,10 +210,10 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final TestUnit last = tus.get(tus.size() - 1);
       tus.set(tus.size() - 1, new BeforeAfterDecorator(last, Collections
           .<CallStep> emptySet(), afterClasses));
-      Dependency.chainDepencies(tus);
+      return Collections.<TestUnit> singletonList(new MultipleTestGroup(tus));
+    } else {
+      return tus;
     }
-
-    return tus;
 
   }
 
