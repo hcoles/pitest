@@ -25,4 +25,6 @@ public interface ResultCollector {
   public void notifyStart(final Description description);
 
   public void notifySkipped(final Description description);
+
+  public boolean shouldExit();
 }

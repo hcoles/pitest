@@ -26,7 +26,6 @@ import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 
 /**
@@ -48,7 +47,7 @@ public final class TestClass implements Serializable {
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, this);
 
-    final F<TestUnit, TestUnit> applyProcessors = new F<TestUnit, TestUnit>() {
+    final TestUnitProcessor applyProcessors = new TestUnitProcessor() {
       public TestUnit apply(final TestUnit tu) {
         TestUnit alteredTestUnit = tu;
         for (final TestUnitProcessor tup : classConfig.testUnitProcessors()) {
@@ -60,10 +59,11 @@ public final class TestClass implements Serializable {
     };
 
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
+
     for (final TestUnitFinder each : classConfig.testUnitFinders()) {
       if (each.canHandle(TestClass.this.getClazz(), !units.isEmpty())) {
         final Collection<TestUnit> newTests = each.findTestUnits(
-            TestClass.this, classConfig, listener);
+            TestClass.this, classConfig, listener, applyProcessors);
 
         units.addAll(newTests);
       }

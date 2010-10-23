@@ -24,6 +24,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
@@ -43,7 +44,8 @@ public class MutationTestFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass clazz,
-      final Configuration configuration, final TestDiscoveryListener listener) {
+      final Configuration configuration, final TestDiscoveryListener listener,
+      final TestUnitProcessor processor) {
     final Option<Class<?>> testee = determineTestee(clazz.getClazz());
     if (testee.hasSome()) {
       final Configuration updatedConfig = createCopyOfConfig(configuration);
@@ -60,6 +62,7 @@ public class MutationTestFinder implements TestUnitFinder {
           .<TestUnit> singleton(createTestUnit(clazz.getClazz(),
               testee.value(), updatedMutationConfig, updatedConfig, d));
       listener.reciveTests(units);
+      // skip processing for mutation tests . . . yes?
       return units;
     } else {
       return Collections.emptyList();

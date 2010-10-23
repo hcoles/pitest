@@ -28,8 +28,8 @@ import org.pitest.internal.ConcreteResultCollector;
 
 public class UnContainer implements Container {
 
-  private final BlockingQueue<TestResult> feedbackQueue = new ArrayBlockingQueue<TestResult>(
-                                                            BUFFER_SIZE);
+  protected final BlockingQueue<TestResult> feedbackQueue = new ArrayBlockingQueue<TestResult>(
+                                                              BUFFER_SIZE);
 
   public void setMaxThreads(final int maxThreads) {
     // ignore

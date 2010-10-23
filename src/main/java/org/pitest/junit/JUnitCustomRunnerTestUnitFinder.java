@@ -25,6 +25,8 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.TestUnitProcessor;
+import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
@@ -34,7 +36,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass a,
-      final Configuration b, final TestDiscoveryListener listener) {
+      final Configuration b, final TestDiscoveryListener listener,
+      final TestUnitProcessor processor) {
     final RunWith runWith = a.getClazz().getAnnotation(RunWith.class);
     if ((runWith != null) && !runWith.value().equals(PITJUnitRunner.class)
         && !runWith.value().equals(Suite.class)) {
@@ -42,8 +45,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
       final List<TestUnit> units = adapter.getTestUnits();
       listener.reciveTests(units);
-      // Dependency.dependOnFirst(units);
-      return Collections.<TestUnit> singletonList(new MultipleTestGroup(units));
+
+      return Collections.<TestUnit> singletonList(new MultipleTestGroup(
+          FCollection.map(units, processor)));
 
     }
 

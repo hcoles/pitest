@@ -33,7 +33,7 @@ public abstract class AbstractTestUnit implements TestUnit {
     this.description = description;
   }
 
-  public Iterator<TestUnit> children() {
+  public Iterator<TestUnit> iterator() {
     return Collections.<TestUnit> emptyList().iterator();
   }
 

@@ -12,8 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.watchdog;
+package org.pitest.extension.common;
 
-public interface Watchdog {
+import org.pitest.extension.TestUnit;
+import org.pitest.extension.TestUnitProcessor;
+
+public class IdentityTestUnitProcessor implements TestUnitProcessor {
+
+  public TestUnit apply(final TestUnit a) {
+    return a;
+  }
 
 }

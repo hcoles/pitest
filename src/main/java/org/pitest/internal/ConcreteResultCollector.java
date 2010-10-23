@@ -55,4 +55,8 @@ public final class ConcreteResultCollector implements ResultCollector {
 
   }
 
+  public boolean shouldExit() {
+    return false;
+  }
+
 }

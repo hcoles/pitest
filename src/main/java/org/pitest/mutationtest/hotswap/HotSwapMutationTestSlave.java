@@ -39,9 +39,11 @@ import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.ConcreteResultCollector;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
+import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCodes;
 import org.pitest.util.MemoryWatchdog;
@@ -55,10 +57,18 @@ public class HotSwapMutationTestSlave {
 
     System.out.println("Slave Mutating class " + run.getClassName());
 
-    final Container c = new UnContainer();
     for (int i = run.getStartMutation(); i != run.getEndMutation(); i++) {
       receiveMutation();
       System.out.println("Slave Running mutation " + i);
+
+      final Container c = new UnContainer() {
+        @Override
+        public void submit(final TestUnit group) {
+          final ExitingResultCollector rc = new ExitingResultCollector(
+              new ConcreteResultCollector(this.feedbackQueue));
+          group.execute(IsolationUtils.getContextClassLoader(), rc);
+        }
+      };
 
       final boolean mutationDetected = doTestsDetectMutation(c, loader, run
           .getTests());

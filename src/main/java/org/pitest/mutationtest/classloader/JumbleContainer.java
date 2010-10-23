@@ -24,10 +24,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.bcel.classfile.JavaClass;
-import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.Container;
-import org.pitest.extension.ResultCollector;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NamedClassesIsolationStrategy;
@@ -36,6 +34,7 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TransformingClassLoaderFactory;
+import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.loopbreak.PerContainerTimelimitCheck;
 
 public class JumbleContainer implements Container {
@@ -44,40 +43,6 @@ public class JumbleContainer implements Container {
   private final BlockingQueue<TestResult>      feedbackQueue = new ArrayBlockingQueue<TestResult>(
                                                                  BUFFER_SIZE);
   private final long                           normalExecutionTime;
-
-  private static class ExitingResultCollector implements ResultCollector {
-
-    private final ResultCollector child;
-    private boolean               hadFailure = false;
-
-    ExitingResultCollector(final ResultCollector child) {
-      this.child = child;
-    }
-
-    public void notifyEnd(final Description description, final Throwable t) {
-      this.child.notifyEnd(description, t);
-      if (t != null) {
-        this.hadFailure = true;
-      }
-    }
-
-    public void notifyEnd(final Description description) {
-      this.child.notifyEnd(description);
-    }
-
-    public void notifySkipped(final Description description) {
-      this.child.notifySkipped(description);
-    }
-
-    public void notifyStart(final Description description) {
-      this.child.notifyStart(description);
-    }
-
-    public boolean isHadFailure() {
-      return this.hadFailure;
-    }
-
-  }
 
   public JumbleContainer(final ClassPath classPath, final JavaClass target,
       final long normalExecutionTime) {
@@ -104,16 +69,7 @@ public class JumbleContainer implements Container {
       resetLoopBreakTimer(cl);
     }
 
-    // for (final TestUnit each : group) {
-
     group.execute(cl, rc);
-
-    // FIXME need to reimplement this
-    // if (rc.isHadFailure()) {
-    // break;
-    // }
-    // }
-
   }
 
   public BlockingQueue<TestResult> feedbackQueue() {

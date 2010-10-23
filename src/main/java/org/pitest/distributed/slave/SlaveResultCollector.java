@@ -64,4 +64,8 @@ public class SlaveResultCollector implements ResultCollector {
     this.publish(testResult);
   }
 
+  public boolean shouldExit() {
+    return false;
+  }
+
 };

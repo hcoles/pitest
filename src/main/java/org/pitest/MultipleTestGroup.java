@@ -54,10 +54,6 @@ public class MultipleTestGroup implements TestUnit {
     return false;
   }
 
-  public Iterator<TestUnit> children() {
-    return this.children.iterator();
-  }
-
   public Description description() {
     return groupDescription;
   }
@@ -65,8 +61,15 @@ public class MultipleTestGroup implements TestUnit {
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     for (final TestUnit each : this.children) {
       each.execute(loader, rc);
+      if (rc.shouldExit()) {
+        break;
+      }
     }
 
+  }
+
+  public Iterator<TestUnit> iterator() {
+    return this.children.iterator();
   }
 
 }

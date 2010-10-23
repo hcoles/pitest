@@ -25,6 +25,7 @@ import org.jmock.MockObjectTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.IdentityTestUnitProcessor;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.internal.TestClass;
 
@@ -46,7 +47,8 @@ public class CustomJUnit3TestUnitFinderTest {
   @Test
   public void testFindsTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        new TestClass(JMockTest.class), null, new NullDiscoveryListener());
+        new TestClass(JMockTest.class), null, new NullDiscoveryListener(),
+        new IdentityTestUnitProcessor());
     assertFalse(actual.isEmpty());
   }
 
@@ -59,7 +61,8 @@ public class CustomJUnit3TestUnitFinderTest {
   @Test
   public void testDoesNotFindTestUnitsInNonCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        new TestClass(JUnit3Test.class), null, new NullDiscoveryListener());
+        new TestClass(JUnit3Test.class), null, new NullDiscoveryListener(),
+        new IdentityTestUnitProcessor());
     assertTrue(actual.isEmpty());
   }
 

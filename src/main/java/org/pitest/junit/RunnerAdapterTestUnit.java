@@ -77,7 +77,7 @@ public class RunnerAdapterTestUnit implements TestUnit, Serializable {
     return this.description;
   }
 
-  public Iterator<TestUnit> children() {
+  public Iterator<TestUnit> iterator() {
     return Collections.<TestUnit> emptyList().iterator();
   }
 

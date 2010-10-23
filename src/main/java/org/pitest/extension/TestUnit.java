@@ -14,20 +14,16 @@
  */
 package org.pitest.extension;
 
-import java.util.Iterator;
-
 import org.pitest.Description;
 
 /**
  * @author henry
  * 
  */
-public interface TestUnit {
+public interface TestUnit extends Iterable<TestUnit> {
 
   public void execute(ClassLoader loader, ResultCollector rc);
 
   public Description description();
-
-  public abstract Iterator<TestUnit> children();
 
 }

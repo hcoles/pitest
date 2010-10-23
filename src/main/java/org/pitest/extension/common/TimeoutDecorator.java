@@ -69,6 +69,10 @@ public final class TimeoutDecorator extends TestUnitDecorator {
       }
     }
 
+    public boolean shouldExit() {
+      return !this.reportResults;
+    }
+
   }
 
   public void execute(final ClassLoader loader, final ResultCollector rc) {

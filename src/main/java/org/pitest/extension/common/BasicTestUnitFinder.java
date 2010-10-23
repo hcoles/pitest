@@ -35,6 +35,7 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestStep;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -75,7 +76,8 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass testClass,
-      final Configuration config, final TestDiscoveryListener listener) {
+      final Configuration config, final TestDiscoveryListener listener,
+      final TestUnitProcessor processor) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
@@ -100,7 +102,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
       listener.reciveTests(units);
 
-      return processChildUnits(units, testClass);
+      return this.createGroupings(FCollection.map(units, processor), testClass);
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
@@ -193,9 +195,8 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     return set.toCollection();
   }
 
-  private List<TestUnit> processChildUnits(final List<TestUnit> tus,
+  private List<TestUnit> createGroupings(final List<TestUnit> tus,
       final TestClass testClass) {
-
     final Collection<CallStep> beforeClasses = findMethodCalls(
         this.beforeClassFinders, testClass.getClazz());
 
@@ -203,18 +204,13 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         this.afterClassFinders, testClass.getClazz());
 
     if (!beforeClasses.isEmpty() || (!afterClasses.isEmpty() && !tus.isEmpty())) {
-
-      final TestUnit first = tus.get(0);
-      tus.set(0, new BeforeAfterDecorator(first, beforeClasses, Collections
-          .<CallStep> emptySet()));
-      final TestUnit last = tus.get(tus.size() - 1);
-      tus.set(tus.size() - 1, new BeforeAfterDecorator(last, Collections
-          .<CallStep> emptySet(), afterClasses));
-      return Collections.<TestUnit> singletonList(new MultipleTestGroup(tus));
+      final TestUnit group = new MultipleTestGroup(tus);
+      final TestUnit decorated = new BeforeAfterDecorator(group, beforeClasses,
+          afterClasses);
+      return Collections.<TestUnit> singletonList(decorated);
     } else {
       return tus;
     }
-
   }
 
 }

@@ -41,13 +41,13 @@ public class TestGroupTest {
 
   @Test
   public void testIteratorReturnsNoValuesWhenNoneAdded() {
-    assertFalse(this.testee.children().hasNext());
+    assertFalse(this.testee.iterator().hasNext());
   }
 
   @Test
   public void testIteratorReturnsAddedNoValues() {
     this.testee.add(this.emptyTestUnit);
-    assertSame(this.emptyTestUnit, this.testee.children().next());
+    assertSame(this.emptyTestUnit, this.testee.iterator().next());
   }
 
   @Test

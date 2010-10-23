@@ -314,6 +314,23 @@ public class TestPitest {
     verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
 
+  public static class HasMethodAnnotatedAsIgnoredAndWillRunAsGroup extends
+      HasMethodAnnotatedAsIgnored {
+
+    @BeforeClassAnnotationForTest
+    public static void before() {
+
+    }
+
+  };
+
+  @Test
+  public void testIgnoredMethodInTestGroupIsSkipped() {
+    run(HasMethodAnnotatedAsIgnoredAndWillRunAsGroup.class);
+    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
+    verify(this.listener).onTestSuccess((any(TestResult.class)));
+  }
+
   private void run(final Class<?> clazz) {
     this.testee.run(this.container, clazz);
   }

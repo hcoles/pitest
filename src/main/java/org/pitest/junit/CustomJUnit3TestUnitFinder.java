@@ -26,6 +26,8 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.TestUnitProcessor;
+import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 
@@ -36,17 +38,18 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass a,
-      final Configuration b, final TestDiscoveryListener listener) {
+      final Configuration b, final TestDiscoveryListener listener,
+      final TestUnitProcessor processor) {
 
     if (isCustomJUnit3Class(a.getClazz())) {
       final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
       final List<TestUnit> units = adapter.getTestUnits();
       listener.reciveTests(units);
-      return Collections.<TestUnit> singletonList(new MultipleTestGroup(units));
+      return Collections.<TestUnit> singletonList(new MultipleTestGroup(
+          FCollection.map(units, processor)));
     } else {
       return Collections.emptyList();
     }
-
   }
 
   public static boolean isCustomJUnit3Class(final Class<?> a) {

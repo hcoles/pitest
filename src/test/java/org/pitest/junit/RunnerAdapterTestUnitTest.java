@@ -47,7 +47,7 @@ public class RunnerAdapterTestUnitTest {
     final XStream xstream2 = new XStream();
     final MultipleTestGroup actual = (MultipleTestGroup) xstream2.fromXML(xml);
 
-    final Iterator<TestUnit> it = actual.children();
+    final Iterator<TestUnit> it = actual.iterator();
     RunnerAdapterTestUnit tu = (RunnerAdapterTestUnit) it.next();
     final RunnerAdapter firstAdapter = tu.getAdapter();
     tu = (RunnerAdapterTestUnit) it.next();
