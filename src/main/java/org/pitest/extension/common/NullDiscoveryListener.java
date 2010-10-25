@@ -31,7 +31,7 @@ public class NullDiscoveryListener implements TestDiscoveryListener {
 
   }
 
-  public void reciveTests(final Collection<TestUnit> testUnits) {
+  public void recieveTests(final Collection<? extends TestUnit> testUnits) {
     // TODO Auto-generated method stub
 
   }

@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.TestStep;
 import org.pitest.functional.predicate.And;
+import org.pitest.junit.adapter.PITJUnitRunner;
 import org.pitest.reflection.IsAnotatedWith;
 import org.pitest.reflection.IsStatic;
 import org.pitest.reflection.Reflection;

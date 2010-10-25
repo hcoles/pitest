@@ -33,13 +33,11 @@ import org.pitest.extension.common.AllwaysIsolateStrategy;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
-import org.pitest.junit.PITJUnitRunner;
-import org.pitest.mutationtest.MutationTest;
-import org.pitest.mutationtest.Mutator;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(useHotSwap = true, threshold = 60, mutators = {
-    Mutator.INCREMENTS, Mutator.RETURN_VALS })
+// @MutationTest(useHotSwap = true, threshold = 60, mutators = {
+// Mutator.INCREMENTS, Mutator.RETURN_VALS })
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 

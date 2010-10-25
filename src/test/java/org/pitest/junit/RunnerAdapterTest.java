@@ -16,9 +16,10 @@ package org.pitest.junit;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.internal.IsolationUtils;
+import org.pitest.junit.adapter.RunnerAdapter;
 
 import com.example.TheoryTest;
 
@@ -33,9 +34,10 @@ public class RunnerAdapterTest {
 
   @Test
   public void testCanBeSerializedAndDeserialized() throws Exception {
-    final RunnerAdapter actual = (RunnerAdapter) SerializationUtils
-        .clone(this.testee);
-    assertEquals(this.testee.getTestUnits().size(), actual.getTestUnits()
+    final RunnerAdapter actual = (RunnerAdapter) IsolationUtils.cloneForLoader(
+        this.testee, IsolationUtils.getContextClassLoader());
+
+    assertEquals(this.testee.getDescriptions().size(), actual.getDescriptions()
         .size());
   }
 

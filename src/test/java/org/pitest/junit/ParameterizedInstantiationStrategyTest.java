@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Suite;
 import org.junit.runners.Parameterized.Parameters;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class ParameterizedInstantiationStrategyTest {
 

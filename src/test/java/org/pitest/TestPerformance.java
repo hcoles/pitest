@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.pitest.annotations.PITSuite;
 import org.pitest.containers.UnContainer;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.junit.PITJUnitRunner;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class TestPerformance {
 

@@ -30,6 +30,7 @@ public class JavaProcessTest {
         JavaProcessTest.class, Collections.<String> emptyList());
     assertTrue(jp.isAlive());
     assertEquals(EXIT_CODE, jp.waitToDie());
+    // failing following addition of quotes around classpath
   }
 
 }

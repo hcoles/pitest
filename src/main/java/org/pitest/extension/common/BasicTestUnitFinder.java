@@ -100,7 +100,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         }
       }
 
-      listener.reciveTests(units);
+      listener.recieveTests(units);
 
       return this.createGroupings(FCollection.map(units, processor), testClass);
 

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.junit;
+package org.pitest.junit.adapter;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +31,8 @@ import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
+import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.junit.JUnitTestResultListener;
 
 /**
  * Custom runner to run tests with Pit but report back to junit.
@@ -69,7 +71,7 @@ public class PITJUnitRunner extends Runner {
         }
       }
 
-      public void reciveTests(final Collection<TestUnit> testUnits) {
+      public void recieveTests(final Collection<? extends TestUnit> testUnits) {
         for (final TestUnit each : testUnits) {
           final Description d = Description.createTestDescription(each
               .description().getTestClass(), each.description().getName());

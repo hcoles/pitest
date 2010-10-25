@@ -27,6 +27,7 @@ import org.junit.internal.builders.SuiteMethodBuilder;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class PossibilitiesBuilder extends RunnerBuilder {
   private final boolean canUseSuiteMethod;

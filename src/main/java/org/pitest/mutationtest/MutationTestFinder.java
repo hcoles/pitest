@@ -61,7 +61,7 @@ public class MutationTestFinder implements TestUnitFinder {
       final Set<TestUnit> units = Collections
           .<TestUnit> singleton(createTestUnit(clazz.getClazz(),
               testee.value(), updatedMutationConfig, updatedConfig, d));
-      listener.reciveTests(units);
+      listener.recieveTests(units);
       // skip processing for mutation tests . . . yes?
       return units;
     } else {

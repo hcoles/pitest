@@ -164,6 +164,8 @@ public class HotSwapMutationTestUnit extends AbstractMutationTestUnit {
       threadWorker.set(null);
     }
 
+    // FIXME inifite loop if first run mutation creates an
+    // infinite loop
     final int lastRunMutation = reportFunction.apply(m, results, worker
         .getResult());
     // readResults(m, results, worker.getResult());

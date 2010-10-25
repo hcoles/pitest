@@ -80,7 +80,8 @@ public class JavaProcess {
       final List<String> args, final Class<?> mainClass,
       final List<String> programArgs) {
 
-    final String classpath = System.getProperty("java.class.path");
+    final String classpath = "\"" + System.getProperty("java.class.path")
+        + "\"";
 
     final List<String> cmd = new ArrayList<String>();
     cmd.addAll(Arrays.asList(javaProcess, "-cp", classpath));

@@ -14,12 +14,11 @@
  */
 package com.example;
 
-import junit.framework.TestCase;
-
+import org.jmock.MockObjectTestCase;
 import org.pitest.annotations.TestClass;
 
 @TestClass(TestA1.Testee.class)
-public class TestA1 extends TestCase {
+public class TestA1 extends MockObjectTestCase {
 
   public static class Testee {
     public static int returnOne() {
@@ -36,14 +35,16 @@ public class TestA1 extends TestCase {
 
   }
 
-  public void test1() {
+  public void test1() throws InterruptedException {
     System.out.println("returnOne = " + Testee.returnOne());
     assertEquals(1, Testee.returnOne());
+
   }
 
-  public void test2() {
+  public void test2() throws InterruptedException {
     System.out.println("returnTwo = " + Testee.returnTwo());
-    assertEquals(2, Testee.returnTwo());
+    assertEquals(3, Testee.returnTwo());
+
   }
 
   public void test3() {
