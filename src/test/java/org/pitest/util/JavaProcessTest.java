@@ -27,10 +27,13 @@ public class JavaProcessTest {
   public void testWaitToDieReturnsProcessExitCode() throws IOException,
       InterruptedException {
     final JavaProcess jp = JavaProcess.launch(Collections.<String> emptyList(),
-        JavaProcessTest.class, Collections.<String> emptyList());
+        JavaProcessTest.class, Collections.<String> emptyList(), NullJavaAgent
+            .instance());
     assertTrue(jp.isAlive());
     assertEquals(EXIT_CODE, jp.waitToDie());
     // failing following addition of quotes around classpath
   }
+
+
 
 }

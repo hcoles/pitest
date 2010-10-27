@@ -214,7 +214,7 @@ public class TestMutationTesting {
     }
   }
 
-  @Test(timeout = 10000)
+  @Test(timeout = 30000)
   public void testInfiniteLoopsCausedByMutationsAreBroken() {
     run(InfiniteLoopTest.class);
     // pass if we get here without a timeout

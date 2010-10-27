@@ -70,7 +70,6 @@ public class MutationTestSlave {
 
     final Mutater m = mutationConfig.createMutator();
     m.setRepository(new ClassLoaderRepository(loader));
-    // final int mutationCount = m.countMutationPoints(className);
 
     for (int i = startMutation; i != endMutation; i++) {
       System.out.println("Running mutation " + i);

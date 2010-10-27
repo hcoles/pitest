@@ -35,6 +35,34 @@
 					</execution>
 				</executions>
 			</plugin>
+		
+		      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>agent</classifier>
+              <archive>
+              <manifestFile>
+                 src/main/resources/agent/MANIFEST.MF
+              </manifestFile>
+              </archive>
+              <includes>
+                <include>**/HotSwapAgent*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+		
+		
+			
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -48,14 +76,21 @@
 								<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" />
 								<jarjar destfile="${build.directory}/${build.finalName}-all.jar"
 									update="true">
-							<!--		<rule pattern="org.xmlpull.**" result="org.pitest.xmlpull.@1" />	-->
+									<rule pattern="org.xmlpull.**" result="org.pitest.xmlpull.@1" />	
 									<rule pattern="org.objectweb.asm.**" result="org.pitest.objectweb.asm.@1" />
 									<rule pattern="com.thoughtworks.xstream.**" result="org.pitest.thoughtworks.xstream.@1" /> -->
 									<fileset dir="target/classes" />
 									<fileset dir="target/dependency/org/objectweb" />
-							<!--		<fileset dir="target/dependency/org/xmlpull" /> -->
+									<fileset dir="target/dependency/org/xmlpull" /> 
 									<fileset dir="target/dependency/com/thoughtworks" />
 									<!--  <fileset dir="target/dependency/org/apache/bcel" /> -->
+								
+								       <manifest>
+                                        <attribute name="Premain-Class" value="org.pitest.mutationtest.instrument.HotSwapAgent"/>
+                                        <attribute name="Can-Redefine-Classes" value="true"/>
+                                        <attribute name="Can-Retransform-Classes" value="true"/>
+                                        <attribute name="Can-Set-Native-Method-Prefix" value="true"/>
+                                       </manifest>
 								</jarjar>
 							</tasks>
 						</configuration>

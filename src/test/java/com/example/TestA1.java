@@ -43,7 +43,7 @@ public class TestA1 extends MockObjectTestCase {
 
   public void test2() throws InterruptedException {
     System.out.println("returnTwo = " + Testee.returnTwo());
-    assertEquals(3, Testee.returnTwo());
+    assertEquals(2, Testee.returnTwo());
 
   }
 

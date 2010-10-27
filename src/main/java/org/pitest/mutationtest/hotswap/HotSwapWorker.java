@@ -26,6 +26,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.AbstractMutationTestUnit;
 import org.pitest.util.Debugger;
 import org.pitest.util.JavaProcess;
+import org.pitest.util.NullJavaAgent;
 
 import com.reeltwo.jumble.mutation.Mutater;
 import com.sun.jdi.event.Event;
@@ -102,7 +103,7 @@ public class HotSwapWorker {
 
     this.process = JavaProcess.launch(debugger, soh, seh, Collections
         .<String> emptyList(), HotSwapMutationTestSlave.class, Arrays
-        .asList(args));
+        .asList(args), NullJavaAgent.instance());
     debugger.setBreakPoint(HotSwapMutationTestSlave.class, "receiveMutation",
         this.hook);
     final SideEffect1<Event> doneHook = new SideEffect1<Event>() {

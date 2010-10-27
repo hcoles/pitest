@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 
 public class JavaProcess {
@@ -67,25 +68,34 @@ public class JavaProcess {
   public static JavaProcess launch(final Debugger debugger,
       final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs)
-      throws IOException {
+      final Class<?> mainClass, final List<String> programArgs,
+      final JavaAgent javaAgent) throws IOException {
 
-    final List<String> cmd = createLaunchArgs("", args, mainClass, programArgs);
+    final List<String> cmd = createLaunchArgs("", javaAgent, args, mainClass,
+        programArgs);
     return new JavaProcess(debugger.launchProcess(cmd), systemOutHandler,
         sysErrHandler);
 
   }
 
   private static List<String> createLaunchArgs(final String javaProcess,
-      final List<String> args, final Class<?> mainClass,
-      final List<String> programArgs) {
+      final JavaAgent agentJarLocator, final List<String> args,
+      final Class<?> mainClass, final List<String> programArgs) {
 
-    final String classpath = "\"" + System.getProperty("java.class.path")
-        + "\"";
+    String classpath = System.getProperty("java.class.path");
+
+    if (classpath.contains(" ")) {
+      classpath = "\"" + classpath + "\"";
+    }
 
     final List<String> cmd = new ArrayList<String>();
     cmd.addAll(Arrays.asList(javaProcess, "-cp", classpath));
     cmd.addAll(args);
+    final Option<String> jarLocation = agentJarLocator.getJarLocation();
+    for (final String each : jarLocation) {
+      cmd.add("-javaagent:" + each);
+    }
+
     cmd.add(mainClass.getName());
     cmd.addAll(programArgs);
     return cmd;
@@ -93,13 +103,13 @@ public class JavaProcess {
 
   public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs)
-      throws IOException {
+      final Class<?> mainClass, final List<String> programArgs,
+      final JavaAgent javaAgent) throws IOException {
     final String separator = System.getProperty("file.separator");
     final String javaProc = System.getProperty("java.home") + separator + "bin"
         + separator + "java";
-    final List<String> cmd = createLaunchArgs(javaProc, args, mainClass,
-        programArgs);
+    final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
+        mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
     final Process process = processBuilder.start();
 
@@ -107,8 +117,8 @@ public class JavaProcess {
   }
 
   public static JavaProcess launch(final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs)
-      throws IOException {
+      final Class<?> mainClass, final List<String> programArgs,
+      final JavaAgent javaAgent) throws IOException {
 
     final SideEffect1<String> soh = new SideEffect1<String>() {
       public void apply(final String a) {
@@ -122,7 +132,7 @@ public class JavaProcess {
       }
     };
 
-    return launch(soh, seh, args, mainClass, programArgs);
+    return launch(soh, seh, args, mainClass, programArgs, javaAgent);
   }
 
 }

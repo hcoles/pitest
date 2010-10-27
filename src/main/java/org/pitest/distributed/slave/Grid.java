@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.JavaProcess;
+import org.pitest.util.NullJavaAgent;
 
 public class Grid {
 
@@ -49,7 +50,7 @@ public class Grid {
         CommandLineMessage.report("Starting new slave process");
 
         worker = JavaProcess.launch(Arrays.asList(args), Slave.class,
-            Collections.<String> emptyList());
+            Collections.<String> emptyList(), NullJavaAgent.instance());
 
         try {
           final int exitValue = worker.waitToDie();

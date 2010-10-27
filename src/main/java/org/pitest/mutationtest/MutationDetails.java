@@ -33,7 +33,11 @@ public class MutationDetails implements Serializable {
   private int parseLineNumber(final String description) {
     final int start = description.indexOf(":") + 1;
     final int end = description.indexOf(":", start);
-    return Integer.parseInt(description.substring(start, end));
+    if ((start > 0) && (end > start)) {
+      return Integer.parseInt(description.substring(start, end));
+    } else {
+      return 0;
+    }
   }
 
   public StackTraceElement stackTraceDescription() {
