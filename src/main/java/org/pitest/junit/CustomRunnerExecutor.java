@@ -17,6 +17,8 @@ package org.pitest.junit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -50,28 +52,35 @@ public class CustomRunnerExecutor {
     // equality issues with multiple classloaders
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new RunListener() {
+      private final Set<String> finished = new TreeSet<String>();
 
       @Override
       public void testFailure(final Failure failure) throws Exception {
+        final String d = descriptionToString(failure.getDescription());
         CustomRunnerExecutor.this.rc.notifyEnd(
-            CustomRunnerExecutor.this.descriptionLookup
-                .get(descriptionToString(failure.getDescription())), failure
+            CustomRunnerExecutor.this.descriptionLookup.get(d), failure
                 .getException());
+        this.finished.add(d);
       }
 
       @Override
       public void testAssumptionFailure(final Failure failure) {
+        final String d = descriptionToString(failure.getDescription());
+
         CustomRunnerExecutor.this.rc.notifyEnd(
-            CustomRunnerExecutor.this.descriptionLookup
-                .get(descriptionToString(failure.getDescription())), failure
+            CustomRunnerExecutor.this.descriptionLookup.get(d), failure
                 .getException());
+        this.finished.add(d);
       }
 
       @Override
       public void testIgnored(final Description description) throws Exception {
+        final String d = descriptionToString(description);
+
         CustomRunnerExecutor.this.rc
-            .notifySkipped(CustomRunnerExecutor.this.descriptionLookup
-                .get(descriptionToString(description)));
+            .notifySkipped(CustomRunnerExecutor.this.descriptionLookup.get(d));
+
+        this.finished.add(d);
 
       }
 
@@ -84,9 +93,12 @@ public class CustomRunnerExecutor {
 
       @Override
       public void testFinished(final Description description) throws Exception {
-        CustomRunnerExecutor.this.rc
-            .notifyEnd(CustomRunnerExecutor.this.descriptionLookup
-                .get(descriptionToString(description)));
+        final String d = descriptionToString(description);
+        if (!this.finished.contains(d)) {
+          CustomRunnerExecutor.this.rc
+              .notifyEnd(CustomRunnerExecutor.this.descriptionLookup.get(d));
+        }
+
       }
 
     };
