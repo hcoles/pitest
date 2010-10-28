@@ -145,7 +145,8 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       @Override
       public void run() {
         try {
-          worker.waitToDie();
+          final int exitCode = worker.waitToDie();
+          System.out.println("Exit code was " + exitCode);
         } catch (final InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -166,7 +167,7 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
         }
         worker.destroy();
       } else {
-        worker.waitToDie();
+        t.run();
       }
     } catch (final InterruptedException e) {
       e.printStackTrace();

@@ -73,6 +73,9 @@ public class InstrumentedMutationTestSlave {
     m.setRepository(new ClassLoaderRepository(loader));
     final int maxMutation = m.countMutationPoints(className);
 
+    final Class<?> testee = Class.forName(className, false, IsolationUtils
+        .getContextClassLoader());
+
     for (int i = startMutation; (i <= endMutation) && (i != maxMutation); i++) {
       System.out.println("Running mutation " + i);
       final Container c = new UnContainer() {
@@ -83,9 +86,18 @@ public class InstrumentedMutationTestSlave {
           group.execute(IsolationUtils.getContextClassLoader(), rc);
         }
       };
-      m.setMutationPoint(i);
+
       final JavaClass mutatedClass = getMutation(className, m, i);
-      final Class<?> testee = Class.forName(className);
+      final String method = m.getMutatedMethodName(className);
+      System.out.println("mutating method " + method);
+
+      if (method.trim().equals("<clinit>()V")) {
+        if (i != startMutation) {
+          // TODO would be more efficient to kick
+          // off tests in a new classloader
+          System.exit(ExitCodes.FORCED_EXIT);
+        }
+      }
 
       boolean mutationDetected = false;
       if (HotSwapAgent.hotSwap(testee, mutatedClass.getBytes())) {
@@ -110,6 +122,7 @@ public class InstrumentedMutationTestSlave {
 
   protected JavaClass getMutation(final String className, final Mutater m,
       final int i) throws ClassNotFoundException {
+
     m.setMutationPoint(i);
     final JavaClass mutatedClass = m.jumbler(className);
     return mutatedClass;

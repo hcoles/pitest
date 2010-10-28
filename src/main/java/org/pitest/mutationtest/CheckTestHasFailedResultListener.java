@@ -30,10 +30,12 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   public void onTestError(final TestResult tr) {
     this.atLeastOneTestFailed = true;
+    System.out.println(tr.getThrowable());
   }
 
   public void onTestFailure(final TestResult tr) {
     this.atLeastOneTestFailed = true;
+    System.out.println(tr.getThrowable());
   }
 
   public void onTestSkipped(final TestResult tr) {

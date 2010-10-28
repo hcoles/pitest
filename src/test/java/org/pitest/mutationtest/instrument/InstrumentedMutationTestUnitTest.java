@@ -63,7 +63,6 @@ public class InstrumentedMutationTestUnitTest {
 
   }
 
-  // @MutationTest(threshold = 66, mutators = Mutator.INCREMENTS)
   public static class TestOne {
     @Test
     public void test() {
@@ -95,19 +94,15 @@ public class InstrumentedMutationTestUnitTest {
 
   @Test
   public void testReportsSuccessIfMoreThanThresholdLevelOfMutationsDetected() {
-    this.testee = new InstrumentedMutationTestUnit(TestOne.class, One.class,
-        new MutationConfig(66, Mutator.INCREMENTS),
-        new JUnitCompatibleConfiguration(), null);
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    this.testee = this.createFor(TestOne.class, One.class, 66);
+    execute();
     verify(this.rc).notifyEnd(any(Description.class));
   }
 
   @Test
   public void testReportsFailureIfLessThanThresholdLevelOfMutationsDetected() {
-    this.testee = new InstrumentedMutationTestUnit(TestOne.class, One.class,
-        new MutationConfig(100, Mutator.INCREMENTS),
-        new JUnitCompatibleConfiguration(), null);
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    this.testee = this.createFor(TestOne.class, One.class, 100);
+    execute();
     verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class));
   }
 
@@ -116,7 +111,7 @@ public class InstrumentedMutationTestUnitTest {
     this.testee = new InstrumentedMutationTestUnit(TestOne.class, One.class,
         new MutationConfig(66, Mutator.SWITCHES),
         new JUnitCompatibleConfiguration(), null);
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    execute();
     verify(this.rc).notifySkipped(any(Description.class));
   }
 
@@ -131,29 +126,74 @@ public class InstrumentedMutationTestUnitTest {
 
   @Test
   public void testReportsFailureIfUnmutatedTestsDoNotRunGreen() {
-    this.testee = new InstrumentedMutationTestUnit(
-        HideFromJUnit.FailingTest.class, One.class, new MutationConfig(66,
-            Mutator.INCREMENTS), new JUnitCompatibleConfiguration(), null);
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    this.testee = createFor(HideFromJUnit.FailingTest.class, One.class, 66);
+    execute();
     verify(this.rc)
         .notifyEnd(any(Description.class), any(AssertionError.class));
   }
 
-  public static class SingleMutation {
-    public static int increment() {
-      int i = 0;
+  public static class HasStaticInitializer {
+    static int i = 0;
+    static int j = 0;
+    static int k = 0;
+    static {
       i++;
-      return i;
+      j++;
+      k++;
     }
   }
 
-  public static class SingleMutationTest {
-    @Test
-    public void test() {
-      System.out.println("Expect SingleMutation to return 1. Is returning "
-          + SingleMutation.increment());
-      assertEquals(1, SingleMutation.increment());
+  public static class MutationTestStaticInitializerWithMissingTest {
+    @Test()
+    public void testFirstMutationPoint() {
+      System.out.println("i is " + HasStaticInitializer.i);
+      assertEquals(1, HasStaticInitializer.i);
     }
+
+    @Test()
+    public void testSeondMutationPoint() {
+      System.out.println("j is " + HasStaticInitializer.j);
+      assertEquals(1, HasStaticInitializer.j);
+    }
+
+  }
+
+  public static class FullyMutationTestStaticInitializer extends
+      MutationTestStaticInitializerWithMissingTest {
+    @Test()
+    public void testThirdMutationPoint() {
+      System.out.println("j is " + HasStaticInitializer.k);
+      assertEquals(1, HasStaticInitializer.k);
+    }
+
+  }
+
+  @Test
+  public void testCanCorrectlyDetectMissedMutationInStaticInitializers() {
+    // class has three mutations but only 1 test so should fail
+    this.testee = createFor(MutationTestStaticInitializerWithMissingTest.class,
+        HasStaticInitializer.class, 100);
+    execute();
+    verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class));
+  }
+
+  @Test
+  public void testPassesIfAllMutationsInStaticInitializerDetected() {
+    this.testee = createFor(FullyMutationTestStaticInitializer.class,
+        HasStaticInitializer.class, 100);
+    execute();
+    verify(this.rc).notifyEnd(any(Description.class));
+  }
+
+  private void execute() {
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+  }
+
+  private InstrumentedMutationTestUnit createFor(final Class<?> test,
+      final Class<?> mutee, final int threshold) {
+    return new InstrumentedMutationTestUnit(test, mutee, new MutationConfig(
+        threshold, Mutator.INCREMENTS), new JUnitCompatibleConfiguration(),
+        null);
   }
 
 }

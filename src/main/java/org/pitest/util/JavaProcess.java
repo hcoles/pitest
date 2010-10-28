@@ -65,7 +65,6 @@ public class JavaProcess {
     return this.process.getOutputStream();
   }
 
-
   private static List<String> createLaunchArgs(final String javaProcess,
       final JavaAgent agentJarLocator, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs) {
