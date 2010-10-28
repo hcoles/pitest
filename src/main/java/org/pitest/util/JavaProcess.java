@@ -17,8 +17,8 @@ package org.pitest.util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
@@ -65,31 +65,13 @@ public class JavaProcess {
     return this.process.getOutputStream();
   }
 
-  public static JavaProcess launch(final Debugger debugger,
-      final SideEffect1<String> systemOutHandler,
-      final SideEffect1<String> sysErrHandler, final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs,
-      final JavaAgent javaAgent) throws IOException {
-
-    final List<String> cmd = createLaunchArgs("", javaAgent, args, mainClass,
-        programArgs);
-    return new JavaProcess(debugger.launchProcess(cmd), systemOutHandler,
-        sysErrHandler);
-
-  }
 
   private static List<String> createLaunchArgs(final String javaProcess,
       final JavaAgent agentJarLocator, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs) {
 
-    String classpath = System.getProperty("java.class.path");
-
-    if (classpath.contains(" ")) {
-      classpath = "\"" + classpath + "\"";
-    }
-
     final List<String> cmd = new ArrayList<String>();
-    cmd.addAll(Arrays.asList(javaProcess, "-cp", classpath));
+    cmd.add(javaProcess);
     cmd.addAll(args);
     final Option<String> jarLocation = agentJarLocator.getJarLocation();
     for (final String each : jarLocation) {
@@ -111,6 +93,14 @@ public class JavaProcess {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+    final Map<String, String> env = processBuilder.environment();
+
+    // Set environment variable rather than using command line
+    // cp argument as this seems to bypass issues with escaping spaces
+    // on in file paths
+    final String classpath = System.getProperty("java.class.path");
+    env.put("CLASSPATH", classpath);
+
     final Process process = processBuilder.start();
 
     return new JavaProcess(process, systemOutHandler, sysErrHandler);

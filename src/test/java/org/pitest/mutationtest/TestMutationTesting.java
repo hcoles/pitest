@@ -152,6 +152,7 @@ public class TestMutationTesting {
     @TestAnnotationForTesting
     @IgnoreAnnotationForTesting
     public void fail() {
+      System.out.println("oops");
       assertEquals(1, 2);
     }
   }

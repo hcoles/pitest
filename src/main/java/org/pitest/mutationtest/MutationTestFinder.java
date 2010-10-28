@@ -28,7 +28,7 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
-import org.pitest.mutationtest.hotswap.HotSwapMutationTestUnit;
+import org.pitest.mutationtest.classloader.MutationTestUnit;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 
 public class MutationTestFinder implements TestUnitFinder {
@@ -73,7 +73,7 @@ public class MutationTestFinder implements TestUnitFinder {
       final Class<?> classToMutate, final MutationConfig mutationConfig,
       final Configuration pitConfig, final Description description) {
     if (mutationConfig.isUseHotswap()) {
-      return new HotSwapMutationTestUnit(test, classToMutate, mutationConfig,
+      return new MutationTestUnit(test, classToMutate, mutationConfig,
           pitConfig, description);
     } else {
       return new InstrumentedMutationTestUnit(test, classToMutate,

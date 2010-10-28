@@ -48,7 +48,6 @@ import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.Mutator;
-import org.pitest.mutationtest.hotswap.RunDetails;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCodes;
 import org.pitest.util.MemoryWatchdog;

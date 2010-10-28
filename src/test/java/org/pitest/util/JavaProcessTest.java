@@ -34,6 +34,4 @@ public class JavaProcessTest {
     // failing following addition of quotes around classpath
   }
 
-
-
 }
