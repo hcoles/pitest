@@ -16,14 +16,9 @@ package org.pitest.extension;
 
 import java.util.Collection;
 
-public interface StaticConfiguration {
+public interface GroupingStrategy {
 
-  public abstract Collection<TestListener> getTestListeners();
-
-  public abstract ResultClassifier getClassifier();
-
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
-
-  public abstract GroupingStrategy getGroupingStrategy();
+  public Collection<? extends TestUnit> group(Class<?> c,
+      Collection<TestUnit> testUnitsFromClass);
 
 }

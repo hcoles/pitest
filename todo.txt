@@ -1,16 +1,10 @@
-1 two stage pass for custom runner adapter. Find desriptions with one runner,
-possibly create a second using correct class loader when executing
-2 can we run just one test within a runner?
-3 move before after class our of basic test unit finder and into processor
-4 fix mutation test
+pass classloader conversion around as strategy to avoid performance impact
+collapse mess of finders into one composite junit finder + revisit/remove canHandle method
+strategy for grouping
 
+move before after class our of basic test unit finder and into processor
 
--- fixme
+distributed mutation testing works, but starting hazelcast for each process is expensive. Can the slave
+not just read the parent's cache? Parent would need to run the unmutated tests first to pull in required data.
 
-Mutation testing via hotswap lacks
-  - infinite loop detection
-  - support for remote class loading
-  - support for use of single process
-  - support to switch back to classloader model
   
-  make ClassPath available in some sort of context?? Make it a property of the container??

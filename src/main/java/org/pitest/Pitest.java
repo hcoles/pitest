@@ -16,11 +16,13 @@
 package org.pitest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
+import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
@@ -58,7 +60,7 @@ public class Pitest {
 
       run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
           this.initialConfig, new CompoundTestDiscoveryListener(staticConfig
-              .getDiscoveryListeners()), c));
+              .getDiscoveryListeners()), staticConfig.getGroupingStrategy(), c));
     }
   }
 
@@ -78,11 +80,13 @@ public class Pitest {
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
       final Configuration startConfig, final TestDiscoveryListener listener,
-      final Class<?>... classes) {
+      final GroupingStrategy groupStrategy, final Class<?>... classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
-      testUnits.addAll(new TestClass(c).getTestUnits(startConfig, listener));
+      final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
+          .getTestUnits(startConfig, listener);
+      testUnits.addAll(groupStrategy.group(c, testUnitsFromClass));
     }
     return testUnits;
   }

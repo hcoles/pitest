@@ -21,6 +21,7 @@ import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
+import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.testunit.AbstractTestUnit;
 
 public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
@@ -48,7 +49,7 @@ public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
 
   protected List<TestUnit> findTestUnits() {
     return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), this.test);
+        new NullDiscoveryListener(), new UnGroupedStrategy(), this.test);
   }
 
   public MutationConfig getMutationConfig() {

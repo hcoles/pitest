@@ -41,7 +41,7 @@ public final class TestClass implements Serializable {
     this.clazz = clazz;
   }
 
-  public Collection<TestUnit> getTestUnitsWithinClass(
+  private Collection<TestUnit> getTestUnitsWithinClass(
       final Configuration startConfig, final TestDiscoveryListener listener) {
 
     final Configuration classConfig = ConcreteConfiguration.updateConfig(

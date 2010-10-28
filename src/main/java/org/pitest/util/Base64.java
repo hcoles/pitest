@@ -171,7 +171,7 @@ package org.pitest.util;
  */
 public class Base64 {
 
-  /*                                                                                                                                                         ******** P U B L I C F I E L D S ******** */
+  /*                                                                                                                                                          ******** P U B L I C F I E L D S ******** */
 
   /** No options specified. Value is zero. */
   public final static int     NO_OPTIONS          = 0;
@@ -209,7 +209,7 @@ public class Base64 {
    */
   public final static int     ORDERED             = 32;
 
-  /*                                                                                                                                                         ******** P R I V A T E F I E L D S ******** */
+  /*                                                                                                                                                          ******** P R I V A T E F I E L D S ******** */
 
   /** Maximum line length (76) of Base64 output. */
   private final static int    MAX_LINE_LENGTH     = 76;

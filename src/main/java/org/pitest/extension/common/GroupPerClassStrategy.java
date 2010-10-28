@@ -12,18 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest.extension.common;
 
 import java.util.Collection;
+import java.util.Collections;
 
-public interface StaticConfiguration {
+import org.pitest.MultipleTestGroup;
+import org.pitest.extension.GroupingStrategy;
+import org.pitest.extension.TestUnit;
 
-  public abstract Collection<TestListener> getTestListeners();
+public class GroupPerClassStrategy implements GroupingStrategy {
 
-  public abstract ResultClassifier getClassifier();
-
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
-
-  public abstract GroupingStrategy getGroupingStrategy();
+  public Collection<? extends TestUnit> group(final Class<?> c,
+      final Collection<TestUnit> testUnitsFromClass) {
+    return Collections.singleton(new MultipleTestGroup(testUnitsFromClass));
+  }
 
 }
