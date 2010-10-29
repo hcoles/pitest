@@ -102,13 +102,16 @@ public class RunnerAdapter extends AbstractTestUnit {
     final Runner runner = createRunner(this.clazz);
     final CustomRunnerExecutor ce = new CustomRunnerExecutor(runner, rc,
         this.descriptions);
+    try {
     Object foreignCe = ce;
     if (IsolationUtils.fromDifferentLoader(runner.getClass(), loader)) {
       foreignCe = IsolationUtils.cloneForLoader(ce, loader);
-    }
-    final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
-    try {
+      final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
       run.invoke(foreignCe);
+    } else {
+      ce.run();
+    }
+
     } catch (final Exception e) {
       throw translateCheckedException(e);
     }
