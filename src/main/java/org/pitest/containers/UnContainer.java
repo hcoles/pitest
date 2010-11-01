@@ -42,9 +42,7 @@ public class UnContainer implements Container {
   public void submit(final TestUnit group) {
     final ConcreteResultCollector rc = new ConcreteResultCollector(
         this.feedbackQueue);
-    // for (final TestUnit each : group) {
     group.execute(this.getClass().getClassLoader(), rc);
-    // }
   }
 
   public boolean awaitCompletion() {

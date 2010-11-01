@@ -14,7 +14,7 @@
  */
 package org.pitest.junit;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,20 +23,17 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.pitest.extension.ResultCollector;
+import org.pitest.internal.IsolationUtils;
 
-public class CustomRunnerExecutor {
+public class ForeignClassLoaderCustomRunnerExecutor {
 
-  private final Runner                              runner;
-  private ResultCollector                           rc;
-  private final Map<String, org.pitest.Description> descriptionLookup;
+  private final Runner runner;
+  private List<String> queue;
 
-  public CustomRunnerExecutor(final Runner runner, final ResultCollector rc,
-      final Map<String, org.pitest.Description> descriptionLookup) {
+  // private final Map<String, org.pitest.Description> descriptionLookup;
+
+  public ForeignClassLoaderCustomRunnerExecutor(final Runner runner) {
     this.runner = runner;
-    this.rc = rc;
-    this.descriptionLookup = descriptionLookup;
-
   }
 
   public void run() {
@@ -48,8 +45,8 @@ public class CustomRunnerExecutor {
       @Override
       public void testFailure(final Failure failure) throws Exception {
         final String d = descriptionToString(failure.getDescription());
-        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d), failure
-            .getException());
+        ForeignClassLoaderCustomRunnerExecutor.this.queue.add("FAIL," + d + ","
+            + IsolationUtils.toTransportString(failure.getException()));
         this.finished.add(d);
       }
 
@@ -57,32 +54,31 @@ public class CustomRunnerExecutor {
       public void testAssumptionFailure(final Failure failure) {
         final String d = descriptionToString(failure.getDescription());
 
-        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d), failure
-            .getException());
+        ForeignClassLoaderCustomRunnerExecutor.this.queue.add("FAIL," + d + ","
+            + IsolationUtils.toTransportString(failure.getException()));
+
         this.finished.add(d);
       }
 
       @Override
       public void testIgnored(final Description description) throws Exception {
         final String d = descriptionToString(description);
-
-        CustomRunnerExecutor.this.rc.notifySkipped(convertDescription(d));
-
+        ForeignClassLoaderCustomRunnerExecutor.this.queue.add("IGNORE," + d);
         this.finished.add(d);
 
       }
 
       @Override
       public void testStarted(final Description description) throws Exception {
-        CustomRunnerExecutor.this.rc
-            .notifyStart(convertDescription(descriptionToString(description)));
+        final String d = descriptionToString(description);
+        ForeignClassLoaderCustomRunnerExecutor.this.queue.add("START," + d);
       }
 
       @Override
       public void testFinished(final Description description) throws Exception {
         final String d = descriptionToString(description);
         if (!this.finished.contains(d)) {
-          CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d));
+          ForeignClassLoaderCustomRunnerExecutor.this.queue.add("END," + d);
         }
 
       }
@@ -91,15 +87,6 @@ public class CustomRunnerExecutor {
     rn.addFirstListener(listener);
     this.runner.run(rn);
 
-  }
-
-  private org.pitest.Description convertDescription(final String desc) {
-    final org.pitest.Description description = this.descriptionLookup.get(desc);
-    if (description == null) {
-      return new org.pitest.Description(desc, CustomRunnerExecutor.class, null);
-    } else {
-      return description;
-    }
   }
 
   public static String descriptionToString(final Description d) {
@@ -116,12 +103,12 @@ public class CustomRunnerExecutor {
     b.append(d.getMethodName());
   }
 
-  public ResultCollector getRc() {
-    return this.rc;
+  public List<String> getQueue() {
+    return this.queue;
   }
 
-  public void setRc(final ResultCollector rc) {
-    this.rc = rc;
+  public void setQueue(final List<String> queue) {
+    this.queue = queue;
   }
 
 }

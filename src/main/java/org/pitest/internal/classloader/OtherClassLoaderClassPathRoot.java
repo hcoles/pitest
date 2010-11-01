@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
+import org.pitest.functional.Option;
+
 public class OtherClassLoaderClassPathRoot implements ClassPathRoot {
 
   private final ClassLoader loader;
@@ -44,6 +46,10 @@ public class OtherClassLoaderClassPathRoot implements ClassPathRoot {
   public void release() throws IOException {
     // TODO Auto-generated method stub
 
+  }
+
+  public Option<String> cacheLocation() {
+    return Option.none();
   }
 
 }

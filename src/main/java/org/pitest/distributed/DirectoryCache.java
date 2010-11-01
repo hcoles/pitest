@@ -90,4 +90,8 @@ public class DirectoryCache implements ResourceCache {
 
   }
 
+  public Option<String> cacheLocation() {
+    return Option.someOrNone(this.cacheDirectory.getAbsolutePath());
+  }
+
 }

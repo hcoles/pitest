@@ -132,6 +132,7 @@ public class PITJUnitRunner extends Runner {
 
   @Override
   public void run(final RunNotifier notifier) {
+    System.out.println("Starting run");
     final Configuration conf = new JUnitCompatibleConfiguration();
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     staticConfig.getTestListeners()

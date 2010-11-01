@@ -1,5 +1,3 @@
-package org.pitest.internal.classloader;
-
 /*
  * Copyright 2010 Henry Coles
  * 
@@ -14,24 +12,17 @@ package org.pitest.internal.classloader;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.mutationtest.instrument;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
 
-import org.pitest.functional.Option;
+import org.apache.bcel.classfile.JavaClass;
 
-public interface ClassPathRoot {
+import com.reeltwo.jumble.mutation.Mutater;
 
-  public URL getResource(String name) throws MalformedURLException;
+public interface Reporter {
 
-  public InputStream getData(String name) throws IOException;
-
-  public void release() throws IOException;
-
-  public Collection<String> classNames();
-
-  public Option<String> cacheLocation();
+  public void report(int i, boolean mutationDetected, JavaClass mutatedClass,
+      Mutater m, String className) throws IOException;
 
 }

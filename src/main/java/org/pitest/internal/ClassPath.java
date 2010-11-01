@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 
-public class ClassPath {
+public class ClassPath implements Iterable<ClassPathRoot> {
 
   private static final Logger       logger = Logger.getLogger(ClassPath.class
                                                .getName());
@@ -171,6 +172,10 @@ public class ClassPath {
       return new String[0];
     }
 
+  }
+
+  public Iterator<ClassPathRoot> iterator() {
+    return this.roots.iterator();
   }
 
 }

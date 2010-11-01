@@ -36,14 +36,18 @@ import org.pitest.Description;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.F2;
+import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.AbstractMutationTestUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.JavaProcess;
+import org.pitest.util.Unchecked;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
@@ -54,6 +58,8 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
   private static final Logger logger             = Logger
                                                      .getLogger(InstrumentedMutationTestUnit.class
                                                          .getName());
+
+  private static final long   PROCESS_START_TIME = 5000;
 
   public InstrumentedMutationTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
@@ -90,18 +96,9 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
         if (!tests.isEmpty()) {
 
-          final List<AssertionError> normalExecutionFailures = new ArrayList<AssertionError>();
-          final long t0 = System.currentTimeMillis();
-          this.runTestInSeperateProcessForMutationRange(
-              normalExecutionFailures, -1, -1, cp, tests, 0);
-          final long normalExecution = System.currentTimeMillis() - t0;
-
-          if (normalExecutionFailures.isEmpty()) {
-            System.out
-                .println("Tests do not run green when no mutation present");
-            throw new RuntimeException(
-                "Cannot mutation test as tests do not pass without mutation");
-          }
+          // run original tests in this process. If we are distributed
+          // this will suck required classes and resources to cache
+          final long normalExecution = runUnmutatedTests(tests);
 
           final List<AssertionError> failures = new ArrayList<AssertionError>();
 
@@ -125,6 +122,36 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
   }
 
+  private long runUnmutatedTests(final List<TestUnit> tests) throws IOException {
+
+    final long t0 = System.currentTimeMillis();
+    final MutationTestWorker worker = new MutationTestWorker(tests,
+        this.config, IsolationUtils.getContextClassLoader());
+
+    final CheckForFailureReporter r = new CheckForFailureReporter();
+    try {
+      final F2<Class<?>, byte[], Boolean> nullHotSwap = new F2<Class<?>, byte[], Boolean>() {
+        public Boolean apply(final Class<?> a, final byte[] b) {
+          return true;
+        }
+
+      };
+
+      worker.run(nullHotSwap, -1, -1, this.classToMutate.getName(), r);
+    } catch (final ClassNotFoundException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+
+    final long normalExecution = System.currentTimeMillis() - t0;
+
+    if (r.hadFailure()) {
+      System.out.println("Tests do not run green when no mutation present");
+      throw new RuntimeException(
+          "Cannot mutation test as tests do not pass without mutation");
+    }
+    return normalExecution;
+  }
+
   private int runTestInSeperateProcessForMutationRange(
       final Collection<AssertionError> results, final int start, final int end,
       final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
@@ -133,12 +160,13 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     final File inputfile = File.createTempFile(randomFilename(), ".data");
     final File result = File.createTempFile(randomFilename(), ".results");
 
-    final String[] args = createSlaveArgs(start, end, tus, inputfile, result,
-        cp);
+    final String[] args = createSlaveArgs(start, end, tus, inputfile, result);
+
+    final String lauchClassPath = getLaunchClassPath(cp);
 
     final JavaProcess worker = JavaProcess.launch(Collections
         .<String> emptyList(), InstrumentedMutationTestSlave.class, Arrays
-        .asList(args), javaAgentJarFinder);
+        .asList(args), javaAgentJarFinder, lauchClassPath);
 
     boolean timedOut = false;
     final Thread t = new Thread() {
@@ -159,8 +187,10 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     try {
       if (normalExecution != 0) {
         t.start();
-        final long timeout = (normalExecution + 5) * (end - start + 1);
-        System.out.println("Timeout is " + timeout);
+        final long timeout = PROCESS_START_TIME + (normalExecution + 5)
+            * (end - start + 1);
+        System.out.println("Timeout is " + timeout + " for " + start + " to "
+            + end + ". normal exec was " + normalExecution);
         t.join(timeout);
         if (worker.isAlive()) {
           timedOut = true;
@@ -186,6 +216,17 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
     return lastRunMutation;
 
+  }
+
+  private String getLaunchClassPath(final ClassPath cp) {
+    String classpath = System.getProperty("java.class.path");
+    for (final ClassPathRoot each : cp) {
+      final Option<String> additional = each.cacheLocation();
+      for (final String path : additional) {
+        classpath = classpath + File.pathSeparator + path;
+      }
+    }
+    return classpath;
   }
 
   private int readResults(final Collection<AssertionError> results,
@@ -220,7 +261,7 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     final int end = mutationCount;
     int lastRunMutation = -10;
 
-    while (start != mutationCount) {
+    while (start < mutationCount) {
       System.out.println("Testing mutations " + start + " to " + end + " of "
           + mutationCount);
       lastRunMutation = runTestInSeperateProcessForMutationRange(results,
@@ -233,12 +274,10 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
   }
 
   private String[] createSlaveArgs(final int start, final int end,
-      final List<TestUnit> tus, final File inputfile, final File result,
-      final ClassPath cp) throws IOException {
+      final List<TestUnit> tus, final File inputfile, final File result)
+      throws IOException {
     final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile));
     bw.append(IsolationUtils.toTransportString(this.config));
-    bw.newLine();
-    bw.append(IsolationUtils.toTransportString(cp));
     bw.newLine();
     bw.append(IsolationUtils.toTransportString(tus));
     bw.newLine();

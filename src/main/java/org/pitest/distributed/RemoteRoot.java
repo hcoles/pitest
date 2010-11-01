@@ -18,6 +18,7 @@ package org.pitest.distributed;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -46,11 +47,20 @@ public class RemoteRoot implements ClassPathRoot {
   public InputStream getData(final String name) throws IOException {
     final byte[] data = this.service.getClasspathData(name);
     if (data != null) {
+      cacheClass(name, data); // TODO make sure this cache is used
       return new ByteArrayInputStream(data);
+
     } else {
       return null;
     }
 
+  }
+
+  private void cacheClass(final String name, final byte[] data)
+      throws IOException {
+    final String filename = name.replace('.', File.separatorChar).concat(
+        ".class");
+    this.cache.cacheResource(filename, data);
   }
 
   public URL getResource(final String name) throws MalformedURLException {
@@ -78,6 +88,10 @@ public class RemoteRoot implements ClassPathRoot {
   public void release() throws IOException {
     // TODO Auto-generated method stub
 
+  }
+
+  public Option<String> cacheLocation() {
+    return this.cache.cacheLocation();
   }
 
 }

@@ -85,7 +85,8 @@ public class JavaProcess {
   public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
-      final JavaAgent javaAgent) throws IOException {
+      final JavaAgent javaAgent, final String initialClassPath)
+      throws IOException {
     final String separator = System.getProperty("file.separator");
     final String javaProc = System.getProperty("java.home") + separator + "bin"
         + separator + "java";
@@ -97,8 +98,8 @@ public class JavaProcess {
     // Set environment variable rather than using command line
     // cp argument as this seems to bypass issues with escaping spaces
     // on in file paths
-    final String classpath = System.getProperty("java.class.path");
-    env.put("CLASSPATH", classpath);
+
+    env.put("CLASSPATH", initialClassPath);
 
     final Process process = processBuilder.start();
 
@@ -108,6 +109,14 @@ public class JavaProcess {
   public static JavaProcess launch(final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent) throws IOException {
+    final String classpath = System.getProperty("java.class.path");
+    return launch(args, mainClass, programArgs, javaAgent, classpath);
+  }
+
+  public static JavaProcess launch(final List<String> args,
+      final Class<?> mainClass, final List<String> programArgs,
+      final JavaAgent javaAgent, final String launchClassPath)
+      throws IOException {
 
     final SideEffect1<String> soh = new SideEffect1<String>() {
       public void apply(final String a) {
@@ -121,7 +130,8 @@ public class JavaProcess {
       }
     };
 
-    return launch(soh, seh, args, mainClass, programArgs, javaAgent);
+    return launch(soh, seh, args, mainClass, programArgs, javaAgent,
+        launchClassPath);
   }
 
 }

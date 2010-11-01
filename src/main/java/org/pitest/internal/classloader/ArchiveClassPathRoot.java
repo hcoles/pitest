@@ -106,4 +106,8 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
         '.');
   }
 
+  public Option<String> cacheLocation() {
+    return Option.none();
+  }
+
 }

@@ -65,7 +65,6 @@ public class Pitest {
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    System.out.println("Running " + testUnits.size() + " tests");
     this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
         testUnits);
   }
@@ -128,6 +127,7 @@ public class Pitest {
       }
     };
     final Thread feederThread = new Thread(feeder);
+    feederThread.setDaemon(true);
     feederThread.start();
     return feederThread;
   }

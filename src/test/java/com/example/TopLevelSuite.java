@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
 import org.pitest.DefaultStaticConfig;
+import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.containers.BaseThreadPoolContainer;
@@ -43,11 +44,12 @@ import org.pitest.mutationtest.Mutator;
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 
-  // @PITContainer
+  @PITContainer
   public static Container isolated() {
+
     final IsolationStrategy i = new AllwaysIsolateStrategy();
     final Transformation t = new IdentityTransformation();
-    return new BaseThreadPoolContainer(4, new TransformingClassLoaderFactory(t,
+    return new BaseThreadPoolContainer(2, new TransformingClassLoaderFactory(t,
         i), Executors.defaultThreadFactory());
   }
 
