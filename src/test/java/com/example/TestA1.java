@@ -15,8 +15,11 @@
 package com.example;
 
 import org.jmock.MockObjectTestCase;
+import org.junit.runner.RunWith;
 import org.pitest.annotations.TestClass;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
+@RunWith(PITJUnitRunner.class)
 @TestClass(TestA1.Testee.class)
 public class TestA1 extends MockObjectTestCase {
 

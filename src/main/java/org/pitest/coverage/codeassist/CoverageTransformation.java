@@ -12,27 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.classloader;
+package org.pitest.coverage.codeassist;
 
-import org.apache.bcel.classfile.JavaClass;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.pitest.coverage.calculator.CodeCoverageStore;
 import org.pitest.extension.Transformation;
-import org.pitest.mutationtest.loopbreak.LoopBreakTransformation;
 
-public class JumbleTransformation implements Transformation {
-
-  private final JavaClass               mutatedClass;
-  private final LoopBreakTransformation loopBreak = new LoopBreakTransformation();
-
-  public JumbleTransformation(final JavaClass muatedClass) {
-    this.mutatedClass = muatedClass;
-  }
+public class CoverageTransformation implements Transformation {
 
   public byte[] transform(final String name, final byte[] bytes) {
-    if (this.mutatedClass.getClassName().equals(name)) {
-      return this.loopBreak.transform(name, this.mutatedClass.getBytes());
-    } else {
-      return bytes;
-    }
+    final ClassReader reader = new ClassReader(bytes);
+    final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+
+    final int id = CodeCoverageStore.registerClass(name);
+    reader.accept(new CoverageClassVisitor(id, writer, true, true),
+        ClassReader.EXPAND_FRAMES);
+    return writer.toByteArray();
   }
 
 }

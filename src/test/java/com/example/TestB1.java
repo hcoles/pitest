@@ -15,7 +15,10 @@
 package com.example;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
+@RunWith(PITJUnitRunner.class)
 public class TestB1 {
   @Test
   public void test1() {

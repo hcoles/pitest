@@ -12,20 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.extension.common;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
 
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-public @interface MutationTest {
+import org.pitest.extension.TestFilter;
+import org.pitest.extension.TestUnit;
 
-  Mutator[] mutators() default { Mutator.INCREMENTS, Mutator.RETURN_VALS,
-      Mutator.SWITCHES };
+public class CompoundTestFilter implements TestFilter {
 
-  int threshold();
+  private final Collection<TestFilter> filters;
+
+  public CompoundTestFilter(final Collection<TestFilter> filters) {
+    this.filters = filters;
+  }
+
+  public boolean include(final TestUnit tu) {
+    for (final TestFilter each : this.filters) {
+      if (!each.include(tu)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 }

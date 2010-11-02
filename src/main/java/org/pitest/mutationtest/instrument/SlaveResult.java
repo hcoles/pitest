@@ -12,20 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.instrument;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.pitest.functional.Option;
 
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-public @interface MutationTest {
+public class SlaveResult {
 
-  Mutator[] mutators() default { Mutator.INCREMENTS, Mutator.RETURN_VALS,
-      Mutator.SWITCHES };
+  private final int                lastRunMutation;
+  private final Option<Statistics> stats;
 
-  int threshold();
+  public SlaveResult(final int lastRunMutation, final Option<Statistics> stats) {
+    this.lastRunMutation = lastRunMutation;
+    this.stats = stats;
+  }
+
+  public int getLastRunMutation() {
+    return this.lastRunMutation;
+  }
+
+  public Option<Statistics> getStats() {
+    return this.stats;
+  }
 
 }

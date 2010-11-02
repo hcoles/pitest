@@ -31,6 +31,7 @@ import javax.management.openmbean.CompositeData;
 
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F2;
+import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.util.CommandLineMessage;
@@ -40,10 +41,12 @@ import org.pitest.util.Unchecked;
 
 public class InstrumentedMutationTestSlave {
 
+  @SuppressWarnings("unchecked")
   public static void main(final String[] args) {
 
     addMemoryWatchDog();
     Writer w = null;
+    int exitCode = ExitCodes.OK;
     try {
 
       final int startMutation = Integer.parseInt(args[0]);
@@ -57,10 +60,14 @@ public class InstrumentedMutationTestSlave {
           new FileInputStream(input)));
       w = new OutputStreamWriter(new FileOutputStream(outputFile));
 
+      Option<Statistics> stats = (Option<Statistics>) IsolationUtils
+          .fromTransportString(br.readLine());
+
+      System.out.println("Recevied stats from parent = " + stats);
+
       final MutationConfig mutationConfig = (MutationConfig) IsolationUtils
           .fromTransportString(br.readLine());
-      // final DefaultPITClassloader loader = createClassLoader(br.readLine());
-      // IsolationUtils.setContextClassLoader(loader);
+
       final List<TestUnit> tests = getTestList(br.readLine(), IsolationUtils
           .getContextClassLoader());
       br.close();
@@ -78,7 +85,18 @@ public class InstrumentedMutationTestSlave {
 
       };
 
-      worker.run(hotswap, startMutation, endMutation, className, r);
+      if (stats.hasNone()) {
+        stats = Option.someOrNone(worker
+            .gatherStatistics(hotswap, className, r));
+        w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
+      }
+
+      for (final String each : stats.value().getStats().keySet()) {
+        System.out.println("Covered method " + each);
+      }
+
+      exitCode = worker.run(hotswap, startMutation, endMutation, className, r,
+          stats.value());
 
     } catch (final Exception ex) {
       ex.printStackTrace(System.out);
@@ -104,7 +122,7 @@ public class InstrumentedMutationTestSlave {
     }
 
     // sometimes hazelcast refuses to die. Kill explicitly
-    System.exit(ExitCodes.OK);
+    System.exit(exitCode);
 
   }
 

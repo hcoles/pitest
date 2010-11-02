@@ -17,7 +17,9 @@ package org.pitest.extension.common;
 import org.pitest.Description;
 import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.Option;
 
 public final class TimeoutDecorator extends TestUnitDecorator {
 
@@ -101,6 +103,17 @@ public final class TimeoutDecorator extends TestUnitDecorator {
   private Throwable createTimeoutError() {
     return new TimeoutException(String.format(
         "Test timed out after %d milliseconds", this.timeout));
+  }
+
+  public Option<TestUnit> filter(final TestFilter filter) {
+    final Option<TestUnit> modifiedChild = this.child().filter(filter);
+    if (modifiedChild.hasSome()) {
+      return Option.<TestUnit> someOrNone(new TimeoutDecorator(modifiedChild
+          .value(), this.timeout));
+    } else {
+      return Option.none();
+    }
+
   }
 
 }

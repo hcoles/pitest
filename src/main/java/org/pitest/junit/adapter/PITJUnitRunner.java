@@ -21,16 +21,22 @@ import java.util.Stack;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.TestMethod;
 import org.pitest.TestResult;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestDiscoveryListener;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.junit.JUnitTestResultListener;
 
@@ -40,10 +46,11 @@ import org.pitest.junit.JUnitTestResultListener;
  * @author henry
  * 
  */
-public class PITJUnitRunner extends Runner {
+public class PITJUnitRunner extends Runner implements Filterable {
 
-  private final Description description;
-  private final Class<?>    root;
+  private final Description  description;
+  private final Class<?>     root;
+  private Option<TestFilter> filter = Option.none();
 
   public PITJUnitRunner(final Class<?> clazz) {
     this.root = clazz;
@@ -116,8 +123,9 @@ public class PITJUnitRunner extends Runner {
 
     };
     final Configuration conf = new JUnitCompatibleConfiguration();
-    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    final DefaultStaticConfig staticConfig = createStaticConfig();
     staticConfig.addDiscoveryListener(describer);
+
     final Pitest pitest = new Pitest(staticConfig, conf);
 
     pitest.run(c, this.root);
@@ -134,12 +142,47 @@ public class PITJUnitRunner extends Runner {
   public void run(final RunNotifier notifier) {
     System.out.println("Starting run");
     final Configuration conf = new JUnitCompatibleConfiguration();
-    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    final DefaultStaticConfig staticConfig = createStaticConfig();
     staticConfig.getTestListeners()
         .add((new JUnitTestResultListener(notifier)));
     final Pitest pitest = new Pitest(staticConfig, conf);
 
     pitest.run(new UnisolatedThreadPoolContainer(1), this.root);
+  }
+
+  private DefaultStaticConfig createStaticConfig() {
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    for (final TestFilter each : this.filter) {
+      staticConfig.getTestFilters().add(each);
+    }
+    return staticConfig;
+  }
+
+  public void filter(final Filter filter) throws NoTestsRemainException {
+    final String description = filter.describe();
+    if (description.startsWith("Method ")) {
+      final String method = description.substring(7, description.indexOf("("));
+      final String clazz = description.substring(description.indexOf("(") + 1,
+          description.indexOf(")"));
+
+      final TestFilter f = new TestFilter() {
+
+        public boolean include(final TestUnit tu) {
+          for (final TestMethod m : tu.description().getMethod()) {
+            return (tu.description().getTestClass().getName().equals(clazz) && m
+                .getName().equals(method));
+          }
+          return false;
+
+        }
+
+      };
+
+      this.filter = Option.someOrNone(f);
+    }
+
+    System.out.println(filter.describe());
+
   }
 
 }

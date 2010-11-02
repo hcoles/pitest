@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.pitest.extension.ResultCollector;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.Option;
 
 public class MultipleTestGroup implements TestUnit {
 
@@ -70,6 +72,25 @@ public class MultipleTestGroup implements TestUnit {
 
   public Iterator<TestUnit> iterator() {
     return this.children.iterator();
+  }
+
+  public Option<TestUnit> filter(final TestFilter filter) {
+
+    final Collection<TestUnit> filtered = new ArrayList<TestUnit>(this.children
+        .size());
+    for (final TestUnit each : this.children) {
+      final Option<TestUnit> tu = each.filter(filter);
+      for (final TestUnit value : tu) {
+        filtered.add(value);
+      }
+    }
+
+    if (filtered.isEmpty()) {
+      return Option.none();
+    } else {
+      return Option.<TestUnit> someOrNone(new MultipleTestGroup(filtered));
+    }
+
   }
 
 }

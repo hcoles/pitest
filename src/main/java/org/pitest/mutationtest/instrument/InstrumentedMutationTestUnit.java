@@ -137,7 +137,7 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
       };
 
-      worker.run(nullHotSwap, -1, -1, this.classToMutate.getName(), r);
+      worker.run(nullHotSwap, -1, -1, this.classToMutate.getName(), r, null);
     } catch (final ClassNotFoundException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
@@ -152,15 +152,16 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     return normalExecution;
   }
 
-  private int runTestInSeperateProcessForMutationRange(
+  private SlaveResult runTestInSeperateProcessForMutationRange(
       final Collection<AssertionError> results, final int start, final int end,
-      final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
-      throws IOException {
+      final ClassPath cp, final List<TestUnit> tus, final long normalExecution,
+      final Option<Statistics> stats) throws IOException {
 
     final File inputfile = File.createTempFile(randomFilename(), ".data");
     final File result = File.createTempFile(randomFilename(), ".results");
 
-    final String[] args = createSlaveArgs(start, end, tus, inputfile, result);
+    final String[] args = createSlaveArgs(start, end, tus, inputfile, result,
+        stats);
 
     final String lauchClassPath = getLaunchClassPath(cp);
 
@@ -203,7 +204,8 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       e.printStackTrace();
     }
 
-    int lastRunMutation = readResults(results, result, start);
+    final SlaveResult sr = readResults(results, result, start);
+    int lastRunMutation = sr.getLastRunMutation();
     if (timedOut) {
       // skip one as result cannot have been written if an infinite loop
       // occured for the mutation
@@ -214,7 +216,7 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     inputfile.delete();
     result.delete();
 
-    return lastRunMutation;
+    return new SlaveResult(lastRunMutation, sr.getStats());
 
   }
 
@@ -229,27 +231,35 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     return classpath;
   }
 
-  private int readResults(final Collection<AssertionError> results,
+  @SuppressWarnings("unchecked")
+  private SlaveResult readResults(final Collection<AssertionError> results,
       final File result, final int start) throws FileNotFoundException,
       IOException {
     final BufferedReader r = new BufferedReader(new InputStreamReader(
         new FileInputStream(result)));
     int lastRunMutation = start;
+    Option<Statistics> stats = Option.none();
     try {
       while (r.ready()) {
         final String line = r.readLine();
-        final String[] parts = line.split(",");
-        lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
-            .indexOf("=")));
-        if (parts[0].contains("false")) {
-          results.add(arrayToAssertionError(parts));
+        System.out.println(line);
+        if (line.startsWith("STATS=")) {
+          stats = (Option<Statistics>) IsolationUtils.fromTransportString(line
+              .substring(6, line.length()));
+        } else {
+          final String[] parts = line.split(",");
+          lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
+              .indexOf("=")));
+          if (parts[0].contains("false")) {
+            results.add(arrayToAssertionError(parts));
+          }
+          System.out.println("Result from file " + line);
         }
-        System.out.println("Result from file " + line);
       }
     } finally {
       r.close();
     }
-    return lastRunMutation;
+    return new SlaveResult(lastRunMutation, stats);
   }
 
   private Collection<AssertionError> runTestsInSeperateProcess(
@@ -259,14 +269,16 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     final Collection<AssertionError> results = new ArrayList<AssertionError>();
     int start = 0;
     final int end = mutationCount;
-    int lastRunMutation = -10;
+    Option<Statistics> stats = Option.none();
 
     while (start < mutationCount) {
       System.out.println("Testing mutations " + start + " to " + end + " of "
           + mutationCount);
-      lastRunMutation = runTestInSeperateProcessForMutationRange(results,
-          start, end, cp, tus, normalExecution);
-      start = lastRunMutation + 1;
+      final SlaveResult sr = runTestInSeperateProcessForMutationRange(results,
+          start, end, cp, tus, normalExecution, stats);
+      start = sr.getLastRunMutation() + 1;
+      stats = sr.getStats();
+      System.out.println("Got stats from slave " + stats);
     }
 
     return results;
@@ -274,9 +286,11 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
   }
 
   private String[] createSlaveArgs(final int start, final int end,
-      final List<TestUnit> tus, final File inputfile, final File result)
-      throws IOException {
+      final List<TestUnit> tus, final File inputfile, final File result,
+      final Option<Statistics> stats) throws IOException {
     final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile));
+    bw.append(IsolationUtils.toTransportString(stats));
+    bw.newLine();
     bw.append(IsolationUtils.toTransportString(this.config));
     bw.newLine();
     bw.append(IsolationUtils.toTransportString(tus));

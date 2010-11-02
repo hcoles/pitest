@@ -39,8 +39,8 @@ import org.pitest.mutationtest.MutationTest;
 import org.pitest.mutationtest.Mutator;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(useHotSwap = false, threshold = 66, mutators = {
-    Mutator.INCREMENTS, Mutator.RETURN_VALS })
+@MutationTest(threshold = 66, mutators = { Mutator.INCREMENTS,
+    Mutator.RETURN_VALS })
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 

@@ -53,7 +53,7 @@ public class RunnerAdapter extends AbstractTestUnit {
     this(clazz, createRunner(clazz));
   }
 
-  private static Runner createRunner(final Class<?> clazz) {
+  public static Runner createRunner(final Class<?> clazz) {
     final RunnerBuilder builder = createRunnerBuilder(clazz);
     try {
       return builder.runnerForClass(clazz);
