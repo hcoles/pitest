@@ -111,6 +111,10 @@ public class InvokeStatistics {
     }
     return statistics;
   }
+  
+  public Set<Integer> getVisitedLines() {
+    return visitedLinesByClassId.values().iterator().next();
+  }
 
   public Map<String, Map<Integer, Boolean>> generateLineInvokeStatistics() {
     final Map<String, Map<Integer, Boolean>> statistics = new HashMap<String, Map<Integer, Boolean>>(); // TODO

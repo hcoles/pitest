@@ -91,8 +91,8 @@ public class InstrumentedMutationTestSlave {
         w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
       }
 
-      for (final String each : stats.value().getStats().keySet()) {
-        System.out.println("Covered method " + each);
+      for (final Integer each : stats.value().getStats().keySet()) {
+        System.out.println("Covered line " + each);
       }
 
       exitCode = worker.run(hotswap, startMutation, endMutation, className, r,

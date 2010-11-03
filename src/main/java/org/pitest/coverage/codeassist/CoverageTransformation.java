@@ -26,6 +26,7 @@ public class CoverageTransformation implements Transformation {
     final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
     final int id = CodeCoverageStore.registerClass(name);
+    System.out.println("Class Id is " + id);
     reader.accept(new CoverageClassVisitor(id, writer, true, true),
         ClassReader.EXPAND_FRAMES);
     return writer.toByteArray();

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassLoaderRepository;
@@ -46,6 +47,7 @@ import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
 import org.pitest.util.ExitCodes;
 
 import com.reeltwo.jumble.mutation.Mutater;
@@ -84,20 +86,23 @@ public class MutationTestWorker {
 
     hotswap.apply(testee, instrumentedClass);
 
-    final Map<String, List<TestUnit>> stats = new HashMap<String, List<TestUnit>>();
+    final Map<Integer, List<TestUnit>> stats = new HashMap<Integer, List<TestUnit>>();
+    
     for (final TestUnit each : this.tests) {
       System.out.println("Gathering stats for " + each.description()
           + " out of " + this.tests.size());
       invokeStatistics.clearStats();
-      final List<MethodNameDescription> methodsForTest = getStatisticsForTest(
+      final Set<Integer> lineVisits = getStatisticsForTest(
           hotswap, className, unmutated, each, invokeQueue, invokeStatistics);
-      for (final MethodNameDescription meth : methodsForTest) {
-        List<TestUnit> coveringTests = stats.get(meth.asJumbleDescription());
+      
+      
+      for (final Integer line : lineVisits) {
+        List<TestUnit> coveringTests = stats.get(line);
         if (coveringTests == null) {
           coveringTests = new ArrayList<TestUnit>();
         }
         coveringTests.add(each);
-        stats.put(meth.asJumbleDescription(), coveringTests);
+        stats.put(line, coveringTests);
 
       }
     }
@@ -107,7 +112,7 @@ public class MutationTestWorker {
 
   }
 
-  private List<MethodNameDescription> getStatisticsForTest(
+  private  Set<Integer> getStatisticsForTest(
       final F2<Class<?>, byte[], Boolean> hotswap, final String className,
       final JavaClass unmutated, final TestUnit test,
       final InvokeQueue invokeQueue, final InvokeStatistics invokeStatistics)
@@ -117,22 +122,10 @@ public class MutationTestWorker {
     doTestsDetectMutation(c, Collections.singletonList(test));
 
     readStatisticsQueue(invokeStatistics, invokeQueue);
-    final Map<String, Map<MethodNameDescription, Boolean>> methodStats = invokeStatistics
-        .generateMethodInvokeStatistics();
-
-    final List<MethodNameDescription> visited = new ArrayList<MethodNameDescription>();
-    for (final Map<MethodNameDescription, Boolean> mns : methodStats.values()) {
-      for (final MethodNameDescription t : mns.keySet()) {
-        if (mns.get(t)) {
-          System.out.println(test.description() + " TESTS "
-              + t.asJumbleDescription());
-          visited.add(t);
-        }
-      }
-
-    }
-
-    return visited;
+ 
+    
+    Set<Integer> lineVisits = invokeStatistics.getVisitedLines();
+    return lineVisits;
 
   }
 
@@ -192,12 +185,8 @@ public class MutationTestWorker {
 
       realOut.println("mutating method " + method);
 
-      List<TestUnit> relevantTests;
-      if (stats != null) {
-        relevantTests = stats.getStats().get(method);
-      } else {
-        relevantTests = this.tests;
-      }
+      final List<TestUnit> relevantTests = pickTests(m, className, stats);
+ 
 
       boolean mutationDetected = false;
       if ((relevantTests == null) || relevantTests.isEmpty()) {
@@ -238,6 +227,19 @@ public class MutationTestWorker {
     realOut.println(".....................");
 
     return ExitCodes.OK;
+  }
+
+  private List<TestUnit> pickTests(Mutater m, String className, Statistics stats) {
+
+    //m.getModification()
+    if (stats != null) {
+      String method = m.getMutatedMethodName(className);
+      String modification = m.getModification();
+      int lineNumber = MutationDetails.parseLineNumber(modification);
+      return stats.getStats().get(lineNumber);
+    } else {
+      return  this.tests;
+    }
   }
 
   private ClassLoader pickClassLoaderForMethod(final int i, final String method) {

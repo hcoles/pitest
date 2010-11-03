@@ -21,13 +21,13 @@ import org.pitest.extension.TestUnit;
 
 public class Statistics {
 
-  private final Map<String, List<TestUnit>> stats;
+  private final Map<Integer, List<TestUnit>> stats;
 
-  public Map<String, List<TestUnit>> getStats() {
+  public Map<Integer, List<TestUnit>> getStats() {
     return this.stats;
   }
 
-  public Statistics(final Map<String, List<TestUnit>> stats) {
+  public Statistics(final Map<Integer, List<TestUnit>> stats) {
     this.stats = stats;
   }
 
