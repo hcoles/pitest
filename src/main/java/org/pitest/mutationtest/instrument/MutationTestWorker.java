@@ -35,7 +35,6 @@ import org.pitest.coverage.calculator.CodeCoverageStore;
 import org.pitest.coverage.calculator.InvokeEntry;
 import org.pitest.coverage.calculator.InvokeQueue;
 import org.pitest.coverage.calculator.InvokeStatistics;
-import org.pitest.coverage.calculator.MethodNameDescription;
 import org.pitest.coverage.codeassist.CoverageTransformation;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
@@ -87,15 +86,14 @@ public class MutationTestWorker {
     hotswap.apply(testee, instrumentedClass);
 
     final Map<Integer, List<TestUnit>> stats = new HashMap<Integer, List<TestUnit>>();
-    
+
     for (final TestUnit each : this.tests) {
       System.out.println("Gathering stats for " + each.description()
           + " out of " + this.tests.size());
       invokeStatistics.clearStats();
-      final Set<Integer> lineVisits = getStatisticsForTest(
-          hotswap, className, unmutated, each, invokeQueue, invokeStatistics);
-      
-      
+      final Set<Integer> lineVisits = getStatisticsForTest(hotswap, className,
+          unmutated, each, invokeQueue, invokeStatistics);
+
       for (final Integer line : lineVisits) {
         List<TestUnit> coveringTests = stats.get(line);
         if (coveringTests == null) {
@@ -112,7 +110,7 @@ public class MutationTestWorker {
 
   }
 
-  private  Set<Integer> getStatisticsForTest(
+  private Set<Integer> getStatisticsForTest(
       final F2<Class<?>, byte[], Boolean> hotswap, final String className,
       final JavaClass unmutated, final TestUnit test,
       final InvokeQueue invokeQueue, final InvokeStatistics invokeStatistics)
@@ -122,9 +120,8 @@ public class MutationTestWorker {
     doTestsDetectMutation(c, Collections.singletonList(test));
 
     readStatisticsQueue(invokeStatistics, invokeQueue);
- 
-    
-    Set<Integer> lineVisits = invokeStatistics.getVisitedLines();
+
+    final Set<Integer> lineVisits = invokeStatistics.getVisitedLines();
     return lineVisits;
 
   }
@@ -186,7 +183,6 @@ public class MutationTestWorker {
       realOut.println("mutating method " + method);
 
       final List<TestUnit> relevantTests = pickTests(m, className, stats);
- 
 
       boolean mutationDetected = false;
       if ((relevantTests == null) || relevantTests.isEmpty()) {
@@ -229,16 +225,16 @@ public class MutationTestWorker {
     return ExitCodes.OK;
   }
 
-  private List<TestUnit> pickTests(Mutater m, String className, Statistics stats) {
+  private List<TestUnit> pickTests(final Mutater m, final String className,
+      final Statistics stats) {
 
-    //m.getModification()
+    // m.getModification()
     if (stats != null) {
-      String method = m.getMutatedMethodName(className);
-      String modification = m.getModification();
-      int lineNumber = MutationDetails.parseLineNumber(modification);
+      final String modification = m.getModification();
+      final int lineNumber = MutationDetails.parseLineNumber(modification);
       return stats.getStats().get(lineNumber);
     } else {
-      return  this.tests;
+      return this.tests;
     }
   }
 

@@ -18,14 +18,12 @@
 package org.pitest.coverage.calculator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * @author ivanalx
@@ -45,10 +43,12 @@ public class InvokeStatistics {
     this.visitedMethodsByClassId.clear();
     this.visitedLinesByClassId.clear();
 
+    // FIXME HashSets are not thread safe . . . not that this really matters
+    // right now
+
     for (int id = 0; id != this.classNames.size(); id++) {
-      this.visitedMethodsByClassId
-          .put(id, new ConcurrentSkipListSet<Integer>());
-      this.visitedLinesByClassId.put(id, new ConcurrentSkipListSet<Integer>());
+      this.visitedMethodsByClassId.put(id, new HashSet<Integer>());
+      this.visitedLinesByClassId.put(id, new HashSet<Integer>());
     }
 
   }
@@ -59,11 +59,10 @@ public class InvokeStatistics {
     this.classNames.add(className);
     final int id = this.classNames.size() - 1;
     if (!this.visitedMethodsByClassId.containsKey(id)) {
-      this.visitedMethodsByClassId
-          .put(id, new ConcurrentSkipListSet<Integer>());
+      this.visitedMethodsByClassId.put(id, new HashSet<Integer>());
     }
     if (!this.visitedLinesByClassId.containsKey(id)) {
-      this.visitedLinesByClassId.put(id, new ConcurrentSkipListSet<Integer>());
+      this.visitedLinesByClassId.put(id, new HashSet<Integer>());
     }
     return id;
   }
@@ -84,43 +83,8 @@ public class InvokeStatistics {
     this.visitedLinesByClassId.get(classId).add(lineId);
   }
 
-  public Map<String, Map<MethodNameDescription, Boolean>> generateMethodInvokeStatistics() {
-    final Map<String, Map<MethodNameDescription, Boolean>> statistics = new HashMap<String, Map<MethodNameDescription, Boolean>>();
-
-    for (final Map.Entry<Integer, Set<Integer>> entry : this.visitedMethodsByClassId
-        .entrySet()) {
-      final String className = this.classNames.get(entry.getKey());
-
-      final List<MethodNameDescription> methodNames = this.methodDescriptionsInClassIdOrder
-          .get(entry.getKey());
-
-      final Set<Integer> visitedMethods = entry.getValue();
-      final Set<Integer> notVisitedMethods = new HashSet<Integer>();
-      for (int i = 0; i < methodNames.size(); i++) {
-        notVisitedMethods.add(i);
-      }
-      notVisitedMethods.removeAll(visitedMethods);
-      final Map<MethodNameDescription, Boolean> methodVisitStatistics = new HashMap<MethodNameDescription, Boolean>();
-      statistics.put(className, methodVisitStatistics);
-      for (final Integer methodId : visitedMethods) {
-        methodVisitStatistics.put(methodNames.get(methodId), true);
-      }
-      for (final Integer methodId : notVisitedMethods) {
-        methodVisitStatistics.put(methodNames.get(methodId), false);
-      }
-    }
-    return statistics;
-  }
-  
   public Set<Integer> getVisitedLines() {
-    return visitedLinesByClassId.values().iterator().next();
-  }
-
-  public Map<String, Map<Integer, Boolean>> generateLineInvokeStatistics() {
-    final Map<String, Map<Integer, Boolean>> statistics = new HashMap<String, Map<Integer, Boolean>>(); // TODO
-    // use
-    // it
-    return null;
+    return this.visitedLinesByClassId.values().iterator().next();
   }
 
 }
