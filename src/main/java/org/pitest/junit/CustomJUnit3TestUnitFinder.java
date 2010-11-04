@@ -15,12 +15,17 @@
 package org.pitest.junit;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.Runner;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
@@ -30,6 +35,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
 import org.pitest.junit.adapter.RunnerAdapter;
 import org.pitest.junit.adapter.RunnerAdapterDescriptionTestUnit;
+import org.pitest.junit.adapter.TestAdapter;
 import org.pitest.reflection.Reflection;
 
 public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
@@ -43,18 +49,30 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
       final TestUnitProcessor processor) {
 
     if (isCustomJUnit3Class(a.getClazz())) {
-
-      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
-      final List<RunnerAdapterDescriptionTestUnit> units = adapter
-          .getDescriptions();
-
+      List<TestUnit> units = new ArrayList<TestUnit>();
+      TestSuite ts = new TestSuite(a.getClazz());
+      flattenSuite(ts, units);
       listener.recieveTests(units);
-      return FCollection.map(Collections.<TestUnit> singletonList(adapter),
+      return FCollection.map(units,
           processor);
 
     } else {
       return Collections.emptyList();
     }
+  }
+  
+  private void flattenSuite(TestSuite suite, List<TestUnit> units) {
+    for ( int i = 0; i != suite.testCount(); i++ ) {
+      Test t = suite.testAt(i);
+      if ( t instanceof TestSuite) {
+        flattenSuite((TestSuite)t, units);
+      } else if ( t instanceof TestCase ) {
+        units.add(new TestAdapter( (TestCase) t ));
+      } else {
+        throw new RuntimeException("Could not handle " + t);
+      }
+    }
+      
   }
 
   public static boolean isCustomJUnit3Class(final Class<?> a) {
