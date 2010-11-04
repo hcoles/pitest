@@ -15,9 +15,16 @@
 package org.pitest.junit;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.pitest.Description;
+import org.pitest.extension.ResultCollector;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.RunnerAdapter;
 
@@ -25,20 +32,37 @@ import com.example.TheoryTest;
 
 public class RunnerAdapterTest {
 
+  @Mock
+  ResultCollector       rc;
+
   private RunnerAdapter testee;
 
   @Before
   public void setup() {
+    MockitoAnnotations.initMocks(this);
     this.testee = new RunnerAdapter(TheoryTest.class);
   }
 
   @Test
-  public void testCanBeSerializedAndDeserialized() throws Exception {
-    final RunnerAdapter actual = (RunnerAdapter) IsolationUtils.cloneForLoader(
-        this.testee, IsolationUtils.getContextClassLoader());
+  public void testCallsNotifyStart() {
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    verify(this.rc, times(3)).notifyStart(any(Description.class));
+  }
 
+  @Test
+  public void testCallsNotifyEndOnSuccess() {
+    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
+    verify(this.rc, times(3)).notifyEnd(any(Description.class));
+  }
+
+  @Test
+  public void testCanBeSerializedAndDeserialized() throws Exception {
+    final String serialized = IsolationUtils.toTransportString(this.testee);
+    final RunnerAdapter actual = (RunnerAdapter) IsolationUtils
+        .fromTransportString(serialized);
     assertEquals(this.testee.getDescriptions().size(), actual.getDescriptions()
         .size());
+
   }
 
 }
