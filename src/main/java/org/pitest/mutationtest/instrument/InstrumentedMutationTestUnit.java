@@ -16,14 +16,11 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,9 +41,9 @@ import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.AbstractMutationTestUnit;
 import org.pitest.mutationtest.MutationConfig;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.JavaProcess;
+import org.pitest.util.StreamMonitor;
 import org.pitest.util.Unchecked;
 
 import com.reeltwo.jumble.mutation.Mutater;
@@ -175,16 +172,9 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     boolean timedOut = false;
     final Thread t = createWorkerThread(worker);
 
-    // FileInputStream fis = new FileInputStream(result);
-    // SideEffect1<String> se = new SideEffect1<String>() {
-    //
-    // public void apply(String a) {
-    //        
-    //        
-    // }
-    //      
-    // };
-    // StreamMonitor sm = new StreamMonitor(fis, se);
+    final FileInputStream fis = new FileInputStream(result);
+    final ResultsReader rr = new ResultsReader(end, results, stats);
+    final StreamMonitor sm = new StreamMonitor(fis, rr);
 
     try {
       if (normalExecution != 0) {
@@ -205,7 +195,9 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       e.printStackTrace();
     }
 
-    final SlaveResult sr = readResults(results, result, start);
+    final SlaveResult sr = rr.getResult(); // readResults(results, result,
+                                           // start);
+    sm.requestStop();
     int lastRunMutation = sr.getLastRunMutation();
     if (timedOut) {
       // skip one as result cannot have been written if an infinite loop
@@ -214,6 +206,7 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       System.out.println("Timed out while running mutation " + lastRunMutation);
     }
 
+    fis.close();
     inputfile.delete();
     result.delete();
 
@@ -248,37 +241,6 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       }
     }
     return classpath;
-  }
-
-  @SuppressWarnings("unchecked")
-  private SlaveResult readResults(final Collection<AssertionError> results,
-      final File result, final int start) throws FileNotFoundException,
-      IOException {
-    final BufferedReader r = new BufferedReader(new InputStreamReader(
-        new FileInputStream(result)));
-    int lastRunMutation = start;
-    Option<Statistics> stats = Option.none();
-    try {
-      while (r.ready()) {
-        final String line = r.readLine();
-        System.out.println(line);
-        if (line.startsWith("STATS=")) {
-          stats = (Option<Statistics>) IsolationUtils.fromTransportString(line
-              .substring(6, line.length()));
-        } else {
-          final String[] parts = line.split(",");
-          lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
-              .indexOf("=")));
-          if (parts[0].contains("false")) {
-            results.add(arrayToAssertionError(parts));
-          }
-          System.out.println("Result from file " + line);
-        }
-      }
-    } finally {
-      r.close();
-    }
-    return new SlaveResult(lastRunMutation, stats);
   }
 
   private Collection<AssertionError> runTestsInSeperateProcess(
@@ -357,21 +319,6 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
       rc.notifyEnd(this.description());
     }
 
-  }
-
-  private AssertionError arrayToAssertionError(final String[] parts) {
-    final MutationDetails details = new MutationDetails(parts[1], parts[2],
-        parts[3], parts[4]);
-    return createAssertionError(details);
-
-  }
-
-  private AssertionError createAssertionError(final MutationDetails md) {
-    final AssertionError ae = new AssertionError("The mutation -> " + md
-        + " did not result in any test failures");
-    final StackTraceElement[] stackTrace = { md.stackTraceDescription() };
-    ae.setStackTrace(stackTrace);
-    return ae;
   }
 
 }

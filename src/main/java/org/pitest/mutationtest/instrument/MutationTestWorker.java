@@ -16,9 +16,7 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -150,45 +148,35 @@ public class MutationTestWorker {
       ClassNotFoundException {
 
     System.out.println("Mutating class " + className);
-
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    final PrintStream realOut = System.out;
-    try {
-      final PrintStream replacedOut = new PrintStream(bos);
-      // System.setOut(replacedOut);
-      return mutateAndRun(hotswap, startMutation, endMutation, className, r,
-          realOut, stats);
-
-    } finally {
-      System.setOut(realOut);
-    }
+    return mutateAndRun(hotswap, startMutation, endMutation, className, r,
+        stats);
 
   }
 
   private int mutateAndRun(final F2<Class<?>, byte[], Boolean> hotswap,
       final int startMutation, final int endMutation, final String className,
-      final Reporter r, final PrintStream realOut, final Statistics stats)
-      throws ClassNotFoundException, IOException {
+      final Reporter r, final Statistics stats) throws ClassNotFoundException,
+      IOException {
 
     final Mutater m = this.mutationConfig.createMutator();
     m.setRepository(new ClassLoaderRepository(this.loader));
     final int maxMutation = m.countMutationPoints(className);
 
     for (int i = startMutation; (i <= endMutation) && (i != maxMutation); i++) {
-      realOut.println("Running mutation " + i);
+      System.out.println("Running mutation " + i);
 
       final JavaClass mutatedClass = getMutation(className, m, i);
       final String method = m.getMutatedMethodName(className);
 
-      realOut.println("mutating method " + method);
+      System.out.println("mutating method " + method);
 
       final List<TestUnit> relevantTests = pickTests(m, className, stats);
 
       boolean mutationDetected = false;
       if ((relevantTests == null) || relevantTests.isEmpty()) {
-        realOut.println("No test coverage for mutation in " + method);
+        System.out.println("No test coverage for mutation in " + method);
       } else {
-        realOut.println("" + relevantTests.size() + " relevant test for "
+        System.out.println("" + relevantTests.size() + " relevant test for "
             + method);
 
         final ClassLoader activeloader = pickClassLoaderForMethod(i, method);
@@ -207,7 +195,7 @@ public class MutationTestWorker {
         if (hotswap.apply(testee, mutatedClass.getBytes())) {
           mutationDetected = doTestsDetectMutation(c, relevantTests);
         } else {
-          realOut.println("Mutation " + i + " of " + endMutation
+          System.out.println("Mutation " + i + " of " + endMutation
               + " was not viable ");
           mutationDetected = true;
         }
@@ -216,11 +204,11 @@ public class MutationTestWorker {
 
       r.report(i, mutationDetected, mutatedClass, m, className);
 
-      realOut.println("Mutation " + i + " of " + endMutation + " detected = "
-          + mutationDetected);
+      System.out.println("Mutation " + i + " of " + endMutation
+          + " detected = " + mutationDetected);
     }
 
-    realOut.println(".....................");
+    System.out.println(".....................");
 
     return ExitCodes.OK;
   }

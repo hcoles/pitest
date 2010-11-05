@@ -14,6 +14,7 @@
  */
 package org.pitest.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.pitest.functional.SideEffect1;
@@ -44,9 +45,9 @@ public class StreamMonitor extends Thread {
         this.inputHandler.apply(output);
       }
 
-    } catch (final Throwable t) {
-      t.printStackTrace();
-      throw Unchecked.translateCheckedException(t);
+    } catch (final IOException e) {
+      requestStop();
+      System.out.println("No longer able to read stream");
     }
   }
 
