@@ -12,24 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.functional.Option;
+public interface MetaData {
 
-public interface ResultCollector {
-
-  public void notifyEnd(Description description, Option<Throwable> t,
-      MetaData data);
-
-  public void notifyEnd(final Description description, Throwable t);
-
-  public void notifyEnd(final Description description);
-
-  public void notifyStart(final Description description);
-
-  public void notifySkipped(final Description description);
-
-  public boolean shouldExit();
 }

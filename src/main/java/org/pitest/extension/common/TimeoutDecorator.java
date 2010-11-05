@@ -15,6 +15,7 @@
 package org.pitest.extension.common;
 
 import org.pitest.Description;
+import org.pitest.MetaData;
 import org.pitest.TimeoutException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
@@ -68,6 +69,13 @@ public final class TimeoutDecorator extends TestUnitDecorator {
     public void notifyEnd(final Description tu) {
       if (this.reportResults) {
         this.child.notifyEnd(tu);
+      }
+    }
+
+    public void notifyEnd(final Description description,
+        final Option<Throwable> t, final MetaData data) {
+      if (this.reportResults) {
+        this.child.notifyEnd(description, t, data);
       }
     }
 

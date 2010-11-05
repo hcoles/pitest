@@ -17,8 +17,11 @@ package org.pitest.internal;
 import java.util.concurrent.BlockingQueue;
 
 import org.pitest.Description;
+import org.pitest.ExtendedTestResult;
+import org.pitest.MetaData;
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
+import org.pitest.functional.Option;
 import org.pitest.testunit.TestUnitState;
 import org.pitest.util.Unchecked;
 
@@ -36,6 +39,11 @@ public final class ConcreteResultCollector implements ResultCollector {
 
   public void notifySkipped(final Description tu) {
     put(new TestResult(tu, null, TestUnitState.NOT_RUN));
+  }
+
+  public void notifyEnd(final Description description,
+      final Option<Throwable> t, final MetaData data) {
+    put(new ExtendedTestResult(description, t.getOrElse(null), data));
   }
 
   public void notifyEnd(final Description description, final Throwable t) {

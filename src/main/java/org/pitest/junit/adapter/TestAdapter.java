@@ -16,6 +16,7 @@ package org.pitest.junit.adapter;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -42,10 +43,15 @@ public class TestAdapter extends AbstractTestUnit {
 
   private static Description testCaseToDescription(final TestCase testCase) {
     final Collection<Method> ms = Reflection.allMethods(testCase.getClass());
-    final Method m = FCollection.filter(ms,
-        IsNamed.instance(testCase.getName())).get(0);
-    return new Description(testCase.getName(), testCase.getClass(),
-        new TestMethod(m, null));
+    final List<Method> filteredMethods = FCollection.filter(ms, IsNamed
+        .instance(testCase.getName()));
+    if (filteredMethods.isEmpty()) {
+      return new Description(testCase.getName(), testCase.getClass(), null);
+    } else {
+      return new Description(testCase.getName(), testCase.getClass(),
+          new TestMethod(filteredMethods.get(0)));
+    }
+
   }
 
   @SuppressWarnings("unchecked")

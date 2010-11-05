@@ -15,7 +15,9 @@
 package org.pitest.mutationtest;
 
 import org.pitest.Description;
+import org.pitest.MetaData;
 import org.pitest.extension.ResultCollector;
+import org.pitest.functional.Option;
 
 public class ExitingResultCollector implements ResultCollector {
 
@@ -47,6 +49,12 @@ public class ExitingResultCollector implements ResultCollector {
 
   public boolean shouldExit() {
     return this.hadFailure;
+  }
+
+  public void notifyEnd(final Description description,
+      final Option<Throwable> t, final MetaData data) {
+    this.child.notifyEnd(description, t, data);
+
   }
 
 }

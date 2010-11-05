@@ -171,8 +171,6 @@ package org.pitest.util;
  */
 public class Base64 {
 
-  /*                                                                                                                                                                     ******** P U B L I C F I E L D S ******** */
-
   /** No options specified. Value is zero. */
   public final static int     NO_OPTIONS          = 0;
 
@@ -208,8 +206,6 @@ public class Base64 {
    * 1940. html</a>.
    */
   public final static int     ORDERED             = 32;
-
-  /*                                                                                                                                                                     ******** P R I V A T E F I E L D S ******** */
 
   /** Maximum line length (76) of Base64 output. */
   private final static int    MAX_LINE_LENGTH     = 76;
@@ -550,31 +546,6 @@ public class Base64 {
       return destination;
     } // end switch
   } // end encode3to4
-
-  /**
-   * Performs Base64 encoding on the <code>raw</code> ByteBuffer, writing it to
-   * the <code>encoded</code> ByteBuffer. This is an experimental feature.
-   * Currently it does not pass along any options (such as
-   * {@link #DO_BREAK_LINES} or {@link #GZIP}.
-   * 
-   * @param raw
-   *          input buffer
-   * @param encoded
-   *          output buffer
-   * @since 2.3
-   */
-  public static void encode(final java.nio.ByteBuffer raw,
-      final java.nio.ByteBuffer encoded) {
-    final byte[] raw3 = new byte[3];
-    final byte[] enc4 = new byte[4];
-
-    while (raw.hasRemaining()) {
-      final int rem = Math.min(3, raw.remaining());
-      raw.get(raw3, 0, rem);
-      Base64.encode3to4(enc4, raw3, rem, Base64.NO_OPTIONS);
-      encoded.put(enc4);
-    } // end input remaining
-  }
 
   /**
    * Performs Base64 encoding on the <code>raw</code> ByteBuffer, writing it to

@@ -98,9 +98,12 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
           // run original tests in this process. If we are distributed
           // this will suck required classes and resources to cache
+          // if we are not distributed this is of limited value . . .
           final long normalExecution = runUnmutatedTests(tests);
 
           final List<AssertionError> failures = new ArrayList<AssertionError>();
+          // final List<MutationDetails> details = new
+          // ArrayList<MutationDetails>();
 
           failures.addAll(runTestsInSeperateProcess(cp, mutationCount, tests,
               normalExecution));
@@ -170,20 +173,18 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
         .asList(args), javaAgentJarFinder, lauchClassPath);
 
     boolean timedOut = false;
-    final Thread t = new Thread() {
-      @Override
-      public void run() {
-        try {
-          final int exitCode = worker.waitToDie();
-          System.out.println("Exit code was " + exitCode);
-        } catch (final InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    };
+    final Thread t = createWorkerThread(worker);
 
-    t.setDaemon(true);
+    // FileInputStream fis = new FileInputStream(result);
+    // SideEffect1<String> se = new SideEffect1<String>() {
+    //
+    // public void apply(String a) {
+    //        
+    //        
+    // }
+    //      
+    // };
+    // StreamMonitor sm = new StreamMonitor(fis, se);
 
     try {
       if (normalExecution != 0) {
@@ -218,6 +219,24 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
     return new SlaveResult(lastRunMutation, sr.getStats());
 
+  }
+
+  private Thread createWorkerThread(final JavaProcess worker) {
+    final Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          final int exitCode = worker.waitToDie();
+          System.out.println("Exit code was " + exitCode);
+        } catch (final InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    };
+
+    t.setDaemon(true);
+    return t;
   }
 
   private String getLaunchClassPath(final ClassPath cp) {

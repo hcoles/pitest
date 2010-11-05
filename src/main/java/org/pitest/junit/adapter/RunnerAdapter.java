@@ -93,7 +93,7 @@ public class RunnerAdapter extends AbstractTestUnit {
 
     final Method m = Reflection.publicMethod(descriptionTestClass, d
         .getMethodName());
-    final TestMethod tm = new TestMethod(m, null);
+    final TestMethod tm = new TestMethod(m);
 
     final org.pitest.Description pitDescription = new org.pitest.Description(d
         .getDisplayName(), descriptionTestClass, tm);

@@ -12,10 +12,13 @@ package org.pitest.distributed.slave;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
+import org.pitest.ExtendedTestResult;
+import org.pitest.MetaData;
 import org.pitest.TestResult;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
+import org.pitest.functional.Option;
 import org.pitest.testunit.TestUnitState;
 
 import com.hazelcast.core.ITopic;
@@ -66,6 +69,11 @@ public class SlaveResultCollector implements ResultCollector {
 
   public boolean shouldExit() {
     return false;
+  }
+
+  public void notifyEnd(final Description description,
+      final Option<Throwable> t, final MetaData data) {
+    this.publish(new ExtendedTestResult(description, t.getOrElse(null), data));
   }
 
 };

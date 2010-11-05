@@ -55,6 +55,7 @@ public class StreamMonitor extends Thread {
     super();
     this.in = in;// new InputStreamReader(in);
     this.inputHandler = inputHandler;
+    this.setName("PIT Stream Monitor");
     setDaemon(true);
     start();
   }

@@ -20,6 +20,7 @@ import org.pitest.Description;
 import org.pitest.TestExecutionException;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestStep;
+import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
 /**
@@ -28,8 +29,8 @@ import org.pitest.internal.IsolationUtils;
  */
 public class SteppedTestUnit extends AbstractTestUnit {
 
-  private final Collection<TestStep>       steps;
-  private final Class<? extends Throwable> expected;
+  private final Collection<TestStep>               steps;
+  private final Option<Class<? extends Throwable>> expected;
 
   public SteppedTestUnit(final Description description,
       final Collection<TestStep> steps) {
@@ -38,7 +39,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
   public SteppedTestUnit(final Description description,
       final Collection<TestStep> steps,
-      final Class<? extends Throwable> expected) {
+      final Option<Class<? extends Throwable>> expected) {
     super(description);
     this.steps = steps;
     this.expected = expected;
@@ -76,12 +77,12 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
   private Throwable updateResultForExpectations(final ClassLoader loader,
       final Throwable tResult) {
-    if (this.expected != null) {
+    if (this.expected.hasSome()) {
       if (tResult == null) {
         return new java.lang.AssertionError("Expected exception "
             + this.expected);
-      } else if (IsolationUtils.convertForClassLoader(loader, this.expected)
-          .isAssignableFrom(tResult.getClass())) {
+      } else if (IsolationUtils.convertForClassLoader(loader,
+          this.expected.value()).isAssignableFrom(tResult.getClass())) {
         return null;
       }
     }

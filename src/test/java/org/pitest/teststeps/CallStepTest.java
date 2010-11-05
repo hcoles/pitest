@@ -12,8 +12,7 @@ public class CallStepTest {
 
   @Before
   public void setUp() throws Exception {
-    this.testMethod = new TestMethod(this.getClass().getMethod("testMethod"),
-        null);
+    this.testMethod = new TestMethod(this.getClass().getMethod("testMethod"));
   }
 
   @Test

@@ -63,7 +63,7 @@ public class SignatureEqualityStrategyTest {
   }
 
   private TestMethod createTestMethod(final Predicate<Method> p) {
-    return new TestMethod(Reflection.publicMethod(this.getClass(), p), null);
+    return new TestMethod(Reflection.publicMethod(this.getClass(), p));
   }
 
   private TestMethod createTestMethod(final String name) {

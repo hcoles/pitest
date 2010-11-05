@@ -63,7 +63,7 @@ public class InstrumentedMutationTestSlave {
       Option<Statistics> stats = (Option<Statistics>) IsolationUtils
           .fromTransportString(br.readLine());
 
-      System.out.println("Recevied stats from parent = " + stats);
+      System.out.println("Received stats from parent = " + stats);
 
       final MutationConfig mutationConfig = (MutationConfig) IsolationUtils
           .fromTransportString(br.readLine());
