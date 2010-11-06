@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
@@ -22,16 +22,31 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationDetails;
 
 public class ResultsReader implements SideEffect1<String> {
-  private int                              lastRunMutation;
-  private StringBuffer                     lineBuffer = new StringBuffer();
-  private Option<Statistics>               stats;
-  private final Collection<AssertionError> results;
+
+  public static class MutationResult {
+
+    public MutationResult(final MutationDetails md) {
+      this.details = md;
+    }
+
+    public final MutationDetails details;
+    public int                   numberOfTestsHittingMutatedLine;
+    public boolean               detected;
+  }
+
+  private int                                lastRunMutation;
+  private StringBuffer                       lineBuffer = new StringBuffer();
+  private Option<Statistics>                 stats;
+  // store as map rather than list to allow possibility of order mutation
+  // results
+  private final Map<Integer, MutationResult> mutations;
 
   public ResultsReader(final int lastRunMutation,
-      final Collection<AssertionError> results, final Option<Statistics> stats) {
+      final Map<Integer, MutationResult> mutations,
+      final Option<Statistics> stats) {
     this.lastRunMutation = lastRunMutation;
     this.stats = stats;
-    this.results = results;
+    this.mutations = mutations;
   }
 
   public void apply(final String a) {
@@ -49,39 +64,47 @@ public class ResultsReader implements SideEffect1<String> {
   @SuppressWarnings("unchecked")
   private void process() {
     final String line = this.lineBuffer.toString();
+    System.out.println("Result from file " + line);
     this.lineBuffer = new StringBuffer();
     if (line.startsWith("STATS=")) {
       this.stats = (Option<Statistics>) IsolationUtils.fromTransportString(line
           .substring(6, line.length()));
     } else {
       final String[] parts = line.split(",");
-      this.lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
-          .indexOf("=")));
-      if (parts[0].contains("false")) {
-        this.results.add(arrayToAssertionError(parts));
+      if (parts[0].equals("DESC=")) {
+        receiveMutationDescription(parts);
+      } else {
+        receiveMutationResults(parts);
       }
-      System.out.println("Result from file " + line);
+
     }
 
   }
 
+  private void receiveMutationDescription(final String[] parts) {
+    final int mutation = extractMutationIndex(parts);
+    final MutationDetails details = new MutationDetails(parts[3], parts[4],
+        parts[5], parts[6]);
+    this.mutations.put(mutation, new MutationResult(details));
+
+  }
+
+  private int extractMutationIndex(final String[] parts) {
+    return Integer.parseInt(parts[1]);
+  }
+
+  private void receiveMutationResults(final String[] parts) {
+    this.lastRunMutation = extractMutationIndex(parts);
+    final MutationResult mr = this.mutations.get(this.lastRunMutation);
+    if (parts[2].contains("true")) {
+      mr.detected = true;
+    } else {
+      mr.detected = false;
+    }
+  }
+
   public SlaveResult getResult() {
     return new SlaveResult(this.lastRunMutation, this.stats);
-  }
-
-  private AssertionError arrayToAssertionError(final String[] parts) {
-    final MutationDetails details = new MutationDetails(parts[1], parts[2],
-        parts[3], parts[4]);
-    return createAssertionError(details);
-
-  }
-
-  private AssertionError createAssertionError(final MutationDetails md) {
-    final AssertionError ae = new AssertionError("The mutation -> " + md
-        + " did not result in any test failures");
-    final StackTraceElement[] stackTrace = { md.stackTraceDescription() };
-    ae.setStackTrace(stackTrace);
-    return ae;
   }
 
 }

@@ -52,9 +52,9 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
   @SuppressWarnings("unchecked")
   private Collection<TestClass> processClass(final Class<?> clazz,
       final boolean excludeInnerClasses) {
-    final Predicate<String> regexFilter = getNameFilter(Option.someOrNone(clazz
+    final Predicate<String> regexFilter = getNameFilter(Option.some(clazz
         .getAnnotation(ClassNameRegexFilter.class)));
-    final Predicate<String> globFilter = getGlobFilter(Option.someOrNone(clazz
+    final Predicate<String> globFilter = getGlobFilter(Option.some(clazz
         .getAnnotation(ClassNameGlobFilter.class)));
 
     final Predicate<String> filter = Or.instance(regexFilter, globFilter);

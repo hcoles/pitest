@@ -17,7 +17,6 @@ package org.pitest.mutationtest;
 import org.pitest.Description;
 import org.pitest.MetaData;
 import org.pitest.extension.ResultCollector;
-import org.pitest.functional.Option;
 
 public class ExitingResultCollector implements ResultCollector {
 
@@ -26,17 +25,6 @@ public class ExitingResultCollector implements ResultCollector {
 
   public ExitingResultCollector(final ResultCollector child) {
     this.child = child;
-  }
-
-  public void notifyEnd(final Description description, final Throwable t) {
-    this.child.notifyEnd(description, t);
-    if (t != null) {
-      this.hadFailure = true;
-    }
-  }
-
-  public void notifyEnd(final Description description) {
-    this.child.notifyEnd(description);
   }
 
   public void notifySkipped(final Description description) {
@@ -51,9 +39,17 @@ public class ExitingResultCollector implements ResultCollector {
     return this.hadFailure;
   }
 
-  public void notifyEnd(final Description description,
-      final Option<Throwable> t, final MetaData data) {
+  public void notifyEnd(final Description description, final Throwable t,
+      final MetaData... data) {
     this.child.notifyEnd(description, t, data);
+    if (t != null) {
+      this.hadFailure = true;
+    }
+
+  }
+
+  public void notifyEnd(final Description description, final MetaData... data) {
+    this.child.notifyEnd(description, data);
 
   }
 

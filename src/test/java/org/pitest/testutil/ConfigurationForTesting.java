@@ -39,7 +39,7 @@ public class ConfigurationForTesting implements Configuration {
             .getName().equals(TestAnnotationForTesting.NONE.class.getName()) ? annotation
             .expected()
             : null;
-        return Option.someOrNone(new TestMethod(method, expected));
+        return Option.some(new TestMethod(method, expected));
       } else {
         return Option.none();
       }

@@ -55,8 +55,8 @@ public class BeforeAfterDecorator extends TestUnitDecorator {
   public Option<TestUnit> filter(final TestFilter filter) {
     final Option<TestUnit> modifiedChild = this.child().filter(filter);
     if (modifiedChild.hasSome()) {
-      return Option.<TestUnit> someOrNone(new BeforeAfterDecorator(
-          modifiedChild.value(), this.before, this.after));
+      return Option.<TestUnit> some(new BeforeAfterDecorator(modifiedChild
+          .value(), this.before, this.after));
     } else {
       return Option.none();
     }

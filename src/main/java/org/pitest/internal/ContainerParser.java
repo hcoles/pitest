@@ -48,8 +48,7 @@ public class ContainerParser {
 
   private Option<Integer> determineNoThreads() {
     if (this.clazz.isAnnotationPresent(PIT.class)) {
-      return Option.someOrNone(this.clazz.getAnnotation(PIT.class)
-          .maxParallel());
+      return Option.some(this.clazz.getAnnotation(PIT.class).maxParallel());
     } else {
       return Option.none();
     }
@@ -62,7 +61,7 @@ public class ContainerParser {
       if (!containerMethod.isEmpty()) {
         final Container c = (Container) containerMethod.iterator().next()
             .invoke(null);
-        return Option.someOrNone(c);
+        return Option.some(c);
       } else {
         return Option.none();
       }

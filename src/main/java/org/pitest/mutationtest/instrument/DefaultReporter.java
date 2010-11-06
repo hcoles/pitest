@@ -38,4 +38,17 @@ public class DefaultReporter implements Reporter {
 
   }
 
+  public void describe(final int i, final int numberOfTests,
+      final JavaClass mutatedClass, final Mutater m, final String className)
+      throws IOException {
+    this.w.write("DESC=," + i + "," + numberOfTests + ","
+        + mutatedClass.getClassName() + "," + mutatedClass.getFileName() + ","
+        + m.getModification() + "," + m.getMutatedMethodName(className) + "\n");
+  }
+
+  public void report(final int i, final boolean mutationDetected)
+      throws IOException {
+    this.w.write("REP=," + i + "," + mutationDetected + "\n");
+  }
+
 }

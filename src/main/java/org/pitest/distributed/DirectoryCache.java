@@ -42,7 +42,7 @@ public class DirectoryCache implements ResourceCache {
     final File resource = new File(this.cacheDirectory.getAbsolutePath()
         + File.separator + name);
     if (resource.exists()) {
-      return Option.someOrNone(resource.toURI().toURL());
+      return Option.some(resource.toURI().toURL());
     } else {
       return Option.none();
     }
@@ -91,7 +91,7 @@ public class DirectoryCache implements ResourceCache {
   }
 
   public Option<String> cacheLocation() {
-    return Option.someOrNone(this.cacheDirectory.getAbsolutePath());
+    return Option.some(this.cacheDirectory.getAbsolutePath());
   }
 
 }

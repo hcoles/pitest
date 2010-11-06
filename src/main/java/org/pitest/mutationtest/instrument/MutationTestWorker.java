@@ -172,6 +172,8 @@ public class MutationTestWorker {
 
       final List<TestUnit> relevantTests = pickTests(m, className, stats);
 
+      r.describe(i, relevantTests.size(), mutatedClass, m, className);
+
       boolean mutationDetected = false;
       if ((relevantTests == null) || relevantTests.isEmpty()) {
         System.out.println("No test coverage for mutation in " + method);
@@ -202,7 +204,7 @@ public class MutationTestWorker {
 
       }
 
-      r.report(i, mutationDetected, mutatedClass, m, className);
+      r.report(i, mutationDetected);
 
       System.out.println("Mutation " + i + " of " + endMutation
           + " detected = " + mutationDetected);
@@ -220,7 +222,7 @@ public class MutationTestWorker {
     if (stats != null) {
       final String modification = m.getModification();
       final int lineNumber = MutationDetails.parseLineNumber(modification);
-      return stats.getStats().get(lineNumber);
+      return stats.getTestForLineNumber(lineNumber);
     } else {
       return this.tests;
     }

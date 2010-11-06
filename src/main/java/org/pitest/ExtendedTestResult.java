@@ -28,14 +28,17 @@ public class ExtendedTestResult extends TestResult {
                                                                             1);
 
   public ExtendedTestResult(final Description description, final Throwable t,
-      final MetaData value) {
+      final MetaData... value) {
     super(description, t, TestUnitState.FINISHED);
-    this.values.put(value.getClass(), value);
+    for (final MetaData each : value) {
+      this.values.put(each.getClass(), value);
+    }
+
   }
 
   @Override
   public <T extends MetaData> Option<T> getValue(final Class<T> type) {
-    return Option.someOrNone(type.cast(this.values.get(type)));
+    return Option.some(type.cast(this.values.get(type)));
   }
 
   @Override

@@ -48,7 +48,7 @@ public abstract class AbstractTestUnit implements TestUnit {
 
   public Option<TestUnit> filter(final TestFilter filter) {
     if (filter.include(this)) {
-      return Option.<TestUnit> someOrNone(this);
+      return Option.<TestUnit> some(this);
     } else {
       return Option.none();
     }

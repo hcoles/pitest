@@ -22,7 +22,9 @@ import com.reeltwo.jumble.mutation.Mutater;
 
 public interface Reporter {
 
-  public void report(int i, boolean mutationDetected, JavaClass mutatedClass,
+  public void describe(int i, int numberOfTests, JavaClass mutatedClass,
       Mutater m, String className) throws IOException;
+
+  public void report(int i, boolean mutationDetected) throws IOException;
 
 }

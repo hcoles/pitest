@@ -43,7 +43,7 @@ public class TestMethod {
   }
 
   public Option<Class<? extends Throwable>> getExpected() {
-    return Option.<Class<? extends Throwable>> someOrNone(this.expected);
+    return Option.<Class<? extends Throwable>> some(this.expected);
   }
 
   @Override

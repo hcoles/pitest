@@ -76,7 +76,7 @@ public class Pitest {
     if (staticConfig.getTestFilters().isEmpty()) {
       return Option.none();
     } else {
-      return Option.<TestFilter> someOrNone(new CompoundTestFilter(staticConfig
+      return Option.<TestFilter> some(new CompoundTestFilter(staticConfig
           .getTestFilters()));
     }
   }

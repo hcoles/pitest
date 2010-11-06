@@ -72,8 +72,8 @@ public final class TimeoutDecorator extends TestUnitDecorator {
       }
     }
 
-    public void notifyEnd(final Description description,
-        final Option<Throwable> t, final MetaData data) {
+    public void notifyEnd(final Description description, final Throwable t,
+        final MetaData... data) {
       if (this.reportResults) {
         this.child.notifyEnd(description, t, data);
       }
@@ -81,6 +81,12 @@ public final class TimeoutDecorator extends TestUnitDecorator {
 
     public boolean shouldExit() {
       return !this.reportResults;
+    }
+
+    public void notifyEnd(final Description description, final MetaData... data) {
+      if (this.reportResults) {
+        this.child.notifyEnd(description, data);
+      }
     }
 
   }
@@ -116,8 +122,8 @@ public final class TimeoutDecorator extends TestUnitDecorator {
   public Option<TestUnit> filter(final TestFilter filter) {
     final Option<TestUnit> modifiedChild = this.child().filter(filter);
     if (modifiedChild.hasSome()) {
-      return Option.<TestUnit> someOrNone(new TimeoutDecorator(modifiedChild
-          .value(), this.timeout));
+      return Option.<TestUnit> some(new TimeoutDecorator(modifiedChild.value(),
+          this.timeout));
     } else {
       return Option.none();
     }

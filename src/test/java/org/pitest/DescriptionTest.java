@@ -47,6 +47,6 @@ public class DescriptionTest {
   public void testGetMethodReturnsSomeIfMethodSupplied() {
     final TestMethod tm = new TestMethod(null);
     this.testee = new Description("foo", null, tm);
-    assertEquals(Option.someOrNone(tm), this.testee.getMethod());
+    assertEquals(Option.some(tm), this.testee.getMethod());
   }
 }

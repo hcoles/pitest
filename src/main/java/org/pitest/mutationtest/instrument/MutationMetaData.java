@@ -14,30 +14,21 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
-import org.pitest.extension.TestUnit;
+import org.pitest.MetaData;
+import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 
-public class Statistics {
+public class MutationMetaData implements MetaData {
 
-  private final Map<Integer, List<TestUnit>> stats;
+  private final Collection<MutationResult> mutations;
 
-  public Map<Integer, List<TestUnit>> getStats() {
-    return this.stats;
+  public MutationMetaData(final Collection<MutationResult> mutations) {
+    this.mutations = mutations;
   }
 
-  public Statistics(final Map<Integer, List<TestUnit>> stats) {
-    this.stats = stats;
-  }
-
-  public List<TestUnit> getTestForLineNumber(final int lineNumber) {
-    if (this.stats.get(lineNumber) != null) {
-      return this.stats.get(lineNumber);
-    } else {
-      return Collections.emptyList();
-    }
+  public Collection<MutationResult> getMutations() {
+    return this.mutations;
   }
 
 }

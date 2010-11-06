@@ -86,8 +86,7 @@ public class InstrumentedMutationTestSlave {
       };
 
       if (stats.hasNone()) {
-        stats = Option.someOrNone(worker
-            .gatherStatistics(hotswap, className, r));
+        stats = Option.some(worker.gatherStatistics(hotswap, className, r));
         w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
       }
 

@@ -88,7 +88,7 @@ public class MultipleTestGroup implements TestUnit {
     if (filtered.isEmpty()) {
       return Option.none();
     } else {
-      return Option.<TestUnit> someOrNone(new MultipleTestGroup(filtered));
+      return Option.<TestUnit> some(new MultipleTestGroup(filtered));
     }
 
   }

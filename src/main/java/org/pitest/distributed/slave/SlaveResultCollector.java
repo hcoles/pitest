@@ -54,14 +54,6 @@ public class SlaveResultCollector implements ResultCollector {
     this.publish(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
-  public void notifyEnd(final Description description, final Throwable t) {
-    notifyEnd(new TestResult(description, t));
-  }
-
-  public void notifyEnd(final Description tu) {
-    notifyEnd(new TestResult(tu, null));
-  }
-
   public void notifyEnd(final TestResult testResult) {
     logger.info("Test complete " + testResult);
     this.publish(testResult);
@@ -74,6 +66,25 @@ public class SlaveResultCollector implements ResultCollector {
   public void notifyEnd(final Description description,
       final Option<Throwable> t, final MetaData data) {
     this.publish(new ExtendedTestResult(description, t.getOrElse(null), data));
+  }
+
+  public void notifyEnd(final Description description, final Throwable t,
+      final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      notifyEnd(new ExtendedTestResult(description, t, data));
+    } else {
+      notifyEnd(new TestResult(description, t));
+    }
+
+  }
+
+  public void notifyEnd(final Description description, final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      notifyEnd(new ExtendedTestResult(description, null, data));
+    } else {
+      notifyEnd(new TestResult(description, null));
+    }
+
   }
 
 };

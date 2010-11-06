@@ -16,16 +16,12 @@ package org.pitest.extension;
 
 import org.pitest.Description;
 import org.pitest.MetaData;
-import org.pitest.functional.Option;
 
 public interface ResultCollector {
 
-  public void notifyEnd(Description description, Option<Throwable> t,
-      MetaData data);
+  public void notifyEnd(Description description, Throwable t, MetaData... data);
 
-  public void notifyEnd(final Description description, Throwable t);
-
-  public void notifyEnd(final Description description);
+  public void notifyEnd(Description description, MetaData... data);
 
   public void notifyStart(final Description description);
 

@@ -92,7 +92,7 @@ public class MutationTestFinder implements TestUnitFinder {
     if (annotation == null) {
       return determineTesteeFromName(test);
     } else {
-      return Option.<Class<?>> someOrNone(annotation.value());
+      return Option.<Class<?>> some(annotation.value());
     }
   }
 
@@ -140,7 +140,7 @@ public class MutationTestFinder implements TestUnitFinder {
     try {
       final Class<?> guessed = Class.forName(name, true, IsolationUtils
           .getContextClassLoader());
-      return Option.<Class<?>> someOrNone(guessed);
+      return Option.<Class<?>> some(guessed);
     } catch (final ClassNotFoundException e) {
       return Option.none();
     } catch (final NoClassDefFoundError e) {
