@@ -31,7 +31,7 @@ public class ExtendedTestResult extends TestResult {
       final MetaData... value) {
     super(description, t, TestUnitState.FINISHED);
     for (final MetaData each : value) {
-      this.values.put(each.getClass(), value);
+      this.values.put(each.getClass(), each);
     }
 
   }
