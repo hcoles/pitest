@@ -20,7 +20,7 @@ import java.io.InputStream;
 import org.pitest.functional.SideEffect1;
 
 public class StreamMonitor extends Thread {
-  private final byte[] buf = new byte[256];
+  private final byte[]              buf       = new byte[256];
   private final InputStream         in;
   private final SideEffect1<String> inputHandler;
   private volatile boolean          shouldRun = true;
@@ -39,8 +39,8 @@ public class StreamMonitor extends Thread {
   private void readFromStream() {
     try {
       int i;
-      while ((i = this.in.read(buf, 0, buf.length)) >= 0) {
-        final String output = new String(buf, 0, i);
+      while ((i = this.in.read(this.buf, 0, this.buf.length)) >= 0) {
+        final String output = new String(this.buf, 0, i);
         this.inputHandler.apply(output);
       }
 

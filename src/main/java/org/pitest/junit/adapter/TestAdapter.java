@@ -14,26 +14,57 @@
  */
 package org.pitest.junit.adapter;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.pitest.Description;
 import org.pitest.TestMethod;
 import org.pitest.extension.ResultCollector;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.IsNamed;
 import org.pitest.reflection.Reflection;
 import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.util.Unchecked;
 
 public class TestAdapter extends AbstractTestUnit {
 
   private final String                    testMethod;
   private final Class<? extends TestCase> testClass;
+
+  private static class SetJUnit3Name implements Predicate<Method> {
+    private final static SetJUnit3Name instance = new SetJUnit3Name();
+
+    public static SetJUnit3Name instance() {
+      return instance;
+    }
+
+    public Boolean apply(final Method a) {
+      return a.getName().equals("setName")
+          && (a.getParameterTypes().length == 1)
+          && a.getParameterTypes()[0].equals(String.class);
+    }
+
+  }
+
+  private static class RunBareMethod implements Predicate<Method> {
+    private final static RunBareMethod instance = new RunBareMethod();
+
+    public static RunBareMethod instance() {
+      return instance;
+    }
+
+    public Boolean apply(final Method a) {
+      return a.getName().equals("runBare")
+          && (a.getParameterTypes().length == 0);
+    }
+
+  }
 
   public TestAdapter(final TestCase testCase) {
     super(testCaseToDescription(testCase));
@@ -60,15 +91,57 @@ public class TestAdapter extends AbstractTestUnit {
     try {
       final Class<? extends TestCase> activeClass = (Class<? extends TestCase>) IsolationUtils
           .convertForClassLoader(loader, this.testClass);
-      final TestCase tc = (TestCase) TestSuite.createTest(activeClass,
-          this.testMethod);
+
       rc.notifyStart(description());
-      tc.runBare();
-      rc.notifyEnd(description());
+      final Object test = createTest(activeClass, this.testMethod);
+      final Method runBare = Reflection.publicMethod(activeClass, RunBareMethod
+          .instance());
+      try {
+        runBare.invoke(test);
+        rc.notifyEnd(description());
+      } catch (final Throwable t) {
+        rc.notifyEnd(description(), t.getCause());
+      }
 
     } catch (final Throwable t) {
       rc.notifyEnd(description(), t);
     }
+  }
+
+  static public Object createTest(final Class<?> theClass, final String name) {
+
+    Object test;
+    try {
+      final Constructor<?> constructor = getTestConstructor(theClass);
+
+      if (constructor.getParameterTypes().length == 0) {
+        test = constructor.newInstance(new Object[0]);
+        final Method setName = Reflection.publicMethod(theClass, SetJUnit3Name
+            .instance());
+        setName.invoke(test, new Object[] { name });
+      } else {
+        test = constructor.newInstance(new Object[] { name });
+      }
+
+    } catch (final Exception e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+
+    return test;
+  }
+
+  /**
+   * Gets a constructor which takes a single String as its argument or a no arg
+   * constructor.
+   */
+  public static Constructor<?> getTestConstructor(final Class<?> theClass)
+      throws NoSuchMethodException {
+    try {
+      return theClass.getConstructor(String.class);
+    } catch (final NoSuchMethodException e) {
+      // fall through
+    }
+    return theClass.getConstructor(new Class[0]);
   }
 
 }

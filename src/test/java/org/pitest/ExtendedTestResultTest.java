@@ -14,34 +14,33 @@
  */
 package org.pitest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.pitest.functional.Option;
 
-
-
 public class ExtendedTestResultTest {
-  
+
   @Test
   public void testCanAddAndRetrieveMetaData() {
-    MetaData md = new MetaData() {
-     
+    final MetaData md = new MetaData() {
+
     };
-    
-    MetaData md2 = new MetaData() {
-      
+
+    final MetaData md2 = new MetaData() {
+
     };
-    
-    ExtendedTestResult testee = new ExtendedTestResult(null,null,md,md2);
+
+    final ExtendedTestResult testee = new ExtendedTestResult(null, null, md,
+        md2);
     assertEquals(Option.some(md), testee.getValue(md.getClass()));
     assertEquals(Option.some(md2), testee.getValue(md2.getClass()));
-    
+
   }
-  
+
   @Test
   public void testReturnsNoneWhenNoMetaDataPresentForClass() {
-    ExtendedTestResult testee = new ExtendedTestResult(null,null);
+    final ExtendedTestResult testee = new ExtendedTestResult(null, null);
     assertEquals(Option.none(), testee.getValue(MetaData.class));
   }
 
