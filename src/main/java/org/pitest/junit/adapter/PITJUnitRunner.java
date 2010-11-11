@@ -36,6 +36,7 @@ import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.F2;
 import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.junit.JUnitTestResultListener;
@@ -118,7 +119,7 @@ public class PITJUnitRunner extends Runner implements Filterable {
       }
 
       public void submit(final TestUnit c) {
-
+        
       }
 
     };
@@ -128,7 +129,15 @@ public class PITJUnitRunner extends Runner implements Filterable {
 
     final Pitest pitest = new Pitest(staticConfig, conf);
 
-    pitest.run(c, this.root);
+    final F2<Class<?>, Container, Container> containerUpdateFunction = new F2<Class<?>, Container, Container>() {
+
+      public Container apply(final Class<?> a, final Container b) {
+        return b;
+      }
+
+    };
+
+    pitest.run(c, containerUpdateFunction, this.root);
 
     return descriptions.peek().getChildren().get(0);
   }

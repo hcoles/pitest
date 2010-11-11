@@ -32,6 +32,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.CompoundTestDiscoveryListener;
 import org.pitest.extension.common.CompoundTestFilter;
 import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ContainerParser;
@@ -52,9 +53,24 @@ public class Pitest {
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
+    final F2<Class<?>, Container, Container> containerUpdateFunction = new F2<Class<?>, Container, Container>() {
+
+      public Container apply(final Class<?> c, final Container defaultContainer) {
+        return new ContainerParser(c).create(defaultContainer);
+      }
+
+    };
+    run(defaultContainer, containerUpdateFunction, classes);
+  }
+
+  public void run(final Container defaultContainer,
+      final F2<Class<?>, Container, Container> containerUpdateFunction,
+      final Class<?>... classes) {
     for (final Class<?> c : classes) {
-      final Container container = new ContainerParser(c)
-          .create(defaultContainer);
+
+      final Container container = containerUpdateFunction.apply(c,
+          defaultContainer);
+
       StaticConfiguration staticConfig = new DefaultStaticConfig(
           this.initialStaticConfig);
       for (final StaticConfigUpdater each : this.initialConfig
