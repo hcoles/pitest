@@ -61,7 +61,7 @@ public class CallStep implements TestStep {
   }
 
   public Option<TestMethod> method() {
-    return Option.someOrNone(this.m);
+    return Option.some(this.m);
   }
 
 }

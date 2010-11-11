@@ -12,10 +12,13 @@ package org.pitest.distributed.slave;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
+import org.pitest.ExtendedTestResult;
+import org.pitest.MetaData;
 import org.pitest.TestResult;
 import org.pitest.distributed.ResultMessage;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
+import org.pitest.functional.Option;
 import org.pitest.testunit.TestUnitState;
 
 import com.hazelcast.core.ITopic;
@@ -51,14 +54,6 @@ public class SlaveResultCollector implements ResultCollector {
     this.publish(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
-  public void notifyEnd(final Description description, final Throwable t) {
-    notifyEnd(new TestResult(description, t));
-  }
-
-  public void notifyEnd(final Description tu) {
-    notifyEnd(new TestResult(tu, null));
-  }
-
   public void notifyEnd(final TestResult testResult) {
     logger.info("Test complete " + testResult);
     this.publish(testResult);
@@ -66,6 +61,30 @@ public class SlaveResultCollector implements ResultCollector {
 
   public boolean shouldExit() {
     return false;
+  }
+
+  public void notifyEnd(final Description description,
+      final Option<Throwable> t, final MetaData data) {
+    this.publish(new ExtendedTestResult(description, t.getOrElse(null), data));
+  }
+
+  public void notifyEnd(final Description description, final Throwable t,
+      final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      notifyEnd(new ExtendedTestResult(description, t, data));
+    } else {
+      notifyEnd(new TestResult(description, t));
+    }
+
+  }
+
+  public void notifyEnd(final Description description, final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      notifyEnd(new ExtendedTestResult(description, null, data));
+    } else {
+      notifyEnd(new TestResult(description, null));
+    }
+
   }
 
 };

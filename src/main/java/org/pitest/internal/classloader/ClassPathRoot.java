@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
+import org.pitest.functional.Option;
+
 public interface ClassPathRoot {
 
   public URL getResource(String name) throws MalformedURLException;
@@ -29,5 +31,7 @@ public interface ClassPathRoot {
   public void release() throws IOException;
 
   public Collection<String> classNames();
+
+  public Option<String> cacheLocation();
 
 }

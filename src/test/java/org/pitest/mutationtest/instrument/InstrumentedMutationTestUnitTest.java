@@ -96,14 +96,16 @@ public class InstrumentedMutationTestUnitTest {
   public void testReportsSuccessIfMoreThanThresholdLevelOfMutationsDetected() {
     this.testee = this.createFor(TestOne.class, One.class, 66);
     execute();
-    verify(this.rc).notifyEnd(any(Description.class));
+    verify(this.rc).notifyEnd(any(Description.class),
+        any(MutationMetaData.class));
   }
 
   @Test
   public void testReportsFailureIfLessThanThresholdLevelOfMutationsDetected() {
     this.testee = this.createFor(TestOne.class, One.class, 100);
     execute();
-    verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class));
+    verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class),
+        any(MutationMetaData.class));
   }
 
   @Test
@@ -174,7 +176,8 @@ public class InstrumentedMutationTestUnitTest {
     this.testee = createFor(MutationTestStaticInitializerWithMissingTest.class,
         HasStaticInitializer.class, 100);
     execute();
-    verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class));
+    verify(this.rc).notifyEnd(any(Description.class), any(Throwable.class),
+        any(MutationMetaData.class));
   }
 
   @Test
@@ -182,7 +185,8 @@ public class InstrumentedMutationTestUnitTest {
     this.testee = createFor(FullyMutationTestStaticInitializer.class,
         HasStaticInitializer.class, 100);
     execute();
-    verify(this.rc).notifyEnd(any(Description.class));
+    verify(this.rc).notifyEnd(any(Description.class),
+        any(MutationMetaData.class));
   }
 
   private void execute() {

@@ -12,21 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.loopbreak;
+package org.pitest;
 
-import org.objectweb.asm.ClassAdapter;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.pitest.extension.Transformation;
-
-public class LoopBreakTransformation implements Transformation {
-
-  public byte[] transform(final String name, final byte[] bytes) {
-    final ClassReader cr = new ClassReader(bytes);
-    final ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
-    final ClassAdapter ca = new LoopBreakClassAdapter(cw);
-    cr.accept(ca, 0);
-    return cw.toByteArray();
-  }
+public interface MetaData {
 
 }

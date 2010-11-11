@@ -14,8 +14,6 @@
  */
 package org.pitest.junit;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,30 +24,23 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.pitest.extension.ResultCollector;
-import org.pitest.junit.adapter.RunnerAdapterDescriptionTestUnit;
 
 public class CustomRunnerExecutor {
 
   private final Runner                              runner;
-  private final ResultCollector                     rc;
+  private ResultCollector                           rc;
   private final Map<String, org.pitest.Description> descriptionLookup;
 
   public CustomRunnerExecutor(final Runner runner, final ResultCollector rc,
-      final List<RunnerAdapterDescriptionTestUnit> descriptions) {
+      final Map<String, org.pitest.Description> descriptionLookup) {
     this.runner = runner;
     this.rc = rc;
-    this.descriptionLookup = new HashMap<String, org.pitest.Description>();
-    for (final RunnerAdapterDescriptionTestUnit each : descriptions) {
-      // map against string representation of description to avoid
-      // equality issues with multiple classloaders
-      this.descriptionLookup.put(
-          descriptionToString(each.getJunitDescription()), each.description());
-    }
+    this.descriptionLookup = descriptionLookup;
+
   }
 
   public void run() {
-    // map against string representation of description to avoid
-    // equality issues with multiple classloaders
+
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new RunListener() {
       private final Set<String> finished = new TreeSet<String>();
@@ -57,9 +48,8 @@ public class CustomRunnerExecutor {
       @Override
       public void testFailure(final Failure failure) throws Exception {
         final String d = descriptionToString(failure.getDescription());
-        CustomRunnerExecutor.this.rc.notifyEnd(
-            CustomRunnerExecutor.this.descriptionLookup.get(d), failure
-                .getException());
+        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d), failure
+            .getException());
         this.finished.add(d);
       }
 
@@ -67,9 +57,8 @@ public class CustomRunnerExecutor {
       public void testAssumptionFailure(final Failure failure) {
         final String d = descriptionToString(failure.getDescription());
 
-        CustomRunnerExecutor.this.rc.notifyEnd(
-            CustomRunnerExecutor.this.descriptionLookup.get(d), failure
-                .getException());
+        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d), failure
+            .getException());
         this.finished.add(d);
       }
 
@@ -77,8 +66,7 @@ public class CustomRunnerExecutor {
       public void testIgnored(final Description description) throws Exception {
         final String d = descriptionToString(description);
 
-        CustomRunnerExecutor.this.rc
-            .notifySkipped(CustomRunnerExecutor.this.descriptionLookup.get(d));
+        CustomRunnerExecutor.this.rc.notifySkipped(convertDescription(d));
 
         this.finished.add(d);
 
@@ -87,16 +75,14 @@ public class CustomRunnerExecutor {
       @Override
       public void testStarted(final Description description) throws Exception {
         CustomRunnerExecutor.this.rc
-            .notifyStart(CustomRunnerExecutor.this.descriptionLookup
-                .get(descriptionToString(description)));
+            .notifyStart(convertDescription(descriptionToString(description)));
       }
 
       @Override
       public void testFinished(final Description description) throws Exception {
         final String d = descriptionToString(description);
         if (!this.finished.contains(d)) {
-          CustomRunnerExecutor.this.rc
-              .notifyEnd(CustomRunnerExecutor.this.descriptionLookup.get(d));
+          CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d));
         }
 
       }
@@ -105,6 +91,15 @@ public class CustomRunnerExecutor {
     rn.addFirstListener(listener);
     this.runner.run(rn);
 
+  }
+
+  private org.pitest.Description convertDescription(final String desc) {
+    final org.pitest.Description description = this.descriptionLookup.get(desc);
+    if (description == null) {
+      return new org.pitest.Description(desc, CustomRunnerExecutor.class, null);
+    } else {
+      return description;
+    }
   }
 
   public static String descriptionToString(final Description d) {
@@ -119,6 +114,14 @@ public class CustomRunnerExecutor {
       descriptionToString(b, each);
     }
     b.append(d.getMethodName());
+  }
+
+  public ResultCollector getRc() {
+    return this.rc;
+  }
+
+  public void setRc(final ResultCollector rc) {
+    this.rc = rc;
   }
 
 }

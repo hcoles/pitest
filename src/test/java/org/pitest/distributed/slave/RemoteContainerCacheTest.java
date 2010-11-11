@@ -71,7 +71,7 @@ public class RemoteContainerCacheTest {
     final RemoteContainer expected = createContainer(this.runDetailsTwo);
     this.testee.enqueue(expected);
     this.testee.enqueue(createContainer(this.runDetailsThree));
-    assertEquals(Option.someOrNone(expected), this.testee
+    assertEquals(Option.some(expected), this.testee
         .getCachedContainer(this.runDetailsTwo));
 
   }

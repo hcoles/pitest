@@ -56,7 +56,7 @@ public class RemoteRootTest {
   public void testGetResourceValueIfAvailableInCacheWithoutMakingRemoteCall()
       throws Exception {
     final URL expected = new URL("file:\\bar");
-    when(this.cache.getResource("foo")).thenReturn(Option.someOrNone(expected));
+    when(this.cache.getResource("foo")).thenReturn(Option.some(expected));
     assertSame(expected, this.testee.getResource("foo"));
     verify(this.service, never()).getResourceData(anyString());
   }
@@ -75,8 +75,7 @@ public class RemoteRootTest {
       throws Exception {
     final byte[] expected = "bar".getBytes();
     when(this.cache.getResource("foo")).thenReturn(Option.<URL> none());
-    when(this.service.getResourceData("foo")).thenReturn(
-        Option.someOrNone(expected));
+    when(this.service.getResourceData("foo")).thenReturn(Option.some(expected));
     this.testee.getResource("foo");
     verify(this.cache).cacheResource("foo", expected);
   }

@@ -28,4 +28,6 @@ public interface ResourceCache {
 
   public void destroy();
 
+  public Option<String> cacheLocation();
+
 }

@@ -19,14 +19,12 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.pitest.containers.BaseThreadPoolContainer;
+import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.distributed.master.ClusterManager;
 import org.pitest.distributed.master.MasterResultQueueListener;
 import org.pitest.distributed.message.RunDetails;
-import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.ClassPath;
 
@@ -34,7 +32,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
-public class DistributedContainer extends BaseThreadPoolContainer {
+public class DistributedContainer extends UnisolatedThreadPoolContainer {
 
   // static state required for funky executor based member
   // to member communication until hazelcast provides something
@@ -63,11 +61,7 @@ public class DistributedContainer extends BaseThreadPoolContainer {
 
   public DistributedContainer(final ClassPath classpath,
       final HazelcastInstance hazelcast, final String... environmentExports) {
-    super(1, new ClassLoaderFactory() {
-      public ClassLoader get() {
-        return this.getClass().getClassLoader();
-      }
-    }, Executors.defaultThreadFactory());
+    super(1);
 
     this.classPath = classpath;
 

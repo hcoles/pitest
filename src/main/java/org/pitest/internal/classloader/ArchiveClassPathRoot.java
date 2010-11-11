@@ -47,7 +47,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
       synchronized (this.file) {
 
         if (this.root.hasNone()) {
-          this.root = Option.someOrNone(new ZipFile(this.file));
+          this.root = Option.some(new ZipFile(this.file));
         }
       }
       return this.root.value();
@@ -104,6 +104,10 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   private String stringToClassName(final String name) {
     return name.substring(0, (name.length() - ".class".length())).replace('/',
         '.');
+  }
+
+  public Option<String> cacheLocation() {
+    return Option.none();
   }
 
 }

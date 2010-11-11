@@ -12,25 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.loopbreak;
+package org.pitest.extension.common;
 
-import org.pitest.TimeoutException;
+import java.util.Collection;
 
-public abstract class PerContainerTimelimitCheck {
+import org.pitest.extension.TestFilter;
+import org.pitest.extension.TestUnit;
 
-  // allthough this is static, classloader
-  // containment means that it is actual a per
-  // test case value as there is a classloader per test
-  private static long maxTime;
+public class CompoundTestFilter implements TestFilter {
 
-  public static void breakIfTimelimitExceeded() {
-    if ((System.currentTimeMillis() > maxTime) && (maxTime != 0)) {
-      throw new TimeoutException("Stopping test as max time exceeded");
-    }
+  private final Collection<TestFilter> filters;
+
+  public CompoundTestFilter(final Collection<TestFilter> filters) {
+    this.filters = filters;
   }
 
-  public static void setMaxEndTime(final long maxtime) {
-    maxTime = maxtime;
+  public boolean include(final TestUnit tu) {
+    for (final TestFilter each : this.filters) {
+      if (!each.include(tu)) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

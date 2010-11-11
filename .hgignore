@@ -3,3 +3,5 @@ syntax: regexp
 ^target$
 syntax: regexp
 ^reports$
+syntax: regexp
+^classpathCache$

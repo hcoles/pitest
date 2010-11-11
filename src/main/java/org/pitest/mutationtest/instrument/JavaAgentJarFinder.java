@@ -49,7 +49,7 @@ public class JavaAgentJarFinder implements JavaAgent {
 
   public Option<String> getJarLocation() {
     // TODO Auto-generated method stub
-    return Option.someOrNone(this.location);
+    return Option.some(this.location);
   }
 
 }

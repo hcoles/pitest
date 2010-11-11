@@ -30,7 +30,7 @@ public class MutationDetails implements Serializable {
         parseLineNumber(description));
   }
 
-  private int parseLineNumber(final String description) {
+  public static int parseLineNumber(final String description) {
     final int start = description.indexOf(":") + 1;
     final int end = description.indexOf(":", start);
     if ((start > 0) && (end > start)) {

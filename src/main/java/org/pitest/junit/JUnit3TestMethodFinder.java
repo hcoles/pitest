@@ -39,7 +39,7 @@ public class JUnit3TestMethodFinder implements MethodFinder {
         && method.getReturnType().equals(Void.TYPE)
         && (method.getParameterTypes().length == 0) && isPublic(method)
         && extendsTestCase(method.getDeclaringClass())) {
-      return Option.someOrNone(new TestMethod(method, null));
+      return Option.some(new TestMethod(method));
     } else {
       return Option.none();
     }

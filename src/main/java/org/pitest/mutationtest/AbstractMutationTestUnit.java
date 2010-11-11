@@ -19,9 +19,11 @@ import java.util.List;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.functional.Option;
 import org.pitest.testunit.AbstractTestUnit;
 
 public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
@@ -48,8 +50,11 @@ public abstract class AbstractMutationTestUnit extends AbstractTestUnit {
   }
 
   protected List<TestUnit> findTestUnits() {
+    // FIXME we do not apply any test filters. Is this what the user
+    // expects?
     return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(), this.test);
+        new NullDiscoveryListener(), new UnGroupedStrategy(), Option
+            .<TestFilter> none(), this.test);
   }
 
   public MutationConfig getMutationConfig() {

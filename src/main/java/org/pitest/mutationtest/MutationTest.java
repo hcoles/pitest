@@ -28,6 +28,4 @@ public @interface MutationTest {
 
   int threshold();
 
-  boolean useHotSwap() default false;
-
 }

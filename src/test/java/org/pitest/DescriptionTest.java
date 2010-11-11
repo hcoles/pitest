@@ -8,9 +8,9 @@ import java.lang.reflect.Method;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
 
 public class DescriptionTest {
@@ -27,9 +27,11 @@ public class DescriptionTest {
     try {
       final Method m = Reflection.publicMethod(this.getClass(),
           "testCanBeSerializedAndDeserialized");
-      this.testee = new Description("foo", IOException.class, new TestMethod(m,
-          null));
-      SerializationUtils.clone(this.testee);
+      this.testee = new Description("foo", IOException.class, new TestMethod(m));
+      final Description actual = (Description) IsolationUtils.cloneForLoader(
+          this.testee, IsolationUtils.getContextClassLoader());
+
+      assertEquals(this.testee, actual);
     } catch (final Throwable t) {
       fail();
     }
@@ -43,8 +45,8 @@ public class DescriptionTest {
 
   @Test
   public void testGetMethodReturnsSomeIfMethodSupplied() {
-    final TestMethod tm = new TestMethod(null, null);
+    final TestMethod tm = new TestMethod(null);
     this.testee = new Description("foo", null, tm);
-    assertEquals(Option.someOrNone(tm), this.testee.getMethod());
+    assertEquals(Option.some(tm), this.testee.getMethod());
   }
 }

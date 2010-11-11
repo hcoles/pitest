@@ -19,7 +19,9 @@ import java.util.Iterator;
 
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.Option;
 
 /**
  * @author henry
@@ -42,6 +44,15 @@ public abstract class AbstractTestUnit implements TestUnit {
 
   public final Description description() {
     return this.description;
+  }
+
+  public Option<TestUnit> filter(final TestFilter filter) {
+    if (filter.include(this)) {
+      return Option.<TestUnit> some(this);
+    } else {
+      return Option.none();
+    }
+
   }
 
 }

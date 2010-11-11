@@ -15,8 +15,11 @@
 package com.example;
 
 import org.jmock.MockObjectTestCase;
+import org.junit.runner.RunWith;
 import org.pitest.annotations.TestClass;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
+@RunWith(PITJUnitRunner.class)
 @TestClass(TestA1.Testee.class)
 public class TestA1 extends MockObjectTestCase {
 
@@ -42,7 +45,7 @@ public class TestA1 extends MockObjectTestCase {
   }
 
   public void test2() throws InterruptedException {
-    System.out.println("returnTwo = " + Testee.returnTwo());
+    System.out.println("TestA1.test2 A1 returnTwo = " + Testee.returnTwo());
     assertEquals(2, Testee.returnTwo());
 
   }

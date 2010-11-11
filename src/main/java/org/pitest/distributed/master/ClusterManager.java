@@ -142,7 +142,7 @@ public class ClusterManager implements
   private void handleReceived(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
 
-    record.setHandler(Option.someOrNone(message.getHandler()));
+    record.setHandler(Option.some(message.getHandler()));
   }
 
   public long registerGroup(final TestUnit testGroup) {

@@ -31,7 +31,7 @@ public class GetResourceDataCallable implements Callable<Option<byte[]>>,
     final URL url = container.getClassPath().findResource(this.name);
     try {
       if (url != null) {
-        return Option.someOrNone(ClassPath.streamToByteArray(url.openStream()));
+        return Option.some(ClassPath.streamToByteArray(url.openStream()));
 
       } else {
         return Option.none();

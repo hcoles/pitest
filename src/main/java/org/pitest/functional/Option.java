@@ -35,7 +35,7 @@ public abstract class Option<T> implements Iterable<T>, Serializable {
   public abstract boolean hasSome();
 
   @SuppressWarnings("unchecked")
-  public static <T> Option<T> someOrNone(final T value) {
+  public static <T> Option<T> some(final T value) {
     if (value == null) {
       return NONE;
     } else {

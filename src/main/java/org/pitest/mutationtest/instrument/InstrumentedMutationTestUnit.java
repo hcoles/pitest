@@ -16,34 +16,41 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.bcel.util.ClassLoaderRepository;
 import org.pitest.Description;
+import org.pitest.MetaData;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.F2;
+import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.AbstractMutationTestUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.JavaProcess;
+import org.pitest.util.StreamMonitor;
+import org.pitest.util.Unchecked;
 
 import com.reeltwo.jumble.mutation.Mutater;
 
@@ -54,6 +61,8 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
   private static final Logger logger             = Logger
                                                      .getLogger(InstrumentedMutationTestUnit.class
                                                          .getName());
+
+  private static final long   PROCESS_START_TIME = 5000;
 
   public InstrumentedMutationTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
@@ -90,25 +99,16 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
         if (!tests.isEmpty()) {
 
-          final List<AssertionError> normalExecutionFailures = new ArrayList<AssertionError>();
-          final long t0 = System.currentTimeMillis();
-          this.runTestInSeperateProcessForMutationRange(
-              normalExecutionFailures, -1, -1, cp, tests, 0);
-          final long normalExecution = System.currentTimeMillis() - t0;
+          // run original tests in this process. If we are distributed
+          // this will suck required classes and resources to cache
+          // if we are not distributed this is of limited value . . .
+          final long normalExecution = runUnmutatedTests(tests);
 
-          if (normalExecutionFailures.isEmpty()) {
-            System.out
-                .println("Tests do not run green when no mutation present");
-            throw new RuntimeException(
-                "Cannot mutation test as tests do not pass without mutation");
-          }
+          final Map<Integer, MutationResult> mutations = runTestsInSeperateProcess(
+              cp, mutationCount, tests, normalExecution);
 
-          final List<AssertionError> failures = new ArrayList<AssertionError>();
+          reportResults(mutationCount, mutations, rc);
 
-          failures.addAll(runTestsInSeperateProcess(cp, mutationCount, tests,
-              normalExecution));
-
-          reportResults(mutationCount, failures, rc);
         } else {
           rc.notifyEnd(this.description(), new AssertionError(
               "No tests to mutation test"));
@@ -125,22 +125,110 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
   }
 
-  private int runTestInSeperateProcessForMutationRange(
-      final Collection<AssertionError> results, final int start, final int end,
-      final ClassPath cp, final List<TestUnit> tus, final long normalExecution)
+  private long runUnmutatedTests(final List<TestUnit> tests) throws IOException {
+
+    final long t0 = System.currentTimeMillis();
+    final MutationTestWorker worker = new MutationTestWorker(tests,
+        this.config, IsolationUtils.getContextClassLoader());
+
+    final CheckForFailureReporter r = new CheckForFailureReporter();
+    try {
+      final F2<Class<?>, byte[], Boolean> nullHotSwap = new F2<Class<?>, byte[], Boolean>() {
+        public Boolean apply(final Class<?> a, final byte[] b) {
+          return true;
+        }
+
+      };
+
+      worker.run(nullHotSwap, -1, -1, this.classToMutate.getName(), r, null);
+    } catch (final ClassNotFoundException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+
+    final long normalExecution = System.currentTimeMillis() - t0;
+
+    if (r.hadFailure()) {
+      System.out.println("Tests do not run green when no mutation present");
+      throw new RuntimeException(
+          "Cannot mutation test as tests do not pass without mutation");
+    }
+    return normalExecution;
+  }
+
+  private SlaveResult runTestInSeperateProcessForMutationRange(
+      final Map<Integer, MutationResult> mutations, final int start,
+      final int end, final ClassPath cp, final List<TestUnit> tus,
+      final long normalExecution, final Option<Statistics> stats)
       throws IOException {
 
     final File inputfile = File.createTempFile(randomFilename(), ".data");
     final File result = File.createTempFile(randomFilename(), ".results");
 
     final String[] args = createSlaveArgs(start, end, tus, inputfile, result,
-        cp);
+        stats);
+
+    final String lauchClassPath = getLaunchClassPath(cp);
 
     final JavaProcess worker = JavaProcess.launch(Collections
         .<String> emptyList(), InstrumentedMutationTestSlave.class, Arrays
-        .asList(args), javaAgentJarFinder);
+        .asList(args), javaAgentJarFinder, lauchClassPath);
 
     boolean timedOut = false;
+    final Thread t = createWorkerThread(worker);
+
+    final InputStream fis = new BufferedInputStream(new FileInputStream(result));
+    final ResultsReader rr = new ResultsReader(end, mutations, stats);
+    final StreamMonitor sm = new StreamMonitor(fis, rr);
+
+    try {
+      if (normalExecution != 0) {
+        t.start();
+        final long timeout = PROCESS_START_TIME + (normalExecution + 5)
+            * (end - start + 1);
+        System.out.println("Timeout is " + timeout + " for " + start + " to "
+            + end + ". normal exec was " + normalExecution);
+        t.join(timeout);
+        if (worker.isAlive()) {
+          timedOut = true;
+        }
+        worker.destroy();
+      } else {
+        t.run();
+      }
+    } catch (final InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    sm.requestStop();
+
+    try {
+      // thread might be blocked with no input to read
+      if (!timedOut) {
+        sm.join(5000);
+      }
+    } catch (final InterruptedException e) {
+      // ignore
+    }
+
+    final SlaveResult sr = rr.getResult();
+    int lastRunMutation = sr.getLastRunMutation();
+    if (timedOut) {
+      mutations.get(lastRunMutation).detected = true;
+      // skip one as result cannot have been written if an infinite loop
+      // occurred for the mutation
+      lastRunMutation = lastRunMutation + 1;
+      System.out.println("Timed out while running mutation " + lastRunMutation);
+    }
+
+    fis.close();
+    inputfile.delete();
+    result.delete();
+
+    return new SlaveResult(lastRunMutation, sr.getStats());
+
+  }
+
+  private Thread createWorkerThread(final JavaProcess worker) {
     final Thread t = new Thread() {
       @Override
       public void run() {
@@ -155,90 +243,50 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     };
 
     t.setDaemon(true);
-
-    try {
-      if (normalExecution != 0) {
-        t.start();
-        final long timeout = (normalExecution + 5) * (end - start + 1);
-        System.out.println("Timeout is " + timeout);
-        t.join(timeout);
-        if (worker.isAlive()) {
-          timedOut = true;
-        }
-        worker.destroy();
-      } else {
-        t.run();
-      }
-    } catch (final InterruptedException e) {
-      e.printStackTrace();
-    }
-
-    int lastRunMutation = readResults(results, result, start);
-    if (timedOut) {
-      // skip one as result cannot have been written if an infinite loop
-      // occured for the mutation
-      lastRunMutation = lastRunMutation + 1;
-      System.out.println("Timed out while running mutation " + lastRunMutation);
-    }
-
-    inputfile.delete();
-    result.delete();
-
-    return lastRunMutation;
-
+    return t;
   }
 
-  private int readResults(final Collection<AssertionError> results,
-      final File result, final int start) throws FileNotFoundException,
-      IOException {
-    final BufferedReader r = new BufferedReader(new InputStreamReader(
-        new FileInputStream(result)));
-    int lastRunMutation = start;
-    try {
-      while (r.ready()) {
-        final String line = r.readLine();
-        final String[] parts = line.split(",");
-        lastRunMutation = Integer.parseInt(parts[0].substring(0, parts[0]
-            .indexOf("=")));
-        if (parts[0].contains("false")) {
-          results.add(arrayToAssertionError(parts));
-        }
-        System.out.println("Result from file " + line);
+  private String getLaunchClassPath(final ClassPath cp) {
+    String classpath = System.getProperty("java.class.path");
+    for (final ClassPathRoot each : cp) {
+      final Option<String> additional = each.cacheLocation();
+      for (final String path : additional) {
+        classpath = classpath + File.pathSeparator + path;
       }
-    } finally {
-      r.close();
     }
-    return lastRunMutation;
+    return classpath;
   }
 
-  private Collection<AssertionError> runTestsInSeperateProcess(
+  private Map<Integer, MutationResult> runTestsInSeperateProcess(
       final ClassPath cp, final int mutationCount, final List<TestUnit> tus,
       final long normalExecution) throws IOException, InterruptedException {
 
-    final Collection<AssertionError> results = new ArrayList<AssertionError>();
+    final Map<Integer, MutationResult> mutations = new HashMap<Integer, MutationResult>();
     int start = 0;
     final int end = mutationCount;
-    int lastRunMutation = -10;
+    Option<Statistics> stats = Option.none();
 
-    while (start != mutationCount) {
+    while (start < mutationCount) {
       System.out.println("Testing mutations " + start + " to " + end + " of "
           + mutationCount);
-      lastRunMutation = runTestInSeperateProcessForMutationRange(results,
-          start, end, cp, tus, normalExecution);
-      start = lastRunMutation + 1;
+      final SlaveResult sr = runTestInSeperateProcessForMutationRange(
+          mutations, start, end, cp, tus, normalExecution, stats);
+      start = sr.getLastRunMutation() + 1;
+      stats = sr.getStats();
+      System.out.println("Got stats from slave " + stats);
     }
 
-    return results;
+    return mutations;
 
   }
 
   private String[] createSlaveArgs(final int start, final int end,
       final List<TestUnit> tus, final File inputfile, final File result,
-      final ClassPath cp) throws IOException {
+      final Option<Statistics> stats) throws IOException {
     final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile));
-    bw.append(IsolationUtils.toTransportString(this.config));
+    bw.append(IsolationUtils.toTransportString(stats));
     bw.newLine();
-    bw.append(IsolationUtils.toTransportString(cp));
+    bw.append(IsolationUtils.toTransportString(this.config));
     bw.newLine();
     bw.append(IsolationUtils.toTransportString(tus));
     bw.newLine();
@@ -268,29 +316,32 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
   }
 
   private void reportResults(final int mutationCount,
-      final List<AssertionError> failures, final ResultCollector rc) {
+      final Map<Integer, MutationResult> mutations, final ResultCollector rc) {
+
+    final List<AssertionError> failures = new ArrayList<AssertionError>();
+    final MetaData md = new MutationMetaData(mutations.values());
+    for (final MutationResult result : mutations.values()) {
+      if (!result.detected) {
+        failures.add(createAssertionError(result.details));
+      }
+    }
+
     final float percentageDetected = 100f - ((failures.size() / (float) mutationCount) * 100f);
     if (percentageDetected < this.config.getThreshold()) {
 
       final AssertionError ae = new AssertionError("Tests detected "
           + percentageDetected + "% of " + mutationCount
           + " mutations. Threshold was " + this.config.getThreshold());
+
       AssertionError last = ae;
       for (final AssertionError each : failures) {
         last.initCause(each);
         last = each;
       }
-      rc.notifyEnd(this.description(), ae);
+      rc.notifyEnd(this.description(), ae, md);
     } else {
-      rc.notifyEnd(this.description());
+      rc.notifyEnd(this.description(), md);
     }
-
-  }
-
-  private AssertionError arrayToAssertionError(final String[] parts) {
-    final MutationDetails details = new MutationDetails(parts[1], parts[2],
-        parts[3], parts[4]);
-    return createAssertionError(details);
 
   }
 

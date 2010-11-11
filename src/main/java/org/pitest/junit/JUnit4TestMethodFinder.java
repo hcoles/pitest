@@ -40,7 +40,7 @@ public class JUnit4TestMethodFinder implements MethodFinder {
       final Class<? extends Throwable> expected = !annotation.expected()
           .getName().equals("org.junit.Test$None") ? annotation.expected()
           : null;
-      return Option.someOrNone(new TestMethod(method, expected));
+      return Option.some(new TestMethod(method, expected));
     } else {
       return Option.none();
     }

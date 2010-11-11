@@ -17,6 +17,8 @@ package org.pitest.internal;
 import java.util.concurrent.BlockingQueue;
 
 import org.pitest.Description;
+import org.pitest.ExtendedTestResult;
+import org.pitest.MetaData;
 import org.pitest.TestResult;
 import org.pitest.extension.ResultCollector;
 import org.pitest.testunit.TestUnitState;
@@ -38,12 +40,21 @@ public final class ConcreteResultCollector implements ResultCollector {
     put(new TestResult(tu, null, TestUnitState.NOT_RUN));
   }
 
-  public void notifyEnd(final Description description, final Throwable t) {
-    put(new TestResult(description, t));
+  public void notifyEnd(final Description description, final Throwable t,
+      final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      put(new ExtendedTestResult(description, t, data));
+    } else {
+      put(new TestResult(description, t));
+    }
   }
 
-  public void notifyEnd(final Description tu) {
-    put(new TestResult(tu, null));
+  public void notifyEnd(final Description description, final MetaData... data) {
+    if ((data != null) && (data.length > 0)) {
+      put(new ExtendedTestResult(description, null, data));
+    } else {
+      put(new TestResult(description, null));
+    }
   }
 
   private void put(final TestResult tr) {

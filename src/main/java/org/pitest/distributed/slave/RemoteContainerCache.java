@@ -32,7 +32,7 @@ public class RemoteContainerCache {
   public Option<RemoteContainer> getCachedContainer(final RunDetails run) {
     for (final RemoteContainer each : this.runs) {
       if (each.getRun().equals(run)) {
-        return Option.someOrNone(each);
+        return Option.some(each);
       }
     }
     return Option.none();

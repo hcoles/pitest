@@ -27,9 +27,14 @@ import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.CompoundTestDiscoveryListener;
+import org.pitest.extension.common.CompoundTestFilter;
+import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 
@@ -48,9 +53,24 @@ public class Pitest {
   }
 
   public void run(final Container defaultContainer, final Class<?>... classes) {
+    final F2<Class<?>, Container, Container> containerUpdateFunction = new F2<Class<?>, Container, Container>() {
+
+      public Container apply(final Class<?> c, final Container defaultContainer) {
+        return new ContainerParser(c).create(defaultContainer);
+      }
+
+    };
+    run(defaultContainer, containerUpdateFunction, classes);
+  }
+
+  public void run(final Container defaultContainer,
+      final F2<Class<?>, Container, Container> containerUpdateFunction,
+      final Class<?>... classes) {
     for (final Class<?> c : classes) {
-      final Container container = new ContainerParser(c)
-          .create(defaultContainer);
+
+      final Container container = containerUpdateFunction.apply(c,
+          defaultContainer);
+
       StaticConfiguration staticConfig = new DefaultStaticConfig(
           this.initialStaticConfig);
       for (final StaticConfigUpdater each : this.initialConfig
@@ -58,14 +78,26 @@ public class Pitest {
         staticConfig = each.apply(staticConfig, c);
       }
 
+      final Option<TestFilter> filter = createTestFilter(staticConfig);
+
       run(container, staticConfig, findTestUnitsForAllSuppliedClasses(
           this.initialConfig, new CompoundTestDiscoveryListener(staticConfig
-              .getDiscoveryListeners()), staticConfig.getGroupingStrategy(), c));
+              .getDiscoveryListeners()), staticConfig.getGroupingStrategy(),
+          filter, c));
+    }
+  }
+
+  private Option<TestFilter> createTestFilter(
+      final StaticConfiguration staticConfig) {
+    if (staticConfig.getTestFilters().isEmpty()) {
+      return Option.none();
+    } else {
+      return Option.<TestFilter> some(new CompoundTestFilter(staticConfig
+          .getTestFilters()));
     }
   }
 
   public void run(final Container container, final List<TestUnit> testUnits) {
-    System.out.println("Running " + testUnits.size() + " tests");
     this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
         testUnits);
   }
@@ -80,7 +112,8 @@ public class Pitest {
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
       final Configuration startConfig, final TestDiscoveryListener listener,
-      final GroupingStrategy groupStrategy, final Class<?>... classes) {
+      final GroupingStrategy groupStrategy,
+      final Option<TestFilter> testFilter, final Class<?>... classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
@@ -88,7 +121,25 @@ public class Pitest {
           .getTestUnits(startConfig, listener);
       testUnits.addAll(groupStrategy.group(c, testUnitsFromClass));
     }
-    return testUnits;
+
+    if (testFilter.hasSome()) {
+      return applyTestFilter(testFilter.value(), testUnits);
+    } else {
+      return testUnits;
+    }
+
+  }
+
+  private static List<TestUnit> applyTestFilter(final TestFilter testFilter,
+      final List<TestUnit> testUnits) {
+    final F<TestUnit, Iterable<TestUnit>> f = new F<TestUnit, Iterable<TestUnit>>() {
+
+      public Iterable<TestUnit> apply(final TestUnit a) {
+        return a.filter(testFilter);
+      }
+
+    };
+    return FCollection.flatMap(testUnits, f);
   }
 
   private void processResultsFromQueue(final Container container,
@@ -128,6 +179,7 @@ public class Pitest {
       }
     };
     final Thread feederThread = new Thread(feeder);
+    feederThread.setDaemon(true);
     feederThread.start();
     return feederThread;
   }

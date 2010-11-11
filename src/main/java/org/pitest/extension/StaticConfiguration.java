@@ -26,4 +26,6 @@ public interface StaticConfiguration {
 
   public abstract GroupingStrategy getGroupingStrategy();
 
+  public abstract Collection<TestFilter> getTestFilters();
+
 }

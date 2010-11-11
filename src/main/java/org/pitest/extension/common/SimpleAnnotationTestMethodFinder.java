@@ -37,15 +37,11 @@ public class SimpleAnnotationTestMethodFinder implements MethodFinder {
   public Option<TestMethod> apply(final Method method) {
     final Annotation a = method.getAnnotation(this.annotationClass);
     if (a != null) {
-      return Option.someOrNone(new TestMethod(method, null));
+      return Option.some(new TestMethod(method));
     } else {
       return Option.none();
     }
   }
 
-  public void reset() {
-    // TODO Auto-generated method stub
-
-  }
 
 }

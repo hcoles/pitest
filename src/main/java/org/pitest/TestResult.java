@@ -16,6 +16,7 @@ package org.pitest;
 
 import java.io.Serializable;
 
+import org.pitest.functional.Option;
 import org.pitest.testunit.TestUnitState;
 
 /**
@@ -52,6 +53,10 @@ public class TestResult implements Serializable {
 
   public Description getDescription() {
     return this.description;
+  }
+
+  public <T extends MetaData> Option<T> getValue(final Class<T> type) {
+    return Option.none();
   }
 
   @Override

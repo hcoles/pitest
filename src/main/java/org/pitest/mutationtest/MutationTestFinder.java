@@ -28,7 +28,6 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.TestClass;
-import org.pitest.mutationtest.classloader.MutationTestUnit;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 
 public class MutationTestFinder implements TestUnitFinder {
@@ -72,21 +71,16 @@ public class MutationTestFinder implements TestUnitFinder {
   private TestUnit createTestUnit(final Class<?> test,
       final Class<?> classToMutate, final MutationConfig mutationConfig,
       final Configuration pitConfig, final Description description) {
-    if (mutationConfig.isUseHotswap()) {
-      return new MutationTestUnit(test, classToMutate, mutationConfig,
-          pitConfig, description);
-    } else {
-      return new InstrumentedMutationTestUnit(test, classToMutate,
-          mutationConfig, pitConfig, description);
-    }
+    return new InstrumentedMutationTestUnit(test, classToMutate,
+        mutationConfig, pitConfig, description);
+
   }
 
   private MutationConfig determineConfigToUse(final TestClass clazz) {
     final MutationTest annotation = clazz.getClazz().getAnnotation(
         MutationTest.class);
     if (annotation != null) {
-      return new MutationConfig(annotation.useHotSwap(),
-          annotation.threshold(), annotation.mutators());
+      return new MutationConfig(annotation.threshold(), annotation.mutators());
     } else {
       return this.mutationConfig;
     }
@@ -98,7 +92,7 @@ public class MutationTestFinder implements TestUnitFinder {
     if (annotation == null) {
       return determineTesteeFromName(test);
     } else {
-      return Option.<Class<?>> someOrNone(annotation.value());
+      return Option.<Class<?>> some(annotation.value());
     }
   }
 
@@ -146,7 +140,7 @@ public class MutationTestFinder implements TestUnitFinder {
     try {
       final Class<?> guessed = Class.forName(name, true, IsolationUtils
           .getContextClassLoader());
-      return Option.<Class<?>> someOrNone(guessed);
+      return Option.<Class<?>> some(guessed);
     } catch (final ClassNotFoundException e) {
       return Option.none();
     } catch (final NoClassDefFoundError e) {

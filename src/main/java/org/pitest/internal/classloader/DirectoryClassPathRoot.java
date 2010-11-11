@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.pitest.functional.Option;
+
 /*
  * Copyright 2010 Henry Coles
  * 
@@ -113,6 +115,10 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
         this.root.getAbsolutePath().length() + 1,
         (f.getAbsolutePath().length() - ".class".length())).replace(
         File.separatorChar, '.');
+  }
+
+  public Option<String> cacheLocation() {
+    return Option.none();
   }
 
 }

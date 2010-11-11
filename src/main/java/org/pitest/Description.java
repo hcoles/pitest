@@ -31,7 +31,7 @@ public final class Description implements Serializable {
       final TestMethod method) {
     this.testClass = testClass;
     this.name = name;
-    this.method = Option.someOrNone(method);
+    this.method = Option.some(method);
   }
 
   public Class<?> getTestClass() {

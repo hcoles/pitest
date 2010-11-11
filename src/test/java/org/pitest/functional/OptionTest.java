@@ -26,12 +26,12 @@ public class OptionTest {
 
   @Test
   public void testSomeOrNoneReturnsNoneWhenPassedNull() {
-    assertEquals(Option.none(), Option.someOrNone(null));
+    assertEquals(Option.none(), Option.some(null));
   }
 
   @Test
   public void testSomeOrNoneDoesNotReturnNoneWhenPassedAValue() {
-    assertFalse(Option.someOrNone("foo").equals(Option.none()));
+    assertFalse(Option.some("foo").equals(Option.none()));
   }
 
   @Test
@@ -41,12 +41,12 @@ public class OptionTest {
 
   @Test
   public void testSomesWithSameValuesAreEqual() {
-    assertEquals(Option.someOrNone("foo"), Option.someOrNone("foo"));
+    assertEquals(Option.some("foo"), Option.some("foo"));
   }
 
   @Test
   public void testSomesWithDifferentValuesAreNotEqual() {
-    assertFalse(Option.someOrNone("foo").equals(Option.someOrNone("bar")));
+    assertFalse(Option.some("foo").equals(Option.some("bar")));
   }
 
   @Test
@@ -56,12 +56,12 @@ public class OptionTest {
 
   @Test
   public void testHasSomeReturnsTrueForSome() {
-    assertTrue(Option.someOrNone("foo").hasSome());
+    assertTrue(Option.some("foo").hasSome());
   }
 
   @Test
   public void testHasNoneReturnsFalseForSome() {
-    assertFalse(Option.someOrNone("foo").hasNone());
+    assertFalse(Option.some("foo").hasNone());
   }
 
   @Test
@@ -71,7 +71,7 @@ public class OptionTest {
 
   @Test
   public void testValueReturnsValueForSome() {
-    assertEquals("foo", Option.someOrNone("foo").value());
+    assertEquals("foo", Option.some("foo").value());
   }
 
   @Test(expected = Error.class)
@@ -86,7 +86,7 @@ public class OptionTest {
 
   @Test
   public void testCanIterateOverExactlyOneValueForSome() {
-    final Option<String> testee = Option.someOrNone("foo");
+    final Option<String> testee = Option.some("foo");
     final Iterator<String> it = testee.iterator();
     assertEquals("foo", it.next());
     assertFalse(it.hasNext());
@@ -99,7 +99,7 @@ public class OptionTest {
 
   @Test
   public void testGetOrElseReturnsValueForSome() {
-    assertEquals("foo", Option.someOrNone("foo").getOrElse("else"));
+    assertEquals("foo", Option.some("foo").getOrElse("else"));
   }
 
 }

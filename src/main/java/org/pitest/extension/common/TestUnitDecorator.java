@@ -40,4 +40,5 @@ public abstract class TestUnitDecorator implements TestUnit {
     // do not return our child as it is not a real one
     return Collections.<TestUnit> emptyList().iterator();
   }
+
 }

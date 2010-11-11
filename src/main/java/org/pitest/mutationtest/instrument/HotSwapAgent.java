@@ -24,7 +24,7 @@ public class HotSwapAgent {
 
   public static void premain(final String agentArguments,
       final Instrumentation inst) {
-    System.out.println("Installing PIT agent wiht args " + agentArguments);
+    System.out.println("Installing PIT agent");
     instrumentation = inst;
   }
 
@@ -34,6 +34,7 @@ public class HotSwapAgent {
 
     try {
       instrumentation.redefineClasses(definitions);
+
       return true;
     } catch (final ClassNotFoundException e) {
       // TODO Auto-generated catch block

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.pitest.functional.Option;
 import org.pitest.internal.classloader.ClassPathRoot;
 
 public class DistributedCacheRoot implements ClassPathRoot {
@@ -54,6 +55,10 @@ public class DistributedCacheRoot implements ClassPathRoot {
   public void release() throws IOException {
     // TODO Auto-generated method stub
 
+  }
+
+  public Option<String> cacheLocation() {
+    return Option.none();
   }
 
 }
