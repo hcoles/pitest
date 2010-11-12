@@ -16,9 +16,11 @@ package org.pitest.extension;
 
 import java.util.Collection;
 
+import org.pitest.internal.TestClass;
+
 public interface GroupingStrategy {
 
-  public Collection<? extends TestUnit> group(Class<?> c,
+  public Collection<? extends TestUnit> group(TestClass c,
       Collection<TestUnit> testUnitsFromClass);
 
 }

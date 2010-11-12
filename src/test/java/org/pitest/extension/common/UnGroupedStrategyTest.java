@@ -14,19 +14,34 @@
  */
 package org.pitest.extension.common;
 
+import static org.junit.Assert.assertSame;
+
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
-import org.pitest.MultipleTestGroup;
-import org.pitest.extension.GroupingStrategy;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.extension.TestUnit;
-import org.pitest.internal.TestClass;
 
-public class GroupPerClassStrategy implements GroupingStrategy {
+public class UnGroupedStrategyTest {
+  @Mock
+  TestUnit tu1;
 
-  public Collection<? extends TestUnit> group(final TestClass c,
-      final Collection<TestUnit> testUnitsFromClass) {
-    return Collections.singleton(new MultipleTestGroup(testUnitsFromClass));
+  @Mock
+  TestUnit tu2;
+
+  @Before
+  public void setup() {
+    MockitoAnnotations.initMocks(this);
   }
 
+  @Test
+  public void testReturnsSuppliedCollection() {
+    final UnGroupedStrategy testee = new UnGroupedStrategy();
+    final Collection<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
+    final Collection<? extends TestUnit> actual = testee.group(null, tus);
+    assertSame(tus, actual);
+  }
 }

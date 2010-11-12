@@ -14,17 +14,16 @@
  */
 package com.example;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class TestB2 {
-  
+
   private static boolean beforeClassRun = false;
-  
+
   @BeforeClass
   public static void beforeClass() {
     beforeClassRun = true;
@@ -34,7 +33,7 @@ public class TestB2 {
   public void before() {
     assertTrue(beforeClassRun);
   }
-  
+
   @Test
   public void test1() {
 

@@ -118,8 +118,8 @@ public class Pitest {
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-          .getTestUnits(startConfig, listener);
-      testUnits.addAll(groupStrategy.group(c, testUnitsFromClass));
+          .getTestUnits(startConfig, listener, groupStrategy);
+      testUnits.addAll(testUnitsFromClass);
     }
 
     if (testFilter.hasSome()) {

@@ -15,8 +15,6 @@
 package org.pitest.junit.adapter;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Stack;
 
 import org.junit.runner.Description;
@@ -28,11 +26,10 @@ import org.junit.runner.notification.RunNotifier;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.TestMethod;
-import org.pitest.TestResult;
+import org.pitest.containers.NullContainer;
 import org.pitest.containers.UnisolatedThreadPoolContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
-import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
@@ -90,39 +87,7 @@ public class PITJUnitRunner extends Runner implements Filterable {
 
     };
 
-    final Container c = new Container() {
-
-      public boolean awaitCompletion() {
-        return true;
-      }
-
-      public ResultSource getResultSource() {
-        return new ResultSource() {
-
-          public List<TestResult> getAvailableResults() {
-            return Collections.emptyList();
-          }
-
-          public boolean resultsAvailable() {
-            return false;
-          }
-
-        };
-      }
-
-      public void setMaxThreads(final int maxThreads) {
-
-      }
-
-      public void shutdownWhenProcessingComplete() {
-
-      }
-
-      public void submit(final TestUnit c) {
-        
-      }
-
-    };
+    final Container c = new NullContainer();
     final Configuration conf = new JUnitCompatibleConfiguration();
     final DefaultStaticConfig staticConfig = createStaticConfig();
     staticConfig.addDiscoveryListener(describer);

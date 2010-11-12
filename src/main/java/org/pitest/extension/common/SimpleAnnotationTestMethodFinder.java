@@ -43,5 +43,4 @@ public class SimpleAnnotationTestMethodFinder implements MethodFinder {
     }
   }
 
-
 }

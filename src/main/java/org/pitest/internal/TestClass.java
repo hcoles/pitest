@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
@@ -87,7 +88,7 @@ public final class TestClass implements Serializable {
 
   private void findTestUnits(final List<TestUnit> tus,
       final TestClass suiteClass, final Configuration startConfig,
-      final TestDiscoveryListener listener) {
+      final GroupingStrategy groupStrategy, final TestDiscoveryListener listener) {
 
     listener.enterClass(suiteClass.getClazz());
 
@@ -97,18 +98,22 @@ public final class TestClass implements Serializable {
     final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc, ConcreteConfiguration
-          .updateConfig(classConfig, tc), listener);
+          .updateConfig(classConfig, tc), groupStrategy, listener);
     }
-    tus.addAll(suiteClass.getTestUnitsWithinClass(startConfig, listener));
+    final Collection<TestUnit> testsInThisClass = suiteClass
+        .getTestUnitsWithinClass(startConfig, listener);
+    if (!testsInThisClass.isEmpty()) {
+      tus.addAll(groupStrategy.group(suiteClass, testsInThisClass));
+    }
 
     listener.leaveClass(suiteClass.getClazz());
 
   }
 
   public Collection<TestUnit> getTestUnits(final Configuration startConfig,
-      final TestDiscoveryListener listener) {
+      final TestDiscoveryListener listener, final GroupingStrategy groupStrategy) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-    findTestUnits(tus, this, startConfig, listener);
+    findTestUnits(tus, this, startConfig, groupStrategy, listener);
     return tus;
   }
 
