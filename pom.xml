@@ -4,7 +4,7 @@
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
-	<version>0.14-alpha-SNAPSHOT</version>
+	<version>0.15-SNAPSHOT</version>
 	<name>pitest</name>
 	<url>http://maven.apache.org</url>
 	<build>
