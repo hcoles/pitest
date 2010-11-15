@@ -155,8 +155,6 @@ public class PITJUnitRunner extends Runner implements Filterable {
       this.filter = Option.some(f);
     }
 
-    System.out.println(filter.describe());
-
   }
 
 }

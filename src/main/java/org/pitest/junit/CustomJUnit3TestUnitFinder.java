@@ -56,7 +56,8 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private void flattenSuite(final TestSuite suite, final List<TestUnit> units) {
+  public static void flattenSuite(final TestSuite suite,
+      final List<TestUnit> units) {
     for (int i = 0; i != suite.testCount(); i++) {
       final Test t = suite.testAt(i);
       if (t instanceof TestSuite) {

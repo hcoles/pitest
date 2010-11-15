@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,13 +36,8 @@ import org.pitest.Pitest;
 import org.pitest.TestResult;
 import org.pitest.annotations.PITSuite;
 import org.pitest.extension.Container;
-import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.Transformation;
-import org.pitest.extension.common.AllwaysIsolateStrategy;
-import org.pitest.internal.TransformingClassLoaderFactory;
-import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
 
@@ -72,6 +66,7 @@ public class TestContainersSendCorrectNotifications {
   public static Collection<Object[]> containers() {
     return Arrays.asList(new Object[][] { { uncontainerFactory() },
         { isolatedThreadPoolContainerFactory(2) },
+        { urlClassLoaderIsolatedThreadPoolContainerFactory(2) },
         { unisolatedThreadPoolContainerFactory(1) },
         { unisolatedThreadPoolContainerFactory(3) } });
 
@@ -89,11 +84,17 @@ public class TestContainersSendCorrectNotifications {
   private static Object isolatedThreadPoolContainerFactory(final int threads) {
     return new ContainerFactory() {
       public Container getContainer() {
-        final IsolationStrategy i = new AllwaysIsolateStrategy();
-        final Transformation t = new IdentityTransformation();
-        return new BaseThreadPoolContainer(threads,
-            new TransformingClassLoaderFactory(t, i), Executors
-                .defaultThreadFactory());
+        return new IsolatedThreadPoolContainer(threads, false);
+      }
+
+    };
+  }
+
+  private static Object urlClassLoaderIsolatedThreadPoolContainerFactory(
+      final int threads) {
+    return new ContainerFactory() {
+      public Container getContainer() {
+        return new IsolatedThreadPoolContainer(threads);
       }
 
     };

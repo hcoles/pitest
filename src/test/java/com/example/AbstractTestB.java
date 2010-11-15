@@ -14,46 +14,14 @@
  */
 package com.example;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
 
-import org.junit.Before;
-import org.junit.Test;
+public class AbstractTestB {
 
-public class TestB2 extends AbstractTestB {
+  protected static boolean beforeClassRun = false;
 
-  @Before
-  public void before() {
-    assertTrue(beforeClassRun);
+  @BeforeClass
+  public static void beforeClass() {
+    beforeClassRun = true;
   }
-
-  @Test
-  public void test1() {
-
-  }
-
-  @Test
-  public void test2() {
-
-  }
-
-  @Test
-  public void test3() {
-
-  }
-
-  @Test
-  public void test4() {
-
-  }
-
-  @Test
-  public void test5() {
-
-  }
-
-  @Test
-  public void test6() {
-
-  }
-
 }
