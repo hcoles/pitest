@@ -64,7 +64,6 @@ public class ResultsReader implements SideEffect1<String> {
   @SuppressWarnings("unchecked")
   private void process() {
     final String line = this.lineBuffer.toString();
-    System.out.println("Result from file " + line);
     this.lineBuffer = new StringBuffer();
     if (line.startsWith("STATS=")) {
       this.stats = (Option<Statistics>) IsolationUtils.fromTransportString(line

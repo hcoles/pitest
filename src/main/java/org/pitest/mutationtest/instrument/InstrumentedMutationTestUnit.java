@@ -39,6 +39,7 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F2;
 import org.pitest.functional.Option;
+import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
@@ -169,9 +170,16 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
 
     final String lauchClassPath = getLaunchClassPath(cp);
 
-    final JavaProcess worker = JavaProcess.launch(Collections
-        .<String> emptyList(), InstrumentedMutationTestSlave.class, Arrays
-        .asList(args), javaAgentJarFinder, lauchClassPath);
+    final SideEffect1<String> sendInputToNoWhere = new SideEffect1<String>() {
+      public void apply(final String a) {
+        // do nothing
+      }
+    };
+
+    final JavaProcess worker = JavaProcess.launch(sendInputToNoWhere,
+        sendInputToNoWhere, Collections.<String> emptyList(),
+        InstrumentedMutationTestSlave.class, Arrays.asList(args),
+        javaAgentJarFinder, lauchClassPath);
 
     boolean timedOut = false;
     final Thread t = createWorkerThread(worker);
@@ -213,7 +221,9 @@ public class InstrumentedMutationTestUnit extends AbstractMutationTestUnit {
     final SlaveResult sr = rr.getResult();
     int lastRunMutation = sr.getLastRunMutation();
     if (timedOut) {
-      mutations.get(lastRunMutation).detected = true;
+      if (lastRunMutation != -1) {
+        mutations.get(lastRunMutation).detected = true;
+      }
       // skip one as result cannot have been written if an infinite loop
       // occurred for the mutation
       lastRunMutation = lastRunMutation + 1;
