@@ -21,8 +21,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,13 +28,14 @@ import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
+import org.pitest.extension.OrderStrategy;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.GroupPerClassStrategy;
+import org.pitest.extension.common.GroupLikedTypeOrderStrategy;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
-public class TestGroupingStrategies {
+public class TestOrderStrategies {
 
   private Pitest testee;
 
@@ -59,28 +58,50 @@ public class TestGroupingStrategies {
 
   private static class HideFromJUnit {
 
-    @SuiteClasses( { SuiteWithNoClassOfOwn.class })
-    @StaticConfigurationClass(GroupedSuite.class)
-    public static class GroupedSuite extends DefaultStaticConfig {
-      @Override
-      public GroupingStrategy getGroupingStrategy() {
-        return new GroupPerClassStrategy();
-      }
+    static interface Target {
     }
 
-    @SuiteClasses( { SuiteWithNoClassOfOwn.class })
-    @StaticConfigurationClass(UnGroupedSuite.class)
-    public static class UnGroupedSuite extends DefaultStaticConfig {
+    @StaticConfigurationClass(GroupedSuite.class)
+    @SuiteClasses( { TargetTestOne.class, TargetTestTwo.class, TestOne.class,
+        TestTwo.class })
+    public static class GroupedSuite extends DefaultStaticConfig {
+      @Override
+      public OrderStrategy getOrderStrategy() {
+        return new GroupLikedTypeOrderStrategy(Target.class);
+      }
+
       @Override
       public GroupingStrategy getGroupingStrategy() {
         return new UnGroupedStrategy();
       }
     }
 
-    @RunWith(Suite.class)
-    @SuiteClasses( { TestOne.class, TestTwo.class })
-    public static class SuiteWithNoClassOfOwn {
+    public static class TargetTestOne implements Target {
+      @SuppressWarnings("unused")
+      @Test
+      public void test() {
 
+      }
+
+      @SuppressWarnings("unused")
+      @Test
+      public void test2() {
+
+      }
+    }
+
+    public static class TargetTestTwo implements Target {
+      @SuppressWarnings("unused")
+      @Test
+      public void test() {
+
+      }
+
+      @SuppressWarnings("unused")
+      @Test
+      public void test2() {
+
+      }
     }
 
     public static class TestOne {
@@ -113,14 +134,9 @@ public class TestGroupingStrategies {
   }
 
   @Test
-  public void testGroupPerClassStrategyCorrectlyApplied() {
+  public void testGroupedLikedTypeOrderStrategyCorrectlyApplied() {
     this.testee.run(this.container, HideFromJUnit.GroupedSuite.class);
-    verify(this.container, times(2)).submit((any(TestUnit.class)));
+    verify(this.container, times(5)).submit((any(TestUnit.class)));
   }
 
-  @Test
-  public void testUnGroupedStrategyCorrectlyApplied() {
-    this.testee.run(this.container, HideFromJUnit.UnGroupedSuite.class);
-    verify(this.container, times(4)).submit((any(TestUnit.class)));
-  }
 }

@@ -14,20 +14,10 @@
  */
 package org.pitest.extension;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface StaticConfiguration {
+public interface OrderStrategy {
 
-  public abstract Collection<TestListener> getTestListeners();
-
-  public abstract ResultClassifier getClassifier();
-
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
-
-  public abstract GroupingStrategy getGroupingStrategy();
-
-  public abstract Collection<TestFilter> getTestFilters();
-
-  public abstract OrderStrategy getOrderStrategy();
+  public List<TestUnit> order(List<TestUnit> tus);
 
 }

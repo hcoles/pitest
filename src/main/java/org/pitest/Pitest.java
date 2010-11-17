@@ -105,7 +105,10 @@ public class Pitest {
   private void run(final Container container,
       final StaticConfiguration staticConfig, final List<TestUnit> testUnits) {
 
-    final Thread feederThread = startFeederThread(container, testUnits);
+    final List<TestUnit> orderedTestUnits = staticConfig.getOrderStrategy()
+        .order(testUnits);
+
+    final Thread feederThread = startFeederThread(container, orderedTestUnits);
 
     processResultsFromQueue(container, feederThread, staticConfig);
   }

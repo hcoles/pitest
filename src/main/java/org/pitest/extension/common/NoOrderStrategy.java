@@ -12,22 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest.extension.common;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface StaticConfiguration {
+import org.pitest.extension.OrderStrategy;
+import org.pitest.extension.TestUnit;
 
-  public abstract Collection<TestListener> getTestListeners();
+public class NoOrderStrategy implements OrderStrategy {
 
-  public abstract ResultClassifier getClassifier();
-
-  public abstract Collection<TestDiscoveryListener> getDiscoveryListeners();
-
-  public abstract GroupingStrategy getGroupingStrategy();
-
-  public abstract Collection<TestFilter> getTestFilters();
-
-  public abstract OrderStrategy getOrderStrategy();
+  public List<TestUnit> order(final List<TestUnit> tus) {
+    return tus;
+  }
 
 }

@@ -18,32 +18,41 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.pitest.extension.GroupingStrategy;
+import org.pitest.extension.OrderStrategy;
 import org.pitest.extension.ResultClassifier;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.common.GroupPerClassStrategy;
+import org.pitest.extension.common.NoOrderStrategy;
 
 public class DefaultStaticConfig implements StaticConfiguration {
 
   private ResultClassifier                        classifier;
-  private final GroupingStrategy                  groupingStrategy;
+  private GroupingStrategy                        groupingStrategy;
   private final Collection<TestListener>          testListeners          = new ArrayList<TestListener>();
   private final Collection<TestDiscoveryListener> testDiscoveryListeners = new ArrayList<TestDiscoveryListener>();
   private final Collection<TestFilter>            testFilters            = new ArrayList<TestFilter>();
+  private OrderStrategy                           orderStrategy;
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
     this.groupingStrategy = new GroupPerClassStrategy();
+    this.orderStrategy = new NoOrderStrategy();
   }
 
   public DefaultStaticConfig(final StaticConfiguration orig) {
+    addConfiguration(orig);
+  }
+
+  public final void addConfiguration(final StaticConfiguration orig) {
     this.classifier = orig.getClassifier();
     this.testListeners.addAll(orig.getTestListeners());
     this.testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
     this.groupingStrategy = orig.getGroupingStrategy();
     this.testFilters.addAll(orig.getTestFilters());
+    this.orderStrategy = orig.getOrderStrategy();
   }
 
   public Collection<TestListener> getTestListeners() {
@@ -62,11 +71,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
     this.testDiscoveryListeners.add(tdl);
   }
 
-  public final void addConfiguration(final StaticConfiguration orig) {
-    this.classifier = orig.getClassifier();
-    this.testListeners.addAll(orig.getTestListeners());
-  }
-
   public Collection<TestDiscoveryListener> getDiscoveryListeners() {
     return this.testDiscoveryListeners;
   }
@@ -77,6 +81,10 @@ public class DefaultStaticConfig implements StaticConfiguration {
 
   public Collection<TestFilter> getTestFilters() {
     return this.testFilters;
+  }
+
+  public OrderStrategy getOrderStrategy() {
+    return this.orderStrategy;
   }
 
 }
