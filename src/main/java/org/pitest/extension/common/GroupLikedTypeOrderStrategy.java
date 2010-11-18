@@ -15,54 +15,75 @@
 package org.pitest.extension.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.pitest.Description;
 import org.pitest.MultipleTestGroup;
 import org.pitest.extension.OrderStrategy;
 import org.pitest.extension.TestUnit;
 
 public class GroupLikedTypeOrderStrategy implements OrderStrategy {
 
-  private final Class<?> type;
+  private final Set<Class<?>> mutuallyExclusiveTypes = new HashSet<Class<?>>();
 
-  public GroupLikedTypeOrderStrategy(final Class<?> type) {
-    this.type = type;
+  public GroupLikedTypeOrderStrategy(final Class<?>... types) {
+    this.mutuallyExclusiveTypes.addAll(Arrays.asList(types));
   }
 
   public List<TestUnit> order(final List<TestUnit> tus) {
-    final List<TestUnit> matchesType = new ArrayList<TestUnit>();
-    final List<TestUnit> noMatch = new ArrayList<TestUnit>();
+    final Map<Class<?>, List<TestUnit>> matchesType = new HashMap<Class<?>, List<TestUnit>>();
+    for (final Class<?> each : this.mutuallyExclusiveTypes) {
+      matchesType.put(each, new ArrayList<TestUnit>());
+    }
+    matchesType.put(null, new ArrayList<TestUnit>());
 
     for (final TestUnit each : tus) {
-      if (parentOrChildIsOfType(each)) {
-        matchesType.add(each);
-      } else {
-        noMatch.add(each);
+      final List<TestUnit> bucket = matchesType
+          .get(parentOrChildIsOfType(each));
+      bucket.add(each);
+    }
+
+    final List<TestUnit> groups = new ArrayList<TestUnit>();
+    for (final Class<?> each : this.mutuallyExclusiveTypes) {
+      final List<TestUnit> grouped = matchesType.get(each);
+      if ((!grouped.isEmpty())) {
+        final MultipleTestGroup mtg = new MultipleTestGroup(grouped);
+        groups.add(mtg);
       }
     }
 
-    final List<TestUnit> ordered = new ArrayList<TestUnit>();
-    if (!matchesType.isEmpty()) {
-      final MultipleTestGroup mtg = new MultipleTestGroup(matchesType);
-      ordered.add(mtg);
-    }
-
-    ordered.addAll(noMatch);
-    return ordered;
+    groups.addAll(matchesType.get(null));
+    return groups;
   }
 
-  private boolean parentOrChildIsOfType(final TestUnit tu) {
-    if (this.type.isAssignableFrom(tu.description().getTestClass())) {
-      return true;
+  private Class<?> isAssignableFromTargetType(final Description d) {
+    for (final Class<?> c : this.mutuallyExclusiveTypes) {
+      if (c.isAssignableFrom(d.getTestClass())) {
+        return c;
+      }
+    }
+    return null;
+  }
+
+  private Class<?> parentOrChildIsOfType(final TestUnit tu) {
+    final Class<?> type = isAssignableFromTargetType(tu.description());
+    if (type != null) {
+      return type;
     }
 
     for (final TestUnit each : tu) {
-      if (parentOrChildIsOfType(each)) {
-        return true;
+      final Class<?> t = parentOrChildIsOfType(each);
+      if (t != null) {
+        return t;
       }
     }
 
-    return false;
+    return null;
 
   }
 

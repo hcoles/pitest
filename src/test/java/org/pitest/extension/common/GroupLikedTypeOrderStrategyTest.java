@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.pitest.MultipleTestGroup;
 import org.pitest.extension.GroupingStrategy;
@@ -33,28 +32,13 @@ public class GroupLikedTypeOrderStrategyTest {
 
   private GroupLikedTypeOrderStrategy testee;
 
-  @Before
-  public void setUp() {
-    this.testee = new GroupLikedTypeOrderStrategy(Target.class);
-  }
-
   static interface Target {
   }
 
-  static class TargetTest1 implements Target {
-    @Test
-    public void testOne() {
-
-    }
-
-    @Test
-    public void testTwo() {
-
-    }
-
+  static interface OtherTarget {
   }
 
-  static class TargetTest2 implements Target {
+  static class BaseTest {
     @Test
     public void testOne() {
 
@@ -62,56 +46,38 @@ public class GroupLikedTypeOrderStrategyTest {
 
     @Test
     public void testTwo() {
-    }
-
-  }
-
-  static class TargetTest3 implements Target {
-    @Test
-    public void testOne() {
-
-    }
-
-    @Test
-    public void testTwo() {
-
     }
   }
 
-  static class NonTargetTest1 {
-    @Test
-    public void testOne() {
+  static class TargetTest1 extends BaseTest implements Target {
 
-    }
-
-    @Test
-    public void testTwo() {
-
-    }
   }
 
-  static class NonTargetTest2 {
-    @Test
-    public void testOne() {
-
-    }
-
-    @Test
-    public void testTwo() {
-
-    }
+  static class TargetTest2 extends BaseTest implements Target {
   }
 
-  static class NonTargetTest3 {
-    @Test
-    public void testOne() {
+  static class TargetTest3 extends BaseTest implements Target {
 
-    }
+  }
 
-    @Test
-    public void testTwo() {
+  static class OtherTargetTest extends BaseTest implements OtherTarget {
 
-    }
+  }
+
+  static class OtherTargetTest2 extends BaseTest implements OtherTarget {
+
+  }
+
+  static class NonTargetTest1 extends BaseTest {
+
+  }
+
+  static class NonTargetTest2 extends BaseTest {
+
+  }
+
+  static class NonTargetTest3 extends BaseTest {
+
   }
 
   private Collection<TestUnit> classToTests(final Class<?> c,
@@ -129,6 +95,14 @@ public class GroupLikedTypeOrderStrategyTest {
     return tus;
   }
 
+  private List<TestUnit> createOtherTargetList(
+      final GroupingStrategy groupStrategy) {
+    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    tus.addAll(classToTests(OtherTargetTest.class, groupStrategy));
+    tus.addAll(classToTests(OtherTargetTest2.class, groupStrategy));
+    return tus;
+  }
+
   private List<TestUnit> createNonTargetList(
       final GroupingStrategy groupStrategy) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
@@ -140,6 +114,7 @@ public class GroupLikedTypeOrderStrategyTest {
 
   @Test
   public void testCreatesGroupForTargetClassWhenInputListUngrouped() {
+    this.testee = new GroupLikedTypeOrderStrategy(Target.class);
     final List<TestUnit> tus = new ArrayList<TestUnit>();
     final List<TestUnit> expected = createNonTargetList(new UnGroupedStrategy());
     tus.addAll(expected);
@@ -152,6 +127,7 @@ public class GroupLikedTypeOrderStrategyTest {
 
   @Test
   public void testCreatesGroupForTargetClassWhenInputListGrouped() {
+    this.testee = new GroupLikedTypeOrderStrategy(Target.class);
     final List<TestUnit> tus = new ArrayList<TestUnit>();
     final List<TestUnit> expected = createNonTargetList(new GroupPerClassStrategy());
     tus.addAll(expected);
@@ -160,6 +136,22 @@ public class GroupLikedTypeOrderStrategyTest {
     final List<TestUnit> actual = this.testee.order(tus);
     assertTrue(actual.get(0) instanceof MultipleTestGroup);
     assertEquals(expected.size(), actual.subList(1, actual.size()).size());
+  }
+
+  @Test
+  public void testCreatesGroupsForAllSuppliedTypes() {
+    this.testee = new GroupLikedTypeOrderStrategy(Target.class,
+        OtherTarget.class);
+    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    final List<TestUnit> expected = createNonTargetList(new GroupPerClassStrategy());
+    tus.addAll(expected);
+    tus.addAll(createOtherTargetList(new GroupPerClassStrategy()));
+    tus.addAll(createTargetList(new GroupPerClassStrategy()));
+
+    final List<TestUnit> actual = this.testee.order(tus);
+    assertTrue(actual.get(0) instanceof MultipleTestGroup);
+    assertTrue(actual.get(1) instanceof MultipleTestGroup);
+    assertEquals(expected.size(), actual.subList(2, actual.size()).size());
   }
 
 }
