@@ -1,0 +1,65 @@
+<html>
+<head>
+<style type='text/css'>
+$css$
+</style>
+
+</head>
+<body>
+
+
+$sourceFiles : { sourceFile | 
+
+<h1>$sourceFile.fileName$</h1>
+
+<table class="src">
+
+$sourceFile.lines:{ line | 
+
+<tr>
+<td class='$line.styles.lineCoverage$'>
+<a name='$sourceFile$_$line.number$'/>
+$line.number$
+</td>
+<td class='$line.styles.mutation$'>
+<a href='#group$sourceFile$_$line.number$'>$line.numberOfMutationsForDisplay$</a>
+</td>
+<td class='$line.styles.code$'><pre><span  class='$line.styles.mutation$'>$line.text$</span></pre></td></tr>
+
+}$
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+$sourceFile.groups:{ group |
+<tr>
+<td><a href='#$sourceFile$_$group.id$'>$group.id$</a></td> 
+<td></td>
+<td>
+
+<a name='group$sourceFile$_$group.id$'/> 
+
+$group.mutations: { mutation | <p class='$mutation.status$'>$mutation.details.htmlSafeDescription$ : $mutation.status$</p> }$
+</td>
+</tr>
+}$
+</table>
+
+}$
+
+<h2>Active mutators</h2>
+<ul>
+$mutators : { mutator |
+<li class='mutator'>$mutator$</li>
+}$
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+$tests:{ test | <li>$test.description$</li>}$
+</ul>
+
+<br/>
+
+
+</body>
+</html>

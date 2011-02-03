@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.pitest</groupId>
+    <artifactId>pitest</artifactId>
+    <packaging>jar</packaging>
+    <version>0.17-SNAPSHOT</version>
+    <name>pitest</name>
+    <url>http://maven.apache.org</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>agent</classifier>
+                            <archive>
+                                <manifestFile>
+                                    src/main/resources/agent/MANIFEST.MF
+              </manifestFile>
+                            </archive>
+                            <includes>
+                                <include>**/HotSwapAgent*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+            <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+                 <version>1.4</version>
+                    <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+                      
+              <artifactSet>
+                <includes>
+                  <include>com.thoughtworks.xstream:*</include>
+                  <include>asm:*</include>
+                  <include>xpp3:*</include>
+                  <include>org.antlr:*</include>
+                  <include>antlr:*</include>
+                  <include>net.sf.jopt-simple:*</include>
+                  
+                  
+                </includes>
+              </artifactSet>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Premain-Class>org.pitest.mutationtest.instrument.HotSwapAgent</Premain-Class>
+                    <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                    <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                    <Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
+                  </manifestEntries>
+                </transformer>
+           
+              </transformers>
+        
+            
+              <relocations>
+                <relocation>
+                  <pattern>org.xmlpull</pattern>
+                  <shadedPattern>org.pitest.xmlpull</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.objectweb.asm</pattern>
+                  <shadedPattern>org.pitest.asm</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.thoughtworks.xstream</pattern>
+                  <shadedPattern>org.pitest.xstream</shadedPattern>
+                </relocation> 
+                <relocation>
+                  <pattern>org.antlr</pattern>
+                  <shadedPattern>org.pitest.antlr</shadedPattern>
+                </relocation> 
+                <relocation>
+                  <pattern>antlr</pattern>
+                  <shadedPattern>org.pitest.antlr.common</shadedPattern>
+                </relocation>  
+                <relocation>
+                  <pattern>joptsimple</pattern>
+                  <shadedPattern>org.pitest.joptsimple</shadedPattern>
+                </relocation>   
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+            
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+        </plugins>
+          
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  
+        
+    </build>
+    <repositories>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2/</url>
+        </repository>
+
+        <repository>
+            <id>equalsverifier-repository</id>
+            <url>http://equalsverifier.googlecode.com/svn/maven/</url>
+        </repository>
+        
+    <repository>
+    <id>javaparser</id>
+    <name>JavaParser Repository</name>
+    <url>http://javaparser.googlecode.com/svn/maven2</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+</repository>
+    
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
+            <version>0.6.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>1.2.0</version>
+        </dependency>       
+    </dependencies>
+
+</project>

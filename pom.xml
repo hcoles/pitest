@@ -1,192 +1,33 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.pitest</groupId>
-	<artifactId>pitest</artifactId>
-	<packaging>jar</packaging>
-	<version>0.15-SNAPSHOT</version>
+	<artifactId>pitest-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.17-SNAPSHOT</version>
 	<name>pitest</name>
 	<url>http://maven.apache.org</url>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-dependencies</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeScope>compile</includeScope>
-							<excludeScope>test</excludeScope>
-						</configuration>
+	    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+    
 
-					</execution>
-				</executions>
-			</plugin>
-		
-		      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>agent</classifier>
-              <archive>
-              <manifestFile>
-                 src/main/resources/agent/MANIFEST.MF
-              </manifestFile>
-              </archive>
-              <includes>
-                <include>**/HotSwapAgent*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-		
-		
-			
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" />
-								<jarjar destfile="${build.directory}/${build.finalName}-all.jar"
-									update="true">
-									<rule pattern="org.xmlpull.**" result="org.pitest.xmlpull.@1" />	
-									<rule pattern="org.objectweb.asm.**" result="org.pitest.objectweb.asm.@1" />
-									<rule pattern="com.thoughtworks.xstream.**" result="org.pitest.thoughtworks.xstream.@1" /> -->
-									<fileset dir="target/classes" />
-									<fileset dir="target/dependency/org/objectweb" />
-									<fileset dir="target/dependency/org/xmlpull" /> 
-									<fileset dir="target/dependency/com/thoughtworks" />
-									<!--  <fileset dir="target/dependency/org/apache/bcel" /> -->
-								
-								       <manifest>
-                                        <attribute name="Premain-Class" value="org.pitest.mutationtest.instrument.HotSwapAgent"/>
-                                        <attribute name="Can-Redefine-Classes" value="true"/>
-                                        <attribute name="Can-Retransform-Classes" value="true"/>
-                                        <attribute name="Can-Set-Native-Method-Prefix" value="true"/>
-                                       </manifest>
-								</jarjar>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>com.tonicsystems</groupId>
-						<artifactId>jarjar</artifactId>
-						<version>0.6</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>attach-sources</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
+  
+            
+            </plugins>
+            </build>
 
-
-		</plugins>
-	</build>
-	<repositories>
-		<repository>
-			<id>jboss</id>
-			<url>http://repository.jboss.com/maven2/</url>
-		</repository>
-		
-  <repository>
-    <id>equalsverifier-repository</id>
-    <url>http://equalsverifier.googlecode.com/svn/maven/</url>
-  </repository>
-	</repositories>
-
-	<dependencies>
-
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.8.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>5.2</version>
-        </dependency>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>3.2</version>
-		</dependency>
-		  <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>3.2</version>
-        </dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.hazelcast</groupId>
-			<artifactId>hazelcast</artifactId>
-			<version>1.9</version>
-		</dependency>
-		<dependency>
-			<groupId>nl.jqno.equalsverifier</groupId>
-			<artifactId>equalsverifier</artifactId>
-			<version>0.6.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.2</version>
-		</dependency>
-<dependency>
-  <groupId>jmock</groupId>
-  <artifactId>jmock</artifactId>
-  <version>1.2.0</version>
-</dependency>
-	</dependencies>
-
+  <modules>
+    <module>pitest-maven</module>
+    <module>pitest</module>
+  </modules>
+  
 </project>

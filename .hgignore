@@ -5,3 +5,9 @@ syntax: regexp
 ^reports$
 syntax: regexp
 ^classpathCache$
+syntax: regexp
+^pitest/target$
+syntax: regexp
+^pitest-maven/target$
+syntax: regexp
+^pitest-maven/bin$
