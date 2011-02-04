@@ -104,6 +104,10 @@ public abstract class Functions {
           System.out.println("Could not load " + className + " "
               + e.getMessage());
           return Option.none();
+        } catch (final SecurityException e) {
+          System.out.println("Could not load " + className + " "
+              + e.getMessage());
+          return Option.none();
         }
       }
 

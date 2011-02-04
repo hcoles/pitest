@@ -77,9 +77,8 @@ public class CodeCentricReport extends MutationCoverageReport {
   @Override
   public void runReport() throws IOException {
 
-    final Collection<Class<?>> completeClassPath = filter(
-        flatMap(getClassPath().classNames(), stringToClass()),
-        convertStringToClassFilter(this.data.getClassesInScopeFilter()));
+    final Collection<Class<?>> completeClassPath = flatMap(getClassPath()
+        .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
 
     final Collection<Class<?>> tests = filter(completeClassPath,
         isWithinATestClass());
