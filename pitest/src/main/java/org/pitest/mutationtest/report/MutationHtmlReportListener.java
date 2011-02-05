@@ -61,7 +61,7 @@ public class MutationHtmlReportListener implements TestListener {
 
   public MutationHtmlReportListener(final String reportDir,
       final SourceLocator... locators) {
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
     final String timeString = sdf.format(new Date());
     this.reportDir = new File(addPathSeperatorIfMissing(reportDir) + timeString);
     this.reportDir.mkdirs();

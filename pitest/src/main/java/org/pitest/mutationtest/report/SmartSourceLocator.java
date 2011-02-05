@@ -25,16 +25,13 @@ import org.pitest.functional.Option;
 
 public class SmartSourceLocator implements SourceLocator {
 
+  private final static int                MAX_DEPTH = 4;
+
   private final Collection<SourceLocator> children;
 
   public SmartSourceLocator(final Collection<File> roots) {
-    final F<File, Iterable<File>> collectChildren = new F<File, Iterable<File>>() {
-      public Iterable<File> apply(final File a) {
-        return collectNextTwoLevelOfDirectories(a);
-      }
-    };
     final Collection<File> childDirs = FCollection.flatMap(roots,
-        collectChildren);
+        collectChildren(0));
     childDirs.addAll(roots);
 
     final F<File, SourceLocator> fileToSourceLocator = new F<File, SourceLocator>() {
@@ -45,16 +42,22 @@ public class SmartSourceLocator implements SourceLocator {
     this.children = FCollection.map(childDirs, fileToSourceLocator);
   }
 
-  private Collection<File> collectNextTwoLevelOfDirectories(final File root) {
-    final Collection<File> childDirs = listFirstLevelDirectories(root);
-    final F<File, Iterable<File>> f = new F<File, Iterable<File>>() {
-      public Iterable<File> apply(final File a) {
-        return listFirstLevelDirectories(a);
+  private F<File, Collection<File>> collectChildren(final int depth) {
+    return new F<File, Collection<File>>() {
+      public Collection<File> apply(final File a) {
+        return collectDirectories(a, depth);
       }
     };
-    final Collection<File> secondLevelDirs = FCollection.flatMap(childDirs, f);
-    childDirs.addAll(secondLevelDirs);
+  }
+
+  private Collection<File> collectDirectories(final File root, int depth) {
+    final Collection<File> childDirs = listFirstLevelDirectories(root);
+    if (depth < MAX_DEPTH) {
+      childDirs.addAll(FCollection.flatMap(childDirs,
+          collectChildren(depth + 1)));
+    }
     return childDirs;
+
   }
 
   private static Collection<File> listFirstLevelDirectories(final File root) {
