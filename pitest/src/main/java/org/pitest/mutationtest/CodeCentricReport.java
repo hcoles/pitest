@@ -77,6 +77,8 @@ public class CodeCentricReport extends MutationCoverageReport {
   @Override
   public void runReport() throws IOException {
 
+    long t0 = System.currentTimeMillis();
+
     final Collection<Class<?>> completeClassPath = flatMap(getClassPath()
         .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
 
@@ -117,8 +119,13 @@ public class CodeCentricReport extends MutationCoverageReport {
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     pit.run(new UnContainer(), tus);
 
-    System.out.println("All done. Tested " + codeToTests.size() + " classes.");
+    System.out.println("Completed in " + timeSpan(t0) + ".  Tested "
+        + codeToTests.size() + " classes.");
 
+  }
+
+  private String timeSpan(long t0) {
+    return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
   }
 
   private F<Class<?>, Boolean> convertStringToClassFilter(
@@ -270,7 +277,9 @@ public class CodeCentricReport extends MutationCoverageReport {
         final Option<Class<?>> parent = Reflection.getParentClass(a);
         if (parent.hasSome()) {
           final ClassGrouping grouping = map.get(parent.value().getName());
-          grouping.addChild(a);
+          if (grouping != null) {
+            grouping.addChild(a);
+          }
         }
 
       }
@@ -286,6 +295,8 @@ public class CodeCentricReport extends MutationCoverageReport {
         if (Reflection.isTopClass(clazz)) {
           map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
               Collections.<String> emptyList()));
+        } else {
+          System.out.println("Not top level " + clazz);
         }
 
       }
