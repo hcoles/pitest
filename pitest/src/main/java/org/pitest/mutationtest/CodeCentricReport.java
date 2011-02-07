@@ -77,7 +77,7 @@ public class CodeCentricReport extends MutationCoverageReport {
   @Override
   public void runReport() throws IOException {
 
-    long t0 = System.currentTimeMillis();
+    final long t0 = System.currentTimeMillis();
 
     final Collection<Class<?>> completeClassPath = flatMap(getClassPath()
         .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
@@ -124,7 +124,7 @@ public class CodeCentricReport extends MutationCoverageReport {
 
   }
 
-  private String timeSpan(long t0) {
+  private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
   }
 

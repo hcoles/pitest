@@ -18,6 +18,8 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 
+import org.pitest.coverage.CoverageTransformer;
+
 public class HotSwapAgent {
 
   private static Instrumentation instrumentation;
@@ -26,6 +28,18 @@ public class HotSwapAgent {
       final Instrumentation inst) {
     System.out.println("Installing PIT agent");
     instrumentation = inst;
+    // if ("coverage".equals(agentArguments)) {
+    instrumentation.addTransformer(new CoverageTransformer());
+    // }
+  }
+
+  public static void agentmain(final String agentArguments,
+      final Instrumentation inst) throws Exception {
+
+    instrumentation = inst;
+    // if ("coverage".equals(agentArguments)) {
+    instrumentation.addTransformer(new CoverageTransformer());
+    // }
   }
 
   public static boolean hotSwap(final Class<?> mutateMe, final byte[] bytes) {

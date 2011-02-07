@@ -57,6 +57,10 @@ public class CoverageStatistics {
     };
   }
 
+  public synchronized Collection<ClassStatistics> getClassStatistics() {
+    return this.classStatisticsInClassIdOrder;
+  }
+
   public synchronized ClassStatistics getClassStatistics(final String clazz) {
     for (final ClassStatistics each : this.classStatisticsInClassIdOrder) {
       if (each.getClassName().equals(clazz)) {

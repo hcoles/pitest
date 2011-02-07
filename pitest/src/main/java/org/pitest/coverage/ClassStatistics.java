@@ -55,4 +55,10 @@ public class ClassStatistics {
     }
   }
 
+  @Override
+  public String toString() {
+    return "ClassStatistics [className=" + this.className + ", lineVists="
+        + this.lineVists + "]";
+  }
+
 }

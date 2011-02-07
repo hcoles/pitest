@@ -14,6 +14,7 @@
  */
 package org.pitest.functional;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -115,15 +116,24 @@ public abstract class Prelude {
   }
 
   public final static <T> SideEffect1<T> print() {
-    return new SideEffect1<T>() {
-      public void apply(final T a) {
-        System.out.println(a);
-      }
-    };
+    return printTo(System.out);
   }
 
   public final static <T> SideEffect1<T> print(final Class<T> type) {
     return print();
+  }
+
+  public final static <T> SideEffect1<T> printTo(final Class<T> type,
+      final PrintStream stream) {
+    return printTo(stream);
+  }
+
+  public final static <T> SideEffect1<T> printTo(final PrintStream stream) {
+    return new SideEffect1<T>() {
+      public void apply(final T a) {
+        stream.println(a);
+      }
+    };
   }
 
   public static <T> SideEffect1<T> printWith(final Object t) {

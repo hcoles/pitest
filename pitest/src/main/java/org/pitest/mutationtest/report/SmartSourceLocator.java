@@ -50,7 +50,7 @@ public class SmartSourceLocator implements SourceLocator {
     };
   }
 
-  private Collection<File> collectDirectories(final File root, int depth) {
+  private Collection<File> collectDirectories(final File root, final int depth) {
     final Collection<File> childDirs = listFirstLevelDirectories(root);
     if (depth < MAX_DEPTH) {
       childDirs.addAll(FCollection.flatMap(childDirs,
