@@ -15,7 +15,6 @@
 package org.pitest.coverage.execute;
 
 import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.InvokeEntry;
 import org.pitest.coverage.InvokeQueue;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
@@ -46,11 +45,21 @@ public class CoverageDecorator extends TestUnitDecorator {
         + child().getDescription());
     this.invokeStatistics.clearCoverageStats();
 
+    final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
+        this.invokeStatistics);
+    t.start();
+
     final long t0 = System.currentTimeMillis();
     this.child().execute(loader, rc);
     final long executionTime = System.currentTimeMillis() - t0;
 
-    readStatisticsQueue(this.invokeStatistics, this.invokeQueue);
+    try {
+      t.waitToFinish();
+    } catch (final InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    // readStatisticsQueue();
 
     this.output.apply(new CoverageResult(this.getDescription(), executionTime,
         this.invokeStatistics.getClassStatistics()));
@@ -64,16 +73,6 @@ public class CoverageDecorator extends TestUnitDecorator {
           this.invokeStatistics, modifiedChild.value(), this.output));
     } else {
       return Option.none();
-    }
-
-  }
-
-  private void readStatisticsQueue(final CoverageStatistics invokeStatistics,
-      final InvokeQueue invokeQueue) {
-    while (!invokeQueue.isEmpty()) {
-      final InvokeEntry entry = invokeQueue.poll();
-      invokeStatistics.visitLine(entry.getClassId(), entry.getLineNumber());
-
     }
 
   }

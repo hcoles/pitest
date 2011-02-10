@@ -32,26 +32,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
-import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
-import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
@@ -59,7 +56,6 @@ import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.reflection.Reflection;
-import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 
 public class CodeCentricReport extends MutationCoverageReport {
@@ -82,7 +78,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     final Collection<Class<?>> completeClassPath = flatMap(getClassPath()
         .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
 
-    final Collection<Class<?>> tests = filter(completeClassPath,
+    final FunctionalCollection<Class<?>> tests = filter(completeClassPath,
         isWithinATestClass());
 
     final List<Class<?>> codeClasses = filter(
@@ -91,13 +87,11 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final Map<String, ClassGrouping> groupedByOuterClass = groupByOuterClass(codeClasses);
 
-    final Map<ClassGrouping, List<String>> codeToTests = mapCodeToTests(
-        convertClassesToStrings(tests), groupedByOuterClass);
+    final CoverageDatabase coverageDatabase = new DependencyBasedCoverageDatabase(
+        this.getClassPath(), this.data);
 
-    System.out.println("Dependency analysis finds tests for "
-        + codeToTests.size() + " classes");
-    FCollection
-        .forEach(codeToTests.keySet(), Prelude.printWith("Has Test =  "));
+    final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
+        .mapCodeToTests(tests, groupedByOuterClass);
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final MutationHtmlReportListener mutationReportListener = new MutationHtmlReportListener(
@@ -139,88 +133,55 @@ public class CodeCentricReport extends MutationCoverageReport {
     };
   }
 
-  private Map<ClassGrouping, List<String>> mapCodeToTests(
-      final Collection<String> tests,
-      final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
-    final Map<String, List<ClassGrouping>> testToCodeMap = mapTestsToCode(
-        tests, groupedByOuterClass);
-
-    final Map<ClassGrouping, List<String>> codeToTestsMap = new HashMap<ClassGrouping, List<String>>();
-
-    for (final Entry<String, List<ClassGrouping>> each : testToCodeMap
-        .entrySet()) {
-      forEach(each.getValue(),
-          mapCodeClassToTestClasses(each.getKey(), codeToTestsMap));
-
-    }
-
-    return codeToTestsMap;
-
-  }
-
-  private SideEffect1<ClassGrouping> mapCodeClassToTestClasses(
-      final String test, final Map<ClassGrouping, List<String>> codeToTestsMap) {
-    return new SideEffect1<ClassGrouping>() {
-      public void apply(final ClassGrouping clazz) {
-
-        List<String> testsForClass = codeToTestsMap.get(clazz);
-        if (testsForClass == null) {
-          testsForClass = new ArrayList<String>();
-          codeToTestsMap.put(clazz, testsForClass);
-        }
-        testsForClass.add(test);
-      }
-    };
-  }
-
-  private Map<String, List<ClassGrouping>> mapTestsToCode(
-      final Collection<String> tests,
-      final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
-    final DependencyExtractor analyser = new DependencyExtractor(
-        new ClassPathByteArraySource(getClassPath()),
-        this.data.getDependencyAnalysisMaxDistance());
-    final Map<String, List<ClassGrouping>> testToCodeMap = new HashMap<String, List<ClassGrouping>>();
-    for (final String each : tests) {
-      final Set<String> testReach = analyser
-          .extractCallDependenciesForPackages(each,
-              this.data.getClassesInScopeFilter());
-      System.out.println("Found " + testReach.size() + " class hits for "
-          + each);
-
-      final List<ClassGrouping> group = flatMap(testReach,
-          jvmClassToGroup(groupedByOuterClass));
-      if (group != null) {
-        testToCodeMap.put(each, group);
-      } else {
-        System.out.println("No group found for " + each);
-      }
-
-    }
-    return testToCodeMap;
-  }
-
   protected ClassPath getClassPath() {
     return this.data.getClassPath(this.nonLocalClassPath).getOrElse(
         new ClassPath());
   }
 
-  private F<String, Iterable<ClassGrouping>> jvmClassToGroup(
-      final Map<String, ClassGrouping> groupedByOuterClass) {
+  private Map<String, ClassGrouping> groupByOuterClass(
+      final Collection<Class<?>> classes) {
+    final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
+    forEach(classes, addToMapIfTopLevelClass(group));
 
-    return new F<String, Iterable<ClassGrouping>>() {
+    forEach(classes, addToParentGrouping(group));
 
-      public Iterable<ClassGrouping> apply(final String a) {
+    return group;
 
-        final String name = a.replace("/", ".");
-        return Option.some(groupedByOuterClass.get(name));
+  }
+
+  private SideEffect1<Class<?>> addToMapIfTopLevelClass(
+      final Map<String, ClassGrouping> map) {
+    return new SideEffect1<Class<?>>() {
+
+      public void apply(final Class<?> clazz) {
+        if (Reflection.isTopClass(clazz)) {
+          map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
+              Collections.<String> emptyList()));
+        } else {
+          System.out.println("Not top level " + clazz);
+        }
+
       }
 
     };
   }
 
-  private Collection<String> convertClassesToStrings(
-      final Collection<Class<?>> classes) {
-    return FCollection.map(classes, Functions.classToName());
+  private SideEffect1<Class<?>> addToParentGrouping(
+      final Map<String, ClassGrouping> map) {
+    return new SideEffect1<Class<?>>() {
+
+      public void apply(final Class<?> a) {
+        final Option<Class<?>> parent = Reflection.getParentClass(a);
+        if (parent.hasSome()) {
+          final ClassGrouping grouping = map.get(parent.value().getName());
+          if (grouping != null) {
+            grouping.addChild(a);
+          }
+        }
+
+      }
+
+    };
   }
 
   private List<TestUnit> createMutationTestUnits(
@@ -256,52 +217,6 @@ public class CodeCentricReport extends MutationCoverageReport {
     cs.addAll(targets);
     cs.removeAll(tests);
     return cs;
-  }
-
-  private Map<String, ClassGrouping> groupByOuterClass(
-      final Collection<Class<?>> classes) {
-    final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
-    forEach(classes, addToMapIfTopLevelClass(group));
-
-    forEach(classes, addToParentGrouping(group));
-
-    return group;
-
-  }
-
-  private SideEffect1<Class<?>> addToParentGrouping(
-      final Map<String, ClassGrouping> map) {
-    return new SideEffect1<Class<?>>() {
-
-      public void apply(final Class<?> a) {
-        final Option<Class<?>> parent = Reflection.getParentClass(a);
-        if (parent.hasSome()) {
-          final ClassGrouping grouping = map.get(parent.value().getName());
-          if (grouping != null) {
-            grouping.addChild(a);
-          }
-        }
-
-      }
-
-    };
-  }
-
-  private SideEffect1<Class<?>> addToMapIfTopLevelClass(
-      final Map<String, ClassGrouping> map) {
-    return new SideEffect1<Class<?>>() {
-
-      public void apply(final Class<?> clazz) {
-        if (Reflection.isTopClass(clazz)) {
-          map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
-              Collections.<String> emptyList()));
-        } else {
-          System.out.println("Not top level " + clazz);
-        }
-
-      }
-
-    };
   }
 
   private Collection<String> classesWithoutATest(

@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.pitest.coverage.CoverageTransformer;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.mutationtest.instrument.HotSwapAgent;
 import org.pitest.util.ExitCode;
 
 public class CoverageSlave {
@@ -50,6 +52,9 @@ public class CoverageSlave {
       System.setProperties(paramsFromParent.systemProperties);
 
       br.close();
+
+      HotSwapAgent.addTransformer(new CoverageTransformer(
+          paramsFromParent.filter));
 
       final CoverageWorker worker = new CoverageWorker(paramsFromParent, w);
 

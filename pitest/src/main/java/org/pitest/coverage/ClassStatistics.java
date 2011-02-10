@@ -14,15 +14,16 @@
  */
 package org.pitest.coverage;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.pitest.util.MemoryEfficientHashMap;
+
 public class ClassStatistics {
 
   private final String                className;
-  private final Map<Integer, Integer> lineVists = new HashMap<Integer, Integer>();
+  private final Map<Integer, Integer> lineVists = new MemoryEfficientHashMap<Integer, Integer>();
 
   public ClassStatistics(final String className) {
     this.className = className;
@@ -32,18 +33,23 @@ public class ClassStatistics {
     return this.className;
   }
 
+  public boolean wasVisited() {
+    return !this.lineVists.isEmpty();
+  }
+
   public Set<Integer> getUniqueVisitedLines() {
-    final Set<Integer> uniqueVisits = new HashSet<Integer>();
+    final Set<Integer> uniqueVisits = new HashSet<Integer>(
+        this.lineVists.size());
     uniqueVisits.addAll(this.lineVists.keySet());
     return uniqueVisits;
   }
 
-  public void clearLineCoverageStats() {
+  public synchronized void clearLineCoverageStats() {
     this.lineVists.clear();
 
   }
 
-  public void registerLineVisit(final int lineId) {
+  public synchronized void registerLineVisit(final int lineId) {
     this.lineVists.put(lineId, getNumberOfHits(lineId) + 1);
   }
 

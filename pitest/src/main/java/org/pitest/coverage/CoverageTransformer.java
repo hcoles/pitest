@@ -7,8 +7,15 @@ import java.security.ProtectionDomain;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.coverage.codeassist.CoverageClassVisitor;
+import org.pitest.functional.predicate.Predicate;
 
 public class CoverageTransformer implements ClassFileTransformer {
+
+  private final Predicate<String> filter;
+
+  public CoverageTransformer(final Predicate<String> filter) {
+    this.filter = filter;
+  }
 
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined,
@@ -29,7 +36,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   }
 
   private boolean shouldInclude(final String className) {
-    return className.contains("Testee");
+    return this.filter.apply(className);
   }
 
 }

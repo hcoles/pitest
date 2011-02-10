@@ -19,16 +19,19 @@ import java.util.List;
 import java.util.Properties;
 
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.predicate.Predicate;
 
 public class SlaveArguments {
 
-  final List<TestUnit> tests;
-  final Properties     systemProperties;
+  final List<TestUnit>    tests;
+  final Properties        systemProperties;
+  final Predicate<String> filter;
 
   public SlaveArguments(final List<TestUnit> tests,
-      final Properties systemProperties) {
+      final Properties systemProperties, final Predicate<String> filter) {
     this.tests = tests;
     this.systemProperties = systemProperties;
+    this.filter = filter;
   }
 
 }

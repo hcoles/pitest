@@ -16,7 +16,6 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +30,7 @@ import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
-import org.pitest.util.Unchecked;
 
 public class CoverageWorker {
 
@@ -51,9 +48,9 @@ public class CoverageWorker {
     final InvokeQueue invokeQueue = new InvokeQueue();
     CodeCoverageStore.init(invokeQueue, invokeStatistics);
 
+    final OutputToFile outputWriter = createOutput(this.output);
     final List<TestUnit> decoratedTests = decorateForCoverage(
-        this.params.tests, invokeStatistics, invokeQueue,
-        createOutput(this.output));
+        this.params.tests, invokeStatistics, invokeQueue, outputWriter);
 
     final Container c = new UnContainer();
 
@@ -67,6 +64,7 @@ public class CoverageWorker {
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, decoratedTests);
+      outputWriter.writeToDisk();
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
@@ -74,22 +72,8 @@ public class CoverageWorker {
 
   }
 
-  private SideEffect1<CoverageResult> createOutput(final Writer w) {
-    return new SideEffect1<CoverageResult>() {
-
-      public void apply(final CoverageResult a) {
-        System.out.println(a.getTestUnitDescription() + " took "
-            + a.getExecutionTime() + " ms and hit " + a.getCoverage().size()
-            + " classes.");
-        try {
-          w.append(IsolationUtils.toTransportString(a) + "\n");
-        } catch (final IOException e) {
-          throw Unchecked.translateCheckedException(e);
-        }
-
-      }
-
-    };
+  private OutputToFile createOutput(final Writer w) {
+    return new OutputToFile(w);
   }
 
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,

@@ -22,6 +22,8 @@ import static org.pitest.util.TestInfo.isATest;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
@@ -95,7 +97,10 @@ public class TestCentricReport extends MutationCoverageReport {
   }
 
   protected Collection<Class<?>> findClassesForCoverage(final ClassPath cp) {
-    return flatMap(cp.findClasses(this.data.getTargetClassesFilter()),
-        stringToClass());
+    final Collection<Class<?>> classes = flatMap(
+        cp.findClasses(this.data.getTargetClassesFilter()), stringToClass());
+    final Set<Class<?>> set = new HashSet<Class<?>>(classes.size());
+    set.addAll(classes);
+    return set;
   }
 }

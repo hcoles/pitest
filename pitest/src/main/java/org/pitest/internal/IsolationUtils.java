@@ -19,7 +19,9 @@ import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.pitest.util.Base64;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
 
@@ -133,7 +136,10 @@ public abstract class IsolationUtils {
   }
 
   public static String toXml(final Object o) {
-    return XSTREAM_INSTANCE.toXML(o);
+    final Writer writer = new StringWriter();
+    XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
+    return writer.toString();
+    // return XSTREAM_INSTANCE.toXML(o);
   }
 
   public static String toTransportString(final Object o) {

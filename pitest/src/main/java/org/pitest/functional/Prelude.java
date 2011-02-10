@@ -136,7 +136,7 @@ public abstract class Prelude {
     };
   }
 
-  public static <T> SideEffect1<T> printWith(final Object t) {
+  public static <T> SideEffect1<T> printWith(final T t) {
     return new SideEffect1<T>() {
       public void apply(final T a) {
         System.out.println(t + " : " + a);

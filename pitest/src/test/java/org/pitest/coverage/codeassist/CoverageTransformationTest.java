@@ -108,11 +108,11 @@ public class CoverageTransformationTest {
     return new InvokeEntry(FIRST_CLASS, line);
   }
 
-  private List<InvokeEntry> getRecordedLines() {
+  private List<InvokeEntry> getRecordedLines() throws InterruptedException {
     final InvokeQueue queue = CodeCoverageStore.getInvokeQueue();
     final List<InvokeEntry> ies = new ArrayList<InvokeEntry>();
     while (!queue.isEmpty()) {
-      ies.add(queue.poll());
+      ies.addAll(queue.poll(100));
     }
     return ies;
 
