@@ -26,9 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.coverage.ClassStatistics;
 import org.pitest.extension.TestUnit;
-import org.pitest.mutationtest.instrument.Statistics.ClassLine;
 
 public class StatisticsTest {
 
@@ -57,8 +55,7 @@ public class StatisticsTest {
     times.put(this.t1, 1l);
     times.put(this.t2, 2l);
     times.put(this.t3, 3l);
-    this.testee = new Statistics(true, times, stats,
-        Collections.singleton(new ClassStatistics("foo")));
+    this.testee = new Statistics(true, times, stats);
   };
 
   @Test

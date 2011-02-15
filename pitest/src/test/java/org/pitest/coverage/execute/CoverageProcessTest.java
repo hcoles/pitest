@@ -1,6 +1,7 @@
 package org.pitest.coverage.execute;
 
 import static org.junit.Assert.assertTrue;
+import static org.pitest.functional.Prelude.print;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,12 +49,14 @@ public class CoverageProcessTest {
     public void testFoo() {
       final Testee testee = new Testee();
       testee.foo();
+
     }
 
     @Test
     public void testFoo2() {
-      final Testee2 testee = new Testee2();
-      testee.foo();
+      final Testee2 testee2 = new Testee2();
+      testee2.foo();
+
     }
   }
 
@@ -76,6 +79,8 @@ public class CoverageProcessTest {
     assertTrue(actual.contains(coverageFor(Testee2.class)));
     assertTrue(actual.contains(coverageFor(Testee.class)));
 
+    actual.forEach(print(CoverageResult.class));
+
   }
 
   private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
@@ -91,7 +96,8 @@ public class CoverageProcessTest {
 
           public Boolean apply(final ClassStatistics a) {
 
-            return a.getClassName().equals(class1.getName().replace(".", "/"));
+            return a.getClassName().equals(class1.getName().replace(".", "/"))
+                && a.wasVisited();
           }
 
         };

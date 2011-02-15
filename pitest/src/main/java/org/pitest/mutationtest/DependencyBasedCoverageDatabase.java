@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.pitest.dependency.DependencyExtractor;
+import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
@@ -20,17 +21,21 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
+import org.pitest.mutationtest.instrument.CoverageSource;
+import org.pitest.mutationtest.instrument.NoCoverageSource;
 import org.pitest.util.Functions;
 
 public class DependencyBasedCoverageDatabase implements CoverageDatabase {
 
+  private final Configuration pitConfig;
   private final ClassPath     classPath;
   private final ReportOptions data;
 
-  public DependencyBasedCoverageDatabase(final ClassPath classPath,
-      final ReportOptions data) {
+  public DependencyBasedCoverageDatabase(final Configuration pitConfig,
+      final ClassPath classPath, final ReportOptions data) {
     this.data = data;
     this.classPath = classPath;
+    this.pitConfig = pitConfig;
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
@@ -123,6 +128,16 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
       }
 
     };
+  }
+
+  public void initialise(final FunctionalCollection<Class<?>> tests) {
+    // TODO Auto-generated method stub
+
+  }
+
+  public CoverageSource getCoverage(final ClassGrouping code,
+      final List<String> tests) {
+    return new NoCoverageSource(tests, this.pitConfig);
   }
 
 }

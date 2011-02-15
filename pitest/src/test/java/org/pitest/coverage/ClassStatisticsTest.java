@@ -39,13 +39,13 @@ public class ClassStatisticsTest {
     assertEquals(1, this.testee.getNumberOfHits(20).intValue());
   }
 
-  @Test
-  public void shouldClearLineCoverageStatsWhenRequested() {
-    addLineHits(Arrays.asList(1, 1, 1));
-    assertEquals(3, this.testee.getNumberOfHits(1).intValue());
-    this.testee.clearLineCoverageStats();
-    assertEquals(0, this.testee.getNumberOfHits(1).intValue());
-  }
+  // @Test
+  // public void shouldClearLineCoverageStatsWhenRequested() {
+  // addLineHits(Arrays.asList(1, 1, 1));
+  // assertEquals(3, this.testee.getNumberOfHits(1).intValue());
+  // this.testee.clearLineCoverageStats();
+  // assertEquals(0, this.testee.getNumberOfHits(1).intValue());
+  // }
 
   private void addLineHits(final List<Integer> coveredLines) {
     for (final int each : coveredLines) {

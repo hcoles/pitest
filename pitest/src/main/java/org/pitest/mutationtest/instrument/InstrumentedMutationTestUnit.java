@@ -16,12 +16,10 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.functional.Prelude.isInstanceOf;
 import static org.pitest.functional.Prelude.not;
-import static org.pitest.functional.Prelude.print;
 import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,15 +30,11 @@ import java.util.logging.Logger;
 import org.pitest.Description;
 import org.pitest.MetaData;
 import org.pitest.PitError;
-import org.pitest.Pitest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoVisitor;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -58,46 +52,46 @@ import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.WrappingProcess;
 
 public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
-  private static final Logger        LOGGER      = Logger
-                                                     .getLogger(InstrumentedMutationTestUnit.class
-                                                         .getName());
+  private static final Logger        LOGGER = Logger
+                                                .getLogger(InstrumentedMutationTestUnit.class
+                                                    .getName());
 
   private final JavaAgent            javaAgentFinder;
-  protected final Collection<String> testClasses = new ArrayList<String>();
+  // protected final Collection<String> testClasses = new ArrayList<String>();
   protected final Collection<String> classesToMutate;
   protected final MutationConfig     config;
-  protected final Configuration      pitConfig;
+  // protected final Configuration pitConfig;
+  private final CoverageSource       coverageSource;
 
   public InstrumentedMutationTestUnit(final Collection<String> tests,
       final Collection<String> classesToMutate,
       final MutationConfig mutationConfig, final Configuration pitConfig,
       final Description description) {
-    this(tests, classesToMutate, mutationConfig, pitConfig, description,
-        new JavaAgentJarFinder());
+    this(classesToMutate, mutationConfig, description,
+        new JavaAgentJarFinder(), new NoCoverageSource(tests, pitConfig));
   }
 
-  public InstrumentedMutationTestUnit(final Collection<String> tests,
-      final Collection<String> classesToMutate,
-      final MutationConfig mutationConfig, final Configuration pitConfig,
-      final Description description, final JavaAgent javaAgentFinder) {
+  public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
+      final MutationConfig mutationConfig, final Description description,
+      final JavaAgent javaAgentFinder, final CoverageSource coverageSource) {
     super(description);
     this.classesToMutate = classesToMutate;
-    this.testClasses.addAll(tests);
+    // this.testClasses.addAll(tests);
     this.config = mutationConfig;
-    this.pitConfig = pitConfig;
     this.javaAgentFinder = javaAgentFinder;
+    this.coverageSource = coverageSource;
 
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
+
       rc.notifyStart(this.getDescription());
       runTests(rc, loader);
     } catch (final Throwable ex) {
@@ -112,14 +106,12 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     final Collection<MutationDetails> availableMutations = m
         .findMutations(this.classesToMutate);
 
-    FCollection.forEach(availableMutations, print());
-
     try {
       if (!availableMutations.isEmpty()) {
         // should test unit perhaps have PitClassloader in it's interface?
         final ClassPath cp = createClassPath(loader);
 
-        final List<TestUnit> tests = findTestUnits(loader);
+        final List<TestUnit> tests = this.coverageSource.getTests(loader);
 
         if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
 
@@ -143,6 +135,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         rc.notifySkipped(this.getDescription());
       }
     } catch (final Exception ex) {
+      ex.printStackTrace();
+      System.out.println(ex.getCause());
       throw translateCheckedException(ex);
     }
 
@@ -169,21 +163,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())
-            .andStdout(discard()).andJavaAgentFinder(this.javaAgentFinder),
+            .andJavaAgentFinder(this.javaAgentFinder).andStdout(discard()),
         fileArgs);
-
-    // final File inputfile = File.createTempFile(randomFilename(), ".data");
-    // final File result = File.createTempFile(randomFilename(), ".results");
-
-    // final String[] args = createSlaveArgs(remainingMutations, tests,
-    // inputfile,
-    // result, stats);
-
-    // final String lauchClassPath = getLaunchClassPath(cp);
-
-    // final JavaProcess worker = JavaProcess.launch(sendInputToNoWhere(),
-    // sendInputToStdErr(), getJVMArgs(), InstrumentedMutationTestSlave.class,
-    // Arrays.asList(args), this.javaAgentFinder, lauchClassPath);
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
         remainingMutations);
@@ -278,7 +259,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final Map<MutationIdentifier, DetectionStatus> mutations)
       throws IOException, InterruptedException {
 
-    Option<Statistics> stats = Option.none();
+    Option<Statistics> stats = this.coverageSource.getStatistics(tests,
+        this.classesToMutate);
 
     Collection<MutationIdentifier> remainingMutations = getUnrunMutationIds(mutations);
 
@@ -291,7 +273,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         throw new PitError(
             "Cannot mutation test as tests do not pass without mutation");
       }
-      System.out.println("Got stats from slave " + stats);
+
       remainingMutations = getUnrunMutationIds(mutations);
     }
 
@@ -425,16 +407,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
   public static String randomFilename() {
     return System.currentTimeMillis()
         + ("" + Math.random()).replaceAll("\\.", "");
-  }
-
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
-        Functions.stringToClass(loader));
-    // FIXME we do not apply any test filters. Is this what the user
-    // expects?
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tcs.toArray(new Class<?>[tcs.size()]));
   }
 
   public MutationConfig getMutationConfig() {

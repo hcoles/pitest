@@ -46,7 +46,6 @@ public class InvokeQueue {
 
   private boolean attemptToWriteToQueue(final int classId, final int lineNumber) {
     try {
-      // System.out.println(lineNumber);
       return this.invokesQueue.offer(new InvokeEntry(classId, lineNumber), 500,
           TimeUnit.MILLISECONDS);
     } catch (final InterruptedException e) {
@@ -72,7 +71,6 @@ public class InvokeQueue {
       this.invokesQueue.drainTo(recipient);
     }
     return recipient;
-    // return this.invokesQueue.poll(timeout, TimeUnit.MILLISECONDS);
   }
 
   @Override

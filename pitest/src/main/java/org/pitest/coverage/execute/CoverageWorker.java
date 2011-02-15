@@ -50,7 +50,7 @@ public class CoverageWorker {
 
     final OutputToFile outputWriter = createOutput(this.output);
     final List<TestUnit> decoratedTests = decorateForCoverage(
-        this.params.tests, invokeStatistics, invokeQueue, outputWriter);
+        this.params.getTests(), invokeStatistics, invokeQueue, outputWriter);
 
     final Container c = new UnContainer();
 

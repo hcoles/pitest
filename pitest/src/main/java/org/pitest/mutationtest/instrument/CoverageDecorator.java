@@ -28,7 +28,6 @@ import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.Statistics.ClassLine;
 
 public class CoverageDecorator extends TestUnitDecorator {
 

@@ -15,7 +15,7 @@
 package org.pitest.mutationtest;
 
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.Statistics.ClassLine;
+import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.StringUtil;
 
 public class MutationDetails {

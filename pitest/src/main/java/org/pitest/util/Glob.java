@@ -14,9 +14,11 @@
  */
 package org.pitest.util;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 
 public class Glob implements Predicate<String> {
@@ -37,6 +39,11 @@ public class Glob implements Predicate<String> {
         return new Glob(glob);
       }
     };
+  }
+
+  public static Collection<Predicate<String>> toGlobPredicates(
+      final Collection<String> globs) {
+    return FCollection.map(globs, Glob.toGlobPredicate());
   }
 
   public static String convertGlobToRegex(final String glob) {

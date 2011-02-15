@@ -44,10 +44,10 @@ public class ClassStatistics {
     return uniqueVisits;
   }
 
-  public synchronized void clearLineCoverageStats() {
-    this.lineVists.clear();
+  // public synchronized void clearLineCoverageStats() {
+  // this.lineVists.clear();
 
-  }
+  // }
 
   public synchronized void registerLineVisit(final int lineId) {
     this.lineVists.put(lineId, getNumberOfHits(lineId) + 1);

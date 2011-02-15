@@ -109,7 +109,6 @@ public abstract class TestInfo {
     return new Predicate<Class<?>>() {
       public Boolean apply(final Class<?> clazz) {
         final boolean isTest = isJUnit3Test(clazz) || isJUnit4Test(clazz);
-        System.out.println("" + clazz + " is test == " + isTest);
         return isTest;
       }
 

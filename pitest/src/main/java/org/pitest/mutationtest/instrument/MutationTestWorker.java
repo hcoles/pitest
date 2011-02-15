@@ -26,7 +26,6 @@ import java.util.Map;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
-import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.CodeCoverageStore;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.InvokeQueue;
@@ -51,7 +50,6 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
-import org.pitest.mutationtest.instrument.Statistics.ClassLine;
 import org.pitest.mutationtest.loopbreak.LoopBreakTransformation;
 import org.pitest.mutationtest.loopbreak.PerProcessTimelimitCheck;
 import org.pitest.util.Unchecked;
@@ -100,11 +98,8 @@ public class MutationTestWorker {
       executionTimes.put(cd.child(), cd.getExecutionTime());
     }
 
-    final Collection<ClassStatistics> classStatistics = invokeStatistics
-        .getClassStatistics(classNames);
-
     return new Statistics(!status.isDetected(), executionTimes,
-        lineToTestUnitsMap, classStatistics);
+        lineToTestUnitsMap);
   }
 
   private void instrumentClassesForCodeCoverage(
@@ -240,8 +235,10 @@ public class MutationTestWorker {
 
   private List<TestUnit> pickTests(final Mutant m, final Statistics stats) {
     if (stats.hasCoverageData() && !hasMutationInStaticInitializer(m)) {
+      System.out.println("Picking tests");
       return stats.getTestForLineNumber(m.getDetails().getClassLine());
     } else {
+      System.out.println("Returning all tests");
       return this.tests;
     }
   }
@@ -256,7 +253,6 @@ public class MutationTestWorker {
   }
 
   private boolean hasMutationInStaticInitializer(final Mutant mutant) {
-    System.out.println(mutant);
     return (mutant.getDetails().getId().isMutated())
         && mutant.getDetails().isInStaticInitializer();
   }

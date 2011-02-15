@@ -7,12 +7,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.pitest.ConcreteConfiguration;
+import org.pitest.Description;
 import org.pitest.Pitest;
+import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.execute.CoverageProcess;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.execute.SlaveArguments;
+import org.pitest.extension.Configuration;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
@@ -22,60 +27,57 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
-import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.mutationtest.instrument.CoverageSource;
+import org.pitest.mutationtest.instrument.DefaultCoverageSource;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.MemoryEfficientHashMap;
 import org.pitest.util.WrappingProcess;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
 
-  private final JavaAgent     javaAgentFinder;
-  private final ClassPath     classPath;
-  private final ReportOptions data;
+  private final Configuration                                 initialConfig;
+  private final JavaAgent                                     javaAgentFinder;
+  private final ClassPath                                     classPath;
+  private final ReportOptions                                 data;
 
-  public DefaultCoverageDatabase(final ClassPath classPath,
-      final JavaAgent javaAgentFinder, final ReportOptions data) {
+  private FunctionalList<CoverageResult>                      coverage;
+  private final Map<String, Map<ClassLine, Set<Description>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<Description>>>();
+
+  public DefaultCoverageDatabase(final Configuration initialConfig,
+      final ClassPath classPath, final JavaAgent javaAgentFinder,
+      final ReportOptions data) {
     this.classPath = classPath;
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
+    this.initialConfig = initialConfig;
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
       final FunctionalCollection<Class<?>> tests,
       final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
 
-    try {
-      final FunctionalList<CoverageResult> coverage = gatherCoverageData(tests);
+    final List<String> testsAsStrings = tests.map(Functions.classToName());
 
-      final List<String> testsAsStrings = tests.map(Functions.classToName());
-
-      // don't actually need to map code to tests
-      // as long as we pass in the coverage data
-      // can map each test to the entire list
-      // and it should never run the uncovered ones
-      final Map<ClassGrouping, List<String>> codeToTests = new HashMap<ClassGrouping, List<String>>();
-      for (final ClassGrouping each : groupedByOuterClass.values()) {
-        codeToTests.put(each, testsAsStrings);
-      }
-
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    // FIXME will use all tests for a static initializer
+    // so must filter here
+    final Map<ClassGrouping, List<String>> codeToTests = new HashMap<ClassGrouping, List<String>>();
+    for (final ClassGrouping each : groupedByOuterClass.values()) {
+      codeToTests.put(each, testsAsStrings);
     }
 
-    // TODO Auto-generated method stub
-    return null;
+    return codeToTests;
   }
 
   private FunctionalList<CoverageResult> gatherCoverageData(
       final Collection<Class<?>> tests) throws IOException,
       InterruptedException {
-    final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
-        new JUnitCompatibleConfiguration());
 
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
-        initialConfig, new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tests.toArray(new Class<?>[tests.size()]));
+        this.initialConfig, new NullDiscoveryListener(),
+        new UnGroupedStrategy(), Option.<TestFilter> none(),
+        tests.toArray(new Class<?>[tests.size()]));
 
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
         convertToJVMClassFilter(this.data.getTargetClassesFilter()));
@@ -96,6 +98,104 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       }
 
     };
+  }
+
+  public void initialise(final FunctionalCollection<Class<?>> tests) {
+    try {
+      this.coverage = gatherCoverageData(tests);
+
+      for (final CoverageResult each : this.coverage) {
+        // System.out.println(each);
+        calculateClassCoverage(each);
+
+      }
+
+      // coverage.forEach(e);
+
+    } catch (final IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (final InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  private void calculateClassCoverage(final CoverageResult each) {
+    for (final ClassStatistics i : each.getCoverage()) {
+      Map<ClassLine, Set<Description>> map = this.classCoverage.get(i
+          .getClassName());
+      if (map == null) {
+        map = new MemoryEfficientHashMap<ClassLine, Set<Description>>();
+        // System.out.println("2 -----> Got coverage for " + i.getClassName());
+        this.classCoverage.put(i.getClassName(), map);
+      } else {
+        // System.out.println("Already have map for " + i.getClassName());
+
+      }
+      mapTestsToClassLines(each, i, map);
+
+    }
+  }
+
+  private void mapTestsToClassLines(final CoverageResult each,
+      final ClassStatistics i, final Map<ClassLine, Set<Description>> map) {
+    for (final int line : i.getUniqueVisitedLines()) {
+      final ClassLine key = new ClassLine(i.getClassName(), line);
+      Set<Description> testsForLine = map.get(key);
+      if (testsForLine == null) {
+        testsForLine = new TreeSet<Description>(
+            new StringBasedDescriptionComparator()); // inject comparator here
+        map.put(key, testsForLine);
+      }
+      testsForLine.add(each.getTestUnitDescription());
+
+    }
+  }
+
+  public CoverageSource getCoverage(final ClassGrouping code,
+      final List<String> tests) {
+
+    return new DefaultCoverageSource(tests, this.initialConfig, getTimings(),
+        coverageByTestUnit(code));
+  }
+
+  private Map<ClassLine, Set<Description>> coverageByTestUnit(
+      final ClassGrouping code) {
+    final Map<ClassLine, Set<Description>> lineToTests = new MemoryEfficientHashMap<ClassLine, Set<Description>>();
+
+    for (final String each : code) {
+      final Map<ClassLine, Set<Description>> tests = this.classCoverage
+          .get(each.replace(".", "/"));
+      if (tests != null) {
+        for (final Entry<ClassLine, Set<Description>> entry : tests.entrySet()) {
+          lineToTests.put(entry.getKey(), entry.getValue());
+        }
+      }
+
+    }
+
+    // for (CoverageResult each : this.coverage) {
+    // Set<Description> tests = lineToTests.get(each.);
+    // TODO filter
+    // / coverageToDescription.put(each.getTestUnitDescription(), value);
+    // }
+
+    return lineToTests;
+  }
+
+  private Map<String, Long> getTimings() {
+    final Map<String, Long> timings = new MemoryEfficientHashMap<String, Long>();
+
+    for (final CoverageResult each : this.coverage) {
+      // TODO filter timings
+      timings.put(each.getTestUnitDescription().toString(),
+          each.getExecutionTime());
+    }
+
+    return timings;
+
   }
 
 }

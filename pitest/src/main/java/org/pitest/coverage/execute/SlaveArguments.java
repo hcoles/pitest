@@ -20,18 +20,33 @@ import java.util.Properties;
 
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.internal.IsolationUtils;
 
 public class SlaveArguments {
 
-  final List<TestUnit>    tests;
-  final Properties        systemProperties;
-  final Predicate<String> filter;
+  private final String            tests;           // store as string to
+                                                    // prevent class loading
+  private final Properties        systemProperties;
+  private final Predicate<String> filter;
 
   public SlaveArguments(final List<TestUnit> tests,
       final Properties systemProperties, final Predicate<String> filter) {
-    this.tests = tests;
+    this.tests = IsolationUtils.toXml(tests);
     this.systemProperties = systemProperties;
     this.filter = filter;
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<TestUnit> getTests() {
+    return (List<TestUnit>) IsolationUtils.fromXml(this.tests);
+  }
+
+  public Properties getSystemProperties() {
+    return this.systemProperties;
+  }
+
+  public Predicate<String> getFilter() {
+    return this.filter;
   }
 
 }

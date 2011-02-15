@@ -39,6 +39,7 @@ import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.F;
@@ -51,23 +52,25 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
-import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.JavaAgent;
 
 public class CodeCentricReport extends MutationCoverageReport {
 
-  private final JavaAgent javaAgentFinder;
-  private final boolean   nonLocalClassPath;
+  private final ListenerFactory listenerFactory;
+  private final JavaAgent       javaAgentFinder;
+  private final boolean         nonLocalClassPath;
 
   public CodeCentricReport(final ReportOptions data,
-      final JavaAgent javaAgentFinder, final boolean nonLocalClassPath) {
+      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
+      final boolean nonLocalClassPath) {
     super(data);
     this.javaAgentFinder = javaAgentFinder;
     this.nonLocalClassPath = nonLocalClassPath;
+    this.listenerFactory = listenerFactory;
   }
 
   @Override
@@ -79,7 +82,8 @@ public class CodeCentricReport extends MutationCoverageReport {
         .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
 
     final FunctionalCollection<Class<?>> tests = filter(completeClassPath,
-        isWithinATestClass());
+        isWithinATestClass()); // note are looking for code within a test class
+                               // - not quite the same thing as isATest
 
     final List<Class<?>> codeClasses = filter(
         extractCodeClasses(completeClassPath, tests),
@@ -87,26 +91,28 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final Map<String, ClassGrouping> groupedByOuterClass = groupByOuterClass(codeClasses);
 
-    final CoverageDatabase coverageDatabase = new DependencyBasedCoverageDatabase(
-        this.getClassPath(), this.data);
+    final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
+        new JUnitCompatibleConfiguration());
+    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+        initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
+
+    coverageDatabase.initialise(tests);
 
     final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
         .mapCodeToTests(tests, groupedByOuterClass);
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    final MutationHtmlReportListener mutationReportListener = new MutationHtmlReportListener(
-        this.data.getReportDir(), new SmartSourceLocator(
-            this.data.getSourceDirs()));
+    final TestListener mutationReportListener = this.listenerFactory
+        .getListener(this.data);
+
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
-    final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
-        new JUnitCompatibleConfiguration());
 
     reportFailureForClassesWithoutTests(
         classesWithoutATest(codeClasses, codeToTests), mutationReportListener);
 
     final List<TestUnit> tus = createMutationTestUnits(codeToTests,
-        initialConfig);
+        initialConfig, coverageDatabase);
 
     System.out.println("Created  " + tus.size() + " mutation test units");
 
@@ -157,10 +163,7 @@ public class CodeCentricReport extends MutationCoverageReport {
         if (Reflection.isTopClass(clazz)) {
           map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
               Collections.<String> emptyList()));
-        } else {
-          System.out.println("Not top level " + clazz);
         }
-
       }
 
     };
@@ -186,18 +189,21 @@ public class CodeCentricReport extends MutationCoverageReport {
 
   private List<TestUnit> createMutationTestUnits(
       final Map<ClassGrouping, List<String>> groupedClassesToTests,
-      final Configuration pitConfig) {
+      final Configuration pitConfig, final CoverageDatabase coverageDatabase) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-    for (final Entry<ClassGrouping, List<String>> each : groupedClassesToTests
+    for (final Entry<ClassGrouping, List<String>> codeToTests : groupedClassesToTests
         .entrySet()) {
-      tus.add(createMutationTestUnit(each.getKey(), each.getValue(), pitConfig));
+      tus.add(createMutationTestUnit(
+          codeToTests.getKey(),
+          coverageDatabase.getCoverage(codeToTests.getKey(),
+              codeToTests.getValue())));
 
     }
     return tus;
   }
 
   private TestUnit createMutationTestUnit(final ClassGrouping classGrouping,
-      final List<String> testClasses, final Configuration pitConfig) {
+      final CoverageSource coverageSource) {
 
     final MutationEngine engine = DefaultMutationConfigFactory
         .createEngine(this.data.getMutators().toArray(
@@ -207,8 +213,8 @@ public class CodeCentricReport extends MutationCoverageReport {
     final Description d = new Description("mutation test of "
         + classGrouping.getParent(), MutationCoverageReport.class, null);
     final List<String> codeClasses = map(classGrouping, jvmClassToClassName());
-    return new InstrumentedMutationTestUnit(testClasses, codeClasses,
-        mutationConfig, pitConfig, d, this.javaAgentFinder);
+    return new InstrumentedMutationTestUnit(codeClasses, mutationConfig, d,
+        this.javaAgentFinder, coverageSource);
   }
 
   private List<Class<?>> extractCodeClasses(final Collection<Class<?>> targets,

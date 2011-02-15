@@ -20,12 +20,12 @@ import java.util.List;
 
 import org.pitest.ExtendedTestResult;
 import org.pitest.TestResult;
+import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
@@ -77,13 +77,14 @@ public abstract class MutationCoverageReport implements Runnable {
     if (data.isTestCentric()) {
       return new TestCentricReport(data);
     } else {
-      return new CodeCentricReport(data, new JavaAgentJarFinder(), false);
+      return new CodeCentricReport(data, new JavaAgentJarFinder(),
+          new HtmlReportFactory(), false);
     }
   }
 
   protected void reportFailureForClassesWithoutTests(
       final Collection<String> classesWithOutATest,
-      final MutationHtmlReportListener mutationReportListener) {
+      final TestListener mutationReportListener) {
     final SideEffect1<String> reportFailure = new SideEffect1<String>() {
       public void apply(final String a) {
         final TestResult tr = new ExtendedTestResult(null, null,

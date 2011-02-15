@@ -49,12 +49,12 @@ public class CoverageSlave {
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
 
-      System.setProperties(paramsFromParent.systemProperties);
+      System.setProperties(paramsFromParent.getSystemProperties());
 
       br.close();
 
-      HotSwapAgent.addTransformer(new CoverageTransformer(
-          paramsFromParent.filter));
+      HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
+          .getFilter()));
 
       final CoverageWorker worker = new CoverageWorker(paramsFromParent, w);
 

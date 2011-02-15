@@ -24,6 +24,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CodeCentricReport;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
@@ -153,7 +154,7 @@ public class PitMojo extends AbstractMojo {
 
     final CodeCentricReport report = new CodeCentricReport(data,
         new KnownLocationJavaAgentJarFinder(pitVersionInfo.getFile()
-            .getAbsolutePath()), true);
+            .getAbsolutePath()), new HtmlReportFactory(), true);
 
     // FIXME will we get a clash between junit & possibly PIT jars by using the
     // plugin loader?
