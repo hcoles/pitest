@@ -131,7 +131,7 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
   }
 
   public void initialise(final FunctionalCollection<Class<?>> tests) {
-    // TODO Auto-generated method stub
+    // nothing to do
 
   }
 

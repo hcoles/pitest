@@ -4,7 +4,6 @@ import static org.pitest.functional.Prelude.printWith;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,7 +29,6 @@ import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.DefaultCoverageSource;
-import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.MemoryEfficientHashMap;
 import org.pitest.util.WrappingProcess;
@@ -42,6 +40,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private final ClassPath                                     classPath;
   private final ReportOptions                                 data;
 
+  // required to choose sensible tests for mutations in static initializers
+  private final DependencyBasedCoverageDatabase               dependencyInfo;
+
   private FunctionalList<CoverageResult>                      coverage;
   private final Map<String, Map<ClassLine, Set<Description>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<Description>>>();
 
@@ -52,22 +53,27 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.initialConfig = initialConfig;
+    this.dependencyInfo = new DependencyBasedCoverageDatabase(initialConfig,
+        classPath, data);
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
       final FunctionalCollection<Class<?>> tests,
       final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
 
-    final List<String> testsAsStrings = tests.map(Functions.classToName());
+    return this.dependencyInfo.mapCodeToTests(tests, groupedByOuterClass);
 
-    // FIXME will use all tests for a static initializer
-    // so must filter here
-    final Map<ClassGrouping, List<String>> codeToTests = new HashMap<ClassGrouping, List<String>>();
-    for (final ClassGrouping each : groupedByOuterClass.values()) {
-      codeToTests.put(each, testsAsStrings);
-    }
-
-    return codeToTests;
+    // final List<String> testsAsStrings = tests.map(Functions.classToName());
+    //
+    // // FIXME will use all tests for a static initializer
+    // // so must filter here
+    // final Map<ClassGrouping, List<String>> codeToTests = new
+    // HashMap<ClassGrouping, List<String>>();
+    // for (final ClassGrouping each : groupedByOuterClass.values()) {
+    // codeToTests.put(each, testsAsStrings);
+    // }
+    //
+    // return codeToTests;
   }
 
   private FunctionalList<CoverageResult> gatherCoverageData(
@@ -105,18 +111,14 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       this.coverage = gatherCoverageData(tests);
 
       for (final CoverageResult each : this.coverage) {
-        // System.out.println(each);
         calculateClassCoverage(each);
-
       }
 
-      // coverage.forEach(e);
+      this.dependencyInfo.initialise(tests);
 
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
