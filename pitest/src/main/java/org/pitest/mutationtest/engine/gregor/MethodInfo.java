@@ -85,4 +85,8 @@ public class MethodInfo {
     return Type.getReturnType(this.desc);
   }
 
+  public Boolean isStaticInitializer() {
+    return "<clinit>".equals(this.name);
+  }
+
 }

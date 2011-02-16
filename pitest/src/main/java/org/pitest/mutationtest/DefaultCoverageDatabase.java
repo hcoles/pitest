@@ -1,6 +1,8 @@
 package org.pitest.mutationtest;
 
+import static org.pitest.functional.Prelude.isEqualTo;
 import static org.pitest.functional.Prelude.printWith;
+import static org.pitest.util.Functions.classToName;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -21,9 +23,12 @@ import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
+import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.instrument.ClassLine;
@@ -61,19 +66,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       final FunctionalCollection<Class<?>> tests,
       final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
 
+    // can't use coverage data if we are mutating static initializers
+    // as only first test to use a class will appear to cover this code
     return this.dependencyInfo.mapCodeToTests(tests, groupedByOuterClass);
 
-    // final List<String> testsAsStrings = tests.map(Functions.classToName());
-    //
-    // // FIXME will use all tests for a static initializer
-    // // so must filter here
-    // final Map<ClassGrouping, List<String>> codeToTests = new
-    // HashMap<ClassGrouping, List<String>>();
-    // for (final ClassGrouping each : groupedByOuterClass.values()) {
-    // codeToTests.put(each, testsAsStrings);
-    // }
-    //
-    // return codeToTests;
   }
 
   private FunctionalList<CoverageResult> gatherCoverageData(
@@ -130,11 +126,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
           .getClassName());
       if (map == null) {
         map = new MemoryEfficientHashMap<ClassLine, Set<Description>>();
-        // System.out.println("2 -----> Got coverage for " + i.getClassName());
         this.classCoverage.put(i.getClassName(), map);
-      } else {
-        // System.out.println("Already have map for " + i.getClassName());
-
       }
       mapTestsToClassLines(each, i, map);
 
@@ -159,8 +151,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   public CoverageSource getCoverage(final ClassGrouping code,
       final List<String> tests) {
 
-    return new DefaultCoverageSource(tests, this.initialConfig, getTimings(),
-        coverageByTestUnit(code));
+    return new DefaultCoverageSource(tests, this.initialConfig,
+        getTimings(tests), coverageByTestUnit(code));
   }
 
   private Map<ClassLine, Set<Description>> coverageByTestUnit(
@@ -187,17 +179,46 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     return lineToTests;
   }
 
-  private Map<String, Long> getTimings() {
+  private Map<String, Long> getTimings(final List<String> tests) {
     final Map<String, Long> timings = new MemoryEfficientHashMap<String, Long>();
 
-    for (final CoverageResult each : this.coverage) {
-      // TODO filter timings
-      timings.put(each.getTestUnitDescription().toString(),
-          each.getExecutionTime());
-    }
+    this.coverage.filter(isForTests(tests)).forEach(addToMap(timings));
 
     return timings;
 
+  }
+
+  private SideEffect1<CoverageResult> addToMap(final Map<String, Long> timings) {
+    return new SideEffect1<CoverageResult>() {
+
+      public void apply(final CoverageResult result) {
+        timings.put(result.getTestUnitDescription().toString(),
+            result.getExecutionTime());
+      }
+
+    };
+  }
+
+  private F<CoverageResult, Boolean> isForTests(final List<String> tests) {
+    return new F<CoverageResult, Boolean>() {
+
+      public Boolean apply(final CoverageResult a) {
+        return FCollection.contains(tests, oneOf(a.getTestUnitDescription()
+            .getTestClasses()));
+      }
+
+    };
+  }
+
+  private F<String, Boolean> oneOf(final Collection<Class<?>> testClasses) {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(final String a) {
+        return FCollection.map(testClasses, classToName()).contains(
+            isEqualTo(a));
+      }
+
+    };
   }
 
 }

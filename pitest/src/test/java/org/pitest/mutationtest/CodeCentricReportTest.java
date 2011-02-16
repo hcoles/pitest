@@ -63,11 +63,21 @@ public class CodeCentricReportTest {
   }
 
   @Test
-  public void shouldKillMutationsInStaticInitializersWhenThereIsCoverage() {
+  public void shouldKillMutationsInStaticInitializersWhenThereIsCoverageAndMutateStaticFlagIsSet() {
+    this.data.setMutateStaticInitializers(true);
     this.data
         .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults(KILLED, KILLED, KILLED);
+  }
+
+  @Test
+  public void shouldNotCreateMutationsInStaticInitializersWhenFlagNotSet() {
+    this.data.setMutateStaticInitializers(false);
+    this.data
+        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+    createAndRun();
+    verifyResults();
   }
 
   private void createAndRun() {

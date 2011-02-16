@@ -22,6 +22,7 @@ import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
 import org.pitest.util.Glob;
@@ -29,14 +30,15 @@ import org.pitest.util.Unchecked;
 
 public class OptionsParser {
 
-  private static final String               TEST_CENTRIC            = "testCentric";
-  private final static String               REPORT_DIR_ARG          = "reportDir";
-  private final static String               TARGET_CLASSES_ARG      = "targetClasses";
-  private final static String               IN_SCOPE_CLASSES_ARG    = "inScopeClasses";
-  private final static String               SOURCE_DIR_ARG          = "sourceDirs";
-  private final static String               MUTATIONS_ARG           = "mutations";
-  private final static String               DEPENDENCY_DISTANCE_ARG = "dependencyDistance";
-  private final static String               CHILD_JVM_ARGS          = "jvmArgs";
+  private static final String               TEST_CENTRIC                   = "testCentric";
+  private final static String               REPORT_DIR_ARG                 = "reportDir";
+  private final static String               TARGET_CLASSES_ARG             = "targetClasses";
+  private final static String               IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
+  private final static String               SOURCE_DIR_ARG                 = "sourceDirs";
+  private final static String               MUTATIONS_ARG                  = "mutations";
+  private final static String               DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
+  private final static String               CHILD_JVM_ARGS                 = "jvmArgs";
+  private final static String               MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
 
   private final OptionParser                parser;
   final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -46,6 +48,7 @@ public class OptionsParser {
   final OptionSpec<File>                    sourceDirSpec;
   final OptionSpec<Mutator>                 mutators;
   final OptionSpec<String>                  jvmArgs;
+  final OptionSpecBuilder                   mutateStatics;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -95,6 +98,8 @@ public class OptionsParser {
     this.jvmArgs = this.parser.accepts(CHILD_JVM_ARGS).withRequiredArg()
         .withValuesSeparatedBy(',')
         .describedAs("comma seperated list of child JVM args");
+
+    this.mutateStatics = this.parser.accepts(MUTATE_STATIC_INITIALIZERS_ARG);
   }
 
   public ReportOptions parse(final String[] args) {
@@ -113,6 +118,7 @@ public class OptionsParser {
     data.setShowHelp(userArgs.has("?"));
     data.setIsTestCentric(userArgs.has(TEST_CENTRIC));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
+    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
 
     return data;
 

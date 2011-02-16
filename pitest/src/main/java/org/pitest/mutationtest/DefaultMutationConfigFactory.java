@@ -85,19 +85,36 @@ public final class DefaultMutationConfigFactory implements
 
   public static MutationConfig createConfig(final int threshold,
       final Mutator... mutators) {
-    return new MutationConfig(createEngine(mutators),
+    return new MutationConfig(createEngine(true, mutators),
         MutationTestType.TEST_CENTRIC, threshold,
         Collections.<String> emptyList());
   }
 
   private MutationEngine createEngine(final MutationTest annotation) {
-    return createEngine(annotation.mutators());
+    return createEngine(true, annotation.mutators());
   }
 
-  public static MutationEngine createEngine(final Mutator... mutators) {
+  public static MutationEngine createEngine(
+      final boolean mutateStaticInitializers, final Mutator... mutators) {
     final Collection<Mutator> ms = createMutatorListFromArrayOrUseDefaults(mutators);
+    final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers);
     return new GregorMutationEngine(
         FCollection.map(ms, mutatorTokenToMutator()), LOGGING_CLASSES, filter);
+  }
+
+  private static Predicate<MethodInfo> pickFilter(
+      final boolean mutateStaticInitializers) {
+    if (!mutateStaticInitializers) {
+      return new Predicate<MethodInfo>() {
+
+        public Boolean apply(final MethodInfo a) {
+          return !a.isStaticInitializer();
+        }
+
+      };
+    } else {
+      return filter;
+    }
   }
 
   private static Collection<Mutator> createMutatorListFromArrayOrUseDefaults(

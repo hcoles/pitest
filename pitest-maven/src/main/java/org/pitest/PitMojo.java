@@ -65,11 +65,19 @@ public class PitMojo extends AbstractMojo {
   private File                  reportsDirectory;
 
   /**
-   * Maximum distance to look from test to class
+   * Maximum distance to look from test to class. Relevant when mutating static
+   * initializers
    * 
    * @parameter
    */
   private int                   maxDependencyDistance;
+
+  /**
+   * Mutate static initializers
+   * 
+   * @parameter
+   */
+  private boolean               mutateStaticInitializers;
 
   /**
    * Maximum distance to look from test to class
@@ -139,6 +147,7 @@ public class PitMojo extends AbstractMojo {
 
     data.setTargetClasses(determineTargetClasses());
     data.setClassesInScope(determineClassesInScope());
+    data.setMutateStaticInitializers(this.mutateStaticInitializers);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 

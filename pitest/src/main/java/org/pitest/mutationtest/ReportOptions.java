@@ -38,12 +38,13 @@ public class ReportOptions {
   private Collection<String>            classPathElements;
   private Collection<Mutator>           mutators;
   private int                           dependencyAnalysisMaxDistance;
+  private boolean                       mutateStaticInitializers = true;
 
   private boolean                       showHelp;
 
   private boolean                       isTestCentric;
 
-  private List<String>                  jvmArgs = new ArrayList<String>();
+  private List<String>                  jvmArgs                  = new ArrayList<String>();
 
   public ReportOptions() {
   }
@@ -198,6 +199,18 @@ public class ReportOptions {
     this.targetClasses = targetClasses;
   }
 
+  public boolean hasValueForClassesInScope() {
+    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
+  }
+
+  public boolean isMutateStaticInitializers() {
+    return this.mutateStaticInitializers;
+  }
+
+  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
+    this.mutateStaticInitializers = mutateStaticInitializers;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -205,13 +218,10 @@ public class ReportOptions {
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", showHelp=" + this.showHelp
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
         + ", isTestCentric=" + this.isTestCentric + ", jvmArgs=" + this.jvmArgs
         + "]";
-  }
-
-  public boolean hasValueForClassesInScope() {
-    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
   }
 
 }
