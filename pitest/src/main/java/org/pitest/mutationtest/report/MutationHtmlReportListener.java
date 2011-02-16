@@ -95,8 +95,6 @@ public class MutationHtmlReportListener implements TestListener {
 
   private void processMetaData(final MutationMetaData value) {
 
-    System.out.println("Results for " + value.getMutatedClass());
-
     try {
 
       final Statistics stats = value.getStats().value();

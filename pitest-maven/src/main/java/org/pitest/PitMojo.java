@@ -33,7 +33,7 @@ import org.pitest.util.Glob;
 /**
  * Goal which runs a coverage mutation report
  * 
- * @goal pit
+ * @goal mutationCoverage
  * 
  * @requiresDependencyResolution test
  * 
@@ -75,7 +75,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Mutate static initializers
    * 
-   * @parameter
+   * @parameter default-value="false"
    */
   private boolean               mutateStaticInitializers;
 

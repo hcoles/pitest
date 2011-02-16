@@ -40,7 +40,7 @@ public class MutationTestFinderTest {
   @Before
   public void setUp() {
     this.config = DefaultMutationConfigFactory.createConfig(100,
-        Mutator.METHOD_CALLS);
+        Mutator.VOID_METHOD_CALLS);
     this.testee = new MutationTestFinder(this.config);
     this.pitConfig = new JUnitCompatibleConfiguration();
   }

@@ -68,7 +68,7 @@ public class CodeCentricReportTest {
     this.data
         .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
-    verifyResults(KILLED, KILLED, KILLED);
+    verifyResults(KILLED);
   }
 
   @Test

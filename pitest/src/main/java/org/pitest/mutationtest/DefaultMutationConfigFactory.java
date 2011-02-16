@@ -29,11 +29,13 @@ import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.MethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public final class DefaultMutationConfigFactory implements
@@ -51,7 +53,7 @@ public final class DefaultMutationConfigFactory implements
                                                                                    Mutator.INCREMENTS,
                                                                                    Mutator.MATH,
                                                                                    Mutator.RETURN_VALS,
-                                                                                   Mutator.METHOD_CALLS,
+                                                                                   Mutator.VOID_METHOD_CALLS,
                                                                                    Mutator.NEGS);
 
   private final static Collection<String>                 LOGGING_CLASSES  = Arrays
@@ -64,8 +66,12 @@ public final class DefaultMutationConfigFactory implements
   static {
     enumMapping.put(Mutator.CONDITIONALS,
         ConditionalsMutator.CONDITIONALS_MUTATOR);
-    enumMapping
-        .put(Mutator.METHOD_CALLS, MethodCallMutator.METHOD_CALL_MUTATOR);
+    enumMapping.put(Mutator.VOID_METHOD_CALLS,
+        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    enumMapping.put(Mutator.NON_VOID_METHOD_CALLS,
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    enumMapping.put(Mutator.CONSTRUCTOR_CALLS,
+        ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
     enumMapping.put(Mutator.INCREMENTS, IncrementsMutator.INCREMENTS_MUTATOR);
     enumMapping.put(Mutator.NEGS, InvertNegsMutator.INVERT_NEGS_MUTATOR);
     enumMapping.put(Mutator.MATH, MathMutator.MATH_MUTATOR);

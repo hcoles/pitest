@@ -27,26 +27,40 @@ import java.util.HashMap;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.functional.F2;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-public enum MethodCallMutator implements MethodMutatorFactory {
+enum MethodCallMutator implements MethodMutatorFactory {
 
   METHOD_CALL_MUTATOR;
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new MethodCallMethodVisitor(methodInfo, context, methodVisitor);
+    return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
+        this.getClass(), allMethods());
   }
 
+  private F2<String, String, Boolean> allMethods() {
+    return new F2<String, String, Boolean>() {
+
+      public Boolean apply(final String a, final String b) {
+        return true;
+      }
+
+    };
+  }
 }
 
 class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
 
-  private final static HashMap<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
+  private final static HashMap<Type, Integer>         RETURN_TYPE_MAP = new HashMap<Type, Integer>();
+
+  private final F2<String, String, Boolean>           filter;
+  private final Class<? extends MethodMutatorFactory> factoryClass;
 
   static {
     RETURN_TYPE_MAP.put(Type.INT_TYPE, ICONST_0);
@@ -60,19 +74,24 @@ class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
   }
 
   public MethodCallMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer) {
+      final Context context, final MethodVisitor writer,
+      final Class<? extends MethodMutatorFactory> factoryClass,
+      final F2<String, String, Boolean> filter) {
     super(methodInfo, context, writer);
+    this.factoryClass = factoryClass;
+    this.filter = filter;
   }
 
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc) {
 
-    if (isCallToSuperOrOwnConstructor(name, owner)) {
+    if (!this.filter.apply(name, desc)
+        || isCallToSuperOrOwnConstructor(name, owner)) {
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     } else {
       final MutationIdentifier newId = this.context.registerMutation(
-          MethodCallMutator.class, "removed call to " + owner + "::" + name);
+          this.factoryClass, "removed call to " + owner + "::" + name);
 
       if (this.context.shouldMutate(newId)) {
 

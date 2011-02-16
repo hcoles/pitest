@@ -27,6 +27,10 @@ public class True<A> implements Predicate<A> {
     return (True<A>) INSTANCE;
   }
 
+  public static <A> Predicate<A> all(final Class<A> a) {
+    return all();
+  }
+
   public Boolean apply(final A a) {
     return true;
   }

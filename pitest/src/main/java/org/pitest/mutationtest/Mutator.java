@@ -17,9 +17,11 @@ package org.pitest.mutationtest;
 public enum Mutator implements MutationOperator {
 
   NEGS("Mutate neg instructions"), RETURN_VALS("Mutate return values"), INLINE_CONSTS(
-      "Mutate inline constants"), MATH("Mutate math operations"), METHOD_CALLS(
-      "Remove method calls"), CONDITIONALS(
-      "Mutate conditional branch instructions"), INCREMENTS("Mutate increments");
+      "Mutate inline constants"), MATH("Mutate math operations"), VOID_METHOD_CALLS(
+      "Remove void method calls"), CONDITIONALS(
+      "Mutate conditional branch instructions"), INCREMENTS("Mutate increments"), NON_VOID_METHOD_CALLS(
+      "Remove non void method calls"), CONSTRUCTOR_CALLS(
+      "Remove constructor calls");
 
   Mutator(final String description) {
     this.description = description;
