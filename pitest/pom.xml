@@ -222,11 +222,6 @@
 			<version>${asm.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm-util</artifactId>
-			<version>${asm.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.4.8</version>

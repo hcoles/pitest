@@ -88,7 +88,7 @@ public final class Mutator {
      * Default mutator that removes method calls to dsl methods.
      * 
      */
-    add("VOID_METHOD_CALLS", DSLMethodCallMutator.DSL_METHOD_CALL_MUTATOR);
+    add("DSL_METHOD_CALL_MUTATOR", DSLMethodCallMutator.DSL_METHOD_CALL_MUTATOR);
 
     /**
      * Default mutator that negates conditionals.
