@@ -19,21 +19,14 @@ import java.io.InputStream;
 
 import org.pitest.functional.SideEffect1;
 
-public class StreamMonitor extends Thread {
-  private final byte[]              buf       = new byte[256];
+public class StreamMonitor extends AbstractMonitor {
+  private final byte[]              buf = new byte[256];
   private final InputStream         in;
   private final SideEffect1<String> inputHandler;
-  private volatile boolean          shouldRun = true;
 
   @Override
-  public void run() {
-    while (this.shouldRun) {
-      readFromStream();
-    }
-  }
-
-  public void requestStop() {
-    this.shouldRun = false;
+  protected void process() {
+    readFromStream();
   }
 
   private void readFromStream() {
@@ -56,7 +49,5 @@ public class StreamMonitor extends Thread {
     this.in = in;// new InputStreamReader(in);
     this.inputHandler = inputHandler;
     this.setName("PIT Stream Monitor");
-    setDaemon(true);
-    start();
   }
 }

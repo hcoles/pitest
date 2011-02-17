@@ -34,4 +34,8 @@ public abstract class PerProcessTimelimitCheck {
     maxTime = 0;
   }
 
+  public static boolean isEnabled() {
+    return maxTime == 0;
+  }
+
 }

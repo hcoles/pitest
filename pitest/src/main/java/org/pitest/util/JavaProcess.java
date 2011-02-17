@@ -25,10 +25,10 @@ import org.pitest.functional.SideEffect1;
 
 public class JavaProcess {
 
-  private final Process       process;
+  private final Process process;
 
-  private final StreamMonitor out;
-  private final StreamMonitor err;
+  private final Monitor out;
+  private final Monitor err;
 
   public JavaProcess(final Process process,
       final SideEffect1<String> sysoutHandler,
@@ -36,6 +36,8 @@ public class JavaProcess {
     this.process = process;
     this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);
     this.err = new StreamMonitor(process.getErrorStream(), syserrHandler);
+    this.out.requestStart();
+    this.err.requestStart();
 
   }
 

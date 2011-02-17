@@ -209,18 +209,11 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     if (!exitCode.isOk()) {
       System.out.println("Slave encountered error");
       final Collection<MutationIdentifier> unfinishedRuns = getUnfinishedRuns(mutations);
-      if (!unfinishedRuns.isEmpty()) {
-        System.out.println("Setting " + unfinishedRuns.size()
-            + " unfinished runs to error state");
-        FCollection.forEach(unfinishedRuns,
-            putToMap(mutations, DetectionStatus.RUN_ERROR));
-      }
-
-      if (exitCode.equals(ExitCode.OUT_OF_MEMORY)) {
-        FCollection.forEach(unfinishedRuns,
-            putToMap(mutations, DetectionStatus.MEMORY_ERROR));
-      }
-
+      final DetectionStatus status = DetectionStatus
+          .getForErrorExitCode(exitCode);
+      System.out.println("Setting " + unfinishedRuns.size()
+          + " unfinished runs to " + status + " state");
+      FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
     } else {
       System.out.println("All ok");
     }

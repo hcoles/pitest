@@ -52,6 +52,8 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.loopbreak.LoopBreakTransformation;
 import org.pitest.mutationtest.loopbreak.PerProcessTimelimitCheck;
+import org.pitest.util.Monitor;
+import org.pitest.util.NullMonitor;
 import org.pitest.util.Unchecked;
 
 public class MutationTestWorker {
@@ -195,14 +197,29 @@ public class MutationTestWorker {
         if (this.hotswap.apply(testee,
             t.transform(i.getClazz(), mutatedClass.getBytes()))) {
 
-          if (useTimeOut) {
-            PerProcessTimelimitCheck.setMaxEndTime(System.currentTimeMillis()
-                + stats.getExecutionTime(relevantTests) + 1000);
-          } else {
-            PerProcessTimelimitCheck.disableLoopBreaking();
+          Monitor timeoutWatchDog = null;
+          try {
+            // FIXME why not make this finer grained with a decorator?
+            // NOTE the watchdog will prevent reporting of earlier tests
+            // so non timing out tests will be timed out . . .
+            if (useTimeOut) {
+              final long loopBreakTimeout = stats
+                  .getExecutionTime(relevantTests) + 1000;
+              PerProcessTimelimitCheck.setMaxEndTime(System.currentTimeMillis()
+                  + loopBreakTimeout);
+              // PerProcessTimelimitCheck.disableLoopBreaking();
+              timeoutWatchDog = new TimeoutWatchDog(loopBreakTimeout + 1000);
+            } else {
+              PerProcessTimelimitCheck.disableLoopBreaking();
+              timeoutWatchDog = new NullMonitor();
+            }
+
+            timeoutWatchDog.requestStart();
+            mutationDetected = doTestsDetectMutation(c, relevantTests);
+          } finally {
+            timeoutWatchDog.requestStop();
           }
 
-          mutationDetected = doTestsDetectMutation(c, relevantTests);
         } else {
           System.out.println("Mutation " + i + " of " + range.size()
               + " was not viable ");

@@ -34,14 +34,15 @@ public class DefaultReporter implements Reporter {
   public void describe(final MutationIdentifier i, final int numberOfTests,
       final Mutant mutatedClass) throws IOException {
     this.w.write("DESC=," + IsolationUtils.toTransportString(i) + "\n");
-
+    this.w.flush();
   }
 
   public void report(final MutationIdentifier i,
       final DetectionStatus mutationDetected) throws IOException {
     this.w.write("REP=," + IsolationUtils.toTransportString(i) + ","
         + mutationDetected + "\n");
-    System.err.println("!Reporting Mutation " + i + " -> " + mutationDetected);
+    this.w.flush();
+    System.err.println("Mutation " + i + " -> " + mutationDetected);
   }
 
 }
