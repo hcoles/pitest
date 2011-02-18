@@ -39,12 +39,14 @@ public class OptionsParser {
   private final static String               DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
   private final static String               CHILD_JVM_ARGS                 = "jvmArgs";
   private final static String               MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
+  private final static String               THREADS_ARG                    = "threads";
 
   private final OptionParser                parser;
   final ArgumentAcceptingOptionSpec<String> reportDirSpec;
   final OptionSpec<String>                  targetClassesSpec;
   final OptionSpec<String>                  inScopeClassesSpec;
   final OptionSpec<Integer>                 depth;
+  final OptionSpec<Integer>                 threadsSpec;
   final OptionSpec<File>                    sourceDirSpec;
   final OptionSpec<Mutator>                 mutators;
   final OptionSpec<String>                  jvmArgs;
@@ -79,6 +81,10 @@ public class OptionsParser {
     this.depth = this.parser.accepts(DEPENDENCY_DISTANCE_ARG).withRequiredArg()
         .ofType(Integer.class).defaultsTo(4)
         .describedAs("maximum distance to look from test for covered classes");
+
+    this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()
+        .ofType(Integer.class).defaultsTo(1)
+        .describedAs("number of threads to use for testing");
 
     this.sourceDirSpec = this.parser.accepts(SOURCE_DIR_ARG).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
@@ -119,6 +125,7 @@ public class OptionsParser {
     data.setIsTestCentric(userArgs.has(TEST_CENTRIC));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
+    data.setNumberOfThreads(this.threadsSpec.value(userArgs));
 
     return data;
 

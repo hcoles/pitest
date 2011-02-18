@@ -199,22 +199,7 @@ public class MutationTestWorker {
 
           Monitor timeoutWatchDog = null;
           try {
-            // FIXME why not make this finer grained with a decorator?
-            // NOTE the watchdog will prevent reporting of earlier tests
-            // so non timing out tests will be timed out . . .
-            if (useTimeOut) {
-              final long loopBreakTimeout = stats
-                  .getExecutionTime(relevantTests) + 1000;
-              PerProcessTimelimitCheck.setMaxEndTime(System.currentTimeMillis()
-                  + loopBreakTimeout);
-              // PerProcessTimelimitCheck.disableLoopBreaking();
-              timeoutWatchDog = new TimeoutWatchDog(loopBreakTimeout + 1000);
-            } else {
-              PerProcessTimelimitCheck.disableLoopBreaking();
-              timeoutWatchDog = new NullMonitor();
-            }
-
-            timeoutWatchDog.requestStart();
+            timeoutWatchDog = setupTimeOuts(stats, useTimeOut, relevantTests);
             mutationDetected = doTestsDetectMutation(c, relevantTests);
           } finally {
             timeoutWatchDog.requestStop();
@@ -236,6 +221,27 @@ public class MutationTestWorker {
 
     System.out.println(".....................");
 
+  }
+
+  private Monitor setupTimeOuts(final Statistics stats,
+      final boolean useTimeOut, final List<TestUnit> relevantTests) {
+    Monitor timeoutWatchDog;
+    // FIXME why not make this finer grained with a decorator?
+    // NOTE the watchdog will prevent reporting of earlier tests
+    // so non timing out tests will be timed out . . .
+    if (useTimeOut) {
+      final long loopBreakTimeout = stats.getExecutionTime(relevantTests) + 1000;
+      PerProcessTimelimitCheck.setMaxEndTime(System.currentTimeMillis()
+          + loopBreakTimeout);
+      // PerProcessTimelimitCheck.disableLoopBreaking();
+      timeoutWatchDog = new TimeoutWatchDog(loopBreakTimeout + 1000);
+    } else {
+      PerProcessTimelimitCheck.disableLoopBreaking();
+      timeoutWatchDog = new NullMonitor();
+    }
+
+    timeoutWatchDog.requestStart();
+    return timeoutWatchDog;
   }
 
   private Container createNewContainer(final ClassLoader activeloader) {

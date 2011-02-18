@@ -32,13 +32,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
+import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
+import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
@@ -117,11 +121,33 @@ public class CodeCentricReport extends MutationCoverageReport {
     System.out.println("Created  " + tus.size() + " mutation test units");
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
-    pit.run(new UnContainer(), tus);
+    pit.run(createContainer(), tus);
 
     System.out.println("Completed in " + timeSpan(t0) + ".  Tested "
         + codeToTests.size() + " classes.");
 
+  }
+
+  private Container createContainer() {
+    if (this.data.getNumberOfThreads() > 1) {
+      return new BaseThreadPoolContainer(this.data.getNumberOfThreads(),
+          classLoaderFactory(), Executors.defaultThreadFactory()) {
+
+      };
+    } else {
+      return new UnContainer();
+    }
+  }
+
+  private ClassLoaderFactory classLoaderFactory() {
+    final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    return new ClassLoaderFactory() {
+
+      public ClassLoader get() {
+        return loader;
+      }
+
+    };
   }
 
   private String timeSpan(final long t0) {

@@ -45,6 +45,7 @@ public class ReportOptions {
   private boolean                       isTestCentric;
 
   private List<String>                  jvmArgs                  = new ArrayList<String>();
+  private int                           numberOfThreads          = 0;
 
   public ReportOptions() {
   }
@@ -211,6 +212,14 @@ public class ReportOptions {
     this.mutateStaticInitializers = mutateStaticInitializers;
   }
 
+  public int getNumberOfThreads() {
+    return this.numberOfThreads;
+  }
+
+  public void setNumberOfThreads(final int numberOfThreads) {
+    this.numberOfThreads = numberOfThreads;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -221,7 +230,7 @@ public class ReportOptions {
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
         + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
         + ", isTestCentric=" + this.isTestCentric + ", jvmArgs=" + this.jvmArgs
-        + "]";
+        + ", numberOfThreads=" + this.numberOfThreads + "]";
   }
 
 }

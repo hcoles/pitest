@@ -73,6 +73,13 @@ public class PitMojo extends AbstractMojo {
   private int                   maxDependencyDistance;
 
   /**
+   * Number of threads to use
+   * 
+   * @parameter default-value="1"
+   */
+  private int                   threads;
+
+  /**
    * Mutate static initializers
    * 
    * @parameter default-value="false"
@@ -148,6 +155,7 @@ public class PitMojo extends AbstractMojo {
     data.setTargetClasses(determineTargetClasses());
     data.setClassesInScope(determineClassesInScope());
     data.setMutateStaticInitializers(this.mutateStaticInitializers);
+    data.setNumberOfThreads(this.threads);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 
