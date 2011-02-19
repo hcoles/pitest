@@ -23,6 +23,9 @@
 </head>
 <body>
 
+<h1>Detected $numberOfDetectedMutations$ of $numberOfMutations$ mutations in around $duration$ secs</h1>
+
+
 
 $summaryList:{ summary | 
 <div class='unit'>

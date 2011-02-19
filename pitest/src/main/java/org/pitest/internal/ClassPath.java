@@ -15,6 +15,8 @@
 
 package org.pitest.internal;
 
+import static org.pitest.functional.FCollection.filter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -188,6 +190,21 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   public Collection<String> findClasses(final Predicate<String> nameFilter) {
     return FCollection.filter(classNames(), nameFilter);
+  }
+
+  public ClassPath getLocalDirectoryComponent() {
+    return new ClassPath(filter(this.roots, isALocalDirectory()).toArray(
+        new ClassPathRoot[0]));
+  }
+
+  private F<ClassPathRoot, Boolean> isALocalDirectory() {
+    return new F<ClassPathRoot, Boolean>() {
+
+      public Boolean apply(final ClassPathRoot a) {
+        return a instanceof DirectoryClassPathRoot;
+      }
+
+    };
   }
 
 }

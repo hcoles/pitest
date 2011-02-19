@@ -50,6 +50,7 @@ public class TestCentricReport extends MutationCoverageReport {
   @Override
   public void runReport() {
 
+    final long t0 = System.currentTimeMillis();
     final Collection<Class<?>> targets = findClassesForCoverage(getClassPath());
     System.out.println("targets = " + targets.size());
     final Collection<Class<?>> tests = FCollection.filter(targets, isATest());
@@ -65,7 +66,7 @@ public class TestCentricReport extends MutationCoverageReport {
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final MutationHtmlReportListener mutationReportListener = new MutationHtmlReportListener(
-        this.data.getReportDir(), new SmartSourceLocator(
+        t0, this.data.getReportDir(), new SmartSourceLocator(
             this.data.getSourceDirs()));
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());

@@ -19,6 +19,6 @@ import org.pitest.extension.TestListener;
 
 public interface ListenerFactory {
 
-  public TestListener getListener(ReportOptions data);
+  public TestListener getListener(ReportOptions data, long startTime);
 
 }

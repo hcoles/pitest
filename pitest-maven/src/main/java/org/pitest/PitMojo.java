@@ -87,6 +87,13 @@ public class PitMojo extends AbstractMojo {
   private boolean               mutateStaticInitializers;
 
   /**
+   * Mutate classes within jar files and other archives
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               includeJarFiles;
+
+  /**
    * Maximum distance to look from test to class
    * 
    * @parameter
@@ -151,6 +158,7 @@ public class PitMojo extends AbstractMojo {
     data.setClassPathElements(classPath);
     data.setIsTestCentric(false);
     data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
+    data.setIncludeJarFiles(this.includeJarFiles);
 
     data.setTargetClasses(determineTargetClasses());
     data.setClassesInScope(determineClassesInScope());
@@ -178,7 +186,7 @@ public class PitMojo extends AbstractMojo {
     final ClassLoader loader = new DefaultPITClassloader(data
         .getClassPath(true).getOrElse(new ClassPath()),
         IsolationUtils.getContextClassLoader());
-    ClassLoader original = IsolationUtils.getContextClassLoader();
+    final ClassLoader original = IsolationUtils.getContextClassLoader();
 
     try {
       IsolationUtils.setContextClassLoader(loader);
@@ -205,7 +213,7 @@ public class PitMojo extends AbstractMojo {
 
   private F<String, Mutator> stringToMutator() {
     return new F<String, Mutator>() {
-      public Mutator apply(String a) {
+      public Mutator apply(final String a) {
         return Mutator.valueOf(a);
       }
 
@@ -221,7 +229,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
-      Collection<String> filters) {
+      final Collection<String> filters) {
     if (filters == null) {
       return Collections.<Predicate<String>> singleton(new Glob(this.project
           .getGroupId() + "*"));

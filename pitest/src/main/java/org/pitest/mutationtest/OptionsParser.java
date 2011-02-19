@@ -40,6 +40,7 @@ public class OptionsParser {
   private final static String               CHILD_JVM_ARGS                 = "jvmArgs";
   private final static String               MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
   private final static String               THREADS_ARG                    = "threads";
+  private final static String               INCLUDE_JAR_FILES              = "includeJarFiles";
 
   private final OptionParser                parser;
   final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -51,6 +52,7 @@ public class OptionsParser {
   final OptionSpec<Mutator>                 mutators;
   final OptionSpec<String>                  jvmArgs;
   final OptionSpecBuilder                   mutateStatics;
+  final OptionSpecBuilder                   includeJarFilesSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -106,6 +108,8 @@ public class OptionsParser {
         .describedAs("comma seperated list of child JVM args");
 
     this.mutateStatics = this.parser.accepts(MUTATE_STATIC_INITIALIZERS_ARG);
+
+    this.includeJarFilesSpec = this.parser.accepts(INCLUDE_JAR_FILES);
   }
 
   public ReportOptions parse(final String[] args) {
@@ -126,6 +130,7 @@ public class OptionsParser {
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
+    data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
 
     return data;
 

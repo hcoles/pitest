@@ -18,6 +18,7 @@ import static org.pitest.functional.FCollection.filter;
 import static org.pitest.functional.FCollection.flatMap;
 import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.FCollection.map;
+import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.id;
 import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Functions.jvmClassToClassName;
@@ -25,6 +26,7 @@ import static org.pitest.util.Functions.stringToClass;
 import static org.pitest.util.TestInfo.isWithinATestClass;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -82,12 +84,15 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final long t0 = System.currentTimeMillis();
 
-    final Collection<Class<?>> completeClassPath = flatMap(getClassPath()
-        .findClasses(this.data.getClassesInScopeFilter()), stringToClass());
+    final Collection<Class<?>> completeClassPath = flatMap(
+        getClassPath().getLocalDirectoryComponent().findClasses(
+            this.data.getClassesInScopeFilter()), stringToClass());
 
+    @SuppressWarnings("unchecked")
     final FunctionalCollection<Class<?>> tests = filter(completeClassPath,
-        isWithinATestClass()); // note are looking for code within a test class
-                               // - not quite the same thing as isATest
+        and(isWithinATestClass(), isNotAbstract())); // note are looking for
+                                                     // code within a test class
+    // - not quite the same thing as isATest
 
     final List<Class<?>> codeClasses = filter(
         extractCodeClasses(completeClassPath, tests),
@@ -107,7 +112,7 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(this.data);
+        .getListener(this.data, t0);
 
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
@@ -126,6 +131,16 @@ public class CodeCentricReport extends MutationCoverageReport {
     System.out.println("Completed in " + timeSpan(t0) + ".  Tested "
         + codeToTests.size() + " classes.");
 
+  }
+
+  private Predicate<Class<?>> isNotAbstract() {
+    return new Predicate<Class<?>>() {
+
+      public Boolean apply(final Class<?> a) {
+        return !a.isInterface() && !Modifier.isAbstract(a.getModifiers());
+      }
+
+    };
   }
 
   private Container createContainer() {

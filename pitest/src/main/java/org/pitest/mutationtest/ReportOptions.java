@@ -44,6 +44,8 @@ public class ReportOptions {
 
   private boolean                       isTestCentric;
 
+  private boolean                       includeJarFiles          = false;
+
   private List<String>                  jvmArgs                  = new ArrayList<String>();
   private int                           numberOfThreads          = 0;
 
@@ -220,6 +222,14 @@ public class ReportOptions {
     this.numberOfThreads = numberOfThreads;
   }
 
+  public boolean isIncludeJarFiles() {
+    return this.includeJarFiles;
+  }
+
+  public void setIncludeJarFiles(final boolean includeJarFiles) {
+    this.includeJarFiles = includeJarFiles;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -229,7 +239,8 @@ public class ReportOptions {
         + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
         + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
-        + ", isTestCentric=" + this.isTestCentric + ", jvmArgs=" + this.jvmArgs
+        + ", isTestCentric=" + this.isTestCentric + ", includeJarFiles="
+        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
         + ", numberOfThreads=" + this.numberOfThreads + "]";
   }
 

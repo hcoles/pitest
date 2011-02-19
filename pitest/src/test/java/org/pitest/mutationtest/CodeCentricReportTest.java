@@ -94,7 +94,8 @@ public class CodeCentricReportTest {
   private ListenerFactory listenerFactory() {
     return new ListenerFactory() {
 
-      public TestListener getListener(final ReportOptions data) {
+      public TestListener getListener(final ReportOptions data,
+          final long startTime) {
         return CodeCentricReportTest.this.metaDataExtractor;
       }
 
