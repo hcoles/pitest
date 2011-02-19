@@ -75,12 +75,8 @@ public class Statistics {
     }
   }
 
-  public long getExecutionTime(final List<TestUnit> tus) {
-    long t = 0;
-    for (final TestUnit each : tus) {
-      t = t + this.testUnitToExecutionTimeMap.get(each);
-    }
-    return t;
+  public long getExecutionTime(final TestUnit tu) {
+    return this.testUnitToExecutionTimeMap.get(tu);
   }
 
   public boolean isGreenSuite() {

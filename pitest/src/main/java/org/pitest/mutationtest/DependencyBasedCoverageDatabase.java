@@ -101,8 +101,7 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
       final Set<String> testReach = analyser
           .extractCallDependenciesForPackages(each,
               this.data.getClassesInScopeFilter());
-      System.out.println("Found " + testReach.size() + " class hits for "
-          + each);
+      System.out.println(each + " reaches " + testReach.size() + " classes");
 
       final List<ClassGrouping> group = flatMap(testReach,
           jvmClassToGroup(groupedByOuterClass));

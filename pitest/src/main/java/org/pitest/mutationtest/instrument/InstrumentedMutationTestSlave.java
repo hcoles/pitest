@@ -70,21 +70,19 @@ public class InstrumentedMutationTestSlave {
 
       };
 
-      final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.tests,
-          paramsFromParent.config.createMutator(IsolationUtils
-              .getContextClassLoader()), IsolationUtils.getContextClassLoader());
-
       final Reporter r = new DefaultReporter(w);
 
       Option<Statistics> stats = paramsFromParent.stats;
       if (stats.hasNone()) {
-        stats = Option.some(worker.gatherStatistics(
-            paramsFromParent.classesToMutate, r));
-        w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
+        stats = generateStats(paramsFromParent, hotswap, r, w);
       }
 
-      worker.run(paramsFromParent.mutations, r, stats.value(), true);
+      final MutationTestWorker worker = new MutationTestWorker(hotswap,
+          paramsFromParent.config.createMutator(IsolationUtils
+              .getContextClassLoader()), IsolationUtils.getContextClassLoader());
+
+      worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
+          stats.value(), paramsFromParent.tests));
 
     } catch (final Exception ex) {
       ex.printStackTrace(System.out);
@@ -109,6 +107,19 @@ public class InstrumentedMutationTestSlave {
       }
     }
 
+  }
+
+  private static Option<Statistics> generateStats(
+      final SlaveArguments paramsFromParent,
+      final F2<Class<?>, byte[], Boolean> hotswap, final Reporter r,
+      final Writer w) throws IOException {
+    final CoverageWorker worker = new CoverageWorker(paramsFromParent.tests,
+        hotswap, paramsFromParent.config.createMutator(IsolationUtils
+            .getContextClassLoader()), IsolationUtils.getContextClassLoader());
+    final Option<Statistics> stats = Option.some(worker.gatherStatistics(
+        paramsFromParent.classesToMutate, r));
+    w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
+    return stats;
   }
 
   private static void addMemoryWatchDog() {

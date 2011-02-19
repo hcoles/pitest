@@ -73,10 +73,10 @@ public class StatisticsTest {
   }
 
   @Test
-  public void testGetExecutionTimeReturnsSumOfExecutionTimes() {
-    assertEquals(4,
-        this.testee.getExecutionTime(Arrays.asList(this.t3, this.t1)));
-    assertEquals(3, this.testee.getExecutionTime(Arrays.asList(this.t3)));
+  public void testGetExecutionTimeReturnsExecutionTimes() {
+    assertEquals(3, this.testee.getExecutionTime(this.t3));
+    assertEquals(2, this.testee.getExecutionTime(this.t2));
+
   }
 
   @Test
