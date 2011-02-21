@@ -25,8 +25,10 @@ import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CodeCentricReport;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.HtmlReportFactory;
+import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.TestCentricReport;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
 import org.pitest.util.Glob;
 
@@ -99,6 +101,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    */
   private List<String>          mutators;
+
+  /**
+   * Run in test centric mode
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               testCentric;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -177,9 +186,7 @@ public class PitMojo extends AbstractMojo {
 
     System.out.println("Running report with " + data);
 
-    final CodeCentricReport report = new CodeCentricReport(data,
-        new KnownLocationJavaAgentJarFinder(pitVersionInfo.getFile()
-            .getAbsolutePath()), new HtmlReportFactory(), true);
+    final MutationCoverageReport report = pickReportType(data, pitVersionInfo);
 
     // FIXME will we get a clash between junit & possibly PIT jars by using the
     // plugin loader?
@@ -200,6 +207,19 @@ public class PitMojo extends AbstractMojo {
       throw new MojoExecutionException("fail", e);
     } finally {
       IsolationUtils.setContextClassLoader(original);
+    }
+  }
+
+  private MutationCoverageReport pickReportType(ReportOptions data,
+      Artifact pitVersionInfo) {
+    if (!this.testCentric) {
+      return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
+          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+          true);
+    } else {
+      return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
+          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+          true);
     }
   }
 
