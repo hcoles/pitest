@@ -52,7 +52,9 @@ $errors : { error |
 <br/>
 }$
 
-$mutatorScores.totals : { score | $score$ }$ 
+<hr/>
+
+$mutatorScores.totals : { score | <h2>$score$</h2> }$ 
 
 </body>
 </html>

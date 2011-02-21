@@ -52,6 +52,8 @@ public class HotSwapAgent {
       // swallow
     } catch (final java.lang.VerifyError e) {
       // swallow
+    } catch (final java.lang.InternalError e) {
+      // swallow
     }
     return false;
   }

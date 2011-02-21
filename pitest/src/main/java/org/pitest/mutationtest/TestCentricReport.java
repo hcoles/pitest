@@ -52,7 +52,8 @@ public class TestCentricReport extends MutationCoverageReport {
   public void runReport() {
 
     final long t0 = System.currentTimeMillis();
-    final Collection<Class<?>> targets = findClassesForCoverage(getClassPath());
+    final Collection<Class<?>> targets = findClassesForCoverage(getClassPath()
+        .getLocalDirectoryComponent());
     System.out.println("targets = " + targets.size());
     final Collection<Class<?>> tests = FCollection.filter(targets, isATest());
 

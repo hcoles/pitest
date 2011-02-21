@@ -4,7 +4,7 @@
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.17-SNAPSHOT</version>
+	<version>0.18</version>
 	<name>pitest</name>
 	<url>http://maven.apache.org</url>
 	    <build>

@@ -149,6 +149,7 @@ public class PitMojo extends AbstractMojo {
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
     final Set<String> classPath = new HashSet<String>();
+
     try {
       classPath.addAll(this.project.getTestClasspathElements());
       classPath.addAll(this.project.getCompileClasspathElements());
@@ -162,6 +163,8 @@ public class PitMojo extends AbstractMojo {
 
     final Artifact pitVersionInfo = this.pluginArtifactMap
         .get("org.pitest:pitest");
+
+    addOwnDependenciesToClassPath(classPath);
 
     final ReportOptions data = new ReportOptions();
     data.setClassPathElements(classPath);
@@ -177,6 +180,7 @@ public class PitMojo extends AbstractMojo {
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 
     data.setMutators(determineMutators());
+    data.setIsTestCentric(this.testCentric);
 
     final List<String> sourceRoots = new ArrayList<String>();
     sourceRoots.addAll(this.project.getCompileSourceRoots());
@@ -207,6 +211,12 @@ public class PitMojo extends AbstractMojo {
       throw new MojoExecutionException("fail", e);
     } finally {
       IsolationUtils.setContextClassLoader(original);
+    }
+  }
+
+  private void addOwnDependenciesToClassPath(final Set<String> classPath) {
+    for (Artifact dependency : this.pluginArtifactMap.values()) {
+      classPath.add(dependency.getFile().getAbsolutePath());
     }
   }
 

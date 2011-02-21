@@ -22,7 +22,7 @@ public class MutatorScores {
 
     @Override
     public String toString() {
-      return this.name + " : Generated " + this.count + ". "
+      return this.name + " : Generated " + this.count + " / "
           + (this.count - this.detected) + " survived.";
     }
 

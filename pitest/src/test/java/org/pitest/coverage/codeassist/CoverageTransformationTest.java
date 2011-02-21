@@ -97,10 +97,9 @@ public class CoverageTransformationTest {
     clazz.newInstance();
 
     final List<InvokeEntry> actual = getRecordedLines();
-    // we seem to record two visits to the deafault constructor
-    // this is not a problem but wold be nice to properly understand
-    final List<InvokeEntry> expected = Arrays.asList(line(20), line(22),
-        line(20));
+    // we seem to sometimes record two visits to the default constructor
+    // results in a flakey build
+    final List<InvokeEntry> expected = Arrays.asList(line(20), line(22));
     assertEquals(expected, actual);
   }
 
