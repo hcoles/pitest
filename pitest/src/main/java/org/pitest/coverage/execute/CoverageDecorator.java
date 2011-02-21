@@ -22,6 +22,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.mutationtest.ExitingResultCollector;
 
 public class CoverageDecorator extends TestUnitDecorator {
 
@@ -50,7 +51,9 @@ public class CoverageDecorator extends TestUnitDecorator {
     t.start();
 
     final long t0 = System.currentTimeMillis();
-    this.child().execute(loader, rc);
+    final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
+        rc);
+    this.child().execute(loader, wrappedCollector);
     final long executionTime = System.currentTimeMillis() - t0;
 
     try {
@@ -62,7 +65,8 @@ public class CoverageDecorator extends TestUnitDecorator {
     // readStatisticsQueue();
 
     this.output.apply(new CoverageResult(this.getDescription(), executionTime,
-        this.invokeStatistics.getClassStatistics()));
+        !wrappedCollector.shouldExit(), this.invokeStatistics
+            .getClassStatistics()));
 
   }
 

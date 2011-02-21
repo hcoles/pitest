@@ -49,6 +49,7 @@ public class CoverageDecorator extends TestUnitDecorator {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
+
     System.out.println("Gathering stats for test " + child().getDescription());
     this.invokeStatistics.clearCoverageStats();
 

@@ -24,16 +24,26 @@ import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
+import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
+import org.pitest.util.JavaAgent;
 import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
 public abstract class MutationCoverageReport implements Runnable {
 
-  protected final ReportOptions data;
+  protected final ReportOptions   data;
+  protected final ListenerFactory listenerFactory;
+  protected final JavaAgent       javaAgentFinder;
+  protected final boolean         nonLocalClassPath;
 
-  public MutationCoverageReport(final ReportOptions data) {
+  public MutationCoverageReport(final ReportOptions data,
+      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
+      final boolean nonLocalClassPath) {
+    this.javaAgentFinder = javaAgentFinder;
+    this.nonLocalClassPath = nonLocalClassPath;
+    this.listenerFactory = listenerFactory;
     this.data = data;
   }
 
@@ -75,7 +85,8 @@ public abstract class MutationCoverageReport implements Runnable {
 
   private static MutationCoverageReport selectRunType(final ReportOptions data) {
     if (data.isTestCentric()) {
-      return new TestCentricReport(data);
+      return new TestCentricReport(data, new JavaAgentJarFinder(),
+          new HtmlReportFactory(), false);
     } else {
       return new CodeCentricReport(data, new JavaAgentJarFinder(),
           new HtmlReportFactory(), false);
@@ -105,6 +116,11 @@ public abstract class MutationCoverageReport implements Runnable {
       }
     };
     return FCollection.flatMap(tests, f);
+  }
+
+  protected ClassPath getClassPath() {
+    return this.data.getClassPath(this.nonLocalClassPath).getOrElse(
+        new ClassPath());
   }
 
 }

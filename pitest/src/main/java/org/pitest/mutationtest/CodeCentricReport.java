@@ -55,7 +55,6 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.CoverageSource;
@@ -66,17 +65,10 @@ import org.pitest.util.JavaAgent;
 
 public class CodeCentricReport extends MutationCoverageReport {
 
-  private final ListenerFactory listenerFactory;
-  private final JavaAgent       javaAgentFinder;
-  private final boolean         nonLocalClassPath;
-
   public CodeCentricReport(final ReportOptions data,
       final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
       final boolean nonLocalClassPath) {
-    super(data);
-    this.javaAgentFinder = javaAgentFinder;
-    this.nonLocalClassPath = nonLocalClassPath;
-    this.listenerFactory = listenerFactory;
+    super(data, javaAgentFinder, listenerFactory, nonLocalClassPath);
   }
 
   @Override
@@ -178,11 +170,6 @@ public class CodeCentricReport extends MutationCoverageReport {
       }
 
     };
-  }
-
-  protected ClassPath getClassPath() {
-    return this.data.getClassPath(this.nonLocalClassPath).getOrElse(
-        new ClassPath());
   }
 
   private Map<String, ClassGrouping> groupByOuterClass(

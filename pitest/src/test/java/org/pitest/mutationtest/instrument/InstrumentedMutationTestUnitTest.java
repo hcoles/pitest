@@ -116,8 +116,8 @@ public class InstrumentedMutationTestUnitTest {
     this.testee = new InstrumentedMutationTestUnit(
         Collections.<String> singleton(TestOne.class.getName()),
         Collections.<String> singleton(One.class.getName()),
-        DefaultMutationConfigFactory.createConfig(66, Mutator.NEGS),
-        new JUnitCompatibleConfiguration(), null);
+        new JavaAgentJarFinder(), DefaultMutationConfigFactory.createConfig(66,
+            Mutator.NEGS), new JUnitCompatibleConfiguration(), null);
     execute();
     verify(this.rc).notifySkipped(any(Description.class));
   }
@@ -203,8 +203,8 @@ public class InstrumentedMutationTestUnitTest {
 
     return new InstrumentedMutationTestUnit(Collections.<String> singleton(test
         .getName()), Collections.<String> singleton(mutee.getName()),
-        DefaultMutationConfigFactory.createConfig(threshold,
-            Mutator.INCREMENTS, Mutator.MATH),
+        new JavaAgentJarFinder(), DefaultMutationConfigFactory.createConfig(
+            threshold, Mutator.INCREMENTS, Mutator.MATH),
         new JUnitCompatibleConfiguration(), null);
   }
 

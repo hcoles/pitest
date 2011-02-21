@@ -29,6 +29,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
+import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
+import org.pitest.util.JavaAgent;
 import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
@@ -36,15 +38,19 @@ public class MutationTestFinder implements TestUnitFinder {
 
   private final MutationConfig                  mutationConfig;
   private final F<Class<?>, Collection<String>> findChildClassesStrategy;
+  private final JavaAgent                       javaAgentFinder;
 
   public MutationTestFinder(final MutationConfig config) {
-    this(config, new FindInnerAndMemberClassesStrategy());
+    this(config, new FindInnerAndMemberClassesStrategy(),
+        new JavaAgentJarFinder());
   }
 
   public MutationTestFinder(final MutationConfig config,
-      final F<Class<?>, Collection<String>> findChildClassesStrategy) {
+      final F<Class<?>, Collection<String>> findChildClassesStrategy,
+      final JavaAgent javaAgentFinder) {
     this.mutationConfig = config;
     this.findChildClassesStrategy = findChildClassesStrategy;
+    this.javaAgentFinder = javaAgentFinder;
   }
 
   public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
@@ -87,7 +93,8 @@ public class MutationTestFinder implements TestUnitFinder {
       final MutationConfig mutationConfig, final Configuration pitConfig,
       final Description description) {
     return new InstrumentedMutationTestUnit(Collections.<String> singleton(test
-        .getName()), classesToMutate, mutationConfig, pitConfig, description);
+        .getName()), classesToMutate, this.javaAgentFinder, mutationConfig,
+        pitConfig, description);
 
   }
 

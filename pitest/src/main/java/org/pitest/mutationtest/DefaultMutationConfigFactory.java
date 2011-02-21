@@ -28,11 +28,11 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
@@ -49,7 +49,7 @@ public final class DefaultMutationConfigFactory implements
 
   public final static Collection<Mutator>                 DEFAULT_MUTATORS = Arrays
                                                                                .asList(
-                                                                                   Mutator.CONDITIONALS,
+                                                                                   Mutator.NEGATE_CONDITIONALS,
                                                                                    Mutator.INCREMENTS,
                                                                                    Mutator.MATH,
                                                                                    Mutator.RETURN_VALS,
@@ -64,8 +64,8 @@ public final class DefaultMutationConfigFactory implements
                                                                                    "org.apache.commons.logging");
 
   static {
-    enumMapping.put(Mutator.CONDITIONALS,
-        ConditionalsMutator.CONDITIONALS_MUTATOR);
+    enumMapping.put(Mutator.NEGATE_CONDITIONALS,
+        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
     enumMapping.put(Mutator.VOID_METHOD_CALLS,
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
     enumMapping.put(Mutator.NON_VOID_METHOD_CALLS,

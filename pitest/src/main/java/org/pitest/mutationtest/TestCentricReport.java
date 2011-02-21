@@ -30,21 +30,22 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
+import org.pitest.extension.TestListener;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
-import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.util.Functions;
+import org.pitest.util.JavaAgent;
 
 public class TestCentricReport extends MutationCoverageReport {
 
-  public TestCentricReport(final ReportOptions data) {
-    super(data);
-    // TODO Auto-generated constructor stub
+  public TestCentricReport(final ReportOptions data,
+      final JavaAgent javaAgentJarFinder,
+      final ListenerFactory listenerFactory, final boolean nonLocalClassPath) {
+    super(data, javaAgentJarFinder, listenerFactory, nonLocalClassPath);
   }
 
   @Override
@@ -65,9 +66,9 @@ public class TestCentricReport extends MutationCoverageReport {
     System.out.println("classesWithATest = " + classesWithATest.size());
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    final MutationHtmlReportListener mutationReportListener = new MutationHtmlReportListener(
-        t0, this.data.getReportDir(), new SmartSourceLocator(
-            this.data.getSourceDirs()));
+    final TestListener mutationReportListener = this.listenerFactory
+        .getListener(this.data, t0);
+
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
 
@@ -79,12 +80,13 @@ public class TestCentricReport extends MutationCoverageReport {
         new JUnitCompatibleConfiguration());
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        true,
-        this.data.getMutators().toArray(
-            new Mutator[this.data.getMutators().size()]));
+        this.data.isMutateStaticInitializers(), this.data.getMutators()
+            .toArray(new Mutator[this.data.getMutators().size()]));
     final MutationConfig mutationConfig = new MutationConfig(engine,
         MutationTestType.TEST_CENTRIC, 0, Collections.<String> emptyList());
-    initialConfig.testUnitFinders().add(new MutationTestFinder(mutationConfig));
+    initialConfig.testUnitFinders().add(
+        new MutationTestFinder(mutationConfig,
+            new FindInnerAndMemberClassesStrategy(), this.javaAgentFinder));
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     final Container c = new UnContainer();
@@ -92,10 +94,6 @@ public class TestCentricReport extends MutationCoverageReport {
 
     System.out.println("Done");
 
-  }
-
-  protected ClassPath getClassPath() {
-    return this.data.getClassPath(false).getOrElse(new ClassPath());
   }
 
   protected Collection<Class<?>> findClassesForCoverage(final ClassPath cp) {

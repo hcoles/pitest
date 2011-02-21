@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.pitest.Description;
+import org.pitest.PitError;
 import org.pitest.Pitest;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.execute.CoverageProcess;
@@ -107,6 +108,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       this.coverage = gatherCoverageData(tests);
 
       for (final CoverageResult each : this.coverage) {
+        if (!each.isGreenTest()) {
+          throw new PitError("Tests do not pass without mutation.");
+        }
         calculateClassCoverage(each);
       }
 

@@ -21,11 +21,11 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-public class ConditionalsMutatorTest extends MutatorTestBase {
+public class NegateConditionalsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyConditionals() {
-    createTesteeWith(ConditionalsMutator.CONDITIONALS_MUTATOR);
+    createTesteeWith(NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
   }
 
   private static class HasIFEQ implements Callable<String> {

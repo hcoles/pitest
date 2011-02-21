@@ -15,38 +15,18 @@
 
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.SURVIVED;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.extension.TestListener;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.TestMutationTesting.MetaDataExtractor;
+import org.pitest.PitError;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
-import org.pitest.util.Glob;
 
-public class CodeCentricReportTest {
+import com.example.FailsTestWhenEnvVariableSetTestee;
 
-  private MetaDataExtractor metaDataExtractor;
-  private ReportOptions     data;
-
-  @Before
-  public void setUp() {
-    this.metaDataExtractor = new MetaDataExtractor();
-    this.data = new ReportOptions();
-    this.data.setSourceDirs(Collections.<File> emptyList());
-    this.data.setMutators(DefaultMutationConfigFactory.DEFAULT_MUTATORS);
-    this.data.setClassesInScope(predicateFor("com.example.*"));
-  }
+public class CodeCentricReportTest extends ReportTestBase {
 
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
@@ -80,37 +60,27 @@ public class CodeCentricReportTest {
     verifyResults();
   }
 
+  @Test(expected = PitError.class)
+  public void shouldFailRunIfTestsNotGreen() {
+    this.data.setMutators(Collections.singletonList(Mutator.MATH));
+    this.data
+        .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
+    try {
+      System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
+          "true");
+      createAndRun();
+    } finally {
+      System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
+          "false");
+    }
+    // should not get here
+  }
+
   private void createAndRun() {
     final CodeCentricReport testee = new CodeCentricReport(this.data,
         new JavaAgentJarFinder(), listenerFactory(), false);
 
     testee.run();
-  }
-
-  private Collection<Predicate<String>> predicateFor(final String glob) {
-    return Glob.toGlobPredicates(Arrays.asList(glob));
-  }
-
-  private ListenerFactory listenerFactory() {
-    return new ListenerFactory() {
-
-      public TestListener getListener(final ReportOptions data,
-          final long startTime) {
-        return CodeCentricReportTest.this.metaDataExtractor;
-      }
-
-    };
-  }
-
-  protected void verifyResults(final DetectionStatus... detectionStatus) {
-    final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
-    final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
-
-    Collections.sort(expected);
-    Collections.sort(actual);
-
-    assertEquals(expected, actual);
   }
 
 }

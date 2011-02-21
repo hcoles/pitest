@@ -52,5 +52,7 @@ $errors : { error |
 <br/>
 }$
 
+$mutatorScores.totals : { score | $score$ }$ 
+
 </body>
 </html>

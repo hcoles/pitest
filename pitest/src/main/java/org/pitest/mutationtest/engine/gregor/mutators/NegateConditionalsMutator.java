@@ -26,9 +26,9 @@ import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-public enum ConditionalsMutator implements MethodMutatorFactory {
+public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
-  CONDITIONALS_MUTATOR;
+  NEGATE_CONDITIONALS_MUTATOR;
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
@@ -100,7 +100,7 @@ class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
   private void createMutation(final int opcode,
       final Substitution substitution, final Label label) {
     final MutationIdentifier newId = this.context.registerMutation(
-        ConditionalsMutator.class, substitution.description);
+        NegateConditionalsMutator.class, substitution.description);
     if (this.context.shouldMutate(newId)) {
       this.mv.visitJumpInsn(substitution.newCode, label);
     } else {

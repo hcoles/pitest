@@ -51,6 +51,8 @@ class UnviableClassMethodVisitor extends InsnMutator {
         "Made unviable class"));
     map.put(Opcodes.IRETURN, new InsnSubstitution(Opcodes.FCMPG,
         "Made unviable class"));
+    map.put(Opcodes.RETURN, new InsnSubstitution(Opcodes.FCMPG,
+        "Made unviable class"));
     return map;
   }
 

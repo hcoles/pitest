@@ -70,10 +70,10 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
   public InstrumentedMutationTestUnit(final Collection<String> tests,
       final Collection<String> classesToMutate,
-      final MutationConfig mutationConfig, final Configuration pitConfig,
-      final Description description) {
-    this(classesToMutate, mutationConfig, description,
-        new JavaAgentJarFinder(), new NoCoverageSource(tests, pitConfig));
+      final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
+      final Configuration pitConfig, final Description description) {
+    this(classesToMutate, mutationConfig, description, javaAgentFinder,
+        new NoCoverageSource(tests, pitConfig));
   }
 
   public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
