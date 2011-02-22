@@ -55,8 +55,6 @@ public class InstrumentedMutationTestSlave {
 
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
-      System.out.println("Received stats from parent = "
-          + paramsFromParent.stats);
 
       System.setProperties(paramsFromParent.systemProperties);
 

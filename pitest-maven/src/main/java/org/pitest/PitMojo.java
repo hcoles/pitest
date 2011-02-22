@@ -29,6 +29,7 @@ import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.TestCentricReport;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
 import org.pitest.util.Glob;
 
@@ -233,7 +234,7 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  private Collection<Mutator> determineMutators() {
+  private Collection<MethodMutatorFactory> determineMutators() {
     if (this.mutators != null) {
       return FCollection.map(this.mutators, stringToMutator());
     } else {
@@ -241,8 +242,8 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  private F<String, Mutator> stringToMutator() {
-    return new F<String, Mutator>() {
+  private F<String, MethodMutatorFactory> stringToMutator() {
+    return new F<String, MethodMutatorFactory>() {
       public Mutator apply(final String a) {
         return Mutator.valueOf(a);
       }

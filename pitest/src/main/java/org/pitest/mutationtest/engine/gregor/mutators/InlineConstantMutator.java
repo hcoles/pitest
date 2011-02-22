@@ -33,8 +33,12 @@ public enum InlineConstantMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new InlineConstantMethodVisitor(this.getClass(), methodInfo,
-        context, methodVisitor);
+    return new InlineConstantMethodVisitor(this, methodInfo, context,
+        methodVisitor);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
@@ -75,10 +79,10 @@ class InlineConstantMethodVisitor extends InsnMutator {
 
   }
 
-  public InlineConstantMethodVisitor(final Class<?> mutatorType,
+  public InlineConstantMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
-    super(mutatorType, methodInfo, context, writer);
+    super(factory, methodInfo, context, writer);
   }
 
   @Override
@@ -102,8 +106,7 @@ class InlineConstantMethodVisitor extends InsnMutator {
     final Object sub = getLdcSubstitution(cst);
     if (!sub.equals(cst)) {
       final MutationIdentifier newId = this.context.registerMutation(
-          this.mutatorType, "Replaced constant value of " + cst + " with "
-              + sub);
+          this.factory, "Replaced constant value of " + cst + " with " + sub);
       if (this.context.shouldMutate(newId)) {
         this.mv.visitLdcInsn(sub);
       } else {
@@ -116,7 +119,7 @@ class InlineConstantMethodVisitor extends InsnMutator {
 
   private void createBiPushMutation(final int opcode, final int var) {
     final MutationIdentifier newId = this.context.registerMutation(
-        this.mutatorType, "Replaced constant value of " + var + " with "
+        this.factory, "Replaced constant value of " + var + " with "
             + (var + 1));
     if (this.context.shouldMutate(newId)) {
       this.mv.visitIntInsn(opcode, (var + 1));

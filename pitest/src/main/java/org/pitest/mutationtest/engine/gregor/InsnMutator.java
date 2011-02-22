@@ -18,9 +18,10 @@ import org.objectweb.asm.MethodVisitor;
 
 public abstract class InsnMutator extends AbstractZeroOperandMutator {
 
-  public InsnMutator(final Class<?> mutatorType, final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer) {
-    super(mutatorType, methodInfo, context, writer);
+  public InsnMutator(final MethodMutatorFactory factory,
+      final MethodInfo methodInfo, final Context context,
+      final MethodVisitor writer) {
+    super(factory, methodInfo, context, writer);
   }
 
   @Override

@@ -30,18 +30,22 @@ public class UnviableClassMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new UnviableClassMethodVisitor(this.getClass(), methodInfo, context,
+    return new UnviableClassMethodVisitor(this, methodInfo, context,
         methodVisitor);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
 
 class UnviableClassMethodVisitor extends InsnMutator {
 
-  public UnviableClassMethodVisitor(final Class<?> mutatorType,
+  public UnviableClassMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
-    super(mutatorType, methodInfo, context, writer);
+    super(factory, methodInfo, context, writer);
   }
 
   @Override

@@ -41,7 +41,7 @@ enum MethodCallMutator implements MethodMutatorFactory {
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this.getClass(), allMethods());
+        this, allMethods());
   }
 
   private F2<String, String, Boolean> allMethods() {
@@ -53,14 +53,18 @@ enum MethodCallMutator implements MethodMutatorFactory {
 
     };
   }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
+  }
 }
 
 class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
 
-  private final static HashMap<Type, Integer>         RETURN_TYPE_MAP = new HashMap<Type, Integer>();
+  private final static HashMap<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
 
-  private final F2<String, String, Boolean>           filter;
-  private final Class<? extends MethodMutatorFactory> factoryClass;
+  private final F2<String, String, Boolean>   filter;
+  private final MethodMutatorFactory          factory;
 
   static {
     RETURN_TYPE_MAP.put(Type.INT_TYPE, ICONST_0);
@@ -75,10 +79,10 @@ class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
 
   public MethodCallMethodVisitor(final MethodInfo methodInfo,
       final Context context, final MethodVisitor writer,
-      final Class<? extends MethodMutatorFactory> factoryClass,
+      final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
     super(methodInfo, context, writer);
-    this.factoryClass = factoryClass;
+    this.factory = factory;
     this.filter = filter;
   }
 
@@ -91,7 +95,7 @@ class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     } else {
       final MutationIdentifier newId = this.context.registerMutation(
-          this.factoryClass, "removed call to " + owner + "::" + name);
+          this.factory, "removed call to " + owner + "::" + name);
 
       if (this.context.shouldMutate(newId)) {
 

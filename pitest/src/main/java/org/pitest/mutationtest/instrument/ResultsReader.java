@@ -19,11 +19,10 @@ import java.util.Map;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.SerializationException;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
-
-import com.thoughtworks.xstream.converters.ConversionException;
 
 public class ResultsReader implements SideEffect1<String> {
 
@@ -110,7 +109,7 @@ public class ResultsReader implements SideEffect1<String> {
       try {
         this.stats = (Option<Statistics>) IsolationUtils
             .fromTransportString(line.substring(6, line.length()));
-      } catch (final ConversionException ex) {
+      } catch (final SerializationException ex) {
         ex.printStackTrace();
       }
     } else {

@@ -121,4 +121,10 @@ public class MutationTestWorker extends AbstractWorker {
         && mutant.getDetails().isInStaticInitializer();
   }
 
+  @Override
+  public String toString() {
+    return "MutationTestWorker [mutater=" + this.mutater + ", loader="
+        + this.loader + ", hotswap=" + this.hotswap + "]";
+  }
+
 }

@@ -32,18 +32,21 @@ public enum MathMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new MathMethodVisitor(this.getClass(), methodInfo, context,
-        methodVisitor);
+    return new MathMethodVisitor(this, methodInfo, context, methodVisitor);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
 
 class MathMethodVisitor extends InsnMutator {
 
-  public MathMethodVisitor(final Class<?> mutatorType,
+  public MathMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
-    super(mutatorType, methodInfo, context, writer);
+    super(factory, methodInfo, context, writer);
   }
 
   private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();

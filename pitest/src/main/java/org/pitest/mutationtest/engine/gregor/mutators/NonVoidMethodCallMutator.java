@@ -28,7 +28,11 @@ public enum NonVoidMethodCallMutator implements MethodMutatorFactory {
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this.getClass(), nonVoidMethods());
+        this, nonVoidMethods());
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
   private F2<String, String, Boolean> nonVoidMethods() {

@@ -34,6 +34,7 @@ import org.pitest.util.Base64;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.core.BaseException;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
@@ -160,6 +161,8 @@ public abstract class IsolationUtils {
       return fromXml(decodeTransportString(encodedXml));
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
+    } catch (final BaseException ex) {
+      throw new SerializationException(ex);
     }
   }
 

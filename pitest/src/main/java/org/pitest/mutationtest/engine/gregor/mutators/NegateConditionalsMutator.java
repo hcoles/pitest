@@ -32,14 +32,21 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalMethodVisitor(methodInfo, context, methodVisitor);
+    return new ConditionalMethodVisitor(methodInfo, context, methodVisitor,
+        this);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
 
 class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
 
-  private static final String DESCRIPTION = "negated conditional";
+  private final MethodMutatorFactory factory;
+
+  private static final String        DESCRIPTION = "negated conditional";
 
   private static class Substitution {
     Substitution(final int newCode, final String description) {
@@ -83,8 +90,10 @@ class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
   }
 
   public ConditionalMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer) {
+      final Context context, final MethodVisitor writer,
+      final MethodMutatorFactory factory) {
     super(methodInfo, context, writer);
+    this.factory = factory;
   }
 
   @Override
@@ -100,7 +109,7 @@ class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
   private void createMutation(final int opcode,
       final Substitution substitution, final Label label) {
     final MutationIdentifier newId = this.context.registerMutation(
-        NegateConditionalsMutator.class, substitution.description);
+        this.factory, substitution.description);
     if (this.context.shouldMutate(newId)) {
       this.mv.visitJumpInsn(substitution.newCode, label);
     } else {

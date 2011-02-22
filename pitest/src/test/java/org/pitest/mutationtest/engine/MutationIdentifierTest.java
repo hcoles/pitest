@@ -29,7 +29,7 @@ public class MutationIdentifierTest {
   @Test
   public void isMutatedShouldReturnTrueWhenIdIsForAMutation() {
     final MutationIdentifier testee = new MutationIdentifier("foo", 42,
-        MutationIdentifierTest.class);
+        "unique name");
     assertTrue(testee.isMutated());
   }
 }

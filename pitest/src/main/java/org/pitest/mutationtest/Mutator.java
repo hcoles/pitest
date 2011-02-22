@@ -14,24 +14,49 @@
  */
 package org.pitest.mutationtest;
 
-public enum Mutator implements MutationOperator {
+import org.objectweb.asm.MethodVisitor;
+import org.pitest.mutationtest.engine.gregor.Context;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
-  NEGS("Mutate neg instructions"), RETURN_VALS("Mutate return values"), INLINE_CONSTS(
-      "Mutate inline constants"), MATH("Mutate math operations"), VOID_METHOD_CALLS(
-      "Remove void method calls"), NEGATE_CONDITIONALS(
-      "Mutate conditional branch instructions"), INCREMENTS("Mutate increments"), NON_VOID_METHOD_CALLS(
-      "Remove non void method calls"), CONSTRUCTOR_CALLS(
-      "Remove constructor calls");
+public enum Mutator implements MethodMutatorFactory {
 
-  Mutator(final String description) {
-    this.description = description;
+  NEGS(InvertNegsMutator.INVERT_NEGS_MUTATOR), RETURN_VALS(
+      ReturnValsMutator.RETURN_VALS_MUTATOR), INLINE_CONSTS(
+      InlineConstantMutator.INLINE_CONSTANT_MUTATOR), MATH(
+      MathMutator.MATH_MUTATOR), VOID_METHOD_CALLS(
+      VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR), NEGATE_CONDITIONALS(
+      NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR), INCREMENTS(
+      IncrementsMutator.INCREMENTS_MUTATOR), NON_VOID_METHOD_CALLS(
+      NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR), CONSTRUCTOR_CALLS(
+      ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+
+  Mutator(final MethodMutatorFactory impl) {
+    this.impl = impl;
   }
 
-  private final String description;
+  private final MethodMutatorFactory impl;
 
   @Override
   public String toString() {
-    return this.description;
+    return this.impl.toString();
   }
 
+  public MethodVisitor create(final Context context,
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+    return this.impl.create(context, methodInfo, methodVisitor);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.impl.getGloballyUniqueId();
+  }
 }

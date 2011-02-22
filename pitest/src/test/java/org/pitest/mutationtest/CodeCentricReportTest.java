@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.PitError;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 
 import com.example.FailsTestWhenEnvVariableSetTestee;
@@ -62,7 +63,8 @@ public class CodeCentricReportTest extends ReportTestBase {
 
   @Test(expected = PitError.class)
   public void shouldFailRunIfTestsNotGreen() {
-    this.data.setMutators(Collections.singletonList(Mutator.MATH));
+    this.data.setMutators(Collections
+        .<MethodMutatorFactory> singletonList(Mutator.MATH));
     this.data
         .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     try {

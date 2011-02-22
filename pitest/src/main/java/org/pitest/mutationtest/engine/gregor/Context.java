@@ -54,17 +54,18 @@ public class Context {
   }
 
   public MutationIdentifier getNextMutationIdentifer(
-      final Class<?> implementer, final String className) {
-    final int index = getAndIncrementIndex(implementer);
-    return new MutationIdentifier(className, index, implementer);
+      final MethodMutatorFactory factory, final String className) {
+    final int index = getAndIncrementIndex(factory);
+    return new MutationIdentifier(className, index,
+        factory.getGloballyUniqueId());
   }
 
-  private int getAndIncrementIndex(final Class<?> implementer) {
-    Integer index = this.mutatorIndexes.get(implementer.getName());
+  private int getAndIncrementIndex(final MethodMutatorFactory factory) {
+    Integer index = this.mutatorIndexes.get(factory.getGloballyUniqueId());
     if (index == null) {
       index = 0;
     }
-    this.mutatorIndexes.put(implementer.getName(), (index + 1));
+    this.mutatorIndexes.put(factory.getGloballyUniqueId(), (index + 1));
     return index;
 
   }
@@ -97,9 +98,9 @@ public class Context {
     return this.lastLineNumber;
   }
 
-  public MutationIdentifier registerMutation(final Class<?> implementer,
-      final String description) {
-    final MutationIdentifier newId = getNextMutationIdentifer(implementer,
+  public MutationIdentifier registerMutation(
+      final MethodMutatorFactory factory, final String description) {
+    final MutationIdentifier newId = getNextMutationIdentifer(factory,
         getClassName().replace("/", "."));
     final MutationDetails details = new MutationDetails(newId, getFileName(),
         description, getMethodName(), getLineNumber());

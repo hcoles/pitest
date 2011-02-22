@@ -189,7 +189,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     return new SideEffect1<String>() {
 
       public void apply(final String a) {
-
+        System.out.println("SLAVE : " + a);
       }
 
     };

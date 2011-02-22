@@ -22,13 +22,13 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public abstract class AbstractZeroOperandMutator extends
     LineTrackingMethodAdapter {
 
-  protected final Class<?> mutatorType;
+  protected final MethodMutatorFactory factory;
 
-  public AbstractZeroOperandMutator(final Class<?> mutatorType,
+  public AbstractZeroOperandMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
     super(methodInfo, context, writer);
-    this.mutatorType = mutatorType;
+    this.factory = factory;
   }
 
   @Override
@@ -52,7 +52,7 @@ public abstract class AbstractZeroOperandMutator extends
   private void createMutation(final int opcode) {
     final ZeroOperandMutation mutation = getMutations().get(opcode);
     final MutationIdentifier newId = this.context.registerMutation(
-        this.mutatorType, mutation.decribe(opcode));
+        this.factory, mutation.decribe(opcode));
     if (this.context.shouldMutate(newId)) {
       mutation.apply(opcode, this.mv);
     } else {

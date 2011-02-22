@@ -32,8 +32,11 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new InvertNegsMethodVisitor(this.getClass(), methodInfo, context,
-        methodVisitor);
+    return new InvertNegsMethodVisitor(this, methodInfo, context, methodVisitor);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
@@ -50,10 +53,10 @@ class InvertNegsMethodVisitor extends InsnMutator {
     mutations.put(Opcodes.LNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
   }
 
-  public InvertNegsMethodVisitor(final Class<?> mutatorType,
+  public InvertNegsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
-    super(mutatorType, methodInfo, context, writer);
+    super(factory, methodInfo, context, writer);
   }
 
   @Override

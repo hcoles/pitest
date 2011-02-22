@@ -28,7 +28,11 @@ public enum VoidMethodCallMutator implements MethodMutatorFactory {
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this.getClass(), voidMethods());
+        this, voidMethods());
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
   private F2<String, String, Boolean> voidMethods() {
