@@ -28,6 +28,10 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     createTesteeWith(NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
   }
 
+  private static int getZeroButPreventInlining() {
+    return 0;
+  }
+
   private static class HasIFEQ implements Callable<String> {
     private final int i;
 
@@ -224,7 +228,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i == j) {
         return "was zero";
       } else {
@@ -248,7 +252,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i != j) {
         return "was not zero";
       } else {
@@ -272,7 +276,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i > j) {
         return "was > zero";
       } else {
@@ -297,7 +301,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i < j) {
         return "was < zero";
       } else {
@@ -322,7 +326,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i <= j) {
         return "was <= zero";
       } else {
@@ -347,7 +351,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i >= j) {
         return "was >= zero";
       } else {

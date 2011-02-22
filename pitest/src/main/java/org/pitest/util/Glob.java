@@ -47,28 +47,28 @@ public class Glob implements Predicate<String> {
   }
 
   public static String convertGlobToRegex(final String glob) {
-    String out = "^";
+    StringBuilder out = new StringBuilder("^");
     for (int i = 0; i < glob.length(); ++i) {
       final char c = glob.charAt(i);
       switch (c) {
       case '*':
-        out += ".*";
+        out.append(".*");
         break;
       case '?':
-        out += '.';
+        out.append('.');
         break;
       case '.':
-        out += "\\.";
+        out.append("\\.");
         break;
       case '\\':
-        out += "\\\\";
+        out.append("\\\\");
         break;
       default:
-        out += c;
+        out.append(c);
       }
     }
-    out += '$';
-    return out;
+    out.append('$');
+    return out.toString();
   }
 
   public Boolean apply(final String value) {

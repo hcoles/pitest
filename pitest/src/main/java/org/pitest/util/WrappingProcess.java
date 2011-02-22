@@ -86,15 +86,16 @@ public abstract class WrappingProcess {
   }
 
   private String getLaunchClassPath(final ClassPath cp) {
-    String classpath = System.getProperty("java.class.path");
+    StringBuilder classpath = new StringBuilder(
+        System.getProperty("java.class.path"));
     for (final ClassPathRoot each : cp) {
       final Option<String> additional = each.cacheLocation();
       for (final String path : additional) {
-        classpath = classpath + File.pathSeparator + path;
+        classpath = classpath.append(File.pathSeparator + path);
       }
     }
 
-    return classpath;
+    return classpath.toString();
   }
 
   public int waitToDie() throws InterruptedException {

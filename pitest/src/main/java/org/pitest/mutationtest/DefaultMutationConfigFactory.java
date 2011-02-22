@@ -35,6 +35,7 @@ public final class DefaultMutationConfigFactory implements
   public final static Collection<MethodMutatorFactory> DEFAULT_MUTATORS = Arrays
                                                                             .<MethodMutatorFactory> asList(
                                                                                 Mutator.NEGATE_CONDITIONALS,
+                                                                                Mutator.CONDITIONALS_BOUNDARY_MUTATOR,
                                                                                 Mutator.INCREMENTS,
                                                                                 Mutator.MATH,
                                                                                 Mutator.RETURN_VALS,

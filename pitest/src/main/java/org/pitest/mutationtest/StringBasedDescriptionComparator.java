@@ -15,12 +15,15 @@
 
 package org.pitest.mutationtest;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.pitest.Description;
 
 public class StringBasedDescriptionComparator implements
-    Comparator<Description> {
+    Comparator<Description>, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   public int compare(final Description arg0, final Description arg1) {
     return arg0.toString().compareTo(arg1.toString());

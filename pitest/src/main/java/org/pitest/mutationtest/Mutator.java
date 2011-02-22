@@ -18,6 +18,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
@@ -35,7 +36,8 @@ public enum Mutator implements MethodMutatorFactory {
       InlineConstantMutator.INLINE_CONSTANT_MUTATOR), MATH(
       MathMutator.MATH_MUTATOR), VOID_METHOD_CALLS(
       VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR), NEGATE_CONDITIONALS(
-      NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR), INCREMENTS(
+      NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR), CONDITIONALS_BOUNDARY_MUTATOR(
+      ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR), INCREMENTS(
       IncrementsMutator.INCREMENTS_MUTATOR), NON_VOID_METHOD_CALLS(
       NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR), CONSTRUCTOR_CALLS(
       ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);

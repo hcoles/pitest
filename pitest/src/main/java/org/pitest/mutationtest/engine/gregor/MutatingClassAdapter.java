@@ -68,10 +68,8 @@ public class MutatingClassAdapter extends ClassAdapter {
     final MethodInfo info = new MethodInfo(this.getContext().getClassName(),
         access, name, desc, signature, exceptions);
     if (this.filter.apply(info)) {
-      System.out.println("not filtered " + info);
       return this.visitMethodForMutation(info, methodVisitor);
     } else {
-      System.out.println("filtered " + info);
       return methodVisitor;
     }
 
@@ -81,9 +79,7 @@ public class MutatingClassAdapter extends ClassAdapter {
       final MethodVisitor methodVisitor) {
 
     MethodVisitor next = methodVisitor;
-    System.out.println(this.methodMutators);
     for (final MethodMutatorFactory each : this.methodMutators) {
-      System.out.println(each + " " + methodInfo);
       next = wrapWithLineFilter(each.create(this.context, methodInfo, next));
     }
 
