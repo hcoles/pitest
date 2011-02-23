@@ -33,10 +33,6 @@ public class MutationIdentifier {
     return this.className;
   }
 
-  public int getIndex() {
-    return this.index;
-  }
-
   public boolean isMutated() {
     return this.index != UNMUTATED;
   }

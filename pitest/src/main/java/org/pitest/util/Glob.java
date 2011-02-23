@@ -47,7 +47,7 @@ public class Glob implements Predicate<String> {
   }
 
   public static String convertGlobToRegex(final String glob) {
-    StringBuilder out = new StringBuilder("^");
+    final StringBuilder out = new StringBuilder("^");
     for (int i = 0; i < glob.length(); ++i) {
       final char c = glob.charAt(i);
       switch (c) {

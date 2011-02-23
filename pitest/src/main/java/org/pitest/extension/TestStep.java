@@ -15,14 +15,10 @@
 package org.pitest.extension;
 
 import org.pitest.Description;
-import org.pitest.TestMethod;
-import org.pitest.functional.Option;
 
 public interface TestStep {
 
   public Object execute(ClassLoader loader, Description testDescription,
       Object target);
-
-  public Option<TestMethod> method();
 
 }

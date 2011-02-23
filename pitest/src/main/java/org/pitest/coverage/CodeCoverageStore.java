@@ -67,10 +67,6 @@ public final class CodeCoverageStore {
     return invokeStatistics.registerClass(className);
   }
 
-  public static CoverageStatistics getInvokeStatistics() {
-    return invokeStatistics;
-  }
-
   public static InvokeQueue getInvokeQueue() {
     return invokeQueue;
   }

@@ -21,7 +21,6 @@ import org.pitest.Description;
 import org.pitest.TestExecutionException;
 import org.pitest.TestMethod;
 import org.pitest.extension.TestStep;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
 /**
@@ -54,10 +53,6 @@ public class CallStep implements TestStep {
     } catch (final Exception e) {
       throw new TestExecutionException(e);
     }
-  }
-
-  public Option<TestMethod> method() {
-    return Option.some(this.m);
   }
 
 }

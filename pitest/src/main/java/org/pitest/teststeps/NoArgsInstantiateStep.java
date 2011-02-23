@@ -18,9 +18,7 @@ import java.lang.reflect.Modifier;
 
 import org.pitest.CanNotCreateTestClassException;
 import org.pitest.Description;
-import org.pitest.TestMethod;
 import org.pitest.extension.TestStep;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
 /**
@@ -54,10 +52,6 @@ public final class NoArgsInstantiateStep implements TestStep {
       e.printStackTrace();
       throw new CanNotCreateTestClassException(e.getMessage(), e);
     }
-  }
-
-  public Option<TestMethod> method() {
-    return Option.none();
   }
 
   @Override

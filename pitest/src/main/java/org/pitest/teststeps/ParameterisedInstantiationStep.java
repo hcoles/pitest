@@ -18,9 +18,7 @@ import java.util.Arrays;
 
 import org.pitest.CanNotCreateTestClassException;
 import org.pitest.Description;
-import org.pitest.TestMethod;
 import org.pitest.extension.TestStep;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
 public final class ParameterisedInstantiationStep implements TestStep {
@@ -43,10 +41,6 @@ public final class ParameterisedInstantiationStep implements TestStep {
     } catch (final Throwable e) {
       throw new CanNotCreateTestClassException(e);
     }
-  }
-
-  public Option<TestMethod> method() {
-    return Option.none();
   }
 
   @Override
