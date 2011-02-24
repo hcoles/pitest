@@ -31,29 +31,29 @@ import org.pitest.util.Unchecked;
 
 public class OptionsParser {
 
-  private static final String               TEST_CENTRIC                   = "testCentric";
-  private final static String               REPORT_DIR_ARG                 = "reportDir";
-  private final static String               TARGET_CLASSES_ARG             = "targetClasses";
-  private final static String               IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
-  private final static String               SOURCE_DIR_ARG                 = "sourceDirs";
-  private final static String               MUTATIONS_ARG                  = "mutations";
-  private final static String               DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
-  private final static String               CHILD_JVM_ARGS                 = "jvmArgs";
-  private final static String               MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
-  private final static String               THREADS_ARG                    = "threads";
-  private final static String               INCLUDE_JAR_FILES              = "includeJarFiles";
+  private static final String                       TEST_CENTRIC                   = "testCentric";
+  private final static String                       REPORT_DIR_ARG                 = "reportDir";
+  private final static String                       TARGET_CLASSES_ARG             = "targetClasses";
+  private final static String                       IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
+  private final static String                       SOURCE_DIR_ARG                 = "sourceDirs";
+  private final static String                       MUTATIONS_ARG                  = "mutations";
+  private final static String                       DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
+  private final static String                       CHILD_JVM_ARGS                 = "jvmArgs";
+  private final static String                       MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
+  private final static String                       THREADS_ARG                    = "threads";
+  private final static String                       INCLUDE_JAR_FILES              = "includeJarFiles";
 
-  private final OptionParser                parser;
-  final ArgumentAcceptingOptionSpec<String> reportDirSpec;
-  final OptionSpec<String>                  targetClassesSpec;
-  final OptionSpec<String>                  inScopeClassesSpec;
-  final OptionSpec<Integer>                 depth;
-  final OptionSpec<Integer>                 threadsSpec;
-  final OptionSpec<File>                    sourceDirSpec;
-  final OptionSpec<MethodMutatorFactory>    mutators;
-  final OptionSpec<String>                  jvmArgs;
-  final OptionSpecBuilder                   mutateStatics;
-  final OptionSpecBuilder                   includeJarFilesSpec;
+  private final OptionParser                        parser;
+  private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
+  private final OptionSpec<String>                  targetClassesSpec;
+  private final OptionSpec<String>                  inScopeClassesSpec;
+  private final OptionSpec<Integer>                 depth;
+  private final OptionSpec<Integer>                 threadsSpec;
+  private final OptionSpec<File>                    sourceDirSpec;
+  private final OptionSpec<MethodMutatorFactory>    mutators;
+  private final OptionSpec<String>                  jvmArgs;
+  private final OptionSpecBuilder                   mutateStatics;
+  private final OptionSpecBuilder                   includeJarFilesSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -122,6 +122,8 @@ public class OptionsParser {
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(FCollection.map(
         this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setClassesInScope(FCollection.map(
+        this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
@@ -142,7 +144,7 @@ public class OptionsParser {
         && userArgs.has(SOURCE_DIR_ARG);
   }
 
-  public void printHelp() {
+  protected void printHelp() {
     try {
       this.parser.printHelpOn(System.out);
     } catch (final IOException ex) {

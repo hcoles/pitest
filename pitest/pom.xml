@@ -227,7 +227,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>1.9</version>
+            <version>1.9.2</version>
         </dependency>
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>

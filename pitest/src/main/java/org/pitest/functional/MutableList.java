@@ -25,11 +25,11 @@ public class MutableList<A> implements FunctionalList<A> {
 
   private final List<A> impl;
 
-  public MutableList(final A... as) {
+  public MutableList(final A... as) { // NO_UCD
     this(Arrays.asList(as));
   }
 
-  public MutableList(final List<A> impl) {
+  public MutableList(final List<A> impl) { // NO_UCD
     this.impl = impl;
   }
 

@@ -46,7 +46,7 @@ public class Glob implements Predicate<String> {
     return FCollection.map(globs, Glob.toGlobPredicate());
   }
 
-  public static String convertGlobToRegex(final String glob) {
+  private static String convertGlobToRegex(final String glob) {
     final StringBuilder out = new StringBuilder("^");
     for (int i = 0; i < glob.length(); ++i) {
       final char c = glob.charAt(i);

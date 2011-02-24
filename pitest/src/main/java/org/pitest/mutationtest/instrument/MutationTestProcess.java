@@ -11,15 +11,15 @@ import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.util.InputStreamLineIterable;
 import org.pitest.util.WrappingProcess;
 
-public class MutationTestProcess extends WrappingProcess {
+class MutationTestProcess extends WrappingProcess {
 
-  public MutationTestProcess(final Args processArgs,
+  protected MutationTestProcess(final Args processArgs,
       final SlaveArguments arguments) throws IOException {
     super(processArgs, arguments, InstrumentedMutationTestSlave.class);
 
   }
 
-  public Option<Statistics> results(
+  protected Option<Statistics> results(
       final Map<MutationIdentifier, DetectionStatus> allmutations,
       final Option<Statistics> stats) throws FileNotFoundException, IOException {
 

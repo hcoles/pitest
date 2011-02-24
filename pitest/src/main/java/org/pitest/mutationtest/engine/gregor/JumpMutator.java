@@ -30,8 +30,8 @@ public abstract class JumpMutator extends LineTrackingMethodAdapter {
       this.description = description;
     }
 
-    int    newCode;
-    String description;
+    private final int    newCode;
+    private final String description;
   }
 
   public JumpMutator(final MethodInfo methodInfo, final Context context,

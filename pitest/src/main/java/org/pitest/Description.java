@@ -25,9 +25,13 @@ import java.util.Iterator;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.FunctionalIterable;
+import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
+import org.pitest.functional.SideEffect1;
 
-public final class Description implements Iterable<Class<?>>, Serializable {
+public final class Description implements FunctionalIterable<Class<?>>,
+    Serializable {
 
   private static final long          serialVersionUID = 1L;
   private final Collection<Class<?>> testClasses      = new ArrayList<Class<?>>(
@@ -124,16 +128,29 @@ public final class Description implements Iterable<Class<?>>, Serializable {
     return this.testClasses.iterator();
   }
 
-  public Collection<Class<?>> filter(final F<Class<?>, Boolean> predicate) {
-    return FCollection.filter(this.testClasses, predicate);
-  }
-
   public boolean contains(final F<Class<?>, Boolean> predicate) {
     return FCollection.contains(this.testClasses, predicate);
   }
 
   public Collection<String> getTestClassNames() {
     return FCollection.map(this.testClasses, classToName());
+  }
+
+  public void forEach(final SideEffect1<Class<?>> e) {
+    FCollection.forEach(this, e);
+  }
+
+  public <B> FunctionalList<B> map(final F<Class<?>, B> f) {
+    return FCollection.map(this, f);
+  }
+
+  public <B> FunctionalList<B> flatMap(
+      final F<Class<?>, ? extends Iterable<B>> f) {
+    return FCollection.flatMap(this, f);
+  }
+
+  public FunctionalList<Class<?>> filter(final F<Class<?>, Boolean> predicate) {
+    return null;
   }
 
 }

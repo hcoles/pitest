@@ -20,7 +20,7 @@ public abstract class PerProcessTimelimitCheck {
 
   private static long maxTime;
 
-  public static void breakIfTimelimitExceeded() {
+  public static void breakIfTimelimitExceeded() { // NO_UCD
     if ((System.currentTimeMillis() > maxTime) && (maxTime != 0)) {
       throw new TimeoutException("Stopping test as max time exceeded");
     }
@@ -34,7 +34,7 @@ public abstract class PerProcessTimelimitCheck {
     maxTime = 0;
   }
 
-  public static boolean isEnabled() {
+  public static boolean isEnabled() { // NO_UCD
     return maxTime == 0;
   }
 

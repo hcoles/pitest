@@ -57,9 +57,9 @@ public abstract class WrappingProcess {
     }
   };
 
-  private final File          input;
-  private final File          output;
-  protected final JavaProcess process;
+  private final File        input;
+  private final File        output;
+  private final JavaProcess process;
 
   public WrappingProcess(final Args argsBuilder, final Object arguments,
       final Class<?> slaveClass) throws IOException {
@@ -80,7 +80,7 @@ public abstract class WrappingProcess {
     bw.close();
   }
 
-  public static String randomFilename() {
+  private static String randomFilename() {
     return System.currentTimeMillis()
         + ("" + Math.random()).replaceAll("\\.", "");
   }

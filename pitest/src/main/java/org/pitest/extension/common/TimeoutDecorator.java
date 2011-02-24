@@ -34,12 +34,12 @@ public final class TimeoutDecorator extends TestUnitDecorator {
     this.timeout = timeout;
   }
 
-  static class ResultCollectorWrapper implements ResultCollector {
+  private static class ResultCollectorWrapper implements ResultCollector {
 
     private final ResultCollector child;
     private boolean               reportResults = true;
 
-    public ResultCollectorWrapper(final ResultCollector child) {
+    private ResultCollectorWrapper(final ResultCollector child) {
       this.child = child;
     }
 
@@ -55,21 +55,8 @@ public final class TimeoutDecorator extends TestUnitDecorator {
       }
     }
 
-    public void stopReporting() {
+    private void stopReporting() {
       this.reportResults = false;
-    }
-
-    public void notifyEnd(final Description description, final Throwable t) {
-      if (this.reportResults) {
-        this.child.notifyEnd(description, t);
-      }
-
-    }
-
-    public void notifyEnd(final Description tu) {
-      if (this.reportResults) {
-        this.child.notifyEnd(tu);
-      }
     }
 
     public void notifyEnd(final Description description, final Throwable t,

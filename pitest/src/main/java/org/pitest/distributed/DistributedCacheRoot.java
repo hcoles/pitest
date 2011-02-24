@@ -52,11 +52,6 @@ public class DistributedCacheRoot implements ClassPathRoot {
     return null;
   }
 
-  public void release() throws IOException {
-    // TODO Auto-generated method stub
-
-  }
-
   public Option<String> cacheLocation() {
     return Option.none();
   }

@@ -38,7 +38,7 @@ public class MutationMetaData implements MetaData {
   private final Collection<MutationResult> mutations;
   private final Option<Statistics>         stats;
 
-  public MutationMetaData(final MutationConfig config,
+  protected MutationMetaData(final MutationConfig config,
       final Collection<ClassInfo> mutatedClasses,
       final Option<Statistics> stats, final Collection<MutationResult> mutations) {
     this.mutations = mutations;
@@ -144,20 +144,6 @@ public class MutationMetaData implements MetaData {
 
   public MutationConfig getConfig() {
     return this.config;
-  }
-
-  public Collection<MutationResult> getResultsForClass(final String clazz) {
-    return FCollection.filter(this.mutations, mutationIsForClass(clazz));
-  }
-
-  private F<MutationResult, Boolean> mutationIsForClass(final String clazz) {
-    return new F<MutationResult, Boolean>() {
-
-      public Boolean apply(final MutationResult a) {
-        return a.details.getClazz().equals(clazz);
-      }
-
-    };
   }
 
   public MutationResultList getResultsForSourceFile(final String sourceFile) {

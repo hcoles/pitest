@@ -37,7 +37,7 @@ public class CoverageStatistics {
     }
   }
 
-  public synchronized int registerClass(final String className) {
+  public synchronized int registerClass(final String className) { // NO_UCD
     final int id = this.classIdCount;
     this.classIdCount++;
     this.classStatisticsInClassIdOrder.put(id, new ClassStatistics(className));
@@ -85,7 +85,7 @@ public class CoverageStatistics {
     };
   }
 
-  public ClassStatistics getClassStatistics(final String clazz) {
+  private ClassStatistics getClassStatistics(final String clazz) {
     for (final ClassStatistics each : this.classStatisticsInClassIdOrder
         .values()) {
       if (each.getClassName().equals(clazz)) {

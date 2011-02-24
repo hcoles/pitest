@@ -31,7 +31,7 @@ public class InvokeQueue {
   private final ArrayBlockingQueue<InvokeEntry> invokesQueue = new ArrayBlockingQueue<InvokeEntry>(
                                                                  15000);
 
-  public void addCodelineInvoke(final int classId, final int lineNumber) {
+  protected void addCodelineInvoke(final int classId, final int lineNumber) {
     boolean ok = false;
     int count = 0;
     while (!ok && (count < 5)) {
@@ -55,10 +55,6 @@ public class InvokeQueue {
 
   public boolean isEmpty() {
     return this.invokesQueue.isEmpty();
-  }
-
-  public int size() {
-    return this.invokesQueue.size();
   }
 
   public Collection<InvokeEntry> poll(final int timeout)

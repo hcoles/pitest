@@ -104,7 +104,7 @@ public abstract class Option<T> implements FunctionalIterable<T> {
 
     private static final long serialVersionUID = 1L;
 
-    final T                   _value;
+    private final T           _value;
 
     private Some(final T value) {
       this._value = value;

@@ -33,12 +33,12 @@ public class IsolatedSystem {
     }
   }
 
-  public static String getProperty(final String key) {
+  public static String getProperty(final String key) { // NO_UCD
     performPropertiesCheck();
     return props.getProperty(key);
   }
 
-  public static String getProperty(final String key, final String defaultValue) {
+  public static String getProperty(final String key, final String defaultValue) { // NO_UCD
     final String value = getProperty(key);
     if (value == null) {
       return defaultValue;
@@ -47,17 +47,17 @@ public class IsolatedSystem {
     }
   }
 
-  public static String setProperty(final String key, final String value) {
+  public static String setProperty(final String key, final String value) { // NO_UCD
     performPropertiesCheck();
     return (String) props.setProperty(key, value);
   }
 
-  public static Properties getProperties() {
+  public static Properties getProperties() { // NO_UCD
     performPropertiesCheck();
     return props;
   }
 
-  public static void setProperties(final Properties props) {
+  public static void setProperties(final Properties props) { // NO_UCD
     performPropertiesCheck();
     IsolatedSystem.props = props;
   }

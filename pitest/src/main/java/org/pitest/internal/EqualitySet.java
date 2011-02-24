@@ -47,10 +47,6 @@ public class EqualitySet<T> implements Iterable<T> {
     return isAdded;
   }
 
-  public void clear() {
-    this.members.clear();
-  }
-
   public boolean contains(final T arg0) {
     for (final T each : this.members) {
       if (this.equality.isEqual(arg0, each)) {

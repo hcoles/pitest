@@ -20,12 +20,12 @@ import java.util.Comparator;
 
 import org.pitest.Description;
 
-public class StringBasedDescriptionComparator implements
-    Comparator<Description>, Serializable {
+class StringBasedDescriptionComparator implements Comparator<Description>,
+    Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public int compare(final Description arg0, final Description arg1) {
+  public int compare(final Description arg0, final Description arg1) { // NO_UCD
     return arg0.toString().compareTo(arg1.toString());
   }
 

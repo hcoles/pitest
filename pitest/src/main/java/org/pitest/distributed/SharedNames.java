@@ -17,7 +17,6 @@ package org.pitest.distributed;
 
 public class SharedNames {
 
-  public static final String TEST_CONTROL              = "TestControl";
   public static final String TEST_RESULTS              = "TestResults";
   public static final String TEST_REQUEST              = "TestGroupQ";
   public static final String TEST_HANDLER_NOTIFICATION = "TestHandler";

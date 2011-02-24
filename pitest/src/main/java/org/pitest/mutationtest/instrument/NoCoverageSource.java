@@ -31,8 +31,8 @@ import org.pitest.util.Functions;
 
 public class NoCoverageSource implements CoverageSource {
 
-  protected final Configuration      pitConfig;
-  protected final Collection<String> testClasses = new ArrayList<String>();
+  private final Configuration      pitConfig;
+  private final Collection<String> testClasses = new ArrayList<String>();
 
   public NoCoverageSource(final Collection<String> tests,
       final Configuration pitConfig) {
@@ -46,16 +46,11 @@ public class NoCoverageSource implements CoverageSource {
     return Option.none();
   }
 
-  public Option<Statistics> getStatistics(
-      final Collection<String> classesToMutate) {
-    return Option.none();
-  }
-
   public List<TestUnit> getTests(final ClassLoader loader) {
     return findTestUnits(loader);
   }
 
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
+  private List<TestUnit> findTestUnits(final ClassLoader loader) {
     final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
         Functions.stringToClass(loader));
     // FIXME we do not apply any test filters. Is this what the user

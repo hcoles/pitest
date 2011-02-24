@@ -16,16 +16,16 @@ package org.pitest.internal.isolation;
 
 public class IsolatedInteger {
 
-  public static Integer getInteger(final String nm) {
+  public static Integer getInteger(final String nm) { // NO_UCD
     return getInteger(nm, null);
   }
 
-  public static Integer getInteger(final String nm, final int val) {
+  public static Integer getInteger(final String nm, final int val) { // NO_UCD
     final Integer result = getInteger(nm, null);
     return (result == null) ? Integer.valueOf(val) : result;
   }
 
-  public static Integer getInteger(final String nm, final Integer val) {
+  public static Integer getInteger(final String nm, final Integer val) { // NO_UCD
     String v = null;
     try {
       v = IsolatedSystem.getProperty(nm);

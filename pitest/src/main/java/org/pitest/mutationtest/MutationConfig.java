@@ -16,7 +16,6 @@ package org.pitest.mutationtest;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.pitest.mutationtest.engine.Mutater;
@@ -33,11 +32,6 @@ public final class MutationConfig {
   public MutationConfig(final MutationEngine engine,
       final MutationTestType type, final int threshold, final String[] jvmArgs) {
     this(engine, type, threshold, Arrays.asList(jvmArgs));
-  }
-
-  public MutationConfig(final MutationTestType type, final int threshold) {
-    this(DefaultMutationConfigFactory.makeDefaultEngine(), type, threshold,
-        Collections.<String> emptyList());
   }
 
   public MutationConfig(final MutationEngine engine,

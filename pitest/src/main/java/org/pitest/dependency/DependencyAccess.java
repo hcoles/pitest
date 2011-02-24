@@ -14,18 +14,18 @@
  */
 package org.pitest.dependency;
 
-public class DependencyAccess {
+class DependencyAccess {
 
-  public enum AccessType {
+  enum AccessType {
     METHOD, FIELD;
   }
 
-  public static class Member implements Comparable<Member> {
+  static class Member implements Comparable<Member> {
     private final String owner;
     private final String name;
     private final String desc;
 
-    public Member(final String owner, final String name, final String desc) {
+    protected Member(final String owner, final String name, final String desc) {
       this.owner = owner;
       this.name = name;
       this.desc = desc;
@@ -110,7 +110,7 @@ public class DependencyAccess {
   private final Member     source;
   private final Member     dest;
 
-  public DependencyAccess(final AccessType type, final Member source,
+  protected DependencyAccess(final AccessType type, final Member source,
       final Member dest) {
     this.type = type;
     this.source = source;
@@ -180,10 +180,6 @@ public class DependencyAccess {
   public String toString() {
     return "DependencyAccess [source=" + this.source + ", dest=" + this.dest
         + ", type=" + this.type + "]";
-  }
-
-  public boolean pointsTo(final DependencyAccess a) {
-    return this.getDest().equals(a.getSource());
   }
 
 }

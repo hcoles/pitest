@@ -43,11 +43,6 @@ public class OtherClassLoaderClassPathRoot implements ClassPathRoot {
     return this.loader.getResource(name);
   }
 
-  public void release() throws IOException {
-    // TODO Auto-generated method stub
-
-  }
-
   public Option<String> cacheLocation() {
     return Option.none();
   }

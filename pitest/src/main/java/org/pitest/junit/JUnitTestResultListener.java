@@ -28,11 +28,11 @@ public class JUnitTestResultListener implements TestListener {
 
   private final RunNotifier notifier;
 
-  public static Description methodToDescription(final TestResult tr) {
+  private static Description methodToDescription(final TestResult tr) {
     return descriptionToDescription(tr.getDescription());
   }
 
-  public static Description descriptionToDescription(
+  private static Description descriptionToDescription(
       final org.pitest.Description description) {
     return Description.createTestDescription(description.getFirstTestClass(),
         description.getName());

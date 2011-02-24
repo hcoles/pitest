@@ -57,16 +57,14 @@ import org.pitest.util.WrappingProcess;
 
 public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
-  private static final Logger        LOGGER = Logger
-                                                .getLogger(InstrumentedMutationTestUnit.class
-                                                    .getName());
+  private static final Logger      LOGGER = Logger
+                                              .getLogger(InstrumentedMutationTestUnit.class
+                                                  .getName());
 
-  private final JavaAgent            javaAgentFinder;
-  // protected final Collection<String> testClasses = new ArrayList<String>();
-  protected final Collection<String> classesToMutate;
-  protected final MutationConfig     config;
-  // protected final Configuration pitConfig;
-  private final CoverageSource       coverageSource;
+  private final JavaAgent          javaAgentFinder;
+  private final Collection<String> classesToMutate;
+  private final MutationConfig     config;
+  private final CoverageSource     coverageSource;
 
   public InstrumentedMutationTestUnit(final Collection<String> tests,
       final Collection<String> classesToMutate,
@@ -395,11 +393,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     // FIXME handle this more generically
     return !FCollection.contains(tests,
         not(isInstanceOf(IgnoredTestUnit.class)));
-  }
-
-  public static String randomFilename() {
-    return System.currentTimeMillis()
-        + ("" + Math.random()).replaceAll("\\.", "");
   }
 
   public MutationConfig getMutationConfig() {

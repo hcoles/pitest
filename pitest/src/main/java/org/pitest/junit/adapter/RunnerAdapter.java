@@ -179,10 +179,6 @@ public class RunnerAdapter extends AbstractTestUnit {
     return descriptionLookup;
   }
 
-  public Class<?> getClazz() {
-    return this.clazz;
-  }
-
   public List<RunnerAdapterDescriptionTestUnit> getDescriptions() {
     return this.descriptions;
   }

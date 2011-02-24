@@ -25,6 +25,7 @@ import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.IsolatedThreadPoolContainer;
+import org.pitest.distributed.DistributedContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.TestListener;
@@ -53,9 +54,10 @@ public class TopLevelSuite extends DefaultStaticConfig {
         i), Executors.defaultThreadFactory());
   }
 
-  @PITContainer
+  // @PITContainer
   public static Container distributed() {
-    return new IsolatedThreadPoolContainer(3);
+    return new DistributedContainer();
+    // return new IsolatedThreadPoolContainer(3);
   }
 
   @PITSuite
