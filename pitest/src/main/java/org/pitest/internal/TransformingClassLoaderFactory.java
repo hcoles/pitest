@@ -35,7 +35,7 @@ public class TransformingClassLoaderFactory implements ClassLoaderFactory {
     this(new ClassPath(), t, s);
   }
 
-  public TransformingClassLoaderFactory(final ClassPath classPath,
+  public TransformingClassLoaderFactory(final ClassPath classPath, // NO_UCD
       final Transformation t, final IsolationStrategy s) {
     this.transformation = t;
     this.s = s;

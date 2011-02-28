@@ -25,7 +25,6 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -50,7 +49,7 @@ public class OptionsParser {
   private final OptionSpec<Integer>                 depth;
   private final OptionSpec<Integer>                 threadsSpec;
   private final OptionSpec<File>                    sourceDirSpec;
-  private final OptionSpec<MethodMutatorFactory>    mutators;
+  private final OptionSpec<Mutator>                 mutators;
   private final OptionSpec<String>                  jvmArgs;
   private final OptionSpecBuilder                   mutateStatics;
   private final OptionSpecBuilder                   includeJarFilesSpec;
@@ -96,7 +95,7 @@ public class OptionsParser {
     this.mutators = this.parser
         .accepts(MUTATIONS_ARG)
         .withRequiredArg()
-        .ofType(MethodMutatorFactory.class)
+        .ofType(Mutator.class)
         .withValuesSeparatedBy(',')
         .describedAs("comma seperated list of mutation operators")
         .defaultsTo(

@@ -109,7 +109,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
       for (final CoverageResult each : this.coverage) {
         if (!each.isGreenTest()) {
-          throw new PitError("Tests do not pass without mutation.");
+          throw new PitError(each.getTestUnitDescription()
+              + " did not pass without mutation.");
         }
         calculateClassCoverage(each);
       }

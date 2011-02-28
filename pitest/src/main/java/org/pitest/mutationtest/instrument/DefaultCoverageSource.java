@@ -81,7 +81,7 @@ public class DefaultCoverageSource implements CoverageSource {
     for (final Entry<ClassLine, Set<Description>> each : this.coverageByTestUnit
         .entrySet()) {
 
-      if (classesToMutate.contains(each.getKey().clazz.replace("/", "."))) {
+      if (classesToMutate.contains(each.getKey().getClassName())) {
         result.put(each.getKey(),
             matchDescriptionaToTestUnit(each.getValue(), tests));
       }

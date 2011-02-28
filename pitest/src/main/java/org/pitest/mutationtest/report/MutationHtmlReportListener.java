@@ -58,9 +58,14 @@ public class MutationHtmlReportListener implements TestListener {
   private final List<String>                  errors        = new ArrayList<String>();
 
   public MutationHtmlReportListener() {
-    this(System.currentTimeMillis(), "", dir("src/test/java"),
+    this(System.currentTimeMillis(), "./", dir("src/test/java"),
         dir("src/main/java"), dir("src"), dir("test"), dir("source"),
         dir("tst"), dir("java"));
+  }
+
+  public MutationHtmlReportListener(final String reportDir,
+      final SourceLocator... locators) {
+    this(System.currentTimeMillis(), reportDir, locators);
   }
 
   public MutationHtmlReportListener(final long startTime,

@@ -16,12 +16,20 @@
 package org.pitest.mutationtest.instrument;
 
 public final class ClassLine {
-  public final String clazz;
-  public final int    lineNumber;
+  private final String clazz;
+  private final int    lineNumber;
 
   public ClassLine(final String clazz, final int lineNumber) {
     this.clazz = clazz.replace("/", ".");
     this.lineNumber = lineNumber;
+  }
+
+  public String getClazz() {
+    return this.clazz;
+  }
+
+  public int getLineNumber() {
+    return this.lineNumber;
   }
 
   @Override
@@ -62,6 +70,10 @@ public final class ClassLine {
   @Override
   public String toString() {
     return "ClassLine [" + this.clazz + ":" + this.lineNumber + "]";
+  }
+
+  public String getClassName() {
+    return this.getClazz().replace("/", ".");
   }
 
 }

@@ -30,25 +30,25 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 public class ReportOptions {
 
-  private boolean                          isValid;
+  private boolean                                    isValid;
 
-  private Collection<Predicate<String>>    classesInScope;
-  private Collection<Predicate<String>>    targetClasses;
-  private String                           reportDir;
-  private Collection<File>                 sourceDirs;
-  private Collection<String>               classPathElements;
-  private Collection<MethodMutatorFactory> mutators;
-  private int                              dependencyAnalysisMaxDistance;
-  private boolean                          mutateStaticInitializers = true;
+  private Collection<Predicate<String>>              classesInScope;
+  private Collection<Predicate<String>>              targetClasses;
+  private String                                     reportDir;
+  private Collection<File>                           sourceDirs;
+  private Collection<String>                         classPathElements;
+  private Collection<? extends MethodMutatorFactory> mutators;
+  private int                                        dependencyAnalysisMaxDistance;
+  private boolean                                    mutateStaticInitializers = true;
 
-  private boolean                          showHelp;
+  private boolean                                    showHelp;
 
-  private boolean                          isTestCentric;
+  private boolean                                    isTestCentric;
 
-  private boolean                          includeJarFiles          = false;
+  private boolean                                    includeJarFiles          = false;
 
-  private List<String>                     jvmArgs                  = new ArrayList<String>();
-  private int                              numberOfThreads          = 0;
+  private List<String>                               jvmArgs                  = new ArrayList<String>();
+  private int                                        numberOfThreads          = 0;
 
   public ReportOptions() {
   }
@@ -111,7 +111,7 @@ public class ReportOptions {
   /**
    * @return the mutators
    */
-  public Collection<MethodMutatorFactory> getMutators() {
+  public Collection<? extends MethodMutatorFactory> getMutators() {
     return this.mutators;
   }
 
@@ -119,7 +119,8 @@ public class ReportOptions {
    * @param mutators
    *          the mutators to set
    */
-  public void setMutators(final Collection<MethodMutatorFactory> mutators) {
+  public void setMutators(
+      final Collection<? extends MethodMutatorFactory> mutators) {
     this.mutators = mutators;
   }
 

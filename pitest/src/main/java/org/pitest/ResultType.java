@@ -54,7 +54,8 @@ public enum ResultType {
     }
   });
 
-  private interface ResultToListenerSideEffect extends F<TestResult, SideEffect1<TestListener>> {
+  private interface ResultToListenerSideEffect extends
+      F<TestResult, SideEffect1<TestListener>> {
   };
 
   ResultType(final ResultToListenerSideEffect f) {
