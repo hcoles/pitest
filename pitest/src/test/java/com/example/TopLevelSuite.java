@@ -20,11 +20,10 @@ import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.annotations.PITContainer;
 import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.containers.BaseThreadPoolContainer;
-import org.pitest.containers.IsolatedThreadPoolContainer;
+import org.pitest.distributed.DistributedContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.IsolationStrategy;
 import org.pitest.extension.TestListener;
@@ -35,12 +34,10 @@ import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.adapter.PITJUnitRunner;
 import org.pitest.mutationtest.MutationTest;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.report.MutationHtmlReportListener;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(threshold = 66, jvmArgs = { "-Xmx256m", "-Xms256m" }, mutators = {
-    Mutator.INCREMENTS, Mutator.RETURN_VALS })
+@MutationTest(threshold = 66, jvmArgs = { "-Xmx256m", "-Xms256m" })
 @StaticConfigurationClass(TopLevelSuite.class)
 public class TopLevelSuite extends DefaultStaticConfig {
 
@@ -53,9 +50,10 @@ public class TopLevelSuite extends DefaultStaticConfig {
         i), Executors.defaultThreadFactory());
   }
 
-  @PITContainer
+  // @PITContainer
   public static Container distributed() {
-    return new IsolatedThreadPoolContainer(3);
+    return new DistributedContainer();
+    // return new IsolatedThreadPoolContainer(3);
   }
 
   @PITSuite

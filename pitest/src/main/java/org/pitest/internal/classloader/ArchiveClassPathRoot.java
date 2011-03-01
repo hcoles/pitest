@@ -83,13 +83,6 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   }
 
-  public void release() throws IOException {
-    if (this.root.hasSome()) {
-      this.root.value().close();
-    }
-    // this.root.close();
-  }
-
   @Override
   public String toString() {
     return "ArchiveClassPathRoot [file=" + this.file.getName() + "]";

@@ -33,11 +33,6 @@ public class SteppedTestUnit extends AbstractTestUnit {
   private final Option<Class<? extends Throwable>> expected;
 
   public SteppedTestUnit(final Description description,
-      final Collection<TestStep> steps) {
-    this(description, steps, null);
-  }
-
-  public SteppedTestUnit(final Description description,
       final Collection<TestStep> steps,
       final Option<Class<? extends Throwable>> expected) {
     super(description);
@@ -90,7 +85,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
     return tResult;
   }
 
-  public Collection<TestStep> steps() {
+  private Collection<TestStep> steps() {
     return this.steps;
   }
 

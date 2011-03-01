@@ -27,7 +27,7 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
 
   private final ClassInfo classInfo;
 
-  public ClassInfoVisitor(final ClassInfo classInfo, final ClassVisitor writer) {
+  private ClassInfoVisitor(final ClassInfo classInfo, final ClassVisitor writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
     this.classInfo = classInfo;
   }

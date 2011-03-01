@@ -85,4 +85,12 @@ public class MethodInfo {
     return Type.getReturnType(this.desc);
   }
 
+  public static boolean isVoid(final String desc) {
+    return Type.getReturnType(desc).equals(Type.VOID_TYPE);
+  }
+
+  public Boolean isStaticInitializer() {
+    return "<clinit>".equals(this.name);
+  }
+
 }

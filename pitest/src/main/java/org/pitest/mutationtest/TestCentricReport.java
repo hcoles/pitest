@@ -22,33 +22,38 @@ import static org.pitest.util.TestInfo.isATest;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
+import org.pitest.extension.TestListener;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
-import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.util.Functions;
+import org.pitest.util.JavaAgent;
 
 public class TestCentricReport extends MutationCoverageReport {
 
-  public TestCentricReport(final ReportOptions data) {
-    super(data);
-    // TODO Auto-generated constructor stub
+  public TestCentricReport(final ReportOptions data,
+      final JavaAgent javaAgentJarFinder,
+      final ListenerFactory listenerFactory, final boolean nonLocalClassPath) {
+    super(data, javaAgentJarFinder, listenerFactory, nonLocalClassPath);
   }
 
   @Override
   public void runReport() {
 
-    final Collection<Class<?>> targets = findClassesForCoverage(getClassPath());
+    final long t0 = System.currentTimeMillis();
+    final Collection<Class<?>> targets = findClassesForCoverage(getClassPath()
+        .getLocalDirectoryComponent());
     System.out.println("targets = " + targets.size());
     final Collection<Class<?>> tests = FCollection.filter(targets, isATest());
 
@@ -62,9 +67,9 @@ public class TestCentricReport extends MutationCoverageReport {
     System.out.println("classesWithATest = " + classesWithATest.size());
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    final MutationHtmlReportListener mutationReportListener = new MutationHtmlReportListener(
-        this.data.getReportDir(), new SmartSourceLocator(
-            this.data.getSourceDirs()));
+    final TestListener mutationReportListener = this.listenerFactory
+        .getListener(this.data, t0);
+
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
 
@@ -75,12 +80,14 @@ public class TestCentricReport extends MutationCoverageReport {
     final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
         new JUnitCompatibleConfiguration());
 
-    final MutationEngine engine = DefaultMutationConfigFactory
-        .createEngine(this.data.getMutators().toArray(
-            new Mutator[this.data.getMutators().size()]));
+    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
+        this.data.isMutateStaticInitializers(), this.data.getMutators()
+            .toArray(new Mutator[this.data.getMutators().size()]));
     final MutationConfig mutationConfig = new MutationConfig(engine,
         MutationTestType.TEST_CENTRIC, 0, Collections.<String> emptyList());
-    initialConfig.testUnitFinders().add(new MutationTestFinder(mutationConfig));
+    initialConfig.testUnitFinders().add(
+        new MutationTestFinder(mutationConfig,
+            new FindInnerAndMemberClassesStrategy(), this.javaAgentFinder));
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     final Container c = new UnContainer();
@@ -90,12 +97,11 @@ public class TestCentricReport extends MutationCoverageReport {
 
   }
 
-  protected ClassPath getClassPath() {
-    return this.data.getClassPath(false).getOrElse(new ClassPath());
-  }
-
   protected Collection<Class<?>> findClassesForCoverage(final ClassPath cp) {
-    return flatMap(cp.findClasses(this.data.getTargetClassesFilter()),
-        stringToClass());
+    final Collection<Class<?>> classes = flatMap(
+        cp.findClasses(this.data.getTargetClassesFilter()), stringToClass());
+    final Set<Class<?>> set = new HashSet<Class<?>>(classes.size());
+    set.addAll(classes);
+    return set;
   }
 }

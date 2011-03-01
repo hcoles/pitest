@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.distributed.message;
+package com.example;
 
-public enum MessageType {
+public class FullyCoveredTestee {
 
-  RUN_TEST, END_RUN
+  public int coverMe() {
+    return 1;
+  }
+
 }

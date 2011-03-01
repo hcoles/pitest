@@ -66,7 +66,7 @@ public class TestMutationTesting {
 
   private MetaDataExtractor   metaDataExtractor;
 
-  static class MetaDataExtractor implements TestListener {
+  public static class MetaDataExtractor implements TestListener {
 
     private final List<MutationResult> data = new ArrayList<MutationResult>();
 
@@ -399,7 +399,7 @@ public class TestMutationTesting {
     this.pit.run(this.container, clazz);
   }
 
-  private void verifyResults(final DetectionStatus... detectionStatus) {
+  protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
         .getDetectionStatus();

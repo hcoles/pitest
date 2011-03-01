@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.report;
 
-public enum LineStatus {
+enum LineStatus {
 
   Covered, NotCovered, NotApplicable;
 

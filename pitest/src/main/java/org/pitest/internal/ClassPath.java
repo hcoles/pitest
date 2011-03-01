@@ -15,6 +15,8 @@
 
 package org.pitest.internal;
 
+import static org.pitest.functional.FCollection.filter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +39,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
-import org.pitest.internal.classloader.PITClassLoader;
 
 public class ClassPath implements Iterable<ClassPathRoot> {
 
@@ -54,7 +55,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     this.roots.addAll(Arrays.asList(roots));
   }
 
-  public ClassPath(final Collection<File> files) {
+  private ClassPath(final Collection<File> files) {
     this(files, false);
   }
 
@@ -66,15 +67,6 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     };
     this.roots.addAll(createRoots(FCollection.filter(files, exists),
         declareCaches));
-  }
-
-  public static ClassPath createFrom(final ClassLoader loader) {
-    // hmm
-    if (loader instanceof PITClassLoader) {
-      return ((PITClassLoader) loader).getClassPath();
-    } else {
-      return new ClassPath();
-    }
   }
 
   public Collection<String> classNames() {
@@ -171,7 +163,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
   }
 
   /** FIXME move somewhere common */
-  public static String[] getClassPathElements() {
+  private static String[] getClassPathElements() {
     final String classPath = System.getProperty("java.class.path");
     final String separator = System.getProperty("path.separator");
     if (classPath != null) {
@@ -188,6 +180,21 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   public Collection<String> findClasses(final Predicate<String> nameFilter) {
     return FCollection.filter(classNames(), nameFilter);
+  }
+
+  public ClassPath getLocalDirectoryComponent() {
+    return new ClassPath(filter(this.roots, isALocalDirectory()).toArray(
+        new ClassPathRoot[0]));
+  }
+
+  private F<ClassPathRoot, Boolean> isALocalDirectory() {
+    return new F<ClassPathRoot, Boolean>() {
+
+      public Boolean apply(final ClassPathRoot a) {
+        return a instanceof DirectoryClassPathRoot;
+      }
+
+    };
   }
 
 }

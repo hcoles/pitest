@@ -12,8 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
 
-public interface MutationOperator {
+package org.pitest.mutationtest.instrument;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.pitest.extension.TestUnit;
+import org.pitest.functional.Option;
+
+public interface CoverageSource {
+
+  Option<Statistics> getStatistics(List<TestUnit> tests,
+      Collection<String> classesToMutate);
+
+  List<TestUnit> getTests(ClassLoader loader);
 
 }

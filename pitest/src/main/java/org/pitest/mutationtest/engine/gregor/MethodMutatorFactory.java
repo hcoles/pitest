@@ -21,4 +21,6 @@ public interface MethodMutatorFactory {
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor);
 
+  public String getGloballyUniqueId();
+
 }

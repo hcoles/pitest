@@ -22,12 +22,12 @@ import org.pitest.dependency.DependencyAccess.AccessType;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.SideEffect1;
 
-public class DependencyClassVisitor extends ClassAdapter {
+class DependencyClassVisitor extends ClassAdapter {
 
   private final SideEffect1<DependencyAccess> typeReceiver;
   private String                              className;
 
-  public DependencyClassVisitor(final ClassVisitor visitor,
+  protected DependencyClassVisitor(final ClassVisitor visitor,
       final SideEffect1<DependencyAccess> typeReceiver) {
     super(visitor);
     this.typeReceiver = filterOutJavaLangObject(typeReceiver);
@@ -83,12 +83,6 @@ public class DependencyClassVisitor extends ClassAdapter {
           this.member, new Member(owner, name, desc)));
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     }
-
-    // @Override
-    // public void visitTypeInsn(final int opcode, final String type) {
-    // this.typeReceiver.apply(type);
-    // this.mv.visitTypeInsn(opcode, type);
-    // }
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner,

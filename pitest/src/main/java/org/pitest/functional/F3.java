@@ -14,7 +14,7 @@
  */
 package org.pitest.functional;
 
-public interface F3<A, B, C, D> {
+public interface F3<A, B, C, D> { // NO_UCD
 
   public D apply(final A a, final B b, final C c);
 

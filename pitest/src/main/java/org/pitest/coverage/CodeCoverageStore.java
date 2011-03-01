@@ -29,22 +29,15 @@ public final class CodeCoverageStore {
   public static final String        CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME;
   public static final String        CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC;
 
-  public static final String        CODE_COVERAGE_CALCULATOR_METHOD_METHOD_NAME;
-
-  public static final String        CODE_COVERAGE_CALCULATOR_METHOD_METHOD_DESC;
-
   static {
     final Method addCalc = new Method("visitLine", Type.VOID_TYPE, new Type[] {
       Type.INT_TYPE, Type.INT_TYPE });
-    final Method addCalcMethod = new Method("visitMethod", Type.VOID_TYPE,
-        new Type[] { Type.INT_TYPE, Type.INT_TYPE });
+
     CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = addCalc.getName();
     CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = addCalc.getDescriptor();
     CODE_COVERAGE_CALCULATOR_CLASS_NAME = CodeCoverageStore.class.getName()
         .replace('.', '/');
 
-    CODE_COVERAGE_CALCULATOR_METHOD_METHOD_NAME = addCalcMethod.getName();
-    CODE_COVERAGE_CALCULATOR_METHOD_METHOD_DESC = addCalcMethod.getDescriptor();
   }
 
   private static InvokeQueue        invokeQueue;
@@ -59,16 +52,12 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public static void visitLine(final int classId, final int codeLine) {
+  public static void visitLine(final int classId, final int codeLine) { // NO_UCD
     invokeQueue.addCodelineInvoke(classId, codeLine);
   }
 
   public static int registerClass(final String className) {
     return invokeStatistics.registerClass(className);
-  }
-
-  public static CoverageStatistics getInvokeStatistics() {
-    return invokeStatistics;
   }
 
   public static InvokeQueue getInvokeQueue() {

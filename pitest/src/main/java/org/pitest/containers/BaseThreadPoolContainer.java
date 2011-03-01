@@ -54,7 +54,7 @@ public class BaseThreadPoolContainer implements Container {
     this.executor.shutdown();
   }
 
-  protected void submit(final Runnable c) {
+  private void submit(final Runnable c) {
     this.executor.submit(c);
   }
 

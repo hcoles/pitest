@@ -16,18 +16,10 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.functional.Prelude.isInstanceOf;
 import static org.pitest.functional.Prelude.not;
-import static org.pitest.functional.Prelude.print;
 import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -38,15 +30,11 @@ import java.util.logging.Logger;
 import org.pitest.Description;
 import org.pitest.MetaData;
 import org.pitest.PitError;
-import org.pitest.Pitest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoVisitor;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -54,8 +42,6 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
@@ -66,49 +52,44 @@ import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Functions;
-import org.pitest.util.InputStreamLineIterable;
 import org.pitest.util.JavaAgent;
-import org.pitest.util.JavaProcess;
+import org.pitest.util.WrappingProcess;
 
 public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
-  // private static final JavaAgent JAVA_AGENT_JAR_FINDER = new
-  // JavaAgentJarFinder();
-  private static final Logger        LOGGER      = Logger
-                                                     .getLogger(InstrumentedMutationTestUnit.class
-                                                         .getName());
+  private static final Logger      LOGGER = Logger
+                                              .getLogger(InstrumentedMutationTestUnit.class
+                                                  .getName());
 
-  private final JavaAgent            javaAgentFinder;
-  protected final Collection<String> testClasses = new ArrayList<String>();
-  protected final Collection<String> classesToMutate;
-  protected final MutationConfig     config;
-  protected final Configuration      pitConfig;
+  private final JavaAgent          javaAgentFinder;
+  private final Collection<String> classesToMutate;
+  private final MutationConfig     config;
+  private final CoverageSource     coverageSource;
 
   public InstrumentedMutationTestUnit(final Collection<String> tests,
       final Collection<String> classesToMutate,
-      final MutationConfig mutationConfig, final Configuration pitConfig,
-      final Description description) {
-    this(tests, classesToMutate, mutationConfig, pitConfig, description,
-        new JavaAgentJarFinder());
+      final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
+      final Configuration pitConfig, final Description description) {
+    this(classesToMutate, mutationConfig, description, javaAgentFinder,
+        new NoCoverageSource(tests, pitConfig));
   }
 
-  public InstrumentedMutationTestUnit(final Collection<String> tests,
-      final Collection<String> classesToMutate,
-      final MutationConfig mutationConfig, final Configuration pitConfig,
-      final Description description, final JavaAgent javaAgentFinder) {
+  public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
+      final MutationConfig mutationConfig, final Description description,
+      final JavaAgent javaAgentFinder, final CoverageSource coverageSource) {
     super(description);
     this.classesToMutate = classesToMutate;
-    this.testClasses.addAll(tests);
+    // this.testClasses.addAll(tests);
     this.config = mutationConfig;
-    this.pitConfig = pitConfig;
     this.javaAgentFinder = javaAgentFinder;
+    this.coverageSource = coverageSource;
 
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
+
       rc.notifyStart(this.getDescription());
       runTests(rc, loader);
     } catch (final Throwable ex) {
@@ -123,14 +104,12 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     final Collection<MutationDetails> availableMutations = m
         .findMutations(this.classesToMutate);
 
-    FCollection.forEach(availableMutations, print());
-
     try {
       if (!availableMutations.isEmpty()) {
         // should test unit perhaps have PitClassloader in it's interface?
         final ClassPath cp = createClassPath(loader);
 
-        final List<TestUnit> tests = findTestUnits(loader);
+        final List<TestUnit> tests = this.coverageSource.getTests(loader);
 
         if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
 
@@ -154,6 +133,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         rc.notifySkipped(this.getDescription());
       }
     } catch (final Exception ex) {
+      ex.printStackTrace();
+      System.out.println(ex.getCause());
       throw translateCheckedException(ex);
     }
 
@@ -175,17 +156,13 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final List<TestUnit> tests, final ClassPath cp,
       final Option<Statistics> stats) throws IOException {
 
-    final File inputfile = File.createTempFile(randomFilename(), ".data");
-    final File result = File.createTempFile(randomFilename(), ".results");
+    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
+        tests, stats, this.config, System.getProperties(), this.classesToMutate);
 
-    final String[] args = createSlaveArgs(remainingMutations, tests, inputfile,
-        result, stats);
-
-    final String lauchClassPath = getLaunchClassPath(cp);
-
-    final JavaProcess worker = JavaProcess.launch(sendInputToNoWhere(),
-        sendInputToStdErr(), getJVMArgs(), InstrumentedMutationTestSlave.class,
-        Arrays.asList(args), this.javaAgentFinder, lauchClassPath);
+    final MutationTestProcess worker = new MutationTestProcess(
+        WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())
+            .andJavaAgentFinder(this.javaAgentFinder).andStdout(discard()),
+        fileArgs);
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
         remainingMutations);
@@ -198,14 +175,22 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       // swallow
     }
 
-    final Option<Statistics> newStats = readResultsFromFile(allmutations,
-        stats, result);
+    final Option<Statistics> newStats = worker.results(allmutations, stats);
 
-    inputfile.delete();
-    result.delete();
+    worker.cleanUp();
 
     correctResultForProcessExitCode(allmutations, exitCode);
     return newStats;
+  }
+
+  private SideEffect1<String> discard() {
+    return new SideEffect1<String>() {
+
+      public void apply(final String a) {
+        // System.out.println("SLAVE : " + a);
+      }
+
+    };
   }
 
   private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(
@@ -215,22 +200,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         DetectionStatus.STARTED);
   }
 
-  private SideEffect1<String> sendInputToStdErr() {
-    return new SideEffect1<String>() {
-      public void apply(final String a) {
-        System.err.println("Mutation slave : " + a);
-      }
-    };
-  }
-
-  private SideEffect1<String> sendInputToNoWhere() {
-    return new SideEffect1<String>() {
-      public void apply(final String a) {
-        // System.out.println("SLAVE : " + a);
-      }
-    };
-  }
-
   private void correctResultForProcessExitCode(
       final Map<MutationIdentifier, DetectionStatus> mutations,
       final ExitCode exitCode) {
@@ -238,18 +207,11 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     if (!exitCode.isOk()) {
       System.out.println("Slave encountered error");
       final Collection<MutationIdentifier> unfinishedRuns = getUnfinishedRuns(mutations);
-      if (!unfinishedRuns.isEmpty()) {
-        System.out.println("Setting " + unfinishedRuns.size()
-            + " unfinished runs to error state");
-        FCollection.forEach(unfinishedRuns,
-            putToMap(mutations, DetectionStatus.RUN_ERROR));
-      }
-
-      if (exitCode.equals(ExitCode.OUT_OF_MEMORY)) {
-        FCollection.forEach(unfinishedRuns,
-            putToMap(mutations, DetectionStatus.MEMORY_ERROR));
-      }
-
+      final DetectionStatus status = DetectionStatus
+          .getForErrorExitCode(exitCode);
+      System.out.println("Setting " + unfinishedRuns.size()
+          + " unfinished runs to " + status + " state");
+      FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
     } else {
       System.out.println("All ok");
     }
@@ -279,37 +241,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     };
   }
 
-  private Option<Statistics> readResultsFromFile(
-      final Map<MutationIdentifier, DetectionStatus> allmutations,
-      final Option<Statistics> stats, final File result)
-      throws FileNotFoundException, IOException {
-
-    final FileReader fr = new FileReader(result);
-    final ResultsReader rr = new ResultsReader(allmutations, stats);
-    try {
-      final InputStreamLineIterable li = new InputStreamLineIterable(fr);
-      li.forEach(rr);
-    } finally {
-      fr.close();
-    }
-
-    return rr.getStats();
-  }
-
   private List<String> getJVMArgs() {
     return this.config.getJVMArgs();
-  }
-
-  private String getLaunchClassPath(final ClassPath cp) {
-    String classpath = System.getProperty("java.class.path");
-    for (final ClassPathRoot each : cp) {
-      final Option<String> additional = each.cacheLocation();
-      for (final String path : additional) {
-        classpath = classpath + File.pathSeparator + path;
-      }
-    }
-
-    return classpath;
   }
 
   private Option<Statistics> runTestsInSeperateProcess(final ClassPath cp,
@@ -317,7 +250,8 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final Map<MutationIdentifier, DetectionStatus> mutations)
       throws IOException, InterruptedException {
 
-    Option<Statistics> stats = Option.none();
+    Option<Statistics> stats = this.coverageSource.getStatistics(tests,
+        this.classesToMutate);
 
     Collection<MutationIdentifier> remainingMutations = getUnrunMutationIds(mutations);
 
@@ -330,7 +264,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         throw new PitError(
             "Cannot mutation test as tests do not pass without mutation");
       }
-      System.out.println("Got stats from slave " + stats);
+
       remainingMutations = getUnrunMutationIds(mutations);
     }
 
@@ -352,22 +286,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     return FCollection.filter(mutations.keySet(), p);
   }
 
-  private String[] createSlaveArgs(
-      final Collection<MutationIdentifier> mutations,
-      final List<TestUnit> tests, final File inputfile, final File result,
-      final Option<Statistics> stats) throws IOException {
-
-    final BufferedWriter bw = new BufferedWriter(new FileWriter(inputfile));
-
-    final SlaveArguments fileArgs = new SlaveArguments(mutations, tests, stats,
-        this.config, System.getProperties(), this.classesToMutate);
-
-    bw.append(IsolationUtils.toTransportString(fileArgs));
-    bw.close();
-    final String[] args = createArgs(inputfile, result);
-    return args;
-  }
-
   private ClassPath createClassPath(final ClassLoader loader) {
     ClassPath cp = null;
     if (loader instanceof PITClassLoader) {
@@ -376,13 +294,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       cp = new ClassPath();
     }
     return cp;
-  }
-
-  private String[] createArgs(final File input, final File output) {
-
-    final String[] a = { input.getAbsolutePath(), output.getAbsolutePath() };
-
-    return a;
   }
 
   private void reportResults(
@@ -482,21 +393,6 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     // FIXME handle this more generically
     return !FCollection.contains(tests,
         not(isInstanceOf(IgnoredTestUnit.class)));
-  }
-
-  public static String randomFilename() {
-    return System.currentTimeMillis()
-        + ("" + Math.random()).replaceAll("\\.", "");
-  }
-
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
-        Functions.stringToClass(loader));
-    // FIXME we do not apply any test filters. Is this what the user
-    // expects?
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tcs.toArray(new Class<?>[tcs.size()]));
   }
 
   public MutationConfig getMutationConfig() {

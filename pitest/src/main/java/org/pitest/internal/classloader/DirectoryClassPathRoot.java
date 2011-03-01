@@ -61,10 +61,6 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
     }
   }
 
-  public void release() throws IOException {
-    // nothing to release
-  }
-
   @Override
   public String toString() {
     return "DirectoryClassPathRoot [root=" + this.root + "]";

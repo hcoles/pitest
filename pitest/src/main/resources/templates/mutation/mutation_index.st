@@ -23,6 +23,9 @@
 </head>
 <body>
 
+<h1>Detected $numberOfDetectedMutations$ of $numberOfMutations$ mutations in around $duration$ secs</h1>
+
+
 
 $summaryList:{ summary | 
 <div class='unit'>
@@ -48,6 +51,10 @@ $errors : { error |
 </div>
 <br/>
 }$
+
+<hr/>
+
+$mutatorScores.totals : { score | <h2>$score$</h2> }$ 
 
 </body>
 </html>

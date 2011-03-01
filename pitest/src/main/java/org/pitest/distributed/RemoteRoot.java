@@ -85,11 +85,6 @@ public class RemoteRoot implements ClassPathRoot {
 
   }
 
-  public void release() throws IOException {
-    // TODO Auto-generated method stub
-
-  }
-
   public Option<String> cacheLocation() {
     return this.cache.cacheLocation();
   }

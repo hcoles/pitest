@@ -27,7 +27,7 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
  */
 public class PITJUnitRunner extends AbstractPITJUnitRunner {
 
-  public PITJUnitRunner(final Class<?> clazz) {
+  public PITJUnitRunner(final Class<?> clazz) { // NO_UCD
     super(clazz);
   }
 

@@ -55,23 +55,23 @@ public class PossibilitiesBuilder extends RunnerBuilder {
     return null;
   }
 
-  protected JUnit4Builder junit4Builder() {
+  private JUnit4Builder junit4Builder() {
     return new JUnit4Builder();
   }
 
-  protected JUnit3Builder junit3Builder() {
+  private JUnit3Builder junit3Builder() {
     return new JUnit3Builder();
   }
 
-  protected AnnotatedBuilder annotatedBuilder() {
+  private AnnotatedBuilder annotatedBuilder() {
     return new AnnotatedBuilder(this);
   }
 
-  protected IgnoredBuilder ignoredBuilder() {
+  private IgnoredBuilder ignoredBuilder() {
     return new IgnoredBuilder();
   }
 
-  protected RunnerBuilder suiteMethodBuilder() {
+  private RunnerBuilder suiteMethodBuilder() {
     if (this.canUseSuiteMethod) {
       return new SuiteMethodBuilder();
     }

@@ -134,7 +134,7 @@ class GregorMutater implements Mutater {
     return new Predicate<MethodMutatorFactory>() {
 
       public Boolean apply(final MethodMutatorFactory a) {
-        return id.getMutator().equals(a.getClass().getName());
+        return id.getMutator().equals(a.getGloballyUniqueId());
       }
 
     };
@@ -163,6 +163,13 @@ class GregorMutater implements Mutater {
 
   public Set<MethodMutatorFactory> getMutators() {
     return this.mutators;
+  }
+
+  @Override
+  public String toString() {
+    return "GregorMutater [filter=" + this.filter + ", byteSource="
+        + this.byteSource + ", mutators=" + this.mutators + ", loggingClasses="
+        + this.loggingClasses + "]";
   }
 
 }

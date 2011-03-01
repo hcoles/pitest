@@ -24,6 +24,10 @@ public class CanNotCreateTestClassException extends RuntimeException {
     super(t);
   }
 
+  public CanNotCreateTestClassException(final String message, final Throwable t) {
+    super(message, t);
+  }
+
   private static final long serialVersionUID = 1L;
 
 }

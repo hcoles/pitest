@@ -17,7 +17,8 @@ package org.pitest.util;
 public enum ExitCode {
 
   OK(0, ErrorType.NONE), OUT_OF_MEMORY(11, ErrorType.HANDLED), FORCED_EXIT(12,
-      ErrorType.HANDLED), UNKNOWN_ERROR(13, ErrorType.UNHANDLED);
+      ErrorType.HANDLED), UNKNOWN_ERROR(13, ErrorType.UNHANDLED), TIMEOUT(14,
+      ErrorType.HANDLED);
 
   private static enum ErrorType {
     NONE, HANDLED, UNHANDLED;

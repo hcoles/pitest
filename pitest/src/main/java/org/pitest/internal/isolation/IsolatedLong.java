@@ -16,16 +16,16 @@ package org.pitest.internal.isolation;
 
 public class IsolatedLong {
 
-  public static Long getLong(final String nm) {
+  public static Long getLong(final String nm) { // NO_UCD
     return getLong(nm, null);
   }
 
-  public static Long getLong(final String nm, final long val) {
+  public static Long getLong(final String nm, final long val) { // NO_UCD
     final Long result = Long.getLong(nm, null);
     return (result == null) ? Long.valueOf(val) : result;
   }
 
-  public static Long getLong(final String nm, final Long val) {
+  public static Long getLong(final String nm, final Long val) { // NO_UCD
     String v = null;
     try {
       v = IsolatedSystem.getProperty(nm);

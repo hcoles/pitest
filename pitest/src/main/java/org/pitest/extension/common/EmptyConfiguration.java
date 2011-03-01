@@ -38,10 +38,6 @@ public class EmptyConfiguration implements Configuration {
         .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
   }
 
-  public int maxParallelism() {
-    return 1;
-  }
-
   public List<TestUnitProcessor> testUnitProcessors() {
     return Collections.emptyList();
   }

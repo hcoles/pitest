@@ -30,7 +30,7 @@ import org.pitest.functional.SideEffect1;
 public class InputStreamLineIterable implements FunctionalIterable<String> {
 
   private final BufferedReader reader;
-  protected String             next;
+  private String               next;
 
   public InputStreamLineIterable(final Reader reader) {
     this.reader = new BufferedReader(reader);

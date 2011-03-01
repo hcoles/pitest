@@ -48,18 +48,18 @@ public class DistributedContainer extends UnisolatedThreadPoolContainer {
   private final ClassPath                                    classPath;
   private final Map<String, String>                          environment;
 
-  public DistributedContainer(final String... environmentExports) {
+  public DistributedContainer(final String... environmentExports) { // NO_UCD
     this(new ClassPath(), Hazelcast.newHazelcastInstance(null),
         environmentExports);
   }
 
-  public DistributedContainer(final Config config,
+  public DistributedContainer(final Config config, // NO_UCD
       final String... environmentExports) {
     this(new ClassPath(), Hazelcast.newHazelcastInstance(config),
         environmentExports);
   }
 
-  public DistributedContainer(final ClassPath classpath,
+  public DistributedContainer(final ClassPath classpath, // NO_UCD
       final HazelcastInstance hazelcast, final String... environmentExports) {
     super(1);
 

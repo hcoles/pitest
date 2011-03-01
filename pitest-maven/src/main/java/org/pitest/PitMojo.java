@@ -24,15 +24,19 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CodeCentricReport;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.HtmlReportFactory;
+import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.TestCentricReport;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
 import org.pitest.util.Glob;
 
 /**
  * Goal which runs a coverage mutation report
  * 
- * @goal pit
+ * @goal mutationCoverage
  * 
  * @requiresDependencyResolution test
  * 
@@ -64,11 +68,33 @@ public class PitMojo extends AbstractMojo {
   private File                  reportsDirectory;
 
   /**
-   * Maximum distance to look from test to class
+   * Maximum distance to look from test to class. Relevant when mutating static
+   * initializers
    * 
    * @parameter
    */
   private int                   maxDependencyDistance;
+
+  /**
+   * Number of threads to use
+   * 
+   * @parameter default-value="1"
+   */
+  private int                   threads;
+
+  /**
+   * Mutate static initializers
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               mutateStaticInitializers;
+
+  /**
+   * Mutate classes within jar files and other archives
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               includeJarFiles;
 
   /**
    * Maximum distance to look from test to class
@@ -76,6 +102,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    */
   private List<String>          mutators;
+
+  /**
+   * Run in test centric mode
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               testCentric;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -117,6 +150,7 @@ public class PitMojo extends AbstractMojo {
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
     final Set<String> classPath = new HashSet<String>();
+
     try {
       classPath.addAll(this.project.getTestClasspathElements());
       classPath.addAll(this.project.getCompileClasspathElements());
@@ -131,17 +165,23 @@ public class PitMojo extends AbstractMojo {
     final Artifact pitVersionInfo = this.pluginArtifactMap
         .get("org.pitest:pitest");
 
+    addOwnDependenciesToClassPath(classPath);
+
     final ReportOptions data = new ReportOptions();
     data.setClassPathElements(classPath);
     data.setIsTestCentric(false);
     data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
+    data.setIncludeJarFiles(this.includeJarFiles);
 
     data.setTargetClasses(determineTargetClasses());
     data.setClassesInScope(determineClassesInScope());
+    data.setMutateStaticInitializers(this.mutateStaticInitializers);
+    data.setNumberOfThreads(this.threads);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 
     data.setMutators(determineMutators());
+    data.setIsTestCentric(this.testCentric);
 
     final List<String> sourceRoots = new ArrayList<String>();
     sourceRoots.addAll(this.project.getCompileSourceRoots());
@@ -151,16 +191,14 @@ public class PitMojo extends AbstractMojo {
 
     System.out.println("Running report with " + data);
 
-    final CodeCentricReport report = new CodeCentricReport(data,
-        new KnownLocationJavaAgentJarFinder(pitVersionInfo.getFile()
-            .getAbsolutePath()), true);
+    final MutationCoverageReport report = pickReportType(data, pitVersionInfo);
 
     // FIXME will we get a clash between junit & possibly PIT jars by using the
     // plugin loader?
     final ClassLoader loader = new DefaultPITClassloader(data
         .getClassPath(true).getOrElse(new ClassPath()),
         IsolationUtils.getContextClassLoader());
-    ClassLoader original = IsolationUtils.getContextClassLoader();
+    final ClassLoader original = IsolationUtils.getContextClassLoader();
 
     try {
       IsolationUtils.setContextClassLoader(loader);
@@ -177,7 +215,26 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  private Collection<Mutator> determineMutators() {
+  private void addOwnDependenciesToClassPath(final Set<String> classPath) {
+    for (Artifact dependency : this.pluginArtifactMap.values()) {
+      classPath.add(dependency.getFile().getAbsolutePath());
+    }
+  }
+
+  private MutationCoverageReport pickReportType(ReportOptions data,
+      Artifact pitVersionInfo) {
+    if (!this.testCentric) {
+      return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
+          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+          true);
+    } else {
+      return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
+          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+          true);
+    }
+  }
+
+  private Collection<MethodMutatorFactory> determineMutators() {
     if (this.mutators != null) {
       return FCollection.map(this.mutators, stringToMutator());
     } else {
@@ -185,9 +242,9 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  private F<String, Mutator> stringToMutator() {
-    return new F<String, Mutator>() {
-      public Mutator apply(String a) {
+  private F<String, MethodMutatorFactory> stringToMutator() {
+    return new F<String, MethodMutatorFactory>() {
+      public Mutator apply(final String a) {
         return Mutator.valueOf(a);
       }
 
@@ -203,7 +260,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
-      Collection<String> filters) {
+      final Collection<String> filters) {
     if (filters == null) {
       return Collections.<Predicate<String>> singleton(new Glob(this.project
           .getGroupId() + "*"));

@@ -21,14 +21,13 @@ import java.util.Map;
 
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.InvokeEntry;
 import org.pitest.coverage.InvokeQueue;
+import org.pitest.coverage.execute.CoverageReaderThread;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.Statistics.ClassLine;
 
 public class CoverageDecorator extends TestUnitDecorator {
 
@@ -50,14 +49,27 @@ public class CoverageDecorator extends TestUnitDecorator {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
+
     System.out.println("Gathering stats for test " + child().getDescription());
     this.invokeStatistics.clearCoverageStats();
 
+    final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
+        this.invokeStatistics);
+    t.start();
+
     final long t0 = System.currentTimeMillis();
+
     this.child().execute(loader, rc);
     this.executionTime = System.currentTimeMillis() - t0;
 
-    readStatisticsQueue(this.invokeStatistics, this.invokeQueue);
+    try {
+      t.waitToFinish();
+    } catch (final InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    // readStatisticsQueue(this.invokeStatistics, this.invokeQueue);
 
     final Collection<ClassStatistics> css = this.invokeStatistics
         .getClassStatistics(this.classesForCoverage);
@@ -87,16 +99,6 @@ public class CoverageDecorator extends TestUnitDecorator {
           this.lineMapping, modifiedChild.value()));
     } else {
       return Option.none();
-    }
-
-  }
-
-  private void readStatisticsQueue(final CoverageStatistics invokeStatistics,
-      final InvokeQueue invokeQueue) {
-    while (!invokeQueue.isEmpty()) {
-      final InvokeEntry entry = invokeQueue.poll();
-      invokeStatistics.visitLine(entry.getClassId(), entry.getLineNumber());
-
     }
 
   }

@@ -13,37 +13,46 @@
 
 package org.pitest.coverage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 
 public class CoverageStatistics {
 
-  private final List<ClassStatistics> classStatisticsInClassIdOrder = new ArrayList<ClassStatistics>();
+  private int                                 classIdCount                  = 0;
+  private final Map<Integer, ClassStatistics> classStatisticsInClassIdOrder = new ConcurrentHashMap<Integer, ClassStatistics>();
 
   public synchronized void clearCoverageStats() {
-    for (final ClassStatistics each : this.classStatisticsInClassIdOrder) {
-      each.clearLineCoverageStats();
+    // this.classStatisticsInClassIdOrder.clear();
+    for (final Entry<Integer, ClassStatistics> each : this.classStatisticsInClassIdOrder
+        .entrySet()) {
+      this.classStatisticsInClassIdOrder.put(each.getKey(),
+          new ClassStatistics(each.getValue().getClassName()));
+
     }
   }
 
-  public synchronized int registerClass(final String className) {
-    this.classStatisticsInClassIdOrder.add(new ClassStatistics(className));
-    return this.classStatisticsInClassIdOrder.size() - 1;
+  public synchronized int registerClass(final String className) { // NO_UCD
+    final int id = this.classIdCount;
+    this.classIdCount++;
+    this.classStatisticsInClassIdOrder.put(id, new ClassStatistics(className));
+    return id;
   }
 
-  public synchronized void visitLine(final int classId, final int lineId) {
+  public void visitLine(final int classId, final int lineId) {
     this.getClassStatistics(classId).registerLineVisit(lineId);
   }
 
-  private synchronized ClassStatistics getClassStatistics(final int id) {
+  private ClassStatistics getClassStatistics(final int id) {
     return this.classStatisticsInClassIdOrder.get(id);
   }
 
-  public synchronized Collection<ClassStatistics> getClassStatistics(
+  public Collection<ClassStatistics> getClassStatistics(
       final Collection<String> classNames) {
     return FCollection.map(classNames, classNameToClassStatistics());
   }
@@ -57,8 +66,28 @@ public class CoverageStatistics {
     };
   }
 
-  public synchronized ClassStatistics getClassStatistics(final String clazz) {
-    for (final ClassStatistics each : this.classStatisticsInClassIdOrder) {
+  public Collection<ClassStatistics> getClassStatistics() {
+    return FCollection.flatMap(this.classStatisticsInClassIdOrder.values(),
+        hasLineHit());
+  }
+
+  private static F<ClassStatistics, Option<ClassStatistics>> hasLineHit() {
+    return new F<ClassStatistics, Option<ClassStatistics>>() {
+
+      public Option<ClassStatistics> apply(final ClassStatistics a) {
+        if (a.wasVisited()) {
+          return Option.some(a);
+        } else {
+          return Option.none();
+        }
+      }
+
+    };
+  }
+
+  private ClassStatistics getClassStatistics(final String clazz) {
+    for (final ClassStatistics each : this.classStatisticsInClassIdOrder
+        .values()) {
       if (each.getClassName().equals(clazz)) {
         return each;
       }

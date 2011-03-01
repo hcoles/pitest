@@ -32,12 +32,12 @@ import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 public class MethodCallMutatorTest extends MutatorTestBase {
 
   @Before
-  public void setupEngineToRemoveVoidMethods() {
+  public void setupEngineToRemoveAllMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
         MethodCallMutator.METHOD_CALL_MUTATOR);
   }
 
-  private static class HasVoidMethodCall implements Callable<String> {
+  static class HasVoidMethodCall implements Callable<String> {
 
     private int i = 0;
 
@@ -116,7 +116,7 @@ public class MethodCallMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasVoidStaticMethodCall(), mutant, "0");
   }
 
-  private static class HasIntMethodCall implements Callable<String> {
+  static class HasIntMethodCall implements Callable<String> {
 
     private static int i = 0;
 
@@ -334,7 +334,7 @@ public class MethodCallMutatorTest extends MutatorTestBase {
 
   }
 
-  private static class HasConstructorCall implements Callable<String> {
+  static class HasConstructorCall implements Callable<String> {
     public String call() throws Exception {
       final Integer i = new Integer(12);
       return "" + (i == null);

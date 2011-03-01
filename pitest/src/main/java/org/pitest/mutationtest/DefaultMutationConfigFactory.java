@@ -17,64 +17,40 @@ package org.pitest.mutationtest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.MethodCallMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public final class DefaultMutationConfigFactory implements
     MutationConfigFactory {
 
-  private final static Predicate<MethodInfo>              filter           = True
-                                                                               .<MethodInfo> all();
+  private final static Predicate<MethodInfo>           filter           = True
+                                                                            .<MethodInfo> all();
 
-  private final static Map<Mutator, MethodMutatorFactory> enumMapping      = new EnumMap<Mutator, MethodMutatorFactory>(
-                                                                               Mutator.class);
+  public final static Collection<MethodMutatorFactory> DEFAULT_MUTATORS = Arrays
+                                                                            .<MethodMutatorFactory> asList(
+                                                                                Mutator.NEGATE_CONDITIONALS,
+                                                                                Mutator.CONDITIONALS_BOUNDARY,
+                                                                                Mutator.INCREMENTS,
+                                                                                Mutator.MATH,
+                                                                                Mutator.RETURN_VALS,
+                                                                                Mutator.VOID_METHOD_CALLS,
+                                                                                Mutator.INVERT_NEGS);
 
-  public final static Collection<Mutator>                 DEFAULT_MUTATORS = Arrays
-                                                                               .asList(
-                                                                                   Mutator.CONDITIONALS,
-                                                                                   Mutator.INCREMENTS,
-                                                                                   Mutator.MATH,
-                                                                                   Mutator.RETURN_VALS,
-                                                                                   Mutator.METHOD_CALLS,
-                                                                                   Mutator.NEGS);
-
-  private final static Collection<String>                 LOGGING_CLASSES  = Arrays
-                                                                               .asList(
-                                                                                   "java.util.logging",
-                                                                                   "org.apache.log4j",
-                                                                                   "org.slf4j",
-                                                                                   "org.apache.commons.logging");
-
-  static {
-    enumMapping.put(Mutator.CONDITIONALS,
-        ConditionalsMutator.CONDITIONALS_MUTATOR);
-    enumMapping
-        .put(Mutator.METHOD_CALLS, MethodCallMutator.METHOD_CALL_MUTATOR);
-    enumMapping.put(Mutator.INCREMENTS, IncrementsMutator.INCREMENTS_MUTATOR);
-    enumMapping.put(Mutator.NEGS, InvertNegsMutator.INVERT_NEGS_MUTATOR);
-    enumMapping.put(Mutator.MATH, MathMutator.MATH_MUTATOR);
-    enumMapping.put(Mutator.RETURN_VALS, ReturnValsMutator.RETURN_VALS_MUTATOR);
-  }
+  private final static Collection<String>              LOGGING_CLASSES  = Arrays
+                                                                            .asList(
+                                                                                "java.util.logging",
+                                                                                "org.apache.log4j",
+                                                                                "org.slf4j",
+                                                                                "org.apache.commons.logging");
 
   public static MutationEngine makeDefaultEngine() {
-    return new GregorMutationEngine(enumMapping.values(), LOGGING_CLASSES,
-        filter);
+    return new GregorMutationEngine(DEFAULT_MUTATORS, LOGGING_CLASSES, filter);
   }
 
   public MutationConfig createConfig(final MutationTest annotation) {
@@ -85,39 +61,45 @@ public final class DefaultMutationConfigFactory implements
 
   public static MutationConfig createConfig(final int threshold,
       final Mutator... mutators) {
-    return new MutationConfig(createEngine(mutators),
+    return new MutationConfig(createEngine(true, mutators),
         MutationTestType.TEST_CENTRIC, threshold,
         Collections.<String> emptyList());
   }
 
   private MutationEngine createEngine(final MutationTest annotation) {
-    return createEngine(annotation.mutators());
+    return createEngine(true, annotation.mutators());
   }
 
-  public static MutationEngine createEngine(final Mutator... mutators) {
-    final Collection<Mutator> ms = createMutatorListFromArrayOrUseDefaults(mutators);
-    return new GregorMutationEngine(
-        FCollection.map(ms, mutatorTokenToMutator()), LOGGING_CLASSES, filter);
+  public static MutationEngine createEngine(
+      final boolean mutateStaticInitializers, final Mutator... mutators) {
+    final Collection<MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
+    final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers);
+    return new GregorMutationEngine(ms, LOGGING_CLASSES, filter);
   }
 
-  private static Collection<Mutator> createMutatorListFromArrayOrUseDefaults(
+  private static Predicate<MethodInfo> pickFilter(
+      final boolean mutateStaticInitializers) {
+    if (!mutateStaticInitializers) {
+      return new Predicate<MethodInfo>() {
+
+        public Boolean apply(final MethodInfo a) {
+          return !a.isStaticInitializer();
+        }
+
+      };
+    } else {
+      return filter;
+    }
+  }
+
+  private static Collection<MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
       final Mutator... mutators) {
     if (mutators.length != 0) {
-      return Arrays.asList(mutators);
+      return Arrays.<MethodMutatorFactory> asList(mutators);
     } else {
       return DEFAULT_MUTATORS;
     }
 
-  }
-
-  private static F<Mutator, MethodMutatorFactory> mutatorTokenToMutator() {
-    return new F<Mutator, MethodMutatorFactory>() {
-
-      public MethodMutatorFactory apply(final Mutator a) {
-        return enumMapping.get(a);
-      }
-
-    };
   }
 
 };

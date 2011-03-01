@@ -27,21 +27,29 @@ public enum IncrementsMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new IncrementsMethodVisitor(methodInfo, context, methodVisitor);
+    return new IncrementsMethodVisitor(methodInfo, context, methodVisitor, this);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 }
 
 class IncrementsMethodVisitor extends LineTrackingMethodAdapter {
 
+  private final MethodMutatorFactory factory;
+
   public IncrementsMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer) {
+      final Context context, final MethodVisitor writer,
+      final MethodMutatorFactory factory) {
     super(methodInfo, context, writer);
+    this.factory = factory;
   }
 
   @Override
   public void visitIincInsn(final int var, final int increment) {
     final MutationIdentifier newId = this.context.registerMutation(
-        IncrementsMutator.class, "Changed increment from " + increment + " to "
+        this.factory, "Changed increment from " + increment + " to "
             + -increment);
     if (this.context.shouldMutate(newId)) {
       this.mv.visitIincInsn(var, -increment);

@@ -27,10 +27,6 @@ public class CheckTestHasFailedResultListener implements TestListener {
   private boolean           atLeastOneTestFailed = false;
   private boolean           timedOut             = false;
 
-  public boolean resultIndicatesSuccess() {
-    return this.atLeastOneTestFailed;
-  }
-
   public void onTestError(final TestResult tr) {
     this.atLeastOneTestFailed = true;
     checkForTimeOut(tr);

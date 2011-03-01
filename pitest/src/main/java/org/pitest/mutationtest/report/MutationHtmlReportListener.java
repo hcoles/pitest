@@ -49,23 +49,33 @@ import org.pitest.util.FileUtil;
 
 public class MutationHtmlReportListener implements TestListener {
 
-  private final Collection<SourceLocator>     sourceRoots = new HashSet<SourceLocator>();
+  private final MutatorScores                 mutatorScores = new MutatorScores();
+  private final long                          startTime;
+
+  private final Collection<SourceLocator>     sourceRoots   = new HashSet<SourceLocator>();
   private final File                          reportDir;
-  private final List<MutationTestSummaryData> summaryData = new ArrayList<MutationTestSummaryData>();
-  private final List<String>                  errors      = new ArrayList<String>();
+  private final List<MutationTestSummaryData> summaryData   = new ArrayList<MutationTestSummaryData>();
+  private final List<String>                  errors        = new ArrayList<String>();
 
   public MutationHtmlReportListener() {
-    this("", dir("src/test/java"), dir("src/main/java"), dir("src"),
-        dir("test"), dir("source"), dir("tst"), dir("java"));
+    this(System.currentTimeMillis(), "./", dir("src/test/java"),
+        dir("src/main/java"), dir("src"), dir("test"), dir("source"),
+        dir("tst"), dir("java"));
   }
 
   public MutationHtmlReportListener(final String reportDir,
       final SourceLocator... locators) {
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
+    this(System.currentTimeMillis(), reportDir, locators);
+  }
+
+  public MutationHtmlReportListener(final long startTime,
+      final String reportDir, final SourceLocator... locators) {
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
     final String timeString = sdf.format(new Date());
     this.reportDir = new File(addPathSeperatorIfMissing(reportDir) + timeString);
     this.reportDir.mkdirs();
     this.sourceRoots.addAll(Arrays.asList(locators));
+    this.startTime = startTime;
   }
 
   private String addPathSeperatorIfMissing(final String s) {
@@ -95,9 +105,8 @@ public class MutationHtmlReportListener implements TestListener {
 
   private void processMetaData(final MutationMetaData value) {
 
-    System.out.println("Results for " + value.getMutatedClass());
-
     try {
+      this.mutatorScores.registerResults(value.getMutations());
 
       final Statistics stats = value.getStats().value();
 
@@ -229,6 +238,8 @@ public class MutationHtmlReportListener implements TestListener {
 
   public void onRunEnd() {
     try {
+      final long duration = (System.currentTimeMillis() - this.startTime) / 1000;
+
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_index");
@@ -236,6 +247,12 @@ public class MutationHtmlReportListener implements TestListener {
           this.reportDir.getAbsolutePath() + File.separatorChar + "index.html"));
       st.setAttribute("summaryList", this.summaryData);
       st.setAttribute("errors", this.errors);
+      st.setAttribute("numberOfMutations",
+          this.mutatorScores.getTotalMutations());
+      st.setAttribute("numberOfDetectedMutations",
+          this.mutatorScores.getTotalDetectedMutations());
+      st.setAttribute("duration", duration);
+      st.setAttribute("mutatorScores", this.mutatorScores);
       bw.write(st.toString());
       bw.close();
 

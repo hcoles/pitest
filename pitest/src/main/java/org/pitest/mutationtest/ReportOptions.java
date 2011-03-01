@@ -26,24 +26,29 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 public class ReportOptions {
 
-  private boolean                       isValid;
+  private boolean                                    isValid;
 
-  private Collection<Predicate<String>> classesInScope;
-  private Collection<Predicate<String>> targetClasses;
-  private String                        reportDir;
-  private Collection<File>              sourceDirs;
-  private Collection<String>            classPathElements;
-  private Collection<Mutator>           mutators;
-  private int                           dependencyAnalysisMaxDistance;
+  private Collection<Predicate<String>>              classesInScope;
+  private Collection<Predicate<String>>              targetClasses;
+  private String                                     reportDir;
+  private Collection<File>                           sourceDirs;
+  private Collection<String>                         classPathElements;
+  private Collection<? extends MethodMutatorFactory> mutators;
+  private int                                        dependencyAnalysisMaxDistance;
+  private boolean                                    mutateStaticInitializers = true;
 
-  private boolean                       showHelp;
+  private boolean                                    showHelp;
 
-  private boolean                       isTestCentric;
+  private boolean                                    isTestCentric;
 
-  private List<String>                  jvmArgs = new ArrayList<String>();
+  private boolean                                    includeJarFiles          = false;
+
+  private List<String>                               jvmArgs                  = new ArrayList<String>();
+  private int                                        numberOfThreads          = 0;
 
   public ReportOptions() {
   }
@@ -106,7 +111,7 @@ public class ReportOptions {
   /**
    * @return the mutators
    */
-  public Collection<Mutator> getMutators() {
+  public Collection<? extends MethodMutatorFactory> getMutators() {
     return this.mutators;
   }
 
@@ -114,7 +119,8 @@ public class ReportOptions {
    * @param mutators
    *          the mutators to set
    */
-  public void setMutators(final Collection<Mutator> mutators) {
+  public void setMutators(
+      final Collection<? extends MethodMutatorFactory> mutators) {
     this.mutators = mutators;
   }
 
@@ -198,6 +204,34 @@ public class ReportOptions {
     this.targetClasses = targetClasses;
   }
 
+  public boolean hasValueForClassesInScope() {
+    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
+  }
+
+  public boolean isMutateStaticInitializers() {
+    return this.mutateStaticInitializers;
+  }
+
+  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
+    this.mutateStaticInitializers = mutateStaticInitializers;
+  }
+
+  public int getNumberOfThreads() {
+    return this.numberOfThreads;
+  }
+
+  public void setNumberOfThreads(final int numberOfThreads) {
+    this.numberOfThreads = numberOfThreads;
+  }
+
+  public boolean isIncludeJarFiles() {
+    return this.includeJarFiles;
+  }
+
+  public void setIncludeJarFiles(final boolean includeJarFiles) {
+    this.includeJarFiles = includeJarFiles;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -205,13 +239,11 @@ public class ReportOptions {
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", showHelp=" + this.showHelp
-        + ", isTestCentric=" + this.isTestCentric + ", jvmArgs=" + this.jvmArgs
-        + "]";
-  }
-
-  public boolean hasValueForClassesInScope() {
-    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
+        + ", isTestCentric=" + this.isTestCentric + ", includeJarFiles="
+        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + "]";
   }
 
 }

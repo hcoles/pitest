@@ -18,13 +18,14 @@ package org.pitest.containers;
 import java.util.concurrent.Executors;
 
 import org.pitest.extension.ClassLoaderFactory;
+import org.pitest.internal.IsolationUtils;
 
 public class UnisolatedThreadPoolContainer extends BaseThreadPoolContainer {
 
   public UnisolatedThreadPoolContainer(final Integer threads) {
     super(threads, new ClassLoaderFactory() {
       public ClassLoader get() {
-        return this.getClass().getClassLoader();
+        return IsolationUtils.getContextClassLoader();
       }
 
     }, Executors.defaultThreadFactory());

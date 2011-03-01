@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.instrument;
 
 import java.lang.instrument.ClassDefinition;
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 
@@ -22,13 +23,22 @@ public class HotSwapAgent {
 
   private static Instrumentation instrumentation;
 
-  public static void premain(final String agentArguments,
+  public static void premain(final String agentArguments, // NO_UCD
       final Instrumentation inst) {
     System.out.println("Installing PIT agent");
     instrumentation = inst;
   }
 
-  public static boolean hotSwap(final Class<?> mutateMe, final byte[] bytes) {
+  public static void addTransformer(final ClassFileTransformer transformer) {
+    instrumentation.addTransformer(transformer);
+  }
+
+  public static void agentmain(final String agentArguments, // NO_UCD
+      final Instrumentation inst) throws Exception {
+    instrumentation = inst;
+  }
+
+  public static boolean hotSwap(final Class<?> mutateMe, final byte[] bytes) { // NO_UCD
 
     final ClassDefinition[] definitions = { new ClassDefinition(mutateMe, bytes) };
 
@@ -41,6 +51,8 @@ public class HotSwapAgent {
     } catch (final UnmodifiableClassException e) {
       // swallow
     } catch (final java.lang.VerifyError e) {
+      // swallow
+    } catch (final java.lang.InternalError e) {
       // swallow
     }
     return false;

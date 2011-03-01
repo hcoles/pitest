@@ -12,26 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.instrument;
 
-import org.pitest.functional.Option;
+package com.example;
 
-public class SlaveResult {
+import static org.junit.Assert.assertEquals;
 
-  private final int                lastRunMutation;
-  private final Option<Statistics> stats;
+import org.junit.Test;
 
-  public SlaveResult(final int lastRunMutation, final Option<Statistics> stats) {
-    this.lastRunMutation = lastRunMutation;
-    this.stats = stats;
+public class HasMutableStaticInitializerTest {
+
+  @Test
+  public void testValueOfI() {
+    assertEquals(100, HasMutableStaticInitializer.i);
   }
 
-  public int getLastRunMutation() {
-    return this.lastRunMutation;
+  @Test
+  public void testValueOfJ() {
+    assertEquals(101, HasMutableStaticInitializer.j);
   }
-
-  public Option<Statistics> getStats() {
-    return this.stats;
-  }
-
 }

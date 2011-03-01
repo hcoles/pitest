@@ -16,7 +16,7 @@ package org.pitest.internal.isolation;
 
 public class IsolatedBoolean {
 
-  public static boolean getBoolean(final String key) {
+  public static boolean getBoolean(final String key) { // NO_UCD
     boolean result = false;
     try {
       result = toBoolean(IsolatedSystem.getProperty(key));

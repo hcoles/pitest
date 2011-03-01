@@ -19,10 +19,10 @@ import java.util.Map;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.SerializationException;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-
-import com.thoughtworks.xstream.converters.ConversionException;
+import org.pitest.util.ExitCode;
 
 public class ResultsReader implements SideEffect1<String> {
 
@@ -45,6 +45,17 @@ public class ResultsReader implements SideEffect1<String> {
       this.detected = detected;
       this.confidence = confidence;
       this.ranking = ranking;
+    }
+
+    public static DetectionStatus getForErrorExitCode(final ExitCode exitCode) {
+      if (exitCode.equals(ExitCode.OUT_OF_MEMORY)) {
+        return DetectionStatus.MEMORY_ERROR;
+      } else if (exitCode.equals(ExitCode.TIMEOUT)) {
+        return DetectionStatus.TIMED_OUT;
+
+      } else {
+        return DetectionStatus.RUN_ERROR;
+      }
     }
 
     public boolean isDetected() {
@@ -98,7 +109,7 @@ public class ResultsReader implements SideEffect1<String> {
       try {
         this.stats = (Option<Statistics>) IsolationUtils
             .fromTransportString(line.substring(6, line.length()));
-      } catch (final ConversionException ex) {
+      } catch (final SerializationException ex) {
         ex.printStackTrace();
       }
     } else {

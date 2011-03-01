@@ -18,12 +18,11 @@ import org.pitest.TestResult;
 import org.pitest.distributed.message.ResultMessage;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
-import org.pitest.functional.Option;
 import org.pitest.testunit.TestUnitState;
 
 import com.hazelcast.core.ITopic;
 
-public class SlaveResultCollector implements ResultCollector {
+class SlaveResultCollector implements ResultCollector {
 
   private final static Logger         LOGGER = Logger
                                                  .getLogger(SlaveResultCollector.class
@@ -34,7 +33,7 @@ public class SlaveResultCollector implements ResultCollector {
 
   // private final MasterService master;
 
-  public SlaveResultCollector(final RunDetails run,
+  protected SlaveResultCollector(final RunDetails run,
       final ITopic<ResultMessage> resultsTopic) {
     this.run = run;
     this.resultsTopic = resultsTopic;
@@ -54,18 +53,13 @@ public class SlaveResultCollector implements ResultCollector {
     this.publish(new TestResult(tu, null, TestUnitState.STARTED));
   }
 
-  public void notifyEnd(final TestResult testResult) {
+  private void notifyEnd(final TestResult testResult) {
     LOGGER.info("Test complete " + testResult);
     this.publish(testResult);
   }
 
   public boolean shouldExit() {
     return false;
-  }
-
-  public void notifyEnd(final Description description,
-      final Option<Throwable> t, final MetaData data) {
-    this.publish(new ExtendedTestResult(description, t.getOrElse(null), data));
   }
 
   public void notifyEnd(final Description description, final Throwable t,

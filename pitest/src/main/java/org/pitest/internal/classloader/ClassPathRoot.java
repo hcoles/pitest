@@ -28,8 +28,6 @@ public interface ClassPathRoot {
 
   public InputStream getData(String name) throws IOException;
 
-  public void release() throws IOException;
-
   public Collection<String> classNames();
 
   public Option<String> cacheLocation();

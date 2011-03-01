@@ -36,7 +36,7 @@ public class ForeignClassLoaderCustomRunnerExecutor {
     this.runner = runner;
   }
 
-  public void run() {
+  public void run() { // NO_UCD
 
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new RunListener() {

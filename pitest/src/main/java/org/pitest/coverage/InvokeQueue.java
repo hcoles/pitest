@@ -17,30 +17,56 @@
 
 package org.pitest.coverage;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ivanalx
  * @date 28.01.2009 14:35:42
  */
 public class InvokeQueue {
-  private final Queue<InvokeEntry> invokesQueue = new ConcurrentLinkedQueue<InvokeEntry>();
 
-  public void addCodelineInvoke(final int classId, final int lineNumber) {
-    this.invokesQueue.add(new InvokeEntry(classId, lineNumber));
+  private final ArrayBlockingQueue<InvokeEntry> invokesQueue = new ArrayBlockingQueue<InvokeEntry>(
+                                                                 15000);
+
+  protected void addCodelineInvoke(final int classId, final int lineNumber) {
+    boolean ok = false;
+    int count = 0;
+    while (!ok && (count < 5)) {
+      ok = attemptToWriteToQueue(classId, lineNumber);
+      count++;
+    }
+
+    if (!ok) {
+      System.out.println("WARNING lost coverage of line " + lineNumber);
+    }
+  }
+
+  private boolean attemptToWriteToQueue(final int classId, final int lineNumber) {
+    try {
+      return this.invokesQueue.offer(new InvokeEntry(classId, lineNumber), 500,
+          TimeUnit.MILLISECONDS);
+    } catch (final InterruptedException e) {
+      return false;
+    }
   }
 
   public boolean isEmpty() {
     return this.invokesQueue.isEmpty();
   }
 
-  public int size() {
-    return this.invokesQueue.size();
-  }
-
-  public InvokeEntry poll() {
-    return this.invokesQueue.poll();
+  public Collection<InvokeEntry> poll(final int timeout)
+      throws InterruptedException {
+    final Collection<InvokeEntry> recipient = new ArrayList<InvokeEntry>();
+    final InvokeEntry blockOnFirst = this.invokesQueue.poll(timeout,
+        TimeUnit.MILLISECONDS);
+    if (blockOnFirst != null) {
+      recipient.add(blockOnFirst);
+      this.invokesQueue.drainTo(recipient);
+    }
+    return recipient;
   }
 
   @Override

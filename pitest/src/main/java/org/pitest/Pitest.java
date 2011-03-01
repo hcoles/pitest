@@ -125,6 +125,8 @@ public class Pitest {
     final List<TestUnit> orderedTestUnits = staticConfig.getOrderStrategy()
         .order(testUnits);
 
+    LOGGER.info("Running " + orderedTestUnits.size() + " units");
+
     signalRunStartToAllListeners(staticConfig);
 
     final Thread feederThread = startFeederThread(container, orderedTestUnits);

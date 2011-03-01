@@ -12,17 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.distributed.slave;
 
-import org.pitest.distributed.message.TestGroupExecuteMessage;
+package org.pitest.mutationtest;
 
-import com.hazelcast.core.MessageListener;
+import org.pitest.extension.TestListener;
 
-public class TestListener implements MessageListener<TestGroupExecuteMessage> {
+public interface ListenerFactory {
 
-  public void onMessage(final TestGroupExecuteMessage arg0) {
-    // TODO Auto-generated method stub
-
-  }
+  public TestListener getListener(ReportOptions data, long startTime);
 
 }

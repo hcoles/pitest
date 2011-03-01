@@ -21,66 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.pitest.coverage.ClassStatistics;
 import org.pitest.extension.TestUnit;
 
 public class Statistics {
 
-  public final static class ClassLine {
-    public final String clazz;
-    public final int    lineNumber;
-
-    public ClassLine(final String clazz, final int lineNumber) {
-      this.clazz = clazz;
-      this.lineNumber = lineNumber;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result
-          + ((this.clazz == null) ? 0 : this.clazz.hashCode());
-      result = prime * result + this.lineNumber;
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      final ClassLine other = (ClassLine) obj;
-      if (this.clazz == null) {
-        if (other.clazz != null) {
-          return false;
-        }
-      } else if (!this.clazz.equals(other.clazz)) {
-        return false;
-      }
-      if (this.lineNumber != other.lineNumber) {
-        return false;
-      }
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      return "ClassLine [" + this.clazz + ":" + this.lineNumber + "]";
-    }
-
-  }
-
   private final Map<ClassLine, List<TestUnit>> lineNumberToCoveringTestsMap;
 
   private final Map<TestUnit, Long>            testUnitToExecutionTimeMap;
-  private final Collection<ClassStatistics>    classStatistics;
   private final boolean                        testsRunGreen;
 
   public boolean hasCoverageData() {
@@ -89,12 +36,10 @@ public class Statistics {
 
   public Statistics(final boolean testRunGreen,
       final Map<TestUnit, Long> times,
-      final Map<ClassLine, List<TestUnit>> stats,
-      final Collection<ClassStatistics> classStatistics) {
+      final Map<ClassLine, List<TestUnit>> stats) {
     this.lineNumberToCoveringTestsMap = stats;
     this.testUnitToExecutionTimeMap = times;
     this.testsRunGreen = testRunGreen;
-    this.classStatistics = classStatistics;
     orderTestLists();
   }
 
@@ -122,6 +67,7 @@ public class Statistics {
   }
 
   public List<TestUnit> getTestForLineNumber(final ClassLine line) {
+
     if (this.lineNumberToCoveringTestsMap.get(line) != null) {
       return this.lineNumberToCoveringTestsMap.get(line);
     } else {
@@ -129,12 +75,8 @@ public class Statistics {
     }
   }
 
-  public long getExecutionTime(final List<TestUnit> tus) {
-    long t = 0;
-    for (final TestUnit each : tus) {
-      t = t + this.testUnitToExecutionTimeMap.get(each);
-    }
-    return t;
+  public long getExecutionTime(final TestUnit tu) {
+    return this.testUnitToExecutionTimeMap.get(tu);
   }
 
   public boolean isGreenSuite() {
@@ -145,40 +87,16 @@ public class Statistics {
     return this.testUnitToExecutionTimeMap.keySet();
   }
 
-  public Collection<ClassStatistics> getClassStatistics() {
-    return this.classStatistics;
-  }
-
-  // public Boolean isCodeLine(final ClassLine classLine) {
-  //
-  // return FCollection.contains(this.classStatistics, isACodeLine(classLine));
-  //
-  // }
-  //
-  // private F<ClassStatistics, Boolean> isACodeLine(final ClassLine classLine)
-  // {
-  // return new F<ClassStatistics, Boolean>() {
-  // public Boolean apply(final ClassStatistics a) {
-  // return a.getClassName().equals(classLine.clazz)
-  // && a.isCodeLine(classLine.lineNumber);
-  // }
-  //
-  // };
-  // }
-
   public int getNumberOfLinesWithCoverage() {
     return this.lineNumberToCoveringTestsMap.size();
   }
 
-  // public int getNumberOfCodeLines() {
-  // final F2<Integer, ClassStatistics, Integer> f = new F2<Integer,
-  // ClassStatistics, Integer>() {
-  // public Integer apply(final Integer a, final ClassStatistics b) {
-  // return a + b.getCodeLines().size();
-  // }
-  // };
-  //
-  // return FCollection.fold(f, 0, this.classStatistics);
-  // }
+  @Override
+  public String toString() {
+    return "Statistics [lineNumberToCoveringTestsMap="
+        + this.lineNumberToCoveringTestsMap + ", testUnitToExecutionTimeMap="
+        + this.testUnitToExecutionTimeMap + ", testsRunGreen="
+        + this.testsRunGreen + "]";
+  }
 
 }

@@ -24,44 +24,45 @@ import org.pitest.functional.SideEffect1;
  */
 public enum ResultType {
 
-  PASS(new F$() {
+  PASS(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return success(a);
     }
   }),
 
-  FAIL(new F$() {
+  FAIL(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return failure(a);
     }
   }),
 
-  ERROR(new F$() {
+  ERROR(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return error(a);
     }
   }),
 
-  SKIPPED(new F$() {
+  SKIPPED(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return skipped(a);
     }
   }),
 
-  STARTED(new F$() {
+  STARTED(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return started(a);
     }
   });
 
-  private interface F$ extends F<TestResult, SideEffect1<TestListener>> {
+  private interface ResultToListenerSideEffect extends
+      F<TestResult, SideEffect1<TestListener>> {
   };
 
-  ResultType(final F$ f) {
+  ResultType(final ResultToListenerSideEffect f) {
     this.function = f;
   }
 
-  private final F<TestResult, SideEffect1<TestListener>> function;
+  protected final F<TestResult, SideEffect1<TestListener>> function;
 
   public SideEffect1<TestListener> getListenerFunction(final TestResult result) {
     return this.function.apply(result);

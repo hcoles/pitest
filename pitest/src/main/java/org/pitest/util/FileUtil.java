@@ -1,14 +1,9 @@
 package org.pitest.util;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import org.pitest.internal.IsolationUtils;
 
 public class FileUtil {
 
@@ -41,36 +36,6 @@ public class FileUtil {
 
     reader.close();
     return fileData.toString();
-  }
-
-  public static void writeBytesFromClassPathToFile(final File dest,
-      final String resource) {
-
-    BufferedOutputStream bos = null;
-    try {
-      final InputStream is = IsolationUtils.getContextClassLoader()
-          .getResourceAsStream(resource);
-      bos = new BufferedOutputStream(new FileOutputStream(dest));
-
-      int i;
-      final byte[] buf = new byte[256];
-      while ((i = is.read(buf, 0, buf.length)) >= 0) {
-        bos.write(buf, 0, i);
-      }
-
-    } catch (final IOException e) {
-
-      System.out.println("No longer able to read stream");
-
-    } finally {
-      if (bos != null) {
-        try {
-          bos.close();
-        } catch (final IOException e) {
-          throw Unchecked.translateCheckedException(e);
-        }
-      }
-    }
   }
 
 }

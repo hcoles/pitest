@@ -164,17 +164,7 @@ public class ClasspathSuiteFinder implements TestSuiteFinder {
   private Predicate<String> getGlobFilter(
       final Option<ClassNameGlobFilter> annotation) {
     if (annotation.hasSome()) {
-      final F<String, Predicate<String>> f = new F<String, Predicate<String>>() {
-        public Predicate<String> apply(final String pattern) {
-          return new Predicate<String>() {
-            public Boolean apply(final String a) {
-              return a.matches(Glob.convertGlobToRegex(pattern));
-            }
-
-          };
-        }
-      };
-      return getFilter(f, annotation.value().value());
+      return getFilter(Glob.toGlobPredicate(), annotation.value().value());
     } else {
       return False.<String> instance();
     }

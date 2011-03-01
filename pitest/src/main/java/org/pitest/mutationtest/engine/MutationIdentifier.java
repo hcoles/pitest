@@ -23,18 +23,14 @@ public class MutationIdentifier {
   private final String     mutator;
 
   public MutationIdentifier(final String className, final int index,
-      final Class<?> mutator) {
+      final String mutatorUniqueId) {
     this.className = className;
     this.index = index;
-    this.mutator = mutator.getName();
+    this.mutator = mutatorUniqueId;
   }
 
   public String getClazz() {
     return this.className;
-  }
-
-  public int getIndex() {
-    return this.index;
   }
 
   public boolean isMutated() {
@@ -42,7 +38,7 @@ public class MutationIdentifier {
   }
 
   public static MutationIdentifier unmutated(final String clazz) {
-    return new MutationIdentifier(clazz, UNMUTATED, MutationIdentifier.class);
+    return new MutationIdentifier(clazz, UNMUTATED, "NoMutation");
   }
 
   public String getMutator() {

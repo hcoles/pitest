@@ -97,8 +97,8 @@ public class CoverageTransformationTest {
     clazz.newInstance();
 
     final List<InvokeEntry> actual = getRecordedLines();
-    // we seem to record two visits to the deafault constructor
-    // this is not a problem but wold be nice to properly understand
+    // we seem to sometimes record two visits to the default constructor
+    // results in a flakey build
     final List<InvokeEntry> expected = Arrays.asList(line(20), line(22),
         line(20));
     assertEquals(expected, actual);
@@ -108,11 +108,11 @@ public class CoverageTransformationTest {
     return new InvokeEntry(FIRST_CLASS, line);
   }
 
-  private List<InvokeEntry> getRecordedLines() {
+  private List<InvokeEntry> getRecordedLines() throws InterruptedException {
     final InvokeQueue queue = CodeCoverageStore.getInvokeQueue();
     final List<InvokeEntry> ies = new ArrayList<InvokeEntry>();
     while (!queue.isEmpty()) {
-      ies.add(queue.poll());
+      ies.addAll(queue.poll(100));
     }
     return ies;
 

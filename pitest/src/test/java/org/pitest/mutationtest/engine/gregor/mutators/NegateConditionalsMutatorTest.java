@@ -21,11 +21,15 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-public class ConditionalsMutatorTest extends MutatorTestBase {
+public class NegateConditionalsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyConditionals() {
-    createTesteeWith(ConditionalsMutator.CONDITIONALS_MUTATOR);
+    createTesteeWith(NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+  }
+
+  private static int getZeroButPreventInlining() {
+    return 0;
   }
 
   private static class HasIFEQ implements Callable<String> {
@@ -224,7 +228,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i == j) {
         return "was zero";
       } else {
@@ -248,7 +252,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i != j) {
         return "was not zero";
       } else {
@@ -272,7 +276,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i > j) {
         return "was > zero";
       } else {
@@ -297,7 +301,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i < j) {
         return "was < zero";
       } else {
@@ -322,7 +326,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i <= j) {
         return "was <= zero";
       } else {
@@ -347,7 +351,7 @@ public class ConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final int j = 0;
+      final int j = getZeroButPreventInlining();
       if (this.i >= j) {
         return "was >= zero";
       } else {

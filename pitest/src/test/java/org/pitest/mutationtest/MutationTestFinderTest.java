@@ -40,7 +40,7 @@ public class MutationTestFinderTest {
   @Before
   public void setUp() {
     this.config = DefaultMutationConfigFactory.createConfig(100,
-        Mutator.METHOD_CALLS);
+        Mutator.VOID_METHOD_CALLS);
     this.testee = new MutationTestFinder(this.config);
     this.pitConfig = new JUnitCompatibleConfiguration();
   }
@@ -68,8 +68,8 @@ public class MutationTestFinderTest {
     assertEquals(1, tus.size());
     final InstrumentedMutationTestUnit actual = (InstrumentedMutationTestUnit) tus
         .iterator().next();
-    final MutationEngine engine = DefaultMutationConfigFactory
-        .createEngine(Mutator.INCREMENTS);
+    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
+        true, Mutator.INCREMENTS);
     assertEquals(new MutationConfig(engine, MutationTestType.TEST_CENTRIC, 66,
         Collections.<String> emptyList()), actual.getMutationConfig());
   }

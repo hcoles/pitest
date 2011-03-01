@@ -17,41 +17,33 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
+import org.pitest.mutationtest.engine.gregor.JumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-public enum ConditionalsMutator implements MethodMutatorFactory {
+public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
-  CONDITIONALS_MUTATOR;
+  NEGATE_CONDITIONALS_MUTATOR;
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalMethodVisitor(methodInfo, context, methodVisitor);
+    return new ConditionalMethodVisitor(methodInfo, context, methodVisitor,
+        this);
+  }
+
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
   }
 
 }
 
-class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
+class ConditionalMethodVisitor extends JumpMutator {
 
-  private static final String DESCRIPTION = "negated conditional";
-
-  private static class Substitution {
-    Substitution(final int newCode, final String description) {
-      this.newCode = newCode;
-      this.description = description;
-    }
-
-    int    newCode;
-    String description;
-  }
-
-  private final static Map<Integer, Substitution> mutations = new HashMap<Integer, Substitution>();
+  private static final String                     DESCRIPTION = "negated conditional";
+  private final static Map<Integer, Substitution> mutations   = new HashMap<Integer, Substitution>();
 
   static {
     mutations.put(Opcodes.IFEQ, new Substitution(Opcodes.IFNE, DESCRIPTION));
@@ -83,29 +75,14 @@ class ConditionalMethodVisitor extends LineTrackingMethodAdapter {
   }
 
   public ConditionalMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer) {
-    super(methodInfo, context, writer);
+      final Context context, final MethodVisitor writer,
+      final MethodMutatorFactory factory) {
+    super(methodInfo, context, writer, factory);
   }
 
   @Override
-  public void visitJumpInsn(final int opcode, final Label label) {
-    if (mutations.containsKey(opcode)) {
-      createMutation(opcode, mutations.get(opcode), label);
-    } else {
-      this.mv.visitJumpInsn(opcode, label);
-    }
-
-  }
-
-  private void createMutation(final int opcode,
-      final Substitution substitution, final Label label) {
-    final MutationIdentifier newId = this.context.registerMutation(
-        ConditionalsMutator.class, substitution.description);
-    if (this.context.shouldMutate(newId)) {
-      this.mv.visitJumpInsn(substitution.newCode, label);
-    } else {
-      this.mv.visitJumpInsn(opcode, label);
-    }
+  protected Map<Integer, Substitution> getMutations() {
+    return mutations;
   }
 
 }

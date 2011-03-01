@@ -66,7 +66,7 @@ public class ClusterManager implements
         hazelcast.<TestGroupExecuteMessage> getQueue(SharedNames.TEST_REQUEST));
   }
 
-  public ClusterManager(final RunDetails run,
+  protected ClusterManager(final RunDetails run,
       final HazelcastInstance hazelcast, final Cluster cluster,
       final ITopic<HandlerNotificationMessage> notificationTopic,
       final BlockingQueue<TestGroupExecuteMessage> executeQueue) {
@@ -144,7 +144,7 @@ public class ClusterManager implements
     record.setHandler(Option.some(message.getHandler()));
   }
 
-  public long registerGroup(final TestUnit testGroup) {
+  private long registerGroup(final TestUnit testGroup) {
     final long id = this.counter++;
     this.inprogressTestGroupHandlers.put(id, new TestGroupMemberRecord(id,
         testGroup, Option.<InetSocketAddress> none()));
