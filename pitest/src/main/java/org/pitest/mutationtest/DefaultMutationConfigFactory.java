@@ -35,12 +35,12 @@ public final class DefaultMutationConfigFactory implements
   public final static Collection<MethodMutatorFactory> DEFAULT_MUTATORS = Arrays
                                                                             .<MethodMutatorFactory> asList(
                                                                                 Mutator.NEGATE_CONDITIONALS,
-                                                                                Mutator.CONDITIONALS_BOUNDARY_MUTATOR,
+                                                                                Mutator.CONDITIONALS_BOUNDARY,
                                                                                 Mutator.INCREMENTS,
                                                                                 Mutator.MATH,
                                                                                 Mutator.RETURN_VALS,
                                                                                 Mutator.VOID_METHOD_CALLS,
-                                                                                Mutator.NEGS);
+                                                                                Mutator.INVERT_NEGS);
 
   private final static Collection<String>              LOGGING_CLASSES  = Arrays
                                                                             .asList(

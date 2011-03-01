@@ -117,7 +117,7 @@ public class InstrumentedMutationTestUnitTest {
         Collections.<String> singleton(TestOne.class.getName()),
         Collections.<String> singleton(One.class.getName()),
         new JavaAgentJarFinder(), DefaultMutationConfigFactory.createConfig(66,
-            Mutator.NEGS), new JUnitCompatibleConfiguration(), null);
+            Mutator.INVERT_NEGS), new JUnitCompatibleConfiguration(), null);
     execute();
     verify(this.rc).notifySkipped(any(Description.class));
   }

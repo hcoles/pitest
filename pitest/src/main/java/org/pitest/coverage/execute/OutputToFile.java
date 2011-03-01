@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.Unchecked;
@@ -47,30 +48,26 @@ public class OutputToFile implements SideEffect1<CoverageResult> {
   }
 
   void writeToDisk() {
-    try {
-      this.w.append(IsolationUtils.toXml(this.buffer) + "\n");
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
 
-    // int start = 0;
-    // int end = 0;
-    // while (end != this.buffer.size()) {
-    // end = start + 600;
-    // if (end > this.buffer.size()) {
-    // end = this.buffer.size();
-    // }
-    // try {
-    // this.w.append(IsolationUtils.toXml(this.buffer.subList(start, end))
-    // + "\n");
-    // start = end;
-    // } catch (IOException e) {
-    // throw Unchecked.translateCheckedException(e);
-    // }
-    //
-    // }
+    // this.w.append(IsolationUtils.toXml(this.buffer) + "\n");
+    FCollection.forEach(this.buffer, writeToFile());
+
     this.buffer.clear();
 
+  }
+
+  private SideEffect1<CoverageResult> writeToFile() {
+    return new SideEffect1<CoverageResult>() {
+
+      public void apply(final CoverageResult a) {
+        try {
+          OutputToFile.this.w.append(IsolationUtils.toXml(a) + "\n");
+        } catch (final IOException e) {
+          throw Unchecked.translateCheckedException(e);
+        }
+      }
+
+    };
   }
 
 }

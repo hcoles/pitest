@@ -31,12 +31,12 @@ import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
 public enum Mutator implements MethodMutatorFactory {
 
-  NEGS(InvertNegsMutator.INVERT_NEGS_MUTATOR), RETURN_VALS(
+  INVERT_NEGS(InvertNegsMutator.INVERT_NEGS_MUTATOR), RETURN_VALS(
       ReturnValsMutator.RETURN_VALS_MUTATOR), INLINE_CONSTS(
       InlineConstantMutator.INLINE_CONSTANT_MUTATOR), MATH(
       MathMutator.MATH_MUTATOR), VOID_METHOD_CALLS(
       VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR), NEGATE_CONDITIONALS(
-      NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR), CONDITIONALS_BOUNDARY_MUTATOR(
+      NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR), CONDITIONALS_BOUNDARY(
       ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR), INCREMENTS(
       IncrementsMutator.INCREMENTS_MUTATOR), NON_VOID_METHOD_CALLS(
       NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR), CONSTRUCTOR_CALLS(

@@ -3,7 +3,6 @@ package org.pitest.coverage.execute;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
@@ -24,19 +23,18 @@ public class CoverageProcess extends WrappingProcess {
     final FileReader fr = new FileReader(this.getOutputFile());
     try {
       final InputStreamLineIterable li = new InputStreamLineIterable(fr);
-      return li.flatMap(stringToCoverageResult());
+      return li.map(stringToCoverageResult());
     } finally {
       fr.close();
     }
 
   }
 
-  private F<String, List<CoverageResult>> stringToCoverageResult() {
-    return new F<String, List<CoverageResult>>() {
+  private F<String, CoverageResult> stringToCoverageResult() {
+    return new F<String, CoverageResult>() {
 
-      @SuppressWarnings("unchecked")
-      public List<CoverageResult> apply(final String a) {
-        return (List<CoverageResult>) IsolationUtils.fromXml(a);
+      public CoverageResult apply(final String a) {
+        return (CoverageResult) IsolationUtils.fromXml(a);
 
       }
 

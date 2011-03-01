@@ -93,12 +93,9 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseCommaSeperatedListOfMutationOperators() {
-    final ReportOptions actual = parse(
-        "--mutations",
-        Mutator.CONDITIONALS_BOUNDARY_MUTATOR.name() + ","
-            + Mutator.MATH.name());
-    assertEquals(
-        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY_MUTATOR, Mutator.MATH),
+    final ReportOptions actual = parse("--mutations",
+        Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
+    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
         actual.getMutators());
   }
 
