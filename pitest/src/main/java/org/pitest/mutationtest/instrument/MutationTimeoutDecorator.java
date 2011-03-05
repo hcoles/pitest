@@ -14,53 +14,64 @@
  */
 package org.pitest.mutationtest.instrument;
 
+import java.util.logging.Logger;
+
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.loopbreak.PerProcessTimelimitCheck;
+import org.pitest.util.Log;
 import org.pitest.util.Monitor;
+import org.pitest.util.TimeOutSystemExitSideEffect;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
-  private static final long serialVersionUID = 1L;
+  private final static Logger         LOG                      = Log
+                                                                   .getLogger();
 
-  private final long        executionTime;
+  private final static long           HARD_TIMEOUT_ADDIONAL_MS = 10000;
+  private static final long           serialVersionUID         = 1L;
 
-  public MutationTimeoutDecorator(final TestUnit child, final long executionTime) {
+  private final TimeoutLengthStrategy timeOutStrategy;
+  private final long                  executionTime;
+
+  public MutationTimeoutDecorator(final TestUnit child,
+      final TimeoutLengthStrategy timeStrategy, final long executionTime) {
     super(child);
     this.executionTime = executionTime;
+    this.timeOutStrategy = timeStrategy;
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-    Monitor timeoutWatchDog = null;
+
+    PerProcessTimelimitCheck.setMaxEndTime(this.timeOutStrategy
+        .getEndTime(this.executionTime));
+
+    final Monitor timeoutWatchDog = new TimeoutWatchDog(
+        TimeOutSystemExitSideEffect.INSTANCE,
+        this.timeOutStrategy.getEndTime(this.executionTime)
+            + HARD_TIMEOUT_ADDIONAL_MS);
+    timeoutWatchDog.requestStart();
     try {
-      timeoutWatchDog = setupTimeOuts();
+      final long t0 = System.currentTimeMillis();
       this.child().execute(loader, rc);
+      LOG.info("test time varied by "
+          + (System.currentTimeMillis() - t0 - this.executionTime) + " for "
+          + this.executionTime + " test.");
     } finally {
       timeoutWatchDog.requestStop();
     }
 
   }
 
-  private Monitor setupTimeOuts() {
-
-    final long loopBreakTimeout = Math.round((this.executionTime * 1.15) + 250);
-    PerProcessTimelimitCheck.setMaxEndTime(System.currentTimeMillis()
-        + loopBreakTimeout);
-    final Monitor timeoutWatchDog = new TimeoutWatchDog(loopBreakTimeout + 250);
-
-    timeoutWatchDog.requestStart();
-    return timeoutWatchDog;
-  }
-
   public Option<TestUnit> filter(final TestFilter filter) {
     final Option<TestUnit> modifiedChild = this.child().filter(filter);
     if (modifiedChild.hasSome()) {
       return Option.<TestUnit> some(new MutationTimeoutDecorator(modifiedChild
-          .value(), this.executionTime));
+          .value(), this.timeOutStrategy, this.executionTime));
     } else {
       return Option.none();
     }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.Configuration;
@@ -24,8 +25,11 @@ import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.NoCoverageSource;
 import org.pitest.util.Functions;
+import org.pitest.util.Log;
 
 public class DependencyBasedCoverageDatabase implements CoverageDatabase {
+
+  private final static Logger LOG = Log.getLogger();
 
   private final Configuration pitConfig;
   private final ClassPath     classPath;
@@ -45,8 +49,8 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
     final Map<ClassGrouping, List<String>> codeToTests = mapCodeToTests(
         convertClassesToStrings(tests), groupedByOuterClass);
 
-    System.out.println("Dependency analysis finds tests for "
-        + codeToTests.size() + " classes");
+    LOG.info("Dependency analysis finds tests for " + codeToTests.size()
+        + " classes");
 
     return codeToTests;
   }
@@ -101,14 +105,14 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
       final Set<String> testReach = analyser
           .extractCallDependenciesForPackages(each,
               this.data.getClassesInScopeFilter());
-      System.out.println(each + " reaches " + testReach.size() + " classes");
+      LOG.info(each + " reaches " + testReach.size() + " classes");
 
       final List<ClassGrouping> group = flatMap(testReach,
           jvmClassToGroup(groupedByOuterClass));
       if (group != null) {
         testToCodeMap.put(each, group);
       } else {
-        System.out.println("No group found for " + each);
+        LOG.warning("No group found for " + each);
       }
 
     }

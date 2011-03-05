@@ -111,6 +111,20 @@ public class PitMojo extends AbstractMojo {
   private boolean               testCentric;
 
   /**
+   * Weighting to allow for timeouts
+   * 
+   * @parameter default-value="1.25"
+   */
+  private float                 timeoutFactor;
+
+  /**
+   * Constant factor to allow for timeouts
+   * 
+   * @parameter default-value="3000"
+   */
+  private long                  timeoutConstant;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -182,6 +196,8 @@ public class PitMojo extends AbstractMojo {
 
     data.setMutators(determineMutators());
     data.setIsTestCentric(this.testCentric);
+    data.setTimeoutConstant(this.timeoutConstant);
+    data.setTimeoutFactor(this.timeoutFactor);
 
     final List<String> sourceRoots = new ArrayList<String>();
     sourceRoots.addAll(this.project.getCompileSourceRoots());
@@ -216,13 +232,13 @@ public class PitMojo extends AbstractMojo {
   }
 
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {
-    for (Artifact dependency : this.pluginArtifactMap.values()) {
+    for (final Artifact dependency : this.pluginArtifactMap.values()) {
       classPath.add(dependency.getFile().getAbsolutePath());
     }
   }
 
-  private MutationCoverageReport pickReportType(ReportOptions data,
-      Artifact pitVersionInfo) {
+  private MutationCoverageReport pickReportType(final ReportOptions data,
+      final Artifact pitVersionInfo) {
     if (!this.testCentric) {
       return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
           pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),

@@ -22,13 +22,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.instrument.HotSwapAgent;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Log;
 
 public class CoverageSlave {
+
+  private final static Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
 
@@ -39,8 +44,8 @@ public class CoverageSlave {
       final File input = new File(args[0]);
       final File outputFile = new File(args[1]);
 
-      System.out.println("Input file is " + input);
-      System.out.println("Output file is " + outputFile);
+      LOG.fine("Input file is " + input);
+      LOG.fine("Output file is " + outputFile);
 
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
@@ -61,7 +66,8 @@ public class CoverageSlave {
       worker.run();
 
     } catch (final Throwable ex) {
-      ex.printStackTrace(System.out);
+      LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
+          ex);
       exitCode = ExitCode.UNKNOWN_ERROR;
     } finally {
       if (w != null) {

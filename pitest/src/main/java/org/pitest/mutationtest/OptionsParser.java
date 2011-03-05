@@ -25,6 +25,7 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -41,6 +42,8 @@ public class OptionsParser {
   private final static String                       MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
   private final static String                       THREADS_ARG                    = "threads";
   private final static String                       INCLUDE_JAR_FILES              = "includeJarFiles";
+  private final static String                       TIMEOUT_FACTOR_ARG             = "timeoutFactor";
+  private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -53,6 +56,8 @@ public class OptionsParser {
   private final OptionSpec<String>                  jvmArgs;
   private final OptionSpecBuilder                   mutateStatics;
   private final OptionSpecBuilder                   includeJarFilesSpec;
+  private final OptionSpec<Float>                   timeoutFactorSpec;
+  private final OptionSpec<Long>                    timeoutConstSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -110,6 +115,19 @@ public class OptionsParser {
     this.mutateStatics = this.parser.accepts(MUTATE_STATIC_INITIALIZERS_ARG);
 
     this.includeJarFilesSpec = this.parser.accepts(INCLUDE_JAR_FILES);
+
+    this.timeoutFactorSpec = this.parser
+        .accepts(TIMEOUT_FACTOR_ARG)
+        .withOptionalArg()
+        .ofType(Float.class)
+        .describedAs("factor to apply to calculate maximum test duration")
+        .defaultsTo(
+            Float.valueOf(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR));
+
+    this.timeoutConstSpec = this.parser.accepts(TIMEOUT_CONST_ARG)
+        .withOptionalArg().ofType(Long.class)
+        .describedAs("constant to apply to calculate maximum test duration")
+        .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
   }
 
   public ReportOptions parse(final String[] args) {
@@ -133,6 +151,8 @@ public class OptionsParser {
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
     data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
+    data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
+    data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
 
     return data;
 

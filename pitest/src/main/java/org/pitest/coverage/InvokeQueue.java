@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import org.pitest.util.Log;
 
 /**
  * @author ivanalx
  * @date 28.01.2009 14:35:42
  */
 public class InvokeQueue {
-
+  private final static Logger                   LOG          = Log.getLogger();
   private final ArrayBlockingQueue<InvokeEntry> invokesQueue = new ArrayBlockingQueue<InvokeEntry>(
                                                                  15000);
 
@@ -40,7 +43,7 @@ public class InvokeQueue {
     }
 
     if (!ok) {
-      System.out.println("WARNING lost coverage of line " + lineNumber);
+      LOG.warning("Lost coverage of line " + lineNumber);
     }
   }
 

@@ -31,10 +31,12 @@ public class SlaveArguments {
   final MutationConfig                 config;
   final Properties                     systemProperties;
   final Collection<String>             classesToMutate;
+  final TimeoutLengthStrategy          timeoutStrategy;
 
   public SlaveArguments(final Collection<MutationIdentifier> mutations,
       final List<TestUnit> tests, final Option<Statistics> stats,
       final MutationConfig config, final Properties systemProperties,
+      final TimeoutLengthStrategy timeoutStrategy,
       final Collection<String> classes) {
     this.mutations = mutations;
     this.tests = tests;
@@ -42,6 +44,7 @@ public class SlaveArguments {
     this.config = config;
     this.systemProperties = systemProperties;
     this.classesToMutate = classes;
+    this.timeoutStrategy = timeoutStrategy;
   }
 
 }

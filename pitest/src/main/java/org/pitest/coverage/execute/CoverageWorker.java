@@ -28,6 +28,7 @@ import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.InvokeQueue;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
@@ -61,6 +62,7 @@ public class CoverageWorker {
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
+      staticConfig.addTestListener(new ConsoleResultListener());
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, decoratedTests);

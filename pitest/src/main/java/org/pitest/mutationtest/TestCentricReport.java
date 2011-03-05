@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
@@ -39,8 +40,10 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Log;
 
 public class TestCentricReport extends MutationCoverageReport {
+  private final static Logger LOG = Log.getLogger();
 
   public TestCentricReport(final ReportOptions data,
       final JavaAgent javaAgentJarFinder,
@@ -54,7 +57,7 @@ public class TestCentricReport extends MutationCoverageReport {
     final long t0 = System.currentTimeMillis();
     final Collection<Class<?>> targets = findClassesForCoverage(getClassPath()
         .getLocalDirectoryComponent());
-    System.out.println("targets = " + targets.size());
+    LOG.info("Found " + targets.size() + " targets");
     final Collection<Class<?>> tests = FCollection.filter(targets, isATest());
 
     final Collection<Class<?>> classesWithATest = extractTesteesFromTests(tests);
@@ -63,8 +66,8 @@ public class TestCentricReport extends MutationCoverageReport {
         targets, not(isATest()));
     classesWithoutATest.removeAll(classesWithATest);
 
-    System.out.println("tests = " + tests.size());
-    System.out.println("classesWithATest = " + classesWithATest.size());
+    LOG.warning("Found " + tests.size() + " tests");
+    LOG.warning("Matched " + classesWithATest.size() + " classes to a test");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -93,7 +96,7 @@ public class TestCentricReport extends MutationCoverageReport {
     final Container c = new UnContainer();
     pit.run(c, tests);
 
-    System.out.println("Done");
+    LOG.info("All Done");
 
   }
 

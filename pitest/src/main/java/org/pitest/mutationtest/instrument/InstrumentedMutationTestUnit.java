@@ -16,6 +16,7 @@ package org.pitest.mutationtest.instrument;
 
 import static org.pitest.functional.Prelude.isInstanceOf;
 import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
@@ -53,36 +54,39 @@ import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Log;
 import org.pitest.util.WrappingProcess;
 
 public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
-  private static final Logger      LOGGER = Logger
-                                              .getLogger(InstrumentedMutationTestUnit.class
-                                                  .getName());
+  private final static Logger         LOG = Log.getLogger();
 
-  private final JavaAgent          javaAgentFinder;
-  private final Collection<String> classesToMutate;
-  private final MutationConfig     config;
-  private final CoverageSource     coverageSource;
+  private final JavaAgent             javaAgentFinder;
+  private final Collection<String>    classesToMutate;
+  private final MutationConfig        config;
+  private final CoverageSource        coverageSource;
+  private final TimeoutLengthStrategy timeoutStrategy;
 
   public InstrumentedMutationTestUnit(final Collection<String> tests,
       final Collection<String> classesToMutate,
       final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
       final Configuration pitConfig, final Description description) {
     this(classesToMutate, mutationConfig, description, javaAgentFinder,
-        new NoCoverageSource(tests, pitConfig));
+        new NoCoverageSource(tests, pitConfig),
+        new PercentAndConstantTimeoutStrategy(1.25f, 1000));
   }
 
   public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
       final MutationConfig mutationConfig, final Description description,
-      final JavaAgent javaAgentFinder, final CoverageSource coverageSource) {
+      final JavaAgent javaAgentFinder, final CoverageSource coverageSource,
+      final TimeoutLengthStrategy timeoutStrategy) {
     super(description);
     this.classesToMutate = classesToMutate;
     // this.testClasses.addAll(tests);
     this.config = mutationConfig;
     this.javaAgentFinder = javaAgentFinder;
     this.coverageSource = coverageSource;
+    this.timeoutStrategy = timeoutStrategy;
 
   }
 
@@ -128,13 +132,11 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
         }
 
       } else {
-        LOGGER.info("Skipping test " + this.getDescription()
+        LOG.info("Skipping test " + this.getDescription()
             + " as no mutations found");
         rc.notifySkipped(this.getDescription());
       }
     } catch (final Exception ex) {
-      ex.printStackTrace();
-      System.out.println(ex.getCause());
       throw translateCheckedException(ex);
     }
 
@@ -157,12 +159,13 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final Option<Statistics> stats) throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        tests, stats, this.config, System.getProperties(), this.classesToMutate);
+        tests, stats, this.config, System.getProperties(),
+        this.timeoutStrategy, this.classesToMutate);
 
     final MutationTestProcess worker = new MutationTestProcess(
         WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())
-            .andJavaAgentFinder(this.javaAgentFinder).andStdout(discard()),
-        fileArgs);
+            .andJavaAgentFinder(this.javaAgentFinder).andStdout(discard())
+            .andStderr(printWith("SLAVE :")), fileArgs);
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
         remainingMutations);
@@ -170,7 +173,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
     try {
       exitCode = ExitCode.fromCode(worker.waitToDie());
-      System.out.println("Exit code was - " + exitCode);
+      LOG.info("Exit code was - " + exitCode);
     } catch (final InterruptedException e1) {
       // swallow
     }
@@ -187,7 +190,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     return new SideEffect1<String>() {
 
       public void apply(final String a) {
-        // System.out.println("SLAVE : " + a);
+        System.out.println("SLAVE : " + a);
       }
 
     };
@@ -205,15 +208,15 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
-      System.out.println("Slave encountered error");
+      LOG.warning("Slave encountered error");
       final Collection<MutationIdentifier> unfinishedRuns = getUnfinishedRuns(mutations);
       final DetectionStatus status = DetectionStatus
           .getForErrorExitCode(exitCode);
-      System.out.println("Setting " + unfinishedRuns.size()
-          + " unfinished runs to " + status + " state");
+      LOG.info("Setting " + unfinishedRuns.size() + " unfinished runs to "
+          + status + " state");
       FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
     } else {
-      System.out.println("All ok");
+      LOG.info("Slave exited ok");
     }
 
   }
@@ -256,11 +259,11 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     Collection<MutationIdentifier> remainingMutations = getUnrunMutationIds(mutations);
 
     while (!remainingMutations.isEmpty()) {
-      System.out.println(remainingMutations.size() + " mutations left to test");
+      LOG.info(remainingMutations.size() + " mutations left to test");
       stats = runTestInSeperateProcessForMutationRange(mutations,
           remainingMutations, tests, cp, stats);
       if (stats.hasSome() && !stats.value().isGreenSuite()) {
-        System.out.println("Tests do not run green when no mutation present");
+        LOG.severe("Tests do not run green when no mutation present");
         throw new PitError(
             "Cannot mutation test as tests do not pass without mutation");
       }

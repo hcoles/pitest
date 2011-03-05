@@ -14,6 +14,8 @@
  */
 package org.pitest.coverage.execute;
 
+import java.util.logging.Logger;
+
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.InvokeQueue;
 import org.pitest.extension.ResultCollector;
@@ -23,9 +25,10 @@ import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.ExitingResultCollector;
+import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
-
+  private final static Logger               LOG = Log.getLogger();
   private final CoverageStatistics          invokeStatistics;
   private final InvokeQueue                 invokeQueue;
   private final SideEffect1<CoverageResult> output;
@@ -42,8 +45,7 @@ public class CoverageDecorator extends TestUnitDecorator {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-    System.out.println("Gathering coverage for test "
-        + child().getDescription());
+    LOG.info("Gathering coverage for test " + child().getDescription());
     this.invokeStatistics.clearCoverageStats();
 
     final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,

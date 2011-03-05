@@ -20,11 +20,13 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
 
 public class MemoryWatchdog {
+  private final static Logger LOG = Log.getLogger();
 
   public static void addWatchDogToAllPools(final long threshold,
       final NotificationListener listener) {
@@ -40,8 +42,8 @@ public class MemoryWatchdog {
         final MemoryUsage mu = mp.getUsage();
         final long max = mu.getMax();
         final long alert = (max * threshold) / 100;
-        System.out.println("Setting a threshold shutdown on pool: "
-            + mp.getName() + " for: " + alert);
+        LOG.info("Setting a threshold shutdown on pool: " + mp.getName()
+            + " for: " + alert);
         mp.setUsageThreshold(alert);
 
       }

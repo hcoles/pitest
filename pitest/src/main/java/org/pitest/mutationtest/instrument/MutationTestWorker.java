@@ -17,6 +17,7 @@ package org.pitest.mutationtest.instrument;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
@@ -32,8 +33,11 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.loopbreak.LoopBreakTransformation;
+import org.pitest.util.Log;
 
 public class MutationTestWorker extends AbstractWorker {
+
+  private final static Logger LOG = Log.getLogger();
 
   public MutationTestWorker(final F2<Class<?>, byte[], Boolean> hotswap,
       final Mutater mutater, final ClassLoader loader) {
@@ -47,12 +51,11 @@ public class MutationTestWorker extends AbstractWorker {
     // System.out.println("Mutating class " + classesToMutate);
 
     for (final MutationIdentifier i : range) {
-      System.out.println("Running mutation " + i);
+      LOG.info("Running mutation " + i);
 
       final Mutant mutatedClass = this.mutater.getMutation(i);
 
-      System.out.println("mutating method "
-          + mutatedClass.getDetails().getMethod());
+      LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
       final List<TestUnit> relevantTests = testSource.pickTests(mutatedClass);
 
@@ -60,10 +63,10 @@ public class MutationTestWorker extends AbstractWorker {
 
       DetectionStatus mutationDetected = DetectionStatus.SURVIVED;
       if ((relevantTests == null) || relevantTests.isEmpty()) {
-        System.out.println("No test coverage for mutation  " + i + " in "
+        LOG.info("No test coverage for mutation  " + i + " in "
             + mutatedClass.getDetails().getMethod());
       } else {
-        System.out.println("" + relevantTests.size() + " relevant test for "
+        LOG.info("" + relevantTests.size() + " relevant test for "
             + mutatedClass.getDetails().getMethod());
 
         final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
@@ -78,8 +81,7 @@ public class MutationTestWorker extends AbstractWorker {
           mutationDetected = doTestsDetectMutation(c, relevantTests);
 
         } else {
-          System.out.println("Mutation " + i + " of " + range.size()
-              + " was not viable ");
+          LOG.info("Mutation " + i + " of " + range.size() + " was not viable ");
           mutationDetected = DetectionStatus.NON_VIABLE;
         }
 
@@ -87,11 +89,9 @@ public class MutationTestWorker extends AbstractWorker {
 
       r.report(i, mutationDetected);
 
-      System.out.println("Mutation " + i + " of " + range.size()
-          + " detected = " + mutationDetected);
+      LOG.info("Mutation " + i + " of " + range.size() + " detected = "
+          + mutationDetected);
     }
-
-    System.out.println(".....................");
 
   }
 
@@ -109,7 +109,7 @@ public class MutationTestWorker extends AbstractWorker {
 
   private ClassLoader pickClassLoaderForMutant(final Mutant mutant) {
     if (hasMutationInStaticInitializer(mutant)) {
-      System.out.println("Creating new classloader for static initializer");
+      LOG.info("Creating new classloader for static initializer");
       return new DefaultPITClassloader(new ClassPath(), null);
     } else {
       return this.loader;

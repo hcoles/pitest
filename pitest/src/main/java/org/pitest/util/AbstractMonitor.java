@@ -19,11 +19,6 @@ public abstract class AbstractMonitor extends Thread implements Monitor {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.pitest.util.Monitor#requestStop()
-   */
   public void requestStop() {
     this.shouldRun = false;
   }
@@ -33,5 +28,14 @@ public abstract class AbstractMonitor extends Thread implements Monitor {
   }
 
   protected abstract void process();
+
+  public final void waitForExit(final long timeOutInMs) {
+    try {
+      this.join(timeOutInMs);
+    } catch (final InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 
 }

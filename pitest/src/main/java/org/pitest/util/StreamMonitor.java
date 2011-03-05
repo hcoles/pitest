@@ -16,10 +16,13 @@ package org.pitest.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 
 public class StreamMonitor extends AbstractMonitor {
+  private final static Logger       LOG = Log.getLogger();
+
   private final byte[]              buf = new byte[256];
   private final InputStream         in;
   private final SideEffect1<String> inputHandler;
@@ -39,7 +42,7 @@ public class StreamMonitor extends AbstractMonitor {
 
     } catch (final IOException e) {
       requestStop();
-      System.out.println("No longer able to read stream");
+      LOG.warning("No longer able to read stream");
     }
   }
 
@@ -50,4 +53,5 @@ public class StreamMonitor extends AbstractMonitor {
     this.inputHandler = inputHandler;
     this.setName("PIT Stream Monitor");
   }
+
 }

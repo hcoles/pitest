@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
@@ -36,9 +37,10 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassByteArraySource;
+import org.pitest.util.Log;
 
 public class DependencyExtractor {
-
+  private final static Logger        LOG = Log.getLogger();
   private final int                  depth;
   private final ClassByteArraySource classToBytes;
 
@@ -132,7 +134,7 @@ public class DependencyExtractor {
       final Predicate<DependencyAccess> filter) throws IOException {
     final Option<byte[]> bytes = this.classToBytes.apply(clazz);
     if (bytes.hasNone()) {
-      System.out.println("No bytes found for " + clazz);
+      LOG.warning("No bytes found for " + clazz);
       return Collections.emptyList();
     }
     final ClassReader reader = new ClassReader(bytes.value());

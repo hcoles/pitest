@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.CoverageStatistics;
@@ -28,9 +29,10 @@ import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
+import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
-
+  private final static Logger                  LOG           = Log.getLogger();
   private final CoverageStatistics             invokeStatistics;
   private final InvokeQueue                    invokeQueue;
   private final Map<ClassLine, List<TestUnit>> lineMapping;
@@ -50,7 +52,7 @@ public class CoverageDecorator extends TestUnitDecorator {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
-    System.out.println("Gathering stats for test " + child().getDescription());
+    LOG.info("Gathering stats for test " + child().getDescription());
     this.invokeStatistics.clearCoverageStats();
 
     final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,

@@ -117,6 +117,18 @@ public class OptionsParserTest {
     assertTrue(actual.isIncludeJarFiles());
   }
 
+  @Test
+  public void shouldParseTimeOutFactor() {
+    final ReportOptions actual = parse("--timeoutFactor", "1.32");
+    assertEquals(1.32f, actual.getTimeoutFactor(), 0.1);
+  }
+
+  @Test
+  public void shouldParseTimeOutConstant() {
+    final ReportOptions actual = parse("--timeoutConst", "42");
+    assertEquals(42, actual.getTimeoutConstant());
+  }
+
   private ReportOptions parse(final String... args) {
     return this.testee.parse(args);
   }

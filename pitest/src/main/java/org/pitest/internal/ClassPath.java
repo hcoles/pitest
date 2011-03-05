@@ -39,13 +39,13 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
+import org.pitest.util.Log;
 
 public class ClassPath implements Iterable<ClassPathRoot> {
 
-  private static final Logger       LOGGER = Logger.getLogger(ClassPath.class
-                                               .getName());
+  private final static Logger       LOG   = Log.getLogger();
 
-  private final List<ClassPathRoot> roots  = new ArrayList<ClassPathRoot>();
+  private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
 
   public ClassPath() {
     this(ClassPath.getClassPathElementsAsFiles());
@@ -92,7 +92,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
           try {
             rs.add(new ArchiveClassPathRoot(f, declareCaches));
           } catch (final ZipException ex) {
-            LOGGER.warning("Can't open the archive " + f);
+            LOG.warning("Can't open the archive " + f);
           }
         }
       }

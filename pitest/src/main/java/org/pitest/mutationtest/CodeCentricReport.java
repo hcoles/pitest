@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
@@ -59,11 +60,15 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
+import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Log;
 
 public class CodeCentricReport extends MutationCoverageReport {
+
+  private final static Logger LOG = Log.getLogger();
 
   public CodeCentricReport(final ReportOptions data,
       final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
@@ -115,13 +120,13 @@ public class CodeCentricReport extends MutationCoverageReport {
     final List<TestUnit> tus = createMutationTestUnits(codeToTests,
         initialConfig, coverageDatabase);
 
-    System.out.println("Created  " + tus.size() + " mutation test units");
+    LOG.info("Created  " + tus.size() + " mutation test units");
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     pit.run(createContainer(), tus);
 
-    System.out.println("Completed in " + timeSpan(t0) + ".  Tested "
-        + codeToTests.size() + " classes.");
+    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeToTests.size()
+        + " classes.");
 
   }
 
@@ -242,7 +247,9 @@ public class CodeCentricReport extends MutationCoverageReport {
         + classGrouping.getParent(), MutationCoverageReport.class, null);
     final List<String> codeClasses = map(classGrouping, jvmClassToClassName());
     return new InstrumentedMutationTestUnit(codeClasses, mutationConfig, d,
-        this.javaAgentFinder, coverageSource);
+        this.javaAgentFinder, coverageSource,
+        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
+            this.data.getTimeoutConstant()));
   }
 
   private List<Class<?>> extractCodeClasses(final Collection<Class<?>> targets,

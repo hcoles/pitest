@@ -27,6 +27,7 @@ import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 
 public class ReportOptions {
 
@@ -49,6 +50,8 @@ public class ReportOptions {
 
   private List<String>                               jvmArgs                  = new ArrayList<String>();
   private int                                        numberOfThreads          = 0;
+  private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
+  private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
   public ReportOptions() {
   }
@@ -232,6 +235,22 @@ public class ReportOptions {
     this.includeJarFiles = includeJarFiles;
   }
 
+  public float getTimeoutFactor() {
+    return this.timeoutFactor;
+  }
+
+  public long getTimeoutConstant() {
+    return this.timeoutConstant;
+  }
+
+  public void setTimeoutConstant(final long timeoutConstant) {
+    this.timeoutConstant = timeoutConstant;
+  }
+
+  public void setTimeoutFactor(final float timeoutFactor) {
+    this.timeoutFactor = timeoutFactor;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -243,7 +262,9 @@ public class ReportOptions {
         + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
         + ", isTestCentric=" + this.isTestCentric + ", includeJarFiles="
         + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + "]";
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + "]";
   }
 
 }

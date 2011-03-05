@@ -1,16 +1,26 @@
 package org.pitest.mutationtest.instrument;
 
+import java.util.logging.Logger;
+
+import org.pitest.functional.SideEffect;
 import org.pitest.util.AbstractMonitor;
-import org.pitest.util.ExitCode;
+import org.pitest.util.Log;
 
 public class TimeoutWatchDog extends AbstractMonitor {
 
-  private final long timeOut;
-  private final long sleepInterval;
+  private final static Logger LOG = Log.getLogger();
 
-  public TimeoutWatchDog(final long maxAllowedTime) {
-    this.timeOut = System.currentTimeMillis() + maxAllowedTime;
-    this.sleepInterval = (maxAllowedTime / 10) + 1;
+  private final long          startTime;
+  private final long          dieAt;
+  private final long          sleepInterval;
+  private final SideEffect    exitStrategy;
+
+  public TimeoutWatchDog(final SideEffect exitStrategy, final long dieAt) {
+    this.startTime = System.currentTimeMillis();
+    this.dieAt = dieAt;
+    this.sleepInterval = (allowedTime() / 5) + 10;
+    this.exitStrategy = exitStrategy;
+
   }
 
   @Override
@@ -18,13 +28,19 @@ public class TimeoutWatchDog extends AbstractMonitor {
     try {
       Thread.sleep(this.sleepInterval);
     } catch (final InterruptedException e) {
-      // swallow
+      e.printStackTrace();
     }
-    if ((System.currentTimeMillis() > this.timeOut)
-        && !this.shutdownRequested()) {
-      System.out.println("Timed out without recovery. Exiting");
-      System.exit(ExitCode.TIMEOUT.getCode());
+    if ((System.currentTimeMillis() > this.dieAt) && !this.shutdownRequested()) {
+      LOG.fine("Hard time out after "
+          + (System.currentTimeMillis() - this.startTime) + "ms. "
+          + "Allowed time was " + allowedTime() + " Exiting.");
+      this.exitStrategy.apply();
+      this.requestStop();
     }
+  }
+
+  private long allowedTime() {
+    return (this.dieAt - this.startTime);
   }
 
 }

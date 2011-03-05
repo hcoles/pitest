@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.management.MemoryNotificationInfo;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -33,9 +35,12 @@ import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 
 public class InstrumentedMutationTestSlave {
+
+  private final static Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
 
@@ -46,8 +51,8 @@ public class InstrumentedMutationTestSlave {
       final File input = new File(args[0]);
       final File outputFile = new File(args[1]);
 
-      System.out.println("Input file is " + input);
-      System.out.println("Output file is " + input);
+      LOG.fine("Input file is " + input);
+      LOG.fine("Output file is " + input);
 
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
@@ -80,31 +85,27 @@ public class InstrumentedMutationTestSlave {
               .getContextClassLoader()), IsolationUtils.getContextClassLoader());
 
       worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          stats.value(), paramsFromParent.tests));
+          stats.value(), paramsFromParent.timeoutStrategy,
+          paramsFromParent.tests));
 
     } catch (final Exception ex) {
-      ex.printStackTrace(System.out);
-      System.out.println("----------------------");
-      if (w != null) {
-        try {
-          w.close();
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
+      LOG.log(Level.WARNING, "Error during mutation test", ex);
+      safelyCloseWriter(w);
       System.exit(ExitCode.UNKNOWN_ERROR.getCode());
     } finally {
-      if (w != null) {
-        try {
-          w.close();
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
+      safelyCloseWriter(w);
     }
 
+  }
+
+  private static void safelyCloseWriter(final Writer w) {
+    if (w != null) {
+      try {
+        w.close();
+      } catch (final IOException e) {
+        LOG.log(Level.WARNING, "Couldn't close writer", e);
+      }
+    }
   }
 
   private static Option<Statistics> generateStats(
@@ -137,7 +138,7 @@ public class InstrumentedMutationTestSlave {
           System.exit(ExitCode.OUT_OF_MEMORY.getCode());
 
         } else {
-          System.out.println("Unknown notification: " + notification);
+          LOG.warning("Unknown notification: " + notification);
         }
       }
 

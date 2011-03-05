@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.PitError;
@@ -36,10 +37,13 @@ import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.DefaultCoverageSource;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
 import org.pitest.util.WrappingProcess;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
+  private final static Logger                                 LOG           = Log
+                                                                                .getLogger();
 
   private final Configuration                                 initialConfig;
   private final JavaAgent                                     javaAgentFinder;
@@ -89,8 +93,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         .andJavaAgentFinder(this.javaAgentFinder)
         .andStderr(printWith("SLAVE : ")), sa);
     process.waitToDie();
-    return process.results();
 
+    final FunctionalList<CoverageResult> results = process.results();
+    process.cleanUp();
+    return results;
   }
 
   private Predicate<String> convertToJVMClassFilter(
@@ -107,12 +113,20 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     try {
       this.coverage = gatherCoverageData(tests);
 
+      boolean allTestsGreen = true;
+
       for (final CoverageResult each : this.coverage) {
         if (!each.isGreenTest()) {
-          throw new PitError(each.getTestUnitDescription()
+          allTestsGreen = false;
+          LOG.warning(each.getTestUnitDescription()
               + " did not pass without mutation.");
         }
         calculateClassCoverage(each);
+      }
+
+      if (!allTestsGreen) {
+        throw new PitError(
+            "All tests did not pass without mutation when calculating coverage");
       }
 
       this.dependencyInfo.initialise(tests);

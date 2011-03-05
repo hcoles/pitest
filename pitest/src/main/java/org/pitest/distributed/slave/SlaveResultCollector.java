@@ -19,15 +19,13 @@ import org.pitest.distributed.message.ResultMessage;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.extension.ResultCollector;
 import org.pitest.testunit.TestUnitState;
+import org.pitest.util.Log;
 
 import com.hazelcast.core.ITopic;
 
 class SlaveResultCollector implements ResultCollector {
 
-  private final static Logger         LOGGER = Logger
-                                                 .getLogger(SlaveResultCollector.class
-                                                     .getName());
-
+  private final static Logger         LOG = Log.getLogger();
   private final RunDetails            run;
   private final ITopic<ResultMessage> resultsTopic;
 
@@ -54,7 +52,7 @@ class SlaveResultCollector implements ResultCollector {
   }
 
   private void notifyEnd(final TestResult testResult) {
-    LOGGER.info("Test complete " + testResult);
+    LOG.info("Test complete " + testResult);
     this.publish(testResult);
   }
 

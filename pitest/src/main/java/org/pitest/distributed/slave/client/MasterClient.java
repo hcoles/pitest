@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.pitest.distributed.master.MasterService;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.functional.Option;
+import org.pitest.util.Log;
 
 import com.hazelcast.core.DistributedTask;
 import com.hazelcast.core.Hazelcast;
@@ -25,10 +26,8 @@ import com.hazelcast.util.concurrent.ConcurrentSkipListSet;
 
 public class MasterClient implements MasterService, Serializable {
 
-  private static final Logger            LOGGER                = Logger
-                                                                   .getLogger(MasterClient.class
-                                                                       .getName());
-
+  private final static Logger            LOG                   = Log
+                                                                   .getLogger();
   private static final long              serialVersionUID      = 1L;
 
   private transient HazelcastInstance    hazelcast;
@@ -112,7 +111,7 @@ public class MasterClient implements MasterService, Serializable {
   }
 
   private Option<byte[]> getRemoteResourceData(final String name) {
-    LOGGER.info("Looking for remote resource " + name);
+    LOG.info("Looking for remote resource " + name);
     final FutureTask<Option<byte[]>> task = new DistributedTask<Option<byte[]>>(
         new GetResourceDataCallable(this.run, name), getMaster(this.run));
 
