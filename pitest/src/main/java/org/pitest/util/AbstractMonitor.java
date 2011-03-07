@@ -21,6 +21,7 @@ public abstract class AbstractMonitor extends Thread implements Monitor {
 
   public void requestStop() {
     this.shouldRun = false;
+    this.interrupt();
   }
 
   protected boolean shutdownRequested() {

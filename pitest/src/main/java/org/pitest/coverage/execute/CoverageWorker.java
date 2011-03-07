@@ -33,7 +33,7 @@ import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
-public class CoverageWorker {
+public class CoverageWorker implements Runnable {
 
   private final SlaveArguments params;
   private final Writer         output;

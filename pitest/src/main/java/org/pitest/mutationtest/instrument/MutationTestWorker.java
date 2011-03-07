@@ -52,47 +52,56 @@ public class MutationTestWorker extends AbstractWorker {
 
     for (final MutationIdentifier i : range) {
       LOG.info("Running mutation " + i);
-
-      final Mutant mutatedClass = this.mutater.getMutation(i);
-
-      LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
-
-      final List<TestUnit> relevantTests = testSource.pickTests(mutatedClass);
-
-      r.describe(i, relevantTests.size(), mutatedClass);
-
-      DetectionStatus mutationDetected = DetectionStatus.SURVIVED;
-      if ((relevantTests == null) || relevantTests.isEmpty()) {
-        LOG.info("No test coverage for mutation  " + i + " in "
-            + mutatedClass.getDetails().getMethod());
-      } else {
-        LOG.info("" + relevantTests.size() + " relevant test for "
-            + mutatedClass.getDetails().getMethod());
-
-        final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
-        final Container c = createNewContainer(activeloader);
-        final Class<?> testee = Class
-            .forName(i.getClazz(), false, activeloader);
-
-        final Transformation t = new LoopBreakTransformation();
-        if (this.hotswap.apply(testee,
-            t.transform(i.getClazz(), mutatedClass.getBytes()))) {
-
-          mutationDetected = doTestsDetectMutation(c, relevantTests);
-
-        } else {
-          LOG.info("Mutation " + i + " of " + range.size() + " was not viable ");
-          mutationDetected = DetectionStatus.NON_VIABLE;
-        }
-
-      }
-
-      r.report(i, mutationDetected);
-
-      LOG.info("Mutation " + i + " of " + range.size() + " detected = "
-          + mutationDetected);
+      final long t0 = System.currentTimeMillis();
+      processMutation(range, r, testSource, i);
+      LOG.fine("processed mutation in " + (System.currentTimeMillis() - t0)
+          + " ms.");
     }
 
+  }
+
+  private void processMutation(final Collection<MutationIdentifier> range,
+      final Reporter r, final TimeOutDecoratedTestSource testSource,
+      final MutationIdentifier i) throws IOException, ClassNotFoundException {
+
+    final Mutant mutatedClass = this.mutater.getMutation(i);
+
+    LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
+
+    final List<TestUnit> relevantTests = testSource.pickTests(mutatedClass);
+
+    r.describe(i, relevantTests.size(), mutatedClass);
+
+    DetectionStatus mutationDetected = DetectionStatus.SURVIVED;
+    if ((relevantTests == null) || relevantTests.isEmpty()) {
+      LOG.info("No test coverage for mutation  " + i + " in "
+          + mutatedClass.getDetails().getMethod());
+    } else {
+      LOG.info("" + relevantTests.size() + " relevant test for "
+          + mutatedClass.getDetails().getMethod());
+
+      final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
+      final Container c = createNewContainer(activeloader);
+      final Class<?> testee = Class.forName(i.getClazz(), false, activeloader);
+
+      final Transformation t = new LoopBreakTransformation();
+      final long t0 = System.currentTimeMillis();
+      if (this.hotswap.apply(testee,
+          t.transform(i.getClazz(), mutatedClass.getBytes()))) {
+        LOG.fine("replaced class with mutant in "
+            + (System.currentTimeMillis() - t0) + " ms");
+        mutationDetected = doTestsDetectMutation(c, relevantTests);
+      } else {
+        LOG.info("Mutation " + i + " of " + range.size() + " was not viable ");
+        mutationDetected = DetectionStatus.NON_VIABLE;
+      }
+
+    }
+
+    r.report(i, mutationDetected);
+
+    LOG.info("Mutation " + i + " of " + range.size() + " detected = "
+        + mutationDetected);
   }
 
   private Container createNewContainer(final ClassLoader activeloader) {

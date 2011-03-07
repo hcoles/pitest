@@ -81,15 +81,13 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final long t0 = System.currentTimeMillis();
 
-    final Collection<Class<?>> completeClassPath = flatMap(
-        getClassPath().getLocalDirectoryComponent().findClasses(
-            this.data.getClassesInScopeFilter()), stringToClass());
+    final Collection<Class<?>> completeClassPath = flatMap(completeClassPath(),
+        stringToClass());
 
     @SuppressWarnings("unchecked")
-    final FunctionalCollection<Class<?>> tests = filter(completeClassPath,
-        and(isWithinATestClass(), isNotAbstract())); // note are looking for
-                                                     // code within a test class
-    // - not quite the same thing as isATest
+    final FunctionalCollection<Class<?>> tests = flatMap(
+        completeClassPathForTests(), stringToClass()).filter(
+        and(isWithinATestClass(), isNotAbstract()));
 
     final List<Class<?>> codeClasses = filter(
         extractCodeClasses(completeClassPath, tests),
@@ -128,6 +126,16 @@ public class CodeCentricReport extends MutationCoverageReport {
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeToTests.size()
         + " classes.");
 
+  }
+
+  private Iterable<String> completeClassPathForTests() {
+    return FCollection.filter(completeClassPath(),
+        this.data.getTargetTestsFilter());
+  }
+
+  private Collection<String> completeClassPath() {
+    return getClassPath().getLocalDirectoryComponent().findClasses(
+        this.data.getClassesInScopeFilter());
   }
 
   private Predicate<Class<?>> isNotAbstract() {

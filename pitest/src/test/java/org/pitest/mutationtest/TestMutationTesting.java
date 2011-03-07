@@ -39,7 +39,7 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.annotations.TestClass;
+import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
@@ -156,7 +156,7 @@ public class TestMutationTesting {
     }
   }
 
-  @TestClass(OneMutation.class)
+  @ClassUnderTest(OneMutation.class)
   @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
@@ -172,7 +172,7 @@ public class TestMutationTesting {
     verifyResults(KILLED);
   }
 
-  @TestClass(ThreeMutations.class)
+  @ClassUnderTest(ThreeMutations.class)
   @MutationTest(threshold = 67, mutators = Mutator.RETURN_VALS)
   public static class ThreeMutationsTwoTests {
     @TestAnnotationForTesting
@@ -195,7 +195,7 @@ public class TestMutationTesting {
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
-  @TestClass(ThreeMutations.class)
+  @ClassUnderTest(ThreeMutations.class)
   @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class FailingTest {
     @TestAnnotationForTesting
@@ -213,7 +213,7 @@ public class TestMutationTesting {
     verifyResults();
   }
 
-  @TestClass(NoMutations.class)
+  @ClassUnderTest(NoMutations.class)
   @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class NoMutationsTest {
     @TestAnnotationForTesting
@@ -230,7 +230,7 @@ public class TestMutationTesting {
     verifyResults();
   }
 
-  @TestClass(ThreeMutations.class)
+  @ClassUnderTest(ThreeMutations.class)
   @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class NoTests {
     @TestAnnotationForTesting
@@ -297,7 +297,7 @@ public class TestMutationTesting {
     }
   }
 
-  @TestClass(InfiniteLoop.class)
+  @ClassUnderTest(InfiniteLoop.class)
   @MutationTest(threshold = 100, mutators = Mutator.INCREMENTS)
   public static class InfiniteLoopTest {
     @TestAnnotationForTesting()
@@ -313,7 +313,7 @@ public class TestMutationTesting {
     verifyResults(KILLED, TIMED_OUT);
   }
 
-  @TestClass(OneMutation.class)
+  @ClassUnderTest(OneMutation.class)
   @MutationTest(threshold = 100, mutators = Mutator.RETURN_VALS)
   public static class OneMutationFullTestWithSystemPropertyDependency {
     @TestAnnotationForTesting
@@ -346,7 +346,7 @@ public class TestMutationTesting {
 
   }
 
-  @TestClass(OneMutation.class)
+  @ClassUnderTest(OneMutation.class)
   @MutationTest(threshold = 100, mutationConfigFactory = UnviableClassConfigurationFactory.class)
   public static class UnviableMutationsTest {
     @TestAnnotationForTesting
@@ -379,7 +379,7 @@ public class TestMutationTesting {
     }
   }
 
-  @TestClass(EatsMemoryWhenMutated.class)
+  @ClassUnderTest(EatsMemoryWhenMutated.class)
   @MutationTest(threshold = 100, mutators = Mutator.INCREMENTS)
   public static class EatsMemoryTest {
     @TestAnnotationForTesting()

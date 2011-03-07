@@ -41,7 +41,7 @@ public class PercentAndConstantTimeoutStrategyTest {
 
   @Test
   public void shouldReturnProductOfFactorAnTestTimePlusConstant() {
-    final long time = 123;
+    final long time = 1;
     this.testee = new PercentAndConstantTimeoutStrategy(this.constantDate,
         1.2f, 666);
     assertEquals((Math.round(1.2f * time) + 666) + CURRENT_TIME,

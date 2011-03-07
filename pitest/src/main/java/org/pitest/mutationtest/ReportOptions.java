@@ -25,6 +25,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
@@ -52,6 +53,8 @@ public class ReportOptions {
   private int                                        numberOfThreads          = 0;
   private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
+
+  private Collection<Predicate<String>>              targetTests;
 
   public ReportOptions() {
   }
@@ -207,6 +210,11 @@ public class ReportOptions {
     this.targetClasses = targetClasses;
   }
 
+  public void setTargetTests(
+      final Collection<Predicate<String>> targetTestsPredicates) {
+    this.targetTests = targetTestsPredicates;
+  }
+
   public boolean hasValueForClassesInScope() {
     return (this.classesInScope != null) && !this.classesInScope.isEmpty();
   }
@@ -251,6 +259,10 @@ public class ReportOptions {
     this.timeoutFactor = timeoutFactor;
   }
 
+  public Collection<Predicate<String>> getTargetTests() {
+    return this.targetTests;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
@@ -264,7 +276,16 @@ public class ReportOptions {
         + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
         + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
         + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + "]";
+        + ", targetTests=" + this.targetTests + "]";
+  }
+
+  public Predicate<String> getTargetTestsFilter() {
+    if ((this.targetTests == null) || this.targetTests.isEmpty()) {
+      return True.all();
+    } else {
+      return or(this.targetTests);
+    }
+
   }
 
 }

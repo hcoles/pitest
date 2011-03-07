@@ -30,8 +30,8 @@ import org.pitest.reflection.Reflection;
 public abstract class TestInfo {
 
   public static Collection<Class<?>> determineTestee(final Class<?> test) {
-    final org.pitest.annotations.TestClass annotation = test
-        .getAnnotation(org.pitest.annotations.TestClass.class);
+    final org.pitest.annotations.ClassUnderTest annotation = test
+        .getAnnotation(org.pitest.annotations.ClassUnderTest.class);
     if (annotation == null) {
       return FCollection.filter(determineTesteeFromName(test),
           True.<Class<?>> all());

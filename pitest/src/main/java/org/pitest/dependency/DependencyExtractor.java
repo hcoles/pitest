@@ -63,7 +63,7 @@ public class DependencyExtractor {
         .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
   }
 
-  public Set<String> extractCallDependencies(final String clazz,
+  private Set<String> extractCallDependencies(final String clazz,
       final TreeSet<String> visited, final Predicate<DependencyAccess> filter,
       final int currentDepth) throws IOException {
 

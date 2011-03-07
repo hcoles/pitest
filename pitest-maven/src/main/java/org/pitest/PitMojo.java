@@ -53,6 +53,14 @@ public class PitMojo extends AbstractMojo {
   private List<String>          targetClasses;
 
   /**
+   * Tests to run
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          targetTests;
+
+  /**
    * Classes in scope for dependency and coverage analysis
    * 
    * @parameter
@@ -188,6 +196,7 @@ public class PitMojo extends AbstractMojo {
     data.setIncludeJarFiles(this.includeJarFiles);
 
     data.setTargetClasses(determineTargetClasses());
+    data.setTargetTests(determineTargetTests());
     data.setClassesInScope(determineClassesInScope());
     data.setMutateStaticInitializers(this.mutateStaticInitializers);
     data.setNumberOfThreads(this.threads);
@@ -229,6 +238,10 @@ public class PitMojo extends AbstractMojo {
     } finally {
       IsolationUtils.setContextClassLoader(original);
     }
+  }
+
+  private Collection<Predicate<String>> determineTargetTests() {
+    return FCollection.map(this.targetTests, Glob.toGlobPredicate());
   }
 
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {

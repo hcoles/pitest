@@ -31,7 +31,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
   private final static Logger         LOG                      = Log
                                                                    .getLogger();
 
-  private final static long           HARD_TIMEOUT_ADDIONAL_MS = 10000;
+  private final static long           HARD_TIMEOUT_ADDIONAL_MS = 15000;
   private static final long           serialVersionUID         = 1L;
 
   private final TimeoutLengthStrategy timeOutStrategy;
@@ -47,20 +47,19 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
-    PerProcessTimelimitCheck.setMaxEndTime(this.timeOutStrategy
-        .getEndTime(this.executionTime));
+    final long maxTime = this.timeOutStrategy.getEndTime(this.executionTime);
+    PerProcessTimelimitCheck.setMaxEndTime(maxTime);
+    final long hardTime = maxTime + HARD_TIMEOUT_ADDIONAL_MS;
 
     final Monitor timeoutWatchDog = new TimeoutWatchDog(
-        TimeOutSystemExitSideEffect.INSTANCE,
-        this.timeOutStrategy.getEndTime(this.executionTime)
-            + HARD_TIMEOUT_ADDIONAL_MS);
+        TimeOutSystemExitSideEffect.INSTANCE, hardTime);
     timeoutWatchDog.requestStart();
     try {
       final long t0 = System.currentTimeMillis();
       this.child().execute(loader, rc);
       LOG.info("test time varied by "
-          + (System.currentTimeMillis() - t0 - this.executionTime) + " for "
-          + this.executionTime + " test.");
+          + (System.currentTimeMillis() - t0 - this.executionTime)
+          + " for test with normal execution time of " + this.executionTime);
     } finally {
       timeoutWatchDog.requestStop();
     }

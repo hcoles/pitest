@@ -78,6 +78,15 @@ public class CodeCentricReportTest extends ReportTestBase {
     // should not get here
   }
 
+  @Test
+  public void shouldOnlyRunTestsMathchingSuppliedFilter() {
+    this.data.setTargetClasses(predicateFor("com.example.*"));
+    this.data
+        .setTargetTests(predicateFor("com.example.HasMutableStaticInitializerTest"));
+    createAndRun();
+    verifyResults(KILLED);
+  }
+
   private void createAndRun() {
     final CodeCentricReport testee = new CodeCentricReport(this.data,
         new JavaAgentJarFinder(), listenerFactory(), false);

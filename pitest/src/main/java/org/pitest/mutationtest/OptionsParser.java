@@ -44,10 +44,12 @@ public class OptionsParser {
   private final static String                       INCLUDE_JAR_FILES              = "includeJarFiles";
   private final static String                       TIMEOUT_FACTOR_ARG             = "timeoutFactor";
   private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
+  private final static String                       TEST_FILTER_ARGS               = "targetTests";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
   private final OptionSpec<String>                  targetClassesSpec;
+  private final OptionSpec<String>                  targetTestsSpec;
   private final OptionSpec<String>                  inScopeClassesSpec;
   private final OptionSpec<Integer>                 depth;
   private final OptionSpec<Integer>                 threadsSpec;
@@ -76,6 +78,14 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filter to match against classes to test");
+
+    this.targetTestsSpec = this.parser
+        .accepts(TEST_FILTER_ARGS)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filters to match against tests to run");
 
     this.inScopeClassesSpec = this.parser
         .accepts(IN_SCOPE_CLASSES_ARG)
@@ -141,6 +151,8 @@ public class OptionsParser {
         this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setClassesInScope(FCollection.map(
         this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
+        Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));

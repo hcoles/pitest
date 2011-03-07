@@ -28,7 +28,7 @@ public class TimeoutWatchDog extends AbstractMonitor {
     try {
       Thread.sleep(this.sleepInterval);
     } catch (final InterruptedException e) {
-      e.printStackTrace();
+      LOG.fine("Sleeping watchdog woken");
     }
     if ((System.currentTimeMillis() > this.dieAt) && !this.shutdownRequested()) {
       LOG.fine("Hard time out after "

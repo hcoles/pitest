@@ -53,12 +53,6 @@ public class OptionsParserTest {
 
   @Test
   public void shouldCreatePredicateFromCommaSeperatedListOfInScopeClassGlobs() {
-
-    // --reportDir /home/henry/mutation_reports --targetClasses
-    // org.apache.commons.dbutils.* --sourceDirs
-    // /home/henry/example-srcs/commons-dbutils/src/ --dependencyDistance 0
-    // --inScopeClasses org.apache.commons.dbutils.* --mutateStaticInits
-
     final ReportOptions actual = parse("--inScopeClasses", "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
@@ -127,6 +121,15 @@ public class OptionsParserTest {
   public void shouldParseTimeOutConstant() {
     final ReportOptions actual = parse("--timeoutConst", "42");
     assertEquals(42, actual.getTimeoutConstant());
+  }
+
+  @Test
+  public void shouldParseCommaSeperatedListOfTargetTestClassGlobs() {
+    final ReportOptions actual = parse("--targetTest", "foo*,bar*");
+    final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
+    assertTrue(actualPredicate.apply("foo_anything"));
+    assertTrue(actualPredicate.apply("bar_anything"));
+    assertFalse(actualPredicate.apply("notfoobar"));
   }
 
   private ReportOptions parse(final String... args) {
