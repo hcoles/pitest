@@ -87,6 +87,14 @@ public class CodeCentricReportTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
+  @Test
+  public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
+    this.data
+        .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
+    createAndRun();
+    verifyResults(KILLED, KILLED, SURVIVED);
+  }
+
   private void createAndRun() {
     final CodeCentricReport testee = new CodeCentricReport(this.data,
         new JavaAgentJarFinder(), listenerFactory(), false);

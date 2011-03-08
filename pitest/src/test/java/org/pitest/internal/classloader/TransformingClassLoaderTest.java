@@ -7,12 +7,10 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
 import org.pitest.internal.ClassPath;
@@ -64,26 +62,22 @@ public class TransformingClassLoaderTest {
   }
 
   @Test
-  @Ignore
   public void shouldLoadSimpleResource() throws URISyntaxException {
-    assertNotNull(this.testee.getResourceAsStream("resourceFolder/text.txt"));
+    assertNotNull(this.testee.getResourceAsStream("text.txt"));
   }
 
   @Test
-  @Ignore
   public void shouldLoadResourceWithSpecialCharsInName()
       throws URISyntaxException {
-    assertNotNull(this.testee
-        .getResourceAsStream("resource folder with spaces/! awkward name ~.txt"));
+    assertNotNull(this.testee.getResourceAsStream("! awkward name ~.txt"));
   }
 
   @Test
-  @Ignore
   public void shouldLoadResourceWithSpaceInFolderName()
       throws URISyntaxException {
-    final URL url = this.testee.getResource("resource folder with spaces");
-    assertNotNull(url);
-    url.toURI();
+    assertNotNull(this.testee.getResource("resource folder with spaces"));
+    assertNotNull(this.testee
+        .getResource("resource folder with spaces/text in folder with spaces.txt"));
   }
 
   @Test
