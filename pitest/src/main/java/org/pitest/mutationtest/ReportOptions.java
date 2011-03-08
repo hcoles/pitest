@@ -40,6 +40,7 @@ public class ReportOptions {
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
   private Collection<? extends MethodMutatorFactory> mutators;
+
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
 
@@ -55,6 +56,8 @@ public class ReportOptions {
   private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
   private Collection<Predicate<String>>              targetTests;
+
+  private Collection<String>                         loggingClasses           = new ArrayList<String>();
 
   public ReportOptions() {
   }
@@ -276,7 +279,8 @@ public class ReportOptions {
         + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
         + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
         + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + "]";
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + "]";
   }
 
   public Predicate<String> getTargetTestsFilter() {
@@ -286,6 +290,18 @@ public class ReportOptions {
       return or(this.targetTests);
     }
 
+  }
+
+  public Collection<String> getLoggingClasses() {
+    if (this.loggingClasses.isEmpty()) {
+      return DefaultMutationConfigFactory.LOGGING_CLASSES;
+    } else {
+      return this.loggingClasses;
+    }
+  }
+
+  public void setLoggingClasses(final Collection<String> loggingClasses) {
+    this.loggingClasses = loggingClasses;
   }
 
 }

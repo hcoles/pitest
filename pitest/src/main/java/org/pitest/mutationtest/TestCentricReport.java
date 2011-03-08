@@ -84,8 +84,10 @@ public class TestCentricReport extends MutationCoverageReport {
         new JUnitCompatibleConfiguration());
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        this.data.isMutateStaticInitializers(), this.data.getMutators()
-            .toArray(new Mutator[this.data.getMutators().size()]));
+        this.data.isMutateStaticInitializers(),
+        this.data.getLoggingClasses(),
+        this.data.getMutators().toArray(
+            new Mutator[this.data.getMutators().size()]));
     final MutationConfig mutationConfig = new MutationConfig(engine,
         MutationTestType.TEST_CENTRIC, 0, Collections.<String> emptyList());
     initialConfig.testUnitFinders().add(

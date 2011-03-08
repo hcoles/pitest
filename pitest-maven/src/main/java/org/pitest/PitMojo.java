@@ -61,6 +61,13 @@ public class PitMojo extends AbstractMojo {
   private List<String>          targetTests;
 
   /**
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          loggingClasses;
+
+  /**
    * Classes in scope for dependency and coverage analysis
    * 
    * @parameter
@@ -207,6 +214,9 @@ public class PitMojo extends AbstractMojo {
     data.setIsTestCentric(this.testCentric);
     data.setTimeoutConstant(this.timeoutConstant);
     data.setTimeoutFactor(this.timeoutFactor);
+    if (this.loggingClasses != null) {
+      data.setLoggingClasses(this.loggingClasses);
+    }
 
     final List<String> sourceRoots = new ArrayList<String>();
     sourceRoots.addAll(this.project.getCompileSourceRoots());

@@ -42,7 +42,7 @@ public final class DefaultMutationConfigFactory implements
                                                                                 Mutator.VOID_METHOD_CALLS,
                                                                                 Mutator.INVERT_NEGS);
 
-  private final static Collection<String>              LOGGING_CLASSES  = Arrays
+  public final static Collection<String>               LOGGING_CLASSES  = Arrays
                                                                             .asList(
                                                                                 "java.util.logging",
                                                                                 "org.apache.log4j",
@@ -61,20 +61,21 @@ public final class DefaultMutationConfigFactory implements
 
   public static MutationConfig createConfig(final int threshold,
       final Mutator... mutators) {
-    return new MutationConfig(createEngine(true, mutators),
+    return new MutationConfig(createEngine(true, LOGGING_CLASSES, mutators),
         MutationTestType.TEST_CENTRIC, threshold,
         Collections.<String> emptyList());
   }
 
   private MutationEngine createEngine(final MutationTest annotation) {
-    return createEngine(true, annotation.mutators());
+    return createEngine(true, LOGGING_CLASSES, annotation.mutators());
   }
 
   public static MutationEngine createEngine(
-      final boolean mutateStaticInitializers, final Mutator... mutators) {
+      final boolean mutateStaticInitializers,
+      final Collection<String> loggingClasses, final Mutator... mutators) {
     final Collection<MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
     final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers);
-    return new GregorMutationEngine(ms, LOGGING_CLASSES, filter);
+    return new GregorMutationEngine(ms, loggingClasses, filter);
   }
 
   private static Predicate<MethodInfo> pickFilter(

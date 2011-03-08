@@ -132,6 +132,20 @@ public class OptionsParserTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
+  @Test
+  public void shouldDefaultLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
+    final ReportOptions actual = parse();
+    assertEquals(DefaultMutationConfigFactory.LOGGING_CLASSES,
+        actual.getLoggingClasses());
+  }
+
+  @Test
+  public void shouldParseCommaSeperatedListOfLoggingPackages() {
+    final ReportOptions actual = parse("--loggingClasses", "foo,bar,foo.bar");
+    assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
+        actual.getLoggingClasses());
+  }
+
   private ReportOptions parse(final String... args) {
     return this.testee.parse(args);
   }

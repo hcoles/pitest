@@ -45,12 +45,14 @@ public class OptionsParser {
   private final static String                       TIMEOUT_FACTOR_ARG             = "timeoutFactor";
   private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
   private final static String                       TEST_FILTER_ARGS               = "targetTests";
+  private final static String                       LOGGING_CLASSES_ARG            = "loggingClasses";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
   private final OptionSpec<String>                  targetClassesSpec;
   private final OptionSpec<String>                  targetTestsSpec;
   private final OptionSpec<String>                  inScopeClassesSpec;
+  private final OptionSpec<String>                  loggingClassesSpec;
   private final OptionSpec<Integer>                 depth;
   private final OptionSpec<Integer>                 threadsSpec;
   private final OptionSpec<File>                    sourceDirSpec;
@@ -78,6 +80,14 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filter to match against classes to test");
+
+    this.loggingClassesSpec = this.parser
+        .accepts(LOGGING_CLASSES_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of packages to consider as untouchable logging calls");
 
     this.targetTestsSpec = this.parser
         .accepts(TEST_FILTER_ARGS)
@@ -165,6 +175,7 @@ public class OptionsParser {
     data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
+    data.setLoggingClasses(this.loggingClassesSpec.values(userArgs));
 
     return data;
 

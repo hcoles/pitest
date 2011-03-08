@@ -69,7 +69,7 @@ public class MutationTestFinderTest {
     final InstrumentedMutationTestUnit actual = (InstrumentedMutationTestUnit) tus
         .iterator().next();
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        true, Mutator.INCREMENTS);
+        true, DefaultMutationConfigFactory.LOGGING_CLASSES, Mutator.INCREMENTS);
     assertEquals(new MutationConfig(engine, MutationTestType.TEST_CENTRIC, 66,
         Collections.<String> emptyList()), actual.getMutationConfig());
   }

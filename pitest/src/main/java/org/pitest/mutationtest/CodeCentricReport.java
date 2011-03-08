@@ -247,8 +247,10 @@ public class CodeCentricReport extends MutationCoverageReport {
       final CoverageSource coverageSource) {
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        this.data.isMutateStaticInitializers(), this.data.getMutators()
-            .toArray(new Mutator[this.data.getMutators().size()]));
+        this.data.isMutateStaticInitializers(),
+        this.data.getLoggingClasses(),
+        this.data.getMutators().toArray(
+            new Mutator[this.data.getMutators().size()]));
     final MutationConfig mutationConfig = new MutationConfig(engine,
         MutationTestType.CODE_CENTRIC, 0, this.data.getJvmArgs());
     final Description d = new Description("mutation test of "
