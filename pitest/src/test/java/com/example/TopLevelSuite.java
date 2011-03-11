@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.concurrent.Executors;
 
 import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.annotations.PITSuite;
 import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.distributed.DistributedContainer;
@@ -39,6 +39,7 @@ import org.pitest.mutationtest.report.MutationHtmlReportListener;
 @RunWith(PITJUnitRunner.class)
 @MutationTest(threshold = 66, jvmArgs = { "-Xmx256m", "-Xms256m" })
 @StaticConfigurationClass(TopLevelSuite.class)
+@SuiteClasses({ JUnit4SuiteA.class, JUnit4SuiteB.class })
 public class TopLevelSuite extends DefaultStaticConfig {
 
   // @PITContainer
@@ -56,7 +57,7 @@ public class TopLevelSuite extends DefaultStaticConfig {
     // return new IsolatedThreadPoolContainer(3);
   }
 
-  @PITSuite
+  // @PITSuite
   public static Collection<Class<?>> children() {
     return Arrays.<Class<?>> asList(JUnit4SuiteA.class, JUnit4SuiteB.class);
   }

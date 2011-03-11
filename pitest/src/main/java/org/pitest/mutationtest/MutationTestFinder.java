@@ -80,7 +80,7 @@ public class MutationTestFinder implements TestUnitFinder {
       final Set<TestUnit> units = Collections
           .<TestUnit> singleton(createTestUnit(clazz.getClazz(), testeeNames,
               updatedMutationConfig, updatedConfig, d));
-      listener.recieveTests(units);
+      listener.receiveTests(units);
       // skip processing for mutation tests . . . yes?
       return units;
     } else {

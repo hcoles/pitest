@@ -39,8 +39,24 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
 
-  private final static XStream                           XSTREAM_INSTANCE = new XStream();
-  private final static WeakHashMap<ClassLoader, XStream> CACHE            = new WeakHashMap<ClassLoader, XStream>();
+  private final static XStream                           XSTREAM_INSTANCE          = new XStream();
+  private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
+  private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
+
+                                                                                     public boolean fromDifferentLoader(
+                                                                                         final Class<?> clazz,
+                                                                                         final ClassLoader loader) {
+                                                                                       return IsolationUtils
+                                                                                           .fromDifferentLoader(
+                                                                                               clazz,
+                                                                                               loader);
+                                                                                     }
+
+                                                                                   };
+
+  public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
+    return LOADER_DETECTION_STRATEGY;
+  }
 
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();

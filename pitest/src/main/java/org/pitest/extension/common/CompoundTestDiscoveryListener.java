@@ -40,9 +40,9 @@ public class CompoundTestDiscoveryListener implements TestDiscoveryListener {
     }
   }
 
-  public void recieveTests(final Collection<? extends TestUnit> testUnits) {
+  public void receiveTests(final Collection<? extends TestUnit> testUnits) {
     for (final TestDiscoveryListener each : this.children) {
-      each.recieveTests(testUnits);
+      each.receiveTests(testUnits);
     }
   }
 

@@ -20,23 +20,37 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
+import org.pitest.junit.adapter.AbstractPITJUnitRunner;
 
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 
   public Collection<TestClass> apply(final TestClass a) {
     final SuiteClasses annotation = a.getClazz().getAnnotation(
         SuiteClasses.class);
-    if (annotation != null) {
+
+    if ((annotation != null) && hasSuitableRunnner(a.getClazz())) {
 
       return FCollection.map(Arrays.asList(annotation.value()),
           classToTestClass());
     } else {
       return Collections.emptyList();
     }
+  }
+
+  private boolean hasSuitableRunnner(final Class<?> clazz) {
+
+    final RunWith runWith = clazz.getAnnotation(RunWith.class);
+    if (runWith != null) {
+      return (runWith.value().equals(Suite.class) || AbstractPITJUnitRunner.class
+          .isAssignableFrom(runWith.value()));
+    }
+    return false;
   }
 
 }

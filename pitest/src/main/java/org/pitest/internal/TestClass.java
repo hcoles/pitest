@@ -16,6 +16,7 @@ package org.pitest.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.pitest.ConcreteConfiguration;
@@ -50,7 +51,6 @@ public final class TestClass {
         listener, classConfig, applyProcessors);
 
     return units;
-    // return FCollection.map(units, applyProcessors);
   }
 
   private Collection<TestUnit> findTestUnitsUsingAllTestFinders(
@@ -90,11 +90,17 @@ public final class TestClass {
 
   public Collection<TestClass> getChildren(final Configuration startConfig) {
 
-    final List<TestClass> children = new ArrayList<TestClass>();
+    // final List<TestClass> children = new ArrayList<TestClass>();
     for (final TestSuiteFinder i : startConfig.testSuiteFinders()) {
-      children.addAll(i.apply(this));
+      final Collection<TestClass> found = i.apply(this);
+      if (!found.isEmpty()) {
+        return found;
+      }
+      // children.addAll(i.apply(this));
     }
-    return children;
+
+    return Collections.emptyList();
+    // return children;
   }
 
   private void findTestUnits(final List<TestUnit> tus,

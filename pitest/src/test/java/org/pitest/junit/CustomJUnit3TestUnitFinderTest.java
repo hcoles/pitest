@@ -94,7 +94,7 @@ public class CustomJUnit3TestUnitFinderTest {
   public void shouldListOfAllTestUnitsToDiscoveryListener() {
     this.testee.findTestUnits(new TestClass(JMockTest.class), null,
         this.discoveryListener, new IdentityTestUnitProcessor());
-    verify(this.discoveryListener, times(1)).recieveTests(
+    verify(this.discoveryListener, times(1)).receiveTests(
         anyListOf(TestUnit.class));
   }
 

@@ -85,12 +85,11 @@ public class TestAdapter extends AbstractTestUnit {
 
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
-      final Class<? extends TestCase> activeClass = (Class<? extends TestCase>) IsolationUtils
-          .convertForClassLoader(loader, this.testClass);
+      final Class<?> activeClass = IsolationUtils.convertForClassLoader(loader,
+          this.testClass);
 
       rc.notifyStart(getDescription());
       final Object test = createTest(activeClass, this.testMethod);

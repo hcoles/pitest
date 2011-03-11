@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -18,18 +19,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Categories.IncludeCategory;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
+import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
+import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.NullDiscoveryListener;
+import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestJUnitConfiguration {
@@ -59,7 +69,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testFindsJunit4Test() {
+  public void shouldFindJunit4Tests() {
     run(SimpleJUnit4Test.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
@@ -86,7 +96,7 @@ public class TestJUnitConfiguration {
   };
 
   @Test
-  public void testCallsSingleStringArgumentsConstructorWithTestName() {
+  public void shouldCallsSingleStringArgumentsConstructorWithTestName() {
     run(JUnit3TestWithSingleStringConstructor.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
@@ -101,7 +111,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testFailsTestsThatDoNotThrowExpectedException() {
+  public void shouldFailTestsThatDoNotThrowExpectedException() {
     run(HideFromJunit1.JUnit4TestWithUnmetExpectations.class);
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
@@ -114,7 +124,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testPassesTestsThatThrowExpectedException() {
+  public void shouldPassTestsThatThrowExpectedException() {
     run(JUnit4TestWithExpectations.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
@@ -129,7 +139,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testReportsErrorForTestsThatThrowWrongException() {
+  public void shouldReportErrorForTestsThatThrowWrongException() {
     run(HideFromJunit2.JUnit4TestWithWrongExpectations.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
@@ -154,7 +164,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testOnlyOneTestRunIfMatchesBothJunit3And4Criteria() {
+  public void shouldRunOnlyOneTestWhenMatchesBothJunit3And4Criteria() {
     run(MixedJunit3And4Test.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
@@ -185,7 +195,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testRunsTestsInheritedFromParent() {
+  public void shouldRunTestsInheritedFromParent() {
     run(HideFromJunit3.InheritedTest.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
@@ -221,7 +231,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testBeforeAndAfterMethodsEligableForBothJUnit3And4CalledOnlyOnce() {
+  public void shouldCallBeforeAndAfterMethodsEligableForBothJUnit3And4OnlyOnce() {
     run(HideFromJunit4.MixedJUnit3And4SetupAndTearDown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
@@ -264,7 +274,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testBeforeAndAfterMethodsCalledInCorrectOrder() {
+  public void shouldCallBeforeAndAfterMethodsInCorrectOrder() {
     run(HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     assertEquals(5,
@@ -289,7 +299,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testTimesTestsOut() {
+  public void shouldTimeTestsOut() {
     run(HideFromJunit6.TestWithTimeout.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
@@ -316,7 +326,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testCreatesTestsForEachJUnitParameter() {
+  public void shouldCreateTestsForEachJUnitParameter() {
     run(HideFromJUnit7.ParameterisedTest.class);
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
@@ -347,7 +357,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testRunsTestsCreatedByCustomRunners() {
+  public void shouldRunTestsCreatedByCustomRunners() {
     run(HideFromJUnit8.TheoriesTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     // failing theories are actually errors
@@ -378,10 +388,62 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  public void testRunsJMock1Tests() {
+  public void shouldRunJMock1Tests() {
     run(HideFromJUnit9.JMockTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     verify(this.listener).onTestFailure(any(TestResult.class));
+  }
+
+  // static abstract class HideFromJUnit10 {
+
+  public static interface Marker {
+  }
+
+  @RunWith(Categories.class)
+  @IncludeCategory(Marker.class)
+  @SuiteClasses({ MarkerTest1.class, MarkerTest2.class })
+  public static class CustomSuite {
+
+  }
+
+  @Category(Marker.class)
+  public static class MarkerTest1 {
+    @Test
+    public void one() {
+
+    }
+
+    @Test
+    public void two() {
+
+    }
+  }
+
+  @Category(Marker.class)
+  public static class MarkerTest2 {
+    @Test
+    public void one() {
+
+    }
+
+    @Test
+    public void two() {
+
+    }
+  }
+
+  // }
+
+  @Test
+  public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
+    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
+        this.testee, new NullDiscoveryListener(), new UnGroupedStrategy(),
+        Option.<TestFilter> none(), CustomSuite.class);
+
+    System.out.println(actual);
+
+    assertEquals(4, actual.size());
+
   }
 
   private void run(final Class<?> clazz) {

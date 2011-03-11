@@ -105,7 +105,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   public Collection<TestSuiteFinder> testSuiteFinders() {
     return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder(),
-        new JUnit4SuiteFinder(), new ClasspathSuiteFinder());
+        new JUnit4SuiteFinder(), new ClasspathSuiteFinder(),
+        new RunnerSuiteFinder());
   }
 
   public List<InstantiationStrategy> instantiationStrategies() {

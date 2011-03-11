@@ -49,7 +49,7 @@ public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final TestSuite ts = new TestSuite(a.getClazz());
       flattenSuite(ts, units);
-      listener.recieveTests(units);
+      listener.receiveTests(units);
       return FCollection.map(units, processor);
 
     } else {

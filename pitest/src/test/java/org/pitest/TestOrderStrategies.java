@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -34,6 +35,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.GroupLikedTypeOrderStrategy;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class TestOrderStrategies {
 
@@ -62,6 +64,7 @@ public class TestOrderStrategies {
     }
 
     @StaticConfigurationClass(GroupedSuite.class)
+    @RunWith(PITJUnitRunner.class)
     @SuiteClasses({ TargetTestOne.class, TargetTestTwo.class, TestOne.class,
         TestTwo.class })
     public static class GroupedSuite extends DefaultStaticConfig {

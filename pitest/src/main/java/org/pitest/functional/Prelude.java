@@ -32,15 +32,15 @@ import org.pitest.functional.predicate.Predicate;
  */
 public abstract class Prelude {
 
-  public final static <A> And<A> and(final Predicate<A>... ps) {
+  public final static <A> And<A> and(final F<A, Boolean>... ps) {
     return new And<A>(Arrays.asList(ps));
   }
 
-  public final static <A> And<A> and(final Iterable<Predicate<A>> ps) {
+  public final static <A> And<A> and(final Iterable<? extends F<A, Boolean>> ps) {
     return new And<A>(ps);
   }
 
-  public final static <A> Not<A> not(final Predicate<A> p) {
+  public final static <A> Not<A> not(final F<A, Boolean> p) {
     return new Not<A>(p);
   }
 
