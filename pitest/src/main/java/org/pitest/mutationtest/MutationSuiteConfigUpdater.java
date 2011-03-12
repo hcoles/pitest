@@ -14,12 +14,9 @@
  */
 package org.pitest.mutationtest;
 
-import java.util.Iterator;
-
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
@@ -50,16 +47,10 @@ public final class MutationSuiteConfigUpdater implements ConfigurationUpdater {
     final MutationConfig config = new MutationConfig(createEngine(annotation),
         MutationTestType.TEST_CENTRIC, annotation.threshold(),
         annotation.jvmArgs());
-    final MutationTestFinder msf = new MutationTestFinder(config);
-    final Configuration copy = new ConcreteConfiguration(current);
+    final MutationTestFinder mtf = new MutationTestFinder(config);
+    final ConcreteConfiguration copy = new ConcreteConfiguration(current);
+    copy.setMutationTestFinder(mtf);
 
-    for (final Iterator<TestUnitFinder> i = copy.testUnitFinders().iterator(); i
-        .hasNext();) {
-      if (i.next() instanceof MutationTestFinder) {
-        i.remove();
-      }
-    }
-    copy.testUnitFinders().add(msf);
     return copy;
   }
 

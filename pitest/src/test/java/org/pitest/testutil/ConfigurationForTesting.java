@@ -20,10 +20,11 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
+import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.True;
+import org.pitest.junit.CompoundTestUnitFinder;
 import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class ConfigurationForTesting implements Configuration {
@@ -52,7 +53,7 @@ public class ConfigurationForTesting implements Configuration {
             IgnoreAnnotationForTesting.class));
   }
 
-  public List<TestUnitFinder> testUnitFinders() {
+  public TestUnitFinder testUnitFinder() {
     final Set<MethodFinder> beforeClassFinders = Collections
         .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
             BeforeClassAnnotationForTest.class));
@@ -72,9 +73,15 @@ public class ConfigurationForTesting implements Configuration {
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
     tmfs.add(new TestFinder());
 
-    return Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
-        True.<Class<?>> all(), tmfs, beforeMethodFinders, afterMethodFinders,
-        beforeClassFinders, afterClassFinders));
+    final List<InstantiationStrategy> instantiationStrategies =
+
+    Arrays
+        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+
+    return new CompoundTestUnitFinder(
+        Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
+            instantiationStrategies, tmfs, beforeMethodFinders,
+            afterMethodFinders, beforeClassFinders, afterClassFinders)));
   }
 
   public boolean allowConfigurationChange() {
@@ -98,6 +105,10 @@ public class ConfigurationForTesting implements Configuration {
 
   public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
     return Collections.emptyList();
+  }
+
+  public TestUnitFinder mutationTestFinder() {
+    return new NoTestFinder();
   }
 
 }

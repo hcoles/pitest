@@ -15,7 +15,6 @@
 package org.pitest.junit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -48,16 +47,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     this.testee = new JUnitCustomRunnerTestUnitFinder();
-  }
-
-  @Test
-  public void shouldNotHandlePreviouslyHandledClass() {
-    assertFalse(this.testee.canHandle(null, true));
-  }
-
-  @Test
-  public void shouldHandleUnHandledClass() {
-    assertTrue(this.testee.canHandle(null, false));
   }
 
   @Test

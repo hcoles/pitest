@@ -22,11 +22,11 @@ public interface Configuration {
 
   public boolean allowConfigurationChange();
 
-  public List<InstantiationStrategy> instantiationStrategies();
-
   public List<TestUnitProcessor> testUnitProcessors();
 
-  public List<TestUnitFinder> testUnitFinders();
+  public TestUnitFinder mutationTestFinder();
+
+  public TestUnitFinder testUnitFinder();
 
   public Collection<TestSuiteFinder> testSuiteFinders();
 

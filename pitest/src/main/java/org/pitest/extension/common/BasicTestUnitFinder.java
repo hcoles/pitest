@@ -41,7 +41,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.EqualitySet;
 import org.pitest.internal.SignatureEqualityStrategy;
 import org.pitest.internal.TestClass;
@@ -51,29 +50,26 @@ import org.pitest.testunit.SteppedTestUnit;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
-  private final Predicate<Class<?>> filter;
-  private final Set<MethodFinder>   testMethodFinders   = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   beforeMethodFinders = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   afterMethodFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   beforeClassFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   afterClassFinders   = new LinkedHashSet<MethodFinder>();
+  private final Set<InstantiationStrategy> instantiationStrategies = new LinkedHashSet<InstantiationStrategy>();
+  private final Set<MethodFinder>          testMethodFinders       = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          beforeMethodFinders     = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          afterMethodFinders      = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          beforeClassFinders      = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          afterClassFinders       = new LinkedHashSet<MethodFinder>();
 
-  public BasicTestUnitFinder(final Predicate<Class<?>> filter,
+  public BasicTestUnitFinder(
+      final Collection<InstantiationStrategy> instantiationStrategies,
       final Collection<MethodFinder> testMethodFinders,
       final Collection<MethodFinder> beforeMethodFinders,
       final Collection<MethodFinder> afterMethodFinders,
       final Collection<MethodFinder> beforeClassFinders,
       final Collection<MethodFinder> afterClassFinders) {
-    this.filter = filter;
+    this.instantiationStrategies.addAll(instantiationStrategies);
     this.testMethodFinders.addAll(testMethodFinders);
     this.beforeMethodFinders.addAll(beforeMethodFinders);
     this.afterMethodFinders.addAll(afterMethodFinders);
     this.beforeClassFinders.addAll(beforeClassFinders);
     this.afterClassFinders.addAll(afterClassFinders);
-  }
-
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return this.filter.apply(clazz);
   }
 
   public Collection<TestUnit> findTestUnits(final TestClass testClass,
@@ -165,7 +161,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   private InstantiationStrategy findInstantiationStrategy(
       final Configuration config, final Class<?> clazz) {
     final List<InstantiationStrategy> strategies = FCollection.filter(
-        config.instantiationStrategies(), canInstantiate(clazz));
+        this.instantiationStrategies, canInstantiate(clazz));
     if (strategies.isEmpty()) {
       throw new PitError("Cannot instantiate " + clazz);
     } else {

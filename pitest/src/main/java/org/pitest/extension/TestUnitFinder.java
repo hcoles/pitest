@@ -21,8 +21,6 @@ import org.pitest.internal.TestClass;
 
 public interface TestUnitFinder {
 
-  public boolean canHandle(Class<?> clazz, boolean alreadyHandled);
-
   public Collection<TestUnit> findTestUnits(final TestClass clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       TestUnitProcessor processor);

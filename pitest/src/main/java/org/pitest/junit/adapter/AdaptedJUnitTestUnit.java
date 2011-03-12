@@ -67,6 +67,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
+
     final Runner runner = createRunner(this.clazz);
     filterIfRequired(rc, runner);
 

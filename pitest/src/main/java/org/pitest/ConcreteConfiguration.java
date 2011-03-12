@@ -15,18 +15,20 @@
 package org.pitest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
-import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
+import org.pitest.extension.common.NoTestFinder;
 import org.pitest.internal.TestClass;
+import org.pitest.junit.CompoundTestUnitFinder;
 
 /**
  * @author henry
@@ -35,9 +37,11 @@ import org.pitest.internal.TestClass;
 public final class ConcreteConfiguration implements Configuration {
 
   private final boolean                          allowConfigurationChange;
-  private final List<InstantiationStrategy>      instantiationStrategy       = new ArrayList<InstantiationStrategy>();
+  // private final List<InstantiationStrategy> instantiationStrategy = new
+  // ArrayList<InstantiationStrategy>();
   private final List<TestUnitProcessor>          testProcessors              = new ArrayList<TestUnitProcessor>();
-  private final List<TestUnitFinder>             testUnitFinders             = new ArrayList<TestUnitFinder>();
+  private TestUnitFinder                         testUnitFinder              = new NoTestFinder();
+  private TestUnitFinder                         mutationTestFinder          = new NoTestFinder();
   private final List<TestSuiteFinder>            testSuiteFinders            = new LinkedList<TestSuiteFinder>();
   private final Collection<ConfigurationUpdater> configurationUpdaters       = new ArrayList<ConfigurationUpdater>();
   private final Collection<StaticConfigUpdater>  staticConfigurationUpdaters = new ArrayList<StaticConfigUpdater>();
@@ -51,8 +55,8 @@ public final class ConcreteConfiguration implements Configuration {
     addConfiguration(configuration);
   }
 
-  public List<TestUnitFinder> testUnitFinders() {
-    return this.testUnitFinders;
+  public TestUnitFinder testUnitFinder() {
+    return this.testUnitFinder;
   }
 
   public List<TestUnitProcessor> testUnitProcessors() {
@@ -67,9 +71,9 @@ public final class ConcreteConfiguration implements Configuration {
     return this.testSuiteFinders;
   }
 
-  public List<InstantiationStrategy> instantiationStrategies() {
-    return this.instantiationStrategy;
-  }
+  // public List<InstantiationStrategy> instantiationStrategies() {
+  // return this.instantiationStrategy;
+  // }
 
   public Collection<ConfigurationUpdater> configurationUpdaters() {
     return this.configurationUpdaters;
@@ -89,8 +93,13 @@ public final class ConcreteConfiguration implements Configuration {
   }
 
   public void addConfiguration(final Configuration configuration) {
-    this.testUnitFinders.addAll(configuration.testUnitFinders());
-    this.instantiationStrategy.addAll(configuration.instantiationStrategies());
+    this.mutationTestFinder = new CompoundTestUnitFinder(Arrays.asList(
+        this.mutationTestFinder, configuration.mutationTestFinder()));
+
+    this.testUnitFinder = new CompoundTestUnitFinder(Arrays.asList(
+        this.testUnitFinder, configuration.testUnitFinder()));
+
+    // this.instantiationStrategy.addAll(configuration.instantiationStrategies());
     this.testProcessors.addAll(configuration.testUnitProcessors());
     this.testSuiteFinders.addAll(configuration.testSuiteFinders());
     this.configurationUpdaters.addAll(configuration.configurationUpdaters());
@@ -100,6 +109,14 @@ public final class ConcreteConfiguration implements Configuration {
 
   public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
     return this.staticConfigurationUpdaters;
+  }
+
+  public TestUnitFinder mutationTestFinder() {
+    return this.mutationTestFinder;
+  }
+
+  public void setMutationTestFinder(final TestUnitFinder mtf) {
+    this.mutationTestFinder = mtf;
   }
 
 }

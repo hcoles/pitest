@@ -37,10 +37,6 @@ import org.pitest.reflection.Reflection;
 
 public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
 
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return isCustomJUnit3Class(clazz);
-  }
-
   public Collection<TestUnit> findTestUnits(final TestClass a,
       final Configuration b, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {

@@ -14,14 +14,12 @@
  */
 package org.pitest.extension.common;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
-import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
@@ -33,17 +31,12 @@ import org.pitest.extension.TestUnitProcessor;
  */
 public class EmptyConfiguration implements Configuration {
 
-  public List<InstantiationStrategy> instantiationStrategies() {
-    return Arrays
-        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
-  }
-
   public List<TestUnitProcessor> testUnitProcessors() {
     return Collections.emptyList();
   }
 
-  public List<TestUnitFinder> testUnitFinders() {
-    return Collections.emptyList();
+  public TestUnitFinder testUnitFinder() {
+    return new NoTestFinder();
   }
 
   public boolean allowConfigurationChange() {
@@ -60,6 +53,10 @@ public class EmptyConfiguration implements Configuration {
 
   public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
     return Collections.emptyList();
+  }
+
+  public TestUnitFinder mutationTestFinder() {
+    return new NoTestFinder();
   }
 
 }

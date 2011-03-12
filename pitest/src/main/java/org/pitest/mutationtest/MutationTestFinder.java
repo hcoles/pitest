@@ -25,6 +25,7 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
+import org.pitest.extension.common.NoTestFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
@@ -53,10 +54,6 @@ public class MutationTestFinder implements TestUnitFinder {
     this.javaAgentFinder = javaAgentFinder;
   }
 
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return true;
-  }
-
   public Collection<TestUnit> findTestUnits(final TestClass clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
@@ -67,8 +64,8 @@ public class MutationTestFinder implements TestUnitFinder {
         this.findChildClassesStrategy);
 
     if (!testees.isEmpty()) {
-      final Configuration updatedConfig = createCopyOfConfig(configuration);
-      updatedConfig.testUnitFinders().remove(this);
+      final ConcreteConfiguration updatedConfig = createCopyOfConfig(configuration);
+      updatedConfig.setMutationTestFinder(new NoTestFinder());
       updatedConfig.configurationUpdaters().remove(
           MutationSuiteConfigUpdater.instance());
 
@@ -116,7 +113,8 @@ public class MutationTestFinder implements TestUnitFinder {
     }
   }
 
-  private Configuration createCopyOfConfig(final Configuration configuration) {
+  private ConcreteConfiguration createCopyOfConfig(
+      final Configuration configuration) {
     return new ConcreteConfiguration(configuration);
   }
 

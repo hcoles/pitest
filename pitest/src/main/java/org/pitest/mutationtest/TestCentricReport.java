@@ -90,9 +90,9 @@ public class TestCentricReport extends MutationCoverageReport {
             new Mutator[this.data.getMutators().size()]));
     final MutationConfig mutationConfig = new MutationConfig(engine,
         MutationTestType.TEST_CENTRIC, 0, Collections.<String> emptyList());
-    initialConfig.testUnitFinders().add(
-        new MutationTestFinder(mutationConfig,
-            new FindInnerAndMemberClassesStrategy(), this.javaAgentFinder));
+
+    initialConfig.setMutationTestFinder(new MutationTestFinder(mutationConfig,
+        new FindInnerAndMemberClassesStrategy(), this.javaAgentFinder));
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     final Container c = new UnContainer();
