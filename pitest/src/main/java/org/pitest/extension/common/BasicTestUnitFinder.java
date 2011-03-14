@@ -43,7 +43,6 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.EqualitySet;
 import org.pitest.internal.SignatureEqualityStrategy;
-import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 import org.pitest.teststeps.CallStep;
 import org.pitest.testunit.SteppedTestUnit;
@@ -72,24 +71,24 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public Collection<TestUnit> findTestUnits(final TestClass testClass,
+  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
       final Configuration config, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
-          this.beforeMethodFinders, testClass.getClazz());
+          this.beforeMethodFinders, testClass);
       final Collection<TestMethod> afters = findTestMethods(
-          this.afterMethodFinders, testClass.getClazz());
+          this.afterMethodFinders, testClass);
 
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(
-          config, testClass.getClazz());
+          config, testClass);
       final List<TestStep> instantiations = instantiationStrategy
-          .instantiations(testClass.getClazz());
+          .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
         for (final TestMethod m : findTestMethods(this.testMethodFinders,
-            testClass.getClazz())) {
+            testClass)) {
           final TestStep step = instantiations.get(instantiation);
           units.add(createTestUnitForInstantiation(step,
               getNamePrefix(instantiations.size(), instantiation), befores,
@@ -134,7 +133,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   private TestUnit createTestUnitForInstantiation(
       final TestStep instantiationStep, final String namePrefix,
       final Collection<TestMethod> befores,
-      final Collection<TestMethod> afters, final TestClass testClass,
+      final Collection<TestMethod> afters, final Class<?> testClass,
       final Configuration config, final TestMethod testMethod) {
 
     final List<TestStep> steps = new ArrayList<TestStep>();
@@ -152,7 +151,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
 
     final TestUnit unit = new SteppedTestUnit(new Description(namePrefix
-        + testMethod.getName(), testClass.getClazz(), testMethod), steps,
+        + testMethod.getName(), testClass, testMethod), steps,
         testMethod.getExpected());
     return unit;
 
@@ -198,12 +197,12 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   private List<TestUnit> createGroupings(final List<TestUnit> tus,
-      final TestClass testClass) {
+      final Class<?> testClass) {
     final Collection<CallStep> beforeClasses = findMethodCalls(
-        this.beforeClassFinders, testClass.getClazz());
+        this.beforeClassFinders, testClass);
 
     final Collection<CallStep> afterClasses = findMethodCalls(
-        this.afterClassFinders, testClass.getClazz());
+        this.afterClassFinders, testClass);
 
     if (!beforeClasses.isEmpty() || (!afterClasses.isEmpty() && !tus.isEmpty())) {
       final TestUnit group = new MultipleTestGroup(tus);

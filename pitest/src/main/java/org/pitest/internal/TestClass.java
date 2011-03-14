@@ -16,14 +16,12 @@ package org.pitest.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.TestDiscoveryListener;
-import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitProcessor;
 
@@ -45,9 +43,8 @@ public final class TestClass {
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, this);
 
-    final TestUnitProcessor applyProcessors = createCombinedTestUnitProcessor(classConfig);
     final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
-        listener, classConfig, applyProcessors);
+        listener, classConfig, classConfig.testUnitProcessor());
 
     return units;
   }
@@ -56,46 +53,16 @@ public final class TestClass {
       final TestDiscoveryListener listener, final Configuration classConfig,
       final TestUnitProcessor applyProcessors) {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
-    units.addAll(classConfig.testUnitFinder().findTestUnits(TestClass.this,
-        classConfig, listener, applyProcessors));
-    units.addAll(classConfig.mutationTestFinder().findTestUnits(TestClass.this,
-        classConfig, listener, applyProcessors));
+    units.addAll(classConfig.testUnitFinder().findTestUnits(
+        TestClass.this.getClazz(), classConfig, listener, applyProcessors));
+    units.addAll(classConfig.mutationTestFinder().findTestUnits(
+        TestClass.this.getClazz(), classConfig, listener, applyProcessors));
 
     return units;
   }
 
-  private TestUnitProcessor createCombinedTestUnitProcessor(
-      final Configuration classConfig) {
-    final TestUnitProcessor applyProcessors = new TestUnitProcessor() {
-      public TestUnit apply(final TestUnit tu) {
-        TestUnit alteredTestUnit = tu;
-        for (final TestUnitProcessor tup : classConfig.testUnitProcessors()) {
-          alteredTestUnit = tup.apply(alteredTestUnit);
-        }
-
-        return alteredTestUnit;
-      }
-    };
-    return applyProcessors;
-  }
-
   public Class<?> getClazz() {
     return this.clazz;
-  }
-
-  public Collection<TestClass> getChildren(final Configuration startConfig) {
-
-    // final List<TestClass> children = new ArrayList<TestClass>();
-    for (final TestSuiteFinder i : startConfig.testSuiteFinders()) {
-      final Collection<TestClass> found = i.apply(this);
-      if (!found.isEmpty()) {
-        return found;
-      }
-      // children.addAll(i.apply(this));
-    }
-
-    return Collections.emptyList();
-    // return children;
   }
 
   private void findTestUnits(final List<TestUnit> tus,
@@ -107,7 +74,8 @@ public final class TestClass {
     final Configuration classConfig = ConcreteConfiguration.updateConfig(
         startConfig, suiteClass);
 
-    final Collection<TestClass> tcs = suiteClass.getChildren(classConfig);
+    final Collection<TestClass> tcs = classConfig.testSuiteFinder().apply(
+        suiteClass);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc,
           ConcreteConfiguration.updateConfig(classConfig, tc), groupStrategy,

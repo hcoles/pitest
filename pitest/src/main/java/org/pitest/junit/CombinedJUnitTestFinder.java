@@ -8,7 +8,6 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
-import org.pitest.internal.TestClass;
 
 public class CombinedJUnitTestFinder implements TestUnitFinder {
 
@@ -19,10 +18,10 @@ public class CombinedJUnitTestFinder implements TestUnitFinder {
                                                                   new CustomJUnit3TestUnitFinder(),
                                                                   new JUnitCustomRunnerTestUnitFinder()));
 
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
-    if (NativeJUnitTestFinder.canHandleNatively(clazz.getClazz())) {
+    if (NativeJUnitTestFinder.canHandleNatively(clazz)) {
       return this.nativeFinder.findTestUnits(clazz, configuration, listener,
           processor);
     } else {

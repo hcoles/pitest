@@ -8,11 +8,10 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
-import org.pitest.internal.TestClass;
 
 public class NoTestFinder implements TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
     return Collections.emptyList();

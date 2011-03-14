@@ -2,7 +2,6 @@ package org.pitest.testutil;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
+import org.pitest.extension.common.NullStaticConfigUpdater;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
@@ -47,10 +47,8 @@ public class ConfigurationForTesting implements Configuration {
 
   };
 
-  public List<TestUnitProcessor> testUnitProcessors() {
-    return Collections
-        .<TestUnitProcessor> singletonList(new IgnoreTestProcessor(
-            IgnoreAnnotationForTesting.class));
+  public TestUnitProcessor testUnitProcessor() {
+    return new IgnoreTestProcessor(IgnoreAnnotationForTesting.class);
   }
 
   public TestUnitFinder testUnitFinder() {
@@ -88,23 +86,16 @@ public class ConfigurationForTesting implements Configuration {
     return true;
   }
 
-  public Collection<TestSuiteFinder> testSuiteFinders() {
-    return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder());
+  public TestSuiteFinder testSuiteFinder() {
+    return new PITStaticMethodSuiteFinder();
   }
 
-  public List<InstantiationStrategy> instantiationStrategies() {
-    return Arrays
-        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+  public ConfigurationUpdater configurationUpdater() {
+    return MutationSuiteConfigUpdater.instance();
   }
 
-  public Collection<ConfigurationUpdater> configurationUpdaters() {
-    return Collections
-        .<ConfigurationUpdater> singletonList(MutationSuiteConfigUpdater
-            .instance());
-  }
-
-  public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
-    return Collections.emptyList();
+  public StaticConfigUpdater staticConfigurationUpdater() {
+    return new NullStaticConfigUpdater();
   }
 
   public TestUnitFinder mutationTestFinder() {

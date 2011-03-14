@@ -25,7 +25,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.IdentityTestUnitProcessor;
 import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.internal.TestClass;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
@@ -62,8 +61,8 @@ public class MutationTestFinderTest {
 
   @Test
   public void shouldUseConfigInAnnotatedChildInPreferenceToParentSuiteConfig() {
-    final Collection<TestUnit> tus = this.testee.findTestUnits(new TestClass(
-        TestOne.class), this.pitConfig, new NullDiscoveryListener(),
+    final Collection<TestUnit> tus = this.testee.findTestUnits(TestOne.class,
+        this.pitConfig, new NullDiscoveryListener(),
         new IdentityTestUnitProcessor());
     assertEquals(1, tus.size());
     final InstrumentedMutationTestUnit actual = (InstrumentedMutationTestUnit) tus

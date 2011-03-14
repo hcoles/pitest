@@ -19,11 +19,11 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.util.List;
 
+import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.F2;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.engine.Mutater;
@@ -47,7 +47,7 @@ public abstract class AbstractWorker {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final EmptyConfiguration conf = new EmptyConfiguration();
+      final ConcreteConfiguration conf = new ConcreteConfiguration();
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);

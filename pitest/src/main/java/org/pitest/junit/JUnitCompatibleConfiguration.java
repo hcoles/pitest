@@ -14,12 +14,10 @@
  */
 package org.pitest.junit;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
+import org.pitest.CompoundTestSuiteFinder;
+import org.pitest.CompoundTestUnitProcessor;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.StaticConfigUpdater;
@@ -35,11 +33,10 @@ import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
-  public List<TestUnitProcessor> testUnitProcessors() {
-    final List<TestUnitProcessor> tups = new ArrayList<TestUnitProcessor>();
-    tups.add(new IgnoreTestProcessor(org.junit.Ignore.class));
-    tups.add(new TimeoutProcessor());
-    return tups;
+  public TestUnitProcessor testUnitProcessor() {
+
+    return new CompoundTestUnitProcessor(Arrays.asList(new IgnoreTestProcessor(
+        org.junit.Ignore.class), new TimeoutProcessor()));
   }
 
   public TestUnitFinder testUnitFinder() {
@@ -51,20 +48,21 @@ public class JUnitCompatibleConfiguration implements Configuration {
     return true;
   }
 
-  public Collection<TestSuiteFinder> testSuiteFinders() {
-    return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder(),
-        new JUnit4SuiteFinder(), new RunnerSuiteFinder());
+  public TestSuiteFinder testSuiteFinder() {
+    return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
+        new PITStaticMethodSuiteFinder(), new JUnit4SuiteFinder(),
+        new RunnerSuiteFinder()));
   }
 
-  public Collection<ConfigurationUpdater> configurationUpdaters() {
-    return Arrays.<ConfigurationUpdater> asList(
-        MutationSuiteConfigUpdater.instance(),
-        new DefaultConfigurationUpdater());
+  public ConfigurationUpdater configurationUpdater() {
+    return new CompoundConfigurationUpdater(
+        Arrays.<ConfigurationUpdater> asList(
+            MutationSuiteConfigUpdater.instance(),
+            new DefaultConfigurationUpdater()));
   }
 
-  public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
-    return Collections
-        .<StaticConfigUpdater> singletonList(new DefaultStaticConfigUpdater());
+  public StaticConfigUpdater staticConfigurationUpdater() {
+    return new DefaultStaticConfigUpdater();
   }
 
   public TestUnitFinder mutationTestFinder() {

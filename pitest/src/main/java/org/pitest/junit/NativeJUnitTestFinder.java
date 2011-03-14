@@ -24,7 +24,6 @@ import org.pitest.extension.common.NamedTestSingleStringConstructorInstantiation
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.TestClass;
 import org.pitest.junit.adapter.AbstractPITJUnitRunner;
 import org.pitest.reflection.Reflection;
 
@@ -102,7 +101,7 @@ public class NativeJUnitTestFinder implements TestUnitFinder {
         afterClassFinders);
   }
 
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
     return this.impl.findTestUnits(clazz, configuration, listener, processor);

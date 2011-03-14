@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
@@ -29,7 +30,6 @@ import org.pitest.coverage.InvokeQueue;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
-import org.pitest.extension.common.EmptyConfiguration;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
@@ -58,7 +58,7 @@ public class CoverageWorker implements Runnable {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final EmptyConfiguration conf = new EmptyConfiguration();
+      final ConcreteConfiguration conf = new ConcreteConfiguration();
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);

@@ -32,7 +32,6 @@ import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.IdentityTestUnitProcessor;
-import org.pitest.internal.TestClass;
 
 import com.example.TheoryTest;
 
@@ -125,9 +124,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
-    return this.testee.findTestUnits(new TestClass(clazz),
-        new ConcreteConfiguration(false), this.listener,
-        new IdentityTestUnitProcessor());
+    return this.testee.findTestUnits(clazz, new ConcreteConfiguration(),
+        this.listener, new IdentityTestUnitProcessor());
   }
 
 }

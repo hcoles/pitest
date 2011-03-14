@@ -17,6 +17,7 @@ package org.pitest.mutationtest;
 import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ConfigurationUpdater;
+import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
@@ -35,7 +36,8 @@ public final class MutationSuiteConfigUpdater implements ConfigurationUpdater {
   public Configuration updateConfiguration(final Class<?> clazz,
       final Configuration current) {
     final MutationTest annotation = clazz.getAnnotation(MutationTest.class);
-    if (annotation != null) {
+    if ((annotation != null)
+        & !(current.mutationTestFinder() instanceof SuppressMutationTestFinding)) {
       return update(annotation, current);
     } else {
       return current;

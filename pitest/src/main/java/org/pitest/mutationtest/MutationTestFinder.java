@@ -25,10 +25,9 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
-import org.pitest.extension.common.NoTestFinder;
+import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.TestClass;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.util.JavaAgent;
@@ -54,28 +53,24 @@ public class MutationTestFinder implements TestUnitFinder {
     this.javaAgentFinder = javaAgentFinder;
   }
 
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
-    final Collection<Class<?>> testees = TestInfo.determineTestee(clazz
-        .getClazz());
+    final Collection<Class<?>> testees = TestInfo.determineTestee(clazz);
 
     final Collection<String> testeeNames = FCollection.flatMap(testees,
         this.findChildClassesStrategy);
 
     if (!testees.isEmpty()) {
       final ConcreteConfiguration updatedConfig = createCopyOfConfig(configuration);
-      updatedConfig.setMutationTestFinder(new NoTestFinder());
-      updatedConfig.configurationUpdaters().remove(
-          MutationSuiteConfigUpdater.instance());
+      updatedConfig.setMutationTestFinder(new SuppressMutationTestFinding());
 
-      final Description d = new Description("mutation test", clazz.getClazz(),
-          null);
+      final Description d = new Description("mutation test", clazz, null);
 
       final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
 
       final Set<TestUnit> units = Collections
-          .<TestUnit> singleton(createTestUnit(clazz.getClazz(), testeeNames,
+          .<TestUnit> singleton(createTestUnit(clazz, testeeNames,
               updatedMutationConfig, updatedConfig, d));
       listener.receiveTests(units);
       // skip processing for mutation tests . . . yes?
@@ -95,9 +90,8 @@ public class MutationTestFinder implements TestUnitFinder {
 
   }
 
-  private MutationConfig determineConfigToUse(final TestClass clazz) {
-    final MutationTest annotation = clazz.getClazz().getAnnotation(
-        MutationTest.class);
+  private MutationConfig determineConfigToUse(final Class<?> clazz) {
+    final MutationTest annotation = clazz.getAnnotation(MutationTest.class);
     if (annotation != null) {
       MutationConfigFactory factory;
       try {

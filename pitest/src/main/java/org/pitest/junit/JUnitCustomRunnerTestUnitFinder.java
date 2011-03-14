@@ -29,12 +29,11 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.internal.TestClass;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final TestClass testClass,
+  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
       final Configuration config, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
     // final RunWith runWith =
@@ -42,8 +41,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     // if (JUnitCompatibleConfiguration.runwithNotHandledNatively(runWith)
     // || JUnitCompatibleConfiguration.hasMethodRule(testClass.getClazz())) {
 
-    final Collection<? extends TestUnit> units = createUnits(
-        testClass.getClazz(), listener);
+    final Collection<? extends TestUnit> units = createUnits(testClass,
+        listener);
 
     // listener.receiveTests(units);
     return FCollection.map(units, processor);

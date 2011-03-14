@@ -25,7 +25,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
-import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestFilter;
@@ -85,12 +84,8 @@ public class Pitest {
       final Container container = containerUpdateFunction.apply(c,
           defaultContainer);
 
-      StaticConfiguration staticConfig = new DefaultStaticConfig(
-          this.initialStaticConfig);
-      for (final StaticConfigUpdater each : this.initialConfig
-          .staticConfigurationUpdaters()) {
-        staticConfig = each.apply(staticConfig, c);
-      }
+      final StaticConfiguration staticConfig = this.initialConfig
+          .staticConfigurationUpdater().apply(this.initialStaticConfig, c);
 
       final Option<TestFilter> filter = createTestFilter(staticConfig);
 

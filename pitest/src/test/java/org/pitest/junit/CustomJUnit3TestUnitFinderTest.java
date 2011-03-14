@@ -35,7 +35,6 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.IdentityTestUnitProcessor;
 import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.internal.TestClass;
 
 public class CustomJUnit3TestUnitFinderTest {
 
@@ -62,7 +61,7 @@ public class CustomJUnit3TestUnitFinderTest {
   @Test
   public void shouldFindTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        new TestClass(JMockTest.class), null, new NullDiscoveryListener(),
+        JMockTest.class, null, new NullDiscoveryListener(),
         new IdentityTestUnitProcessor());
     assertFalse(actual.isEmpty());
   }
@@ -76,14 +75,14 @@ public class CustomJUnit3TestUnitFinderTest {
   @Test
   public void shouldNotFindTestUnitsInNonCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        new TestClass(JUnit3Test.class), null, new NullDiscoveryListener(),
+        JUnit3Test.class, null, new NullDiscoveryListener(),
         new IdentityTestUnitProcessor());
     assertTrue(actual.isEmpty());
   }
 
   @Test
   public void shouldApplyTestProcessorExactlyOnce() {
-    this.testee.findTestUnits(new TestClass(JMockTest.class), null,
+    this.testee.findTestUnits(JMockTest.class, null,
         new NullDiscoveryListener(), this.processor);
 
     verify(this.processor, times(1)).apply(any(TestUnit.class));
@@ -92,8 +91,8 @@ public class CustomJUnit3TestUnitFinderTest {
 
   @Test
   public void shouldListOfAllTestUnitsToDiscoveryListener() {
-    this.testee.findTestUnits(new TestClass(JMockTest.class), null,
-        this.discoveryListener, new IdentityTestUnitProcessor());
+    this.testee.findTestUnits(JMockTest.class, null, this.discoveryListener,
+        new IdentityTestUnitProcessor());
     verify(this.discoveryListener, times(1)).receiveTests(
         anyListOf(TestUnit.class));
   }
