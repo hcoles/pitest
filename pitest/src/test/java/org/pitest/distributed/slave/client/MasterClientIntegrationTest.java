@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.InetSocketAddress;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.distributed.message.RunDetails;
 import org.pitest.internal.IsolationUtils;
@@ -27,7 +28,7 @@ import com.hazelcast.core.Hazelcast;
 public class MasterClientIntegrationTest {
 
   @Test
-  // not a unit test performs network io
+  @Ignore
   public void shouldSerializeAndDeserializeViaXStreamWithoutError()
       throws Exception {
     final RunDetails rd = new RunDetails(new InetSocketAddress(0), 1);

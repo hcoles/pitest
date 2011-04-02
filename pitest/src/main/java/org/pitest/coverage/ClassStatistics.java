@@ -15,15 +15,12 @@
 package org.pitest.coverage;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
-import org.pitest.util.MemoryEfficientHashMap;
 
 public class ClassStatistics {
 
-  private final String                className;
-  private final Map<Integer, Integer> lineVists = new MemoryEfficientHashMap<Integer, Integer>();
+  private final String       className;
+  private final Set<Integer> visitedLines = new HashSet<Integer>();
 
   public ClassStatistics(final String className) {
     this.className = className;
@@ -34,37 +31,21 @@ public class ClassStatistics {
   }
 
   public boolean wasVisited() {
-    return !this.lineVists.isEmpty();
+    return !this.visitedLines.isEmpty();
   }
 
   public Set<Integer> getUniqueVisitedLines() {
-    final Set<Integer> uniqueVisits = new HashSet<Integer>(
-        this.lineVists.size());
-    uniqueVisits.addAll(this.lineVists.keySet());
-    return uniqueVisits;
+    return this.visitedLines;
   }
-
-  // public synchronized void clearLineCoverageStats() {
-  // this.lineVists.clear();
-
-  // }
 
   public synchronized void registerLineVisit(final int lineId) {
-    this.lineVists.put(lineId, getNumberOfHits(lineId) + 1);
-  }
-
-  public Integer getNumberOfHits(final int lineId) {
-    if (this.lineVists.containsKey(lineId)) {
-      return this.lineVists.get(lineId);
-    } else {
-      return 0;
-    }
+    this.visitedLines.add(lineId);
   }
 
   @Override
   public String toString() {
-    return "ClassStatistics [className=" + this.className + ", lineVists="
-        + this.lineVists + "]";
+    return "ClassStatistics [className=" + this.className + ", visitedLines="
+        + this.visitedLines + "]";
   }
 
 }
