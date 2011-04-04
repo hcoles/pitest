@@ -36,7 +36,7 @@ public class ClassStatisticsTest {
   @Test
   public void shouldRecordVisitsToEachLine() {
     addLineHits(Arrays.asList(1, 1, 1, 2, 2, 20));
-    Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1, 2, 20));
+    final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1, 2, 20));
     assertEquals(expected, this.testee.getUniqueVisitedLines());
   }
 

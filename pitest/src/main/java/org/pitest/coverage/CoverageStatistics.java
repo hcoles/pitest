@@ -28,7 +28,6 @@ public class CoverageStatistics {
   private final Map<Integer, ClassStatistics> classStatisticsInClassIdOrder = new ConcurrentHashMap<Integer, ClassStatistics>();
 
   public synchronized void clearCoverageStats() {
-    // this.classStatisticsInClassIdOrder.clear();
     for (final Entry<Integer, ClassStatistics> each : this.classStatisticsInClassIdOrder
         .entrySet()) {
       this.classStatisticsInClassIdOrder.put(each.getKey(),

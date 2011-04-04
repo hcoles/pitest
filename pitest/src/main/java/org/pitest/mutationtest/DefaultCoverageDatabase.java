@@ -111,7 +111,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   public void initialise(final FunctionalCollection<Class<?>> tests) {
     try {
+      final long t0 = System.currentTimeMillis();
       this.coverage = gatherCoverageData(tests);
+      final long time = (System.currentTimeMillis() - t0) / 1000;
 
       boolean allTestsGreen = true;
 
@@ -126,8 +128,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
       if (!allTestsGreen) {
         throw new PitError(
-            "All tests did not pass without mutation when calculating coverage");
+            "All tests did not pass without mutation when calculating coverage. Coverage took "
+                + time + " seconds");
       }
+
+      LOG.info("Calculated coverage in " + time + " seconds.");
 
       this.dependencyInfo.initialise(tests);
 

@@ -20,7 +20,7 @@ import java.util.Set;
 public class ClassStatistics {
 
   private final String       className;
-  private final Set<Integer> visitedLines = new HashSet<Integer>();
+  private final Set<Integer> visitedLines = new HashSet<Integer>(0);
 
   public ClassStatistics(final String className) {
     this.className = className;
