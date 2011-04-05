@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.pitest.PitError;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -48,7 +49,12 @@ public class CoverageStatistics {
   }
 
   private ClassStatistics getClassStatistics(final int id) {
-    return this.classStatisticsInClassIdOrder.get(id);
+    final ClassStatistics cs = this.classStatisticsInClassIdOrder.get(id);
+    if (cs == null) {
+      throw new PitError("Unknown class id " + id + " (We have "
+          + this.classIdCount + " classes.)");
+    }
+    return cs;
   }
 
   public Collection<ClassStatistics> getClassStatistics(

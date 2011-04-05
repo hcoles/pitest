@@ -29,13 +29,16 @@ public class CoverageDecorator extends TestUnitDecorator {
   private final static Logger    LOG = Log.getLogger();
   // private final CoverageStatistics invokeStatistics;
   private final CoverageReceiver invokeQueue;
+  private final int              index;
 
   // private final SideEffect1<CoverageResult> output;
 
-  protected CoverageDecorator(final CoverageReceiver queue, final TestUnit child) {
+  protected CoverageDecorator(final CoverageReceiver queue,
+      final TestUnit child, final int index) {
     super(child);
     // this.invokeStatistics = invokeStatistics;
     this.invokeQueue = queue;
+    this.index = index;
     // this.output = output;
 
   }
@@ -43,7 +46,7 @@ public class CoverageDecorator extends TestUnitDecorator {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     LOG.info("Gathering coverage for test " + child().getDescription());
-    this.invokeQueue.recordTest(child().getDescription());
+    this.invokeQueue.recordTest(this.index);
     // this.invokeStatistics.clearCoverageStats();
 
     // final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
@@ -77,7 +80,7 @@ public class CoverageDecorator extends TestUnitDecorator {
     final Option<TestUnit> modifiedChild = this.child().filter(filter);
     if (modifiedChild.hasSome()) {
       return Option.<TestUnit> some(new CoverageDecorator(this.invokeQueue,
-          modifiedChild.value()));
+          modifiedChild.value(), this.index));
     } else {
       return Option.none();
     }

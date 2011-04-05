@@ -28,7 +28,6 @@ import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
@@ -53,8 +52,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   // required to choose sensible tests for mutations in static initializers
   private final DependencyBasedCoverageDatabase               dependencyInfo;
 
-  private FunctionalList<CoverageResult>                      coverage;
+  // private FunctionalList<CoverageResult> coverage;
   private final Map<String, Map<ClassLine, Set<Description>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<Description>>>();
+  private final Map<Description, Long>                        times         = new MemoryEfficientHashMap<Description, Long>();
+
+  private boolean                                             allTestsGreen = true;
 
   public DefaultCoverageDatabase(final Configuration initialConfig,
       final ClassPath classPath, final JavaAgent javaAgentFinder,
@@ -77,16 +79,17 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   }
 
-  private FunctionalList<CoverageResult> gatherCoverageData(
-      final Collection<Class<?>> tests) throws IOException,
-      InterruptedException {
+  private void gatherCoverageData(final Collection<Class<?>> tests)
+      throws IOException, InterruptedException {
 
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         this.initialConfig, new NullDiscoveryListener(),
         new UnGroupedStrategy(), Option.<TestFilter> none(),
         tests.toArray(new Class<?>[tests.size()]));
 
-    final CoverageReceiverThread crt = new CoverageReceiverThread();
+    final SideEffect1<CoverageResult> handler = resultProcessor();
+
+    final CoverageReceiverThread crt = new CoverageReceiverThread(tus, handler);
     crt.start();
 
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
@@ -99,9 +102,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     process.waitToDie();
     crt.waitToFinish();
 
-    final FunctionalList<CoverageResult> results = crt.getCrs();// crt.getRprocess.results();
     process.cleanUp();
-    return results;
   }
 
   private Predicate<String> convertToJVMClassFilter(
@@ -117,27 +118,18 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   public void initialise(final FunctionalCollection<Class<?>> tests) {
     try {
       final long t0 = System.currentTimeMillis();
-      this.coverage = gatherCoverageData(tests);
+
+      gatherCoverageData(tests);
+
       final long time = (System.currentTimeMillis() - t0) / 1000;
 
-      boolean allTestsGreen = true;
+      LOG.info("Calculated coverage in " + time + " seconds.");
 
-      for (final CoverageResult each : this.coverage) {
-        if (!each.isGreenTest()) {
-          allTestsGreen = false;
-          LOG.warning(each.getTestUnitDescription()
-              + " did not pass without mutation.");
-        }
-        calculateClassCoverage(each);
-      }
-
-      if (!allTestsGreen) {
+      if (!this.allTestsGreen) {
         throw new PitError(
             "All tests did not pass without mutation when calculating coverage. Coverage took "
                 + time + " seconds");
       }
-
-      LOG.info("Calculated coverage in " + time + " seconds.");
 
       this.dependencyInfo.initialise(tests);
 
@@ -147,6 +139,26 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       e.printStackTrace();
     }
 
+  }
+
+  private SideEffect1<CoverageResult> resultProcessor() {
+    return new SideEffect1<CoverageResult>() {
+
+      public void apply(final CoverageResult cr) {
+
+        if (!cr.isGreenTest()) {
+          DefaultCoverageDatabase.this.allTestsGreen = false;
+          LOG.warning(cr.getTestUnitDescription()
+              + " did not pass without mutation.");
+        }
+        calculateClassCoverage(cr);
+
+        DefaultCoverageDatabase.this.times.put(cr.getTestUnitDescription(),
+            cr.getExecutionTime());
+
+      }
+
+    };
   }
 
   private void calculateClassCoverage(final CoverageResult each) {
@@ -211,29 +223,28 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private Map<String, Long> getTimings(final List<String> tests) {
     final Map<String, Long> timings = new MemoryEfficientHashMap<String, Long>();
 
-    this.coverage.filter(isForTests(tests)).forEach(addToMap(timings));
+    FCollection.filter(this.times.keySet(), isForTests(tests)).forEach(
+        addToMap(timings));
 
     return timings;
 
   }
 
-  private SideEffect1<CoverageResult> addToMap(final Map<String, Long> timings) {
-    return new SideEffect1<CoverageResult>() {
-
-      public void apply(final CoverageResult result) {
-        timings.put(result.getTestUnitDescription().toString(),
-            result.getExecutionTime());
+  private SideEffect1<Description> addToMap(final Map<String, Long> timings) {
+    return new SideEffect1<Description>() {
+      public void apply(final Description result) {
+        timings.put(result.toString(),
+            DefaultCoverageDatabase.this.times.get(result));
       }
 
     };
   }
 
-  private F<CoverageResult, Boolean> isForTests(final List<String> tests) {
-    return new F<CoverageResult, Boolean>() {
+  private F<Description, Boolean> isForTests(final List<String> tests) {
+    return new F<Description, Boolean>() {
 
-      public Boolean apply(final CoverageResult a) {
-        return FCollection.contains(tests, oneOf(a.getTestUnitDescription()
-            .getTestClasses()));
+      public Boolean apply(final Description a) {
+        return FCollection.contains(tests, oneOf(a.getTestClasses()));
       }
 
     };

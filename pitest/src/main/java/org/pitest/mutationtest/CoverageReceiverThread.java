@@ -5,26 +5,27 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 import org.pitest.Description;
+import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoveragePipe;
 import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.MutableList;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.extension.TestUnit;
+import org.pitest.functional.SideEffect1;
 import org.pitest.util.Unchecked;
 
 public class CoverageReceiverThread extends Thread {
 
-  private final FunctionalList<CoverageResult> crs = new MutableList<CoverageResult>();
+  private final SideEffect1<CoverageResult> handler;
+  private final List<TestUnit>              tus;
 
-  public FunctionalList<CoverageResult> getCrs() {
-    return this.crs;
-  }
-
-  public CoverageReceiverThread() {
+  public CoverageReceiverThread(final List<TestUnit> tus,
+      final SideEffect1<CoverageResult> handler) {
     this.setDaemon(true);
+    this.handler = handler;
+    this.tus = tus;
   }
 
   @Override
@@ -34,13 +35,9 @@ public class CoverageReceiverThread extends Thread {
     try {
       socket = new ServerSocket(8187);
       final Socket clientSocket = socket.accept();
-      BufferedInputStream bif = new BufferedInputStream(
+      final BufferedInputStream bif = new BufferedInputStream(
           clientSocket.getInputStream());
       final DataInputStream is = new DataInputStream(bif);
-
-      // final Map<Integer, String> classes = new HashMap<Integer, String>();
-      // Map<Integer, ClassStatistics> coverage = new HashMap<Integer,
-      // ClassStatistics>();
 
       Description d = null;
       final CoverageStatistics cs = new CoverageStatistics();
@@ -49,11 +46,14 @@ public class CoverageReceiverThread extends Thread {
       while (control != CoveragePipe.DONE) {
         switch (control) {
         case CoveragePipe.CLAZZ:
+
           final int id = is.readInt();
           final String name = is.readUTF();
-          // classes.put(id, name);
 
-          cs.registerClass(name);
+          final int newId = cs.registerClass(name);
+          if (id != newId) {
+            throw new PitError("Coverage id out of sync");
+          }
 
           break;
         case CoveragePipe.LINE:
@@ -71,16 +71,18 @@ public class CoverageReceiverThread extends Thread {
           final CoverageResult cr = new CoverageResult(d, executionTime,
               isGreen, cs.getClassStatistics());
 
-          this.crs.add(cr);
+          this.handler.apply(cr);
 
           cs.clearCoverageStats();
 
           break;
         case CoveragePipe.TEST_CHANGE:
-          d = (Description) IsolationUtils.fromTransportString(is.readUTF());
+
+          final int index = is.readInt();
+          d = this.tus.get(index).getDescription();
           break;
         case CoveragePipe.DONE:
-          System.out.println("Done");
+
         }
         control = is.readByte();
       }

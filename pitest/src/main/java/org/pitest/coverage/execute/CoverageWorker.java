@@ -16,6 +16,7 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Writer;
@@ -54,7 +55,8 @@ public class CoverageWorker implements Runnable {
 
       s = new Socket("localhost", 8187);
 
-      final DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+      final DataOutputStream dos = new DataOutputStream(
+          new BufferedOutputStream(s.getOutputStream()));
       final CoveragePipe invokeQueue = new CoveragePipe(dos);
 
       CodeCoverageStore.init(invokeQueue, invokeStatistics);
@@ -101,8 +103,10 @@ public class CoverageWorker implements Runnable {
       final CoverageStatistics stats, final CoverageReceiver queue,
       final SideEffect1<CoverageResult> output) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
+    int index = 0;
     for (final TestUnit each : plainTests) {
-      decorated.add(new CoverageDecorator(queue, each));
+      decorated.add(new CoverageDecorator(queue, each, index));
+      index++;
     }
     return decorated;
   }
