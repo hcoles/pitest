@@ -16,59 +16,60 @@ package org.pitest.coverage.execute;
 
 import java.util.logging.Logger;
 
-import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.InvokeQueue;
+import org.pitest.coverage.CoverageReceiver;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
-  private final static Logger               LOG = Log.getLogger();
-  private final CoverageStatistics          invokeStatistics;
-  private final InvokeQueue                 invokeQueue;
-  private final SideEffect1<CoverageResult> output;
+  private final static Logger    LOG = Log.getLogger();
+  // private final CoverageStatistics invokeStatistics;
+  private final CoverageReceiver invokeQueue;
 
-  protected CoverageDecorator(final InvokeQueue queue,
-      final CoverageStatistics invokeStatistics, final TestUnit child,
-      final SideEffect1<CoverageResult> output) {
+  // private final SideEffect1<CoverageResult> output;
+
+  protected CoverageDecorator(final CoverageReceiver queue, final TestUnit child) {
     super(child);
-    this.invokeStatistics = invokeStatistics;
+    // this.invokeStatistics = invokeStatistics;
     this.invokeQueue = queue;
-    this.output = output;
+    // this.output = output;
 
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     LOG.info("Gathering coverage for test " + child().getDescription());
-    this.invokeStatistics.clearCoverageStats();
+    this.invokeQueue.recordTest(child().getDescription());
+    // this.invokeStatistics.clearCoverageStats();
 
-    final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
-        this.invokeStatistics);
-    t.start();
+    // final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
+    // this.invokeStatistics);
+    // t.start();
 
     final long t0 = System.currentTimeMillis();
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
         rc);
     this.child().execute(loader, wrappedCollector);
     final long executionTime = System.currentTimeMillis() - t0;
+    this.invokeQueue.recordTestOutcome(!wrappedCollector.shouldExit(),
+        executionTime);
 
-    try {
-      t.waitToFinish();
-    } catch (final InterruptedException e) {
-      e.printStackTrace();
-    }
+    // try {
+    // t.waitToFinish();
+    // } catch (final InterruptedException e) {
+    // e.printStackTrace();
+    // }
 
     // readStatisticsQueue();
 
-    this.output.apply(new CoverageResult(this.getDescription(), executionTime,
-        !wrappedCollector.shouldExit(), this.invokeStatistics
-            .getClassStatistics()));
+    // this.output.apply(new CoverageResult(this.getDescription(),
+    // executionTime,
+    // !wrappedCollector.shouldExit(), this.invokeStatistics
+    // .getClassStatistics()));
 
   }
 
@@ -76,7 +77,7 @@ public class CoverageDecorator extends TestUnitDecorator {
     final Option<TestUnit> modifiedChild = this.child().filter(filter);
     if (modifiedChild.hasSome()) {
       return Option.<TestUnit> some(new CoverageDecorator(this.invokeQueue,
-          this.invokeStatistics, modifiedChild.value(), this.output));
+          modifiedChild.value()));
     } else {
       return Option.none();
     }

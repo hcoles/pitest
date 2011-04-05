@@ -19,6 +19,7 @@ package org.pitest.coverage;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
+import org.pitest.coverage.execute.InvokeReceiver;
 
 /**
  * @author ivanalx
@@ -40,10 +41,10 @@ public final class CodeCoverageStore {
 
   }
 
-  private static InvokeQueue        invokeQueue;
+  private static InvokeReceiver     invokeQueue;
   private static CoverageStatistics invokeStatistics;
 
-  public static void init(final InvokeQueue invokeQueue,
+  public static void init(final InvokeReceiver invokeQueue,
       final CoverageStatistics invokeStatistics) {
     CodeCoverageStore.invokeQueue = invokeQueue;
     CodeCoverageStore.invokeStatistics = invokeStatistics;
@@ -57,10 +58,12 @@ public final class CodeCoverageStore {
   }
 
   public static int registerClass(final String className) {
-    return invokeStatistics.registerClass(className);
+    final int id = invokeStatistics.registerClass(className);
+    invokeQueue.registerClass(id, className);
+    return id;
   }
 
-  public static InvokeQueue getInvokeQueue() {
+  public static InvokeReceiver getInvokeQueue() {
     return invokeQueue;
   }
 

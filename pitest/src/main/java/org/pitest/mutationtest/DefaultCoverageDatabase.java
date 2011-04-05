@@ -86,15 +86,20 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         new UnGroupedStrategy(), Option.<TestFilter> none(),
         tests.toArray(new Class<?>[tests.size()]));
 
+    final CoverageReceiverThread crt = new CoverageReceiverThread();
+    crt.start();
+
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
         convertToJVMClassFilter(this.data.getTargetClassesFilter()));
     final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)
         .andStderr(printWith("SLAVE : ")), sa);
-    process.waitToDie();
 
-    final FunctionalList<CoverageResult> results = process.results();
+    process.waitToDie();
+    crt.waitToFinish();
+
+    final FunctionalList<CoverageResult> results = crt.getCrs();// crt.getRprocess.results();
     process.cleanUp();
     return results;
   }

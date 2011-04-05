@@ -14,16 +14,25 @@
  */
 package org.pitest.coverage;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClassStatistics {
+public class ClassStatistics implements Serializable {
 
-  private final String       className;
-  private final Set<Integer> visitedLines = new HashSet<Integer>(0);
+  private static final long      serialVersionUID = 1L;
+
+  private final String           className;
+  private transient Set<Integer> visitedLines     = new HashSet<Integer>(0);
 
   public ClassStatistics(final String className) {
     this.className = className;
+  }
+
+  public ClassStatistics(final String className, final Collection<Integer> lines) {
+    this.className = className;
+    this.visitedLines.addAll(lines);
   }
 
   public String getClassName() {

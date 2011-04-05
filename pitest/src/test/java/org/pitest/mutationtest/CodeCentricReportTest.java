@@ -20,6 +20,7 @@ import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.S
 
 import java.util.Collections;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.PitError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -88,6 +89,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   @Test
+  @Ignore
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));

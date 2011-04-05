@@ -16,7 +16,10 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Writer;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +28,8 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CodeCoverageStore;
+import org.pitest.coverage.CoverageReceiver;
 import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.InvokeQueue;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
@@ -45,16 +48,23 @@ public class CoverageWorker implements Runnable {
   public void run() {
 
     final CoverageStatistics invokeStatistics = new CoverageStatistics();
-    final InvokeQueue invokeQueue = new InvokeQueue();
-    CodeCoverageStore.init(invokeQueue, invokeStatistics);
 
-    final OutputToFile outputWriter = createOutput(this.output);
-    final List<TestUnit> decoratedTests = decorateForCoverage(
-        this.params.getTests(), invokeStatistics, invokeQueue, outputWriter);
-
-    final Container c = new UnContainer();
-
+    Socket s = null;
     try {
+
+      s = new Socket("localhost", 8187);
+
+      final DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+      final CoveragePipe invokeQueue = new CoveragePipe(dos);
+
+      CodeCoverageStore.init(invokeQueue, invokeStatistics);
+
+      final OutputToFile outputWriter = createOutput(this.output);
+      final List<TestUnit> decoratedTests = decorateForCoverage(
+          this.params.getTests(), invokeStatistics, invokeQueue, outputWriter);
+
+      final Container c = new UnContainer();
+
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
       final ConcreteConfiguration conf = new ConcreteConfiguration();
@@ -67,8 +77,18 @@ public class CoverageWorker implements Runnable {
       pit.run(c, decoratedTests);
       outputWriter.writeToDisk();
 
+      invokeQueue.end();
+
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
+    } finally {
+      try {
+        if (s != null) {
+          s.close();
+        }
+      } catch (final IOException e) {
+        throw translateCheckedException(e);
+      }
     }
 
   }
@@ -78,11 +98,11 @@ public class CoverageWorker implements Runnable {
   }
 
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
-      final CoverageStatistics stats, final InvokeQueue queue,
+      final CoverageStatistics stats, final CoverageReceiver queue,
       final SideEffect1<CoverageResult> output) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
     for (final TestUnit each : plainTests) {
-      decorated.add(new CoverageDecorator(queue, stats, each, output));
+      decorated.add(new CoverageDecorator(queue, each));
     }
     return decorated;
   }

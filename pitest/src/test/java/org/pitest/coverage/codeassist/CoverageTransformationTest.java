@@ -29,6 +29,7 @@ import org.pitest.coverage.InvokeEntry;
 import org.pitest.coverage.InvokeQueue;
 import org.pitest.coverage.codeassist.samples.ClassWithAMethod;
 import org.pitest.coverage.codeassist.samples.ClassWithInitialisedField;
+import org.pitest.coverage.execute.InvokeReceiver;
 
 public class CoverageTransformationTest {
 
@@ -109,7 +110,7 @@ public class CoverageTransformationTest {
   }
 
   private List<InvokeEntry> getRecordedLines() throws InterruptedException {
-    final InvokeQueue queue = CodeCoverageStore.getInvokeQueue();
+    final InvokeReceiver queue = CodeCoverageStore.getInvokeQueue();
     final List<InvokeEntry> ies = new ArrayList<InvokeEntry>();
     while (!queue.isEmpty()) {
       ies.addAll(queue.poll(100));

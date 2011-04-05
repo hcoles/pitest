@@ -1,11 +1,14 @@
 package org.pitest.coverage.execute;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.pitest.Description;
 import org.pitest.coverage.ClassStatistics;
 
-public class CoverageResult {
+public class CoverageResult implements Serializable {
+
+  private static final long                 serialVersionUID = 1L;
 
   private final Description                 testUnitDescription;
   private final long                        executionTime;
