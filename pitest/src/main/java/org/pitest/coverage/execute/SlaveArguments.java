@@ -24,16 +24,18 @@ import org.pitest.internal.IsolationUtils;
 
 public class SlaveArguments {
 
-  private final String            tests;           // store as string to
-                                                    // prevent class loading
+  private final String            tests;
   private final Properties        systemProperties;
   private final Predicate<String> filter;
+  private final int               port;
 
   public SlaveArguments(final List<TestUnit> tests,
-      final Properties systemProperties, final Predicate<String> filter) {
+      final Properties systemProperties, final Predicate<String> filter,
+      final int port) {
     this.tests = IsolationUtils.toXml(tests);
     this.systemProperties = systemProperties;
     this.filter = filter;
+    this.port = port;
   }
 
   @SuppressWarnings("unchecked")
@@ -47,6 +49,10 @@ public class SlaveArguments {
 
   public Predicate<String> getFilter() {
     return this.filter;
+  }
+
+  public int getPort() {
+    return this.port;
   }
 
 }

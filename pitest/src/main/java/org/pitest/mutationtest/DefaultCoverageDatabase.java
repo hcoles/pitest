@@ -89,11 +89,14 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
-    final CoverageReceiverThread crt = new CoverageReceiverThread(tus, handler);
+    final int port = 8187;
+
+    final CoverageReceiverThread crt = new CoverageReceiverThread(port, tus,
+        handler);
     crt.start();
 
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
-        convertToJVMClassFilter(this.data.getTargetClassesFilter()));
+        convertToJVMClassFilter(this.data.getTargetClassesFilter()), port);
     final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)

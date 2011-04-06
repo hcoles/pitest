@@ -53,7 +53,7 @@ public class CoverageWorker implements Runnable {
     Socket s = null;
     try {
 
-      s = new Socket("localhost", 8187);
+      s = new Socket("localhost", this.params.getPort());
 
       final DataOutputStream dos = new DataOutputStream(
           new BufferedOutputStream(s.getOutputStream()));

@@ -40,7 +40,7 @@ public class AdaptedJUnitTestUnitTest {
       @SuppressWarnings("unused")
       @Test
       public void fail() {
-        fail();
+        org.junit.Assert.fail();
       }
 
     }

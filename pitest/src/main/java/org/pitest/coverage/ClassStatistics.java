@@ -21,10 +21,10 @@ import java.util.Set;
 
 public class ClassStatistics implements Serializable {
 
-  private static final long      serialVersionUID = 1L;
+  private static final long  serialVersionUID = 1L;
 
-  private final String           className;
-  private transient Set<Integer> visitedLines     = new HashSet<Integer>(0);
+  private final String       className;
+  private final Set<Integer> visitedLines     = new HashSet<Integer>(0);
 
   public ClassStatistics(final String className) {
     this.className = className;

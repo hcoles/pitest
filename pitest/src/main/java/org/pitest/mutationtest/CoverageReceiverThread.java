@@ -20,12 +20,14 @@ public class CoverageReceiverThread extends Thread {
 
   private final SideEffect1<CoverageResult> handler;
   private final List<TestUnit>              tus;
+  private final int                         port;
 
-  public CoverageReceiverThread(final List<TestUnit> tus,
+  public CoverageReceiverThread(final int port, final List<TestUnit> tus,
       final SideEffect1<CoverageResult> handler) {
     this.setDaemon(true);
     this.handler = handler;
     this.tus = tus;
+    this.port = port;
   }
 
   @Override
@@ -33,7 +35,7 @@ public class CoverageReceiverThread extends Thread {
 
     ServerSocket socket = null;
     try {
-      socket = new ServerSocket(8187);
+      socket = new ServerSocket(this.port);
       final Socket clientSocket = socket.accept();
       final BufferedInputStream bif = new BufferedInputStream(
           clientSocket.getInputStream());

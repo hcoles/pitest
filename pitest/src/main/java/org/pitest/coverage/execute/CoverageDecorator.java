@@ -14,8 +14,6 @@
  */
 package org.pitest.coverage.execute;
 
-import java.util.logging.Logger;
-
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
@@ -23,35 +21,24 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ExitingResultCollector;
-import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
-  private final static Logger    LOG = Log.getLogger();
-  // private final CoverageStatistics invokeStatistics;
+
   private final CoverageReceiver invokeQueue;
   private final int              index;
-
-  // private final SideEffect1<CoverageResult> output;
 
   protected CoverageDecorator(final CoverageReceiver queue,
       final TestUnit child, final int index) {
     super(child);
-    // this.invokeStatistics = invokeStatistics;
     this.invokeQueue = queue;
     this.index = index;
-    // this.output = output;
 
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-    LOG.info("Gathering coverage for test " + child().getDescription());
+    // LOG.info("Gathering coverage for test " + child().getDescription());
     this.invokeQueue.recordTest(this.index);
-    // this.invokeStatistics.clearCoverageStats();
-
-    // final CoverageReaderThread t = new CoverageReaderThread(this.invokeQueue,
-    // this.invokeStatistics);
-    // t.start();
 
     final long t0 = System.currentTimeMillis();
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
@@ -60,19 +47,6 @@ public class CoverageDecorator extends TestUnitDecorator {
     final long executionTime = System.currentTimeMillis() - t0;
     this.invokeQueue.recordTestOutcome(!wrappedCollector.shouldExit(),
         executionTime);
-
-    // try {
-    // t.waitToFinish();
-    // } catch (final InterruptedException e) {
-    // e.printStackTrace();
-    // }
-
-    // readStatisticsQueue();
-
-    // this.output.apply(new CoverageResult(this.getDescription(),
-    // executionTime,
-    // !wrappedCollector.shouldExit(), this.invokeStatistics
-    // .getClassStatistics()));
 
   }
 

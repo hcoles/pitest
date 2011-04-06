@@ -67,7 +67,7 @@ public class CoverageProcessTest {
         new UnGroupedStrategy(), Option.<TestFilter> none(), Tests.class);
 
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
-        coverOnlyTestees());
+        coverOnlyTestees(), 8186);
 
     final CoverageProcess process = new CoverageProcess(
         WrappingProcess.Args.withClassPath(new ClassPath()), sa);
