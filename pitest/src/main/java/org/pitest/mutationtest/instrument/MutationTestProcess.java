@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.instrument;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,9 +14,12 @@ import org.pitest.util.WrappingProcess;
 
 class MutationTestProcess extends WrappingProcess {
 
+  private final File output;
+
   protected MutationTestProcess(final Args processArgs,
       final SlaveArguments arguments) throws IOException {
     super(processArgs, arguments, InstrumentedMutationTestSlave.class);
+    this.output = new File(arguments.outputFileName);
 
   }
 
@@ -23,7 +27,7 @@ class MutationTestProcess extends WrappingProcess {
       final Map<MutationIdentifier, DetectionStatus> allmutations,
       final Option<Statistics> stats) throws FileNotFoundException, IOException {
 
-    final FileReader fr = new FileReader(this.getOutputFile());
+    final FileReader fr = new FileReader(this.output);
     final ResultsReader rr = new ResultsReader(allmutations, stats);
     try {
       final InputStreamLineIterable li = new InputStreamLineIterable(fr);

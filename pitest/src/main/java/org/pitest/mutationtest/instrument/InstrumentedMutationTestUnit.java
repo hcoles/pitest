@@ -158,9 +158,10 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       final List<TestUnit> tests, final ClassPath cp,
       final Option<Statistics> stats) throws IOException {
 
-    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        tests, stats, this.config, System.getProperties(),
-        this.timeoutStrategy, this.classesToMutate);
+    final SlaveArguments fileArgs = new SlaveArguments(
+        WrappingProcess.randomFilename(), remainingMutations, tests, stats,
+        this.config, System.getProperties(), this.timeoutStrategy,
+        this.classesToMutate);
 
     final MutationTestProcess worker = new MutationTestProcess(
         WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())

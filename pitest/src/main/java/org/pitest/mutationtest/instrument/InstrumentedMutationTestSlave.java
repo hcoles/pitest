@@ -49,17 +49,18 @@ public class InstrumentedMutationTestSlave {
 
     try {
       final File input = new File(args[0]);
-      final File outputFile = new File(args[1]);
 
       LOG.fine("Input file is " + input);
-      LOG.fine("Output file is " + input);
 
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
 
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
+
+      final File outputFile = new File(paramsFromParent.outputFileName);
+      w = new OutputStreamWriter(new FileOutputStream(outputFile));
+      LOG.fine("Output file is " + outputFile);
 
       System.setProperties(paramsFromParent.systemProperties);
 

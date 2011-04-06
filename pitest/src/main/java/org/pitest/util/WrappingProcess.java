@@ -58,17 +58,16 @@ public abstract class WrappingProcess {
   };
 
   private final File        input;
-  private final File        output;
+
   private final JavaProcess process;
 
   public WrappingProcess(final Args argsBuilder, final Object arguments,
       final Class<?> slaveClass) throws IOException {
     this.input = File.createTempFile(randomFilename(), ".data");
-    this.output = File.createTempFile(randomFilename(), ".results");
+
     writeArguments(arguments);
 
-    final String[] args = { this.input.getAbsolutePath(),
-        this.output.getAbsolutePath() };
+    final String[] args = { this.input.getAbsolutePath() };
     this.process = JavaProcess.launch(argsBuilder.stdout, argsBuilder.stdErr,
         argsBuilder.jvmArgs, slaveClass, Arrays.asList(args),
         argsBuilder.javaAgentFinder, getLaunchClassPath(argsBuilder.classPath));
@@ -80,7 +79,7 @@ public abstract class WrappingProcess {
     bw.close();
   }
 
-  private static String randomFilename() {
+  public static String randomFilename() {
     return System.currentTimeMillis()
         + ("" + Math.random()).replaceAll("\\.", "");
   }
@@ -102,13 +101,8 @@ public abstract class WrappingProcess {
     return this.process.waitToDie();
   }
 
-  public File getOutputFile() {
-    return this.output;
-  }
-
   public void cleanUp() {
     this.input.delete();
-    this.output.delete();
   }
 
 }

@@ -32,12 +32,15 @@ public class SlaveArguments {
   final Properties                     systemProperties;
   final Collection<String>             classesToMutate;
   final TimeoutLengthStrategy          timeoutStrategy;
+  final String                         outputFileName;
 
-  public SlaveArguments(final Collection<MutationIdentifier> mutations,
+  public SlaveArguments(final String outputFileName,
+      final Collection<MutationIdentifier> mutations,
       final List<TestUnit> tests, final Option<Statistics> stats,
       final MutationConfig config, final Properties systemProperties,
       final TimeoutLengthStrategy timeoutStrategy,
       final Collection<String> classes) {
+    this.outputFileName = outputFileName;
     this.mutations = mutations;
     this.tests = tests;
     this.stats = stats;
