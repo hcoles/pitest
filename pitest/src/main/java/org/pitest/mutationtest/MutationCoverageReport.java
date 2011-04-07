@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.pitest.ExtendedTestResult;
+import org.pitest.PitError;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
@@ -85,8 +86,9 @@ public abstract class MutationCoverageReport implements Runnable {
 
   private static MutationCoverageReport selectRunType(final ReportOptions data) {
     if (data.isTestCentric()) {
-      return new TestCentricReport(data, new JavaAgentJarFinder(),
-          new HtmlReportFactory(), false);
+      throw new PitError("Not supported");
+      // return new TestCentricReport(data, new JavaAgentJarFinder(),
+      // new HtmlReportFactory(), false);
     } else {
       return new CodeCentricReport(data, new JavaAgentJarFinder(),
           new HtmlReportFactory(), false);

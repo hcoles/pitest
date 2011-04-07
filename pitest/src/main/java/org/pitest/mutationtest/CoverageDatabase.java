@@ -1,6 +1,7 @@
 package org.pitest.mutationtest;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public interface CoverageDatabase {
       FunctionalCollection<Class<?>> tests,
       Map<String, ClassGrouping> groupedByOuterClass) throws IOException;
 
-  void initialise(final FunctionalCollection<Class<?>> tests);
+  boolean initialise(final Collection<Class<?>> tests);
 
   CoverageSource getCoverage(ClassGrouping code, List<String> tests);
 

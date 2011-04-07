@@ -17,9 +17,7 @@ package org.pitest.coverage.execute;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +33,6 @@ public class CoverageSlave {
 
   public static void main(final String[] args) {
 
-    final Writer w = null;
     ExitCode exitCode = ExitCode.OK;
 
     try {
@@ -56,22 +53,15 @@ public class CoverageSlave {
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final CoverageWorker worker = new CoverageWorker(paramsFromParent, w);
+      final CoverageWorker worker = new CoverageWorker(paramsFromParent);
 
       worker.run();
 
     } catch (final Throwable ex) {
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
+      ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
-    } finally {
-      if (w != null) {
-        try {
-          w.close();
-        } catch (final IOException e) {
-          e.printStackTrace();
-        }
-      }
     }
 
     System.exit(exitCode.getCode());

@@ -19,7 +19,6 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +32,14 @@ import org.pitest.coverage.CoverageReceiver;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
 public class CoverageWorker implements Runnable {
 
   private final SlaveArguments params;
-  private final Writer         output;
 
-  public CoverageWorker(final SlaveArguments paramsFromParent, final Writer w) {
+  public CoverageWorker(final SlaveArguments paramsFromParent) {
     this.params = paramsFromParent;
-    this.output = w;
   }
 
   public void run() {
@@ -61,9 +57,9 @@ public class CoverageWorker implements Runnable {
 
       CodeCoverageStore.init(invokeQueue, invokeStatistics);
 
-      final OutputToFile outputWriter = createOutput(this.output);
+      // final OutputToFile outputWriter = createOutput(this.output);
       final List<TestUnit> decoratedTests = decorateForCoverage(
-          this.params.getTests(), invokeStatistics, invokeQueue, outputWriter);
+          this.params.getTests(), invokeStatistics, invokeQueue);
 
       final Container c = new UnContainer();
 
@@ -77,7 +73,7 @@ public class CoverageWorker implements Runnable {
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, decoratedTests);
-      outputWriter.writeToDisk();
+      // outputWriter.writeToDisk();
 
       invokeQueue.end();
 
@@ -95,13 +91,8 @@ public class CoverageWorker implements Runnable {
 
   }
 
-  private OutputToFile createOutput(final Writer w) {
-    return new OutputToFile(w);
-  }
-
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
-      final CoverageStatistics stats, final CoverageReceiver queue,
-      final SideEffect1<CoverageResult> output) {
+      final CoverageStatistics stats, final CoverageReceiver queue) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
     int index = 0;
     for (final TestUnit each : plainTests) {

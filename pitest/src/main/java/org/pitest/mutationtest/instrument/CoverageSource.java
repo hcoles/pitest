@@ -19,11 +19,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 
 public interface CoverageSource {
 
-  Option<Statistics> getStatistics(List<TestUnit> tests,
+  Statistics getStatistics(List<TestUnit> tests,
       Collection<String> classesToMutate);
 
   List<TestUnit> getTests(ClassLoader loader);

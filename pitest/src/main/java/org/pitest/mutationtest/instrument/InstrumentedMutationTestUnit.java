@@ -30,10 +30,8 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.MetaData;
-import org.pitest.PitError;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoVisitor;
-import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
@@ -67,14 +65,14 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
   private final CoverageSource        coverageSource;
   private final TimeoutLengthStrategy timeoutStrategy;
 
-  public InstrumentedMutationTestUnit(final Collection<String> tests,
-      final Collection<String> classesToMutate,
-      final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
-      final Configuration pitConfig, final Description description) {
-    this(classesToMutate, mutationConfig, description, javaAgentFinder,
-        new NoCoverageSource(tests, pitConfig),
-        new PercentAndConstantTimeoutStrategy(1.25f, 1000));
-  }
+  // public InstrumentedMutationTestUnit(final Collection<String> tests,
+  // final Collection<String> classesToMutate,
+  // final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
+  // final Configuration pitConfig, final Description description) {
+  // this(classesToMutate, mutationConfig, description, javaAgentFinder,
+  // new NoCoverageSource(tests, pitConfig),
+  // new PercentAndConstantTimeoutStrategy(1.25f, 1000));
+  // }
 
   public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
       final MutationConfig mutationConfig, final Description description,
@@ -121,10 +119,10 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
           FCollection.map(availableMutations, mutationDetailsToId()).forEach(
               putToMap(mutations, DetectionStatus.NOT_STARTED));
 
-          final Option<Statistics> stats = runTestsInSeperateProcess(cp, tests,
+          final Statistics stats = runTestsInSeperateProcess(cp, tests,
               mutations);
 
-          reportResults(mutations, availableMutations, rc, stats, loader);
+          reportResults(stats, mutations, availableMutations, rc, loader);
 
         } else {
           rc.notifyEnd(this.getDescription(), new AssertionError(
@@ -152,11 +150,11 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     };
   }
 
-  private Option<Statistics> runTestInSeperateProcessForMutationRange(
+  private void runTestInSeperateProcessForMutationRange(
       final Map<MutationIdentifier, DetectionStatus> allmutations,
       final Collection<MutationIdentifier> remainingMutations,
-      final List<TestUnit> tests, final ClassPath cp,
-      final Option<Statistics> stats) throws IOException {
+      final List<TestUnit> tests, final ClassPath cp, final Statistics stats)
+      throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(
         WrappingProcess.randomFilename(), remainingMutations, tests, stats,
@@ -179,12 +177,12 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
       // swallow
     }
 
-    final Option<Statistics> newStats = worker.results(allmutations, stats);
+    worker.results(allmutations);
 
     worker.cleanUp();
 
     correctResultForProcessExitCode(allmutations, exitCode);
-    return newStats;
+
   }
 
   private SideEffect1<String> discard() {
@@ -249,26 +247,20 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     return this.config.getJVMArgs();
   }
 
-  private Option<Statistics> runTestsInSeperateProcess(final ClassPath cp,
+  private Statistics runTestsInSeperateProcess(final ClassPath cp,
       final List<TestUnit> tests,
       final Map<MutationIdentifier, DetectionStatus> mutations)
       throws IOException, InterruptedException {
 
-    Option<Statistics> stats = this.coverageSource.getStatistics(tests,
+    final Statistics stats = this.coverageSource.getStatistics(tests,
         this.classesToMutate);
 
     Collection<MutationIdentifier> remainingMutations = getUnrunMutationIds(mutations);
 
     while (!remainingMutations.isEmpty()) {
       LOG.info(remainingMutations.size() + " mutations left to test");
-      stats = runTestInSeperateProcessForMutationRange(mutations,
-          remainingMutations, tests, cp, stats);
-      if (stats.hasSome() && !stats.value().isGreenSuite()) {
-        LOG.severe("Tests do not run green when no mutation present");
-        throw new PitError(
-            "Cannot mutation test as tests do not pass without mutation");
-      }
-
+      runTestInSeperateProcessForMutationRange(mutations, remainingMutations,
+          tests, cp, stats);
       remainingMutations = getUnrunMutationIds(mutations);
     }
 
@@ -300,17 +292,16 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
     return cp;
   }
 
-  private void reportResults(
+  private void reportResults(final Statistics stats,
       final Map<MutationIdentifier, DetectionStatus> mutations,
       final Collection<MutationDetails> availableMutations,
-      final ResultCollector rc, final Option<Statistics> sr,
-      final ClassLoader loader) {
+      final ResultCollector rc, final ClassLoader loader) {
 
     final FunctionalList<MutationResult> results = FCollection.map(
         availableMutations, detailsToMutationResults(mutations));
 
     final MetaData md = new MutationMetaData(this.config, namesToClassInfo(
-        this.classesToMutate, loader), sr, results);
+        this.classesToMutate, loader), stats, results);
 
     final List<AssertionError> failures = results.filter(mutationNotDetected())
         .map(resultToAssertionError());

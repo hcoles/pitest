@@ -28,7 +28,6 @@ import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
-import org.pitest.mutationtest.TestCentricReport;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
 import org.pitest.util.Glob;
@@ -267,9 +266,10 @@ public class PitMojo extends AbstractMojo {
           pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
           true);
     } else {
-      return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
-          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-          true);
+      throw new PitError("Not supported");
+      // return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
+      // pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+      // true);
     }
   }
 

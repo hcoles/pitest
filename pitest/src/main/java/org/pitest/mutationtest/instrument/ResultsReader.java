@@ -16,10 +16,8 @@ package org.pitest.mutationtest.instrument;
 
 import java.util.Map;
 
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.SerializationException;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
@@ -82,17 +80,13 @@ public class ResultsReader implements SideEffect1<String> {
     public final DetectionStatus status;
   }
 
-  // private MutationIdentifier lastRunMutation;
-  private Option<Statistics>                             stats;
   // store as map rather than list to allow possibility of out of order mutation
   // results
   private final Map<MutationIdentifier, DetectionStatus> mutations;
 
   public ResultsReader(
-      final Map<MutationIdentifier, DetectionStatus> allmutations,
-      final Option<Statistics> stats) {
-    // // this.lastRunMutation = lastRunMutation;
-    this.stats = stats;
+      final Map<MutationIdentifier, DetectionStatus> allmutations) {
+
     this.mutations = allmutations;
   }
 
@@ -100,25 +94,16 @@ public class ResultsReader implements SideEffect1<String> {
     process(a);
   }
 
-  @SuppressWarnings("unchecked")
   private void process(final String line) {
     if (line == null) {
       return;
     }
-    if (line.startsWith("STATS=")) {
-      try {
-        this.stats = (Option<Statistics>) IsolationUtils
-            .fromTransportString(line.substring(6, line.length()));
-      } catch (final SerializationException ex) {
-        ex.printStackTrace();
-      }
+
+    final String[] parts = line.split(",");
+    if (parts[0].equals("DESC=")) {
+      receiveMutationDescription(parts);
     } else {
-      final String[] parts = line.split(",");
-      if (parts[0].equals("DESC=")) {
-        receiveMutationDescription(parts);
-      } else {
-        receiveMutationResults(parts);
-      }
+      receiveMutationResults(parts);
     }
 
   }
@@ -142,10 +127,6 @@ public class ResultsReader implements SideEffect1<String> {
 
   private DetectionStatus extractStatus(final String[] parts) {
     return DetectionStatus.valueOf(parts[2]);
-  }
-
-  public Option<Statistics> getStats() {
-    return this.stats;
   }
 
 }

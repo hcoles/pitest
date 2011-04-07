@@ -54,11 +54,11 @@ public class DefaultCoverageSource implements CoverageSource {
     this.coverageByTestUnit = coverageByTestUnit;
   }
 
-  public Option<Statistics> getStatistics(final List<TestUnit> tests,
+  public Statistics getStatistics(final List<TestUnit> tests,
       final Collection<String> classesToMutate) {
     final Statistics stats = new Statistics(true, matchTestsToTimes(tests),
         relevantCoverage(tests, classesToMutate));
-    return Option.some(stats);
+    return stats;
   }
 
   public List<TestUnit> getTests(final ClassLoader loader) {

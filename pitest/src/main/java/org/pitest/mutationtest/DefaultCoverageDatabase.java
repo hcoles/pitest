@@ -14,7 +14,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
-import org.pitest.PitError;
 import org.pitest.Pitest;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.execute.CoverageProcess;
@@ -65,8 +64,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.initialConfig = initialConfig;
-    this.dependencyInfo = new DependencyBasedCoverageDatabase(initialConfig,
-        classPath, data);
+    this.dependencyInfo = new DependencyBasedCoverageDatabase(classPath, data);
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
@@ -118,7 +116,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     };
   }
 
-  public void initialise(final FunctionalCollection<Class<?>> tests) {
+  public boolean initialise(final Collection<Class<?>> tests) {
     try {
       final long t0 = System.currentTimeMillis();
 
@@ -128,19 +126,13 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
       LOG.info("Calculated coverage in " + time + " seconds.");
 
-      if (!this.allTestsGreen) {
-        throw new PitError(
-            "All tests did not pass without mutation when calculating coverage. Coverage took "
-                + time + " seconds");
-      }
-
-      this.dependencyInfo.initialise(tests);
-
     } catch (final IOException e) {
       e.printStackTrace();
     } catch (final InterruptedException e) {
       e.printStackTrace();
     }
+
+    return this.allTestsGreen;
 
   }
 

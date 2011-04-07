@@ -14,8 +14,10 @@
  */
 package org.pitest.mutationtest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.pitest.ConcreteConfiguration;
@@ -28,8 +30,13 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.internal.ClassPath;
+import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.testunit.FailingTestUnit;
+import org.pitest.util.Glob;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
@@ -39,11 +46,22 @@ public class MutationTestFinder implements TestUnitFinder {
   private final MutationConfig                  mutationConfig;
   private final F<Class<?>, Collection<String>> findChildClassesStrategy;
   private final JavaAgent                       javaAgentFinder;
+  private final ClassPath                       classPath = new ClassPath();
+
+  // private final ReportOptions data;
 
   public MutationTestFinder(final MutationConfig config) {
     this(config, new FindInnerAndMemberClassesStrategy(),
         new JavaAgentJarFinder());
   }
+
+  // private static ReportOptions defaultOptions() {
+  // ReportOptions data = new ReportOptions();
+  // data.setClassesInScope(Collections.singleton(True.<String> all()));
+  // data.setTargetClasses(Collections.singleton(True.<String> all()));
+  // data.setTargetTests(Collections.singleton(True.<String> all()));
+  // return data;
+  // }
 
   public MutationTestFinder(final MutationConfig config,
       final F<Class<?>, Collection<String>> findChildClassesStrategy,
@@ -62,31 +80,58 @@ public class MutationTestFinder implements TestUnitFinder {
         this.findChildClassesStrategy);
 
     if (!testees.isEmpty()) {
-      final ConcreteConfiguration updatedConfig = createCopyOfConfig(configuration);
-      updatedConfig.setMutationTestFinder(new SuppressMutationTestFinding());
-
-      final Description d = new Description("mutation test", clazz, null);
-
-      final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
-
-      final Set<TestUnit> units = Collections
-          .<TestUnit> singleton(createTestUnit(clazz, testeeNames,
-              updatedMutationConfig, updatedConfig, d));
+      final Collection<TestUnit> units = createUnits(clazz, configuration,
+          testeeNames);
       listener.receiveTests(units);
-      // skip processing for mutation tests . . . yes?
       return units;
     } else {
       return Collections.emptyList();
     }
   }
 
-  private TestUnit createTestUnit(final Class<?> test,
-      final Collection<String> classesToMutate,
+  private Collection<TestUnit> createUnits(final Class<?> clazz,
+      final Configuration configuration, final Collection<String> testeeNames) {
+    final ConcreteConfiguration updatedConfig = createCopyOfConfig(configuration);
+    updatedConfig.setMutationTestFinder(new SuppressMutationTestFinding());
+
+    final Description d = new Description("mutation test", clazz, null);
+
+    final MutationConfig updatedMutationConfig = determineConfigToUse(clazz);
+
+    final ReportOptions data = new ReportOptions();
+    data.setTargetClasses(FCollection.map(testeeNames, Glob.toGlobPredicate()));
+    data.setClassesInScope(FCollection.map(testeeNames, Glob.toGlobPredicate()));
+    // data.setTargetTests();
+
+    final DefaultCoverageDatabase dcb = new DefaultCoverageDatabase(
+        updatedConfig, this.classPath, this.javaAgentFinder, data);
+    final List<Class<?>> classes = new ArrayList<Class<?>>();
+    classes.add(clazz);
+    final boolean allTestsGreen = dcb.initialise(classes);
+    if (allTestsGreen) {
+
+      final ClassGrouping code = new ClassGrouping(testeeNames.iterator()
+          .next(), testeeNames);
+      final CoverageSource s = dcb.getCoverage(code,
+          Collections.singletonList(clazz.getName()));
+
+      final Set<TestUnit> units = Collections
+          .<TestUnit> singleton(createTestUnit(testeeNames,
+              updatedMutationConfig, updatedConfig, d, s));
+      // skip processing for mutation tests . . . yes?
+      return units;
+    } else {
+      return Collections.<TestUnit> singletonList(new FailingTestUnit(d,
+          "Cannot create mutation test as test do not run green"));
+    }
+  }
+
+  private TestUnit createTestUnit(final Collection<String> classesToMutate,
       final MutationConfig mutationConfig, final Configuration pitConfig,
-      final Description description) {
-    return new InstrumentedMutationTestUnit(Collections.<String> singleton(test
-        .getName()), classesToMutate, this.javaAgentFinder, mutationConfig,
-        pitConfig, description);
+      final Description description, final CoverageSource source) {
+    return new InstrumentedMutationTestUnit(classesToMutate, mutationConfig,
+        description, this.javaAgentFinder, source,
+        new PercentAndConstantTimeoutStrategy(1.25f, 1000));
 
   }
 
