@@ -30,11 +30,6 @@ public class ClassStatistics implements Serializable {
     this.className = className;
   }
 
-  public ClassStatistics(final String className, final Collection<Integer> lines) {
-    this.className = className;
-    this.visitedLines.addAll(lines);
-  }
-
   public String getClassName() {
     return this.className;
   }

@@ -57,20 +57,6 @@ public class CoverageStatistics {
     return cs;
   }
 
-  public Collection<ClassStatistics> getClassStatistics(
-      final Collection<String> classNames) {
-    return FCollection.map(classNames, classNameToClassStatistics());
-  }
-
-  private F<String, ClassStatistics> classNameToClassStatistics() {
-    return new F<String, ClassStatistics>() {
-      public ClassStatistics apply(final String a) {
-        return getClassStatistics(a);
-      }
-
-    };
-  }
-
   public Collection<ClassStatistics> getClassStatistics() {
     return FCollection.flatMap(this.classStatisticsInClassIdOrder.values(),
         hasLineHit());
@@ -88,16 +74,6 @@ public class CoverageStatistics {
       }
 
     };
-  }
-
-  private ClassStatistics getClassStatistics(final String clazz) {
-    for (final ClassStatistics each : this.classStatisticsInClassIdOrder
-        .values()) {
-      if (each.getClassName().equals(clazz)) {
-        return each;
-      }
-    }
-    return null; // fixme
   }
 
 }

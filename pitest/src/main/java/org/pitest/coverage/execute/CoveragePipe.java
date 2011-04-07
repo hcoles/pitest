@@ -2,10 +2,8 @@ package org.pitest.coverage.execute;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.coverage.InvokeEntry;
 import org.pitest.util.Unchecked;
 
 public class CoveragePipe implements CoverageReceiver {
@@ -65,15 +63,6 @@ public class CoveragePipe implements CoverageReceiver {
       throw Unchecked.translateCheckedException(e);
 
     }
-  }
-
-  public boolean isEmpty() {
-    return false;
-  }
-
-  public Collection<? extends InvokeEntry> poll(final int i)
-      throws InterruptedException {
-    return null;
   }
 
   public synchronized void registerClass(final int id, final String className) {

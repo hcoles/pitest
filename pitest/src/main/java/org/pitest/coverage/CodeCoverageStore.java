@@ -63,8 +63,4 @@ public final class CodeCoverageStore {
     return id;
   }
 
-  public static InvokeReceiver getInvokeQueue() {
-    return invokeQueue;
-  }
-
 }
