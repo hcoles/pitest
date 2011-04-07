@@ -65,22 +65,12 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
   private final CoverageSource        coverageSource;
   private final TimeoutLengthStrategy timeoutStrategy;
 
-  // public InstrumentedMutationTestUnit(final Collection<String> tests,
-  // final Collection<String> classesToMutate,
-  // final JavaAgent javaAgentFinder, final MutationConfig mutationConfig,
-  // final Configuration pitConfig, final Description description) {
-  // this(classesToMutate, mutationConfig, description, javaAgentFinder,
-  // new NoCoverageSource(tests, pitConfig),
-  // new PercentAndConstantTimeoutStrategy(1.25f, 1000));
-  // }
-
   public InstrumentedMutationTestUnit(final Collection<String> classesToMutate,
       final MutationConfig mutationConfig, final Description description,
       final JavaAgent javaAgentFinder, final CoverageSource coverageSource,
       final TimeoutLengthStrategy timeoutStrategy) {
     super(description);
     this.classesToMutate = classesToMutate;
-    // this.testClasses.addAll(tests);
     this.config = mutationConfig;
     this.javaAgentFinder = javaAgentFinder;
     this.coverageSource = coverageSource;
