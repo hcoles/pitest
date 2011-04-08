@@ -100,7 +100,7 @@ public abstract class IsolationUtils {
     }
   }
 
-  private static Class<?> convertForClassLoader(final ClassLoader loader,
+  public static Class<?> convertForClassLoader(final ClassLoader loader,
       final String name) {
     try {
       return Class.forName(name, true, loader);

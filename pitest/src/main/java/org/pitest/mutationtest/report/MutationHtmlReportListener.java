@@ -108,7 +108,7 @@ public class MutationHtmlReportListener implements TestListener {
     try {
       this.mutatorScores.registerResults(value.getMutations());
 
-      final Statistics stats = value.getStats().value();
+      final Statistics stats = value.getStats();
 
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
@@ -197,11 +197,8 @@ public class MutationHtmlReportListener implements TestListener {
 
   private Collection<TestUnit> getTests(final MutationMetaData value) {
 
-    if (value.getStats().hasSome()) {
-      return value.getStats().value().getAllTests();
-    } else {
-      return Collections.emptyList();
-    }
+    return value.getStats().getAllTests();
+
   }
 
   private Option<Reader> findSourceFile(final Collection<String> classes,

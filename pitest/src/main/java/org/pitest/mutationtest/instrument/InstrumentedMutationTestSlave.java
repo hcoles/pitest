@@ -31,7 +31,6 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
 import org.pitest.functional.F2;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
@@ -49,17 +48,18 @@ public class InstrumentedMutationTestSlave {
 
     try {
       final File input = new File(args[0]);
-      final File outputFile = new File(args[1]);
 
       LOG.fine("Input file is " + input);
-      LOG.fine("Output file is " + input);
 
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
 
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
+
+      final File outputFile = new File(paramsFromParent.outputFileName);
+      w = new OutputStreamWriter(new FileOutputStream(outputFile));
+      LOG.fine("Output file is " + outputFile);
 
       System.setProperties(paramsFromParent.systemProperties);
 
@@ -75,17 +75,12 @@ public class InstrumentedMutationTestSlave {
 
       final Reporter r = new DefaultReporter(w);
 
-      Option<Statistics> stats = paramsFromParent.stats;
-      if (stats.hasNone()) {
-        stats = generateStats(paramsFromParent, hotswap, r, w);
-      }
-
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           paramsFromParent.config.createMutator(IsolationUtils
               .getContextClassLoader()), IsolationUtils.getContextClassLoader());
 
       worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          stats.value(), paramsFromParent.timeoutStrategy,
+          paramsFromParent.stats, paramsFromParent.timeoutStrategy,
           paramsFromParent.tests));
 
     } catch (final Exception ex) {
@@ -106,19 +101,6 @@ public class InstrumentedMutationTestSlave {
         LOG.log(Level.WARNING, "Couldn't close writer", e);
       }
     }
-  }
-
-  private static Option<Statistics> generateStats(
-      final SlaveArguments paramsFromParent,
-      final F2<Class<?>, byte[], Boolean> hotswap, final Reporter r,
-      final Writer w) throws IOException {
-    final CoverageWorker worker = new CoverageWorker(paramsFromParent.tests,
-        hotswap, paramsFromParent.config.createMutator(IsolationUtils
-            .getContextClassLoader()), IsolationUtils.getContextClassLoader());
-    final Option<Statistics> stats = Option.some(worker.gatherStatistics(
-        paramsFromParent.classesToMutate, r));
-    w.write("STATS=" + IsolationUtils.toTransportString(stats) + "\n");
-    return stats;
   }
 
   private static void addMemoryWatchDog() {

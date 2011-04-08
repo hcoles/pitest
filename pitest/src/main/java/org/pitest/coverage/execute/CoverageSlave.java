@@ -17,11 +17,7 @@ package org.pitest.coverage.execute;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,19 +33,15 @@ public class CoverageSlave {
 
   public static void main(final String[] args) {
 
-    Writer w = null;
     ExitCode exitCode = ExitCode.OK;
 
     try {
       final File input = new File(args[0]);
-      final File outputFile = new File(args[1]);
 
       LOG.fine("Input file is " + input);
-      LOG.fine("Output file is " + outputFile);
 
       final BufferedReader br = new BufferedReader(new InputStreamReader(
           new FileInputStream(input)));
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
 
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
@@ -61,22 +53,15 @@ public class CoverageSlave {
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final CoverageWorker worker = new CoverageWorker(paramsFromParent, w);
+      final CoverageWorker worker = new CoverageWorker(paramsFromParent);
 
       worker.run();
 
     } catch (final Throwable ex) {
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
+      ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
-    } finally {
-      if (w != null) {
-        try {
-          w.close();
-        } catch (final IOException e) {
-          e.printStackTrace();
-        }
-      }
     }
 
     System.exit(exitCode.getCode());

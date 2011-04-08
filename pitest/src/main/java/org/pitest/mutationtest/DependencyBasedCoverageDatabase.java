@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.dependency.DependencyExtractor;
-import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
@@ -22,24 +21,20 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.mutationtest.instrument.CoverageSource;
-import org.pitest.mutationtest.instrument.NoCoverageSource;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 
-public class DependencyBasedCoverageDatabase implements CoverageDatabase {
+public class DependencyBasedCoverageDatabase {
 
   private final static Logger LOG = Log.getLogger();
 
-  private final Configuration pitConfig;
   private final ClassPath     classPath;
   private final ReportOptions data;
 
-  public DependencyBasedCoverageDatabase(final Configuration pitConfig,
-      final ClassPath classPath, final ReportOptions data) {
+  public DependencyBasedCoverageDatabase(final ClassPath classPath,
+      final ReportOptions data) {
     this.data = data;
     this.classPath = classPath;
-    this.pitConfig = pitConfig;
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
@@ -131,16 +126,6 @@ public class DependencyBasedCoverageDatabase implements CoverageDatabase {
       }
 
     };
-  }
-
-  public void initialise(final FunctionalCollection<Class<?>> tests) {
-    // nothing to do
-
-  }
-
-  public CoverageSource getCoverage(final ClassGrouping code,
-      final List<String> tests) {
-    return new NoCoverageSource(tests, this.pitConfig);
   }
 
 }

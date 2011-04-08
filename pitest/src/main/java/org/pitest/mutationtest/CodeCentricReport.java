@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
+import org.pitest.PitError;
 import org.pitest.Pitest;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
@@ -49,6 +50,7 @@ import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
+import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
@@ -97,10 +99,15 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
         new JUnitCompatibleConfiguration());
+    initialConfig.setMutationTestFinder(new SuppressMutationTestFinding());
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
 
-    coverageDatabase.initialise(tests);
+    if (!coverageDatabase.initialise(tests)) {
+      throw new PitError(
+          "All tests did not pass without mutation when calculating coverage.");
+
+    }
 
     final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
         .mapCodeToTests(tests, groupedByOuterClass);

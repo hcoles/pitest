@@ -14,21 +14,21 @@
  */
 package org.pitest.coverage.codeassist;
 
-import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CodeCoverageStore;
 import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.InvokeEntry;
-import org.pitest.coverage.InvokeQueue;
 import org.pitest.coverage.codeassist.samples.ClassWithAMethod;
 import org.pitest.coverage.codeassist.samples.ClassWithInitialisedField;
+import org.pitest.coverage.execute.InvokeReceiver;
 
 public class CoverageTransformationTest {
 
@@ -37,13 +37,15 @@ public class CoverageTransformationTest {
   private static final int       FIRST_CLASS                         = 0;
   private CoverageTransformation testee;
   private CoverageStatistics     invokeStatistics;
-  private InvokeQueue            invokeQueue;
+
+  @Mock
+  private InvokeReceiver         invokeQueue;
 
   @Before
   public void setup() {
+    MockitoAnnotations.initMocks(this);
     this.testee = new CoverageTransformation();
     this.invokeStatistics = new CoverageStatistics();
-    this.invokeQueue = new InvokeQueue();
     CodeCoverageStore.init(this.invokeQueue, this.invokeStatistics);
   }
 
@@ -58,11 +60,10 @@ public class CoverageTransformationTest {
     final Method method = clazz.getMethod("aMethod");
     method.invoke(instance);
 
-    final List<InvokeEntry> actual = getRecordedLines();
-    final List<InvokeEntry> expected = Arrays.asList(
-        line(CLASS_WITH_METHOD_DEFAULT_CONS_LINE),
-        line(CLASS_WITH_METHOD_METHOD_LINE));
-    assertEquals(expected, actual);
+    verify(this.invokeQueue).addCodelineInvoke(FIRST_CLASS,
+        CLASS_WITH_METHOD_DEFAULT_CONS_LINE);
+    verify(this.invokeQueue).addCodelineInvoke(FIRST_CLASS,
+        CLASS_WITH_METHOD_METHOD_LINE);
 
   }
 
@@ -78,12 +79,11 @@ public class CoverageTransformationTest {
     method.invoke(instance);
     method.invoke(instance);
 
-    final List<InvokeEntry> actual = getRecordedLines();
-    final List<InvokeEntry> expected = Arrays.asList(
-        line(CLASS_WITH_METHOD_DEFAULT_CONS_LINE),
-        line(CLASS_WITH_METHOD_METHOD_LINE),
-        line(CLASS_WITH_METHOD_METHOD_LINE));
-    assertEquals(expected, actual);
+    verify(this.invokeQueue).addCodelineInvoke(FIRST_CLASS,
+        CLASS_WITH_METHOD_DEFAULT_CONS_LINE);
+    verify(this.invokeQueue, times(2)).addCodelineInvoke(FIRST_CLASS,
+        CLASS_WITH_METHOD_METHOD_LINE);
+
   }
 
   @Test
@@ -96,25 +96,8 @@ public class CoverageTransformationTest {
     final Class<?> clazz = ClassUtils.createClass(bytes);
     clazz.newInstance();
 
-    final List<InvokeEntry> actual = getRecordedLines();
-    // we seem to sometimes record two visits to the default constructor
-    // results in a flakey build
-    final List<InvokeEntry> expected = Arrays.asList(line(20), line(22),
-        line(20));
-    assertEquals(expected, actual);
-  }
-
-  private InvokeEntry line(final int line) {
-    return new InvokeEntry(FIRST_CLASS, line);
-  }
-
-  private List<InvokeEntry> getRecordedLines() throws InterruptedException {
-    final InvokeQueue queue = CodeCoverageStore.getInvokeQueue();
-    final List<InvokeEntry> ies = new ArrayList<InvokeEntry>();
-    while (!queue.isEmpty()) {
-      ies.addAll(queue.poll(100));
-    }
-    return ies;
+    verify(this.invokeQueue, atLeastOnce()).addCodelineInvoke(FIRST_CLASS, 20);
+    verify(this.invokeQueue, atLeastOnce()).addCodelineInvoke(FIRST_CLASS, 22);
 
   }
 

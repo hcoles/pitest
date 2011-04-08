@@ -29,6 +29,7 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
@@ -36,20 +37,12 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   public Collection<TestUnit> findTestUnits(final Class<?> testClass,
       final Configuration config, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
-    // final RunWith runWith =
-    // testClass.getClazz().getAnnotation(RunWith.class);
-    // if (JUnitCompatibleConfiguration.runwithNotHandledNatively(runWith)
-    // || JUnitCompatibleConfiguration.hasMethodRule(testClass.getClazz())) {
 
     final Collection<? extends TestUnit> units = createUnits(testClass,
         listener);
 
-    // listener.receiveTests(units);
     return FCollection.map(units, processor);
 
-    // }
-
-    // return Collections.emptyList();
   }
 
   private Collection<? extends TestUnit> createUnits(final Class<?> clazz,
@@ -96,7 +89,13 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private TestUnit descriptionToTest(final Description description) {
-    return new AdaptedJUnitTestUnit(description.getTestClass(),
+
+    Class<?> clazz = description.getTestClass();
+    if (clazz == null) {
+      clazz = IsolationUtils.convertForClassLoader(
+          IsolationUtils.getContextClassLoader(), description.getClassName());
+    }
+    return new AdaptedJUnitTestUnit(clazz,
         Option.some(createFilterFor(description)));
   }
 

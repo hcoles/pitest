@@ -36,11 +36,11 @@ public class MutationMetaData implements MetaData {
   private final MutationConfig             config;
   private final Collection<ClassInfo>      mutatedClasses;
   private final Collection<MutationResult> mutations;
-  private final Option<Statistics>         stats;
+  private final Statistics                 stats;
 
   protected MutationMetaData(final MutationConfig config,
-      final Collection<ClassInfo> mutatedClasses,
-      final Option<Statistics> stats, final Collection<MutationResult> mutations) {
+      final Collection<ClassInfo> mutatedClasses, final Statistics stats,
+      final Collection<MutationResult> mutations) {
     this.mutations = mutations;
     this.mutatedClasses = mutatedClasses;
     this.stats = stats;
@@ -72,7 +72,7 @@ public class MutationMetaData implements MetaData {
   }
 
   public Collection<String> getTestClasses() {
-    final Statistics stats = this.stats.value();
+
     final Set<String> uniqueTestClasses = new HashSet<String>();
     final F2<Set<String>, TestUnit, Set<String>> f = new F2<Set<String>, TestUnit, Set<String>>() {
       public Set<String> apply(final Set<String> a, final TestUnit b) {
@@ -81,7 +81,7 @@ public class MutationMetaData implements MetaData {
       }
     };
 
-    return FCollection.fold(f, uniqueTestClasses, stats.getAllTests());
+    return FCollection.fold(f, uniqueTestClasses, this.stats.getAllTests());
   }
 
   public MutationTestSummaryData getSummaryData() {
@@ -91,9 +91,9 @@ public class MutationMetaData implements MetaData {
   }
 
   public int getPercentageLineCoverage() {
-    final Statistics stats = this.stats.value();
+
     return Math.round(100f / getNumberOfCodeLines()
-        * stats.getNumberOfLinesWithCoverage());
+        * this.stats.getNumberOfLinesWithCoverage());
   }
 
   private float getNumberOfCodeLines() {
@@ -138,7 +138,7 @@ public class MutationMetaData implements MetaData {
     return this.mutatedClasses;
   }
 
-  public Option<Statistics> getStats() {
+  public Statistics getStats() {
     return this.stats;
   }
 

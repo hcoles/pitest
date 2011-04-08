@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -27,17 +26,20 @@ public class SlaveArguments {
 
   final Collection<MutationIdentifier> mutations;
   final List<TestUnit>                 tests;
-  final Option<Statistics>             stats;
+  final Statistics                     stats;
   final MutationConfig                 config;
   final Properties                     systemProperties;
   final Collection<String>             classesToMutate;
   final TimeoutLengthStrategy          timeoutStrategy;
+  final String                         outputFileName;
 
-  public SlaveArguments(final Collection<MutationIdentifier> mutations,
-      final List<TestUnit> tests, final Option<Statistics> stats,
+  public SlaveArguments(final String outputFileName,
+      final Collection<MutationIdentifier> mutations,
+      final List<TestUnit> tests, final Statistics stats,
       final MutationConfig config, final Properties systemProperties,
       final TimeoutLengthStrategy timeoutStrategy,
       final Collection<String> classes) {
+    this.outputFileName = outputFileName;
     this.mutations = mutations;
     this.tests = tests;
     this.stats = stats;
