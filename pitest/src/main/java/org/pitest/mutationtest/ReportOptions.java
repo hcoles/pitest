@@ -46,8 +46,6 @@ public class ReportOptions {
 
   private boolean                                    showHelp;
 
-  private boolean                                    isTestCentric;
-
   private boolean                                    includeJarFiles          = false;
 
   private List<String>                               jvmArgs                  = new ArrayList<String>();
@@ -161,14 +159,6 @@ public class ReportOptions {
     return this.showHelp;
   }
 
-  public void setIsTestCentric(final boolean isTestCentric) {
-    this.isTestCentric = isTestCentric;
-  }
-
-  public boolean isTestCentric() {
-    return this.isTestCentric;
-  }
-
   public List<String> getJvmArgs() {
     return this.jvmArgs;
   }
@@ -275,12 +265,11 @@ public class ReportOptions {
         + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
         + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
-        + ", isTestCentric=" + this.isTestCentric + ", includeJarFiles="
-        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + "]";
+        + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
+        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
+        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
+        + this.timeoutConstant + ", targetTests=" + this.targetTests
+        + ", loggingClasses=" + this.loggingClasses + "]";
   }
 
   public Predicate<String> getTargetTestsFilter() {

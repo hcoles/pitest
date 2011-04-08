@@ -168,7 +168,6 @@ public class OptionsParser {
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.setValid(validateArgs(userArgs));
     data.setShowHelp(userArgs.has("?"));
-    data.setIsTestCentric(userArgs.has(TEST_CENTRIC));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));

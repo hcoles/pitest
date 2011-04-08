@@ -118,13 +118,6 @@ public class PitMojo extends AbstractMojo {
   private List<String>          mutators;
 
   /**
-   * Run in test centric mode
-   * 
-   * @parameter default-value="false"
-   */
-  private boolean               testCentric;
-
-  /**
    * Weighting to allow for timeouts
    * 
    * @parameter default-value="1.25"
@@ -197,7 +190,6 @@ public class PitMojo extends AbstractMojo {
 
     final ReportOptions data = new ReportOptions();
     data.setClassPathElements(classPath);
-    data.setIsTestCentric(false);
     data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
     data.setIncludeJarFiles(this.includeJarFiles);
 
@@ -210,7 +202,6 @@ public class PitMojo extends AbstractMojo {
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 
     data.setMutators(determineMutators());
-    data.setIsTestCentric(this.testCentric);
     data.setTimeoutConstant(this.timeoutConstant);
     data.setTimeoutFactor(this.timeoutFactor);
     if (this.loggingClasses != null) {
@@ -261,16 +252,10 @@ public class PitMojo extends AbstractMojo {
 
   private MutationCoverageReport pickReportType(final ReportOptions data,
       final Artifact pitVersionInfo) {
-    if (!this.testCentric) {
-      return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
-          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-          true);
-    } else {
-      throw new PitError("Not supported");
-      // return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
-      // pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-      // true);
-    }
+
+    return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
+        pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
+        true);
   }
 
   private Collection<MethodMutatorFactory> determineMutators() {

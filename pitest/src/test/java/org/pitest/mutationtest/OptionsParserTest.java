@@ -74,12 +74,6 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldDetermineIfTestCentricFlagIsSet() {
-    final ReportOptions actual = parse("--testCentric");
-    assertTrue(actual.isTestCentric());
-  }
-
-  @Test
   public void shouldParseCommaSeperatedListOfJVMArgs() {
     final ReportOptions actual = parse("--jvmArgs", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
