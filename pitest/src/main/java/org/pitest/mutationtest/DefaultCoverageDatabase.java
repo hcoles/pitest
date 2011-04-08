@@ -89,19 +89,19 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final int port = 8187;
 
-    final CoverageReceiverThread crt = new CoverageReceiverThread(port, tus,
-        handler);
-    crt.start();
+    // final CoverageReceiverThread crt = new CoverageReceiverThread(port, tus,
+    // handler);
+    // crt.start();
 
     final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
         convertToJVMClassFilter(this.data.getTargetClassesFilter()), port);
     final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)
-        .andStderr(printWith("SLAVE : ")), sa);
+        .andStderr(printWith("SLAVE : ")), sa, port, tus, handler);
 
     process.waitToDie();
-    crt.waitToFinish();
+    // crt.waitToFinish();
 
     process.cleanUp();
   }
