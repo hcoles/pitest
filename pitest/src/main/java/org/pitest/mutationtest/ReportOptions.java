@@ -41,7 +41,6 @@ public class ReportOptions {
   private Collection<String>                         classPathElements;
   private Collection<? extends MethodMutatorFactory> mutators;
 
-  private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
 
   private boolean                                    showHelp;
@@ -129,22 +128,6 @@ public class ReportOptions {
   public void setMutators(
       final Collection<? extends MethodMutatorFactory> mutators) {
     this.mutators = mutators;
-  }
-
-  /**
-   * @return the dependencyAnalysisMaxDistance
-   */
-  public int getDependencyAnalysisMaxDistance() {
-    return this.dependencyAnalysisMaxDistance;
-  }
-
-  /**
-   * @param dependencyAnalysisMaxDistance
-   *          the dependencyAnalysisMaxDistance to set
-   */
-  public void setDependencyAnalysisMaxDistance(
-      final int dependencyAnalysisMaxDistance) {
-    this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
   }
 
   public boolean isValid() {
@@ -262,8 +245,7 @@ public class ReportOptions {
         + this.classesInScope + ", targetClasses=" + this.targetClasses
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
-        + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutators + ", mutateStaticInitializers="
         + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
         + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
         + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads

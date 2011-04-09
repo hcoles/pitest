@@ -37,7 +37,6 @@ public class OptionsParser {
   private final static String                       IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
   private final static String                       SOURCE_DIR_ARG                 = "sourceDirs";
   private final static String                       MUTATIONS_ARG                  = "mutations";
-  private final static String                       DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
   private final static String                       CHILD_JVM_ARGS                 = "jvmArgs";
   private final static String                       MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
   private final static String                       THREADS_ARG                    = "threads";
@@ -53,7 +52,6 @@ public class OptionsParser {
   private final OptionSpec<String>                  targetTestsSpec;
   private final OptionSpec<String>                  inScopeClassesSpec;
   private final OptionSpec<String>                  loggingClassesSpec;
-  private final OptionSpec<Integer>                 depth;
   private final OptionSpec<Integer>                 threadsSpec;
   private final OptionSpec<File>                    sourceDirSpec;
   private final OptionSpec<Mutator>                 mutators;
@@ -104,10 +102,6 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filter to match against classes to consider in scope");
-
-    this.depth = this.parser.accepts(DEPENDENCY_DISTANCE_ARG).withRequiredArg()
-        .ofType(Integer.class).defaultsTo(4)
-        .describedAs("maximum distance to look from test for covered classes");
 
     this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()
         .ofType(Integer.class).defaultsTo(1)
@@ -165,7 +159,6 @@ public class OptionsParser {
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
-    data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.setValid(validateArgs(userArgs));
     data.setShowHelp(userArgs.has("?"));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
