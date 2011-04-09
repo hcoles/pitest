@@ -100,14 +100,15 @@ public class MutationTestFinder implements TestUnitFinder {
 
     final ReportOptions data = new ReportOptions();
     data.setTargetClasses(FCollection.map(testeeNames, Glob.toGlobPredicate()));
-    data.setClassesInScope(FCollection.map(testeeNames, Glob.toGlobPredicate()));
+    data.setClassesInScope(FCollection.map(
+        Collections.singleton(clazz.getName()), Glob.toGlobPredicate()));
     // data.setTargetTests();
 
     final DefaultCoverageDatabase dcb = new DefaultCoverageDatabase(
         updatedConfig, this.classPath, this.javaAgentFinder, data);
     final List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(clazz);
-    final boolean allTestsGreen = dcb.initialise(classes);
+    final boolean allTestsGreen = dcb.initialise();
     if (allTestsGreen) {
 
       final ClassGrouping code = new ClassGrouping(testeeNames.iterator()

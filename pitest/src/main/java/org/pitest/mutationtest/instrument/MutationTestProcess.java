@@ -38,4 +38,10 @@ class MutationTestProcess extends WrappingProcess {
 
   }
 
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    this.output.delete();
+  }
+
 }
