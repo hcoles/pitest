@@ -110,7 +110,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     }
 
     final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
-        .mapCodeToTests(tests, groupedByOuterClass);
+        .mapCodeToTests(groupedByOuterClass);
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory

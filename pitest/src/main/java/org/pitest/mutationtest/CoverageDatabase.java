@@ -5,13 +5,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.FunctionalCollection;
 import org.pitest.mutationtest.instrument.CoverageSource;
 
 public interface CoverageDatabase {
 
   Map<ClassGrouping, List<String>> mapCodeToTests(
-      FunctionalCollection<Class<?>> tests,
       Map<String, ClassGrouping> groupedByOuterClass) throws IOException;
 
   boolean initialise(final Collection<Class<?>> tests);

@@ -6,6 +6,7 @@ import static org.pitest.util.Functions.classToName;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,8 +27,8 @@ import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
@@ -68,12 +69,17 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
-      final FunctionalCollection<Class<?>> tests,
       final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
+
+    final Set<Class<?>> uniqueDiscoveredTestClasses = new HashSet<Class<?>>();
+
+    FCollection.flatMap(this.times.keySet(), Prelude.id(Description.class),
+        uniqueDiscoveredTestClasses);
 
     // can't use coverage data if we are mutating static initializers
     // as only first test to use a class will appear to cover this code
-    return this.dependencyInfo.mapCodeToTests(tests, groupedByOuterClass);
+    return this.dependencyInfo.mapCodeToTests(uniqueDiscoveredTestClasses,
+        groupedByOuterClass);
 
   }
 

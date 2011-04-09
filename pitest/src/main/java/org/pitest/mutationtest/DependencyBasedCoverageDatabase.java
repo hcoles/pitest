@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
@@ -38,7 +37,7 @@ public class DependencyBasedCoverageDatabase {
   }
 
   public Map<ClassGrouping, List<String>> mapCodeToTests(
-      final FunctionalCollection<Class<?>> tests,
+      final Iterable<Class<?>> tests,
       final Map<String, ClassGrouping> groupedByOuterClass) throws IOException {
 
     final Map<ClassGrouping, List<String>> codeToTests = mapCodeToTests(
@@ -51,7 +50,7 @@ public class DependencyBasedCoverageDatabase {
   }
 
   private Collection<String> convertClassesToStrings(
-      final Collection<Class<?>> classes) {
+      final Iterable<Class<?>> classes) {
     return FCollection.map(classes, Functions.classToName());
   }
 
