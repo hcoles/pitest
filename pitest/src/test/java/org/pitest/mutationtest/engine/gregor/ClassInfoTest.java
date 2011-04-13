@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -14,24 +14,17 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import org.objectweb.asm.MethodVisitor;
+import static org.junit.Assert.assertTrue;
 
-public class InsnSubstitution implements ZeroOperandMutation {
+import org.junit.Test;
 
-  final int    replacementOpcode;
-  final String message;
+public class ClassInfoTest {
 
-  public InsnSubstitution(final int replacementOpcode, final String message) {
-    this.replacementOpcode = replacementOpcode;
-    this.message = message;
-  }
-
-  public void apply(final int opCode, final MethodVisitor mv) {
-    mv.visitInsn(this.replacementOpcode);
-  }
-
-  public String decribe(final int opCode, final MethodInfo methodInfo) {
-    return this.message;
+  @Test
+  public void shouldIdentifyEnumsFromSuperClass() {
+    final ClassInfo testee = new ClassInfo(0, 0, "foo", "", "java/lang/Enum",
+        null);
+    assertTrue(testee.isEnum());
   }
 
 }

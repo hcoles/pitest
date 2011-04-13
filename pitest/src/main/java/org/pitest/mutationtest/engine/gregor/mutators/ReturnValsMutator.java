@@ -87,8 +87,9 @@ class ReturnValsMethodVisitor extends InsnMutator {
         mv.visitInsn(Opcodes.ARETURN);
       }
 
-      public String decribe(final int opCode) {
-        return "mutated return of Object value";
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "mutated return of Object value for "
+            + methodInfo.getDescription();
       }
 
     };
@@ -103,8 +104,9 @@ class ReturnValsMethodVisitor extends InsnMutator {
         mv.visitInsn(opcode);
       }
 
-      public String decribe(final int opCode) {
-        return "replaced return of long value with value + 1";
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return of long value with value + 1 for "
+            + methodInfo.getDescription();
       }
 
     };
@@ -132,8 +134,9 @@ class ReturnValsMethodVisitor extends InsnMutator {
         mv.visitInsn(Opcodes.FRETURN);
       }
 
-      public String decribe(final int opCode) {
-        return "replaced return of float value with -(x + 1)";
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return of float value with -(x + 1) for "
+            + methodInfo.getDescription();
       }
 
     };
@@ -161,8 +164,9 @@ class ReturnValsMethodVisitor extends InsnMutator {
         mv.visitInsn(Opcodes.DRETURN);
       }
 
-      public String decribe(final int opCode) {
-        return "replaced return of double value with -(x + 1)";
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return of double value with -(x + 1) for "
+            + methodInfo.getDescription();
       }
 
     };
@@ -181,7 +185,7 @@ class ReturnValsMethodVisitor extends InsnMutator {
         mv.visitInsn(Opcodes.IRETURN);
       }
 
-      public String decribe(final int opCode) {
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of integer sized value with (x == 0 ? 1 : 0)";
       }
 
