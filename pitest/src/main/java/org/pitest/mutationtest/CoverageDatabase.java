@@ -15,6 +15,6 @@ public interface CoverageDatabase {
 
   CoverageSource getCoverage(ClassGrouping code, List<String> tests);
 
-  Collection<String> getClassesWithoutATest();
+  Collection<String> getParentClassesWithoutATest();
 
 }

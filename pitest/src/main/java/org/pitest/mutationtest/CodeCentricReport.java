@@ -86,7 +86,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     staticConfig.addTestListener(new ConsoleResultListener());
 
     reportFailureForClassesWithoutTests(
-        coverageDatabase.getClassesWithoutATest(), mutationReportListener);
+        coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
 
     final List<TestUnit> tus = createMutationTestUnits(codeToTests,
         initialConfig, coverageDatabase);

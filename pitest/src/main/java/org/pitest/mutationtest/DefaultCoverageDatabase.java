@@ -5,6 +5,7 @@ import static org.pitest.functional.FCollection.flatMap;
 import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.isEqualTo;
+import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Functions.stringToClass;
@@ -382,9 +383,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     };
   }
 
-  public Collection<String> getClassesWithoutATest() {
-    final FunctionalList<String> codeClassNames = FCollection.map(
-        this.codeClasses, Functions.classToName());
+  public Collection<String> getParentClassesWithoutATest() {
+    final FunctionalList<String> codeClassNames = FCollection
+        .filter(this.codeClasses, not(Functions.isInnerClass()))
+        .map(Functions.classToName()).map(Functions.classNameToJVMClassName());
     return codeClassNames.filter(Prelude.not(hasTest()));
   }
 
