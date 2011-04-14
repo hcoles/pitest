@@ -9,12 +9,11 @@ import org.pitest.mutationtest.instrument.CoverageSource;
 
 public interface CoverageDatabase {
 
-  Map<ClassGrouping, List<String>> mapCodeToTests() throws IOException;
+  Map<ClassGrouping, List<String>> mapCodeToTests(
+      Map<String, ClassGrouping> groupedByOuterClass) throws IOException;
 
-  boolean initialise();
+  boolean initialise(final Collection<Class<?>> tests);
 
   CoverageSource getCoverage(ClassGrouping code, List<String> tests);
-
-  Collection<String> getClassesWithoutATest();
 
 }
