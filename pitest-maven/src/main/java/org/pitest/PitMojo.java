@@ -82,6 +82,14 @@ public class PitMojo extends AbstractMojo {
   private File                  reportsDirectory;
 
   /**
+   * Maximum distance to look from test to class. Relevant when mutating static
+   * initializers
+   * 
+   * @parameter
+   */
+  private int                   maxDependencyDistance;
+
+  /**
    * Number of threads to use
    * 
    * @parameter default-value="1"
@@ -182,6 +190,7 @@ public class PitMojo extends AbstractMojo {
 
     final ReportOptions data = new ReportOptions();
     data.setClassPathElements(classPath);
+    data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
     data.setIncludeJarFiles(this.includeJarFiles);
 
     data.setTargetClasses(determineTargetClasses());
