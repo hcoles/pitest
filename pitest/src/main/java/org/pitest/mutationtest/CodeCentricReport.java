@@ -14,23 +14,11 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.FCollection.filter;
-import static org.pitest.functional.FCollection.flatMap;
-import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.FCollection.map;
-import static org.pitest.functional.Prelude.and;
-import static org.pitest.functional.Prelude.id;
-import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Functions.jvmClassToClassName;
-import static org.pitest.util.Functions.stringToClass;
-import static org.pitest.util.TestInfo.isWithinATestClass;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,20 +39,12 @@ import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.extension.common.SuppressMutationTestFinding;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalCollection;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
-import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
-import org.pitest.reflection.Reflection;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 
@@ -83,34 +63,20 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final long t0 = System.currentTimeMillis();
 
-    final Collection<Class<?>> completeClassPath = flatMap(completeClassPath(),
-        stringToClass());
-
-    @SuppressWarnings("unchecked")
-    final FunctionalCollection<Class<?>> tests = flatMap(
-        completeClassPathForTests(), stringToClass()).filter(
-        and(isWithinATestClass(), isNotAbstract()));
-
-    final List<Class<?>> codeClasses = filter(
-        extractCodeClasses(completeClassPath, tests),
-        convertStringToClassFilter(this.data.getTargetClassesFilter()));
-
-    final Map<String, ClassGrouping> groupedByOuterClass = groupByOuterClass(codeClasses);
-
     final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
         new JUnitCompatibleConfiguration());
     initialConfig.setMutationTestFinder(new SuppressMutationTestFinding());
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
 
-    if (!coverageDatabase.initialise(tests)) {
+    if (!coverageDatabase.initialise()) {
       throw new PitError(
           "All tests did not pass without mutation when calculating coverage.");
 
     }
 
     final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
-        .mapCodeToTests(groupedByOuterClass);
+        .mapCodeToTests();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -120,7 +86,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     staticConfig.addTestListener(new ConsoleResultListener());
 
     reportFailureForClassesWithoutTests(
-        classesWithoutATest(codeClasses, codeToTests), mutationReportListener);
+        coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
 
     final List<TestUnit> tus = createMutationTestUnits(codeToTests,
         initialConfig, coverageDatabase);
@@ -133,26 +99,6 @@ public class CodeCentricReport extends MutationCoverageReport {
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeToTests.size()
         + " classes.");
 
-  }
-
-  private Iterable<String> completeClassPathForTests() {
-    return FCollection.filter(completeClassPath(),
-        this.data.getTargetTestsFilter());
-  }
-
-  private Collection<String> completeClassPath() {
-    return getClassPath().getLocalDirectoryComponent().findClasses(
-        this.data.getClassesInScopeFilter());
-  }
-
-  private Predicate<Class<?>> isNotAbstract() {
-    return new Predicate<Class<?>>() {
-
-      public Boolean apply(final Class<?> a) {
-        return !a.isInterface() && !Modifier.isAbstract(a.getModifiers());
-      }
-
-    };
   }
 
   private Container createContainer() {
@@ -179,60 +125,6 @@ public class CodeCentricReport extends MutationCoverageReport {
 
   private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
-  }
-
-  private F<Class<?>, Boolean> convertStringToClassFilter(
-      final Predicate<String> predicate) {
-    return new F<Class<?>, Boolean>() {
-
-      public Boolean apply(final Class<?> a) {
-        return predicate.apply(a.getName());
-      }
-
-    };
-  }
-
-  private Map<String, ClassGrouping> groupByOuterClass(
-      final Collection<Class<?>> classes) {
-    final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
-    forEach(classes, addToMapIfTopLevelClass(group));
-
-    forEach(classes, addToParentGrouping(group));
-
-    return group;
-
-  }
-
-  private SideEffect1<Class<?>> addToMapIfTopLevelClass(
-      final Map<String, ClassGrouping> map) {
-    return new SideEffect1<Class<?>>() {
-
-      public void apply(final Class<?> clazz) {
-        if (Reflection.isTopClass(clazz)) {
-          map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
-              Collections.<String> emptyList()));
-        }
-      }
-
-    };
-  }
-
-  private SideEffect1<Class<?>> addToParentGrouping(
-      final Map<String, ClassGrouping> map) {
-    return new SideEffect1<Class<?>>() {
-
-      public void apply(final Class<?> a) {
-        final Option<Class<?>> parent = Reflection.getParentClass(a);
-        if (parent.hasSome()) {
-          final ClassGrouping grouping = map.get(parent.value().getName());
-          if (grouping != null) {
-            grouping.addChild(a);
-          }
-        }
-
-      }
-
-    };
   }
 
   private List<TestUnit> createMutationTestUnits(
@@ -267,27 +159,6 @@ public class CodeCentricReport extends MutationCoverageReport {
         this.javaAgentFinder, coverageSource,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()));
-  }
-
-  private List<Class<?>> extractCodeClasses(final Collection<Class<?>> targets,
-      final Collection<Class<?>> tests) {
-    final List<Class<?>> cs = new ArrayList<Class<?>>();
-    cs.addAll(targets);
-    cs.removeAll(tests);
-    return cs;
-  }
-
-  private Collection<String> classesWithoutATest(
-      final List<Class<?>> codeClasses,
-      final Map<ClassGrouping, List<String>> codeToTests) {
-    final FunctionalList<String> codeWithTests = FCollection.flatMap(
-        codeToTests.keySet(), id(ClassGrouping.class));
-
-    final FunctionalList<String> classesWithoutTest = FCollection.map(
-        codeClasses, classToName());
-    classesWithoutTest.removeAll(codeWithTests);
-    return classesWithoutTest;
-
   }
 
 }

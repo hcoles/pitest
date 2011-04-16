@@ -95,8 +95,8 @@ public abstract class MutationCoverageReport implements Runnable {
     final SideEffect1<String> reportFailure = new SideEffect1<String>() {
       public void apply(final String a) {
         final TestResult tr = new ExtendedTestResult(null, null,
-            new UnRunnableMutationTestMetaData(
-                "Could not determine a Test class for " + a));
+            new UnRunnableMutationTestMetaData("Could not find any tests for "
+                + a));
         mutationReportListener.onTestFailure(tr);
       }
 

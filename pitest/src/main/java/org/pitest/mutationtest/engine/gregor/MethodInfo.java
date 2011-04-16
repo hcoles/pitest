@@ -38,6 +38,10 @@ public class MethodInfo {
     this.exceptions = exceptions;
   }
 
+  public String getDescription() {
+    return getOwner() + "::" + getName();
+  }
+
   public String getOwner() {
     return this.owner;
   }
@@ -69,6 +73,10 @@ public class MethodInfo {
         + this.name + ", signature=" + this.signature + "]";
   }
 
+  public boolean isStatic() {
+    return ((this.access & Opcodes.ACC_STATIC) != 0);
+  }
+
   public boolean isSynthetic() {
     return ((this.access & Opcodes.ACC_SYNTHETIC) != 0);
   }
@@ -91,6 +99,14 @@ public class MethodInfo {
 
   public Boolean isStaticInitializer() {
     return "<clinit>".equals(this.name);
+  }
+
+  public boolean isVoid() {
+    return isVoid(this.desc);
+  }
+
+  public boolean takesNoParameters() {
+    return this.desc.startsWith("()");
   }
 
 }

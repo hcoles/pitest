@@ -14,11 +14,15 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
 
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
@@ -76,6 +80,35 @@ public class TestGregorMutater extends MutatorTestBase {
     final FunctionalList<MutationDetails> actualDetails = findMutationsFor(VeryMutable.class);
     assertTrue(actualDetails.isEmpty());
 
+  }
+
+  static enum AnEnum {
+    Foo, Bar;
+  }
+
+  @Test
+  public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
+    createTesteeWith(Mutator.values());
+    final Collection<MutationDetails> actualDetails = findMutationsFor(AnEnum.class);
+    assertTrue(actualDetails.isEmpty());
+  }
+
+  static enum EnumWithCustomConstructor {
+    Foo, Bar;
+
+    int i;
+
+    EnumWithCustomConstructor() {
+      this.i++;
+    }
+
+  }
+
+  @Test
+  public void shouldMutateCustomConstructorsAddedToEnums() {
+    createTesteeWith(Mutator.values());
+    final Collection<MutationDetails> actualDetails = findMutationsFor(EnumWithCustomConstructor.class);
+    assertFalse(actualDetails.isEmpty());
   }
 
 }

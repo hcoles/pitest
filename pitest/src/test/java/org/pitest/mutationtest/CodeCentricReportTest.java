@@ -37,6 +37,15 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   @Test
+  public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageDataWhenLimitedByClassReach() {
+    this.data.setDependencyAnalysisMaxDistance(2);
+    this.data.setTargetTests(predicateFor("com.example.*FullyCovered*"));
+    this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
+    createAndRun();
+    verifyResults(KILLED);
+  }
+
+  @Test
   public void shouldReportSurvivingMutations() {
     this.data.setTargetClasses(predicateFor("com.example.PartiallyCovered*"));
     createAndRun();

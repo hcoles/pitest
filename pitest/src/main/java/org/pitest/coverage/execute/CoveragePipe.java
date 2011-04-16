@@ -36,7 +36,7 @@ public class CoveragePipe implements CoverageReceiver {
     try {
       this.dos.writeByte(TEST_CHANGE);
       this.dos.writeInt(testIndex);
-      ;
+
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
