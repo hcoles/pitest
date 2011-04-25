@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -12,14 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.coverage.domain;
 
-package org.pitest.mutationtest;
+public class TestInfo {
 
-import org.pitest.extension.TestListener;
+  private final String name;
+  private final long   time;
 
-public interface ListenerFactory {
+  public TestInfo(final String name, final long time) {
+    this.name = name;
+    this.time = time;
+  }
 
-  public TestListener getListener(CoverageDatabase coverage,
-      ReportOptions data, long startTime);
+  public String getName() {
+    return this.name;
+  }
+
+  public long getTime() {
+    return this.time;
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
+  }
 
 }

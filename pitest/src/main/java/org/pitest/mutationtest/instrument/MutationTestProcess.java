@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.util.InputStreamLineIterable;
@@ -24,16 +26,24 @@ class MutationTestProcess extends WrappingProcess {
   }
 
   protected void results(
-      final Map<MutationIdentifier, DetectionStatus> allmutations)
+      final Map<MutationDetails, DetectionStatus> allmutations)
       throws FileNotFoundException, IOException {
 
     final FileReader fr = new FileReader(this.output);
-    final ResultsReader rr = new ResultsReader(allmutations);
+    final Map<MutationIdentifier, DetectionStatus> idMap = new HashMap<MutationIdentifier, DetectionStatus>();
+    final ResultsReader rr = new ResultsReader(idMap);
     try {
       final InputStreamLineIterable li = new InputStreamLineIterable(fr);
       li.forEach(rr);
     } finally {
       fr.close();
+    }
+
+    for (final MutationDetails each : allmutations.keySet()) {
+      final DetectionStatus status = idMap.get(each.getId());
+      if (status != null) {
+        allmutations.put(each, status);
+      }
     }
 
   }

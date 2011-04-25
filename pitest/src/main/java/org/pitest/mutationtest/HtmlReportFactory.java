@@ -21,9 +21,10 @@ import org.pitest.mutationtest.report.SmartSourceLocator;
 
 public class HtmlReportFactory implements ListenerFactory {
 
-  public TestListener getListener(final ReportOptions data, final long startTime) {
-    return new MutationHtmlReportListener(startTime, data.getReportDir(),
-        new SmartSourceLocator(data.getSourceDirs()));
+  public TestListener getListener(final CoverageDatabase coverage,
+      final ReportOptions data, final long startTime) {
+    return new MutationHtmlReportListener(coverage, startTime,
+        data.getReportDir(), new SmartSourceLocator(data.getSourceDirs()));
   }
 
 }

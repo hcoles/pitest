@@ -34,7 +34,6 @@ import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.adapter.PITJUnitRunner;
 import org.pitest.mutationtest.MutationTest;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 
 @RunWith(PITJUnitRunner.class)
 @MutationTest(threshold = 66, jvmArgs = { "-Xmx256m", "-Xms256m" })
@@ -64,8 +63,7 @@ public class TopLevelSuite extends DefaultStaticConfig {
 
   @Override
   public Collection<TestListener> getTestListeners() {
-    return Arrays.asList(ConsoleResultListener.instance(),
-        new MutationHtmlReportListener());
+    return Arrays.<TestListener> asList(ConsoleResultListener.instance());
   }
 
 }

@@ -16,15 +16,12 @@
 package org.pitest.mutationtest.instrument;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.pitest.extension.TestUnit;
+import org.pitest.coverage.domain.TestInfo;
+import org.pitest.mutationtest.MutationDetails;
 
 public interface CoverageSource {
 
-  Statistics getStatistics(List<TestUnit> tests,
-      Collection<String> classesToMutate);
-
-  List<TestUnit> getTests(ClassLoader loader);
+  Collection<TestInfo> getTestsForMutant(MutationDetails mutation);
 
 }

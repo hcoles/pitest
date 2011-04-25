@@ -32,8 +32,8 @@ public abstract class ReportTestBase {
   protected ListenerFactory listenerFactory() {
     return new ListenerFactory() {
 
-      public TestListener getListener(final ReportOptions data,
-          final long startTime) {
+      public TestListener getListener(final CoverageDatabase coverage,
+          final ReportOptions data, final long startTime) {
         return ReportTestBase.this.metaDataExtractor;
       }
 

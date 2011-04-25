@@ -28,6 +28,7 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.ExitingResultCollector;
+import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -44,37 +45,41 @@ public class MutationTestWorker extends AbstractWorker {
     super(hotswap, mutater, loader);
   }
 
-  protected void run(final Collection<MutationIdentifier> range,
-      final Reporter r, final TimeOutDecoratedTestSource testSource)
-      throws IOException, ClassNotFoundException {
+  protected void run(final Collection<MutationDetails> range, final Reporter r,
+      final TimeOutDecoratedTestSource testSource) throws IOException,
+      ClassNotFoundException {
 
     // System.out.println("Mutating class " + classesToMutate);
 
-    for (final MutationIdentifier i : range) {
+    for (final MutationDetails i : range) {
       LOG.info("Running mutation " + i);
       final long t0 = System.currentTimeMillis();
-      processMutation(range, r, testSource, i);
+      processMutation(r, testSource, i);
       LOG.fine("processed mutation in " + (System.currentTimeMillis() - t0)
           + " ms.");
     }
 
   }
 
-  private void processMutation(final Collection<MutationIdentifier> range,
-      final Reporter r, final TimeOutDecoratedTestSource testSource,
-      final MutationIdentifier i) throws IOException, ClassNotFoundException {
+  private void processMutation(final Reporter r,
+      final TimeOutDecoratedTestSource testSource,
+      final MutationDetails mutationDetails) throws IOException,
+      ClassNotFoundException {
 
-    final Mutant mutatedClass = this.mutater.getMutation(i);
+    final MutationIdentifier mutationId = mutationDetails.getId();
+    final Mutant mutatedClass = this.mutater.getMutation(mutationId);
 
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
-    final List<TestUnit> relevantTests = testSource.pickTests(mutatedClass);
+    final List<TestUnit> relevantTests = testSource
+        .translateTests(mutationDetails.getTestsInOrder());
+    // pickTests(mutatedClass);
 
-    r.describe(i, relevantTests.size(), mutatedClass);
+    r.describe(mutationId, relevantTests.size(), mutatedClass);
 
     DetectionStatus mutationDetected = DetectionStatus.SURVIVED;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
-      LOG.info("No test coverage for mutation  " + i + " in "
+      LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
     } else {
       LOG.info("" + relevantTests.size() + " relevant test for "
@@ -82,26 +87,26 @@ public class MutationTestWorker extends AbstractWorker {
 
       final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
       final Container c = createNewContainer(activeloader);
-      final Class<?> testee = Class.forName(i.getClazz(), false, activeloader);
+      final Class<?> testee = Class.forName(mutationId.getClazz(), false,
+          activeloader);
 
       final Transformation t = new LoopBreakTransformation();
       final long t0 = System.currentTimeMillis();
       if (this.hotswap.apply(testee,
-          t.transform(i.getClazz(), mutatedClass.getBytes()))) {
+          t.transform(mutationId.getClazz(), mutatedClass.getBytes()))) {
         LOG.fine("replaced class with mutant in "
             + (System.currentTimeMillis() - t0) + " ms");
         mutationDetected = doTestsDetectMutation(c, relevantTests);
       } else {
-        LOG.info("Mutation " + i + " of " + range.size() + " was not viable ");
+        LOG.info("Mutation " + mutationId + " was not viable ");
         mutationDetected = DetectionStatus.NON_VIABLE;
       }
 
     }
 
-    r.report(i, mutationDetected);
+    r.report(mutationId, mutationDetected);
 
-    LOG.info("Mutation " + i + " of " + range.size() + " detected = "
-        + mutationDetected);
+    LOG.info("Mutation " + mutationId + " detected = " + mutationDetected);
   }
 
   private Container createNewContainer(final ClassLoader activeloader) {

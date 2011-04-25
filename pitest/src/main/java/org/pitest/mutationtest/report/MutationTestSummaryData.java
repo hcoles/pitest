@@ -16,34 +16,25 @@ package org.pitest.mutationtest.report;
 
 import java.util.Collection;
 
-import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Prelude;
 
 public class MutationTestSummaryData {
 
   public enum MutationTestType {
     CODE_CENTRIC(new F<MutationTestSummaryData, Collection<String>>() {
       public Collection<String> apply(final MutationTestSummaryData a) {
-        return FCollection.map(a.mutatedClasses, classInfoToName());
+        return a.mutatedClasses;
       }
 
-      private F<ClassInfo, String> classInfoToName() {
-        return new F<ClassInfo, String>() {
-
-          public String apply(final ClassInfo a) {
-
-            return a.getName();
-          }
-
-        };
-      }
     }),
 
     TEST_CENTRIC(new F<MutationTestSummaryData, Collection<String>>() {
 
       public Collection<String> apply(final MutationTestSummaryData a) {
-        return a.testClasses;
+        return FCollection.map(a.testClasses, Prelude.asString());
       }
     });
 
@@ -65,15 +56,15 @@ public class MutationTestSummaryData {
 
   }
 
-  private final MutationTestType      runType;
-  private final Collection<ClassInfo> mutatedClasses;
-  private final Collection<String>    testClasses;
-  private final Integer               mutationCoverage;
-  private final Integer               lineCoverage;
+  private final MutationTestType     runType;
+  private final Collection<String>   mutatedClasses;
+  private final Collection<TestInfo> testClasses;
+  private final Integer              mutationCoverage;
+  private final Integer              lineCoverage;
 
   public MutationTestSummaryData(final MutationTestType runType,
-      final Collection<ClassInfo> mutatedClasses,
-      final Collection<String> testClasses, final Integer mutationCoverage,
+      final Collection<String> mutatedClasses,
+      final Collection<TestInfo> testClasses, final Integer mutationCoverage,
       final Integer lineCoverage) {
     this.runType = runType;
     this.mutatedClasses = mutatedClasses;
@@ -93,11 +84,11 @@ public class MutationTestSummaryData {
     }
   }
 
-  public Collection<ClassInfo> getMutatedClasses() {
+  public Collection<String> getMutatedClasses() {
     return this.mutatedClasses;
   }
 
-  public Collection<String> getTestClasses() {
+  public Collection<TestInfo> getTestClasses() {
     return this.testClasses;
   }
 

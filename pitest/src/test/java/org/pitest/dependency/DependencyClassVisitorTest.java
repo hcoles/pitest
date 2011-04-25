@@ -103,10 +103,6 @@ public class DependencyClassVisitorTest {
     final byte[] bytes = this.cp.getClassData(clazz.getName());
     final ClassReader reader = new ClassReader(bytes);
     reader.accept(this.testee, 0);
-
-    for (final DependencyAccess each : this.gatheredAccess) {
-      System.out.println(each.getSource() + " -> " + each.getDest());
-    }
   }
 
   private Set<String> classesToNames(final Class<?>... classes) {

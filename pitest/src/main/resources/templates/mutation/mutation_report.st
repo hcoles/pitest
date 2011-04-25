@@ -55,7 +55,7 @@ $mutators : { mutator |
 
 <h2>Tests examined</h2>
 <ul>
-$tests:{ test | <li>$test.description$</li>}$
+$tests:{ test | <li>$test.name$ ($test.time$ ms)</li>}$
 </ul>
 
 <br/>

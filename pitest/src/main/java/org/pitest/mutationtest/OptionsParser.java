@@ -106,7 +106,7 @@ public class OptionsParser {
             "comma seperated list of filter to match against classes to consider in scope");
 
     this.depth = this.parser.accepts(DEPENDENCY_DISTANCE_ARG).withRequiredArg()
-        .ofType(Integer.class).defaultsTo(4)
+        .ofType(Integer.class).defaultsTo(-1)
         .describedAs("maximum distance to look from test for covered classes");
 
     this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()

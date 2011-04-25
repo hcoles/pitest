@@ -30,10 +30,6 @@ public class Statistics {
   private final Map<TestUnit, Long>            testUnitToExecutionTimeMap;
   private final boolean                        testsRunGreen;
 
-  public boolean hasCoverageData() {
-    return this.lineNumberToCoveringTestsMap != null;
-  }
-
   public Statistics(final boolean testRunGreen,
       final Map<TestUnit, Long> times,
       final Map<ClassLine, List<TestUnit>> stats) {

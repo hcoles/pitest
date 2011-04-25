@@ -15,113 +15,79 @@
 
 package org.pitest.mutationtest.instrument;
 
-import static org.pitest.functional.Prelude.putToMap;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.pitest.Description;
-import org.pitest.Pitest;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.TestFilter;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
-import org.pitest.util.Functions;
-import org.pitest.util.MemoryEfficientHashMap;
+import org.pitest.mutationtest.MutationDetails;
+import org.pitest.util.Log;
 
 public class DefaultCoverageSource implements CoverageSource {
 
+  private final static Logger                    LOG = Log.getLogger();
+
   private final Map<String, Long>                timings;
   private final Map<ClassLine, Set<Description>> coverageByTestUnit;
-  protected final Configuration                  pitConfig;
-  protected final Collection<String>             testClasses = new ArrayList<String>();
 
-  public DefaultCoverageSource(final Collection<String> tests,
-      final Configuration pitConfig, final Map<String, Long> timings,
+  public DefaultCoverageSource(final Map<String, Long> timings,
       final Map<ClassLine, Set<Description>> coverageByTestUnit) {
-    this.testClasses.addAll(tests);
 
-    this.pitConfig = pitConfig;
     this.timings = timings;
     this.coverageByTestUnit = coverageByTestUnit;
   }
 
-  public Statistics getStatistics(final List<TestUnit> tests,
-      final Collection<String> classesToMutate) {
-    final Statistics stats = new Statistics(true, matchTestsToTimes(tests),
-        relevantCoverage(tests, classesToMutate));
-    return stats;
-  }
+  public Collection<TestInfo> getTestsForMutant(final MutationDetails mutation) {
+    if (!mutation.isInStaticInitializer()) {
+      final Set<Description> tests = this.coverageByTestUnit.get(mutation
+          .getClassLine());
+      final Set<TestInfo> testInfos = new TreeSet<TestInfo>(timeComparator());
+      FCollection.map(tests, descriptionToTestInfo(), testInfos);
+      return testInfos;
+    } else {
+      LOG.warning("Using untargeted tests");
 
-  public List<TestUnit> getTests(final ClassLoader loader) {
-    return findTestUnits(loader);
-  }
+      return FCollection.map(this.timings.entrySet(), entryToTestInfo());
 
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
-        Functions.stringToClass(loader));
-    // FIXME we do not apply any test filters. Is this what the user
-    // expects?
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tcs.toArray(new Class<?>[tcs.size()]));
-  }
-
-  private Map<ClassLine, List<TestUnit>> relevantCoverage(
-      final List<TestUnit> tests, final Collection<String> classesToMutate) {
-    final Map<ClassLine, List<TestUnit>> result = new MemoryEfficientHashMap<ClassLine, List<TestUnit>>();
-    for (final Entry<ClassLine, Set<Description>> each : this.coverageByTestUnit
-        .entrySet()) {
-
-      if (classesToMutate.contains(each.getKey().getClassName())) {
-        result.put(each.getKey(),
-            matchDescriptionaToTestUnit(each.getValue(), tests));
-      }
     }
 
-    return result;
-
   }
 
-  private List<TestUnit> matchDescriptionaToTestUnit(
-      final Set<Description> descriptions, final List<TestUnit> tests) {
+  private Comparator<TestInfo> timeComparator() {
+    return new Comparator<TestInfo>() {
 
-    return FCollection.filter(tests, matchesOneOf(descriptions));
-
-  }
-
-  private F<TestUnit, Boolean> matchesOneOf(final Set<Description> descriptions) {
-    return new F<TestUnit, Boolean>() {
-
-      public Boolean apply(final TestUnit a) {
-
-        final boolean match = descriptions.contains(a.getDescription());
-        return match;
-
+      public int compare(final TestInfo arg0, final TestInfo arg1) {
+        final Long t0 = arg0.getTime();
+        final Long t1 = arg1.getTime();
+        return t0.compareTo(t1);
       }
 
     };
   }
 
-  private Map<TestUnit, Long> matchTestsToTimes(final List<TestUnit> tests) {
-    final Map<TestUnit, Long> map = new MemoryEfficientHashMap<TestUnit, Long>();
-    FCollection.forEach(tests, putToMap(map, testUnitToTime()));
-    return map;
+  private F<Entry<String, Long>, TestInfo> entryToTestInfo() {
+    return new F<Entry<String, Long>, TestInfo>() {
+
+      public TestInfo apply(final Entry<String, Long> a) {
+        return new TestInfo(a.getKey(), a.getValue());
+      }
+
+    };
   }
 
-  private F<TestUnit, Long> testUnitToTime() {
-    return new F<TestUnit, Long>() {
-      public Long apply(final TestUnit a) {
-        return DefaultCoverageSource.this.timings.get(a.getDescription()
-            .toString());
+  private F<Description, TestInfo> descriptionToTestInfo() {
+    return new F<Description, TestInfo>() {
+
+      public TestInfo apply(final Description a) {
+        final long time = DefaultCoverageSource.this.timings.get(a.toString());
+        return new TestInfo(a.toString(), time);
       }
 
     };

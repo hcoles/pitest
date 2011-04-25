@@ -37,10 +37,6 @@ public class DirectorySourceLocator implements SourceLocator {
     this.root = root;
   }
 
-  public static DirectorySourceLocator dir(final String root) {
-    return new DirectorySourceLocator(root);
-  }
-
   public Option<Reader> locate(final Collection<String> classes,
       final String fileName) {
     final F<String, Iterable<Reader>> f = new F<String, Iterable<Reader>>() {

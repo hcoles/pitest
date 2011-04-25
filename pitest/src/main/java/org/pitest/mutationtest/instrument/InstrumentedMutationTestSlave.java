@@ -80,8 +80,7 @@ public class InstrumentedMutationTestSlave {
               .getContextClassLoader()), IsolationUtils.getContextClassLoader());
 
       worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          paramsFromParent.stats, paramsFromParent.timeoutStrategy,
-          paramsFromParent.tests));
+          paramsFromParent.timeoutStrategy, paramsFromParent.tests));
 
     } catch (final Exception ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);

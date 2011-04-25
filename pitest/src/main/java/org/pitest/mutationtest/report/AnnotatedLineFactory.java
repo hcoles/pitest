@@ -24,21 +24,21 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
+import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
-import org.pitest.mutationtest.instrument.Statistics;
 import org.pitest.util.InputStreamLineIterable;
 import org.pitest.util.StringUtil;
 
 public class AnnotatedLineFactory {
 
   private final FunctionalIterable<MutationResult> mutations;
-  private final Statistics                         statistics;
+  private final CoverageDatabase                   statistics;
   private final Collection<ClassInfo>              classesInFile;
 
   public AnnotatedLineFactory(
       final FunctionalIterable<MutationResult> mutations,
-      final Statistics statistics, final Collection<ClassInfo> classes) {
+      final CoverageDatabase statistics, final Collection<ClassInfo> classes) {
     this.mutations = mutations;
     this.statistics = statistics;
     this.classesInFile = classes;

@@ -14,6 +14,11 @@
  */
 package org.pitest.mutationtest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.StringUtil;
@@ -25,6 +30,7 @@ public class MutationDetails {
   private final String             filename;
   private final int                lineNumber;
   private final String             description;
+  private final List<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final String method, final int lineNumber) {
@@ -42,7 +48,8 @@ public class MutationDetails {
 
   @Override
   public String toString() {
-    return this.method + " : " + this.lineNumber + " -> " + this.description;
+    return this.method + " : " + this.lineNumber + " -> " + this.description
+        + " (" + this.id.getIndex() + ")";
   }
 
   public String getDescription() {
@@ -75,6 +82,14 @@ public class MutationDetails {
 
   public MutationIdentifier getId() {
     return this.id;
+  }
+
+  public List<TestInfo> getTestsInOrder() {
+    return this.testsInOrder;
+  }
+
+  public void addTestsInOrder(final Collection<TestInfo> testNames) {
+    this.testsInOrder.addAll(testNames);
   }
 
   @Override

@@ -27,6 +27,8 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassInfoVisitor;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.execute.CoverageProcess;
 import org.pitest.coverage.execute.CoverageResult;
@@ -38,6 +40,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.FunctionalList;
@@ -59,20 +62,21 @@ import org.pitest.util.Unchecked;
 import org.pitest.util.WrappingProcess;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
-  private final static Logger                                 LOG           = Log
-                                                                                .getLogger();
+  private final static Logger                                 LOG             = Log
+                                                                                  .getLogger();
 
   private final Configuration                                 initialConfig;
   private final JavaAgent                                     javaAgentFinder;
   private final ClassPath                                     classPath;
   private final ReportOptions                                 data;
 
-  private final Map<String, Map<ClassLine, Set<Description>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<Description>>>();
-  private final Map<Description, Long>                        times         = new MemoryEfficientHashMap<Description, Long>();
+  private final Map<String, ClassInfo>                        nameToClassInfo = new MemoryEfficientHashMap<String, ClassInfo>();
+  private final Map<String, Map<ClassLine, Set<Description>>> classCoverage   = new MemoryEfficientHashMap<String, Map<ClassLine, Set<Description>>>();
+  private final Map<Description, Long>                        times           = new MemoryEfficientHashMap<Description, Long>();
 
   private List<Class<?>>                                      codeClasses;
   private Map<String, ClassGrouping>                          groupedByOuterClass;
-  private boolean                                             allTestsGreen = true;
+  private boolean                                             allTestsGreen   = true;
 
   public DefaultCoverageDatabase(final Configuration initialConfig,
       final ClassPath classPath, final JavaAgent javaAgentFinder,
@@ -102,10 +106,41 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         extractCodeClasses(completeClassPath, uniqueDiscoveredTestClasses),
         convertStringToClassFilter(this.data.getTargetClassesFilter()));
 
+    analyseClasses();
+
     this.groupedByOuterClass = groupByOuterClass(this.codeClasses);
 
     return this.allTestsGreen;
 
+  }
+
+  private void analyseClasses() {
+    for (final ClassInfo each : namesToClassInfo(this.codeClasses)) {
+      this.nameToClassInfo.put(each.getName(), each);
+    }
+  }
+
+  private Collection<ClassInfo> namesToClassInfo(
+      final Collection<Class<?>> classes) {
+    return FCollection.flatMap(classes, nameToClassInfo());
+  }
+
+  private F<Class<?>, Option<ClassInfo>> nameToClassInfo() {
+    return new F<Class<?>, Option<ClassInfo>>() {
+
+      public Option<ClassInfo> apply(final Class<?> a) {
+        final ClassPathByteArraySource source = new ClassPathByteArraySource(
+            DefaultCoverageDatabase.this.classPath);
+        final Option<byte[]> bytes = source.apply(a.getName());
+        if (bytes.hasSome()) {
+          return Option.some(ClassInfoVisitor.getClassInfo(a.getName(),
+              bytes.value()));
+        } else {
+          return Option.none();
+        }
+      }
+
+    };
   }
 
   private Set<Class<?>> gatherUniqueClassesFromDescriptions(
@@ -201,7 +236,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private List<TestUnit> filterTestsByDependencyAnalysis(
       final List<TestUnit> tus) {
     final int maxDistance = this.data.getDependencyAnalysisMaxDistance();
-    if (maxDistance == 0) {
+    if (maxDistance <= 0) {
       return tus;
     } else {
       return FCollection.filter(tus, isWithinReach(maxDistance));
@@ -303,8 +338,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   public CoverageSource getCoverage(final ClassGrouping code,
       final List<String> tests) {
 
-    return new DefaultCoverageSource(tests, this.initialConfig,
-        getTimings(tests), coverageByTestUnit(code));
+    return new DefaultCoverageSource(getTimings(tests),
+        coverageByTestUnit(code));
   }
 
   private Map<ClassLine, Set<Description>> coverageByTestUnit(
@@ -462,6 +497,60 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       }
 
     };
+  }
+
+  public Collection<Description> getTestForLineNumber(final ClassLine classLine) {
+    return FCollection.flatMap(this.classCoverage.values(),
+        flattenMap(classLine));
+  }
+
+  private F<Map<ClassLine, Set<Description>>, Iterable<Description>> flattenMap(
+      final ClassLine classLine) {
+    return new F<Map<ClassLine, Set<Description>>, Iterable<Description>>() {
+
+      public Iterable<Description> apply(
+          final Map<ClassLine, Set<Description>> a) {
+        final Set<Description> value = a.get(classLine);
+        if (value != null) {
+          return value;
+        }
+        return Collections.emptySet();
+      }
+
+    };
+  }
+
+  public Collection<ClassInfo> getClassInfo(final Collection<String> classes) {
+    final Collection<ClassInfo> cis = new ArrayList<ClassInfo>();
+    for (final String each : classes) {
+      cis.add(this.nameToClassInfo.get(each));
+    }
+    return cis;
+  }
+
+  public int getNumberOfCoveredLines(final Collection<String> mutatedClass) {
+    return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
+  }
+
+  private F2<Integer, String, Integer> numberCoveredLines() {
+    return new F2<Integer, String, Integer>() {
+
+      public Integer apply(final Integer a, final String clazz) {
+        return a + getNumberOfCoveredLines(clazz);
+      }
+
+    };
+  }
+
+  public int getNumberOfCoveredLines(final String clazz) {
+    final Map<ClassLine, Set<Description>> map = this.classCoverage.get(clazz
+        .replace(".", "/"));
+    if (map != null) {
+      return map.size();
+    } else {
+      return 0;
+    }
+
   }
 
 }

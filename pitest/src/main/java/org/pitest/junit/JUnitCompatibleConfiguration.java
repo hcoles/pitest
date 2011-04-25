@@ -44,10 +44,6 @@ public class JUnitCompatibleConfiguration implements Configuration {
     return new CombinedJUnitTestFinder();
   }
 
-  public boolean allowConfigurationChange() {
-    return true;
-  }
-
   public TestSuiteFinder testSuiteFinder() {
     return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
         new PITStaticMethodSuiteFinder(), new JUnit4SuiteFinder(),

@@ -85,7 +85,7 @@ public class PitMojo extends AbstractMojo {
    * Maximum distance to look from test to class. Relevant when mutating static
    * initializers
    * 
-   * @parameter
+   * @parameter default-value="-1"
    */
   private int                   maxDependencyDistance;
 

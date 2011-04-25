@@ -16,34 +16,32 @@ package org.pitest.mutationtest.instrument;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.pitest.MetaData;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.extension.TestUnit;
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
-import org.pitest.mutationtest.report.MutationTestSummaryData;
+import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public class MutationMetaData implements MetaData {
 
   private final MutationConfig             config;
-  private final Collection<ClassInfo>      mutatedClasses;
+  private final Collection<String>         mutatedClasses;
   private final Collection<MutationResult> mutations;
-  private final Statistics                 stats;
+
+  // private final Statistics stats;
 
   protected MutationMetaData(final MutationConfig config,
-      final Collection<ClassInfo> mutatedClasses, final Statistics stats,
+      final Collection<String> collection,
       final Collection<MutationResult> mutations) {
     this.mutations = mutations;
-    this.mutatedClasses = mutatedClasses;
-    this.stats = stats;
+    this.mutatedClasses = collection;
+
     this.config = config;
   }
 
@@ -71,44 +69,8 @@ public class MutationMetaData implements MetaData {
     };
   }
 
-  public Collection<String> getTestClasses() {
-
-    final Set<String> uniqueTestClasses = new HashSet<String>();
-    final F2<Set<String>, TestUnit, Set<String>> f = new F2<Set<String>, TestUnit, Set<String>>() {
-      public Set<String> apply(final Set<String> a, final TestUnit b) {
-        a.addAll(b.getDescription().getTestClassNames());
-        return a;
-      }
-    };
-
-    return FCollection.fold(f, uniqueTestClasses, this.stats.getAllTests());
-  }
-
-  public MutationTestSummaryData getSummaryData() {
-    return new MutationTestSummaryData(this.config.getRunType(),
-        this.mutatedClasses, getTestClasses(),
-        this.getPercentageMutationCoverage(), getPercentageLineCoverage());
-  }
-
-  public int getPercentageLineCoverage() {
-
-    return Math.round(100f / getNumberOfCodeLines()
-        * this.stats.getNumberOfLinesWithCoverage());
-  }
-
-  private float getNumberOfCodeLines() {
-    return FCollection.fold(accumulateCodeLines(), 0, this.mutatedClasses);
-  }
-
-  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
-    // TODO Auto-generated method stub
-    return new F2<Integer, ClassInfo, Integer>() {
-
-      public Integer apply(final Integer a, final ClassInfo b) {
-        return a + b.getCodeLines().size();
-      }
-
-    };
+  public MutationTestType getRunType() {
+    return this.config.getRunType();
   }
 
   public int getNumberOfDetetectedMutations() {
@@ -134,13 +96,13 @@ public class MutationMetaData implements MetaData {
     return this.mutations;
   }
 
-  public Collection<ClassInfo> getMutatedClass() {
+  public Collection<String> getMutatedClass() {
     return this.mutatedClasses;
   }
 
-  public Statistics getStats() {
-    return this.stats;
-  }
+  // public Statistics getStats() {
+  // return this.stats;
+  // }
 
   public MutationConfig getConfig() {
     return this.config;
@@ -162,13 +124,12 @@ public class MutationMetaData implements MetaData {
     };
   }
 
-  public Collection<ClassInfo> getClassesForSourceFile(
-      final String sourceFileName) {
-    final Set<ClassInfo> classes = new HashSet<ClassInfo>();
-    final F<MutationResult, Iterable<ClassInfo>> f = new F<MutationResult, Iterable<ClassInfo>>() {
-      public Iterable<ClassInfo> apply(final MutationResult a) {
+  public Collection<String> getClassesForSourceFile(final String sourceFileName) {
+    final Set<String> classes = new HashSet<String>();
+    final F<MutationResult, Iterable<String>> f = new F<MutationResult, Iterable<String>>() {
+      public Iterable<String> apply(final MutationResult a) {
         if (a.details.getFilename().equals(sourceFileName)) {
-          return getClassInfo(a.details.getClazz());
+          return Option.some(a.details.getClazz());
         } else {
           return Option.none();
         }
@@ -180,16 +141,22 @@ public class MutationMetaData implements MetaData {
     return classes;
   }
 
-  private List<ClassInfo> getClassInfo(final String clazz) {
-    return FCollection.filter(this.mutatedClasses, nameIs(clazz));
+  // private List<ClassInfo> getClassInfo(final String clazz) {
+  // return FCollection.filter(this.mutatedClasses, nameIs(clazz));
+  // }
+
+  public Collection<TestInfo> getTargettedTests() {
+    final Set<TestInfo> uniqueTests = new HashSet<TestInfo>();
+    FCollection
+        .flatMap(this.mutations, mutationToTargettedTests(), uniqueTests);
+    return uniqueTests;
   }
 
-  private F<ClassInfo, Boolean> nameIs(final String clazz) {
-    return new F<ClassInfo, Boolean>() {
+  private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
+    return new F<MutationResult, Iterable<TestInfo>>() {
 
-      public Boolean apply(final ClassInfo a) {
-
-        return a.getName().equals(clazz);
+      public Iterable<TestInfo> apply(final MutationResult a) {
+        return a.details.getTestsInOrder();
       }
 
     };

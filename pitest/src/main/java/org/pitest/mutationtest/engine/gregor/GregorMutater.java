@@ -55,7 +55,7 @@ class GregorMutater implements Mutater {
   }
 
   public FunctionalList<MutationDetails> findMutations(
-      final Collection<String> classesToMutate) {
+      final Iterable<String> classesToMutate) {
     return FCollection.flatMap(classesToMutate, classToMutationDetails());
   }
 
@@ -180,12 +180,6 @@ class GregorMutater implements Mutater {
       }
 
     };
-  }
-
-  public Mutant getUnmodifiedClass(final String clazz) {
-    final MutationDetails details = new MutationDetails(
-        MutationIdentifier.unmutated(clazz), "", "unmutated", "none", -1);
-    return new Mutant(details, this.byteSource.apply(clazz).value());
   }
 
   public Set<MethodMutatorFactory> getMutators() {

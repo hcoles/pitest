@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.report;
 
-import static org.pitest.mutationtest.report.DirectorySourceLocator.dir;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -36,14 +34,14 @@ import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.MutationMetaData;
-import org.pitest.mutationtest.instrument.Statistics;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.FileUtil;
 
@@ -56,22 +54,14 @@ public class MutationHtmlReportListener implements TestListener {
   private final File                          reportDir;
   private final List<MutationTestSummaryData> summaryData   = new ArrayList<MutationTestSummaryData>();
   private final List<String>                  errors        = new ArrayList<String>();
+  private final CoverageDatabase              coverage;
 
-  public MutationHtmlReportListener() {
-    this(System.currentTimeMillis(), "./", dir("src/test/java"),
-        dir("src/main/java"), dir("src"), dir("test"), dir("source"),
-        dir("tst"), dir("java"));
-  }
-
-  public MutationHtmlReportListener(final String reportDir,
+  public MutationHtmlReportListener(final CoverageDatabase coverage,
+      final long startTime, final String reportDir,
       final SourceLocator... locators) {
-    this(System.currentTimeMillis(), reportDir, locators);
-  }
-
-  public MutationHtmlReportListener(final long startTime,
-      final String reportDir, final SourceLocator... locators) {
     final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
     final String timeString = sdf.format(new Date());
+    this.coverage = coverage;
     this.reportDir = new File(addPathSeperatorIfMissing(reportDir) + timeString);
     this.reportDir.mkdirs();
     this.sourceRoots.addAll(Arrays.asList(locators));
@@ -108,12 +98,29 @@ public class MutationHtmlReportListener implements TestListener {
     try {
       this.mutatorScores.registerResults(value.getMutations());
 
-      final Statistics stats = value.getStats();
-
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
-      final MutationTestSummaryData summaryData = value.getSummaryData();
+
+      // final lineCoverage =
+
+      final long numberOfCoveredLines = this.coverage
+          .getNumberOfCoveredLines(value.getMutatedClass());
+
+      int lineCoverage = 0;
+      if (numberOfCoveredLines != 0) {
+        final long numberOfCodeLines = FCollection.fold(accumulateCodeLines(),
+            0, this.coverage.getClassInfo(value.getMutatedClass()));
+
+        lineCoverage = Math.round(100f / numberOfCodeLines
+            * numberOfCoveredLines);
+
+      }
+
+      final MutationTestSummaryData summaryData = new MutationTestSummaryData(
+          value.getRunType(), value.getMutatedClass(),
+          value.getTargettedTests(), value.getPercentageMutationCoverage(),
+          lineCoverage);
       collectSummaryData(summaryData);
 
       final String fileName = summaryData.getFileName();
@@ -126,11 +133,12 @@ public class MutationHtmlReportListener implements TestListener {
           .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", css);
       st.setAttribute("summary", summaryData);
-      st.setAttribute("tests", getTests(value));
+
+      st.setAttribute("tests", value.getTargettedTests());
+
       st.setAttribute("mutators", value.getConfig().getMutatorNames());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(
-          value, stats);
+      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(value);
 
       st.setAttribute("sourceFiles", sourceFiles);
       st.setAttribute("mutatedClasses", value.getMutatedClass());
@@ -144,14 +152,25 @@ public class MutationHtmlReportListener implements TestListener {
     }
   }
 
+  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
+    return new F2<Integer, ClassInfo, Integer>() {
+
+      public Integer apply(final Integer a, final ClassInfo b) {
+        return a + b.getCodeLines().size();
+      }
+
+    };
+  }
+
   private Collection<SourceFile> createAnnotatedSoureFiles(
-      final MutationMetaData value, final Statistics stats) throws IOException {
+      final MutationMetaData value) throws IOException {
     final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
     for (final String each : value.getSourceFiles()) {
       final MutationResultList mutationsForThisFile = value
           .getResultsForSourceFile(each);
       final List<Line> lines = createAnnotatedSourceCodeLines(each,
-          mutationsForThisFile, stats, value.getClassesForSourceFile(each));
+          mutationsForThisFile,
+          this.coverage.getClassInfo(value.getClassesForSourceFile(each)));
 
       sourceFiles.add(new SourceFile(each, lines, mutationsForThisFile
           .groupMutationsByLine()));
@@ -168,13 +187,12 @@ public class MutationHtmlReportListener implements TestListener {
 
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
       final MutationResultList mutationsForThisFile,
-      final Statistics statistics, final Collection<ClassInfo> classes)
-      throws IOException {
+      final Collection<ClassInfo> classes) throws IOException {
     final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
     if (reader.hasSome()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
-          mutationsForThisFile, statistics, classes);
+          mutationsForThisFile, this.coverage, classes);
       return alf.convert(reader.value());
     }
     return Collections.emptyList();
@@ -193,12 +211,6 @@ public class MutationHtmlReportListener implements TestListener {
       }
 
     };
-  }
-
-  private Collection<TestUnit> getTests(final MutationMetaData value) {
-
-    return value.getStats().getAllTests();
-
   }
 
   private Option<Reader> findSourceFile(final Collection<String> classes,

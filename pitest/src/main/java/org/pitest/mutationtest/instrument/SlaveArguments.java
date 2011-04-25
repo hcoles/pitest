@@ -20,32 +20,26 @@ import java.util.Properties;
 
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.MutationConfig;
-import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.MutationDetails;
 
 public class SlaveArguments {
 
-  final Collection<MutationIdentifier> mutations;
-  final List<TestUnit>                 tests;
-  final Statistics                     stats;
-  final MutationConfig                 config;
-  final Properties                     systemProperties;
-  final Collection<String>             classesToMutate;
-  final TimeoutLengthStrategy          timeoutStrategy;
-  final String                         outputFileName;
+  final Collection<MutationDetails> mutations;
+  final List<TestUnit>              tests;
+  final MutationConfig              config;
+  final Properties                  systemProperties;
+  final TimeoutLengthStrategy       timeoutStrategy;
+  final String                      outputFileName;
 
   public SlaveArguments(final String outputFileName,
-      final Collection<MutationIdentifier> mutations,
-      final List<TestUnit> tests, final Statistics stats,
+      final Collection<MutationDetails> mutations, final List<TestUnit> tests,
       final MutationConfig config, final Properties systemProperties,
-      final TimeoutLengthStrategy timeoutStrategy,
-      final Collection<String> classes) {
+      final TimeoutLengthStrategy timeoutStrategy) {
     this.outputFileName = outputFileName;
     this.mutations = mutations;
     this.tests = tests;
-    this.stats = stats;
     this.config = config;
     this.systemProperties = systemProperties;
-    this.classesToMutate = classes;
     this.timeoutStrategy = timeoutStrategy;
   }
 

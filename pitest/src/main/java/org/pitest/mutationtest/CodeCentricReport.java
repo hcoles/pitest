@@ -14,26 +14,19 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.FCollection.map;
-import static org.pitest.util.Functions.jvmClassToClassName;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.Pitest;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.ClassLoaderFactory;
-import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
@@ -41,9 +34,6 @@ import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.instrument.CoverageSource;
-import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
-import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -80,7 +70,7 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(this.data, t0);
+        .getListener(coverageDatabase, this.data, t0);
 
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
@@ -88,7 +78,18 @@ public class CodeCentricReport extends MutationCoverageReport {
     reportFailureForClassesWithoutTests(
         coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
 
-    final List<TestUnit> tus = createMutationTestUnits(codeToTests,
+    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
+        this.data.isMutateStaticInitializers(),
+        this.data.getLoggingClasses(),
+        this.data.getMutators().toArray(
+            new Mutator[this.data.getMutators().size()]));
+
+    final MutationConfig mutationConfig = new MutationConfig(engine,
+        MutationTestType.CODE_CENTRIC, 0, this.data.getJvmArgs());
+    final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
+        new JUnitCompatibleConfiguration(), this.data, this.javaAgentFinder);
+
+    final List<TestUnit> tus = builder.createMutationTestUnits(codeToTests,
         initialConfig, coverageDatabase);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -125,40 +126,6 @@ public class CodeCentricReport extends MutationCoverageReport {
 
   private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
-  }
-
-  private List<TestUnit> createMutationTestUnits(
-      final Map<ClassGrouping, List<String>> groupedClassesToTests,
-      final Configuration pitConfig, final CoverageDatabase coverageDatabase) {
-    final List<TestUnit> tus = new ArrayList<TestUnit>();
-    for (final Entry<ClassGrouping, List<String>> codeToTests : groupedClassesToTests
-        .entrySet()) {
-      tus.add(createMutationTestUnit(
-          codeToTests.getKey(),
-          coverageDatabase.getCoverage(codeToTests.getKey(),
-              codeToTests.getValue())));
-
-    }
-    return tus;
-  }
-
-  private TestUnit createMutationTestUnit(final ClassGrouping classGrouping,
-      final CoverageSource coverageSource) {
-
-    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        this.data.isMutateStaticInitializers(),
-        this.data.getLoggingClasses(),
-        this.data.getMutators().toArray(
-            new Mutator[this.data.getMutators().size()]));
-    final MutationConfig mutationConfig = new MutationConfig(engine,
-        MutationTestType.CODE_CENTRIC, 0, this.data.getJvmArgs());
-    final Description d = new Description("mutation test of "
-        + classGrouping.getParent(), MutationCoverageReport.class, null);
-    final List<String> codeClasses = map(classGrouping, jvmClassToClassName());
-    return new InstrumentedMutationTestUnit(codeClasses, mutationConfig, d,
-        this.javaAgentFinder, coverageSource,
-        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()));
   }
 
 }

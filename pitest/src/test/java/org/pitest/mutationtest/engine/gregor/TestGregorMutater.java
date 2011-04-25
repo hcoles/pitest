@@ -111,4 +111,26 @@ public class TestGregorMutater extends MutatorTestBase {
     assertFalse(actualDetails.isEmpty());
   }
 
+  // public static class HasFinallyAroundReturnStatement {
+  // public int foo(int t) {
+  // try {
+  // return t;
+  // } finally {
+  // bar();
+  // }
+  //
+  // }
+  //
+  // public void bar() {
+  //
+  // }
+  // }
+  //
+  // @Test
+  // public void willGenerateMutatationsForBothBranchesOfTryFinallyBlock() {
+  // createTesteeWith(Mutator.VOID_METHOD_CALLS);
+  // final Collection<MutationDetails> actualDetails =
+  // findMutationsFor(HasFinallyAroundReturnStatement.class);
+  // assertEquals(2, actualDetails.size());
+  // }
 }

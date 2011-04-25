@@ -89,6 +89,10 @@ public class MutationIdentifier {
     return true;
   }
 
+  public int getIndex() {
+    return this.index;
+  }
+
   @Override
   public String toString() {
     return "MutationIdentifier [className=" + this.className + ", index="
