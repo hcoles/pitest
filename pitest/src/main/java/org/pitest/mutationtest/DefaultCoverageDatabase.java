@@ -436,8 +436,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   public Collection<String> getParentClassesWithoutATest() {
+    @SuppressWarnings("unchecked")
     final FunctionalList<String> codeClassNames = FCollection
-        .filter(this.codeClasses, not(Functions.isInnerClass()))
+        .filter(this.codeClasses,
+            and(not(Functions.isInnerClass()), not(Functions.isInterface())))
         .map(Functions.classToName()).map(Functions.classNameToJVMClassName());
     return codeClassNames.filter(Prelude.not(hasTest()));
   }

@@ -16,8 +16,6 @@ public interface CoverageDatabase {
 
   boolean initialise();
 
-  // CoverageSource getCoverage(ClassGrouping code, List<String> tests);
-
   Collection<String> getParentClassesWithoutATest();
 
   Collection<Description> getTestForLineNumber(ClassLine classLine);
