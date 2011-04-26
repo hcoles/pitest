@@ -16,19 +16,16 @@ package org.pitest.mutationtest;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import org.pitest.ExtendedTestResult;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.JavaAgent;
-import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
 public abstract class MutationCoverageReport implements Runnable {
@@ -102,16 +99,6 @@ public abstract class MutationCoverageReport implements Runnable {
 
     };
     FCollection.forEach(classesWithOutATest, reportFailure);
-  }
-
-  protected List<Class<?>> extractTesteesFromTests(
-      final Collection<Class<?>> tests) {
-    final F<Class<?>, Iterable<Class<?>>> f = new F<Class<?>, Iterable<Class<?>>>() {
-      public Iterable<Class<?>> apply(final Class<?> test) {
-        return TestInfo.determineTestee(test);
-      }
-    };
-    return FCollection.flatMap(tests, f);
   }
 
   protected ClassPath getClassPath() {

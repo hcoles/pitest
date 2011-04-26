@@ -14,6 +14,7 @@
  */
 package org.pitest.functional;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -51,6 +52,10 @@ public abstract class Option<T> implements FunctionalIterable<T> {
 
   public <B> FunctionalList<B> map(final F<T, B> f) {
     return FCollection.map(this, f);
+  }
+
+  public <B> void mapTo(final F<T, B> f, final Collection<? super B> bs) {
+    FCollection.map(this, f, bs);
   }
 
   @SuppressWarnings("unchecked")

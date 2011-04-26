@@ -26,7 +26,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.instrument.CoverageSource;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.JavaAgent;
@@ -79,8 +78,7 @@ public class MutationTestBuilder {
     final Collection<MutationDetails> availableMutations = m
         .findMutations(classesToMutate);
 
-    assignTestsToMutations(availableMutations,
-        coverageDatabase.getCoverage(classesToMutate, relevantTestClasses));
+    assignTestsToMutations(availableMutations, coverageDatabase);
 
     return availableMutations;
 
@@ -88,9 +86,9 @@ public class MutationTestBuilder {
 
   private void assignTestsToMutations(
       final Collection<MutationDetails> availableMutations,
-      final CoverageSource coverageSource) {
+      final CoverageDatabase coverageDatabase) {
     for (final MutationDetails mutation : availableMutations) {
-      final Collection<TestInfo> testDetails = coverageSource
+      final Collection<TestInfo> testDetails = coverageDatabase
           .getTestsForMutant(mutation);
 
       mutation.addTestsInOrder(testDetails);

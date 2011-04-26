@@ -15,6 +15,7 @@
 package org.pitest.mutationtest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -93,6 +94,11 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
 
   public <B> FunctionalList<B> map(final F<MutationResult, B> f) {
     return FCollection.map(this, f);
+  }
+
+  public <B> void mapTo(final F<MutationResult, B> f,
+      final Collection<? super B> bs) {
+    FCollection.map(this, f, bs);
   }
 
 }

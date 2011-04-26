@@ -14,6 +14,7 @@
  */
 package org.pitest.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.pitest.functional.F;
@@ -77,4 +78,7 @@ public class Range implements FunctionalIterable<Integer> {
     return FCollection.map(this, f);
   }
 
+  public <B> void mapTo(final F<Integer, B> f, final Collection<? super B> bs) {
+    FCollection.map(this, f, bs);
+  }
 }

@@ -64,6 +64,10 @@ public class MutationDetails {
     return this.id.getClazz();
   }
 
+  public String getJVMClassName() {
+    return this.id.getClazz().replace(".", "/");
+  }
+
   public String getMethod() {
     return this.method;
   }

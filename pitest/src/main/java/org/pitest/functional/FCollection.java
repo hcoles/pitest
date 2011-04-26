@@ -104,4 +104,15 @@ public abstract class FCollection {
     return p;
   }
 
+  public static <T> FunctionalCollection<T> flatten(
+      final Iterable<? extends Iterable<? extends T>> ts) {
+    final MutableList<T> list = new MutableList<T>();
+    for (final Iterable<? extends T> it : ts) {
+      for (final T each : it) {
+        list.add(each);
+      }
+    }
+    return list;
+  }
+
 }

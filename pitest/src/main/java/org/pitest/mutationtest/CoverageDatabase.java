@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.mutationtest.instrument.ClassLine;
-import org.pitest.mutationtest.instrument.CoverageSource;
 
 public interface CoverageDatabase {
 
@@ -16,7 +16,7 @@ public interface CoverageDatabase {
 
   boolean initialise();
 
-  CoverageSource getCoverage(ClassGrouping code, List<String> tests);
+  // CoverageSource getCoverage(ClassGrouping code, List<String> tests);
 
   Collection<String> getParentClassesWithoutATest();
 
@@ -25,5 +25,7 @@ public interface CoverageDatabase {
   Collection<ClassInfo> getClassInfo(Collection<String> classesForSourceFile);
 
   int getNumberOfCoveredLines(Collection<String> mutatedClass);
+
+  Collection<TestInfo> getTestsForMutant(MutationDetails mutation);
 
 }

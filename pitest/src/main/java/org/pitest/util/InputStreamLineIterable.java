@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.pitest.functional.F;
@@ -84,7 +85,10 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
 
   public <B> FunctionalList<B> map(final F<String, B> f) {
     return FCollection.map(this, f);
+  }
 
+  public <B> void mapTo(final F<String, B> f, final Collection<? super B> bs) {
+    FCollection.map(this, f, bs);
   }
 
   public <B> FunctionalList<B> flatMap(final F<String, ? extends Iterable<B>> f) {

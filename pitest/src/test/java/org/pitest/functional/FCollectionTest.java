@@ -152,4 +152,14 @@ public class FCollectionTest {
     assertEquals(8, actual);
   }
 
+  @Test
+  public void flattenShouldReturnCollectionContainingAllSuppliedValues() {
+    final Collection<Collection<Integer>> is = new ArrayList<Collection<Integer>>();
+    is.add(Arrays.asList(1, 2, 3, 4, 5));
+    is.add(Arrays.asList(6, 7, 8, 9));
+    assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
+        FCollection.flatten(is));
+
+  }
+
 }
