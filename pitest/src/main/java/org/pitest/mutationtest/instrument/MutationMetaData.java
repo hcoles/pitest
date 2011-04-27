@@ -34,8 +34,6 @@ public class MutationMetaData implements MetaData {
   private final Collection<String>         mutatedClasses;
   private final Collection<MutationResult> mutations;
 
-  // private final Statistics stats;
-
   protected MutationMetaData(final MutationConfig config,
       final Collection<String> collection,
       final Collection<MutationResult> mutations) {
@@ -52,8 +50,8 @@ public class MutationMetaData implements MetaData {
   public Collection<String> getSourceFiles() {
 
     final Set<String> uniqueFilenames = new HashSet<String>();
-    FCollection
-        .mapTo(this.mutations, mutationResultToFileName(), uniqueFilenames);
+    FCollection.mapTo(this.mutations, mutationResultToFileName(),
+        uniqueFilenames);
     return uniqueFilenames;
 
   }
@@ -141,14 +139,17 @@ public class MutationMetaData implements MetaData {
     return classes;
   }
 
-  // private List<ClassInfo> getClassInfo(final String clazz) {
-  // return FCollection.filter(this.mutatedClasses, nameIs(clazz));
-  // }
+  public Collection<String> getTestClasses() {
+    final Set<String> uniqueTestClasses = new HashSet<String>();
+    FCollection.flatMapTo(getTargettedTests(), TestInfo.toDefiningClassNames(),
+        uniqueTestClasses);
+    return uniqueTestClasses;
+  }
 
   public Collection<TestInfo> getTargettedTests() {
     final Set<TestInfo> uniqueTests = new HashSet<TestInfo>();
-    FCollection
-        .flatMapTo(this.mutations, mutationToTargettedTests(), uniqueTests);
+    FCollection.flatMapTo(this.mutations, mutationToTargettedTests(),
+        uniqueTests);
     return uniqueTests;
   }
 

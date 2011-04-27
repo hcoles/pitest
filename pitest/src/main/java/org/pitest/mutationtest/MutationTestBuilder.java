@@ -16,14 +16,16 @@ package org.pitest.mutationtest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.pitest.Description;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
@@ -48,18 +50,17 @@ public class MutationTestBuilder {
   }
 
   public List<TestUnit> createMutationTestUnits(
-      final Map<ClassGrouping, List<String>> groupedClassesToTests,
+      final Collection<ClassGrouping> codeClasses,
       final Configuration pitConfig, final CoverageDatabase coverageDatabase) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
 
-    for (final Entry<ClassGrouping, List<String>> codeToTests : groupedClassesToTests
-        .entrySet()) {
+    for (final ClassGrouping classGroup : codeClasses) {
 
       final Collection<MutationDetails> mutationsForClasses = createMutations(
-          coverageDatabase, this.mutationConfig, codeToTests.getKey());
+          coverageDatabase, this.mutationConfig, classGroup);
 
       tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses,
-          codeToTests.getKey(), codeToTests.getValue()));
+          classGroup.getParent()));
 
     }
     return tus;
@@ -95,15 +96,31 @@ public class MutationTestBuilder {
 
   private TestUnit createMutationTestUnit(final MutationConfig mutationConfig,
       final Collection<MutationDetails> mutationsForClasses,
-      final ClassGrouping classGrouping, final List<String> testClasses) {
+      final String parentClassName) {
 
-    final Description d = new Description("mutation test of "
-        + classGrouping.getParent(), MutationCoverageReport.class, null);
+    final Description d = new Description(
+        "mutation test of " + parentClassName, MutationCoverageReport.class,
+        null);
 
-    return new InstrumentedMutationTestUnit(mutationsForClasses, testClasses,
-        this.initialConfig, mutationConfig, d, this.javaAgentFinder,
-        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()));
+    final Set<String> uniqueTestClasses = new HashSet<String>();
+    FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
+        uniqueTestClasses);
+
+    return new InstrumentedMutationTestUnit(mutationsForClasses,
+        uniqueTestClasses, this.initialConfig, mutationConfig, d,
+        this.javaAgentFinder, new PercentAndConstantTimeoutStrategy(
+            this.data.getTimeoutFactor(), this.data.getTimeoutConstant()));
+  }
+
+  private F<MutationDetails, Iterable<String>> mutationDetailsToTestClass() {
+    return new F<MutationDetails, Iterable<String>>() {
+
+      public Iterable<String> apply(final MutationDetails a) {
+        return FCollection.flatMap(a.getTestsInOrder(),
+            TestInfo.toDefiningClassNames());
+      }
+
+    };
   }
 
 }

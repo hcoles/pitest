@@ -16,7 +16,6 @@ package org.pitest.mutationtest.report;
 
 import java.util.Collection;
 
-import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
@@ -56,15 +55,15 @@ public class MutationTestSummaryData {
 
   }
 
-  private final MutationTestType     runType;
-  private final Collection<String>   mutatedClasses;
-  private final Collection<TestInfo> testClasses;
-  private final Integer              mutationCoverage;
-  private final Integer              lineCoverage;
+  private final MutationTestType   runType;
+  private final Collection<String> mutatedClasses;
+  private final Collection<String> testClasses;
+  private final Integer            mutationCoverage;
+  private final Integer            lineCoverage;
 
   public MutationTestSummaryData(final MutationTestType runType,
       final Collection<String> mutatedClasses,
-      final Collection<TestInfo> testClasses, final Integer mutationCoverage,
+      final Collection<String> testClasses, final Integer mutationCoverage,
       final Integer lineCoverage) {
     this.runType = runType;
     this.mutatedClasses = mutatedClasses;
@@ -88,7 +87,7 @@ public class MutationTestSummaryData {
     return this.mutatedClasses;
   }
 
-  public Collection<TestInfo> getTestClasses() {
+  public Collection<String> getTestClasses() {
     return this.testClasses;
   }
 

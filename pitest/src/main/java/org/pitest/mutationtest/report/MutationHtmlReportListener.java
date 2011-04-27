@@ -102,25 +102,11 @@ public class MutationHtmlReportListener implements TestListener {
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
 
-      // final lineCoverage =
-
-      final long numberOfCoveredLines = this.coverage
-          .getNumberOfCoveredLines(value.getMutatedClass());
-
-      int lineCoverage = 0;
-      if (numberOfCoveredLines != 0) {
-        final long numberOfCodeLines = FCollection.fold(accumulateCodeLines(),
-            0, this.coverage.getClassInfo(value.getMutatedClass()));
-
-        lineCoverage = Math.round(100f / numberOfCodeLines
-            * numberOfCoveredLines);
-
-      }
+      final int lineCoverage = calculateLineCoverage(value);
 
       final MutationTestSummaryData summaryData = new MutationTestSummaryData(
-          value.getRunType(), value.getMutatedClass(),
-          value.getTargettedTests(), value.getPercentageMutationCoverage(),
-          lineCoverage);
+          value.getRunType(), value.getMutatedClass(), value.getTestClasses(),
+          value.getPercentageMutationCoverage(), lineCoverage);
       collectSummaryData(summaryData);
 
       final String fileName = summaryData.getFileName();
@@ -150,6 +136,22 @@ public class MutationHtmlReportListener implements TestListener {
     } catch (final IOException ex) {
       ex.printStackTrace();
     }
+  }
+
+  private int calculateLineCoverage(final MutationMetaData value) {
+    final long numberOfCoveredLines = this.coverage
+        .getNumberOfCoveredLines(value.getMutatedClass());
+
+    int lineCoverage = 0;
+    if (numberOfCoveredLines != 0) {
+      final long numberOfCodeLines = FCollection.fold(accumulateCodeLines(), 0,
+          this.coverage.getClassInfo(value.getMutatedClass()));
+
+      lineCoverage = Math
+          .round(100f / numberOfCodeLines * numberOfCoveredLines);
+
+    }
+    return lineCoverage;
   }
 
   private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {

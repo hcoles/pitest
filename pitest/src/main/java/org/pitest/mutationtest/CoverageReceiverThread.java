@@ -90,8 +90,7 @@ public class CoverageReceiverThread extends Thread {
       }
 
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw Unchecked.translateCheckedException(e);
     } finally {
       if (socket != null) {
         try {

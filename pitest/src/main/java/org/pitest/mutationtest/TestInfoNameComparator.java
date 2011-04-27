@@ -18,15 +18,14 @@ package org.pitest.mutationtest;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.pitest.Description;
+import org.pitest.coverage.domain.TestInfo;
 
-class StringBasedDescriptionComparator implements Comparator<Description>,
-    Serializable {
+class TestInfoNameComparator implements Comparator<TestInfo>, Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public int compare(final Description arg0, final Description arg1) { // NO_UCD
-    return arg0.toString().compareTo(arg1.toString());
+  public int compare(final TestInfo arg0, final TestInfo arg1) { // NO_UCD
+    return arg0.getName().compareTo(arg1.getName());
   }
 
 }

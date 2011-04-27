@@ -15,8 +15,8 @@
 package org.pitest.mutationtest;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
@@ -65,8 +65,8 @@ public class CodeCentricReport extends MutationCoverageReport {
 
     }
 
-    final Map<ClassGrouping, List<String>> codeToTests = coverageDatabase
-        .mapCodeToTests();
+    final Collection<ClassGrouping> codeClasses = coverageDatabase
+        .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -89,7 +89,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
         new JUnitCompatibleConfiguration(), this.data, this.javaAgentFinder);
 
-    final List<TestUnit> tus = builder.createMutationTestUnits(codeToTests,
+    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         initialConfig, coverageDatabase);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -97,7 +97,7 @@ public class CodeCentricReport extends MutationCoverageReport {
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     pit.run(createContainer(), tus);
 
-    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeToTests.size()
+    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
 
   }

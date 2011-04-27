@@ -17,9 +17,7 @@ package org.pitest.mutationtest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.Description;
@@ -34,7 +32,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.testunit.FailingTestUnit;
-import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.TestInfo;
@@ -111,24 +108,13 @@ public class MutationTestFinder implements TestUnitFinder {
     if (allTestsGreen) {
 
       final ClassGrouping code = new ClassGrouping(testeeNames);
-      // final CoverageSource s = dcb.getCoverage(code,
-      // Collections.singletonList(clazz.getName()));
 
       final MutationTestBuilder builder = new MutationTestBuilder(
           updatedMutationConfig, updatedConfig, data, this.javaAgentFinder);
 
-      final Map<ClassGrouping, List<String>> groupedClassesToTests = new HashMap<ClassGrouping, List<String>>();
-      groupedClassesToTests.put(code,
-          FCollection.map(classes, Functions.classToName()));
-
-      return builder.createMutationTestUnits(groupedClassesToTests,
+      return builder.createMutationTestUnits(Collections.singleton(code),
           updatedConfig, dcb);
 
-      // final Set<TestUnit> units = Collections
-      // .<TestUnit> singleton(createTestUnit(testeeNames,
-      // updatedMutationConfig, updatedConfig, d, s));
-      // skip processing for mutation tests . . . yes?
-      // return units;
     } else {
       return Collections.<TestUnit> singletonList(new FailingTestUnit(d,
           "Cannot create mutation test as test do not run green"));
