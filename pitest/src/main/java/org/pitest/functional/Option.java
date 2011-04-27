@@ -55,7 +55,7 @@ public abstract class Option<T> implements FunctionalIterable<T> {
   }
 
   public <B> void mapTo(final F<T, B> f, final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 
   @SuppressWarnings("unchecked")

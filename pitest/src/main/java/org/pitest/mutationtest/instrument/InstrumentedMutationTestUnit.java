@@ -315,7 +315,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
   private Collection<String> uniqueMutatedClasses() {
     final Set<String> classes = new HashSet<String>();
-    FCollection.map(this.availableMutations, mutationToMutee(), classes);
+    FCollection.mapTo(this.availableMutations, mutationToMutee(), classes);
     return classes;
   }
 

@@ -56,8 +56,7 @@ public class MutationTestBuilder {
         .entrySet()) {
 
       final Collection<MutationDetails> mutationsForClasses = createMutations(
-          coverageDatabase, this.mutationConfig, codeToTests.getKey(),
-          codeToTests.getValue());
+          coverageDatabase, this.mutationConfig, codeToTests.getKey());
 
       tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses,
           codeToTests.getKey(), codeToTests.getValue()));
@@ -68,8 +67,7 @@ public class MutationTestBuilder {
 
   private Collection<MutationDetails> createMutations(
       final CoverageDatabase coverageDatabase,
-      final MutationConfig mutationConfig, final ClassGrouping classesToMutate,
-      final List<String> relevantTestClasses) {
+      final MutationConfig mutationConfig, final ClassGrouping classesToMutate) {
     mutationConfig.createMutator(IsolationUtils.getContextClassLoader());
 
     final Mutater m = mutationConfig.createMutator(IsolationUtils

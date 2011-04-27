@@ -110,7 +110,7 @@ public class MutableList<A> implements FunctionalList<A> {
   }
 
   public <B> void mapTo(final F<A, B> f, final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 
   public void add(final int arg0, final A arg1) {

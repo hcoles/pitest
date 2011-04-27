@@ -29,7 +29,7 @@ public abstract class FCollection {
     }
   }
 
-  public static <A, B> void map(final Iterable<? extends A> as,
+  public static <A, B> void mapTo(final Iterable<? extends A> as,
       final F<A, B> f, final Collection<? super B> bs) {
     if (as != null) {
 
@@ -42,11 +42,11 @@ public abstract class FCollection {
   public static <A, B> FunctionalList<B> map(final Iterable<? extends A> as,
       final F<A, B> f) {
     final FunctionalList<B> bs = emptyList();
-    map(as, f, bs);
+    mapTo(as, f, bs);
     return bs;
   }
 
-  public static <A, B> void flatMap(final Iterable<? extends A> as,
+  public static <A, B> void flatMapTo(final Iterable<? extends A> as,
       final F<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
     if (as != null) {
       for (final A a : as) {
@@ -60,7 +60,7 @@ public abstract class FCollection {
   public static <A, B> FunctionalList<B> flatMap(
       final Iterable<? extends A> as, final F<A, ? extends Iterable<B>> f) {
     final FunctionalList<B> bs = emptyList();
-    flatMap(as, f, bs);
+    flatMapTo(as, f, bs);
     return bs;
   }
 

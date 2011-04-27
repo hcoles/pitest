@@ -88,7 +88,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   public <B> void mapTo(final F<String, B> f, final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 
   public <B> FunctionalList<B> flatMap(final F<String, ? extends Iterable<B>> f) {

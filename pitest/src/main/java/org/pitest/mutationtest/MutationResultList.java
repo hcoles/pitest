@@ -98,7 +98,7 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
 
   public <B> void mapTo(final F<MutationResult, B> f,
       final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 
 }

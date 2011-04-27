@@ -146,7 +146,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private Set<Class<?>> gatherUniqueClassesFromDescriptions(
       final Iterable<Description> descriptions) {
     final Set<Class<?>> uniqueDiscoveredTestClasses = new HashSet<Class<?>>();
-    FCollection.flatMap(descriptions, Prelude.id(Description.class),
+    FCollection.flatMapTo(descriptions, Prelude.id(Description.class),
         uniqueDiscoveredTestClasses);
     return uniqueDiscoveredTestClasses;
   }
@@ -176,7 +176,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       final Map<ClassLine, Set<Description>> coverage = this
           .coverageByTestUnit(each);
       final Set<Class<?>> uniqueDiscoveredTestClasses = new HashSet<Class<?>>();
-      FCollection.flatMap(coverage.values(), flattenList(),
+      FCollection.flatMapTo(coverage.values(), flattenList(),
           uniqueDiscoveredTestClasses);
       groupsToTests
           .put(

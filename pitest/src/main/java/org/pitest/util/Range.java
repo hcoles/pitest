@@ -79,6 +79,6 @@ public class Range implements FunctionalIterable<Integer> {
   }
 
   public <B> void mapTo(final F<Integer, B> f, final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 }

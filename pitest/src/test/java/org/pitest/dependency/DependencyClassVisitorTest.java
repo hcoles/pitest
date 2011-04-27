@@ -107,7 +107,7 @@ public class DependencyClassVisitorTest {
 
   private Set<String> classesToNames(final Class<?>... classes) {
     final Set<String> set = new HashSet<String>();
-    FCollection.map(Arrays.asList(classes), classToJvmName(), set);
+    FCollection.mapTo(Arrays.asList(classes), classToJvmName(), set);
     return set;
   }
 

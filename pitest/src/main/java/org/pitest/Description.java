@@ -145,7 +145,7 @@ public final class Description implements FunctionalIterable<Class<?>>,
   }
 
   public <B> void mapTo(final F<Class<?>, B> f, final Collection<? super B> bs) {
-    FCollection.map(this, f, bs);
+    FCollection.mapTo(this, f, bs);
   }
 
   public <B> FunctionalList<B> flatMap(
