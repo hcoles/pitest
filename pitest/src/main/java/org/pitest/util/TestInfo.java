@@ -82,7 +82,7 @@ public abstract class TestInfo {
 
   private static Option<Class<?>> tryName(final String name) {
     try {
-      final Class<?> guessed = Class.forName(name, true,
+      final Class<?> guessed = Class.forName(name, false,
           IsolationUtils.getContextClassLoader());
       return Option.<Class<?>> some(guessed);
     } catch (final ClassNotFoundException e) {

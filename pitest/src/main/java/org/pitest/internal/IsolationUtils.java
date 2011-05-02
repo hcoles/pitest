@@ -103,7 +103,7 @@ public abstract class IsolationUtils {
   public static Class<?> convertForClassLoader(final ClassLoader loader,
       final String name) {
     try {
-      return Class.forName(name, true, loader);
+      return Class.forName(name, false, loader);
     } catch (final ClassNotFoundException ex) {
       throw translateCheckedException(ex);
     }
