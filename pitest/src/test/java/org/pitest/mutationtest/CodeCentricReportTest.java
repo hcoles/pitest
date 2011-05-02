@@ -101,7 +101,7 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
-    verifyResults(KILLED, KILLED, SURVIVED);
+    verifyResults(KILLED, KILLED);
   }
 
   @Test

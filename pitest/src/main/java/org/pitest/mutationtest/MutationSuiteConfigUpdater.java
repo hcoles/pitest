@@ -37,7 +37,7 @@ public final class MutationSuiteConfigUpdater implements ConfigurationUpdater {
       final Configuration current) {
     final MutationTest annotation = clazz.getAnnotation(MutationTest.class);
     if ((annotation != null)
-        & !(current.mutationTestFinder() instanceof SuppressMutationTestFinding)) {
+        && !(current.mutationTestFinder() instanceof SuppressMutationTestFinding)) {
       return update(annotation, current);
     } else {
       return current;

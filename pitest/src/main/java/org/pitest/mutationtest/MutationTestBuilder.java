@@ -16,9 +16,12 @@ package org.pitest.mutationtest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.coverage.domain.TestInfo;
@@ -26,13 +29,17 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Log;
 
 public class MutationTestBuilder {
+
+  private final static Logger  LOG = Log.getLogger();
 
   private final ReportOptions  data;
   private final JavaAgent      javaAgentFinder;
@@ -87,10 +94,41 @@ public class MutationTestBuilder {
       final Collection<MutationDetails> availableMutations,
       final CoverageDatabase coverageDatabase) {
     for (final MutationDetails mutation : availableMutations) {
-      final Collection<TestInfo> testDetails = coverageDatabase
-          .getTestsForMutant(mutation);
+      final Collection<TestInfo> testDetails = prioritizeTests(getTestsForMutant(
+          coverageDatabase, mutation));
 
       mutation.addTestsInOrder(testDetails);
+    }
+  }
+
+  private Collection<TestInfo> prioritizeTests(
+      final Collection<TestInfo> testsForMutant) {
+    final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
+        Prelude.id(TestInfo.class));
+    Collections.sort(sortedTis, timeComparator());
+    return sortedTis;
+  }
+
+  private Comparator<TestInfo> timeComparator() {
+    return new Comparator<TestInfo>() {
+
+      public int compare(final TestInfo arg0, final TestInfo arg1) {
+        final Long t0 = arg0.getTime();
+        final Long t1 = arg1.getTime();
+        return t0.compareTo(t1);
+      }
+
+    };
+  }
+
+  private Collection<TestInfo> getTestsForMutant(
+      final CoverageDatabase coverageDatabase, final MutationDetails mutation) {
+
+    if (!mutation.isInStaticInitializer()) {
+      return coverageDatabase.getTestsForClassLine(mutation.getClassLine());
+    } else {
+      LOG.warning("Using untargetted tests");
+      return coverageDatabase.getTestsForClass(mutation.getJVMClassName());
     }
   }
 

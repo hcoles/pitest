@@ -14,7 +14,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,13 +67,12 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private final ReportOptions                              data;
 
   private final Map<String, ClassInfo>                     nameToClassInfo = new MemoryEfficientHashMap<String, ClassInfo>();
-
   private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage   = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
-
   private final Map<Description, Long>                     times           = new MemoryEfficientHashMap<Description, Long>();
 
   private List<Class<?>>                                   codeClasses;
-  private Map<String, ClassGrouping>                       groupedByOuterClass;
+  private Collection<ClassGrouping>                        groupedClasses;
+
   private boolean                                          allTestsGreen   = true;
 
   public DefaultCoverageDatabase(final Configuration initialConfig,
@@ -107,7 +105,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     analyseClasses();
 
-    this.groupedByOuterClass = groupByOuterClass(this.codeClasses);
+    this.groupedClasses = groupByOuterClass(this.codeClasses);
 
     return this.allTestsGreen;
 
@@ -345,14 +343,14 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     };
   }
 
-  private Map<String, ClassGrouping> groupByOuterClass(
+  private Collection<ClassGrouping> groupByOuterClass(
       final Collection<Class<?>> classes) {
     final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
     forEach(classes, addToMapIfTopLevelClass(group));
 
     forEach(classes, addToParentGrouping(group));
 
-    return group;
+    return group.values();
 
   }
 
@@ -460,56 +458,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   }
 
-  public Collection<TestInfo> getTestsForMutant(final MutationDetails mutation) {
-
-    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(mutation
-        .getJVMClassName());
-    if (map == null) {
-      map = new MemoryEfficientHashMap<ClassLine, Set<TestInfo>>();
-    }
-
-    final Collection<TestInfo> tis = testInfoForMutation(mutation, map);
-
-    final List<TestInfo> sortedTis = FCollection.map(tis,
-        Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis, timeComparator());
-    return sortedTis;
-
-  }
-
-  private Collection<TestInfo> testInfoForMutation(
-      final MutationDetails mutation, final Map<ClassLine, Set<TestInfo>> map) {
-    if (!mutation.isInStaticInitializer()) {
-      return map.get(mutation.getClassLine());
-    } else {
-
-      // Use any test that provided some coverage of the class
-      // This fails to consider tests that only accessed a static variable
-      // of the class in question as this does not register as coverage.
-
-      LOG.warning("Using untargeted tests");
-      final Set<TestInfo> tis = new HashSet<TestInfo>();
-      for (final Set<TestInfo> each : map.values()) {
-        tis.addAll(each);
-      }
-      return tis;
-
-    }
-
-  }
-
-  private Comparator<TestInfo> timeComparator() {
-    return new Comparator<TestInfo>() {
-
-      public int compare(final TestInfo arg0, final TestInfo arg1) {
-        final Long t0 = arg0.getTime();
-        final Long t1 = arg1.getTime();
-        return t0.compareTo(t1);
-      }
-
-    };
-  }
-
   private TestInfo descriptionToTestInfo(final Description description) {
     final long time = DefaultCoverageDatabase.this.times.get(description);
 
@@ -518,7 +466,35 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   public Collection<ClassGrouping> getGroupedClasses() {
-    return this.groupedByOuterClass.values();
+    return this.groupedClasses;
+  }
+
+  public Collection<TestInfo> getTestsForClass(final String clazz) {
+    final Map<ClassLine, Set<TestInfo>> map = getTestsForJVMClassName(clazz);
+
+    final Set<TestInfo> tis = new HashSet<TestInfo>();
+    for (final Set<TestInfo> each : map.values()) {
+      tis.addAll(each);
+    }
+    return tis;
+
+  }
+
+  private Map<ClassLine, Set<TestInfo>> getTestsForJVMClassName(
+      final String clazz) {
+    // Use any test that provided some coverage of the class
+    // This fails to consider tests that only accessed a static variable
+    // of the class in question as this does not register as coverage.
+
+    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz);
+    if (map == null) {
+      map = new MemoryEfficientHashMap<ClassLine, Set<TestInfo>>();
+    }
+    return map;
+  }
+
+  public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
+    return getTestsForJVMClassName(classLine.getJVMClassName()).get(classLine);
   }
 
 }

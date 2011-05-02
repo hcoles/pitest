@@ -30,10 +30,6 @@ public abstract class PerProcessTimelimitCheck {
     maxTime = maxtime;
   }
 
-  public static void disableLoopBreaking() {
-    maxTime = 0;
-  }
-
   public static boolean isEnabled() { // NO_UCD
     return maxTime == 0;
   }

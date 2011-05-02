@@ -18,7 +18,9 @@ public interface CoverageDatabase {
 
   int getNumberOfCoveredLines(Collection<String> mutatedClass);
 
-  Collection<TestInfo> getTestsForMutant(MutationDetails mutation);
+  Collection<TestInfo> getTestsForClass(String clazz);
+
+  Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
 
   Collection<ClassGrouping> getGroupedClasses();
 
