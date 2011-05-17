@@ -22,7 +22,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
-import org.pitest.mutationtest.CodeCentricReport;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.MutationCoverageReport;
@@ -253,9 +252,9 @@ public class PitMojo extends AbstractMojo {
   private MutationCoverageReport pickReportType(final ReportOptions data,
       final Artifact pitVersionInfo) {
 
-    return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
-        pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-        true);
+    return new MutationCoverageReport(data,
+        new KnownLocationJavaAgentJarFinder(pitVersionInfo.getFile()
+            .getAbsolutePath()), new HtmlReportFactory(), true);
   }
 
   private Collection<MethodMutatorFactory> determineMutators() {

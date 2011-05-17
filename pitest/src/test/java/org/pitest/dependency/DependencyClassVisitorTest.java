@@ -60,7 +60,7 @@ public class DependencyClassVisitorTest {
   }
 
   @Test
-  public void shouldRecordsDirectDependenciesFromCallingNew() throws Exception {
+  public void shouldRecordDirectDependenciesFromCallingNew() throws Exception {
     examineClassWithTestee(HasDependencyFromCallingNew.class);
     assertEquals(classesToNames(Integer.class), this.gatheredDependencies);
   }

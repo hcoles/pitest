@@ -113,7 +113,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   private void createAndRun() {
-    final CodeCentricReport testee = new CodeCentricReport(this.data,
+    final MutationCoverageReport testee = new MutationCoverageReport(this.data,
         new JavaAgentJarFinder(), listenerFactory(), false);
 
     testee.run();

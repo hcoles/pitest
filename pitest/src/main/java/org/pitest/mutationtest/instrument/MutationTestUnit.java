@@ -58,7 +58,7 @@ import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.WrappingProcess;
 
-public class InstrumentedMutationTestUnit extends AbstractTestUnit {
+public class MutationTestUnit extends AbstractTestUnit {
 
   private final static Logger               LOG = Log.getLogger();
 
@@ -71,7 +71,7 @@ public class InstrumentedMutationTestUnit extends AbstractTestUnit {
 
   protected final Collection<String>        testClasses;
 
-  public InstrumentedMutationTestUnit(
+  public MutationTestUnit(
       final Collection<MutationDetails> availableMutations,
       final Collection<String> testClasses, final Configuration pitConfig,
       final MutationConfig mutationConfig, final Description description,

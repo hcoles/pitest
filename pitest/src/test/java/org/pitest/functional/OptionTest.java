@@ -36,7 +36,7 @@ public class OptionTest {
   private static final String FOO = "foo";
 
   @Test
-  public void someShouldReturnsNoneWhenPassedNull() {
+  public void someShouldReturnNoneWhenPassedNull() {
     assertEquals(Option.none(), Option.some(null));
   }
 

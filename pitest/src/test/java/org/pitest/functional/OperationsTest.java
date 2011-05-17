@@ -23,7 +23,7 @@ import org.junit.Test;
 public class OperationsTest {
 
   @Test
-  public void combineShouldPassesResultOfFirstFunctionToSecond() {
+  public void combineShouldPassResultOfFirstFunctionToSecond() {
     final F<Class<?>, Option<Class<?>>> actual = Operations.combine(
         classToName(), stringToClass());
     assertEquals(Option.some(String.class), actual.apply(String.class));

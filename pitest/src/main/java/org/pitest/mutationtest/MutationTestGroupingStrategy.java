@@ -31,7 +31,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
-import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
+import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.testunit.AbstractTestUnit;
 
 public class MutationTestGroupingStrategy implements GroupingStrategy {
@@ -59,7 +59,7 @@ public class MutationTestGroupingStrategy implements GroupingStrategy {
   private F<TestUnit, Boolean> isAMutationTest() {
     return new F<TestUnit, Boolean>() {
       public Boolean apply(final TestUnit a) {
-        return a instanceof InstrumentedMutationTestUnit;
+        return a instanceof MutationTestUnit;
       }
     };
   }

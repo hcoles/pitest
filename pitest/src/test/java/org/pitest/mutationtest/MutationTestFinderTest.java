@@ -27,7 +27,7 @@ import org.pitest.extension.common.IdentityTestUnitProcessor;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
+import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public class MutationTestFinderTest {
@@ -65,7 +65,7 @@ public class MutationTestFinderTest {
         this.pitConfig, new NullDiscoveryListener(),
         new IdentityTestUnitProcessor());
     assertEquals(1, tus.size());
-    final InstrumentedMutationTestUnit actual = (InstrumentedMutationTestUnit) tus
+    final MutationTestUnit actual = (MutationTestUnit) tus
         .iterator().next();
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         true, DefaultMutationConfigFactory.LOGGING_CLASSES, Mutator.INCREMENTS);

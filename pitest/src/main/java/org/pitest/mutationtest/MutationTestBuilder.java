@@ -32,7 +32,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.instrument.InstrumentedMutationTestUnit;
+import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -144,7 +144,7 @@ public class MutationTestBuilder {
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new InstrumentedMutationTestUnit(mutationsForClasses,
+    return new MutationTestUnit(mutationsForClasses,
         uniqueTestClasses, this.initialConfig, mutationConfig, d,
         this.javaAgentFinder, new PercentAndConstantTimeoutStrategy(
             this.data.getTimeoutFactor(), this.data.getTimeoutConstant()));
