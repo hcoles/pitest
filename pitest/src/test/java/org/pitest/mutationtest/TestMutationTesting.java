@@ -45,6 +45,7 @@ import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.True;
+import org.pitest.mutationtest.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -336,10 +337,11 @@ public class TestMutationTesting {
       MutationConfigFactory {
 
     public MutationConfig createConfig(final MutationTest config) {
-      final GregorMutationEngine engine = new GregorMutationEngine(
+      final DefaultMutationEngineConfiguration engineConfig = new DefaultMutationEngineConfiguration(
+          True.<MethodInfo> all(), Collections.<String> emptyList(),
           Collections
-              .<MethodMutatorFactory> singleton(new UnviableClassMutator()),
-          Collections.<String> emptyList(), True.<MethodInfo> all());
+              .<MethodMutatorFactory> singleton(new UnviableClassMutator()));
+      final GregorMutationEngine engine = new GregorMutationEngine(engineConfig);
       return new MutationConfig(engine, MutationTestType.TEST_CENTRIC, 0,
           Collections.<String> emptyList());
     }

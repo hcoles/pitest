@@ -46,6 +46,7 @@ public class OptionsParser {
   private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
   private final static String                       TEST_FILTER_ARGS               = "targetTests";
   private final static String                       LOGGING_CLASSES_ARG            = "loggingClasses";
+  private final static String                       EXCLUDED_METHOD_ARG            = "excludedMethods";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -62,6 +63,7 @@ public class OptionsParser {
   private final OptionSpecBuilder                   includeJarFilesSpec;
   private final OptionSpec<Float>                   timeoutFactorSpec;
   private final OptionSpec<Long>                    timeoutConstSpec;
+  private final OptionSpec<String>                  excludedMethodsSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -79,7 +81,7 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of filter to match against classes to test");
+            "comma seperated list of filters to match against classes to test");
 
     this.loggingClassesSpec = this.parser
         .accepts(LOGGING_CLASSES_ARG)
@@ -148,6 +150,14 @@ public class OptionsParser {
         .withOptionalArg().ofType(Long.class)
         .describedAs("constant to apply to calculate maximum test duration")
         .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
+
+    this.excludedMethodsSpec = this.parser
+        .accepts(EXCLUDED_METHOD_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filters to match against methods to exclude from mutation analysis");
   }
 
   public ReportOptions parse(final String[] args) {
@@ -175,6 +185,8 @@ public class OptionsParser {
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.loggingClassesSpec.values(userArgs));
+    data.setExcludedMethods(FCollection.map(
+        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
 
     return data;
 

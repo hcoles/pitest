@@ -105,11 +105,19 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   @Test
-  public void shouldFindPickRelevantTestsFromSuppliedTestSuites() {
+  public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
     this.data.setTargetTests(predicateFor("com.example.SuiteForFullyCovered"));
     createAndRun();
     verifyResults(KILLED);
+  }
+
+  @Test
+  public void shouldNotMutateMethodsMatchingExclusionPredicate() {
+    this.data.setTargetClasses(predicateFor("com.example.HasExcludedMethods*"));
+    this.data.setExcludedMethods(predicateFor("excludeMe"));
+    createAndRun();
+    verifyResults();
   }
 
   private void createAndRun() {

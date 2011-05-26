@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 
 public class OptionsParserTest {
@@ -138,6 +139,17 @@ public class OptionsParserTest {
     final ReportOptions actual = parse("--loggingClasses", "foo,bar,foo.bar");
     assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
         actual.getLoggingClasses());
+  }
+
+  @Test
+  public void shouldParseCommaSeperatedListOfExcludedMethods() {
+    final ReportOptions actual = parse("--excludedMethods", "foo*,bar*,car");
+    final Predicate<String> actualPredicate = Prelude.or(actual
+        .getExcludedMethods());
+    assertTrue(actualPredicate.apply("foox"));
+    assertTrue(actualPredicate.apply("barx"));
+    assertTrue(actualPredicate.apply("car"));
+    assertFalse(actualPredicate.apply("carx"));
   }
 
   private ReportOptions parse(final String... args) {

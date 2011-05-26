@@ -35,6 +35,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -154,6 +155,7 @@ public class MutationCoverageReport implements Runnable {
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
+        Prelude.or(this.data.getExcludedMethods()),
         this.data.getLoggingClasses(),
         this.data.getMutators().toArray(
             new Mutator[this.data.getMutators().size()]));

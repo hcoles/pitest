@@ -59,6 +59,14 @@ public class PitMojo extends AbstractMojo {
   private List<String>          targetTests;
 
   /**
+   * Methods not to mutate
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          excludedMethods;
+
+  /**
    * 
    * @parameter
    * 
@@ -196,6 +204,7 @@ public class PitMojo extends AbstractMojo {
     data.setTargetTests(determineTargetTests());
     data.setClassesInScope(determineClassesInScope());
     data.setMutateStaticInitializers(this.mutateStaticInitializers);
+    data.setExcludedMethods(globStringsToPredicates(this.excludedMethods));
     data.setNumberOfThreads(this.threads);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
@@ -237,6 +246,11 @@ public class PitMojo extends AbstractMojo {
     } finally {
       IsolationUtils.setContextClassLoader(original);
     }
+  }
+
+  private Collection<Predicate<String>> globStringsToPredicates(
+      List<String> excludedMethods) {
+    return FCollection.map(excludedMethods, Glob.toGlobPredicate());
   }
 
   private Collection<Predicate<String>> determineTargetTests() {

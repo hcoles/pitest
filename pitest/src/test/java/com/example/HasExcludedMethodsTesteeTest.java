@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -12,28 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.functional.predicate;
+package com.example;
 
-/**
- * @author henry
- * 
- */
-public class False<A> implements Predicate<A> {
+import static org.junit.Assert.assertEquals;
 
-  private final static False<?> INSTANCE = new False<Object>();
+import org.junit.Test;
 
-  @SuppressWarnings("unchecked")
-  public static <A> False<A> instance() {
-    return (False<A>) INSTANCE;
-  }
+public class HasExcludedMethodsTesteeTest {
 
-  @SuppressWarnings("unchecked")
-  public static <A> False<A> instance(final Class<A> type) {
-    return (False<A>) INSTANCE;
-  }
-
-  public Boolean apply(final A a) {
-    return false;
+  @Test
+  public void testEcludedMethod() {
+    assertEquals(11, HasExcludedMethodsTestee.excludeMe(10));
   }
 
 }

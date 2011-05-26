@@ -144,10 +144,10 @@ public class MutationTestBuilder {
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(mutationsForClasses,
-        uniqueTestClasses, this.initialConfig, mutationConfig, d,
-        this.javaAgentFinder, new PercentAndConstantTimeoutStrategy(
-            this.data.getTimeoutFactor(), this.data.getTimeoutConstant()));
+    return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
+        this.initialConfig, mutationConfig, d, this.javaAgentFinder,
+        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
+            this.data.getTimeoutConstant()));
   }
 
   private F<MutationDetails, Iterable<String>> mutationDetailsToTestClass() {

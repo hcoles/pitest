@@ -15,7 +15,6 @@
 package org.pitest.util;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +70,6 @@ public class JavaProcess {
     } catch (final IllegalThreadStateException e) {
       return true;
     }
-  }
-
-  public OutputStream stdIn() {
-    return this.process.getOutputStream();
   }
 
   private static List<String> createLaunchArgs(final String javaProcess,

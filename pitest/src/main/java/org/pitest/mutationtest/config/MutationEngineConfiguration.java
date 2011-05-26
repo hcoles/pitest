@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -12,28 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.functional.predicate;
+package org.pitest.mutationtest.config;
 
-/**
- * @author henry
- * 
- */
-public class False<A> implements Predicate<A> {
+import java.util.Collection;
 
-  private final static False<?> INSTANCE = new False<Object>();
+import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-  @SuppressWarnings("unchecked")
-  public static <A> False<A> instance() {
-    return (False<A>) INSTANCE;
-  }
+public interface MutationEngineConfiguration {
 
-  @SuppressWarnings("unchecked")
-  public static <A> False<A> instance(final Class<A> type) {
-    return (False<A>) INSTANCE;
-  }
+  Collection<MethodMutatorFactory> mutators();
 
-  public Boolean apply(final A a) {
-    return false;
-  }
+  public Predicate<MethodInfo> methodFilter();
+
+  public Collection<String> doNotMutateCallsTo();
 
 }

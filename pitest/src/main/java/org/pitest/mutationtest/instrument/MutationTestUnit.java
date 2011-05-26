@@ -71,8 +71,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   protected final Collection<String>        testClasses;
 
-  public MutationTestUnit(
-      final Collection<MutationDetails> availableMutations,
+  public MutationTestUnit(final Collection<MutationDetails> availableMutations,
       final Collection<String> testClasses, final Configuration pitConfig,
       final MutationConfig mutationConfig, final Description description,
       final JavaAgent javaAgentFinder,

@@ -19,6 +19,7 @@ import static org.pitest.functional.Prelude.or;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.pitest.functional.F;
@@ -36,6 +37,8 @@ public class ReportOptions {
 
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
+  private Collection<Predicate<String>>              excludedMethods          = Collections
+                                                                                  .emptyList();
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
@@ -291,6 +294,15 @@ public class ReportOptions {
 
   public void setLoggingClasses(final Collection<String> loggingClasses) {
     this.loggingClasses = loggingClasses;
+  }
+
+  public Collection<Predicate<String>> getExcludedMethods() {
+    return this.excludedMethods;
+  }
+
+  public void setExcludedMethods(
+      final Collection<Predicate<String>> excludedMethods) {
+    this.excludedMethods = excludedMethods;
   }
 
 }
