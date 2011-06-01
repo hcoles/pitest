@@ -18,7 +18,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.pitest.functional.predicate.And;
@@ -88,19 +87,6 @@ public abstract class Prelude {
         map.put(key, f.apply(key));
       }
     };
-  }
-
-  public final static <A> F<A, List<A>> toSingletonList() {
-    return new F<A, List<A>>() {
-
-      public List<A> apply(final A a) {
-        return Collections.singletonList(a);
-      }
-    };
-  }
-
-  public final static <A> F<A, List<A>> toSingletonList(final Class<A> type) {
-    return toSingletonList();
   }
 
   public final static <A> F<A, A> id() {
@@ -191,6 +177,16 @@ public abstract class Prelude {
       public String apply(final String a, final String b) {
         return a + seperator + b;
       }
+    };
+  }
+
+  public static <T> F<T, Iterable<T>> asList(final Class<T> type) {
+    return new F<T, Iterable<T>>() {
+
+      public Iterable<T> apply(final T a) {
+        return Collections.singletonList(a);
+      }
+
     };
   }
 }

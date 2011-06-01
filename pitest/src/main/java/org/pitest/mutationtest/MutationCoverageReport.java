@@ -33,7 +33,6 @@ import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.ConsoleResultListener;
-import org.pitest.extension.common.SuppressMutationTestFinding;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
@@ -42,7 +41,6 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
-import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
@@ -83,7 +81,8 @@ public class MutationCoverageReport implements Runnable {
     if (data.shouldShowHelp() || !data.isValid()) {
       parser.printHelp();
     } else {
-      final MutationCoverageReport instance = selectRunType(data);
+      final MutationCoverageReport instance = new MutationCoverageReport(data,
+          new JavaAgentJarFinder(), new HtmlReportFactory(), false);
 
       instance.run();
 
@@ -96,12 +95,6 @@ public class MutationCoverageReport implements Runnable {
     if (!data.hasValueForClassesInScope()) {
       data.setClassesInScope(data.getTargetClasses());
     }
-  }
-
-  private static MutationCoverageReport selectRunType(final ReportOptions data) {
-    return new MutationCoverageReport(data, new JavaAgentJarFinder(),
-        new HtmlReportFactory(), false);
-
   }
 
   protected void reportFailureForClassesWithoutTests(
@@ -130,7 +123,7 @@ public class MutationCoverageReport implements Runnable {
 
     final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
         new JUnitCompatibleConfiguration());
-    initialConfig.setMutationTestFinder(new SuppressMutationTestFinding());
+
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
 
@@ -161,7 +154,7 @@ public class MutationCoverageReport implements Runnable {
             new Mutator[this.data.getMutators().size()]));
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
-        MutationTestType.CODE_CENTRIC, 0, this.data.getJvmArgs());
+        this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
         new JUnitCompatibleConfiguration(), this.data, this.javaAgentFinder);
 

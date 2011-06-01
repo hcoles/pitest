@@ -33,10 +33,8 @@ import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.internal.TransformingClassLoaderFactory;
 import org.pitest.internal.transformation.IdentityTransformation;
 import org.pitest.junit.adapter.PITJUnitRunner;
-import org.pitest.mutationtest.MutationTest;
 
 @RunWith(PITJUnitRunner.class)
-@MutationTest(threshold = 66, jvmArgs = { "-Xmx256m", "-Xms256m" })
 @StaticConfigurationClass(TopLevelSuite.class)
 @SuiteClasses({ JUnit4SuiteA.class, JUnit4SuiteB.class })
 public class TopLevelSuite extends DefaultStaticConfig {

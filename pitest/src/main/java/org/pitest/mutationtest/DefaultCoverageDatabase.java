@@ -46,6 +46,7 @@ import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.instrument.ClassLine;
@@ -346,20 +347,24 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private Collection<ClassGrouping> groupByOuterClass(
       final Collection<Class<?>> classes) {
     final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
-    forEach(classes, addToMapIfTopLevelClass(group));
+    forEach(classes, addToMap(group, Reflection.isTopClass()));
 
     forEach(classes, addToParentGrouping(group));
+
+    if (group.isEmpty()) {
+      forEach(classes, addToMap(group, True.<Class<?>> all()));
+    }
 
     return group.values();
 
   }
 
-  private SideEffect1<Class<?>> addToMapIfTopLevelClass(
-      final Map<String, ClassGrouping> map) {
+  private SideEffect1<Class<?>> addToMap(final Map<String, ClassGrouping> map,
+      final Predicate<Class<?>> predicate) {
     return new SideEffect1<Class<?>>() {
 
       public void apply(final Class<?> clazz) {
-        if (Reflection.isTopClass(clazz)) {
+        if (predicate.apply(clazz)) {
           map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
               Collections.<String> emptyList()));
         }

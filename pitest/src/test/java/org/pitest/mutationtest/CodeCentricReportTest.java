@@ -89,9 +89,10 @@ public class CodeCentricReportTest extends ReportTestBase {
 
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
-    this.data.setTargetClasses(predicateFor("com.example.*"));
     this.data
-        .setTargetTests(predicateFor("com.example.HasMutableStaticInitializerTest"));
+        .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -107,7 +108,8 @@ public class CodeCentricReportTest extends ReportTestBase {
   @Test
   public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
-    this.data.setTargetTests(predicateFor("com.example.SuiteForFullyCovered"));
+    this.data
+        .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
     createAndRun();
     verifyResults(KILLED);
   }

@@ -55,4 +55,8 @@ public abstract class ReportTestBase {
     return Glob.toGlobPredicates(Arrays.asList(glob));
   }
 
+  protected Collection<Predicate<String>> predicateFor(final Class<?> clazz) {
+    return predicateFor(clazz.getName());
+  }
+
 }

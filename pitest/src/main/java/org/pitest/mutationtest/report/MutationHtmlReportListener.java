@@ -105,7 +105,7 @@ public class MutationHtmlReportListener implements TestListener {
       final int lineCoverage = calculateLineCoverage(value);
 
       final MutationTestSummaryData summaryData = new MutationTestSummaryData(
-          value.getRunType(), value.getMutatedClass(), value.getTestClasses(),
+          value.getMutatedClass(), value.getTestClasses(),
           value.getPercentageMutationCoverage(), lineCoverage);
       collectSummaryData(summaryData);
 

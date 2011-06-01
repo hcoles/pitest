@@ -26,7 +26,6 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
-import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public class MutationMetaData implements MetaData {
 
@@ -65,10 +64,6 @@ public class MutationMetaData implements MetaData {
       }
 
     };
-  }
-
-  public MutationTestType getRunType() {
-    return this.config.getRunType();
   }
 
   public int getNumberOfDetetectedMutations() {

@@ -107,20 +107,18 @@ public class MutationTestUnit extends AbstractTestUnit {
 
         final List<TestUnit> tests = findTestUnits(loader);
 
+        final Map<MutationDetails, DetectionStatus> mutations = new HashMap<MutationDetails, DetectionStatus>();
         if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
-
-          final Map<MutationDetails, DetectionStatus> mutations = new HashMap<MutationDetails, DetectionStatus>();
           FCollection.forEach(this.availableMutations,
               putToMap(mutations, DetectionStatus.NOT_STARTED));
 
           runTestsInSeperateProcess(cp, tests, mutations);
 
-          reportResults(mutations, this.availableMutations, rc, loader);
-
         } else {
-          rc.notifyEnd(this.getDescription(), new AssertionError(
-              "No tests to mutation test"));
+          FCollection.forEach(this.availableMutations,
+              putToMap(mutations, DetectionStatus.SURVIVED));
         }
+        reportResults(mutations, this.availableMutations, rc, loader);
 
       } else {
         LOG.info("Skipping test " + this.getDescription()
@@ -289,26 +287,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     final MetaData md = new MutationMetaData(this.config,
         uniqueMutatedClasses(), results);
 
-    final List<AssertionError> failures = results.filter(mutationNotDetected())
-        .map(resultToAssertionError());
-
-    final float percentageDetected = 100f - ((failures.size() / (float) mutations
-        .size()) * 100f);
-    if (percentageDetected < this.config.getThreshold()) {
-
-      final AssertionError ae = new AssertionError("Tests detected "
-          + percentageDetected + "% of " + mutations.size()
-          + " mutations. Threshold was " + this.config.getThreshold());
-
-      AssertionError last = ae;
-      for (final AssertionError each : failures) {
-        last.initCause(each);
-        last = each;
-      }
-      rc.notifyEnd(this.getDescription(), ae, md);
-    } else {
-      rc.notifyEnd(this.getDescription(), md);
-    }
+    rc.notifyEnd(this.getDescription(), md);
 
   }
 
@@ -332,31 +311,6 @@ public class MutationTestUnit extends AbstractTestUnit {
 
       public MutationResult apply(final MutationDetails a) {
         return new MutationResult(a, mutations.get(a));
-      }
-
-    };
-  }
-
-  private F<MutationResult, AssertionError> resultToAssertionError() {
-    return new F<MutationResult, AssertionError>() {
-
-      public AssertionError apply(final MutationResult result) {
-        final AssertionError ae = new AssertionError("The mutation -> "
-            + result.details + " did not result in any test failures");
-        final StackTraceElement[] stackTrace = { result.details
-            .stackTraceDescription() };
-        ae.setStackTrace(stackTrace);
-        return ae;
-      }
-
-    };
-  }
-
-  private F<MutationResult, Boolean> mutationNotDetected() {
-    return new F<MutationResult, Boolean>() {
-
-      public Boolean apply(final MutationResult a) {
-        return !a.status.isDetected();
       }
 
     };

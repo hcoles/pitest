@@ -41,11 +41,6 @@ public class MutationDetails {
     this.lineNumber = lineNumber;
   }
 
-  public StackTraceElement stackTraceDescription() {
-    return new StackTraceElement(this.id.getClazz(), this.method,
-        this.filename, this.lineNumber);
-  }
-
   @Override
   public String toString() {
     return this.method + " : " + this.lineNumber + " -> " + this.description

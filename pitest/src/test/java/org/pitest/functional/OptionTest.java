@@ -17,10 +17,8 @@ package org.pitest.functional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Operations.combine;
 import static org.pitest.functional.Prelude.id;
 import static org.pitest.functional.Prelude.isEqualTo;
-import static org.pitest.functional.Prelude.toSingletonList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,10 +129,8 @@ public class OptionTest {
 
   @Test
   public void shouldFlatMapSuppliedValue() {
-    assertEquals(
-        fooList(),
-        Option.some(FOO).flatMap(
-            combine(id(String.class), toSingletonList(String.class))));
+    assertEquals(fooList(),
+        Option.some(FOO).flatMap(Prelude.asList(String.class)));
   }
 
   @Test

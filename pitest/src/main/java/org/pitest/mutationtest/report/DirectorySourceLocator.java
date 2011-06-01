@@ -29,10 +29,6 @@ public class DirectorySourceLocator implements SourceLocator {
 
   private final File root;
 
-  public DirectorySourceLocator(final String root) {
-    this(new File(root));
-  }
-
   public DirectorySourceLocator(final File root) {
     this.root = root;
   }
