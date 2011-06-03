@@ -31,12 +31,11 @@ import org.pitest.util.Unchecked;
 
 public class OptionsParser {
 
-  private static final String                       TEST_CENTRIC                   = "testCentric";
   private final static String                       REPORT_DIR_ARG                 = "reportDir";
   private final static String                       TARGET_CLASSES_ARG             = "targetClasses";
   private final static String                       IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
   private final static String                       SOURCE_DIR_ARG                 = "sourceDirs";
-  private final static String                       MUTATIONS_ARG                  = "mutations";
+  private final static String                       MUTATIONS_ARG                  = "mutators";
   private final static String                       DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
   private final static String                       CHILD_JVM_ARGS                 = "jvmArgs";
   private final static String                       MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
@@ -45,7 +44,7 @@ public class OptionsParser {
   private final static String                       TIMEOUT_FACTOR_ARG             = "timeoutFactor";
   private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
   private final static String                       TEST_FILTER_ARGS               = "targetTests";
-  private final static String                       LOGGING_CLASSES_ARG            = "loggingClasses";
+  private final static String                       AVOID_CALLS_ARG                = "avoidCallsTo";
   private final static String                       EXCLUDED_METHOD_ARG            = "excludedMethods";
 
   private final OptionParser                        parser;
@@ -53,7 +52,7 @@ public class OptionsParser {
   private final OptionSpec<String>                  targetClassesSpec;
   private final OptionSpec<String>                  targetTestsSpec;
   private final OptionSpec<String>                  inScopeClassesSpec;
-  private final OptionSpec<String>                  loggingClassesSpec;
+  private final OptionSpec<String>                  avoidCallsSpec;
   private final OptionSpec<Integer>                 depth;
   private final OptionSpec<Integer>                 threadsSpec;
   private final OptionSpec<File>                    sourceDirSpec;
@@ -69,9 +68,6 @@ public class OptionsParser {
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
-    this.parser.accepts("codeCentric");
-    this.parser.accepts(TEST_CENTRIC);
-
     this.reportDirSpec = this.parser.accepts(REPORT_DIR_ARG).withRequiredArg()
         .describedAs("directory to create report folder in");
 
@@ -83,8 +79,8 @@ public class OptionsParser {
         .describedAs(
             "comma seperated list of filters to match against classes to test");
 
-    this.loggingClassesSpec = this.parser
-        .accepts(LOGGING_CLASSES_ARG)
+    this.avoidCallsSpec = this.parser
+        .accepts(AVOID_CALLS_ARG)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
@@ -184,7 +180,7 @@ public class OptionsParser {
     data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
-    data.setLoggingClasses(this.loggingClassesSpec.values(userArgs));
+    data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
     data.setExcludedMethods(FCollection.map(
         this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
 

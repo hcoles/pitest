@@ -115,7 +115,7 @@ public abstract class Reflection {
 
   public static Predicate<Class<?>> isTopClass() {
     return new Predicate<Class<?>>() {
-      public Boolean apply(Class<?> a) {
+      public Boolean apply(final Class<?> a) {
         return isTopClass(a);
       }
 

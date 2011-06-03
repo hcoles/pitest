@@ -29,6 +29,8 @@ import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.util.Functions;
+import org.pitest.util.TestInfo;
 
 public final class Description implements FunctionalIterable<Class<?>>,
     Serializable {
@@ -155,6 +157,20 @@ public final class Description implements FunctionalIterable<Class<?>>,
 
   public FunctionalList<Class<?>> filter(final F<Class<?>, Boolean> predicate) {
     return null;
+  }
+
+  public Collection<String> getDirectTestees() {
+    return FCollection.flatMap(this.testClasses, classToTestees());
+  }
+
+  private F<Class<?>, Iterable<String>> classToTestees() {
+    return new F<Class<?>, Iterable<String>>() {
+
+      public Iterable<String> apply(final Class<?> a) {
+        return TestInfo.determineTestee(a).map(Functions.classToName());
+      }
+
+    };
   }
 
 }

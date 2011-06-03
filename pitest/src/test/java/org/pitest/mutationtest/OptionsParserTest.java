@@ -82,7 +82,7 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseCommaSeperatedListOfMutationOperators() {
-    final ReportOptions actual = parse("--mutations",
+    final ReportOptions actual = parse("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
     assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
         actual.getMutators());
@@ -135,8 +135,8 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfLoggingPackages() {
-    final ReportOptions actual = parse("--loggingClasses", "foo,bar,foo.bar");
+  public void shouldParseCommaSeperatedListOfClassesToAvoidCallTo() {
+    final ReportOptions actual = parse("--avoidCallsTo", "foo,bar,foo.bar");
     assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
         actual.getLoggingClasses());
   }

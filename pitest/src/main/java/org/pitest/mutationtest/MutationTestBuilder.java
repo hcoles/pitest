@@ -17,7 +17,6 @@ package org.pitest.mutationtest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +38,10 @@ import org.pitest.util.Log;
 
 public class MutationTestBuilder {
 
-  private final static Logger  LOG = Log.getLogger();
+  private final static int     TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
+
+  private final static Logger  LOG                                  = Log
+                                                                        .getLogger();
 
   private final ReportOptions  data;
   private final JavaAgent      javaAgentFinder;
@@ -94,31 +96,23 @@ public class MutationTestBuilder {
       final Collection<MutationDetails> availableMutations,
       final CoverageDatabase coverageDatabase) {
     for (final MutationDetails mutation : availableMutations) {
-      final Collection<TestInfo> testDetails = prioritizeTests(getTestsForMutant(
-          coverageDatabase, mutation));
+      final Collection<TestInfo> testDetails = prioritizeTests(mutation,
+          coverageDatabase);
 
       mutation.addTestsInOrder(testDetails);
     }
   }
 
-  private Collection<TestInfo> prioritizeTests(
-      final Collection<TestInfo> testsForMutant) {
+  private Collection<TestInfo> prioritizeTests(final MutationDetails mutation,
+      final CoverageDatabase coveageDatabase) {
+    final Collection<TestInfo> testsForMutant = getTestsForMutant(
+        coveageDatabase, mutation);
     final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
         Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis, timeComparator());
+    Collections.sort(sortedTis,
+        new TestInfoPriorisationComparator(mutation.getClazz(),
+            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
     return sortedTis;
-  }
-
-  private Comparator<TestInfo> timeComparator() {
-    return new Comparator<TestInfo>() {
-
-      public int compare(final TestInfo arg0, final TestInfo arg1) {
-        final Long t0 = arg0.getTime();
-        final Long t1 = arg1.getTime();
-        return t0.compareTo(t1);
-      }
-
-    };
   }
 
   private Collection<TestInfo> getTestsForMutant(

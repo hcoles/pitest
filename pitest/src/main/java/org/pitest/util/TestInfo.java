@@ -16,11 +16,12 @@ package org.pitest.util;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.FunctionalIterable;
+import org.pitest.functional.MutableList;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
@@ -29,14 +30,14 @@ import org.pitest.reflection.Reflection;
 
 public abstract class TestInfo {
 
-  public static Collection<Class<?>> determineTestee(final Class<?> test) {
+  public static FunctionalIterable<Class<?>> determineTestee(final Class<?> test) {
     final org.pitest.annotations.ClassUnderTest annotation = test
         .getAnnotation(org.pitest.annotations.ClassUnderTest.class);
     if (annotation == null) {
       return FCollection.filter(determineTesteeFromName(test),
           True.<Class<?>> all());
     } else {
-      return Arrays.asList(annotation.value());
+      return new MutableList<Class<?>>(Arrays.asList(annotation.value()));
     }
   }
 

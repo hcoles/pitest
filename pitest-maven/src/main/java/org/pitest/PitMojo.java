@@ -71,7 +71,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    * 
    */
-  private List<String>          loggingClasses;
+  private List<String>          avoidCallsTo;
 
   /**
    * Classes in scope for dependency and coverage analysis
@@ -212,8 +212,8 @@ public class PitMojo extends AbstractMojo {
     data.setMutators(determineMutators());
     data.setTimeoutConstant(this.timeoutConstant);
     data.setTimeoutFactor(this.timeoutFactor);
-    if (this.loggingClasses != null) {
-      data.setLoggingClasses(this.loggingClasses);
+    if (this.avoidCallsTo != null) {
+      data.setLoggingClasses(this.avoidCallsTo);
     }
 
     final List<String> sourceRoots = new ArrayList<String>();

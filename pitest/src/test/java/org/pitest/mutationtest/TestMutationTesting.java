@@ -35,6 +35,7 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
+import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
@@ -151,6 +152,7 @@ public class TestMutationTesting {
     }
   }
 
+  @ClassUnderTest(OneMutation.class)
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
@@ -320,23 +322,23 @@ public class TestMutationTesting {
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
-      MethodMutatorFactory... mutators) {
+      final MethodMutatorFactory... mutators) {
 
-    ReportOptions data = new ReportOptions();
+    final ReportOptions data = new ReportOptions();
 
-    Set<Predicate<String>> tests = Collections.singleton(Prelude.isEqualTo(test
-        .getName()));
+    final Set<Predicate<String>> tests = Collections.singleton(Prelude
+        .isEqualTo(test.getName()));
     data.setTargetTests(tests);
     data.setDependencyAnalysisMaxDistance(-1);
 
-    Set<Predicate<String>> mutees = Collections.singleton(Prelude
+    final Set<Predicate<String>> mutees = Collections.singleton(Prelude
         .isEqualTo(clazz.getName()));
     data.setTargetClasses(mutees);
 
     data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
     data.setTimeoutFactor(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR);
 
-    ArrayList<Predicate<String>> inScope = new ArrayList<Predicate<String>>();
+    final ArrayList<Predicate<String>> inScope = new ArrayList<Predicate<String>>();
     inScope.addAll(mutees);
     inScope.addAll(tests);
 

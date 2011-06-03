@@ -203,7 +203,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private List<TestUnit> filterTestsByDependencyAnalysis(
       final List<TestUnit> tus) {
     final int maxDistance = this.data.getDependencyAnalysisMaxDistance();
-    if (maxDistance <= 0) {
+    if (maxDistance < 0) {
       return tus;
     } else {
       return FCollection.filter(tus, isWithinReach(maxDistance));
@@ -464,10 +464,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   private TestInfo descriptionToTestInfo(final Description description) {
-    final long time = DefaultCoverageDatabase.this.times.get(description);
+    final int time = DefaultCoverageDatabase.this.times.get(description)
+        .intValue();
 
     return new TestInfo(description.getTestClassNames(),
-        description.toString(), time);
+        description.toString(), time, description.getDirectTestees());
   }
 
   public Collection<ClassGrouping> getGroupedClasses() {

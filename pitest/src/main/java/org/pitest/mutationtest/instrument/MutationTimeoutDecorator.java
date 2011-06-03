@@ -14,22 +14,16 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.util.logging.Logger;
-
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.loopbreak.PerProcessTimelimitCheck;
-import org.pitest.util.Log;
 import org.pitest.util.Monitor;
 import org.pitest.util.TimeOutSystemExitSideEffect;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
-
-  private final static Logger         LOG                      = Log
-                                                                   .getLogger();
 
   private final static long           HARD_TIMEOUT_ADDIONAL_MS = 15000;
   private static final long           serialVersionUID         = 1L;
@@ -55,11 +49,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
         TimeOutSystemExitSideEffect.INSTANCE, hardTime);
     timeoutWatchDog.requestStart();
     try {
-      final long t0 = System.currentTimeMillis();
       this.child().execute(loader, rc);
-      LOG.info("test time varied by "
-          + (System.currentTimeMillis() - t0 - this.executionTime)
-          + " for test with normal execution time of " + this.executionTime);
     } finally {
       timeoutWatchDog.requestStop();
     }

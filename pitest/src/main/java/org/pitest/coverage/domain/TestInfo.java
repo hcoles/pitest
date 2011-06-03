@@ -21,21 +21,23 @@ import org.pitest.functional.F;
 public class TestInfo {
 
   private final String             name;
-  private final long               time;
+  private final int                time;
   private final Collection<String> definingClasses;
+  private final Collection<String> testees;
 
   public TestInfo(final Collection<String> definingClasses, final String name,
-      final long time) {
+      final int time, final Collection<String> testees) {
     this.definingClasses = definingClasses;
     this.name = name;
     this.time = time;
+    this.testees = testees;
   }
 
   public String getName() {
     return this.name;
   }
 
-  public long getTime() {
+  public int getTime() {
     return this.time;
   }
 
@@ -56,7 +58,7 @@ public class TestInfo {
         * result
         + ((this.definingClasses == null) ? 0 : this.definingClasses.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-    result = prime * result + (int) (this.time ^ (this.time >>> 32));
+    result = prime * result + (this.time ^ (this.time >>> 32));
     return result;
   }
 
@@ -100,6 +102,10 @@ public class TestInfo {
       }
 
     };
+  }
+
+  public boolean directlyHits(final String targetClass) {
+    return this.testees.contains(targetClass);
   }
 
 }
