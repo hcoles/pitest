@@ -39,6 +39,9 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
+import org.pitest.mutationtest.filter.MutationFilterFactory;
+import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.JavaAgent;
@@ -156,7 +159,8 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        new JUnitCompatibleConfiguration(), this.data, this.javaAgentFinder);
+        limitMutationsPerClass(), new JUnitCompatibleConfiguration(),
+        this.data, this.javaAgentFinder);
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         initialConfig, coverageDatabase);
@@ -168,6 +172,16 @@ public class MutationCoverageReport implements Runnable {
 
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
+
+  }
+
+  private MutationFilterFactory limitMutationsPerClass() {
+    if (this.data.getMaxMutationsPerClass() <= 0) {
+      return UnfilteredMutationFilter.factory();
+    } else {
+      return LimitNumberOfMutationPerClassFilter.factory(this.data
+          .getMaxMutationsPerClass());
+    }
 
   }
 

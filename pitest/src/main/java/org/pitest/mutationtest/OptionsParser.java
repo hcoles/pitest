@@ -46,6 +46,7 @@ public class OptionsParser {
   private final static String                       TEST_FILTER_ARGS               = "targetTests";
   private final static String                       AVOID_CALLS_ARG                = "avoidCallsTo";
   private final static String                       EXCLUDED_METHOD_ARG            = "excludedMethods";
+  private final static String                       MAX_MUTATIONS_PER_CLASS_ARG    = "maxMutationsPerClass";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -63,6 +64,7 @@ public class OptionsParser {
   private final OptionSpec<Float>                   timeoutFactorSpec;
   private final OptionSpec<Long>                    timeoutConstSpec;
   private final OptionSpec<String>                  excludedMethodsSpec;
+  private final OptionSpec<Integer>                 maxMutationsPerClassSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -110,6 +112,11 @@ public class OptionsParser {
     this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()
         .ofType(Integer.class).defaultsTo(1)
         .describedAs("number of threads to use for testing");
+
+    this.maxMutationsPerClassSpec = this.parser
+        .accepts(MAX_MUTATIONS_PER_CLASS_ARG).withRequiredArg()
+        .ofType(Integer.class).defaultsTo(0)
+        .describedAs("max number of mutations to allow for each class");
 
     this.sourceDirSpec = this.parser.accepts(SOURCE_DIR_ARG).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
@@ -183,6 +190,7 @@ public class OptionsParser {
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
     data.setExcludedMethods(FCollection.map(
         this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec.value(userArgs));
 
     return data;
 

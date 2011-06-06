@@ -139,6 +139,13 @@ public class PitMojo extends AbstractMojo {
   private long                  timeoutConstant;
 
   /**
+   * Maximum number of mutations to allow per class
+   * 
+   * @parameter default-value="3000"
+   */
+  private int                   maxMutationsPerClass;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -206,6 +213,7 @@ public class PitMojo extends AbstractMojo {
     data.setMutateStaticInitializers(this.mutateStaticInitializers);
     data.setExcludedMethods(globStringsToPredicates(this.excludedMethods));
     data.setNumberOfThreads(this.threads);
+    data.setMaxMutationsPerClass(this.maxMutationsPerClass);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
 

@@ -18,6 +18,7 @@ package org.pitest.mutationtest;
 import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.SURVIVED;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -26,6 +27,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 
 import com.example.FailsTestWhenEnvVariableSetTestee;
+import com.example.MultipleMutations;
 
 public class CodeCentricReportTest extends ReportTestBase {
 
@@ -99,10 +101,11 @@ public class CodeCentricReportTest extends ReportTestBase {
 
   @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
+    this.data.setMutators(Arrays.asList(Mutator.RETURN_VALS));
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
-    verifyResults(KILLED, KILLED, SURVIVED);
+    verifyResults(KILLED);
   }
 
   @Test
@@ -120,6 +123,16 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setExcludedMethods(predicateFor("excludeMe"));
     createAndRun();
     verifyResults();
+  }
+
+  @Test
+  public void shouldLimitNumberOfMutationsPerClass() {
+    this.data.setTargetClasses(predicateFor(MultipleMutations.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
+    this.data.setMaxMutationsPerClass(1);
+    createAndRun();
+    verifyResults(SURVIVED);
   }
 
   private void createAndRun() {

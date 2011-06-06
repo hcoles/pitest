@@ -1,0 +1,70 @@
+/*
+ * Copyright 2011 Henry Coles
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and limitations under the License. 
+ */
+package org.pitest.mutationtest.filter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.pitest.mutationtest.MutationDetails;
+
+public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
+
+  private final int maxMutationsPerClass;
+
+  public LimitNumberOfMutationPerClassFilter(final int max) {
+    this.maxMutationsPerClass = max;
+  }
+
+  public static MutationFilterFactory factory(final int maxMutationsPerClass) {
+    return new MutationFilterFactory() {
+
+      public MutationFilter createFilter() {
+        return new LimitNumberOfMutationPerClassFilter(maxMutationsPerClass);
+      }
+
+    };
+  }
+
+  public Collection<MutationDetails> filter(
+      final Collection<MutationDetails> mutations) {
+    if (mutations.size() <= this.maxMutationsPerClass) {
+      return mutations;
+    } else {
+      return createEvenlyDistributedSampling(mutations);
+    }
+  }
+
+  private Collection<MutationDetails> createEvenlyDistributedSampling(
+      final Collection<MutationDetails> mutations) {
+    final Collection<MutationDetails> filtered = new ArrayList<MutationDetails>(
+        this.maxMutationsPerClass);
+    final int step = (mutations.size() / this.maxMutationsPerClass);
+    final Iterator<MutationDetails> it = mutations.iterator();
+    while (it.hasNext()) {
+      int i = 0;
+      MutationDetails value = null;
+      while (it.hasNext() && (i != step)) {
+        value = it.next();
+        i++;
+      }
+      if (filtered.size() != this.maxMutationsPerClass) {
+        filtered.add(value);
+      }
+    }
+
+    return filtered;
+  }
+}

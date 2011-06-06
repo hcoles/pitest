@@ -48,6 +48,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
@@ -359,7 +360,8 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        this.config, data, new JavaAgentJarFinder());
+        UnfilteredMutationFilter.factory(), this.config, data,
+        new JavaAgentJarFinder());
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         this.config, coverageDatabase);

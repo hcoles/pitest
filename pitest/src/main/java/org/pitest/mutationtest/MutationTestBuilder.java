@@ -31,6 +31,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.filter.MutationFilter;
+import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.JavaAgent;
@@ -38,24 +40,26 @@ import org.pitest.util.Log;
 
 public class MutationTestBuilder {
 
-  private final static int     TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
+  private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
-  private final static Logger  LOG                                  = Log
-                                                                        .getLogger();
+  private final static Logger         LOG                                  = Log
+                                                                               .getLogger();
 
-  private final ReportOptions  data;
-  private final JavaAgent      javaAgentFinder;
-  private final MutationConfig mutationConfig;
-
-  private final Configuration  initialConfig;
+  private final ReportOptions         data;
+  private final JavaAgent             javaAgentFinder;
+  private final MutationConfig        mutationConfig;
+  private final Configuration         initialConfig;
+  private final MutationFilterFactory filterFactory;
 
   public MutationTestBuilder(final MutationConfig mutationConfig,
+      final MutationFilterFactory filterFactory,
       final Configuration initialConfig, final ReportOptions data,
       final JavaAgent javaAgentFinder) {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.mutationConfig = mutationConfig;
     this.initialConfig = initialConfig;
+    this.filterFactory = filterFactory;
   }
 
   public List<TestUnit> createMutationTestUnits(
@@ -66,7 +70,8 @@ public class MutationTestBuilder {
     for (final ClassGrouping classGroup : codeClasses) {
 
       final Collection<MutationDetails> mutationsForClasses = createMutations(
-          coverageDatabase, this.mutationConfig, classGroup);
+          coverageDatabase, this.mutationConfig, classGroup,
+          this.filterFactory.createFilter());
 
       tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses,
           classGroup.getParent()));
@@ -77,14 +82,15 @@ public class MutationTestBuilder {
 
   private Collection<MutationDetails> createMutations(
       final CoverageDatabase coverageDatabase,
-      final MutationConfig mutationConfig, final ClassGrouping classesToMutate) {
+      final MutationConfig mutationConfig, final ClassGrouping classesToMutate,
+      final MutationFilter filter) {
     mutationConfig.createMutator(IsolationUtils.getContextClassLoader());
 
     final Mutater m = mutationConfig.createMutator(IsolationUtils
         .getContextClassLoader());
 
-    final Collection<MutationDetails> availableMutations = m
-        .findMutations(classesToMutate);
+    final Collection<MutationDetails> availableMutations = filter.filter(m
+        .findMutations(classesToMutate));
 
     assignTestsToMutations(availableMutations, coverageDatabase);
 

@@ -60,6 +60,8 @@ public class ReportOptions {
 
   private Collection<String>                         loggingClasses           = new ArrayList<String>();
 
+  private int                                        maxMutationsPerClass;
+
   public ReportOptions() {
   }
 
@@ -303,6 +305,14 @@ public class ReportOptions {
   public void setExcludedMethods(
       final Collection<Predicate<String>> excludedMethods) {
     this.excludedMethods = excludedMethods;
+  }
+
+  public int getMaxMutationsPerClass() {
+    return this.maxMutationsPerClass;
+  }
+
+  public void setMaxMutationsPerClass(final int maxMutationsPerClass) {
+    this.maxMutationsPerClass = maxMutationsPerClass;
   }
 
 }
