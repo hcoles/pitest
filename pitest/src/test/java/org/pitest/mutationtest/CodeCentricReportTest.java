@@ -102,6 +102,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
     this.data.setMutators(Arrays.asList(Mutator.RETURN_VALS));
+
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
