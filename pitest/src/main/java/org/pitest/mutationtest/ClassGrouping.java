@@ -24,10 +24,6 @@ public class ClassGrouping implements Iterable<String> {
   private final static int   PARENT_INDEX = 0;
   private final List<String> children     = new ArrayList<String>(1);
 
-  public ClassGrouping(final Collection<String> children) {
-    this.children.addAll(children);
-  }
-
   public ClassGrouping(final String parent, final Collection<String> children) {
     this.children.add(parent);
     this.children.addAll(children);

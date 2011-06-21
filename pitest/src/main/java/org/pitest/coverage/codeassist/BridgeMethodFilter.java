@@ -24,7 +24,15 @@ public enum BridgeMethodFilter implements
 
   public Boolean apply(final Integer access, final String name,
       final String desc, final String signature, final String[] exceptions) {
-    return ((access & Opcodes.ACC_SYNTHETIC) == 0);
+    return (isSynthetic(access) || isBridge(access));
+  }
+
+  private boolean isBridge(Integer access) {
+    return false;
+  }
+
+  private boolean isSynthetic(final Integer access) {
+    return (access & Opcodes.ACC_BRIDGE) == 0;
   }
 
 }
