@@ -27,7 +27,7 @@ public enum BridgeMethodFilter implements
     return (isSynthetic(access) || isBridge(access));
   }
 
-  private boolean isBridge(Integer access) {
+  private boolean isBridge(final Integer access) {
     return false;
   }
 

@@ -9,10 +9,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
@@ -22,14 +18,6 @@ import org.pitest.reflection.Reflection;
 public class DescriptionTest {
 
   private Description testee;
-
-  @Test
-  @Ignore
-  // issues with cgilib
-  public void shouldKeepEqualsContract() {
-    EqualsVerifier.forClass(Description.class).suppress(Warning.NULL_FIELDS)
-        .verify();
-  }
 
   @Test
   public void shouldCloneViaXStreamWithoutError() throws Exception {

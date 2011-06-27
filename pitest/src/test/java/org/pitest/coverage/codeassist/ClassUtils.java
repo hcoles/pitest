@@ -12,6 +12,11 @@ public class ClassUtils {
   private ClassUtils() {
   }
 
+  public static byte[] classAsBytes(final Class<?> clazz)
+      throws ClassNotFoundException {
+    return classAsBytes(clazz.getName());
+  }
+
   public static byte[] classAsBytes(final String className)
       throws ClassNotFoundException {
     try {

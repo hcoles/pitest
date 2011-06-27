@@ -156,11 +156,6 @@
             <id>jboss</id>
             <url>http://repository.jboss.com/maven2/</url>
         </repository>
-
-        <repository>
-            <id>equalsverifier-repository</id>
-            <url>http://equalsverifier.googlecode.com/svn/maven/</url>
-        </repository>
         
     <repository>
     <id>javaparser</id>
@@ -228,12 +223,6 @@
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
             <version>1.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.jqno.equalsverifier</groupId>
-            <artifactId>equalsverifier</artifactId>
-            <version>0.6.3</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xstream</groupId>

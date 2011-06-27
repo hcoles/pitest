@@ -198,7 +198,7 @@ public class PitMojo extends AbstractMojo {
     }
 
     final Artifact pitVersionInfo = this.pluginArtifactMap
-        .get("org.pitest:pitest");
+    .get("org.pitest:pitest");
 
     addOwnDependenciesToClassPath(classPath);
 
