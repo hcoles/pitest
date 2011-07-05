@@ -6,34 +6,34 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.20</version>
+		<version>0.20-SNAPSHOT</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest-maven</artifactId>
-	<version>0.20</version>
+	<version>0.20-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>pitest-maven Maven Mojo</name>
-    <url>http://pitest.org</url>
-    <description>Mutation testing system for java - Maven plugin</description>
-    <scm>
-        <connection>scm:hg:https://pitestrunner.googlecode.com/hg/</connection>
-        <url>http://code.google.com/p/pitestrunner/source/browse/</url>
-    </scm>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
+	<url>http://pitest.org</url>
+	<description>Mutation testing system for java - Maven plugin</description>
+	<scm>
+		<connection>scm:hg:https://pitestrunner.googlecode.com/hg/</connection>
+		<url>http://code.google.com/p/pitestrunner/source/browse/</url>
+	</scm>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
 
-    </licenses>
-    <developers>
-        <developer>
-            <id>henry</id>
-            <name>Henry Coles</name>
-            <email>henry@pitest.org</email>
-        </developer>
-    </developers>
+	</licenses>
+	<developers>
+		<developer>
+			<id>henry</id>
+			<name>Henry Coles</name>
+			<email>henry@pitest.org</email>
+		</developer>
+	</developers>
 	<build>
 		<plugins>
 			<plugin>
@@ -45,6 +45,7 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
@@ -75,7 +76,7 @@
 		<dependency>
 			<groupId>org.pitest</groupId>
 			<artifactId>pitest</artifactId>
-			<version>0.20</version>
+			<version>0.20-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
