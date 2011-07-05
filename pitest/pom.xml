@@ -7,7 +7,28 @@
 	<packaging>jar</packaging>
 	<version>0.20</version>
 	<name>pitest</name>
-	<url>http://maven.apache.org</url>
+	<url>http://pitest.org</url>
+	<description>Mutation testing system for java</description>
+	<scm>
+		<connection>scm:hg:https://pitestrunner.googlecode.com/hg/</connection>
+		<url>http://code.google.com/p/pitestrunner/source/browse/</url>
+	</scm>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+
+	</licenses>
+	<developers>
+		<developer>
+			<id>henry</id>
+			<name>Henry Coles</name>
+			<email>henry@pitest.org</email>
+		</developer>
+	</developers>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -141,6 +162,20 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 
 
 		</plugins>
