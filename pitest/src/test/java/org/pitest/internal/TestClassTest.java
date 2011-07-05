@@ -21,8 +21,6 @@ import org.junit.Test;
 
 public class TestClassTest {
 
-
-
   @Test
   public void shouldCloneViaXStreamWithoutError() throws Exception {
     try {

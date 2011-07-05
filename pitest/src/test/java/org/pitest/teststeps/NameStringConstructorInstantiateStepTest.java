@@ -26,7 +26,6 @@ import org.pitest.internal.IsolationUtils;
 
 public class NameStringConstructorInstantiateStepTest {
 
-
   public static class OneString {
     public final String s;
 
@@ -47,12 +46,12 @@ public class NameStringConstructorInstantiateStepTest {
 
   @Test
   public void shouldSerializeAndDeserializeViaXStreamWithoutError()
-  throws Exception {
+      throws Exception {
     try {
       final NameStringConstructorInstantiateStep expected = new NameStringConstructorInstantiateStep(
           OneString.class);
       final NameStringConstructorInstantiateStep actual = (NameStringConstructorInstantiateStep) IsolationUtils
-      .clone(expected);
+          .clone(expected);
       assertSame(expected.getClazz(), actual.getClazz());
     } catch (final Throwable t) {
       fail();

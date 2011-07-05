@@ -22,20 +22,18 @@ import org.pitest.internal.IsolationUtils;
 
 public class NoArgsInstantiateStepTest {
 
-
-
   @Test
   public void shouldConstructsAnObject() {
     final NoArgsInstantiateStep testee = new NoArgsInstantiateStep(
         NoArgsInstantiateStepTest.class);
     final NoArgsInstantiateStepTest actual = (NoArgsInstantiateStepTest) testee
-    .execute(this.getClass().getClassLoader(), null, null);
+        .execute(this.getClass().getClassLoader(), null, null);
     assertNotNull(actual);
   }
 
   @Test
   public void shouldSerializeAndDeserializeByXStreamWithoutError()
-  throws Exception {
+      throws Exception {
     try {
       final NoArgsInstantiateStep testee = new NoArgsInstantiateStep(
           NoArgsInstantiateStepTest.class);

@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
@@ -376,11 +376,11 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final Object j = "0";
-      if (this.i == j) {
-        return "was zero";
+      final Object integer = Integer.class;
+      if (this.i == integer) {
+        return "was integer";
       } else {
-        return "was not zero";
+        return "was not integer";
       }
     }
   }
@@ -388,8 +388,11 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceIF_ACMPNEWithIF_CMPEQ() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ACMPNE.class);
-    assertMutantCallableReturns(new HasIF_ACMPNE("1"), mutant, "was zero");
-    assertMutantCallableReturns(new HasIF_ACMPNE("0"), mutant, "was not zero");
+    printMutant(mutant);
+    assertMutantCallableReturns(new HasIF_ACMPNE(String.class), mutant,
+        "was integer");
+    assertMutantCallableReturns(new HasIF_ACMPNE(Integer.class), mutant,
+        "was not integer");
   }
 
   private static class HasIF_ACMPEQ implements Callable<String> {
@@ -400,11 +403,11 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
     }
 
     public String call() {
-      final Object j = "0";
-      if (this.i != j) {
-        return "was not zero";
+      final Object integer = Integer.class;
+      if (this.i != integer) {
+        return "was not integer";
       } else {
-        return "was zero";
+        return "was integer";
       }
     }
   }
@@ -412,8 +415,10 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceIF_ACMPEQWithIF_CMPNE() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ACMPEQ.class);
-    assertMutantCallableReturns(new HasIF_ACMPEQ("1"), mutant, "was zero");
-    assertMutantCallableReturns(new HasIF_ACMPEQ("0"), mutant, "was not zero");
+    assertMutantCallableReturns(new HasIF_ACMPEQ(String.class), mutant,
+        "was integer");
+    assertMutantCallableReturns(new HasIF_ACMPEQ(Integer.class), mutant,
+        "was not integer");
   }
 
 }
