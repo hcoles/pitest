@@ -11,6 +11,7 @@
 	<description>Mutation testing system for java - parent project</description>
 	<scm>
 		<connection>scm:hg:https://pitestrunner.googlecode.com/hg/</connection>
+		<developerConnection>scm:hg:https://pitestrunner.googlecode.com/hg/</developerConnection>
 		<url>http://code.google.com/p/pitestrunner/source/browse/</url>
 	</scm>
 	<licenses>
@@ -28,6 +29,13 @@
 			<email>henry@pitest.org</email>
 		</developer>
 	</developers>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 
 	<modules>
 		<module>pitest-maven</module>
