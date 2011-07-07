@@ -15,6 +15,7 @@ public class CoveragePipe implements CoverageReceiver {
   public final static byte       DONE        = 16;
 
   private final DataOutputStream dos;
+  private final HitCache         cache       = new HitCache();
 
   public CoveragePipe(final DataOutputStream dos) {
     this.dos = dos;
@@ -23,9 +24,11 @@ public class CoveragePipe implements CoverageReceiver {
   public synchronized void addCodelineInvoke(final int classId,
       final int lineNumber) {
     try {
-      this.dos.writeByte(LINE);
-      this.dos.writeInt(classId);
-      this.dos.writeInt(lineNumber);
+      if (!this.cache.checkHit(classId, lineNumber)) {
+        this.dos.writeByte(LINE);
+        this.dos.writeInt(classId);
+        this.dos.writeInt(lineNumber);
+      }
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
@@ -34,6 +37,7 @@ public class CoveragePipe implements CoverageReceiver {
 
   public synchronized void recordTest(final int testIndex) {
     try {
+      this.cache.reset();
       this.dos.writeByte(TEST_CHANGE);
       this.dos.writeInt(testIndex);
 
