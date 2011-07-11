@@ -14,56 +14,15 @@
  */
 package org.pitest.coverage.execute;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 class HitCache {
 
-  private static class Pair {
-    final int classId;
-    final int lineNumber;
-
-    Pair(final int classId, final int lineNumber) {
-      this.classId = classId;
-      this.lineNumber = lineNumber;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + this.classId;
-      result = prime * result + this.lineNumber;
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      final Pair other = (Pair) obj;
-      if (this.classId != other.classId) {
-        return false;
-      }
-      if (this.lineNumber != other.lineNumber) {
-        return false;
-      }
-      return true;
-    }
-
-  }
-
-  private Set<Pair> cache = new HashSet<Pair>();
+  private Set<Long> cache = new TreeSet<Long>();
 
   public boolean checkHit(final int classId, final int lineNumber) {
-    final Pair id = new Pair(classId, lineNumber);
+    final long id = ((long) classId << 32) | lineNumber;
     if (this.cache.contains(id)) {
       return true;
     } else {
@@ -73,6 +32,6 @@ class HitCache {
   }
 
   public void reset() {
-    this.cache = new HashSet<Pair>();
+    this.cache = new TreeSet<Long>();
   }
 }

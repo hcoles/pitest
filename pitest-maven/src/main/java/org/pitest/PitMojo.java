@@ -141,7 +141,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Maximum number of mutations to allow per class
    * 
-   * @parameter default-value="3000"
+   * @parameter default-value="-1"
    */
   private int                   maxMutationsPerClass;
 
