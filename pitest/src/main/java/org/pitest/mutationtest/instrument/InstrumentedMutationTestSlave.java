@@ -57,9 +57,7 @@ public class InstrumentedMutationTestSlave {
       final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
           .fromTransportString(br.readLine());
 
-      if (paramsFromParent.isVerbose()) {
-        Log.setLevel(Level.FINEST);
-      }
+      Log.setVerbose(paramsFromParent.isVerbose());
 
       final File outputFile = new File(paramsFromParent.outputFileName);
       w = new OutputStreamWriter(new FileOutputStream(outputFile));

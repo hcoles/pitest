@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.ConcreteConfiguration;
@@ -123,9 +122,7 @@ public class MutationCoverageReport implements Runnable {
 
   private void runReport() throws IOException {
 
-    if (this.data.isVerbose()) {
-      Log.setLevel(Level.FINEST);
-    }
+    Log.setVerbose(this.data.isVerbose());
 
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
 

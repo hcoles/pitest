@@ -31,7 +31,15 @@ public class Log {
     }
   }
 
-  public static void setLevel(final Level level) {
+  public static void setVerbose(final boolean on) {
+    if (on) {
+      setLevel(Level.FINEST);
+    } else {
+      setLevel(Level.INFO);
+    }
+  }
+
+  private static void setLevel(final Level level) {
 
     LOGGER.setLevel(level);
     for (final Handler each : LOGGER.getHandlers()) {

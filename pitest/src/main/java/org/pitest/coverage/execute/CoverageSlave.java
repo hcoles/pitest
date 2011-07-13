@@ -47,16 +47,16 @@ public class CoverageSlave {
           .fromTransportString(br.readLine());
 
       System.setProperties(paramsFromParent.getSystemProperties());
-      if (paramsFromParent.isVerbose()) {
-        Log.setLevel(Level.FINEST);
-      }
+
+      Log.setVerbose(paramsFromParent.isVerbose());
 
       br.close();
 
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final CoverageWorker worker = new CoverageWorker(paramsFromParent);
+      final CoverageWorker worker = new CoverageWorker(
+          paramsFromParent.getPort(), paramsFromParent.getTests());
 
       worker.run();
 

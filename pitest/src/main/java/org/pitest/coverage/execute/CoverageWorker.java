@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.coverage.execute;
 
@@ -36,10 +36,12 @@ import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
 public class CoverageWorker implements Runnable {
 
-  private final SlaveArguments params;
+  private final int            port;
+  private final List<TestUnit> tests;
 
-  public CoverageWorker(final SlaveArguments paramsFromParent) {
-    this.params = paramsFromParent;
+  public CoverageWorker(final int port, final List<TestUnit> tests) {
+    this.port = port;
+    this.tests = tests;
   }
 
   public void run() {
@@ -49,7 +51,7 @@ public class CoverageWorker implements Runnable {
     Socket s = null;
     try {
 
-      s = new Socket("localhost", this.params.getPort());
+      s = new Socket("localhost", this.port);
 
       final DataOutputStream dos = new DataOutputStream(
           new BufferedOutputStream(s.getOutputStream()));
@@ -57,9 +59,8 @@ public class CoverageWorker implements Runnable {
 
       CodeCoverageStore.init(invokeQueue, invokeStatistics);
 
-      // final OutputToFile outputWriter = createOutput(this.output);
-      final List<TestUnit> decoratedTests = decorateForCoverage(
-          this.params.getTests(), invokeStatistics, invokeQueue);
+      final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
+          invokeStatistics, invokeQueue);
 
       final Container c = new UnContainer();
 
@@ -73,7 +74,6 @@ public class CoverageWorker implements Runnable {
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, decoratedTests);
-      // outputWriter.writeToDisk();
 
       invokeQueue.end();
 
