@@ -146,6 +146,13 @@ public class PitMojo extends AbstractMojo {
   private int                   maxMutationsPerClass;
 
   /**
+   * Output verbose logging
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean verbose;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -184,6 +191,7 @@ public class PitMojo extends AbstractMojo {
 
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
+
     final Set<String> classPath = new HashSet<String>();
 
     try {
@@ -216,6 +224,7 @@ public class PitMojo extends AbstractMojo {
     data.setMaxMutationsPerClass(this.maxMutationsPerClass);
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
+    data.setVerbose(this.verbose);
 
     data.setMutators(determineMutators());
     data.setTimeoutConstant(this.timeoutConstant);

@@ -177,7 +177,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final SlaveArguments sa = new SlaveArguments(filteredTests,
         System.getProperties(),
-        convertToJVMClassFilter(this.data.getTargetClassesFilter()), port);
+        convertToJVMClassFilter(this.data.getTargetClassesFilter()), port,
+        this.data.isVerbose());
     final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)
@@ -296,8 +297,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       Set<TestInfo> testsForLine = map.get(key);
       if (testsForLine == null) {
         testsForLine = new TreeSet<TestInfo>(new TestInfoNameComparator()); // inject
-                                                                            // comparator
-                                                                            // here
+        // comparator
+        // here
         map.put(key, testsForLine);
       }
       testsForLine.add(this.descriptionToTestInfo(description));

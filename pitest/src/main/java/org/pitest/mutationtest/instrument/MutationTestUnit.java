@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.instrument;
 
@@ -148,7 +148,8 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final SlaveArguments fileArgs = new SlaveArguments(
         WrappingProcess.randomFilename(), remainingMutations, tests,
-        this.config, System.getProperties(), this.timeoutStrategy);
+        this.config, System.getProperties(), this.timeoutStrategy,
+        Log.isVerbose());
 
     final MutationTestProcess worker = new MutationTestProcess(
         WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())
@@ -161,7 +162,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
     try {
       exitCode = ExitCode.fromCode(worker.waitToDie());
-      LOG.info("Exit code was - " + exitCode);
+      LOG.fine("Exit code was - " + exitCode);
     } catch (final InterruptedException e1) {
       // swallow
     }
@@ -200,11 +201,11 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
       final DetectionStatus status = DetectionStatus
           .getForErrorExitCode(exitCode);
-      LOG.info("Setting " + unfinishedRuns.size() + " unfinished runs to "
+      LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
     } else {
-      LOG.info("Slave exited ok");
+      LOG.fine("Slave exited ok");
     }
 
   }
