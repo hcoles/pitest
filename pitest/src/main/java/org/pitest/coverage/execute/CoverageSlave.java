@@ -14,14 +14,21 @@
  */
 package org.pitest.coverage.execute;
 
+import static org.pitest.util.Unchecked.translateCheckedException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageTransformer;
+import org.pitest.extension.TestUnit;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.instrument.HotSwapAgent;
 import org.pitest.util.ExitCode;
@@ -34,7 +41,7 @@ public class CoverageSlave {
   public static void main(final String[] args) {
 
     ExitCode exitCode = ExitCode.OK;
-
+    Socket s = null;
     try {
       final File input = new File(args[0]);
 
@@ -55,8 +62,13 @@ public class CoverageSlave {
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final CoverageWorker worker = new CoverageWorker(
-          paramsFromParent.getPort(), paramsFromParent.getTests());
+      s = new Socket("localhost", paramsFromParent.getPort());
+
+      final List<TestUnit> tus = getTestsFromParent(s);
+
+      LOG.info(tus.size() + " tests received");
+
+      final CoverageWorker worker = new CoverageWorker(s.getOutputStream(), tus);
 
       worker.run();
 
@@ -65,10 +77,32 @@ public class CoverageSlave {
           ex);
       ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
+    } finally {
+      try {
+        if (s != null) {
+          s.close();
+        }
+      } catch (final IOException e) {
+        throw translateCheckedException(e);
+      }
     }
 
     System.exit(exitCode.getCode());
 
+  }
+
+  private static List<TestUnit> getTestsFromParent(final Socket s)
+      throws IOException {
+    final BufferedReader br = new BufferedReader(new InputStreamReader(
+        s.getInputStream()));
+    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    String line = br.readLine();
+    while (!line.equals("END")) {
+      tus.add((TestUnit) IsolationUtils.fromTransportString(line));
+      line = br.readLine();
+    }
+
+    return tus;
   }
 
 }

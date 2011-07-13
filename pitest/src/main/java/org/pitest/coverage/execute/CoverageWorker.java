@@ -18,8 +18,7 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +35,11 @@ import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
 public class CoverageWorker implements Runnable {
 
-  private final int            port;
+  private final OutputStream   os;
   private final List<TestUnit> tests;
 
-  public CoverageWorker(final int port, final List<TestUnit> tests) {
-    this.port = port;
+  public CoverageWorker(final OutputStream os, final List<TestUnit> tests) {
+    this.os = os;
     this.tests = tests;
   }
 
@@ -48,13 +47,10 @@ public class CoverageWorker implements Runnable {
 
     final CoverageStatistics invokeStatistics = new CoverageStatistics();
 
-    Socket s = null;
     try {
 
-      s = new Socket("localhost", this.port);
-
       final DataOutputStream dos = new DataOutputStream(
-          new BufferedOutputStream(s.getOutputStream()));
+          new BufferedOutputStream(this.os));
       final CoveragePipe invokeQueue = new CoveragePipe(dos);
 
       CodeCoverageStore.init(invokeQueue, invokeStatistics);
@@ -79,14 +75,6 @@ public class CoverageWorker implements Runnable {
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
-    } finally {
-      try {
-        if (s != null) {
-          s.close();
-        }
-      } catch (final IOException e) {
-        throw translateCheckedException(e);
-      }
     }
 
   }

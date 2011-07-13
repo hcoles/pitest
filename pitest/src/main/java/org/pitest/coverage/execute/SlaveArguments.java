@@ -15,34 +15,23 @@ package org.pitest.coverage.execute;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import java.util.List;
 import java.util.Properties;
 
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.IsolationUtils;
 
 public class SlaveArguments {
 
-  private final String            tests;
   private final Properties        systemProperties;
   private final Predicate<String> filter;
   private final int               port;
   private final boolean           verbose;
 
-  public SlaveArguments(final List<TestUnit> tests,
-      final Properties systemProperties, final Predicate<String> filter,
-      final int port, final boolean verbose) {
-    this.tests = IsolationUtils.toXml(tests);
+  public SlaveArguments(final Properties systemProperties,
+      final Predicate<String> filter, final int port, final boolean verbose) {
     this.systemProperties = systemProperties;
     this.filter = filter;
     this.port = port;
     this.verbose = verbose;
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<TestUnit> getTests() {
-    return (List<TestUnit>) IsolationUtils.fromXml(this.tests);
   }
 
   public Properties getSystemProperties() {

@@ -69,7 +69,7 @@ public class CoverageProcessTest {
         new JUnitCompatibleConfiguration(), new NullDiscoveryListener(),
         new UnGroupedStrategy(), Option.<TestFilter> none(), Tests.class);
 
-    final SlaveArguments sa = new SlaveArguments(tus, System.getProperties(),
+    final SlaveArguments sa = new SlaveArguments(System.getProperties(),
         coverOnlyTestees(), 8186, true);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
