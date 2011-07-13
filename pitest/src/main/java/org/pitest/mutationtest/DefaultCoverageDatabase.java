@@ -55,6 +55,7 @@ import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
+import org.pitest.util.PortFinder;
 import org.pitest.util.Unchecked;
 import org.pitest.util.WrappingProcess;
 
@@ -173,7 +174,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
-    final int port = 8187;
+    final PortFinder pf = new PortFinder();
+    final int port = pf.getNextAvailablePort();
 
     final SlaveArguments sa = new SlaveArguments(filteredTests,
         System.getProperties(),

@@ -46,8 +46,8 @@ public class TestAdapter extends AbstractTestUnit {
 
     public Boolean apply(final Method a) {
       return a.getName().equals("setName")
-      && (a.getParameterTypes().length == 1)
-      && a.getParameterTypes()[0].equals(String.class);
+          && (a.getParameterTypes().length == 1)
+          && a.getParameterTypes()[0].equals(String.class);
     }
 
   }
@@ -61,7 +61,7 @@ public class TestAdapter extends AbstractTestUnit {
 
     public Boolean apply(final Method a) {
       return a.getName().equals("runBare")
-      && (a.getParameterTypes().length == 0);
+          && (a.getParameterTypes().length == 0);
     }
 
   }
@@ -135,7 +135,7 @@ public class TestAdapter extends AbstractTestUnit {
    * constructor.
    */
   public static Constructor<?> getTestConstructor(final Class<?> theClass)
-  throws NoSuchMethodException {
+      throws NoSuchMethodException {
     try {
       return theClass.getConstructor(String.class);
     } catch (final NoSuchMethodException e) {
