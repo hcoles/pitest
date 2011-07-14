@@ -1,12 +1,9 @@
 package org.pitest.mutationtest;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -17,26 +14,30 @@ import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoveragePipe;
 import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.execute.SlaveArguments;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.util.Log;
+import org.pitest.util.SafeDataOutputStream;
 import org.pitest.util.Unchecked;
 
-public class CoverageReceiverThread extends Thread {
+public class CoverageCommunicationThread extends Thread {
 
   private final static Logger               LOG = Log.getLogger();
 
   private final SideEffect1<CoverageResult> handler;
   private final List<TestUnit>              tus;
   private final int                         port;
+  private final SlaveArguments              arguments;
 
-  public CoverageReceiverThread(final int port, final List<TestUnit> tus,
+  public CoverageCommunicationThread(final int port,
+      final SlaveArguments arguments, final List<TestUnit> tus,
       final SideEffect1<CoverageResult> handler) {
     this.setDaemon(true);
     this.handler = handler;
     this.tus = tus;
     this.port = port;
+    this.arguments = arguments;
   }
 
   @Override
@@ -50,10 +51,12 @@ public class CoverageReceiverThread extends Thread {
       final BufferedInputStream bif = new BufferedInputStream(
           clientSocket.getInputStream());
 
-      sendTests(clientSocket);
+      sendDataToSlave(clientSocket);
 
       final DataInputStream is = new DataInputStream(bif);
       receiveCoverage(is);
+
+      bif.close();
 
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
@@ -70,6 +73,30 @@ public class CoverageReceiverThread extends Thread {
         throw Unchecked.translateCheckedException(e);
       }
     }
+
+  }
+
+  private void sendDataToSlave(final Socket clientSocket) throws IOException {
+    final OutputStream os = clientSocket.getOutputStream();
+    final SafeDataOutputStream dos = new SafeDataOutputStream(os);
+    sendArguments(dos);
+    sendTests(dos);
+  }
+
+  private void sendArguments(final SafeDataOutputStream dos) throws IOException {
+    dos.write(this.arguments);
+    dos.flush();
+  }
+
+  private void sendTests(final SafeDataOutputStream dos) throws IOException {
+
+    // send individually to reduce memory overhead of deserializing large suite
+    dos.writeInt(this.tus.size());
+    for (final TestUnit tu : this.tus) {
+      dos.write(tu);
+    }
+    dos.flush();
+    LOG.info("Sent tests to slave");
 
   }
 
@@ -121,19 +148,6 @@ public class CoverageReceiverThread extends Thread {
       }
       control = is.readByte();
     }
-  }
-
-  private void sendTests(final Socket clientSocket) throws IOException {
-    final OutputStream os = clientSocket.getOutputStream();
-    final Writer w = new BufferedWriter(new OutputStreamWriter(os));
-    // send individually to reduce memory overhead of deserializing large suite
-    for (final TestUnit tu : this.tus) {
-      w.write(IsolationUtils.toTransportString(tu) + "\n");
-    }
-    w.write("END\n");
-    w.flush();
-    LOG.info("Sent tests to slave");
-
   }
 
   public void waitToFinish() throws InterruptedException {

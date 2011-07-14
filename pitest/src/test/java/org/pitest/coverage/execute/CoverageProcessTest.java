@@ -85,6 +85,7 @@ public class CoverageProcessTest {
     final CoverageProcess process = new CoverageProcess(
         WrappingProcess.Args.withClassPath(new ClassPath()), sa, 8186, tus,
         handler);
+    process.start();
     process.waitToDie();
 
     assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));

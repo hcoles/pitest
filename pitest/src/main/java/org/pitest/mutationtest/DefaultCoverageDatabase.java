@@ -174,7 +174,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
-    final PortFinder pf = new PortFinder();
+    final PortFinder pf = PortFinder.INSTANCE;
     final int port = pf.getNextAvailablePort();
 
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
@@ -185,6 +185,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         .andJavaAgentFinder(this.javaAgentFinder)
         .andStderr(printWith("SLAVE : ")), sa, port, filteredTests, handler);
 
+    process.start();
     process.waitToDie();
 
     process.cleanUp();

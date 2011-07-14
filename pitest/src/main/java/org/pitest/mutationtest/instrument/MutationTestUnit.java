@@ -56,6 +56,7 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
+import org.pitest.util.PortFinder;
 import org.pitest.util.WrappingProcess;
 
 public class MutationTestUnit extends AbstractTestUnit {
@@ -151,10 +152,13 @@ public class MutationTestUnit extends AbstractTestUnit {
         this.config, System.getProperties(), this.timeoutStrategy,
         Log.isVerbose());
 
+    final PortFinder pf = PortFinder.INSTANCE;
+
     final MutationTestProcess worker = new MutationTestProcess(
-        WrappingProcess.Args.withClassPath(cp).andJVMArgs(getJVMArgs())
-            .andJavaAgentFinder(this.javaAgentFinder).andStdout(discard())
-            .andStderr(printWith("SLAVE :")), fileArgs);
+        pf.getNextAvailablePort(), WrappingProcess.Args.withClassPath(cp)
+            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+            .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
+    worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
         remainingMutations);

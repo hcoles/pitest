@@ -34,6 +34,8 @@ public class ClassUtils {
         counter++;
       }
 
+      stream.close();
+
       return result;
     } catch (final IOException e) {
       throw new ClassNotFoundException("", e);

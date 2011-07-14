@@ -14,15 +14,13 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.management.MemoryNotificationInfo;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +34,7 @@ import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
+import org.pitest.util.SafeDataInputStream;
 
 public class InstrumentedMutationTestSlave {
 
@@ -45,17 +44,16 @@ public class InstrumentedMutationTestSlave {
 
     addMemoryWatchDog();
     Writer w = null;
-
+    Socket s = null;
     try {
-      final File input = new File(args[0]);
+      final int port = Integer.valueOf(args[0]);
 
-      LOG.fine("Input file is " + input);
+      s = new Socket("localhost", port);
 
-      final BufferedReader br = new BufferedReader(new InputStreamReader(
-          new FileInputStream(input)));
+      final SafeDataInputStream dis = new SafeDataInputStream(
+          s.getInputStream());
 
-      final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
-          .fromTransportString(br.readLine());
+      final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
@@ -65,7 +63,7 @@ public class InstrumentedMutationTestSlave {
 
       System.setProperties(paramsFromParent.systemProperties);
 
-      br.close();
+      dis.close();
 
       final F2<Class<?>, byte[], Boolean> hotswap = new F2<Class<?>, byte[], Boolean>() {
 
@@ -86,10 +84,12 @@ public class InstrumentedMutationTestSlave {
 
     } catch (final Exception ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
+      safelyCloseSocket(s);
       safelyCloseWriter(w);
       System.exit(ExitCode.UNKNOWN_ERROR.getCode());
     } finally {
       safelyCloseWriter(w);
+      safelyCloseSocket(s);
     }
 
   }
@@ -100,6 +100,16 @@ public class InstrumentedMutationTestSlave {
         w.close();
       } catch (final IOException e) {
         LOG.log(Level.WARNING, "Couldn't close writer", e);
+      }
+    }
+  }
+
+  private static void safelyCloseSocket(final Socket s) {
+    if (s != null) {
+      try {
+        s.close();
+      } catch (final IOException e) {
+        LOG.log(Level.WARNING, "Couldn't close scoket", e);
       }
     }
   }

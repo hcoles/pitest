@@ -29,13 +29,13 @@ public class PortFinderTest {
 
   @Before
   public void setUp() {
-    this.testee = new PortFinder();
+    this.testee = PortFinder.INSTANCE;
   }
 
   @Test
-  public void shouldNotIncrementPortNumberIfPortIsNotInUse() {
+  public void shouldIncrementPortNumberIfPortIsNotInUse() {
     final int nextPort = this.testee.getNextAvailablePort();
-    assertEquals(nextPort, this.testee.getNextAvailablePort());
+    assertEquals(nextPort + 1, this.testee.getNextAvailablePort());
   }
 
   @Test
@@ -44,9 +44,9 @@ public class PortFinderTest {
 
     ServerSocket ss = null;
     try {
-      ss = new ServerSocket(nextPort);
-      assertFalse(PortFinder.isPortAvailable(nextPort));
-      assertEquals(nextPort + 1, this.testee.getNextAvailablePort());
+      ss = new ServerSocket(nextPort + 1);
+      assertFalse(PortFinder.isPortAvailable(nextPort + 1));
+      assertEquals(nextPort + 2, this.testee.getNextAvailablePort());
     } finally {
       ss.close();
     }

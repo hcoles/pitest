@@ -18,33 +18,33 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.logging.Logger;
 
-import org.pitest.PitError;
+public enum PortFinder {
 
-public class PortFinder {
+  INSTANCE;
 
   private final static Logger LOG             = Log.getLogger();
 
   private final static int    MIN_PORT_NUMBER = 8081;
   private final static int    MAX_PORT_NUMBER = 9000;
 
-  private int                 portNumber      = MIN_PORT_NUMBER;
+  private int                 lastPortNumber  = MIN_PORT_NUMBER;
 
-  public int getNextAvailablePort() {
-    while (!isPortAvailable(this.portNumber)) {
-      this.portNumber++;
+  public synchronized int getNextAvailablePort() {
+    this.lastPortNumber++;
+    while (!isPortAvailable(this.lastPortNumber)) {
+      this.lastPortNumber++;
 
-      if (this.portNumber > MAX_PORT_NUMBER) {
-        throw new PitError("Could not find available port between "
-            + MIN_PORT_NUMBER + " and " + MAX_PORT_NUMBER);
+      if (this.lastPortNumber > MAX_PORT_NUMBER) {
+        this.lastPortNumber = 9000;
       }
     }
 
-    LOG.fine("using port " + this.portNumber);
+    LOG.fine("using port " + this.lastPortNumber);
 
-    return this.portNumber;
+    return this.lastPortNumber;
   }
 
-  public static boolean isPortAvailable(final int port) {
+  public synchronized static boolean isPortAvailable(final int port) {
 
     ServerSocket ss = null;
     try {

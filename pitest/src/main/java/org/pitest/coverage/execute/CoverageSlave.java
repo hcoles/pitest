@@ -16,11 +16,7 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +25,10 @@ import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.extension.TestUnit;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.instrument.HotSwapAgent;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
+import org.pitest.util.SafeDataInputStream;
 
 public class CoverageSlave {
 
@@ -43,28 +39,23 @@ public class CoverageSlave {
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
     try {
-      final File input = new File(args[0]);
 
-      LOG.fine("Input file is " + input);
+      final int port = Integer.valueOf(args[0]);
+      s = new Socket("localhost", port);
 
-      final BufferedReader br = new BufferedReader(new InputStreamReader(
-          new FileInputStream(input)));
+      final SafeDataInputStream dis = new SafeDataInputStream(
+          s.getInputStream());
 
-      final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
-          .fromTransportString(br.readLine());
+      final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
 
       System.setProperties(paramsFromParent.getSystemProperties());
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      br.close();
-
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      s = new Socket("localhost", paramsFromParent.getPort());
-
-      final List<TestUnit> tus = getTestsFromParent(s);
+      final List<TestUnit> tus = getTestsFromParent(dis);
 
       LOG.info(tus.size() + " tests received");
 
@@ -91,16 +82,14 @@ public class CoverageSlave {
 
   }
 
-  private static List<TestUnit> getTestsFromParent(final Socket s)
+  private static List<TestUnit> getTestsFromParent(final SafeDataInputStream dis)
       throws IOException {
-    final BufferedReader br = new BufferedReader(new InputStreamReader(
-        s.getInputStream()));
-    final List<TestUnit> tus = new ArrayList<TestUnit>();
-    String line = br.readLine();
-    while (!line.equals("END")) {
-      tus.add((TestUnit) IsolationUtils.fromTransportString(line));
-      line = br.readLine();
+    final int count = dis.readInt();
+    final List<TestUnit> tus = new ArrayList<TestUnit>(count);
+    for (int i = 0; i != count; i++) {
+      tus.add(dis.read(TestUnit.class));
     }
+    LOG.fine("Receiving " + count + " tests from parent");
 
     return tus;
   }

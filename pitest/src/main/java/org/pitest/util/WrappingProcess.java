@@ -3,9 +3,7 @@ package org.pitest.util;
 import static org.pitest.functional.Prelude.print;
 import static org.pitest.functional.Prelude.printTo;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +12,6 @@ import java.util.List;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 
@@ -57,26 +54,25 @@ public abstract class WrappingProcess {
     }
   };
 
-  private final File        input;
+  protected final int    port;
+  private final Args     argsBuilder;
+  private final Class<?> slaveClass;
 
-  private final JavaProcess process;
+  private JavaProcess    process;
 
-  public WrappingProcess(final Args argsBuilder, final Object arguments,
-      final Class<?> slaveClass) throws IOException {
-    this.input = File.createTempFile(randomFilename(), ".data");
-
-    writeArguments(arguments);
-
-    final String[] args = { this.input.getAbsolutePath() };
-    this.process = JavaProcess.launch(argsBuilder.stdout, argsBuilder.stdErr,
-        argsBuilder.jvmArgs, slaveClass, Arrays.asList(args),
-        argsBuilder.javaAgentFinder, getLaunchClassPath(argsBuilder.classPath));
+  public WrappingProcess(final int port, final Args args,
+      final Class<?> slaveClass) {
+    this.port = port;
+    this.argsBuilder = args;
+    this.slaveClass = slaveClass;
   }
 
-  private void writeArguments(final Object arguments) throws IOException {
-    final BufferedWriter bw = new BufferedWriter(new FileWriter(this.input));
-    bw.append(IsolationUtils.toTransportString(arguments));
-    bw.close();
+  public void start() throws IOException {
+    final String[] args = { "" + this.port };
+    this.process = JavaProcess.launch(this.argsBuilder.stdout,
+        this.argsBuilder.stdErr, this.argsBuilder.jvmArgs, this.slaveClass,
+        Arrays.asList(args), this.argsBuilder.javaAgentFinder,
+        getLaunchClassPath(this.argsBuilder.classPath));
   }
 
   public static String randomFilename() {
@@ -102,7 +98,7 @@ public abstract class WrappingProcess {
   }
 
   public void cleanUp() {
-    this.input.delete();
+
   }
 
 }
