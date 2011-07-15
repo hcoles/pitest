@@ -70,7 +70,7 @@ public class CoverageProcessTest {
         new UnGroupedStrategy(), Option.<TestFilter> none(), Tests.class);
 
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
-        coverOnlyTestees(), 8186, true);
+        coverOnlyTestees(), true);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
 

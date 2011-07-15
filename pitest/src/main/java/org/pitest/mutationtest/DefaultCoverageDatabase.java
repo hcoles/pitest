@@ -178,7 +178,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final int port = pf.getNextAvailablePort();
 
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
-        convertToJVMClassFilter(this.data.getTargetClassesFilter()), port,
+        convertToJVMClassFilter(this.data.getTargetClassesFilter()),
         this.data.isVerbose());
     final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())

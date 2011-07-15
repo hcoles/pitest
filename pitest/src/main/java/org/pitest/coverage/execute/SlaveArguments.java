@@ -23,14 +23,12 @@ public class SlaveArguments {
 
   private final Properties        systemProperties;
   private final Predicate<String> filter;
-  private final int               port;
   private final boolean           verbose;
 
   public SlaveArguments(final Properties systemProperties,
-      final Predicate<String> filter, final int port, final boolean verbose) {
+      final Predicate<String> filter, final boolean verbose) {
     this.systemProperties = systemProperties;
     this.filter = filter;
-    this.port = port;
     this.verbose = verbose;
   }
 
@@ -40,10 +38,6 @@ public class SlaveArguments {
 
   public Predicate<String> getFilter() {
     return this.filter;
-  }
-
-  public int getPort() {
-    return this.port;
   }
 
   public boolean isVerbose() {

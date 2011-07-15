@@ -14,7 +14,7 @@
  */
 package org.pitest.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,25 +22,24 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-
 public class SafeDataInputStreamTest {
 
   @Test
   public void shouldBeAbletoReadLargeStrings() {
-    char[] chars = new char[65536];
+    final char[] chars = new char[65536];
     Arrays.fill(chars, '!');
-    String s = new String(chars);
+    final String s = new String(chars);
 
-    ByteArrayOutputStream o = new ByteArrayOutputStream();
-    SafeDataOutputStream dos = new SafeDataOutputStream( o );
+    final ByteArrayOutputStream o = new ByteArrayOutputStream();
+    final SafeDataOutputStream dos = new SafeDataOutputStream(o);
     dos.writeString(s);
 
-    ByteArrayInputStream i = new ByteArrayInputStream(o.toByteArray());
+    final ByteArrayInputStream i = new ByteArrayInputStream(o.toByteArray());
 
-    SafeDataInputStream dis = new SafeDataInputStream(i);
-    String actual = dis.readString();
+    final SafeDataInputStream dis = new SafeDataInputStream(i);
+    final String actual = dis.readString();
 
-    assertEquals(s,actual);
+    assertEquals(s, actual);
 
   }
 
