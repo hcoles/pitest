@@ -21,7 +21,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.util.WrappingProcess;
+import org.pitest.util.ProcessArgs;
 
 public class CoverageProcessTest {
 
@@ -83,8 +83,7 @@ public class CoverageProcessTest {
     };
 
     final CoverageProcess process = new CoverageProcess(
-        WrappingProcess.Args.withClassPath(new ClassPath()), sa, 8186, tus,
-        handler);
+        ProcessArgs.withClassPath(new ClassPath()), sa, 8186, tus, handler);
     process.start();
     process.waitToDie();
 

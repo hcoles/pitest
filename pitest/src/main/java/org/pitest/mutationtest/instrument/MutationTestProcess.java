@@ -14,6 +14,7 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.util.InputStreamLineIterable;
+import org.pitest.util.ProcessArgs;
 import org.pitest.util.SafeDataOutputStream;
 import org.pitest.util.Unchecked;
 import org.pitest.util.WrappingProcess;
@@ -24,7 +25,7 @@ class MutationTestProcess extends WrappingProcess {
   private final SlaveArguments args;
   private ServerSocket         socket;
 
-  protected MutationTestProcess(final int port, final Args processArgs,
+  protected MutationTestProcess(final int port, final ProcessArgs processArgs,
       final SlaveArguments arguments) {
 
     super(port, processArgs, InstrumentedMutationTestSlave.class);

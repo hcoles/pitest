@@ -56,8 +56,8 @@ import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
 import org.pitest.util.PortFinder;
+import org.pitest.util.ProcessArgs;
 import org.pitest.util.Unchecked;
-import org.pitest.util.WrappingProcess;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
   private final static Logger                              LOG             = Log
@@ -180,7 +180,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
         convertToJVMClassFilter(this.data.getTargetClassesFilter()),
         this.data.isVerbose());
-    final CoverageProcess process = new CoverageProcess(WrappingProcess.Args
+    final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)
         .andStderr(printWith("SLAVE : ")), sa, port, filteredTests, handler);
