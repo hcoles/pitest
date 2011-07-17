@@ -67,4 +67,12 @@ public class SafeDataOutputStream {
     }
   }
 
+  public void writeByte(final byte b) {
+    try {
+      this.dos.writeByte(b);
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
 }

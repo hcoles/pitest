@@ -14,11 +14,7 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.lang.management.MemoryNotificationInfo;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -42,9 +38,8 @@ public class InstrumentedMutationTestSlave {
 
   public static void main(final String[] args) {
 
-    addMemoryWatchDog();
-    Writer w = null;
     Socket s = null;
+    Reporter r = null;
     try {
       final int port = Integer.valueOf(args[0]);
 
@@ -57,13 +52,9 @@ public class InstrumentedMutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final File outputFile = new File(paramsFromParent.outputFileName);
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
-      LOG.fine("Output file is " + outputFile);
-
       System.setProperties(paramsFromParent.systemProperties);
 
-      dis.close();
+      // dis.close();
 
       final F2<Class<?>, byte[], Boolean> hotswap = new F2<Class<?>, byte[], Boolean>() {
 
@@ -73,35 +64,31 @@ public class InstrumentedMutationTestSlave {
 
       };
 
-      final Reporter r = new DefaultReporter(w);
+      r = new DefaultReporter(s.getOutputStream());
+      addMemoryWatchDog(r);
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           paramsFromParent.config.createMutator(IsolationUtils
               .getContextClassLoader()), IsolationUtils.getContextClassLoader());
 
       worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          paramsFromParent.timeoutStrategy, paramsFromParent.tests));
+          paramsFromParent.timeoutStrategy, paramsFromParent.tests, r));
 
     } catch (final Exception ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
+      if (r != null) {
+        r.done();
+      }
       safelyCloseSocket(s);
-      safelyCloseWriter(w);
       System.exit(ExitCode.UNKNOWN_ERROR.getCode());
     } finally {
-      safelyCloseWriter(w);
+      if (r != null) {
+        r.done();
+      }
+
       safelyCloseSocket(s);
     }
 
-  }
-
-  private static void safelyCloseWriter(final Writer w) {
-    if (w != null) {
-      try {
-        w.close();
-      } catch (final IOException e) {
-        LOG.log(Level.WARNING, "Couldn't close writer", e);
-      }
-    }
   }
 
   private static void safelyCloseSocket(final Socket s) {
@@ -114,7 +101,7 @@ public class InstrumentedMutationTestSlave {
     }
   }
 
-  private static void addMemoryWatchDog() {
+  private static void addMemoryWatchDog(final Reporter r) {
     final NotificationListener listener = new NotificationListener() {
 
       public void handleNotification(final Notification notification,
@@ -128,6 +115,7 @@ public class InstrumentedMutationTestSlave {
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());
 
+          r.done();
           System.exit(ExitCode.OUT_OF_MEMORY.getCode());
 
         } else {

@@ -8,7 +8,7 @@ import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.classloader.ClassPathRoot;
 
-public abstract class WrappingProcess {
+public class WrappingProcess {
 
   protected final int       port;
   private final ProcessArgs argsBuilder;
@@ -32,11 +32,6 @@ public abstract class WrappingProcess {
         getLaunchClassPath(this.argsBuilder.getClassPath()));
   }
 
-  public static String randomFilename() {
-    return System.currentTimeMillis()
-        + ("" + Math.random()).replaceAll("\\.", "");
-  }
-
   private String getLaunchClassPath(final ClassPath cp) {
     StringBuilder classpath = new StringBuilder(
         System.getProperty("java.class.path"));
@@ -54,8 +49,8 @@ public abstract class WrappingProcess {
     return this.process.waitToDie();
   }
 
-  public void cleanUp() {
-
+  public int getPort() {
+    return this.port;
   }
 
 }

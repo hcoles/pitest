@@ -1,12 +1,18 @@
 package org.pitest.util;
 
 import org.pitest.functional.SideEffect;
+import org.pitest.mutationtest.instrument.Reporter;
 
-public enum TimeOutSystemExitSideEffect implements SideEffect {
+public class TimeOutSystemExitSideEffect implements SideEffect {
 
-  INSTANCE;
+  private final Reporter r;
+
+  public TimeOutSystemExitSideEffect(final Reporter r) {
+    this.r = r;
+  }
 
   public void apply() {
+    this.r.done();
     System.exit(ExitCode.TIMEOUT.getCode());
   }
 

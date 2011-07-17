@@ -31,7 +31,7 @@ public class TimeoutWatchDog extends AbstractMonitor {
       // LOG.fine("Sleeping watchdog woken");
     }
     if ((System.currentTimeMillis() > this.dieAt) && !this.shutdownRequested()) {
-      LOG.fine("Hard time out after "
+      LOG.info("Hard time out after "
           + (System.currentTimeMillis() - this.startTime) + "ms. "
           + "Allowed time was " + allowedTime() + " Exiting.");
       this.exitStrategy.apply();

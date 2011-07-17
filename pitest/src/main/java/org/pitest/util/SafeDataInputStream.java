@@ -60,4 +60,12 @@ public class SafeDataInputStream {
     }
   }
 
+  public byte readByte() {
+    try {
+      return this.dis.readByte();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
 }

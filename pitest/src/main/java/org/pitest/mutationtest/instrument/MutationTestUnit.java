@@ -53,12 +53,12 @@ import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
+import org.pitest.util.FileUtil;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.PortFinder;
 import org.pitest.util.ProcessArgs;
-import org.pitest.util.WrappingProcess;
 
 public class MutationTestUnit extends AbstractTestUnit {
 
@@ -149,9 +149,8 @@ public class MutationTestUnit extends AbstractTestUnit {
       final List<TestUnit> tests, final ClassPath cp) throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(
-        WrappingProcess.randomFilename(), remainingMutations, tests,
-        this.config, System.getProperties(), this.timeoutStrategy,
-        Log.isVerbose());
+        FileUtil.randomFilename(), remainingMutations, tests, this.config,
+        System.getProperties(), this.timeoutStrategy, Log.isVerbose());
 
     final PortFinder pf = PortFinder.INSTANCE;
 
@@ -173,8 +172,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     }
 
     worker.results(allmutations);
-
-    worker.cleanUp();
 
     correctResultForProcessExitCode(allmutations, exitCode);
 

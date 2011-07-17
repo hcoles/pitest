@@ -187,8 +187,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     process.start();
     process.waitToDie();
-
-    process.cleanUp();
   }
 
   private List<TestUnit> extractRelevantTests(final Collection<Class<?>> tests) {
