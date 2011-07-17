@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument.protocol;
+package org.pitest.util;
 
-public class Id {
+public interface ReceiveStrategy {
 
-  public final static byte DESCRIBE    = 1;
-  public final static byte REPORT      = 2;
-  public final static byte LINE        = 4;
-  public final static byte TEST_CHANGE = 8;
-  public final static byte OUTCOME     = 16;
-  public final static byte CLAZZ       = 32;
-  public final static byte DONE        = 64;
+  void apply(byte control, SafeDataInputStream is);
+
 }

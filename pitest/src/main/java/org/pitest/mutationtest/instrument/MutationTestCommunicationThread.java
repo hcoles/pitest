@@ -14,76 +14,41 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.util.CommunicationThread;
+import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;
 import org.pitest.util.SafeDataOutputStream;
-import org.pitest.util.Unchecked;
 
-public class MutationTestCommunicationThread extends Thread {
+public class MutationTestCommunicationThread extends CommunicationThread {
 
-  // private final static Logger LOG = Log
-  // .getLogger();
+  static class SendData implements SideEffect1<SafeDataOutputStream> {
+    private final SlaveArguments arguments;
 
-  private final int                                      port;
-  private final SlaveArguments                           arguments;
-  private final Map<MutationIdentifier, DetectionStatus> idMap = new HashMap<MutationIdentifier, DetectionStatus>();
-
-  public MutationTestCommunicationThread(final int port,
-      final SlaveArguments arguments) {
-    this.setDaemon(true);
-    this.port = port;
-    this.arguments = arguments;
-  }
-
-  @Override
-  public void run() {
-
-    ServerSocket socket = null;
-    Socket clientSocket = null;
-    try {
-      socket = new ServerSocket(this.port);
-      clientSocket = socket.accept();
-      final BufferedInputStream bif = new BufferedInputStream(
-          clientSocket.getInputStream());
-
-      sendDataToSlave(clientSocket);
-
-      final SafeDataInputStream is = new SafeDataInputStream(bif);
-      receiveResults(is);
-
-      bif.close();
-
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    } finally {
-      try {
-        if (clientSocket != null) {
-          clientSocket.close();
-        }
-
-        if (socket != null) {
-          socket.close();
-        }
-      } catch (final IOException e) {
-        throw Unchecked.translateCheckedException(e);
-      }
+    SendData(final SlaveArguments arguments) {
+      this.arguments = arguments;
     }
 
+    public void apply(final SafeDataOutputStream dos) {
+      dos.write(this.arguments);
+      dos.flush();
+    }
   }
 
-  private void receiveResults(final SafeDataInputStream is) {
-    byte control = is.readByte();
-    while (control != Id.DONE) {
+  static class Receive implements ReceiveStrategy {
+
+    private final Map<MutationIdentifier, DetectionStatus> idMap;
+
+    Receive(final Map<MutationIdentifier, DetectionStatus> idMap) {
+      this.idMap = idMap;
+    }
+
+    public void apply(final byte control, final SafeDataInputStream is) {
       switch (control) {
       case Id.DESCRIBE:
         handleDescribe(is);
@@ -92,36 +57,31 @@ public class MutationTestCommunicationThread extends Thread {
         handleReport(is);
         break;
       }
-      control = is.readByte();
     }
+
+    private void handleReport(final SafeDataInputStream is) {
+      final MutationIdentifier mutation = is.read(MutationIdentifier.class);
+      final DetectionStatus value = is.read(DetectionStatus.class);
+      this.idMap.put(mutation, value);
+    }
+
+    private void handleDescribe(final SafeDataInputStream is) {
+      final MutationIdentifier mutation = is.read(MutationIdentifier.class);
+      this.idMap.put(mutation, DetectionStatus.STARTED);
+    }
+
   }
 
-  private void handleReport(final SafeDataInputStream is) {
-    final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-    final DetectionStatus value = is.read(DetectionStatus.class);
-    this.idMap.put(mutation, value);
+  private final Map<MutationIdentifier, DetectionStatus> idMap;
+
+  public MutationTestCommunicationThread(final int port,
+      final SlaveArguments arguments,
+      final Map<MutationIdentifier, DetectionStatus> idMap) {
+    super(port, new SendData(arguments), new Receive(idMap));
+    this.idMap = idMap;
   }
 
-  private void handleDescribe(final SafeDataInputStream is) {
-    final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-    this.idMap.put(mutation, DetectionStatus.STARTED);
-  }
-
-  private void sendDataToSlave(final Socket clientSocket) throws IOException {
-    final OutputStream os = clientSocket.getOutputStream();
-    final SafeDataOutputStream dos = new SafeDataOutputStream(os);
-    sendArguments(dos);
-  }
-
-  private void sendArguments(final SafeDataOutputStream dos) throws IOException {
-    dos.write(this.arguments);
-    dos.flush();
-  }
-
-  public void waitToFinish() throws InterruptedException {
-    this.join();
-  }
-
+  @Override
   public DetectionStatus getStatus(final MutationIdentifier id) {
     return this.idMap.get(id);
   }

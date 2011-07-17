@@ -75,4 +75,20 @@ public class SafeDataOutputStream {
     }
   }
 
+  public void writeBoolean(final boolean b) {
+    try {
+      this.dos.writeBoolean(b);
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public void writeLong(final long l) {
+    try {
+      this.dos.writeLong(l);
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
 }

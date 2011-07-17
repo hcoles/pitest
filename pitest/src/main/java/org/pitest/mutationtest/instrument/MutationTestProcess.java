@@ -2,9 +2,11 @@ package org.pitest.mutationtest.instrument;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
@@ -18,7 +20,8 @@ class MutationTestProcess {
       final SlaveArguments arguments) {
     this.process = new WrappingProcess(port, processArgs,
         InstrumentedMutationTestSlave.class);
-    this.thread = new MutationTestCommunicationThread(port, arguments);
+    this.thread = new MutationTestCommunicationThread(port, arguments,
+        new HashMap<MutationIdentifier, DetectionStatus>());
 
   }
 

@@ -68,4 +68,20 @@ public class SafeDataInputStream {
     }
   }
 
+  public boolean readBoolean() {
+    try {
+      return this.dis.readBoolean();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public long readLong() {
+    try {
+      return this.dis.readLong();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
 }
