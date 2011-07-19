@@ -16,9 +16,6 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,6 @@ import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
-import org.pitest.coverage.CodeCoverageStore;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.extension.Container;
@@ -35,28 +31,23 @@ import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
 public class CoverageWorker implements Runnable {
 
-  private final OutputStream   os;
-  private final List<TestUnit> tests;
+  private final CoveragePipe       pipe;
+  private final CoverageStatistics invokeStatistics;
+  private final List<TestUnit>     tests;
 
-  public CoverageWorker(final OutputStream os, final List<TestUnit> tests) {
-    this.os = os;
+  public CoverageWorker(final CoveragePipe pipe,
+      final CoverageStatistics invokeStatistics, final List<TestUnit> tests) {
+    this.pipe = pipe;
     this.tests = tests;
+    this.invokeStatistics = invokeStatistics;
   }
 
   public void run() {
 
-    final CoverageStatistics invokeStatistics = new CoverageStatistics();
-
     try {
 
-      final DataOutputStream dos = new DataOutputStream(
-          new BufferedOutputStream(this.os));
-      final CoveragePipe invokeQueue = new CoveragePipe(dos);
-
-      CodeCoverageStore.init(invokeQueue, invokeStatistics);
-
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
-          invokeStatistics, invokeQueue);
+          this.invokeStatistics, this.pipe);
 
       final Container c = new UnContainer();
 
@@ -70,8 +61,6 @@ public class CoverageWorker implements Runnable {
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, decoratedTests);
-
-      invokeQueue.end();
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);

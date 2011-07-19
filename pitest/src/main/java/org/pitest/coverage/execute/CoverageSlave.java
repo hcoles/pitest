@@ -16,6 +16,8 @@ package org.pitest.coverage.execute;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.pitest.coverage.CodeCoverageStore;
+import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.instrument.HotSwapAgent;
@@ -38,6 +42,7 @@ public class CoverageSlave {
 
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
+    CoveragePipe invokeQueue = null;
     try {
 
       final int port = Integer.valueOf(args[0]);
@@ -52,6 +57,14 @@ public class CoverageSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
+      final DataOutputStream dos = new DataOutputStream(
+          new BufferedOutputStream(s.getOutputStream()));
+
+      final CoverageStatistics invokeStatistics = new CoverageStatistics();
+      invokeQueue = new CoveragePipe(dos);
+
+      CodeCoverageStore.init(invokeQueue, invokeStatistics);
+
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
@@ -59,7 +72,8 @@ public class CoverageSlave {
 
       LOG.info(tus.size() + " tests received");
 
-      final CoverageWorker worker = new CoverageWorker(s.getOutputStream(), tus);
+      final CoverageWorker worker = new CoverageWorker(invokeQueue,
+          invokeStatistics, tus);
 
       worker.run();
 
@@ -69,6 +83,10 @@ public class CoverageSlave {
       ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
     } finally {
+      if (invokeQueue != null) {
+        invokeQueue.end();
+      }
+
       try {
         if (s != null) {
           s.close();
@@ -90,8 +108,8 @@ public class CoverageSlave {
       tus.add(dis.read(TestUnit.class));
     }
     LOG.fine("Receiving " + count + " tests from parent");
-
     return tus;
+
   }
 
 }
