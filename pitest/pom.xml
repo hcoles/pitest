@@ -63,23 +63,6 @@
 					</archive>
 				</configuration>
 
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>agent</classifier>
-							<archive>
-								<manifestFile>src/main/resources/agent/MANIFEST.MF</manifestFile>
-							</archive>
-							<includes>
-								<include>**/HotSwapAgent*</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 
 
@@ -198,7 +181,7 @@
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
-			<version>3.2</version>
+			<version>3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>

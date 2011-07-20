@@ -50,7 +50,7 @@ import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
-import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
@@ -58,6 +58,7 @@ import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.util.JavaAgent;
 
 public class TestMutationTesting {
 
@@ -347,8 +348,19 @@ public class TestMutationTesting {
 
     data.setClassesInScope(inScope);
 
+    final JavaAgent agent = new JarCreatingJarFinder();
+
+    try {
+      createEngineAndRun(data, agent, mutators);
+    } finally {
+      agent.close();
+    }
+  }
+
+  private void createEngineAndRun(final ReportOptions data,
+      final JavaAgent agent, final MethodMutatorFactory... mutators) {
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        this.config, new ClassPath(), new JavaAgentJarFinder(), data);
+        this.config, new ClassPath(), agent, data);
 
     coverageDatabase.initialise();
 
@@ -362,8 +374,7 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        UnfilteredMutationFilter.factory(), this.config, data,
-        new JavaAgentJarFinder());
+        UnfilteredMutationFilter.factory(), this.config, data, agent);
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         this.config, coverageDatabase);

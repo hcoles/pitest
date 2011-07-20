@@ -22,16 +22,14 @@ import java.util.List;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
-import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
 
 public class ProcessArgs {
 
   private final ClassPath     classPath;
-  private SideEffect1<String> stdout          = print(String.class);
-  private SideEffect1<String> stdErr          = printTo(String.class,
-                                                  System.err);
-  private List<String>        jvmArgs         = Collections.emptyList();
-  private JavaAgent           javaAgentFinder = new JavaAgentJarFinder();
+  private SideEffect1<String> stdout  = print(String.class);
+  private SideEffect1<String> stdErr  = printTo(String.class, System.err);
+  private List<String>        jvmArgs = Collections.emptyList();
+  private JavaAgent           javaAgentFinder;
 
   private ProcessArgs(final ClassPath cp) {
     this.classPath = cp;

@@ -15,4 +15,7 @@ public class KnownLocationJavaAgentJarFinder implements JavaAgent {
     return Option.some(this.location);
   }
 
+  public void close() {
+  }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,21 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.util;
+package org.pitest.mutationtest.instrument;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.pitest.functional.Option;
 
-public class NullJavaAgent implements JavaAgent {
+public class JarCreatingJarFinderTest {
 
-  public static NullJavaAgent instance() {
-    return new NullJavaAgent();
-  }
-
-  public Option<String> getJarLocation() {
-    return Option.none();
-  }
-
-  public void close() {
+  @Test
+  public void shouldCreateJarFile() {
+    final JarCreatingJarFinder testee = new JarCreatingJarFinder();
+    final Option<String> actual = testee.getJarLocation();
+    assertTrue(actual.hasSome());
+    System.out.println(actual);
   }
 
 }

@@ -21,6 +21,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.ProcessArgs;
 
 public class CoverageProcessTest {
@@ -82,10 +83,14 @@ public class CoverageProcessTest {
 
     };
 
-    final CoverageProcess process = new CoverageProcess(
-        ProcessArgs.withClassPath(new ClassPath()), sa, 8186, tus, handler);
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+
+    final CoverageProcess process = new CoverageProcess(ProcessArgs
+        .withClassPath(new ClassPath()).andJavaAgentFinder(agent), sa, 8186,
+        tus, handler);
     process.start();
     process.waitToDie();
+    agent.close();
 
     assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));

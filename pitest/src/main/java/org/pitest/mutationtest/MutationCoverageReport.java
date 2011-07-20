@@ -42,7 +42,7 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
-import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -84,13 +84,21 @@ public class MutationCoverageReport implements Runnable {
     if (data.shouldShowHelp() || !data.isValid()) {
       parser.printHelp();
     } else {
-      final MutationCoverageReport instance = new MutationCoverageReport(data,
-          new JavaAgentJarFinder(), new HtmlReportFactory(), false);
-
-      instance.run();
-
+      runReport(data);
     }
 
+  }
+
+  private static void runReport(final ReportOptions data) {
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+    try {
+      final MutationCoverageReport instance = new MutationCoverageReport(data,
+          agent, new HtmlReportFactory(), false);
+
+      instance.run();
+    } finally {
+      agent.close();
+    }
   }
 
   private static void setClassesInScopeToEqualTargetClassesIfNoValueSupplied(

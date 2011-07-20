@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.mutationtest;
@@ -24,7 +24,8 @@ import java.util.Collections;
 import org.junit.Test;
 import org.pitest.PitError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.instrument.JavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.util.JavaAgent;
 
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.MultipleMutations;
@@ -137,10 +138,15 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   private void createAndRun() {
-    final MutationCoverageReport testee = new MutationCoverageReport(this.data,
-        new JavaAgentJarFinder(), listenerFactory(), false);
+    final JavaAgent agent = new JarCreatingJarFinder();
+    try {
+      final MutationCoverageReport testee = new MutationCoverageReport(
+          this.data, agent, listenerFactory(), false);
 
-    testee.run();
+      testee.run();
+    } finally {
+      agent.close();
+    }
   }
 
 }
