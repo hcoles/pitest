@@ -227,9 +227,6 @@ public class TestMutationTesting {
 
   }
 
-  public class TestMutableIncrement {
-
-  }
 
   public static class InfiniteLoop {
     public static int loop() {
@@ -360,12 +357,12 @@ public class TestMutationTesting {
   private void createEngineAndRun(final ReportOptions data,
       final JavaAgent agent, final MethodMutatorFactory... mutators) {
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        this.config, new ClassPath(), agent, data);
+        this.config, new ClassPath(true), agent, data);
 
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -385,7 +382,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

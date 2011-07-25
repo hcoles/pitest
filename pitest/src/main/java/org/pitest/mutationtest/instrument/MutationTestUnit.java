@@ -21,6 +21,7 @@ import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
@@ -59,6 +61,7 @@ import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.PortFinder;
 import org.pitest.util.ProcessArgs;
+import org.pitest.util.Unchecked;
 
 public class MutationTestUnit extends AbstractTestUnit {
 
@@ -105,7 +108,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     try {
       if (!this.availableMutations.isEmpty()) {
 
-        final ClassPath cp = createClassPath(loader);
+        final String cp = createClassPath(loader);
 
         final List<TestUnit> tests = findTestUnits(loader);
 
@@ -146,7 +149,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestInSeperateProcessForMutationRange(
       final Map<MutationDetails, DetectionStatus> allmutations,
       final Collection<MutationDetails> remainingMutations,
-      final List<TestUnit> tests, final ClassPath cp) throws IOException {
+      final List<TestUnit> tests, final String cp) throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(
         FileUtil.randomFilename(), remainingMutations, tests, this.config,
@@ -156,8 +159,8 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-            .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
+        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -202,7 +205,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       LOG.warning("Slave encountered error");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
       final DetectionStatus status = DetectionStatus
-          .getForErrorExitCode(exitCode);
+      .getForErrorExitCode(exitCode);
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
@@ -239,10 +242,10 @@ public class MutationTestUnit extends AbstractTestUnit {
     return this.config.getJVMArgs();
   }
 
-  private void runTestsInSeperateProcess(final ClassPath cp,
+  private void runTestsInSeperateProcess(final String cp,
       final List<TestUnit> tests,
       final Map<MutationDetails, DetectionStatus> mutations)
-      throws IOException, InterruptedException {
+  throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 
@@ -269,14 +272,25 @@ public class MutationTestUnit extends AbstractTestUnit {
     return FCollection.filter(mutations.keySet(), p);
   }
 
-  private ClassPath createClassPath(final ClassLoader loader) {
-    ClassPath cp = null;
-    if (loader instanceof PITClassLoader) {
-      cp = ((PITClassLoader) loader).getClassPath();
+  private String createClassPath(final ClassLoader loader) {
+    String cp = null;
+    if (IsolationUtils.loaderAgnosticInstanceOf(loader, PITClassLoader.class)) {
+      cp = getLocalClasspathFromLoader(loader);
     } else {
-      cp = new ClassPath();
+      cp = new ClassPath(true).getLocalClassPath();
     }
+
     return cp;
+  }
+
+  private String getLocalClasspathFromLoader(final ClassLoader loader) {
+    final Method m = org.pitest.reflection.Reflection.publicMethod(
+        loader.getClass(), "getLocalClassPath");
+    try {
+      return (String) m.invoke(loader);
+    } catch (final Exception ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
   }
 
   private void reportResults(

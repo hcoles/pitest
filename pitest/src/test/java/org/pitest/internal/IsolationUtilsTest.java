@@ -1,6 +1,10 @@
 package org.pitest.internal;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
+import org.pitest.dependency.DependencyExtractorTest.Foo;
+import org.pitest.internal.classloader.DefaultPITClassloader;
 
 public class IsolationUtilsTest {
 
@@ -9,6 +13,23 @@ public class IsolationUtilsTest {
 
     final String encodedXml = IsolationUtils.toTransportString(new ClassPath());
     IsolationUtils.fromTransportString(encodedXml);
-    // pass if get here wihtout error
+    // pass if get here without error
+  }
+
+  @Test
+  public void loaderAgnosticInstanceOfShouldReturnFalseForDifferentTypes() {
+    assertFalse(IsolationUtils.loaderAgnosticInstanceOf("foo", Integer.class));
+  }
+
+  @Test
+  public void loaderAgnosticInstanceOfShouldReturnTrueForSameTypeFromSameLoader() {
+    assertTrue(IsolationUtils.loaderAgnosticInstanceOf(1, Integer.class));
+  }
+
+  @Test
+  public void loaderAgnosticInstanceOfShouldReturnTrueForSameTypeFromDifferentLoaders() {
+    ClassLoader loader = new DefaultPITClassloader(new ClassPath(), IsolationUtils.getContextClassLoader());
+    Object foo = IsolationUtils.cloneForLoader(new Foo(), loader);
+    assertTrue(IsolationUtils.loaderAgnosticInstanceOf(foo, Foo.class));
   }
 }

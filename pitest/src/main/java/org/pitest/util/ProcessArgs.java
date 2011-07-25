@@ -25,18 +25,22 @@ import org.pitest.internal.ClassPath;
 
 public class ProcessArgs {
 
-  private final ClassPath     classPath;
+  private final String        launchClassPath;
   private SideEffect1<String> stdout  = print(String.class);
   private SideEffect1<String> stdErr  = printTo(String.class, System.err);
   private List<String>        jvmArgs = Collections.emptyList();
   private JavaAgent           javaAgentFinder;
 
-  private ProcessArgs(final ClassPath cp) {
-    this.classPath = cp;
+  private ProcessArgs(final String launchClassPath) {
+    this.launchClassPath = launchClassPath;
+  }
+
+  public static ProcessArgs withClassPath(final String cp) {
+    return new ProcessArgs(cp);
   }
 
   public static ProcessArgs withClassPath(final ClassPath cp) {
-    return new ProcessArgs(cp);
+    return new ProcessArgs(cp.getLocalClassPath());
   }
 
   public ProcessArgs andStdout(final SideEffect1<String> stdout) {
@@ -59,8 +63,8 @@ public class ProcessArgs {
     return this;
   }
 
-  public ClassPath getClassPath() {
-    return this.classPath;
+  public String getLaunchClassPath() {
+    return this.launchClassPath;
   }
 
   public SideEffect1<String> getStdout() {

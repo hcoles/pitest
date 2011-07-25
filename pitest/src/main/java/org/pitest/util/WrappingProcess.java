@@ -1,12 +1,7 @@
 package org.pitest.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.pitest.functional.Option;
-import org.pitest.internal.ClassPath;
-import org.pitest.internal.classloader.ClassPathRoot;
 
 public class WrappingProcess {
 
@@ -29,20 +24,7 @@ public class WrappingProcess {
         this.argsBuilder.getStdErr(), this.argsBuilder.getJvmArgs(),
         this.slaveClass, Arrays.asList(args),
         this.argsBuilder.getJavaAgentFinder(),
-        getLaunchClassPath(this.argsBuilder.getClassPath()));
-  }
-
-  private String getLaunchClassPath(final ClassPath cp) {
-    StringBuilder classpath = new StringBuilder(
-        System.getProperty("java.class.path"));
-    for (final ClassPathRoot each : cp) {
-      final Option<String> additional = each.cacheLocation();
-      for (final String path : additional) {
-        classpath = classpath.append(File.pathSeparator + path);
-      }
-    }
-
-    return classpath.toString();
+        this.argsBuilder.getLaunchClassPath());
   }
 
   public int waitToDie() throws InterruptedException {

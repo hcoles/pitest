@@ -195,4 +195,17 @@ public abstract class IsolationUtils {
     return cloneForLoader(object, getContextClassLoader());
   }
 
+  public static boolean loaderAgnosticInstanceOf(final Object o,
+      final Class<?> clazz) {
+    final boolean instanceOf = clazz.isAssignableFrom(o.getClass());
+    if (!instanceOf) {
+      final Class<?> c = IsolationUtils.convertForClassLoader(
+          IsolationUtils.getContextClassLoader(), o.getClass());
+      return clazz.isAssignableFrom(c);
+    } else {
+      return instanceOf;
+    }
+
+  }
+
 }

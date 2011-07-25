@@ -37,6 +37,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
@@ -209,7 +210,7 @@ public class MutationCoverageReport implements Runnable {
   }
 
   private ClassLoaderFactory classLoaderFactory() {
-    final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    final ClassLoader loader = IsolationUtils.getContextClassLoader();
     return new ClassLoaderFactory() {
 
       public ClassLoader get() {

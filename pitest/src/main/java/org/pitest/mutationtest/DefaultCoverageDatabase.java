@@ -180,6 +180,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
         convertToJVMClassFilter(this.data.getTargetClassesFilter()),
         this.data.isVerbose());
+
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)

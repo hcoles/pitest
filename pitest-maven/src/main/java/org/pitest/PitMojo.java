@@ -243,11 +243,10 @@ public class PitMojo extends AbstractMojo {
 
     final MutationCoverageReport report = pickReportType(data, pitVersionInfo);
 
-    // FIXME will we get a clash between junit & possibly PIT jars by using the
-    // plugin loader?
+    // Create new classloader with no parent
     final ClassLoader loader = new DefaultPITClassloader(data
         .getClassPath(true).getOrElse(new ClassPath()),
-        IsolationUtils.getContextClassLoader());
+        null);
     final ClassLoader original = IsolationUtils.getContextClassLoader();
 
     try {

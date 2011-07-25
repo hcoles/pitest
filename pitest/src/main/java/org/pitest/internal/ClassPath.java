@@ -35,6 +35,7 @@ import java.util.zip.ZipException;
 import org.pitest.PitError;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
@@ -47,16 +48,18 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
 
+  // FIXME what's the consequence of allways declaring cache files?
+
   public ClassPath() {
-    this(ClassPath.getClassPathElementsAsFiles());
+    this(ClassPath.getClassPathElementsAsFiles(), true);
+  }
+
+  public ClassPath(final boolean declareCaches) {
+    this(ClassPath.getClassPathElementsAsFiles(), declareCaches);
   }
 
   public ClassPath(final ClassPathRoot... roots) {
     this.roots.addAll(Arrays.asList(roots));
-  }
-
-  private ClassPath(final Collection<File> files) {
-    this(files, false);
   }
 
   public ClassPath(final Collection<File> files, final boolean declareCaches) {
@@ -195,6 +198,19 @@ public class ClassPath implements Iterable<ClassPathRoot> {
       }
 
     };
+  }
+
+  public String getLocalClassPath() {
+    StringBuilder classpath = new StringBuilder();
+    for (final ClassPathRoot each : this.roots) {
+      final Option<String> additional = each.cacheLocation();
+      for (final String path : additional) {
+        classpath = classpath.append(File.pathSeparator + path);
+      }
+    }
+
+    return classpath.toString();
+
   }
 
 }
