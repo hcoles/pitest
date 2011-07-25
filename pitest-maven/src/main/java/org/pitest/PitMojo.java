@@ -274,9 +274,14 @@ public class PitMojo extends AbstractMojo {
   }
 
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {
-    for (final Artifact dependency : this.pluginArtifactMap.values()) {
+    for (final Artifact dependency : filteredDependencies()) {
       classPath.add(dependency.getFile().getAbsolutePath());
     }
+  }
+
+  private Collection<Artifact> filteredDependencies() {
+    DependencyFilter filter = new DependencyFilter("org.pitest");
+    return FCollection.filter(this.pluginArtifactMap.values(), filter);
   }
 
   private MutationCoverageReport pickReportType(final ReportOptions data,
