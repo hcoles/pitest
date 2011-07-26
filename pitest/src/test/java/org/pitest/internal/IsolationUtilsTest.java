@@ -1,6 +1,7 @@
 package org.pitest.internal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.pitest.dependency.DependencyExtractorTest.Foo;
@@ -28,8 +29,9 @@ public class IsolationUtilsTest {
 
   @Test
   public void loaderAgnosticInstanceOfShouldReturnTrueForSameTypeFromDifferentLoaders() {
-    ClassLoader loader = new DefaultPITClassloader(new ClassPath(), IsolationUtils.getContextClassLoader());
-    Object foo = IsolationUtils.cloneForLoader(new Foo(), loader);
+    final ClassLoader loader = new DefaultPITClassloader(new ClassPath(),
+        IsolationUtils.getContextClassLoader());
+    final Object foo = IsolationUtils.cloneForLoader(new Foo(), loader);
     assertTrue(IsolationUtils.loaderAgnosticInstanceOf(foo, Foo.class));
   }
 }

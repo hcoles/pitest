@@ -24,22 +24,18 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.coverage.CoverageStatistics;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 
 public class CoverageWorker implements Runnable {
 
-  private final CoveragePipe       pipe;
-  private final CoverageStatistics invokeStatistics;
-  private final List<TestUnit>     tests;
+  private final CoveragePipe   pipe;
+  private final List<TestUnit> tests;
 
-  public CoverageWorker(final CoveragePipe pipe,
-      final CoverageStatistics invokeStatistics, final List<TestUnit> tests) {
+  public CoverageWorker(final CoveragePipe pipe, final List<TestUnit> tests) {
     this.pipe = pipe;
     this.tests = tests;
-    this.invokeStatistics = invokeStatistics;
   }
 
   public void run() {
@@ -47,7 +43,7 @@ public class CoverageWorker implements Runnable {
     try {
 
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
-          this.invokeStatistics, this.pipe);
+          this.pipe);
 
       final Container c = new UnContainer();
 
@@ -69,7 +65,7 @@ public class CoverageWorker implements Runnable {
   }
 
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
-      final CoverageStatistics stats, final CoverageReceiver queue) {
+      final CoverageReceiver queue) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
     int index = 0;
     for (final TestUnit each : plainTests) {

@@ -39,7 +39,7 @@
 	<modules>
 		<module>pitest-maven</module>
 		<module>pitest</module>
-	</modules>
+  </modules>
 
 	<profiles>
 		<profile>

@@ -32,7 +32,7 @@ public class Log {
   }
 
   private static void addOrSetHandler(final Handler handler) {
-    if ( LOGGER.getHandlers().length == 0 ) {
+    if (LOGGER.getHandlers().length == 0) {
       LOGGER.addHandler(handler);
     } else {
       LOGGER.getHandlers()[0] = handler;
@@ -58,7 +58,7 @@ public class Log {
   static class PlainFormatter extends Formatter {
 
     private final static String LINE_SEPARATOR = System
-    .getProperty("line.separator");
+                                                   .getProperty("line.separator");
     private final DateFormat    dateFormat     = DateFormat.getTimeInstance();
 
     @Override

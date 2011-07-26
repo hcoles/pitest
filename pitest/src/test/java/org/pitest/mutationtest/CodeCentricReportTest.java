@@ -137,6 +137,16 @@ public class CodeCentricReportTest extends ReportTestBase {
     verifyResults(SURVIVED);
   }
 
+  @Test
+  public void shouldWorkWithPowerMock() {
+    this.data.setTargetClasses(predicateFor("com.example.CallFoo"));
+    this.data.setClassesInScope(predicateFor("com.example.*"));
+    this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
+    this.data.setVerbose(true);
+    createAndRun();
+    verifyResults(KILLED);
+  }
+
   private void createAndRun() {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {

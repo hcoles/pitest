@@ -159,8 +159,8 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-        .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
+            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+            .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -205,7 +205,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       LOG.warning("Slave encountered error");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
       final DetectionStatus status = DetectionStatus
-      .getForErrorExitCode(exitCode);
+          .getForErrorExitCode(exitCode);
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
@@ -245,7 +245,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestsInSeperateProcess(final String cp,
       final List<TestUnit> tests,
       final Map<MutationDetails, DetectionStatus> mutations)
-  throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 

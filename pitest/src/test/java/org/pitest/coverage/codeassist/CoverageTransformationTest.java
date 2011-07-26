@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CodeCoverageStore;
-import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.codeassist.samples.ClassWithAMethod;
 import org.pitest.coverage.codeassist.samples.ClassWithInitialisedField;
 import org.pitest.coverage.execute.InvokeReceiver;
@@ -36,7 +35,6 @@ public class CoverageTransformationTest {
   private static final int       CLASS_WITH_METHOD_METHOD_LINE       = 20;
   private static final int       FIRST_CLASS                         = 0;
   private CoverageTransformation testee;
-  private CoverageStatistics     invokeStatistics;
 
   @Mock
   private InvokeReceiver         invokeQueue;
@@ -45,8 +43,8 @@ public class CoverageTransformationTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     this.testee = new CoverageTransformation();
-    this.invokeStatistics = new CoverageStatistics();
-    CodeCoverageStore.init(this.invokeQueue, this.invokeStatistics);
+    CodeCoverageStore.resetClassCounter();
+    CodeCoverageStore.init(this.invokeQueue);
   }
 
   @Test

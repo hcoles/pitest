@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CodeCoverageStore;
-import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.instrument.HotSwapAgent;
@@ -39,6 +38,8 @@ public class CoverageSlave {
   private final static Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
+
+    // Thread.currentThread().setContextClassLoader( trackingLoader());
 
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
@@ -60,10 +61,10 @@ public class CoverageSlave {
       final DataOutputStream dos = new DataOutputStream(
           new BufferedOutputStream(s.getOutputStream()));
 
-      final CoverageStatistics invokeStatistics = new CoverageStatistics();
+      // final CoverageStatistics invokeStatistics = new CoverageStatistics();
       invokeQueue = new CoveragePipe(dos);
 
-      CodeCoverageStore.init(invokeQueue, invokeStatistics);
+      CodeCoverageStore.init(invokeQueue);
 
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
@@ -72,8 +73,7 @@ public class CoverageSlave {
 
       LOG.info(tus.size() + " tests received");
 
-      final CoverageWorker worker = new CoverageWorker(invokeQueue,
-          invokeStatistics, tus);
+      final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
 
       worker.run();
 

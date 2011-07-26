@@ -3,22 +3,20 @@
  * "alex.mq0" and "dmitry.kandalov"
  * 
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.coverage;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
 import org.pitest.coverage.execute.InvokeReceiver;
 
 /**
@@ -26,28 +24,24 @@ import org.pitest.coverage.execute.InvokeReceiver;
  * @date 26.01.2009 14:41:04
  */
 public final class CodeCoverageStore {
-  public static final String        CODE_COVERAGE_CALCULATOR_CLASS_NAME;
-  public static final String        CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME;
-  public static final String        CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC;
+  public static final String    CODE_COVERAGE_CALCULATOR_CLASS_NAME;
+  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME;
+  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC;
 
   static {
-    final Method addCalc = new Method("visitLine", Type.VOID_TYPE, new Type[] {
-      Type.INT_TYPE, Type.INT_TYPE });
 
-    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = addCalc.getName();
-    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = addCalc.getDescriptor();
+    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";// addCalc.getName();
+    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(II)V";
     CODE_COVERAGE_CALCULATOR_CLASS_NAME = CodeCoverageStore.class.getName()
         .replace('.', '/');
 
   }
 
-  private static InvokeReceiver     invokeQueue;
-  private static CoverageStatistics invokeStatistics;
+  private static InvokeReceiver invokeQueue;
+  private static int            classId = 0;
 
-  public static void init(final InvokeReceiver invokeQueue,
-      final CoverageStatistics invokeStatistics) {
+  public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
-    CodeCoverageStore.invokeStatistics = invokeStatistics;
   }
 
   private CodeCoverageStore() {
@@ -58,9 +52,17 @@ public final class CodeCoverageStore {
   }
 
   public static int registerClass(final String className) {
-    final int id = invokeStatistics.registerClass(className);
+    final int id = nextId();
     invokeQueue.registerClass(id, className);
     return id;
+  }
+
+  private static synchronized int nextId() {
+    return classId++;
+  }
+
+  public static void resetClassCounter() {
+    classId = 0;
   }
 
 }

@@ -227,7 +227,6 @@ public class TestMutationTesting {
 
   }
 
-
   public static class InfiniteLoop {
     public static int loop() {
       int i = 1;
@@ -362,7 +361,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-    .getGroupedClasses();
+        .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -382,7 +381,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-    .getDetectionStatus();
+        .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);
