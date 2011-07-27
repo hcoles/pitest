@@ -26,7 +26,7 @@ public class JarCreatingJarFinderTest {
     final JarCreatingJarFinder testee = new JarCreatingJarFinder();
     final Option<String> actual = testee.getJarLocation();
     assertTrue(actual.hasSome());
-    System.out.println(actual);
+    testee.close();
   }
 
 }
