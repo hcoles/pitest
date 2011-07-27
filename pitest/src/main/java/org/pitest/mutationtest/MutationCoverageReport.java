@@ -134,7 +134,6 @@ public class MutationCoverageReport implements Runnable {
 
     TestInfo.checkJUnitVersion();
 
-
     Log.setVerbose(this.data.isVerbose());
 
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
@@ -149,16 +148,16 @@ public class MutationCoverageReport implements Runnable {
 
     if (!coverageDatabase.initialise()) {
       throw new PitError(
-      "All tests did not pass without mutation when calculating coverage.");
+          "All tests did not pass without mutation when calculating coverage.");
 
     }
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-    .getGroupedClasses();
+        .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-    .getListener(coverageDatabase, this.data, t0);
+        .getListener(coverageDatabase, this.data, t0);
 
     staticConfig.addTestListener(mutationReportListener);
     staticConfig.addTestListener(new ConsoleResultListener());
@@ -191,7 +190,6 @@ public class MutationCoverageReport implements Runnable {
         + " classes.");
 
   }
-
 
   private MutationFilterFactory limitMutationsPerClass() {
     if (this.data.getMaxMutationsPerClass() <= 0) {
