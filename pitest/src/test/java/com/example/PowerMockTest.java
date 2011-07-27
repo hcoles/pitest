@@ -22,18 +22,29 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ PowerMockFoo.class })
+@PrepareForTest({ PowerMockFoo.class, PowerMockCallsOwnMethod.class })
 @PowerMockIgnore("org.pitest.*")
 public class PowerMockTest {
 
   @Test
-  public void testWithMockito() {
+  public void testReplaceStaticCallToOtherClass() {
     PowerMockito.mockStatic(PowerMockFoo.class);
 
     new PowerMockCallFoo().call();
 
     PowerMockito.verifyStatic();
     PowerMockFoo.foo();
+
+  }
+
+  @Test
+  public void testReplaceStaticCallToMutatedClass() {
+    PowerMockito.mockStatic(PowerMockCallsOwnMethod.class);
+
+    new PowerMockCallsOwnMethod().call();
+
+    PowerMockito.verifyStatic();
+    PowerMockCallsOwnMethod.foo();
 
   }
 
@@ -46,8 +57,17 @@ class PowerMockCallFoo {
 }
 
 class PowerMockFoo {
-
   public static void foo() {
     System.out.println("static method called");
+  }
+}
+
+class PowerMockCallsOwnMethod {
+  public void call() {
+    foo();
+  }
+
+  public static void foo() {
+
   }
 }
