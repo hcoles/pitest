@@ -25,9 +25,12 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
 import org.pitest.functional.F2;
+import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
@@ -37,6 +40,8 @@ public class InstrumentedMutationTestSlave {
   private final static Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
+
+    enablePowerMockSupport();
 
     Socket s = null;
     Reporter r = null;
@@ -89,6 +94,13 @@ public class InstrumentedMutationTestSlave {
       safelyCloseSocket(s);
     }
 
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void enablePowerMockSupport() {
+    // Bwahahahahahahaha
+    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
+        .or(new Glob("javassist/*"))));
   }
 
   private static void safelyCloseSocket(final Socket s) {

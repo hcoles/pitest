@@ -59,7 +59,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldKillMutationsInStaticInitializersWhenThereIsCoverageAndMutateStaticFlagIsSet() {
     this.data.setMutateStaticInitializers(true);
     this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -68,7 +68,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldNotCreateMutationsInStaticInitializersWhenFlagNotSet() {
     this.data.setMutateStaticInitializers(false);
     this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults();
   }
@@ -78,14 +78,14 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setMutators(Collections
         .<MethodMutatorFactory> singletonList(Mutator.MATH));
     this.data
-    .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
+        .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     try {
       System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
-      "true");
+          "true");
       createAndRun();
     } finally {
       System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
-      "false");
+          "false");
     }
     // should not get here
   }
@@ -93,9 +93,9 @@ public class CodeCentricReportTest extends ReportTestBase {
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
     this.data
-    .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
+        .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
     this.data
-    .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
+        .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -105,7 +105,7 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setMutators(Arrays.asList(Mutator.RETURN_VALS));
 
     this.data
-    .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
+        .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -114,7 +114,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
     this.data
-    .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
+        .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -131,7 +131,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldLimitNumberOfMutationsPerClass() {
     this.data.setTargetClasses(predicateFor(MultipleMutations.class));
     this.data
-    .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
+        .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
     this.data.setMaxMutationsPerClass(1);
     createAndRun();
     verifyResults(SURVIVED);
@@ -139,8 +139,8 @@ public class CodeCentricReportTest extends ReportTestBase {
 
   @Test
   public void shouldWorkWithPowerMock() {
-    this.data.setTargetClasses(predicateFor("com.example.CallFoo"));
-    this.data.setClassesInScope(predicateFor("com.example.*"));
+    this.data.setTargetClasses(predicateFor("com.example.PowerMockCallFoo"));
+    this.data.setClassesInScope(predicateFor("com.example.Power*"));
     this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
     this.data.setVerbose(true);
     createAndRun();

@@ -43,7 +43,7 @@ public class MutationTestBuilder {
   private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
   private final static Logger         LOG                                  = Log
-  .getLogger();
+                                                                               .getLogger();
 
   private final ReportOptions         data;
   private final JavaAgent             javaAgentFinder;

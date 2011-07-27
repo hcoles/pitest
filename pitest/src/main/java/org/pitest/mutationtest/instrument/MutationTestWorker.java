@@ -32,6 +32,7 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.util.Log;
 
 public class MutationTestWorker extends AbstractWorker {
@@ -66,6 +67,11 @@ public class MutationTestWorker extends AbstractWorker {
 
     final MutationIdentifier mutationId = mutationDetails.getId();
     final Mutant mutatedClass = this.mutater.getMutation(mutationId);
+
+    // For the benefit of mocking frameworks such as PowerMock
+    // mess with the internals of Javassist so our mutated class
+    // bytes are returned
+    JavassistInterceptor.setMutant(mutatedClass);
 
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 

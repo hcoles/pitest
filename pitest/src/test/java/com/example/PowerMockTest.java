@@ -17,39 +17,37 @@ package com.example;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Foo.class })
+@PrepareForTest({ PowerMockFoo.class })
+@PowerMockIgnore("org.pitest.*")
 public class PowerMockTest {
 
   @Test
   public void testWithMockito() {
-    PowerMockito.mockStatic(Foo.class);
-    // use Mockito to set up your expectation
-    // Mockito.when(Foo.returnOne()).thenReturn(2);
+    PowerMockito.mockStatic(PowerMockFoo.class);
 
-    new CallFoo().call();
+    new PowerMockCallFoo().call();
 
     PowerMockito.verifyStatic();
-    Foo.returnOne();
+    PowerMockFoo.foo();
 
   }
 
 }
 
-class CallFoo {
+class PowerMockCallFoo {
   public void call() {
-    System.out.println("Call called");
-    Foo.returnOne();
+    PowerMockFoo.foo();
   }
 }
 
-class Foo {
+class PowerMockFoo {
 
-  public static int returnOne() {
+  public static void foo() {
     System.out.println("static method called");
-    return 1;
   }
 }

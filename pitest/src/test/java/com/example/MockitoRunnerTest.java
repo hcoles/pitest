@@ -29,7 +29,7 @@ public class MockitoRunnerTest {
 
   @Test
   public void testThings() {
-    MockitoCallFoo testee = new MockitoCallFoo(this.foo);
+    final MockitoCallFoo testee = new MockitoCallFoo(this.foo);
     testee.call();
     verify(this.foo).foo();
 
@@ -37,11 +37,10 @@ public class MockitoRunnerTest {
 
 }
 
-
 class MockitoCallFoo {
   final MockitoFoo foo;
 
-  public MockitoCallFoo(  MockitoFoo foo) {
+  public MockitoCallFoo(final MockitoFoo foo) {
     this.foo = foo;
   }
 
