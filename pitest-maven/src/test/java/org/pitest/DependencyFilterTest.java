@@ -22,20 +22,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 public class DependencyFilterTest {
 
   private DependencyFilter testee;
 
   @Mock
-  private Artifact artifact;
+  private Artifact         artifact;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new DependencyFilter("foo","bar");
+    this.testee = new DependencyFilter("foo", "bar");
   }
-
 
   @Test
   public void shouldAllowWhiteListedGroups() {

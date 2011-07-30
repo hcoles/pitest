@@ -40,9 +40,19 @@ public class JarCreatingJarFinder implements JavaAgent {
   public static final String  BOOT_CLASSPATH          = "Boot-Class-Path";
 
   private final static String AGENT_CLASS_NAME        = HotSwapAgent.class
-                                                          .getName();
+  .getName();
 
   private Option<String>      location                = Option.none();
+
+  private final ClassPath classPath;
+
+  public JarCreatingJarFinder(ClassPath cp) {
+    this.classPath = cp;
+  }
+
+  public JarCreatingJarFinder() {
+    this(new ClassPath());
+  }
 
   public Option<String> getJarLocation() {
     if (this.location.hasNone()) {
@@ -51,7 +61,7 @@ public class JarCreatingJarFinder implements JavaAgent {
     return this.location;
   }
 
-  private static Option<String> createJar() {
+  private Option<String> createJar() {
     try {
 
       final String location = FileUtil.randomFilename() + ".jar";
@@ -64,9 +74,8 @@ public class JarCreatingJarFinder implements JavaAgent {
     }
   }
 
-  private static void createJarFromClassPathResources(
+  private void createJarFromClassPathResources(
       final FileOutputStream fos, final String location) throws IOException {
-    final ClassPath cp = new ClassPath();
     final Manifest m = new Manifest();
 
     m.clear();
@@ -81,24 +90,24 @@ public class JarCreatingJarFinder implements JavaAgent {
     global.putValue(CAN_SET_NATIVE_METHOD, "true");
 
     final JarOutputStream jos = new JarOutputStream(fos, m);
-    addClass(HotSwapAgent.class, cp, jos);
-    addClass(CodeCoverageStore.class, cp, jos);
-    addClass(InvokeReceiver.class, cp, jos);
+    addClass(HotSwapAgent.class, jos);
+    addClass(CodeCoverageStore.class, jos);
+    addClass(InvokeReceiver.class, jos);
     jos.close();
   }
 
-  private static void addClass(final Class<?> clazz, final ClassPath cp,
+  private  void addClass(final Class<?> clazz,
       final JarOutputStream jos) throws IOException {
     final String className = clazz.getName();
     final ZipEntry ze = new ZipEntry(className.replace(".", "/") + ".class");
     jos.putNextEntry(ze);
-    jos.write(classBytes(className, cp));
+    jos.write(classBytes(className));
     jos.closeEntry();
   }
 
-  private static byte[] classBytes(final String className, final ClassPath cp)
-      throws IOException {
-    return cp.getClassData(className);
+  private  byte[] classBytes(final String className)
+  throws IOException {
+    return this.classPath.getClassData(className);
   }
 
   public void close() {

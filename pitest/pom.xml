@@ -52,15 +52,6 @@
 				<configuration>
 					<archive>
 						<index>true</index>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Premain-Class>org.pitest.boot.HotSwapAgent</Premain-Class>
-							<Can-Redefine-Classes>true</Can-Redefine-Classes>
-							<Can-Retransform-Classes>true</Can-Retransform-Classes>
-							<Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
-						</manifestEntries>
 					</archive>
 				</configuration>
 
@@ -90,18 +81,6 @@
 									<include>net.sf.jopt-simple:*</include>
 								</includes>
 							</artifactSet>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<manifestEntries>
-										<Premain-Class>org.pitest.boot.HotSwapAgent</Premain-Class>
-										<Can-Redefine-Classes>true</Can-Redefine-Classes>
-										<Can-Retransform-Classes>true</Can-Retransform-Classes>
-										<Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
-									</manifestEntries>
-								</transformer>
-
-							</transformers>
 
 
 							<relocations>

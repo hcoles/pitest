@@ -25,13 +25,12 @@ public class DependencyFilter implements Predicate<Artifact> {
 
   private final Set<String> allowedGroups = new HashSet<String>();
 
-  public DependencyFilter(String ... groups) {
+  public DependencyFilter(final String... groups) {
     this.allowedGroups.addAll(Arrays.asList(groups));
   }
 
-  public Boolean apply(Artifact a) {
+  public Boolean apply(final Artifact a) {
     return this.allowedGroups.contains(a.getGroupId());
   }
-
 
 }

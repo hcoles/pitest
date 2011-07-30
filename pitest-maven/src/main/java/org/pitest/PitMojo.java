@@ -28,8 +28,9 @@ import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.Glob;
+import org.pitest.util.JavaAgent;
 
 /**
  * Goal which runs a coverage mutation report
@@ -150,7 +151,7 @@ public class PitMojo extends AbstractMojo {
    * 
    * @parameter default-value="false"
    */
-  private boolean verbose;
+  private boolean               verbose;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -205,11 +206,38 @@ public class PitMojo extends AbstractMojo {
       e1.printStackTrace();
     }
 
-    final Artifact pitVersionInfo = this.pluginArtifactMap
-    .get("org.pitest:pitest");
-
     addOwnDependenciesToClassPath(classPath);
 
+    final ReportOptions data = parseReportOptions(classPath);
+    System.out.println("Running report with " + data);
+    final ClassPath cp = data.getClassPath(true).getOrElse(new ClassPath());
+    final JavaAgent ja = new JarCreatingJarFinder(cp);
+    final MutationCoverageReport report = new MutationCoverageReport(data, ja,
+        new HtmlReportFactory(), true);
+
+    // Create new classloader under boot
+    final ClassLoader loader = new DefaultPITClassloader(cp, null);
+    final ClassLoader original = IsolationUtils.getContextClassLoader();
+
+    try {
+      IsolationUtils.setContextClassLoader(loader);
+
+      final Runnable run = (Runnable) IsolationUtils.cloneForLoader(report,
+          loader);
+
+      run.run();
+
+    } catch (final Exception e) {
+      throw new MojoExecutionException("fail", e);
+    } finally {
+      IsolationUtils.setContextClassLoader(original);
+      ja.close();
+
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private ReportOptions parseReportOptions(final Set<String> classPath) {
     final ReportOptions data = new ReportOptions();
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
@@ -238,34 +266,11 @@ public class PitMojo extends AbstractMojo {
     sourceRoots.addAll(this.project.getTestCompileSourceRoots());
 
     data.setSourceDirs(stringsTofiles(sourceRoots));
-
-    System.out.println("Running report with " + data);
-
-    final MutationCoverageReport report = pickReportType(data, pitVersionInfo);
-
-    // Create new classloader with no parent
-    final ClassLoader loader = new DefaultPITClassloader(data
-        .getClassPath(true).getOrElse(new ClassPath()),
-        null);
-    final ClassLoader original = IsolationUtils.getContextClassLoader();
-
-    try {
-      IsolationUtils.setContextClassLoader(loader);
-
-      final Runnable run = (Runnable) IsolationUtils.cloneForLoader(report,
-          loader);
-
-      run.run();
-
-    } catch (final Exception e) {
-      throw new MojoExecutionException("fail", e);
-    } finally {
-      IsolationUtils.setContextClassLoader(original);
-    }
+    return data;
   }
 
   private Collection<Predicate<String>> globStringsToPredicates(
-      List<String> excludedMethods) {
+      final List<String> excludedMethods) {
     return FCollection.map(excludedMethods, Glob.toGlobPredicate());
   }
 
@@ -280,16 +285,8 @@ public class PitMojo extends AbstractMojo {
   }
 
   private Collection<Artifact> filteredDependencies() {
-    DependencyFilter filter = new DependencyFilter("org.pitest");
+    final DependencyFilter filter = new DependencyFilter("org.pitest");
     return FCollection.filter(this.pluginArtifactMap.values(), filter);
-  }
-
-  private MutationCoverageReport pickReportType(final ReportOptions data,
-      final Artifact pitVersionInfo) {
-
-    return new MutationCoverageReport(data,
-        new KnownLocationJavaAgentJarFinder(pitVersionInfo.getFile()
-            .getAbsolutePath()), new HtmlReportFactory(), true);
   }
 
   private Collection<MethodMutatorFactory> determineMutators() {
