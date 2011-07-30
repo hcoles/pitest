@@ -83,7 +83,8 @@ public class CoverageProcessTest {
   public static class TestInDifferentClassLoader {
     @Test
     public void testFoo() {
-      final ClassLoader cl = new DefaultPITClassloader(new ClassPath(), null);
+      final ClassLoader cl = new DefaultPITClassloader(new ClassPath(),
+          IsolationUtils.bootClassLoader());
       final Testee testee = new Testee();
       final Runnable r = (Runnable) IsolationUtils.cloneForLoader(testee, cl);
       r.run();

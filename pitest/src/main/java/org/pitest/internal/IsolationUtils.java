@@ -208,4 +208,8 @@ public abstract class IsolationUtils {
 
   }
 
+  public static ClassLoader bootClassLoader() {
+    return Object.class.getClassLoader();
+  }
+
 }

@@ -216,7 +216,8 @@ public class PitMojo extends AbstractMojo {
         new HtmlReportFactory(), true);
 
     // Create new classloader under boot
-    final ClassLoader loader = new DefaultPITClassloader(cp, null);
+    final ClassLoader loader = new DefaultPITClassloader(cp,
+        IsolationUtils.bootClassLoader());
     final ClassLoader original = IsolationUtils.getContextClassLoader();
 
     try {

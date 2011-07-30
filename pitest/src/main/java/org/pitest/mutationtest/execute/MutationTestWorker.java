@@ -30,6 +30,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.functional.F2;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
@@ -138,7 +139,8 @@ public class MutationTestWorker {
   private ClassLoader pickClassLoaderForMutant(final Mutant mutant) {
     if (hasMutationInStaticInitializer(mutant)) {
       LOG.info("Creating new classloader for static initializer");
-      return new DefaultPITClassloader(new ClassPath(), null);
+      return new DefaultPITClassloader(new ClassPath(),
+          IsolationUtils.bootClassLoader());
     } else {
       return this.loader;
     }

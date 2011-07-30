@@ -40,13 +40,13 @@ public class JarCreatingJarFinder implements JavaAgent {
   public static final String  BOOT_CLASSPATH          = "Boot-Class-Path";
 
   private final static String AGENT_CLASS_NAME        = HotSwapAgent.class
-  .getName();
+                                                          .getName();
 
   private Option<String>      location                = Option.none();
 
-  private final ClassPath classPath;
+  private final ClassPath     classPath;
 
-  public JarCreatingJarFinder(ClassPath cp) {
+  public JarCreatingJarFinder(final ClassPath cp) {
     this.classPath = cp;
   }
 
@@ -74,8 +74,8 @@ public class JarCreatingJarFinder implements JavaAgent {
     }
   }
 
-  private void createJarFromClassPathResources(
-      final FileOutputStream fos, final String location) throws IOException {
+  private void createJarFromClassPathResources(final FileOutputStream fos,
+      final String location) throws IOException {
     final Manifest m = new Manifest();
 
     m.clear();
@@ -96,8 +96,8 @@ public class JarCreatingJarFinder implements JavaAgent {
     jos.close();
   }
 
-  private  void addClass(final Class<?> clazz,
-      final JarOutputStream jos) throws IOException {
+  private void addClass(final Class<?> clazz, final JarOutputStream jos)
+      throws IOException {
     final String className = clazz.getName();
     final ZipEntry ze = new ZipEntry(className.replace(".", "/") + ".class");
     jos.putNextEntry(ze);
@@ -105,8 +105,7 @@ public class JarCreatingJarFinder implements JavaAgent {
     jos.closeEntry();
   }
 
-  private  byte[] classBytes(final String className)
-  throws IOException {
+  private byte[] classBytes(final String className) throws IOException {
     return this.classPath.getClassData(className);
   }
 
