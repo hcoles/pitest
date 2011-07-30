@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.execute;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 
 public class SlaveArguments {
 

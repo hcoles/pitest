@@ -12,13 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.execute;
+
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.pitest.ConcreteConfiguration;
+import org.pitest.DefaultStaticConfig;
+import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
@@ -26,22 +31,29 @@ import org.pitest.functional.F2;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ConcreteResultCollector;
 import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.util.Log;
 
-public class MutationTestWorker extends AbstractWorker {
+public class MutationTestWorker {
 
-  private final static Logger LOG = Log.getLogger();
+  private final static Logger                   LOG = Log.getLogger();
+  protected final Mutater                       mutater;
+  protected final ClassLoader                   loader;
+  protected final F2<Class<?>, byte[], Boolean> hotswap;
 
   public MutationTestWorker(final F2<Class<?>, byte[], Boolean> hotswap,
       final Mutater mutater, final ClassLoader loader) {
-    super(hotswap, mutater, loader);
+    this.loader = loader;
+    this.mutater = mutater;
+    this.hotswap = hotswap;
   }
 
   protected void run(final Collection<MutationDetails> range, final Reporter r,
@@ -141,6 +153,26 @@ public class MutationTestWorker extends AbstractWorker {
   public String toString() {
     return "MutationTestWorker [mutater=" + this.mutater + ", loader="
         + this.loader + ", hotswap=" + this.hotswap + "]";
+  }
+
+  protected DetectionStatus doTestsDetectMutation(final Container c,
+      final List<TestUnit> tests) {
+    try {
+      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
+
+      final ConcreteConfiguration conf = new ConcreteConfiguration();
+
+      final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+      staticConfig.addTestListener(listener);
+
+      final Pitest pit = new Pitest(staticConfig, conf);
+      pit.run(c, tests);
+
+      return listener.status();
+    } catch (final Exception ex) {
+      throw translateCheckedException(ex);
+    }
+
   }
 
 }

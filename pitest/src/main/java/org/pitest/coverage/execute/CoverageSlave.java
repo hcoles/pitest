@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.pitest.coverage.CodeCoverageStore;
+import org.pitest.boot.CodeCoverageStore;
+import org.pitest.boot.HotSwapAgent;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.extension.TestUnit;
-import org.pitest.mutationtest.instrument.HotSwapAgent;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
@@ -38,8 +38,6 @@ public class CoverageSlave {
   private final static Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
-
-    // Thread.currentThread().setContextClassLoader( trackingLoader());
 
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;

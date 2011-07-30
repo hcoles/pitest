@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.SideEffect;
+import org.pitest.mutationtest.execute.TimeoutWatchDog;
 
 public class TimeoutWatchDogTest {
 

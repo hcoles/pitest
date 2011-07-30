@@ -20,13 +20,15 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.ProcessArgs;
 
 public class CoverageProcessTest {
 
-  public static class Testee {
+  public static class Testee implements Runnable {
     public void foo() {
 
     }
@@ -34,6 +36,11 @@ public class CoverageProcessTest {
     public void bar() {
 
     }
+
+    public void run() {
+      new Testee2().bar();
+    }
+
   }
 
   public static class Testee2 {
@@ -66,9 +73,37 @@ public class CoverageProcessTest {
   public void shouldCalculateCoverageForAllRelevantClasses()
       throws IOException, InterruptedException {
 
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
+
+    assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
+    assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
+
+  }
+
+  public static class TestInDifferentClassLoader {
+    @Test
+    public void testFoo() {
+      final ClassLoader cl = new DefaultPITClassloader(new ClassPath(), null);
+      final Testee testee = new Testee();
+      final Runnable r = (Runnable) IsolationUtils.cloneForLoader(testee, cl);
+      r.run();
+    }
+
+  }
+
+  @Test
+  public void shouldCalculateCoverageOfClassesRunInDifferentClassLoader()
+      throws IOException, InterruptedException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestInDifferentClassLoader.class);
+    assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
+    assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
+  }
+
+  private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
+      throws IOException, InterruptedException {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         new JUnitCompatibleConfiguration(), new NullDiscoveryListener(),
-        new UnGroupedStrategy(), Option.<TestFilter> none(), Tests.class);
+        new UnGroupedStrategy(), Option.<TestFilter> none(), test);
 
     final SlaveArguments sa = new SlaveArguments(System.getProperties(),
         coverOnlyTestees(), true);
@@ -91,10 +126,7 @@ public class CoverageProcessTest {
     process.start();
     process.waitToDie();
     agent.close();
-
-    assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
-    assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
-
+    return coveredClasses;
   }
 
   private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {

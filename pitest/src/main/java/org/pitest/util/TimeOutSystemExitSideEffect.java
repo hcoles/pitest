@@ -1,7 +1,7 @@
 package org.pitest.util;
 
 import org.pitest.functional.SideEffect;
-import org.pitest.mutationtest.instrument.Reporter;
+import org.pitest.mutationtest.execute.Reporter;
 
 public class TimeOutSystemExitSideEffect implements SideEffect {
 

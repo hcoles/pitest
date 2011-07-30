@@ -22,6 +22,8 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
+import org.pitest.mutationtest.execute.Reporter;
 import org.pitest.util.MemoryEfficientHashMap;
 
 public class TimeOutDecoratedTestSource {

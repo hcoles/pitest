@@ -51,6 +51,7 @@ public class PowerMockTest {
 }
 
 class PowerMockCallFoo {
+
   public void call() {
     PowerMockFoo.foo();
   }

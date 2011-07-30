@@ -14,19 +14,84 @@
  */
 package org.pitest.mutationtest.instrument;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.pitest.boot.HotSwapAgent;
 import org.pitest.functional.Option;
 
 public class JarCreatingJarFinderTest {
 
-  @Test
-  public void shouldCreateJarFile() {
-    final JarCreatingJarFinder testee = new JarCreatingJarFinder();
-    final Option<String> actual = testee.getJarLocation();
-    assertTrue(actual.hasSome());
-    testee.close();
+  private JarCreatingJarFinder testee;
+
+  @Before
+  public void setUp() {
+    this.testee = new JarCreatingJarFinder();
   }
 
+  @After
+  public void cleanup() {
+    if (this.testee != null) {
+      this.testee.close();
+    }
+  }
+
+  @Test
+  public void shouldCreateJarFile() {
+    final Option<String> actual = this.testee.getJarLocation();
+    assertTrue(actual.hasSome());
+  }
+
+  @Test
+  public void shouldSetPreMainClassAttribute() throws IOException {
+    assertGeneratedManifestEntryEquals(JarCreatingJarFinder.PREMAIN_CLASS,
+        HotSwapAgent.class.getName());
+  }
+
+  @Test
+  public void shouldSetCanRedefineClasses() throws IOException {
+    assertGeneratedManifestEntryEquals(
+        JarCreatingJarFinder.CAN_REDEFINE_CLASSES, "true");
+  }
+
+  @Test
+  public void shouldSetNativeMethodPrefix() throws IOException {
+    assertGeneratedManifestEntryEquals(
+        JarCreatingJarFinder.CAN_SET_NATIVE_METHOD, "true");
+  }
+
+  // @Test
+  // public void shouldAddPITToTheBootClassPath() throws IOException {
+  // final String actual =
+  // getGeneratedManifestAttribute(JarCreatingJarFinder.BOOT_CLASSPATH);
+  // assertTrue(!actual.equals(""));
+  // }
+
+  private void assertGeneratedManifestEntryEquals(final String key,
+      final String expected) throws IOException, FileNotFoundException {
+    final String am = getGeneratedManifestAttribute(key);
+    assertEquals(expected, am);
+  }
+
+  private String getGeneratedManifestAttribute(final String key)
+      throws IOException, FileNotFoundException {
+    final Option<String> actual = this.testee.getJarLocation();
+    final File f = new File(actual.value());
+    final JarInputStream jis = new JarInputStream(new FileInputStream(f));
+    final Manifest m = jis.getManifest();
+    final Attributes a = m.getMainAttributes();
+    final String am = a.getValue(key);
+    return am;
+  }
 }

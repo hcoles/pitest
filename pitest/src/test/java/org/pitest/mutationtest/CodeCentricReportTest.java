@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.pitest.PitError;
+import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.JavaAgent;
@@ -73,8 +73,8 @@ public class CodeCentricReportTest extends ReportTestBase {
     verifyResults();
   }
 
-  @Test(expected = PitError.class)
-  public void shouldFailRunIfTestsNotGreen() {
+  @Test(expected = PitHelpError.class)
+  public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
     this.data.setMutators(Collections
         .<MethodMutatorFactory> singletonList(Mutator.MATH));
     this.data
@@ -166,6 +166,13 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setVerbose(true);
     createAndRun();
     verifyResults(KILLED);
+  }
+
+  @Test(expected = PitHelpError.class)
+  public void shouldReportHelpfulErrorIfNoMutationsFounds() {
+    this.data.setTargetClasses(predicateFor("foo"));
+    this.data.setClassesInScope(predicateFor("foo"));
+    createAndRun();
   }
 
   private void createAndRun() {

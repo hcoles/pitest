@@ -19,13 +19,14 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.pitest.PitError;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
 
@@ -146,8 +147,7 @@ public abstract class TestInfo {
     final int major = Integer.parseInt(parts[0]);
     final int minor = Integer.parseInt(parts[1]);
     if ((major < 4) || ((major == 4) && (minor < 6))) {
-      throw new PitError("Unsupported JUnit version " + version
-          + ". PIT requires JUnit 4.8.6 or above. See FAQ for details.");
+      throw new PitHelpError(Help.WRONG_JUNIT_VERSION, version);
     }
 
   }

@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.ExtendedTestResult;
-import org.pitest.PitError;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
 import org.pitest.containers.BaseThreadPoolContainer;
@@ -36,6 +35,8 @@ import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -147,9 +148,7 @@ public class MutationCoverageReport implements Runnable {
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
 
     if (!coverageDatabase.initialise()) {
-      throw new PitError(
-          "All tests did not pass without mutation when calculating coverage.");
-
+      throw new PitHelpError(Help.FAILING_TESTS);
     }
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
@@ -182,6 +181,7 @@ public class MutationCoverageReport implements Runnable {
         initialConfig, coverageDatabase);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
+    checkMutationsFounds(tus);
 
     final Pitest pit = new Pitest(staticConfig, initialConfig);
     pit.run(createContainer(), tus);
@@ -189,6 +189,12 @@ public class MutationCoverageReport implements Runnable {
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
 
+  }
+
+  private void checkMutationsFounds(final List<TestUnit> tus) {
+    if (tus.isEmpty()) {
+      throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
+    }
   }
 
   private MutationFilterFactory limitMutationsPerClass() {

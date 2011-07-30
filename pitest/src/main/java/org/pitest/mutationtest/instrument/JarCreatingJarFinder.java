@@ -17,11 +17,14 @@ package org.pitest.mutationtest.instrument;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.jar.Attributes;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
+import org.pitest.boot.CodeCoverageStore;
+import org.pitest.boot.HotSwapAgent;
+import org.pitest.boot.InvokeReceiver;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.util.FileUtil;
@@ -30,9 +33,16 @@ import org.pitest.util.Unchecked;
 
 public class JarCreatingJarFinder implements JavaAgent {
 
-  private final static String AGENT_CLASS_NAME = HotSwapAgent.class.getName();
+  public static final String  CAN_REDEFINE_CLASSES    = "Can-Redefine-Classes";
+  public static final String  PREMAIN_CLASS           = "Premain-Class";
+  public static final String  CAN_RETRANSFORM_CLASSES = " Can-Retransform-Classes";
+  public static final String  CAN_SET_NATIVE_METHOD   = "Can-Set-Native-Method-Prefix";
+  public static final String  BOOT_CLASSPATH          = "Boot-Class-Path";
 
-  private Option<String>      location         = Option.none();
+  private final static String AGENT_CLASS_NAME        = HotSwapAgent.class
+                                                          .getName();
+
+  private Option<String>      location                = Option.none();
 
   public Option<String> getJarLocation() {
     if (this.location.hasNone()) {
@@ -41,16 +51,12 @@ public class JarCreatingJarFinder implements JavaAgent {
     return this.location;
   }
 
-  private static InputStream manifest(final ClassPath cp) throws IOException {
-    return cp.findResource("Agent-Manifest").openStream();
-  }
-
   private static Option<String> createJar() {
     try {
 
       final String location = FileUtil.randomFilename() + ".jar";
       final FileOutputStream fos = new FileOutputStream(location);
-      createJarFromClassPathResources(fos);
+      createJarFromClassPathResources(fos, location);
       return Option.some(location);
 
     } catch (final IOException ex) {
@@ -58,20 +64,41 @@ public class JarCreatingJarFinder implements JavaAgent {
     }
   }
 
-  private static void createJarFromClassPathResources(final FileOutputStream fos)
-      throws IOException {
+  private static void createJarFromClassPathResources(
+      final FileOutputStream fos, final String location) throws IOException {
     final ClassPath cp = new ClassPath();
-    final Manifest m = new Manifest(manifest(cp));
+    final Manifest m = new Manifest();
+
+    m.clear();
+    final Attributes global = m.getMainAttributes();
+    if (global.getValue(Attributes.Name.MANIFEST_VERSION) == null) {
+      global.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+    }
+    final File l = new File(location);
+    global.putValue(BOOT_CLASSPATH, l.getAbsolutePath().replace('\\', '/'));
+    global.putValue(PREMAIN_CLASS, AGENT_CLASS_NAME);
+    global.putValue(CAN_REDEFINE_CLASSES, "true");
+    global.putValue(CAN_SET_NATIVE_METHOD, "true");
+
     final JarOutputStream jos = new JarOutputStream(fos, m);
-    final ZipEntry ze = new ZipEntry(AGENT_CLASS_NAME.replace(".", "/"));
-    jos.putNextEntry(ze);
-    jos.write(classBytes(cp));
-    jos.closeEntry();
+    addClass(HotSwapAgent.class, cp, jos);
+    addClass(CodeCoverageStore.class, cp, jos);
+    addClass(InvokeReceiver.class, cp, jos);
     jos.close();
   }
 
-  private static byte[] classBytes(final ClassPath cp) throws IOException {
-    return cp.getClassData(AGENT_CLASS_NAME);
+  private static void addClass(final Class<?> clazz, final ClassPath cp,
+      final JarOutputStream jos) throws IOException {
+    final String className = clazz.getName();
+    final ZipEntry ze = new ZipEntry(className.replace(".", "/") + ".class");
+    jos.putNextEntry(ze);
+    jos.write(classBytes(className, cp));
+    jos.closeEntry();
+  }
+
+  private static byte[] classBytes(final String className, final ClassPath cp)
+      throws IOException {
+    return cp.getClassData(className);
   }
 
   public void close() {

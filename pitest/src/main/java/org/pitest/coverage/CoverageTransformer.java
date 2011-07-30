@@ -6,6 +6,7 @@ import java.security.ProtectionDomain;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.codeassist.CoverageClassVisitor;
 import org.pitest.functional.predicate.Predicate;
 

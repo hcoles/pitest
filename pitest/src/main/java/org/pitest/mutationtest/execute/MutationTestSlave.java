@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.execute;
 
 import java.io.IOException;
 import java.lang.management.MemoryNotificationInfo;
@@ -24,9 +24,11 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
+import org.pitest.boot.HotSwapAgent;
 import org.pitest.functional.F2;
 import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
@@ -35,7 +37,7 @@ import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
 
-public class InstrumentedMutationTestSlave {
+public class MutationTestSlave {
 
   private final static Logger LOG = Log.getLogger();
 

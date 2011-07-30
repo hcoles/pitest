@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;

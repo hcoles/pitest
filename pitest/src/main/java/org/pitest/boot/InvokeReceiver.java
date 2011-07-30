@@ -1,4 +1,4 @@
-package org.pitest.coverage.execute;
+package org.pitest.boot;
 
 public interface InvokeReceiver {
   public abstract void addCodelineInvoke(final int classId, final int lineNumber);

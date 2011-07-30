@@ -50,6 +50,8 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.execute.MutationTestProcess;
+import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;

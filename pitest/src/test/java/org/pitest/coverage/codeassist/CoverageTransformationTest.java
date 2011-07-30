@@ -24,10 +24,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.coverage.CodeCoverageStore;
+import org.pitest.boot.CodeCoverageStore;
+import org.pitest.boot.InvokeReceiver;
 import org.pitest.coverage.codeassist.samples.ClassWithAMethod;
 import org.pitest.coverage.codeassist.samples.ClassWithInitialisedField;
-import org.pitest.coverage.execute.InvokeReceiver;
 
 public class CoverageTransformationTest {
 
