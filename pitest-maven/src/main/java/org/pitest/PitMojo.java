@@ -29,6 +29,7 @@ import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.util.Glob;
 import org.pitest.util.JavaAgent;
 
@@ -211,7 +212,12 @@ public class PitMojo extends AbstractMojo {
     final ReportOptions data = parseReportOptions(classPath);
     System.out.println("Running report with " + data);
     final ClassPath cp = data.getClassPath(true).getOrElse(new ClassPath());
-    final JavaAgent ja = new JarCreatingJarFinder(cp);
+
+    // workaround for apparent java 1.5 JVM bug . . . might not play nicely
+    // with distributed testing
+    final JavaAgent jac = new JarCreatingJarFinder(cp);
+    KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(jac.getJarLocation().value());
+
     final MutationCoverageReport report = new MutationCoverageReport(data, ja,
         new HtmlReportFactory(), true);
 
