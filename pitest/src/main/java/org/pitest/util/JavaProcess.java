@@ -15,10 +15,15 @@
 package org.pitest.util;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
+import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 
@@ -79,24 +84,47 @@ public class JavaProcess {
     final List<String> cmd = new ArrayList<String>();
     cmd.add(javaProcess);
     cmd.addAll(args);
-    final Option<String> jarLocation = agentJarLocator.getJarLocation();
-    for (final String each : jarLocation) {
-      cmd.add("-javaagent:" + each);
-    }
+
+    addPITJavaAgent(agentJarLocator, cmd);
+    addLaunchJavaAgents(cmd);
 
     cmd.add(mainClass.getName());
     cmd.addAll(programArgs);
     return cmd;
   }
 
+  private static void addPITJavaAgent(final JavaAgent agentJarLocator,
+      final List<String> cmd) {
+    final Option<String> jarLocation = agentJarLocator.getJarLocation();
+    for (final String each : jarLocation) {
+      cmd.add("-javaagent:" + each);
+    }
+  }
+
+  private static void addLaunchJavaAgents(List<String> cmd) {
+    final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
+    FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(), isJavaAgentParam());
+    cmd.addAll(agents);
+  }
+
+  private static F<String, Boolean> isJavaAgentParam() {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(String a) {
+        return a.toLowerCase().startsWith("-javaagent");
+      }
+
+    };
+  }
+
   public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String initialClassPath)
-      throws IOException {
+  throws IOException {
     final String separator = System.getProperty("file.separator");
     final String javaProc = System.getProperty("java.home") + separator + "bin"
-        + separator + "java";
+    + separator + "java";
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
@@ -118,7 +146,7 @@ public class JavaProcess {
   public static JavaProcess launch(final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String launchClassPath)
-      throws IOException {
+  throws IOException {
 
     final SideEffect1<String> soh = new SideEffect1<String>() {
       public void apply(final String a) {
