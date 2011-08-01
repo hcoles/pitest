@@ -38,7 +38,7 @@ public enum Help {
   }
 
   public String format(final Object... params) {
-    return String.format(this.text, params);
+    return String.format(this.toString(), params);
   }
 
 }

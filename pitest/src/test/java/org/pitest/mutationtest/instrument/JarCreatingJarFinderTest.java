@@ -71,12 +71,11 @@ public class JarCreatingJarFinderTest {
         JarCreatingJarFinder.CAN_SET_NATIVE_METHOD, "true");
   }
 
-  // @Test
-  // public void shouldAddPITToTheBootClassPath() throws IOException {
-  // final String actual =
-  // getGeneratedManifestAttribute(JarCreatingJarFinder.BOOT_CLASSPATH);
-  // assertTrue(!actual.equals(""));
-  // }
+  @Test
+  public void shouldAddPITToTheBootClassPath() throws IOException {
+    final String actual = getGeneratedManifestAttribute(JarCreatingJarFinder.BOOT_CLASSPATH);
+    assertTrue(!actual.equals(""));
+  }
 
   private void assertGeneratedManifestEntryEquals(final String key,
       final String expected) throws IOException, FileNotFoundException {
