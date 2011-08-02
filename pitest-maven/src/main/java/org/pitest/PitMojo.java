@@ -238,6 +238,7 @@ public class PitMojo extends AbstractMojo {
       throw new MojoExecutionException("fail", e);
     } finally {
       IsolationUtils.setContextClassLoader(original);
+      jac.close();
       ja.close();
 
     }
