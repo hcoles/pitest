@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.mutationtest.instrument;
@@ -39,9 +39,9 @@ public class TimeoutWatchDogTest {
 
   @Test(timeout = 200)
   public void shouldApplyExitStrategyAfterTimeIntervalHasPassed()
-      throws InterruptedException {
+  throws InterruptedException {
     this.testee = new TimeoutWatchDog(this.exitStrategy,
-        System.currentTimeMillis() + 100);
+        System.currentTimeMillis() + 100, "foo");
     this.testee.requestStart();
     this.testee.waitForExit(150);
     verify(this.exitStrategy).apply();
@@ -49,9 +49,9 @@ public class TimeoutWatchDogTest {
 
   @Test(timeout = 1000)
   public void shouldNotApplyExitStrategyIfShutdownBeforeTimeIntervalHasPAssed()
-      throws InterruptedException {
+  throws InterruptedException {
     this.testee = new TimeoutWatchDog(this.exitStrategy,
-        System.currentTimeMillis() + 100);
+        System.currentTimeMillis() + 100, "foo");
     this.testee.requestStart();
     this.testee.requestStop();
 

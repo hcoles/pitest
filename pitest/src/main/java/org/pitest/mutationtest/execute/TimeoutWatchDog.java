@@ -14,12 +14,14 @@ public class TimeoutWatchDog extends AbstractMonitor {
   private final long          dieAt;
   private final long          sleepInterval;
   private final SideEffect    exitStrategy;
+  private final String testName;
 
-  public TimeoutWatchDog(final SideEffect exitStrategy, final long dieAt) {
+  public TimeoutWatchDog(final SideEffect exitStrategy, final long dieAt, String name) {
     this.startTime = System.currentTimeMillis();
     this.dieAt = dieAt;
     this.sleepInterval = (allowedTime() / 5) + 10;
     this.exitStrategy = exitStrategy;
+    this.testName = name;
 
   }
 
@@ -32,8 +34,8 @@ public class TimeoutWatchDog extends AbstractMonitor {
     }
     if ((System.currentTimeMillis() > this.dieAt) && !this.shutdownRequested()) {
       LOG.info("Hard time out after "
-          + (System.currentTimeMillis() - this.startTime) + "ms. "
-          + "Allowed time was " + allowedTime() + " Exiting.");
+          + (System.currentTimeMillis() - this.startTime) + "ms. While running " + this.testName
+          + ". Allowed time was " + allowedTime() + " Exiting.");
       this.exitStrategy.apply();
       this.requestStop();
     }

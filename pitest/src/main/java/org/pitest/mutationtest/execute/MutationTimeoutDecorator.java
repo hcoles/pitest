@@ -46,7 +46,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
     final long maxTime = this.timeOutStrategy.getEndTime(this.executionTime);
 
     final Monitor timeoutWatchDog = new TimeoutWatchDog(
-        new TimeOutSystemExitSideEffect(this.r), maxTime);
+        new TimeOutSystemExitSideEffect(this.r), maxTime, this.child().getDescription().toString());
     timeoutWatchDog.requestStart();
     try {
       this.child().execute(loader, rc);

@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest;
@@ -33,11 +33,11 @@ import org.pitest.util.Functions;
 import org.pitest.util.TestInfo;
 
 public final class Description implements FunctionalIterable<Class<?>>,
-    Serializable {
+Serializable {
 
   private static final long          serialVersionUID = 1L;
   private final Collection<Class<?>> testClasses      = new ArrayList<Class<?>>(
-                                                          1);
+      1);
   private final String               name;
   private final Option<TestMethod>   method;
 
@@ -72,7 +72,7 @@ public final class Description implements FunctionalIterable<Class<?>>,
   @Override
   public String toString() {
     if (!this.testClasses.isEmpty()) {
-      return this.getFirstTestClass() + "." + this.name;
+      return this.getFirstTestClass().getName() + "." + this.name;
     } else {
       return this.name;
     }
@@ -83,10 +83,10 @@ public final class Description implements FunctionalIterable<Class<?>>,
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((this.method == null) ? 0 : this.method.hashCode());
+    + ((this.method == null) ? 0 : this.method.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-        + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
+    + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
     return result;
   }
 
