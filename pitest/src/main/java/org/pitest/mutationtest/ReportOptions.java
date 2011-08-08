@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
 import java.io.File;
@@ -25,8 +26,8 @@ import java.util.List;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
@@ -39,6 +40,10 @@ public class ReportOptions {
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
                                                                                   .emptyList();
+
+  private Collection<Predicate<String>>              excludedClasses          = Collections
+                                                                                  .emptyList();
+
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
@@ -206,8 +211,9 @@ public class ReportOptions {
     return this.targetClasses;
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
-    return or(this.targetClasses);
+    return Prelude.and(or(this.targetClasses), not(isBlackListed()));
   }
 
   public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
@@ -283,13 +289,25 @@ public class ReportOptions {
         + ", loggingClasses=" + this.loggingClasses + "]";
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-      return True.all();
+      return not(isBlackListed());
     } else {
-      return or(this.targetTests);
+      return Prelude.and(or(this.targetTests), not(isBlackListed()));
     }
 
+  }
+
+  private Predicate<String> isBlackListed() {
+    return new Predicate<String>() {
+
+      public Boolean apply(final String a) {
+        System.out.println(a);
+        return or(ReportOptions.this.excludedClasses).apply(a);
+      }
+
+    };
   }
 
   public Collection<String> getLoggingClasses() {
@@ -323,6 +341,15 @@ public class ReportOptions {
 
   public void setVerbose(final boolean verbose) {
     this.verbose = verbose;
+  }
+
+  public Collection<Predicate<String>> getExcludedClasses() {
+    return this.excludedClasses;
+  }
+
+  public void setExcludedClasses(
+      final Collection<Predicate<String>> excludedClasses) {
+    this.excludedClasses = excludedClasses;
   }
 
 }

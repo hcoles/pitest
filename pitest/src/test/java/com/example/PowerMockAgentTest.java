@@ -20,9 +20,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
-@PrepareForTest({ PowerMockAgentFoo.class})
+@PrepareForTest({ PowerMockAgentFoo.class })
 public class PowerMockAgentTest {
-
 
   @Rule
   public PowerMockRule rule = new PowerMockRule();

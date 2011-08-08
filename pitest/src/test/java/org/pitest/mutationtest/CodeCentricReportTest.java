@@ -28,6 +28,8 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.JavaAgent;
 
 import com.example.FailsTestWhenEnvVariableSetTestee;
+import com.example.FullyCoveredTestee;
+import com.example.FullyCoveredTesteeTest;
 import com.example.MultipleMutations;
 
 public class CodeCentricReportTest extends ReportTestBase {
@@ -59,7 +61,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldKillMutationsInStaticInitializersWhenThereIsCoverageAndMutateStaticFlagIsSet() {
     this.data.setMutateStaticInitializers(true);
     this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -68,7 +70,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldNotCreateMutationsInStaticInitializersWhenFlagNotSet() {
     this.data.setMutateStaticInitializers(false);
     this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults();
   }
@@ -78,14 +80,14 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setMutators(Collections
         .<MethodMutatorFactory> singletonList(Mutator.MATH));
     this.data
-    .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
+        .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     try {
       System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
-      "true");
+          "true");
       createAndRun();
     } finally {
       System.setProperty(FailsTestWhenEnvVariableSetTestee.class.getName(),
-      "false");
+          "false");
     }
     // should not get here
   }
@@ -93,9 +95,9 @@ public class CodeCentricReportTest extends ReportTestBase {
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
     this.data
-    .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
+        .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
     this.data
-    .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
+        .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -105,7 +107,7 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setMutators(Arrays.asList(Mutator.RETURN_VALS));
 
     this.data
-    .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
+        .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -114,7 +116,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
     this.data
-    .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
+        .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -131,7 +133,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldLimitNumberOfMutationsPerClass() {
     this.data.setTargetClasses(predicateFor(MultipleMutations.class));
     this.data
-    .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
+        .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
     this.data.setMaxMutationsPerClass(1);
     createAndRun();
     verifyResults(SURVIVED);
@@ -150,7 +152,7 @@ public class CodeCentricReportTest extends ReportTestBase {
   @Test
   public void shouldWorkWhenPowerMockReplacesCallsWithinMutee() {
     this.data
-    .setTargetClasses(predicateFor("com.example.PowerMockCallsOwnMethod"));
+        .setTargetClasses(predicateFor("com.example.PowerMockCallsOwnMethod"));
     this.data.setClassesInScope(predicateFor("com.example.Power*"));
     this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
     this.data.setVerbose(true);
@@ -169,11 +171,12 @@ public class CodeCentricReportTest extends ReportTestBase {
   }
 
   @Test
-  public void shouldworkWithPowerMockJavaAgent() {
+  public void shouldWorkWithPowerMockJavaAgent() {
     this.data
-    .setTargetClasses(predicateFor("com.example.PowerMockAgentCallFoo"));
+        .setTargetClasses(predicateFor("com.example.PowerMockAgentCallFoo"));
     this.data.setClassesInScope(predicateFor("com.example.Power*"));
-    this.data.setTargetTests(predicateFor(com.example.PowerMockAgentTest.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.PowerMockAgentTest.class));
     this.data.setVerbose(true);
     createAndRun();
     verifyResults(KILLED);
@@ -183,6 +186,32 @@ public class CodeCentricReportTest extends ReportTestBase {
   public void shouldReportHelpfulErrorIfNoMutationsFounds() {
     this.data.setTargetClasses(predicateFor("foo"));
     this.data.setClassesInScope(predicateFor("foo"));
+    createAndRun();
+  }
+
+  @Test
+  public void shouldExcludeFilteredTests() {
+    this.data.setTargetTests(predicateFor("com.example.*FullyCoveredTestee*"));
+    this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
+    this.data.setExcludedClasses(predicateFor(FullyCoveredTesteeTest.class));
+    createAndRun();
+    verifyResults(SURVIVED);
+  }
+
+  @Test
+  public void willAllowExcludedClassesToBeReIncludedViaSuite() {
+    this.data
+        .setTargetTests(predicateFor("com.example.*SuiteForFullyCovered*"));
+    this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
+    this.data.setExcludedClasses(predicateFor(FullyCoveredTesteeTest.class));
+    createAndRun();
+    verifyResults(SURVIVED);
+  }
+
+  @Test(expected = PitHelpError.class)
+  public void shouldExcludeFilteredClasses() {
+    this.data.setTargetClasses(predicateFor(FullyCoveredTestee.class));
+    this.data.setExcludedClasses(predicateFor(FullyCoveredTestee.class));
     createAndRun();
   }
 

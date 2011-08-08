@@ -39,7 +39,7 @@ public class TimeoutWatchDogTest {
 
   @Test(timeout = 200)
   public void shouldApplyExitStrategyAfterTimeIntervalHasPassed()
-  throws InterruptedException {
+      throws InterruptedException {
     this.testee = new TimeoutWatchDog(this.exitStrategy,
         System.currentTimeMillis() + 100, "foo");
     this.testee.requestStart();
@@ -49,7 +49,7 @@ public class TimeoutWatchDogTest {
 
   @Test(timeout = 1000)
   public void shouldNotApplyExitStrategyIfShutdownBeforeTimeIntervalHasPAssed()
-  throws InterruptedException {
+      throws InterruptedException {
     this.testee = new TimeoutWatchDog(this.exitStrategy,
         System.currentTimeMillis() + 100, "foo");
     this.testee.requestStart();

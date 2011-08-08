@@ -33,11 +33,11 @@ import org.pitest.util.Functions;
 import org.pitest.util.TestInfo;
 
 public final class Description implements FunctionalIterable<Class<?>>,
-Serializable {
+    Serializable {
 
   private static final long          serialVersionUID = 1L;
   private final Collection<Class<?>> testClasses      = new ArrayList<Class<?>>(
-      1);
+                                                          1);
   private final String               name;
   private final Option<TestMethod>   method;
 
@@ -83,10 +83,10 @@ Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result
-    + ((this.method == null) ? 0 : this.method.hashCode());
+        + ((this.method == null) ? 0 : this.method.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-    + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
+        + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
     return result;
   }
 

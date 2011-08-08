@@ -15,8 +15,6 @@
 
 package org.pitest.mutationtest.execute;
 
-
-
 import org.pitest.functional.F2;
 import org.pitest.mutationtest.engine.Mutater;
 

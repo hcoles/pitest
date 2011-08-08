@@ -101,16 +101,17 @@ public class JavaProcess {
     }
   }
 
-  private static void addLaunchJavaAgents(List<String> cmd) {
+  private static void addLaunchJavaAgents(final List<String> cmd) {
     final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-    FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(), isJavaAgentParam());
+    final FunctionalList<String> agents = FCollection.filter(
+        rt.getInputArguments(), isJavaAgentParam());
     cmd.addAll(agents);
   }
 
   private static F<String, Boolean> isJavaAgentParam() {
     return new F<String, Boolean>() {
 
-      public Boolean apply(String a) {
+      public Boolean apply(final String a) {
         return a.toLowerCase().startsWith("-javaagent");
       }
 
@@ -121,10 +122,10 @@ public class JavaProcess {
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String initialClassPath)
-  throws IOException {
+      throws IOException {
     final String separator = System.getProperty("file.separator");
     final String javaProc = System.getProperty("java.home") + separator + "bin"
-    + separator + "java";
+        + separator + "java";
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
@@ -146,7 +147,7 @@ public class JavaProcess {
   public static JavaProcess launch(final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String launchClassPath)
-  throws IOException {
+      throws IOException {
 
     final SideEffect1<String> soh = new SideEffect1<String>() {
       public void apply(final String a) {
