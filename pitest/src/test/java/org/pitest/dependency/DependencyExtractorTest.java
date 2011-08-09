@@ -1,21 +1,22 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.dependency;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,8 +62,9 @@ public class DependencyExtractorTest {
   public void shouldFindOnlyImmediateDependenciesWhenDepthIsOne()
       throws Exception {
     constructWithDepthOf(1);
-    final Set<String> actual = this.testee.extractCallDependenciesForPackages(
-        Foo.class.getName(), True.<String> all());
+    final Collection<String> actual = this.testee
+        .extractCallDependenciesForPackages(Foo.class.getName(),
+            True.<String> all());
     final Set<String> expected = asSet(classToJvmName(Bar.class),
         classToJvmName(Car.class));
     assertCollectionEquals(expected, actual);
@@ -72,8 +74,9 @@ public class DependencyExtractorTest {
   public void shouldTraverseTwoLevelsOfDependenciesWhenDepthIsTwo()
       throws Exception {
     constructWithDepthOf(2);
-    final Set<String> actual = this.testee.extractCallDependenciesForPackages(
-        Foo.class.getName(), True.<String> all());
+    final Collection<String> actual = this.testee
+        .extractCallDependenciesForPackages(Foo.class.getName(),
+            True.<String> all());
     final Set<String> expected = asSet(classToJvmName(Bar.class),
         classToJvmName(Car.class), classToJvmName(Far.class));
     assertCollectionEquals(expected, actual);
@@ -82,8 +85,9 @@ public class DependencyExtractorTest {
   @Test
   public void shouldTraverseUnboundedWhenDepthIsZero() throws Exception {
     constructWithDepthOf(0);
-    final Set<String> actual = this.testee.extractCallDependenciesForPackages(
-        Foo.class.getName(), True.<String> all());
+    final Collection<String> actual = this.testee
+        .extractCallDependenciesForPackages(Foo.class.getName(),
+            True.<String> all());
     final List<String> expected = Arrays.asList(classToJvmName(Bar.class),
         classToJvmName(Car.class), classToJvmName(Far.class),
         classToJvmName(VeryFar.class));
@@ -93,10 +97,42 @@ public class DependencyExtractorTest {
   @Test
   public void shouldNotPickUpDependenciesFromFilteredMethods() throws Exception {
     constructWithDepthOf(0);
-    final Set<String> actual = this.testee.extractCallDependencies(
+    final Collection<String> actual = this.testee.extractCallDependencies(
         Foo.class.getName(), excludeMethodsCalledOne());
     final Set<String> expected = asSet(classToJvmName(Car.class));
     assertCollectionEquals(expected, actual);
+  }
+
+  @Test
+  public void shouldFindDependenciesReachedViaClassesNotMatchingFilter()
+      throws IOException {
+    constructWithDepthOf(5);
+    final Collection<String> actual = this.testee
+        .extractCallDependenciesForPackages(Foo.class.getName(),
+            includeOnlyThingsCalled("VeryFar"), ignoreCoreClasses());
+    final Set<String> expected = asSet(classToJvmName(VeryFar.class));
+    assertCollectionEquals(expected, actual);
+  }
+
+  private Predicate<DependencyAccess> ignoreCoreClasses() {
+    return new Predicate<DependencyAccess>() {
+
+      public Boolean apply(final DependencyAccess a) {
+        return !a.getDest().getOwner().startsWith("java");
+      }
+
+    };
+
+  }
+
+  private Predicate<String> includeOnlyThingsCalled(final String subString) {
+    return new Predicate<String>() {
+
+      public Boolean apply(final String a) {
+        return a.contains(subString);
+      }
+
+    };
   }
 
   private void constructWithDepthOf(final int depth) {
