@@ -39,10 +39,10 @@ public class ReportOptions {
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
-  .emptyList();
+                                                                                  .emptyList();
 
   private Collection<Predicate<String>>              excludedClasses          = Collections
-  .emptyList();
+                                                                                  .emptyList();
 
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
@@ -96,7 +96,7 @@ public class ReportOptions {
   /**
    * @return the reportDir
    */
-   public String getReportDir() {
+  public String getReportDir() {
     return this.reportDir;
   }
 
@@ -104,251 +104,251 @@ public class ReportOptions {
    * @param reportDir
    *          the reportDir to set
    */
-   public void setReportDir(final String reportDir) {
-     this.reportDir = reportDir;
-   }
+  public void setReportDir(final String reportDir) {
+    this.reportDir = reportDir;
+  }
 
-   /**
-    * @return the sourceDirs
-    */
-   public Collection<File> getSourceDirs() {
-     return this.sourceDirs;
-   }
+  /**
+   * @return the sourceDirs
+   */
+  public Collection<File> getSourceDirs() {
+    return this.sourceDirs;
+  }
 
-   public Collection<String> getClassPathElements() {
-     return this.classPathElements;
-   }
+  public Collection<String> getClassPathElements() {
+    return this.classPathElements;
+  }
 
-   public void setClassPathElements(final Collection<String> classPathElements) {
-     this.classPathElements = classPathElements;
-   }
+  public void setClassPathElements(final Collection<String> classPathElements) {
+    this.classPathElements = classPathElements;
+  }
 
-   /**
-    * @param sourceDirs
-    *          the sourceDirs to set
-    */
-   public void setSourceDirs(final Collection<File> sourceDirs) {
-     this.sourceDirs = sourceDirs;
-   }
+  /**
+   * @param sourceDirs
+   *          the sourceDirs to set
+   */
+  public void setSourceDirs(final Collection<File> sourceDirs) {
+    this.sourceDirs = sourceDirs;
+  }
 
-   /**
-    * @return the mutators
-    */
-   public Collection<? extends MethodMutatorFactory> getMutators() {
-     return this.mutators;
-   }
+  /**
+   * @return the mutators
+   */
+  public Collection<? extends MethodMutatorFactory> getMutators() {
+    return this.mutators;
+  }
 
-   /**
-    * @param mutators
-    *          the mutators to set
-    */
-   public void setMutators(
-       final Collection<? extends MethodMutatorFactory> mutators) {
-     this.mutators = mutators;
-   }
+  /**
+   * @param mutators
+   *          the mutators to set
+   */
+  public void setMutators(
+      final Collection<? extends MethodMutatorFactory> mutators) {
+    this.mutators = mutators;
+  }
 
-   /**
-    * @return the dependencyAnalysisMaxDistance
-    */
-   public int getDependencyAnalysisMaxDistance() {
-     return this.dependencyAnalysisMaxDistance;
-   }
+  /**
+   * @return the dependencyAnalysisMaxDistance
+   */
+  public int getDependencyAnalysisMaxDistance() {
+    return this.dependencyAnalysisMaxDistance;
+  }
 
-   /**
-    * @param dependencyAnalysisMaxDistance
-    *          the dependencyAnalysisMaxDistance to set
-    */
-   public void setDependencyAnalysisMaxDistance(
-       final int dependencyAnalysisMaxDistance) {
-     this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
-   }
+  /**
+   * @param dependencyAnalysisMaxDistance
+   *          the dependencyAnalysisMaxDistance to set
+   */
+  public void setDependencyAnalysisMaxDistance(
+      final int dependencyAnalysisMaxDistance) {
+    this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
+  }
 
-   public boolean isValid() {
-     return this.isValid;
-   }
+  public boolean isValid() {
+    return this.isValid;
+  }
 
-   public void setValid(final boolean isValid) {
-     this.isValid = isValid;
-   }
+  public void setValid(final boolean isValid) {
+    this.isValid = isValid;
+  }
 
-   public boolean shouldShowHelp() {
-     return this.showHelp;
-   }
+  public boolean shouldShowHelp() {
+    return this.showHelp;
+  }
 
-   public List<String> getJvmArgs() {
-     return this.jvmArgs;
-   }
+  public List<String> getJvmArgs() {
+    return this.jvmArgs;
+  }
 
-   public void addChildJVMArgs(final List<String> args) {
-     this.jvmArgs = args;
-   }
+  public void addChildJVMArgs(final List<String> args) {
+    this.jvmArgs = args;
+  }
 
-   public Option<ClassPath> getClassPath(final boolean declareCaches) {
-     if (this.classPathElements != null) {
-       return Option.some(createClassPathFromElements(declareCaches));
-     } else {
-       return Option.<ClassPath> none();
-     }
-   }
+  public Option<ClassPath> getClassPath(final boolean declareCaches) {
+    if (this.classPathElements != null) {
+      return Option.some(createClassPathFromElements(declareCaches));
+    } else {
+      return Option.<ClassPath> none();
+    }
+  }
 
-   private ClassPath createClassPathFromElements(final boolean declareCaches) {
+  private ClassPath createClassPathFromElements(final boolean declareCaches) {
 
-     return new ClassPath(
-         FCollection.map(this.classPathElements, stringToFile()), true);
-   }
+    return new ClassPath(
+        FCollection.map(this.classPathElements, stringToFile()), true);
+  }
 
-   private F<String, File> stringToFile() {
-     return new F<String, File>() {
+  private F<String, File> stringToFile() {
+    return new F<String, File>() {
 
-       public File apply(final String a) {
-         return new File(a);
-       }
+      public File apply(final String a) {
+        return new File(a);
+      }
 
-     };
-   }
+    };
+  }
 
-   public Collection<Predicate<String>> getTargetClasses() {
-     return this.targetClasses;
-   }
+  public Collection<Predicate<String>> getTargetClasses() {
+    return this.targetClasses;
+  }
 
-   @SuppressWarnings("unchecked")
-   public Predicate<String> getTargetClassesFilter() {
-     return Prelude.and(or(this.targetClasses), not(isBlackListed()));
-   }
+  @SuppressWarnings("unchecked")
+  public Predicate<String> getTargetClassesFilter() {
+    return Prelude.and(or(this.targetClasses), not(isBlackListed()));
+  }
 
-   public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
-     this.targetClasses = targetClasses;
-   }
+  public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
+    this.targetClasses = targetClasses;
+  }
 
-   public void setTargetTests(
-       final Collection<Predicate<String>> targetTestsPredicates) {
-     this.targetTests = targetTestsPredicates;
-   }
+  public void setTargetTests(
+      final Collection<Predicate<String>> targetTestsPredicates) {
+    this.targetTests = targetTestsPredicates;
+  }
 
-   public boolean hasValueForClassesInScope() {
-     return (this.classesInScope != null) && !this.classesInScope.isEmpty();
-   }
+  public boolean hasValueForClassesInScope() {
+    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
+  }
 
-   public boolean isMutateStaticInitializers() {
-     return this.mutateStaticInitializers;
-   }
+  public boolean isMutateStaticInitializers() {
+    return this.mutateStaticInitializers;
+  }
 
-   public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
-     this.mutateStaticInitializers = mutateStaticInitializers;
-   }
+  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
+    this.mutateStaticInitializers = mutateStaticInitializers;
+  }
 
-   public int getNumberOfThreads() {
-     return this.numberOfThreads;
-   }
+  public int getNumberOfThreads() {
+    return this.numberOfThreads;
+  }
 
-   public void setNumberOfThreads(final int numberOfThreads) {
-     this.numberOfThreads = numberOfThreads;
-   }
+  public void setNumberOfThreads(final int numberOfThreads) {
+    this.numberOfThreads = numberOfThreads;
+  }
 
-   public boolean isIncludeJarFiles() {
-     return this.includeJarFiles;
-   }
+  public boolean isIncludeJarFiles() {
+    return this.includeJarFiles;
+  }
 
-   public void setIncludeJarFiles(final boolean includeJarFiles) {
-     this.includeJarFiles = includeJarFiles;
-   }
+  public void setIncludeJarFiles(final boolean includeJarFiles) {
+    this.includeJarFiles = includeJarFiles;
+  }
 
-   public float getTimeoutFactor() {
-     return this.timeoutFactor;
-   }
+  public float getTimeoutFactor() {
+    return this.timeoutFactor;
+  }
 
-   public long getTimeoutConstant() {
-     return this.timeoutConstant;
-   }
+  public long getTimeoutConstant() {
+    return this.timeoutConstant;
+  }
 
-   public void setTimeoutConstant(final long timeoutConstant) {
-     this.timeoutConstant = timeoutConstant;
-   }
+  public void setTimeoutConstant(final long timeoutConstant) {
+    this.timeoutConstant = timeoutConstant;
+  }
 
-   public void setTimeoutFactor(final float timeoutFactor) {
-     this.timeoutFactor = timeoutFactor;
-   }
+  public void setTimeoutFactor(final float timeoutFactor) {
+    this.timeoutFactor = timeoutFactor;
+  }
 
-   public Collection<Predicate<String>> getTargetTests() {
-     return this.targetTests;
-   }
+  public Collection<Predicate<String>> getTargetTests() {
+    return this.targetTests;
+  }
 
-   @Override
-   public String toString() {
-     return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
-     + this.classesInScope + ", targetClasses=" + this.targetClasses
-     + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
-     + ", classPathElements=" + this.classPathElements + ", mutators="
-     + this.mutators + ", dependencyAnalysisMaxDistance="
-     + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-     + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
-     + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
-     + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
-     + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
-     + this.timeoutConstant + ", targetTests=" + this.targetTests
-     + ", loggingClasses=" + this.loggingClasses + "]";
-   }
+  @Override
+  public String toString() {
+    return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
+        + this.classesInScope + ", targetClasses=" + this.targetClasses
+        + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
+        + ", classPathElements=" + this.classPathElements + ", mutators="
+        + this.mutators + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
+        + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
+        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
+        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
+        + this.timeoutConstant + ", targetTests=" + this.targetTests
+        + ", loggingClasses=" + this.loggingClasses + "]";
+  }
 
-   @SuppressWarnings("unchecked")
-   public Predicate<String> getTargetTestsFilter() {
-     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-       return not(isBlackListed());
-     } else {
-       return Prelude.and(or(this.targetTests), not(isBlackListed()));
-     }
+  @SuppressWarnings("unchecked")
+  public Predicate<String> getTargetTestsFilter() {
+    if ((this.targetTests == null) || this.targetTests.isEmpty()) {
+      return not(isBlackListed());
+    } else {
+      return Prelude.and(or(this.targetTests), not(isBlackListed()));
+    }
 
-   }
+  }
 
-   private Predicate<String> isBlackListed() {
-     return new Predicate<String>() {
+  private Predicate<String> isBlackListed() {
+    return new Predicate<String>() {
 
-       public Boolean apply(final String a) {
-         return or(ReportOptions.this.excludedClasses).apply(a);
-       }
+      public Boolean apply(final String a) {
+        return or(ReportOptions.this.excludedClasses).apply(a);
+      }
 
-     };
-   }
+    };
+  }
 
-   public Collection<String> getLoggingClasses() {
-     if (this.loggingClasses.isEmpty()) {
-       return DefaultMutationConfigFactory.LOGGING_CLASSES;
-     } else {
-       return this.loggingClasses;
-     }
-   }
+  public Collection<String> getLoggingClasses() {
+    if (this.loggingClasses.isEmpty()) {
+      return DefaultMutationConfigFactory.LOGGING_CLASSES;
+    } else {
+      return this.loggingClasses;
+    }
+  }
 
-   public void setLoggingClasses(final Collection<String> loggingClasses) {
-     this.loggingClasses = loggingClasses;
-   }
+  public void setLoggingClasses(final Collection<String> loggingClasses) {
+    this.loggingClasses = loggingClasses;
+  }
 
-   public Collection<Predicate<String>> getExcludedMethods() {
-     return this.excludedMethods;
-   }
+  public Collection<Predicate<String>> getExcludedMethods() {
+    return this.excludedMethods;
+  }
 
-   public void setExcludedMethods(
-       final Collection<Predicate<String>> excludedMethods) {
-     this.excludedMethods = excludedMethods;
-   }
+  public void setExcludedMethods(
+      final Collection<Predicate<String>> excludedMethods) {
+    this.excludedMethods = excludedMethods;
+  }
 
-   public int getMaxMutationsPerClass() {
-     return this.maxMutationsPerClass;
-   }
+  public int getMaxMutationsPerClass() {
+    return this.maxMutationsPerClass;
+  }
 
-   public void setMaxMutationsPerClass(final int maxMutationsPerClass) {
-     this.maxMutationsPerClass = maxMutationsPerClass;
-   }
+  public void setMaxMutationsPerClass(final int maxMutationsPerClass) {
+    this.maxMutationsPerClass = maxMutationsPerClass;
+  }
 
-   public void setVerbose(final boolean verbose) {
-     this.verbose = verbose;
-   }
+  public void setVerbose(final boolean verbose) {
+    this.verbose = verbose;
+  }
 
-   public Collection<Predicate<String>> getExcludedClasses() {
-     return this.excludedClasses;
-   }
+  public Collection<Predicate<String>> getExcludedClasses() {
+    return this.excludedClasses;
+  }
 
-   public void setExcludedClasses(
-       final Collection<Predicate<String>> excludedClasses) {
-     this.excludedClasses = excludedClasses;
-   }
+  public void setExcludedClasses(
+      final Collection<Predicate<String>> excludedClasses) {
+    this.excludedClasses = excludedClasses;
+  }
 
 }

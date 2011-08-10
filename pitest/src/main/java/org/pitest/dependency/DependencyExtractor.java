@@ -53,18 +53,31 @@ public class DependencyExtractor {
     this.classToBytes = classToBytes;
   }
 
+  @SuppressWarnings("unchecked")
   public Collection<String> extractCallDependenciesForPackages(
       final String clazz, final Predicate<String> targetPackages)
       throws IOException {
     final Set<String> allDependencies = extractCallDependencies(clazz,
         IgnoreCoreClasses.INSTANCE);
-    return FCollection.filter(allDependencies, asJVMNamePredicate(targetPackages));
+    return FCollection.filter(allDependencies,
+        and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
   }
 
-  private F<String, Boolean> asJVMNamePredicate(final Predicate<String> predicate) {
+  private F<String, Boolean> notSuppliedClass(final String clazz) {
     return new F<String, Boolean>() {
 
-      public Boolean apply(String a) {
+      public Boolean apply(final String a) {
+        return !Functions.jvmClassToClassName().apply(a).equals(clazz);
+      }
+
+    };
+  }
+
+  private F<String, Boolean> asJVMNamePredicate(
+      final Predicate<String> predicate) {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(final String a) {
         return predicate.apply(Functions.jvmClassToClassName().apply(a));
       }
 
@@ -83,7 +96,7 @@ public class DependencyExtractor {
       final Predicate<DependencyAccess> filter) throws IOException {
 
     return this
-    .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
+        .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
   }
 
   private Set<String> extractCallDependencies(final String clazz,

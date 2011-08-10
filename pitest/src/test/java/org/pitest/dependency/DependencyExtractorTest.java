@@ -58,6 +58,14 @@ public class DependencyExtractorTest {
 
   }
 
+  public static class CyclicFoo {
+    CyclicBar b = new CyclicBar();
+  }
+
+  public static class CyclicBar {
+    CyclicFoo f = new CyclicFoo();
+  }
+
   @Test
   public void shouldFindOnlyImmediateDependenciesWhenDepthIsOne()
       throws Exception {
@@ -111,6 +119,17 @@ public class DependencyExtractorTest {
         .extractCallDependenciesForPackages(Foo.class.getName(),
             includeOnlyThingsCalled("VeryFar"), ignoreCoreClasses());
     final Set<String> expected = asSet(classToJvmName(VeryFar.class));
+    assertCollectionEquals(expected, actual);
+  }
+
+  @Test
+  public void shouldHandleCyclicDependencies() throws Exception {
+    constructWithDepthOf(0);
+    final Collection<String> actual = this.testee
+        .extractCallDependenciesForPackages(CyclicFoo.class.getName(),
+            True.<String> all());
+    final List<String> expected = Arrays
+        .asList(classToJvmName(CyclicBar.class));
     assertCollectionEquals(expected, actual);
   }
 
