@@ -40,6 +40,8 @@ import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.commandline.OptionsParser;
+import org.pitest.mutationtest.commandline.ParseResult;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
@@ -80,13 +82,14 @@ public class MutationCoverageReport implements Runnable {
   public static void main(final String args[]) {
 
     final OptionsParser parser = new OptionsParser();
-    final ReportOptions data = parser.parse(args);
+    final ParseResult pr = parser.parse(args);
 
-    setClassesInScopeToEqualTargetClassesIfNoValueSupplied(data);
-
-    if (data.shouldShowHelp() || !data.isValid()) {
+    if (!pr.isOk()) {
       parser.printHelp();
+      System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
+      final ReportOptions data = pr.getOptions();
+      setClassesInScopeToEqualTargetClassesIfNoValueSupplied(data);
       runReport(data);
     }
 

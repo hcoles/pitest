@@ -19,12 +19,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.commandline.OptionsParser;
 
 public class OptionsParserTest {
 
@@ -37,15 +40,15 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseReportDir() {
-
     final String value = "foo";
-    final ReportOptions actual = parse("--reportDir", value);
+    final ReportOptions actual = parseAddingRequiredArgs("--reportDir", value);
     assertEquals(value, actual.getReportDir());
   }
 
   @Test
   public void shouldCreatePredicateFromCommaSeperatedListOfTargetClassGlobs() {
-    final ReportOptions actual = parse("--targetClasses", "foo*,bar*");
+    final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -54,7 +57,8 @@ public class OptionsParserTest {
 
   @Test
   public void shouldCreatePredicateFromCommaSeperatedListOfInScopeClassGlobs() {
-    final ReportOptions actual = parse("--inScopeClasses", "foo*,bar*");
+    final ReportOptions actual = parseAddingRequiredArgs("--inScopeClasses",
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -63,26 +67,28 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseCommaSeperatedListOfSourceDirectories() {
-    final ReportOptions actual = parse("--sourceDirs", "foo/bar,bar/far");
+    final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
+        "foo/bar,bar/far");
     assertEquals(Arrays.asList(new File("foo/bar"), new File("bar/far")),
         actual.getSourceDirs());
   }
 
   @Test
   public void shouldParseMaxDepenencyDistance() {
-    final ReportOptions actual = parse("--dependencyDistance", "42");
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--dependencyDistance", "42");
     assertEquals(42, actual.getDependencyAnalysisMaxDistance());
   }
 
   @Test
   public void shouldParseCommaSeperatedListOfJVMArgs() {
-    final ReportOptions actual = parse("--jvmArgs", "foo,bar");
+    final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
   }
 
   @Test
   public void shouldParseCommaSeperatedListOfMutationOperators() {
-    final ReportOptions actual = parse("--mutators",
+    final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
     assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
         actual.getMutators());
@@ -90,37 +96,39 @@ public class OptionsParserTest {
 
   @Test
   public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {
-    final ReportOptions actual = parse("--mutateStaticInits");
+    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
     assertTrue(actual.isMutateStaticInitializers());
   }
 
   @Test
   public void shouldParseNumberOfThreads() {
-    final ReportOptions actual = parse("--threads", "42");
+    final ReportOptions actual = parseAddingRequiredArgs("--threads", "42");
     assertEquals(42, actual.getNumberOfThreads());
   }
 
   @Test
   public void shouldDetermineIfIncludeJarFilesFlagIsSet() {
-    final ReportOptions actual = parse("--includeJarFiles");
+    final ReportOptions actual = parseAddingRequiredArgs("--includeJarFiles");
     assertTrue(actual.isIncludeJarFiles());
   }
 
   @Test
   public void shouldParseTimeOutFactor() {
-    final ReportOptions actual = parse("--timeoutFactor", "1.32");
+    final ReportOptions actual = parseAddingRequiredArgs("--timeoutFactor",
+        "1.32");
     assertEquals(1.32f, actual.getTimeoutFactor(), 0.1);
   }
 
   @Test
   public void shouldParseTimeOutConstant() {
-    final ReportOptions actual = parse("--timeoutConst", "42");
+    final ReportOptions actual = parseAddingRequiredArgs("--timeoutConst", "42");
     assertEquals(42, actual.getTimeoutConstant());
   }
 
   @Test
   public void shouldParseCommaSeperatedListOfTargetTestClassGlobs() {
-    final ReportOptions actual = parse("--targetTest", "foo*,bar*");
+    final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -129,21 +137,23 @@ public class OptionsParserTest {
 
   @Test
   public void shouldDefaultLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
-    final ReportOptions actual = parse();
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertEquals(DefaultMutationConfigFactory.LOGGING_CLASSES,
         actual.getLoggingClasses());
   }
 
   @Test
   public void shouldParseCommaSeperatedListOfClassesToAvoidCallTo() {
-    final ReportOptions actual = parse("--avoidCallsTo", "foo,bar,foo.bar");
+    final ReportOptions actual = parseAddingRequiredArgs("--avoidCallsTo",
+        "foo,bar,foo.bar");
     assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
         actual.getLoggingClasses());
   }
 
   @Test
   public void shouldParseCommaSeperatedListOfExcludedMethods() {
-    final ReportOptions actual = parse("--excludedMethods", "foo*,bar*,car");
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
+        "foo*,bar*,car");
     final Predicate<String> actualPredicate = Prelude.or(actual
         .getExcludedMethods());
     assertTrue(actualPredicate.apply("foox"));
@@ -154,12 +164,29 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseVerboseFlag() {
-    final ReportOptions actual = parse("--verbose");
+    final ReportOptions actual = parseAddingRequiredArgs("--verbose");
     assertTrue(actual.isVerbose());
   }
 
+  private ReportOptions parseAddingRequiredArgs(final String... args) {
+
+    final List<String> a = new ArrayList<String>();
+    a.addAll(Arrays.asList(args));
+    addIfNotPresent(a, "--targetClasses");
+    addIfNotPresent(a, "--reportDir");
+    addIfNotPresent(a, "--sourceDirs");
+    return parse(a.toArray(new String[a.size()]));
+  }
+
+  private void addIfNotPresent(final List<String> uniqueArgs, final String value) {
+    if (!uniqueArgs.contains(value)) {
+      uniqueArgs.add(value);
+      uniqueArgs.add("ignore");
+    }
+  }
+
   private ReportOptions parse(final String... args) {
-    return this.testee.parse(args);
+    return this.testee.parse(args).getOptions();
   }
 
 }

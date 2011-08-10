@@ -12,19 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.commandline;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.Mutator;
+import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
@@ -73,7 +77,7 @@ public class OptionsParser {
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
     this.reportDirSpec = this.parser.accepts(REPORT_DIR_ARG).withRequiredArg()
-        .describedAs("directory to create report folder in");
+        .describedAs("directory to create report folder in").required();
 
     this.targetClassesSpec = this.parser
         .accepts(TARGET_CLASSES_ARG)
@@ -81,7 +85,8 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of filters to match against classes to test");
+            "comma seperated list of filters to match against classes to test")
+        .required();
 
     this.avoidCallsSpec = this.parser
         .accepts(AVOID_CALLS_ARG)
@@ -122,7 +127,7 @@ public class OptionsParser {
 
     this.sourceDirSpec = this.parser.accepts(SOURCE_DIR_ARG).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
-        .describedAs("comma seperated list of source directories");
+        .describedAs("comma seperated list of source directories").required();
 
     this.mutators = this.parser
         .accepts(MUTATIONS_ARG)
@@ -167,46 +172,46 @@ public class OptionsParser {
     this.verboseSpec = this.parser.accepts(VERBOSE);
   }
 
-  public ReportOptions parse(final String[] args) {
-
-    final OptionSet userArgs = this.parser.parse(args);
+  public ParseResult parse(final String[] args) {
 
     final ReportOptions data = new ReportOptions();
+    try {
+      final OptionSet userArgs = this.parser.parse(args);
+      data.setReportDir(userArgs.valueOf(this.reportDirSpec));
+      data.setTargetClasses(FCollection.map(
+          this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+      data.setClassesInScope(FCollection.map(
+          this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+      data.setTargetTests(FCollection.map(
+          this.targetTestsSpec.values(userArgs), Glob.toGlobPredicate()));
+      data.setSourceDirs(this.sourceDirSpec.values(userArgs));
+      data.setMutators(this.mutators.values(userArgs));
+      data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
+      data.addChildJVMArgs(this.jvmArgs.values(userArgs));
+      data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
+      data.setNumberOfThreads(this.threadsSpec.value(userArgs));
+      data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
+      data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
+      data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
+      data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
+      data.setExcludedMethods(FCollection.map(
+          this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+      data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec
+          .value(userArgs));
+      data.setVerbose(userArgs.has(this.verboseSpec));
 
-    data.setReportDir(userArgs.valueOf(this.reportDirSpec));
-    data.setTargetClasses(FCollection.map(
-        this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setClassesInScope(FCollection.map(
-        this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
-        Glob.toGlobPredicate()));
-    data.setSourceDirs(this.sourceDirSpec.values(userArgs));
-    data.setMutators(this.mutators.values(userArgs));
-    data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
-    data.setValid(validateArgs(userArgs));
-    data.setShowHelp(userArgs.has("?"));
-    data.addChildJVMArgs(this.jvmArgs.values(userArgs));
-    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
-    data.setNumberOfThreads(this.threadsSpec.value(userArgs));
-    data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
-    data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
-    data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
-    data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
-    data.setExcludedMethods(FCollection.map(
-        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec.value(userArgs));
-    data.setVerbose(userArgs.has(this.verboseSpec));
-
-    return data;
+      if (userArgs.has("?")) {
+        return new ParseResult(data, "See above for supported parameters.");
+      } else {
+        return new ParseResult(data, null);
+      }
+    } catch (final OptionException uoe) {
+      return new ParseResult(data, uoe.getLocalizedMessage());
+    }
 
   }
 
-  private static boolean validateArgs(final OptionSet userArgs) {
-    return userArgs.has(REPORT_DIR_ARG) && userArgs.has(TARGET_CLASSES_ARG)
-        && userArgs.has(SOURCE_DIR_ARG);
-  }
-
-  protected void printHelp() {
+  public void printHelp() {
     try {
       this.parser.printHelpOn(System.out);
     } catch (final IOException ex) {

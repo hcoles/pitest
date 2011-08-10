@@ -34,8 +34,6 @@ import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 
 public class ReportOptions {
 
-  private boolean                                    isValid;
-
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
@@ -51,8 +49,6 @@ public class ReportOptions {
 
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
-
-  private boolean                                    showHelp;
 
   private boolean                                    includeJarFiles          = false;
 
@@ -72,16 +68,8 @@ public class ReportOptions {
   public ReportOptions() {
   }
 
-  public boolean isShowHelp() {
-    return this.showHelp;
-  }
-
   public boolean isVerbose() {
     return this.verbose;
-  }
-
-  public void setShowHelp(final boolean showHelp) {
-    this.showHelp = showHelp;
   }
 
   public Predicate<String> getClassesInScopeFilter() {
@@ -161,18 +149,6 @@ public class ReportOptions {
   public void setDependencyAnalysisMaxDistance(
       final int dependencyAnalysisMaxDistance) {
     this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
-  }
-
-  public boolean isValid() {
-    return this.isValid;
-  }
-
-  public void setValid(final boolean isValid) {
-    this.isValid = isValid;
-  }
-
-  public boolean shouldShowHelp() {
-    return this.showHelp;
   }
 
   public List<String> getJvmArgs() {
@@ -275,18 +251,18 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
+    return "ReportOptions [isValid=" + ", classesInScope="
         + this.classesInScope + ", targetClasses=" + this.targetClasses
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
-        + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
-        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
-        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
-        + this.timeoutConstant + ", targetTests=" + this.targetTests
-        + ", loggingClasses=" + this.loggingClasses + "]";
+        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
+        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + "]";
   }
 
   @SuppressWarnings("unchecked")
