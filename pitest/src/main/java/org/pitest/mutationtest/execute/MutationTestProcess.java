@@ -8,7 +8,7 @@ import java.util.Map;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationTestCommunicationThread;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
 

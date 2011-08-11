@@ -19,8 +19,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.results.MutationResult;
 
 public class Line {
   private final long                 number;

@@ -1,28 +1,23 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.instrument;
 
-import java.util.Map;
-
-import org.pitest.functional.SideEffect1;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 
-public class ResultsReader implements SideEffect1<String> {
+public class ResultsReader  {
 
   public static enum Confidence {
     HIGH, LOW;
@@ -31,8 +26,8 @@ public class ResultsReader implements SideEffect1<String> {
   public static enum DetectionStatus {
     KILLED(true, Confidence.HIGH, 4), SURVIVED(false, Confidence.HIGH, 0), TIMED_OUT(
         true, Confidence.LOW, 2), NON_VIABLE(true, Confidence.HIGH, 3), MEMORY_ERROR(
-        true, Confidence.LOW, 1), NOT_STARTED(false, Confidence.LOW, 1), STARTED(
-        false, Confidence.LOW, 1), RUN_ERROR(true, Confidence.LOW, 0);
+            true, Confidence.LOW, 1), NOT_STARTED(false, Confidence.LOW, 1), STARTED(
+                false, Confidence.LOW, 1), RUN_ERROR(true, Confidence.LOW, 0);
 
     private final boolean    detected;
     private final Confidence confidence;
@@ -80,53 +75,5 @@ public class ResultsReader implements SideEffect1<String> {
     public final DetectionStatus status;
   }
 
-  // store as map rather than list to allow possibility of out of order mutation
-  // results
-  private final Map<MutationIdentifier, DetectionStatus> mutations;
-
-  public ResultsReader(
-      final Map<MutationIdentifier, DetectionStatus> allmutations) {
-
-    this.mutations = allmutations;
-  }
-
-  public void apply(final String a) {
-    process(a);
-  }
-
-  private void process(final String line) {
-    if (line == null) {
-      return;
-    }
-
-    final String[] parts = line.split(",");
-    if (parts[0].equals("DESC=")) {
-      receiveMutationDescription(parts);
-    } else {
-      receiveMutationResults(parts);
-    }
-
-  }
-
-  private void receiveMutationDescription(final String[] parts) {
-    final MutationIdentifier mutation = extractMutationIndex(parts);
-    this.mutations.put(mutation, DetectionStatus.STARTED);
-
-  }
-
-  private MutationIdentifier extractMutationIndex(final String[] parts) {
-    return (MutationIdentifier) IsolationUtils.fromTransportString(parts[1]);
-  }
-
-  private void receiveMutationResults(final String[] parts) {
-    final MutationIdentifier mutation = extractMutationIndex(parts);
-    final DetectionStatus value = extractStatus(parts);
-    this.mutations.put(mutation, value);
-
-  }
-
-  private DetectionStatus extractStatus(final String[] parts) {
-    return DetectionStatus.valueOf(parts[2]);
-  }
 
 }

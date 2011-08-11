@@ -52,6 +52,7 @@ public class OptionsParser {
   private final static String                       EXCLUDED_METHOD_ARG            = "excludedMethods";
   private final static String                       MAX_MUTATIONS_PER_CLASS_ARG    = "maxMutationsPerClass";
   private final static String                       VERBOSE                        = "verbose";
+  private final static String                       EXCLUDED_CLASSES_ARG           = "excludedClasses";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -71,6 +72,7 @@ public class OptionsParser {
   private final OptionSpec<String>                  excludedMethodsSpec;
   private final OptionSpec<Integer>                 maxMutationsPerClassSpec;
   private final OptionSpecBuilder                   verboseSpec;
+  private final OptionSpec<String>                  excludedClassesSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -169,6 +171,14 @@ public class OptionsParser {
         .describedAs(
             "comma seperated list of filters to match against methods to exclude from mutation analysis");
 
+    this.excludedClassesSpec = this.parser
+        .accepts(EXCLUDED_CLASSES_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
+
     this.verboseSpec = this.parser.accepts(VERBOSE);
   }
 
@@ -196,6 +206,8 @@ public class OptionsParser {
       data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
       data.setExcludedMethods(FCollection.map(
           this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+      data.setExcludedClasses(FCollection.map(
+          this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
       data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec
           .value(userArgs));
       data.setVerbose(userArgs.has(this.verboseSpec));

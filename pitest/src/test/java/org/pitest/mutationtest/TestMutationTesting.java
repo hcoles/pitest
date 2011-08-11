@@ -15,11 +15,11 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.KILLED;
-import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.MEMORY_ERROR;
-import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.NON_VIABLE;
-import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.SURVIVED;
-import static org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus.TIMED_OUT;
+import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
+import static org.pitest.mutationtest.results.DetectionStatus.MEMORY_ERROR;
+import static org.pitest.mutationtest.results.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,8 +53,8 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
@@ -361,7 +361,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -381,7 +381,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

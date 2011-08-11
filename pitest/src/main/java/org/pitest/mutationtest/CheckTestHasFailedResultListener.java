@@ -18,7 +18,7 @@ import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.TimeoutException;
 import org.pitest.extension.TestListener;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.results.DetectionStatus;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
+package org.pitest.mutationtest.results;
 
-package org.pitest.mutationtest.execute;
-
-import org.pitest.functional.F2;
-import org.pitest.mutationtest.engine.Mutater;
-
-public abstract class AbstractWorker {
-
-  public AbstractWorker(final F2<Class<?>, byte[], Boolean> hotswap,
-      final Mutater mutater, final ClassLoader loader) {
-
-  }
-
+public enum Confidence {
+  HIGH, LOW;
 }

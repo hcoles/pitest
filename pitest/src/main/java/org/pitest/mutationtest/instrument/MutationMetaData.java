@@ -25,7 +25,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultList;
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationMetaData implements MetaData {
 

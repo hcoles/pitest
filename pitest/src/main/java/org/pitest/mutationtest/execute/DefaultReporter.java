@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.SafeDataOutputStream;
 
 public class DefaultReporter implements Reporter {

@@ -25,7 +25,7 @@ public class JavassistInterceptor {
 
   private static Mutant MUTANT;
 
-  public static InputStream openClassfile(final Object classPath,
+  public static InputStream openClassfile(final Object classPath, // NO_UCD
       final String name) {
 
     if (isMutatedClass(name)) {

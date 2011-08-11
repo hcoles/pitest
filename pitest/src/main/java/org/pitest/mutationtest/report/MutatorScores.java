@@ -6,7 +6,7 @@ import java.util.Map;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.MemoryEfficientHashMap;
 
 public class MutatorScores {

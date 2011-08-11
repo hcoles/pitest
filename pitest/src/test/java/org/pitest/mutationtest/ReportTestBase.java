@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.TestMutationTesting.MetaDataExtractor;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.Glob;
 
 public abstract class ReportTestBase {

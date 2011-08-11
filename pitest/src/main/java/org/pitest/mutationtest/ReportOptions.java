@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
@@ -72,8 +73,9 @@ public class ReportOptions {
     return this.verbose;
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getClassesInScopeFilter() {
-    return or(this.classesInScope);
+    return and(or(this.classesInScope), not(isBlackListed()));
   }
 
   public void setClassesInScope(
@@ -316,10 +318,6 @@ public class ReportOptions {
 
   public void setVerbose(final boolean verbose) {
     this.verbose = verbose;
-  }
-
-  public Collection<Predicate<String>> getExcludedClasses() {
-    return this.excludedClasses;
   }
 
   public void setExcludedClasses(

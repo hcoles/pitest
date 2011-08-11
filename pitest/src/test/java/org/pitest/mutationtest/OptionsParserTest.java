@@ -136,6 +136,34 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToInScopeClasses() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+        "foo*", "--inScopeClasses", "foo*,bar*");
+    final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
+    assertFalse(actualPredicate.apply("foo_anything"));
+    assertTrue(actualPredicate.apply("bar_anything"));
+  }
+
+  @Test
+  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToTests() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+        "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
+    final Predicate<String> testPredicate = actual.getTargetTestsFilter();
+    assertFalse(testPredicate.apply("foo_anything"));
+    assertTrue(testPredicate.apply("bar_anything"));
+  }
+
+  @Test
+  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToTargets() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+        "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
+
+    final Predicate<String> targetPredicate = actual.getTargetClassesFilter();
+    assertFalse(targetPredicate.apply("foo_anything"));
+    assertTrue(targetPredicate.apply("bar_anything"));
+  }
+
+  @Test
   public void shouldDefaultLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
     final ReportOptions actual = parseAddingRequiredArgs();
     assertEquals(DefaultMutationConfigFactory.LOGGING_CLASSES,

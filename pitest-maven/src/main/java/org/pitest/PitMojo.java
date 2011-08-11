@@ -68,6 +68,15 @@ public class PitMojo extends AbstractMojo {
    */
   private List<String>          excludedMethods;
 
+
+  /**
+   * Classes not to mutate or run tests from
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          excludedClasses;
+
   /**
    * 
    * @parameter
@@ -256,6 +265,7 @@ public class PitMojo extends AbstractMojo {
     data.setClassesInScope(determineClassesInScope());
     data.setMutateStaticInitializers(this.mutateStaticInitializers);
     data.setExcludedMethods(globStringsToPredicates(this.excludedMethods));
+    data.setExcludedClasses(globStringsToPredicates(this.excludedClasses));
     data.setNumberOfThreads(this.threads);
     data.setMaxMutationsPerClass(this.maxMutationsPerClass);
 

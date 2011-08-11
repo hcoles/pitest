@@ -38,9 +38,9 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
+import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.Log;
 
 public class MutationTestWorker {
