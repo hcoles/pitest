@@ -43,7 +43,6 @@ public class DefaultReporter implements Reporter {
     this.w.write(i);
     this.w.write(mutationDetected);
     this.w.flush();
-    System.err.println("Mutation " + i + " -> " + mutationDetected);
   }
 
   public synchronized void done() {

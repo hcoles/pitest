@@ -18,11 +18,13 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
+import org.pitest.MultipleTestGroup;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
@@ -35,6 +37,7 @@ import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.QuietConsoleTestListener;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -166,15 +169,20 @@ public class MutationTestWorker {
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
+      staticConfig.addTestListener(new QuietConsoleTestListener(System.err));
 
       final Pitest pit = new Pitest(staticConfig, conf);
-      pit.run(c, tests);
+      pit.run(c, createEarlyExitTestGroup(tests));
 
       return listener.status();
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
 
+  }
+
+  private List<TestUnit> createEarlyExitTestGroup(final List<TestUnit> tests) {
+    return Collections.<TestUnit> singletonList(new MultipleTestGroup(tests));
   }
 
 }

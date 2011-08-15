@@ -31,7 +31,6 @@ import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.ConsoleResultListener;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
@@ -162,7 +161,7 @@ public class MutationCoverageReport implements Runnable {
         .getListener(coverageDatabase, this.data, t0);
 
     staticConfig.addTestListener(mutationReportListener);
-    staticConfig.addTestListener(new ConsoleResultListener());
+    // staticConfig.addTestListener(ConsoleTestListener.);
 
     reportFailureForClassesWithoutTests(
         coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);

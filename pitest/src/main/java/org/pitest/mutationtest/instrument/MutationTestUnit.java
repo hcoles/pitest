@@ -44,6 +44,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
@@ -73,6 +74,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final MutationConfig              config;
   private final TimeoutLengthStrategy       timeoutStrategy;
   private final Collection<MutationDetails> availableMutations;
+  private final boolean                     verbose;
 
   protected final Configuration             pitConfig;
 
@@ -82,7 +84,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Collection<String> testClasses, final Configuration pitConfig,
       final MutationConfig mutationConfig, final Description description,
       final JavaAgent javaAgentFinder,
-      final TimeoutLengthStrategy timeoutStrategy) {
+      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose) {
     super(description);
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
@@ -90,6 +92,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     this.javaAgentFinder = javaAgentFinder;
     this.timeoutStrategy = timeoutStrategy;
     this.testClasses = testClasses;
+    this.verbose = verbose;
 
   }
 
@@ -162,7 +165,8 @@ public class MutationTestUnit extends AbstractTestUnit {
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
             .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-            .andStdout(discard()).andStderr(printWith("SLAVE :")), fileArgs);
+            .andStdout(captureStdOutIfVerbose())
+            .andStderr(printWith("stderr ")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -182,14 +186,13 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   }
 
-  private SideEffect1<String> discard() {
-    return new SideEffect1<String>() {
+  private SideEffect1<String> captureStdOutIfVerbose() {
+    if (this.verbose) {
+      return Prelude.printWith("stdout ");
+    } else {
+      return Prelude.noSideEffect(String.class);
+    }
 
-      public void apply(final String a) {
-        System.out.println("SLAVE : " + a);
-      }
-
-    };
   }
 
   private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(
@@ -204,7 +207,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
-      LOG.warning("Slave encountered error");
+      LOG.warning("Slave encountered error or timeout");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
       final DetectionStatus status = DetectionStatus
           .getForErrorExitCode(exitCode);

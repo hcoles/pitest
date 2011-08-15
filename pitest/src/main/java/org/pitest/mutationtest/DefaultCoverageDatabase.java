@@ -4,6 +4,7 @@ import static org.pitest.functional.FCollection.filter;
 import static org.pitest.functional.FCollection.flatMap;
 import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.Prelude.and;
+import static org.pitest.functional.Prelude.noSideEffect;
 import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.util.Functions.stringToClass;
@@ -184,10 +185,20 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
         .andJavaAgentFinder(this.javaAgentFinder)
-        .andStderr(printWith("SLAVE : ")), sa, port, filteredTests, handler);
+        .andStderr(printWith("stderr "))
+        .andStdout(captureStandardOutIfVerbose()), sa, port, filteredTests,
+        handler);
 
     process.start();
     process.waitToDie();
+  }
+
+  private SideEffect1<String> captureStandardOutIfVerbose() {
+    if (this.data.isVerbose()) {
+      return printWith("stdout ");
+    } else {
+      return noSideEffect(String.class);
+    }
   }
 
   private List<TestUnit> extractRelevantTests(final Collection<Class<?>> tests) {

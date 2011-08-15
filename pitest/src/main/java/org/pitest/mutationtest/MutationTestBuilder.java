@@ -151,7 +151,7 @@ public class MutationTestBuilder {
     return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
         this.initialConfig, mutationConfig, d, this.javaAgentFinder,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()));
+            this.data.getTimeoutConstant()), this.data.isVerbose());
   }
 
   private F<MutationDetails, Iterable<String>> mutationDetailsToTestClass() {

@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.instrument;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -22,11 +23,14 @@ import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.CommunicationThread;
+import org.pitest.util.Log;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;
 import org.pitest.util.SafeDataOutputStream;
 
 public class MutationTestCommunicationThread extends CommunicationThread {
+
+  private final static Logger LOG = Log.getLogger();
 
   static class SendData implements SideEffect1<SafeDataOutputStream> {
     private final SlaveArguments arguments;
@@ -64,6 +68,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
       final DetectionStatus value = is.read(DetectionStatus.class);
       this.idMap.put(mutation, value);
+      LOG.info(mutation + " " + value);
     }
 
     private void handleDescribe(final SafeDataInputStream is) {
