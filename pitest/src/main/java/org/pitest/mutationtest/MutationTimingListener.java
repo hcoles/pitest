@@ -19,10 +19,15 @@ import java.io.PrintStream;
 import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
+import org.pitest.functional.Option;
+import org.pitest.mutationtest.execute.TimingMetaData;
 
-public class QuietConsoleTestListener implements TestListener {
+public class MutationTimingListener implements TestListener {
 
-  public QuietConsoleTestListener(final PrintStream stream) {
+  private long accumulatedTime;
+  private long tests;
+
+  public MutationTimingListener(final PrintStream stream) {
     this.stream = stream;
   }
 
@@ -32,13 +37,16 @@ public class QuietConsoleTestListener implements TestListener {
   }
 
   public void onTestStart(final Description d) {
+    this.tests++;
   }
 
   public void onTestFailure(final TestResult tr) {
+    getTimingMetaData(tr);
     this.stream.print("F");
   }
 
   public void onTestError(final TestResult tr) {
+    getTimingMetaData(tr);
     this.stream.print("E(" + tr.getThrowable().getClass() + ")");
   }
 
@@ -47,11 +55,19 @@ public class QuietConsoleTestListener implements TestListener {
   }
 
   public void onTestSuccess(final TestResult tr) {
-    this.stream.print("P");
+    final long expectedTime = getTimingMetaData(tr);
+    this.stream.print("P(" + expectedTime + ")");
+  }
+
+  private long getTimingMetaData(final TestResult tr) {
+    final Option<TimingMetaData> tmd = tr.getValue(TimingMetaData.class);
+    this.accumulatedTime = this.accumulatedTime + tmd.value().getExpectedTime();
+    return tmd.value().getExpectedTime();
   }
 
   public void onRunEnd() {
-    this.stream.println();
+    this.stream.println(" -> " + this.accumulatedTime + " ms in " + this.tests
+        + " tests.");
   }
 
 }

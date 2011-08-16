@@ -50,7 +50,8 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
             .getDescription().toString());
     timeoutWatchDog.requestStart();
     try {
-      this.child().execute(loader, rc);
+      this.child().execute(loader,
+          new TimingMetaDataResultCollector(rc, this.executionTime));
     } finally {
       timeoutWatchDog.requestStop();
     }

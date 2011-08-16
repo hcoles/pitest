@@ -37,7 +37,7 @@ import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.QuietConsoleTestListener;
+import org.pitest.mutationtest.MutationTimingListener;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -169,7 +169,7 @@ public class MutationTestWorker {
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
-      staticConfig.addTestListener(new QuietConsoleTestListener(System.err));
+      staticConfig.addTestListener(new MutationTimingListener(System.out));
 
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, createEarlyExitTestGroup(tests));
