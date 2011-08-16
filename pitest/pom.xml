@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.21</version>
+		<version>0.22-SNAPSHOT</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
-	<version>0.21</version>
+	<version>0.22-SNAPSHOT</version>
 	<name>pitest</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java</description>
