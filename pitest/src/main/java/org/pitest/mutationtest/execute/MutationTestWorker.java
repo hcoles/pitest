@@ -92,12 +92,12 @@ public class MutationTestWorker {
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
     final List<TestUnit> relevantTests = testSource
-        .translateTests(mutationDetails.getTestsInOrder());
+    .translateTests(mutationDetails.getTestsInOrder());
     // pickTests(mutatedClass);
 
     r.describe(mutationId);
 
-    DetectionStatus mutationDetected = DetectionStatus.SURVIVED;
+    StatusTestPair mutationDetected = new StatusTestPair(DetectionStatus.SURVIVED);
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
@@ -117,7 +117,7 @@ public class MutationTestWorker {
         mutationDetected = doTestsDetectMutation(c, relevantTests);
       } else {
         LOG.info("Mutation " + mutationId + " was not viable ");
-        mutationDetected = DetectionStatus.NON_VIABLE;
+        mutationDetected =  new StatusTestPair(DetectionStatus.NON_VIABLE);
       }
 
     }
@@ -151,16 +151,16 @@ public class MutationTestWorker {
 
   private boolean hasMutationInStaticInitializer(final Mutant mutant) {
     return (mutant.getDetails().getId().isMutated())
-        && mutant.getDetails().isInStaticInitializer();
+    && mutant.getDetails().isInStaticInitializer();
   }
 
   @Override
   public String toString() {
     return "MutationTestWorker [mutater=" + this.mutater + ", loader="
-        + this.loader + ", hotswap=" + this.hotswap + "]";
+    + this.loader + ", hotswap=" + this.hotswap + "]";
   }
 
-  protected DetectionStatus doTestsDetectMutation(final Container c,
+  protected StatusTestPair doTestsDetectMutation(final Container c,
       final List<TestUnit> tests) {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
@@ -174,11 +174,20 @@ public class MutationTestWorker {
       final Pitest pit = new Pitest(staticConfig, conf);
       pit.run(c, createEarlyExitTestGroup(tests));
 
-      return listener.status();
+      return createStatusTestPair(listener);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
 
+  }
+
+  private StatusTestPair createStatusTestPair(
+      final CheckTestHasFailedResultListener listener) {
+    if ( listener.lastFailingTest().hasSome()) {
+      return new StatusTestPair(listener.status(), listener.lastFailingTest().value().getName());
+    } else {
+      return new StatusTestPair(listener.status());
+    }
   }
 
   private List<TestUnit> createEarlyExitTestGroup(final List<TestUnit> tests) {

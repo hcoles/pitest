@@ -19,7 +19,6 @@ import java.io.OutputStream;
 
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.protocol.Id;
-import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.SafeDataOutputStream;
 
 public class DefaultReporter implements Reporter {
@@ -31,14 +30,14 @@ public class DefaultReporter implements Reporter {
   }
 
   public synchronized void describe(final MutationIdentifier i)
-      throws IOException {
+  throws IOException {
     this.w.writeByte(Id.DESCRIBE);
     this.w.write(i);
     this.w.flush();
   }
 
   public synchronized void report(final MutationIdentifier i,
-      final DetectionStatus mutationDetected) throws IOException {
+      final StatusTestPair mutationDetected) throws IOException {
     this.w.writeByte(Id.REPORT);
     this.w.write(i);
     this.w.write(mutationDetected);

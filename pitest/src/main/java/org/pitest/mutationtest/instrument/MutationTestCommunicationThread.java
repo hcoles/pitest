@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.SlaveArguments;
+import org.pitest.mutationtest.execute.StatusTestPair;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.CommunicationThread;
@@ -47,9 +48,9 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
   static class Receive implements ReceiveStrategy {
 
-    private final Map<MutationIdentifier, DetectionStatus> idMap;
+    private final Map<MutationIdentifier, StatusTestPair> idMap;
 
-    Receive(final Map<MutationIdentifier, DetectionStatus> idMap) {
+    Receive(final Map<MutationIdentifier, StatusTestPair> idMap) {
       this.idMap = idMap;
     }
 
@@ -66,29 +67,29 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
     private void handleReport(final SafeDataInputStream is) {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-      final DetectionStatus value = is.read(DetectionStatus.class);
+      final StatusTestPair value = is.read(StatusTestPair.class);
       this.idMap.put(mutation, value);
       LOG.info(mutation + " " + value);
     }
 
     private void handleDescribe(final SafeDataInputStream is) {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-      this.idMap.put(mutation, DetectionStatus.STARTED);
+      this.idMap.put(mutation, new StatusTestPair(DetectionStatus.STARTED));
     }
 
   }
 
-  private final Map<MutationIdentifier, DetectionStatus> idMap;
+  private final Map<MutationIdentifier, StatusTestPair> idMap;
 
   public MutationTestCommunicationThread(final int port,
       final SlaveArguments arguments,
-      final Map<MutationIdentifier, DetectionStatus> idMap) {
+      final Map<MutationIdentifier, StatusTestPair> idMap) {
     super(port, new SendData(arguments), new Receive(idMap));
     this.idMap = idMap;
   }
 
-  @Override
-  public DetectionStatus getStatus(final MutationIdentifier id) {
+
+  public StatusTestPair getStatus(final MutationIdentifier id) {
     return this.idMap.get(id);
   }
 

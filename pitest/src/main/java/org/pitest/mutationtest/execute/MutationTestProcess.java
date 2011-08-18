@@ -22,7 +22,7 @@ public class MutationTestProcess {
     this.process = new WrappingProcess(port, processArgs,
         MutationTestSlave.class);
     this.thread = new MutationTestCommunicationThread(port, arguments,
-        new HashMap<MutationIdentifier, DetectionStatus>());
+        new HashMap<MutationIdentifier, StatusTestPair>());
 
   }
 
@@ -32,12 +32,12 @@ public class MutationTestProcess {
   }
 
   public void results(final Map<MutationDetails, DetectionStatus> allmutations)
-      throws FileNotFoundException, IOException {
+  throws FileNotFoundException, IOException {
 
     for (final MutationDetails each : allmutations.keySet()) {
-      final DetectionStatus status = this.thread.getStatus(each.getId());
+      final StatusTestPair status = this.thread.getStatus(each.getId());
       if (status != null) {
-        allmutations.put(each, status);
+        allmutations.put(each, status.getStatus());
       }
     }
 

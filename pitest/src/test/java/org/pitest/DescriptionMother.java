@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.execute;
+package org.pitest;
 
-import java.io.IOException;
+import java.util.Collections;
 
-import org.pitest.mutationtest.engine.MutationIdentifier;
+public class DescriptionMother {
 
-public interface Reporter {
-
-  public void describe(MutationIdentifier i) throws IOException;
-
-  public void report(MutationIdentifier i, StatusTestPair mutationDetected)
-  throws IOException;
-
-  public void done();
+  public static Description createEmptyDescription(String name) {
+    return new  Description(name, Collections.<Class<?>> emptySet(),
+        null);
+  }
 
 }

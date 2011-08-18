@@ -19,13 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.protocol.Id;
-import org.pitest.mutationtest.results.DetectionStatus;
 
 public class CommunicationThread extends Thread {
 
@@ -36,7 +32,6 @@ public class CommunicationThread extends Thread {
   private final ReceiveStrategy                          receive;
 
   private final int                                      port;
-  private final Map<MutationIdentifier, DetectionStatus> idMap = new HashMap<MutationIdentifier, DetectionStatus>();
 
   public CommunicationThread(final int port,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
@@ -103,8 +98,5 @@ public class CommunicationThread extends Thread {
     this.join();
   }
 
-  public DetectionStatus getStatus(final MutationIdentifier id) {
-    return this.idMap.get(id);
-  }
 
 }
