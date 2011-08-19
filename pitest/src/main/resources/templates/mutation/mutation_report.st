@@ -38,7 +38,7 @@ $sourceFile.groups:{ group |
 
 <a name='group$sourceFile$_$group.id$'/> 
 
-$group.mutations: { mutation | <p class='$mutation.status$'>$mutation.details.htmlSafeDescription$ : $mutation.status$</p> }$
+$group.mutations: { mutation | <p class='$mutation.status$'>$mutation.details.htmlSafeDescription$ : $mutation.statusDescription$</p> }$
 </td>
 </tr>
 }$

@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.execute.SlaveArguments;
-import org.pitest.mutationtest.execute.StatusTestPair;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.CommunicationThread;
@@ -48,9 +48,9 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
   static class Receive implements ReceiveStrategy {
 
-    private final Map<MutationIdentifier, StatusTestPair> idMap;
+    private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 
-    Receive(final Map<MutationIdentifier, StatusTestPair> idMap) {
+    Receive(final Map<MutationIdentifier, MutationStatusTestPair> idMap) {
       this.idMap = idMap;
     }
 
@@ -67,29 +67,30 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
     private void handleReport(final SafeDataInputStream is) {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-      final StatusTestPair value = is.read(StatusTestPair.class);
+      final MutationStatusTestPair value = is
+          .read(MutationStatusTestPair.class);
       this.idMap.put(mutation, value);
       LOG.info(mutation + " " + value);
     }
 
     private void handleDescribe(final SafeDataInputStream is) {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-      this.idMap.put(mutation, new StatusTestPair(DetectionStatus.STARTED));
+      this.idMap.put(mutation, new MutationStatusTestPair(
+          DetectionStatus.STARTED));
     }
 
   }
 
-  private final Map<MutationIdentifier, StatusTestPair> idMap;
+  private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 
   public MutationTestCommunicationThread(final int port,
       final SlaveArguments arguments,
-      final Map<MutationIdentifier, StatusTestPair> idMap) {
+      final Map<MutationIdentifier, MutationStatusTestPair> idMap) {
     super(port, new SendData(arguments), new Receive(idMap));
     this.idMap = idMap;
   }
 
-
-  public StatusTestPair getStatus(final MutationIdentifier id) {
+  public MutationStatusTestPair getStatus(final MutationIdentifier id) {
     return this.idMap.get(id);
   }
 

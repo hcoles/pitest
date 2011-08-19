@@ -61,6 +61,10 @@ public final class Description implements FunctionalIterable<Class<?>>,
     return this.testClasses.iterator().next();
   }
 
+  public String getQualifiedName() {
+    return this.getFirstTestClass().getName() + "." + this.getName();
+  }
+
   public String getName() {
     return this.name;
   }

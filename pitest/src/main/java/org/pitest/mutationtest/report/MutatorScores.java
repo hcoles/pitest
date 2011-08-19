@@ -42,14 +42,14 @@ public class MutatorScores {
     return new SideEffect1<MutationResult>() {
 
       public void apply(final MutationResult mr) {
-        final String key = mr.details.getId().getMutator();
+        final String key = mr.getDetails().getId().getMutator();
         Total total = MutatorScores.this.mutatorTotalMap.get(key);
         if (total == null) {
           total = new Total(key);
           MutatorScores.this.mutatorTotalMap.put(key, total);
         }
         total.count += 1;
-        total.detected += mr.status.isDetected() ? 1 : 0;
+        total.detected += mr.getStatus().isDetected() ? 1 : 0;
       }
 
     };

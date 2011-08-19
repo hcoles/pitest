@@ -76,7 +76,7 @@ public class TestMutationTesting {
     public List<DetectionStatus> getDetectionStatus() {
       final List<DetectionStatus> dss = new ArrayList<DetectionStatus>();
       for (final MutationResult each : this.data) {
-        dss.add(each.status);
+        dss.add(each.getStatus());
       }
       return dss;
     }

@@ -51,6 +51,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -117,16 +118,20 @@ public class MutationTestUnit extends AbstractTestUnit {
 
         final List<TestUnit> tests = findTestUnits(loader);
 
-        final Map<MutationDetails, DetectionStatus> mutations = new HashMap<MutationDetails, DetectionStatus>();
+        final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
         if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
-          FCollection.forEach(this.availableMutations,
-              putToMap(mutations, DetectionStatus.NOT_STARTED));
+          FCollection.forEach(
+              this.availableMutations,
+              putToMap(mutations, new MutationStatusTestPair(
+                  DetectionStatus.NOT_STARTED)));
 
           runTestsInSeperateProcess(cp, tests, mutations);
 
         } else {
-          FCollection.forEach(this.availableMutations,
-              putToMap(mutations, DetectionStatus.SURVIVED));
+          FCollection.forEach(
+              this.availableMutations,
+              putToMap(mutations, new MutationStatusTestPair(
+                  DetectionStatus.SURVIVED)));
         }
         reportResults(mutations, this.availableMutations, rc, loader);
 
@@ -152,7 +157,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestInSeperateProcessForMutationRange(
-      final Map<MutationDetails, DetectionStatus> allmutations,
+      final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations,
       final List<TestUnit> tests, final String cp) throws IOException {
 
@@ -196,21 +201,21 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(
-      final Map<MutationDetails, DetectionStatus> allmutations,
+      final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations) {
     allmutations.put(remainingMutations.iterator().next(),
-        DetectionStatus.STARTED);
+        new MutationStatusTestPair(DetectionStatus.STARTED));
   }
 
   private void correctResultForProcessExitCode(
-      final Map<MutationDetails, DetectionStatus> mutations,
+      final Map<MutationDetails, MutationStatusTestPair> mutations,
       final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
       LOG.warning("Slave encountered error or timeout");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
-      final DetectionStatus status = DetectionStatus
-          .getForErrorExitCode(exitCode);
+      final MutationStatusTestPair status = new MutationStatusTestPair(
+          DetectionStatus.getForErrorExitCode(exitCode));
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
@@ -221,19 +226,19 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private Collection<MutationDetails> getUnfinishedRuns(
-      final Map<MutationDetails, DetectionStatus> mutations) {
+      final Map<MutationDetails, MutationStatusTestPair> mutations) {
 
     return FCollection.flatMap(mutations.entrySet(),
         detectionStatusIs(DetectionStatus.STARTED));
   }
 
-  private F<Entry<MutationDetails, DetectionStatus>, Option<MutationDetails>> detectionStatusIs(
+  private F<Entry<MutationDetails, MutationStatusTestPair>, Option<MutationDetails>> detectionStatusIs(
       final DetectionStatus status) {
-    return new F<Entry<MutationDetails, DetectionStatus>, Option<MutationDetails>>() {
+    return new F<Entry<MutationDetails, MutationStatusTestPair>, Option<MutationDetails>>() {
 
       public Option<MutationDetails> apply(
-          final Entry<MutationDetails, DetectionStatus> a) {
-        if (a.getValue().equals(status)) {
+          final Entry<MutationDetails, MutationStatusTestPair> a) {
+        if (a.getValue().getStatus().equals(status)) {
           return Option.some(a.getKey());
         } else {
           return Option.none();
@@ -249,7 +254,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   private void runTestsInSeperateProcess(final String cp,
       final List<TestUnit> tests,
-      final Map<MutationDetails, DetectionStatus> mutations)
+      final Map<MutationDetails, MutationStatusTestPair> mutations)
       throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
@@ -264,13 +269,13 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private Collection<MutationDetails> getUnrunMutationIds(
-      final Map<MutationDetails, DetectionStatus> mutations) {
+      final Map<MutationDetails, MutationStatusTestPair> mutations) {
 
     final F<MutationDetails, Boolean> p = new F<MutationDetails, Boolean>() {
 
       public Boolean apply(final MutationDetails a) {
-        final DetectionStatus status = mutations.get(a);
-        return status.equals(DetectionStatus.NOT_STARTED);
+        final MutationStatusTestPair status = mutations.get(a);
+        return status.getStatus().equals(DetectionStatus.NOT_STARTED);
       }
 
     };
@@ -299,7 +304,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void reportResults(
-      final Map<MutationDetails, DetectionStatus> mutations,
+      final Map<MutationDetails, MutationStatusTestPair> mutations,
       final Collection<MutationDetails> availableMutations,
       final ResultCollector rc, final ClassLoader loader) {
 
@@ -328,7 +333,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private F<MutationDetails, MutationResult> detailsToMutationResults(
-      final Map<MutationDetails, DetectionStatus> mutations) {
+      final Map<MutationDetails, MutationStatusTestPair> mutations) {
     return new F<MutationDetails, MutationResult>() {
 
       public MutationResult apply(final MutationDetails a) {

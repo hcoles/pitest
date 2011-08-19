@@ -30,14 +30,14 @@ public class DefaultReporter implements Reporter {
   }
 
   public synchronized void describe(final MutationIdentifier i)
-  throws IOException {
+      throws IOException {
     this.w.writeByte(Id.DESCRIBE);
     this.w.write(i);
     this.w.flush();
   }
 
   public synchronized void report(final MutationIdentifier i,
-      final StatusTestPair mutationDetected) throws IOException {
+      final MutationStatusTestPair mutationDetected) throws IOException {
     this.w.writeByte(Id.REPORT);
     this.w.write(i);
     this.w.write(mutationDetected);

@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.instrument;
 
@@ -60,7 +60,7 @@ public class MutationMetaData implements MetaData {
     return new F<MutationResult, String>() {
 
       public String apply(final MutationResult a) {
-        return a.details.getFilename();
+        return a.getDetails().getFilename();
       }
 
     };
@@ -69,7 +69,7 @@ public class MutationMetaData implements MetaData {
   public int getNumberOfDetetectedMutations() {
     int count = 0;
     for (final MutationResult each : this.mutations) {
-      if (each.status.isDetected()) {
+      if (each.getStatus().isDetected()) {
         count++;
       }
     }
@@ -111,7 +111,7 @@ public class MutationMetaData implements MetaData {
     return new F<MutationResult, Boolean>() {
 
       public Boolean apply(final MutationResult a) {
-        return a.details.getFilename().equals(sourceFile);
+        return a.getDetails().getFilename().equals(sourceFile);
       }
 
     };
@@ -121,8 +121,8 @@ public class MutationMetaData implements MetaData {
     final Set<String> classes = new HashSet<String>();
     final F<MutationResult, Iterable<String>> f = new F<MutationResult, Iterable<String>>() {
       public Iterable<String> apply(final MutationResult a) {
-        if (a.details.getFilename().equals(sourceFileName)) {
-          return Option.some(a.details.getClazz());
+        if (a.getDetails().getFilename().equals(sourceFileName)) {
+          return Option.some(a.getDetails().getClazz());
         } else {
           return Option.none();
         }
@@ -152,7 +152,7 @@ public class MutationMetaData implements MetaData {
     return new F<MutationResult, Iterable<TestInfo>>() {
 
       public Iterable<TestInfo> apply(final MutationResult a) {
-        return a.details.getTestsInOrder();
+        return a.getDetails().getTestsInOrder();
       }
 
     };

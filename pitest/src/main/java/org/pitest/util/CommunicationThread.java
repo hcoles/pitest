@@ -28,10 +28,10 @@ public class CommunicationThread extends Thread {
   // private final static Logger LOG = Log
   // .getLogger();
 
-  private final SideEffect1<SafeDataOutputStream>        sendInitialData;
-  private final ReceiveStrategy                          receive;
+  private final SideEffect1<SafeDataOutputStream> sendInitialData;
+  private final ReceiveStrategy                   receive;
 
-  private final int                                      port;
+  private final int                               port;
 
   public CommunicationThread(final int port,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
@@ -97,6 +97,5 @@ public class CommunicationThread extends Thread {
   public void waitToFinish() throws InterruptedException {
     this.join();
   }
-
 
 }

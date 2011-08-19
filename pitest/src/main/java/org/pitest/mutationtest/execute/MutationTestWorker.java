@@ -92,12 +92,13 @@ public class MutationTestWorker {
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
     final List<TestUnit> relevantTests = testSource
-    .translateTests(mutationDetails.getTestsInOrder());
+        .translateTests(mutationDetails.getTestsInOrder());
     // pickTests(mutatedClass);
 
     r.describe(mutationId);
 
-    StatusTestPair mutationDetected = new StatusTestPair(DetectionStatus.SURVIVED);
+    MutationStatusTestPair mutationDetected = new MutationStatusTestPair(
+        DetectionStatus.SURVIVED);
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
@@ -117,7 +118,8 @@ public class MutationTestWorker {
         mutationDetected = doTestsDetectMutation(c, relevantTests);
       } else {
         LOG.info("Mutation " + mutationId + " was not viable ");
-        mutationDetected =  new StatusTestPair(DetectionStatus.NON_VIABLE);
+        mutationDetected = new MutationStatusTestPair(
+            DetectionStatus.NON_VIABLE);
       }
 
     }
@@ -151,16 +153,16 @@ public class MutationTestWorker {
 
   private boolean hasMutationInStaticInitializer(final Mutant mutant) {
     return (mutant.getDetails().getId().isMutated())
-    && mutant.getDetails().isInStaticInitializer();
+        && mutant.getDetails().isInStaticInitializer();
   }
 
   @Override
   public String toString() {
     return "MutationTestWorker [mutater=" + this.mutater + ", loader="
-    + this.loader + ", hotswap=" + this.hotswap + "]";
+        + this.loader + ", hotswap=" + this.hotswap + "]";
   }
 
-  protected StatusTestPair doTestsDetectMutation(final Container c,
+  protected MutationStatusTestPair doTestsDetectMutation(final Container c,
       final List<TestUnit> tests) {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
@@ -181,12 +183,13 @@ public class MutationTestWorker {
 
   }
 
-  private StatusTestPair createStatusTestPair(
+  private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
-    if ( listener.lastFailingTest().hasSome()) {
-      return new StatusTestPair(listener.status(), listener.lastFailingTest().value().getName());
+    if (listener.lastFailingTest().hasSome()) {
+      return new MutationStatusTestPair(listener.status(), listener
+          .lastFailingTest().value().getQualifiedName());
     } else {
-      return new StatusTestPair(listener.status());
+      return new MutationStatusTestPair(listener.status());
     }
   }
 

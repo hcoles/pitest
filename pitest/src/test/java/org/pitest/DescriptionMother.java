@@ -18,9 +18,8 @@ import java.util.Collections;
 
 public class DescriptionMother {
 
-  public static Description createEmptyDescription(String name) {
-    return new  Description(name, Collections.<Class<?>> emptySet(),
-        null);
+  public static Description createEmptyDescription(final String name) {
+    return new Description(name, Collections.<Class<?>> emptySet(), null);
   }
 
 }

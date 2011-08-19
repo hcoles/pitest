@@ -22,8 +22,8 @@ public interface Reporter {
 
   public void describe(MutationIdentifier i) throws IOException;
 
-  public void report(MutationIdentifier i, StatusTestPair mutationDetected)
-  throws IOException;
+  public void report(MutationIdentifier i,
+      MutationStatusTestPair mutationDetected) throws IOException;
 
   public void done();
 

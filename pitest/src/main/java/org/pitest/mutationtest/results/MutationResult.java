@@ -14,15 +14,38 @@
  */
 package org.pitest.mutationtest.results;
 
+import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 public class MutationResult {
 
-  public MutationResult(final MutationDetails md, final DetectionStatus status) {
+  private final MutationDetails        details;
+  private final MutationStatusTestPair status;
+
+  public MutationResult(final MutationDetails md,
+      final MutationStatusTestPair status) {
     this.details = md;
     this.status = status;
   }
 
-  public final MutationDetails details;
-  public final DetectionStatus status;
+  public MutationDetails getDetails() {
+    return this.details;
+  }
+
+  public Option<String> getKillingTest() {
+    return this.status.getKillingTest();
+  }
+
+  public DetectionStatus getStatus() {
+    return this.status.getStatus();
+  }
+
+  public String getStatusDescription() {
+    for (final String test : getKillingTest()) {
+      return getStatus() + " -> " + test;
+    }
+    return getStatus().name();
+  }
+
 }

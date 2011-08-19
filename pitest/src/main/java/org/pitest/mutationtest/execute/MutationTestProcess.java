@@ -8,7 +8,6 @@ import java.util.Map;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationTestCommunicationThread;
-import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
 
@@ -22,7 +21,7 @@ public class MutationTestProcess {
     this.process = new WrappingProcess(port, processArgs,
         MutationTestSlave.class);
     this.thread = new MutationTestCommunicationThread(port, arguments,
-        new HashMap<MutationIdentifier, StatusTestPair>());
+        new HashMap<MutationIdentifier, MutationStatusTestPair>());
 
   }
 
@@ -31,13 +30,14 @@ public class MutationTestProcess {
     this.process.start();
   }
 
-  public void results(final Map<MutationDetails, DetectionStatus> allmutations)
-  throws FileNotFoundException, IOException {
+  public void results(
+      final Map<MutationDetails, MutationStatusTestPair> allmutations)
+      throws FileNotFoundException, IOException {
 
     for (final MutationDetails each : allmutations.keySet()) {
-      final StatusTestPair status = this.thread.getStatus(each.getId());
+      final MutationStatusTestPair status = this.thread.getStatus(each.getId());
       if (status != null) {
-        allmutations.put(each, status.getStatus());
+        allmutations.put(each, status);
       }
     }
 

@@ -17,17 +17,18 @@ package org.pitest.mutationtest.execute;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.results.DetectionStatus;
 
-public class StatusTestPair {
+public class MutationStatusTestPair {
 
   private final DetectionStatus status;
-  private final Option<String> killingTest;
+  private final Option<String>  killingTest;
 
-  public StatusTestPair(DetectionStatus status) {
+  public MutationStatusTestPair(final DetectionStatus status) {
     this.status = status;
     this.killingTest = Option.some(null);
   }
 
-  public StatusTestPair(DetectionStatus status, String killingTest) {
+  public MutationStatusTestPair(final DetectionStatus status,
+      final String killingTest) {
     this.status = status;
     this.killingTest = Option.some(killingTest);
   }
@@ -42,14 +43,12 @@ public class StatusTestPair {
 
   @Override
   public String toString() {
-    if ( this.killingTest.hasNone() ) {
+    if (this.killingTest.hasNone()) {
       return this.status.name();
     } else {
       return this.status.name() + " by " + this.killingTest.value();
     }
 
   }
-
-
 
 }

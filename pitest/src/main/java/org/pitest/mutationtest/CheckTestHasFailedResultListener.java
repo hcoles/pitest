@@ -23,10 +23,10 @@ import org.pitest.mutationtest.results.DetectionStatus;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private static final long serialVersionUID     = 1L;
+  private static final long   serialVersionUID = 1L;
 
-  private boolean           timedOut             = false;
-  private Option<Description> lastFailingTest = Option.none();
+  private boolean             timedOut         = false;
+  private Option<Description> lastFailingTest  = Option.none();
 
   public void onTestError(final TestResult tr) {
     recordFailingTest(tr);
