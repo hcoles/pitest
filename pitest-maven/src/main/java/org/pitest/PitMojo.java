@@ -156,6 +156,14 @@ public class PitMojo extends AbstractMojo {
    */
   private int                   maxMutationsPerClass;
 
+
+  /**
+   * Arguments to pass to child processes
+   * 
+   * @parameter
+   */
+  private List<String>                jvmArgs;
+
   /**
    * Output verbose logging
    * 
@@ -271,6 +279,7 @@ public class PitMojo extends AbstractMojo {
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
     data.setVerbose(this.verbose);
+    data.addChildJVMArgs(this.jvmArgs);
 
     data.setMutators(determineMutators());
     data.setTimeoutConstant(this.timeoutConstant);
