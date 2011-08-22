@@ -163,7 +163,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final SlaveArguments fileArgs = new SlaveArguments(
         FileUtil.randomFilename(), remainingMutations, tests, this.config,
-        System.getProperties(), this.timeoutStrategy, Log.isVerbose());
+        this.timeoutStrategy, Log.isVerbose());
 
     final PortFinder pf = PortFinder.INSTANCE;
 

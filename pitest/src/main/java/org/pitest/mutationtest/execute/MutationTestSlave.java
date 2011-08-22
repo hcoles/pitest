@@ -59,10 +59,6 @@ public class MutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      System.setProperties(paramsFromParent.systemProperties);
-
-      // dis.close();
-
       final F2<Class<?>, byte[], Boolean> hotswap = new F2<Class<?>, byte[], Boolean>() {
 
         public Boolean apply(final Class<?> a, final byte[] b) {

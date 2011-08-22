@@ -52,14 +52,11 @@ public class CoverageSlave {
 
       final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
 
-      System.setProperties(paramsFromParent.getSystemProperties());
-
       Log.setVerbose(paramsFromParent.isVerbose());
 
       final DataOutputStream dos = new DataOutputStream(
           new BufferedOutputStream(s.getOutputStream()));
 
-      // final CoverageStatistics invokeStatistics = new CoverageStatistics();
       invokeQueue = new CoveragePipe(dos);
 
       CodeCoverageStore.init(invokeQueue);

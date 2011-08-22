@@ -14,6 +14,8 @@
  */
 package org.pitest.util;
 
+import static org.pitest.functional.Prelude.or;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -21,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 
 public class JavaProcess {
 
@@ -103,13 +105,22 @@ public class JavaProcess {
 
   private static void addLaunchJavaAgents(final List<String> cmd) {
     final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
+    @SuppressWarnings("unchecked")
     final FunctionalList<String> agents = FCollection.filter(
-        rt.getInputArguments(), isJavaAgentParam());
+        rt.getInputArguments(), or(isJavaAgentParam(), isEnvironmentSetting()));
     cmd.addAll(agents);
   }
 
-  private static F<String, Boolean> isJavaAgentParam() {
-    return new F<String, Boolean>() {
+  private static Predicate<String> isEnvironmentSetting() {
+    return new Predicate<String>() {
+      public Boolean apply(final String a) {
+        return a.startsWith("-D");
+      }
+    };
+  }
+
+  private static Predicate<String> isJavaAgentParam() {
+    return new Predicate<String>() {
 
       public Boolean apply(final String a) {
         return a.toLowerCase().startsWith("-javaagent");

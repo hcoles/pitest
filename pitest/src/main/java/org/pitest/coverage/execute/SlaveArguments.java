@@ -15,25 +15,16 @@ package org.pitest.coverage.execute;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import java.util.Properties;
-
 import org.pitest.functional.predicate.Predicate;
 
 public class SlaveArguments {
 
-  private final Properties        systemProperties;
   private final Predicate<String> filter;
   private final boolean           verbose;
 
-  public SlaveArguments(final Properties systemProperties,
-      final Predicate<String> filter, final boolean verbose) {
-    this.systemProperties = systemProperties;
+  public SlaveArguments(final Predicate<String> filter, final boolean verbose) {
     this.filter = filter;
     this.verbose = verbose;
-  }
-
-  public Properties getSystemProperties() {
-    return this.systemProperties;
   }
 
   public Predicate<String> getFilter() {

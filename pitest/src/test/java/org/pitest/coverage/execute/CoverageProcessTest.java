@@ -1,8 +1,14 @@
 package org.pitest.coverage.execute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.junit.Test;
@@ -30,7 +36,6 @@ public class CoverageProcessTest {
 
   public static class Testee implements Runnable {
     public void foo() {
-
     }
 
     public void bar() {
@@ -100,14 +105,49 @@ public class CoverageProcessTest {
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
   }
 
+  public static class ReliesOnNewLine {
+    public static String parseNewLines() throws IOException {
+      final StringWriter sw = new StringWriter();
+      final PrintWriter pw = new PrintWriter(sw);
+      pw.println("foo");
+      pw.println("bar");
+
+      final BufferedReader in = new BufferedReader(new StringReader(sw
+          .getBuffer().toString()));
+      return in.readLine();
+    }
+  }
+
+  public static class ReliesOnNewLineTest {
+    @Test
+    public void testNewLine() throws IOException {
+      assertEquals("foo", ReliesOnNewLine.parseNewLines());
+    }
+  }
+
+  @Test
+  public void shouldNotCorruptedTheSystemNewLineProperty() throws Exception {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(ReliesOnNewLineTest.class);
+    assertFalse(coveredClasses.contains(failingTest()));
+  }
+
+  private F<CoverageResult, Boolean> failingTest() {
+    return new F<CoverageResult, Boolean>() {
+
+      public Boolean apply(final CoverageResult a) {
+        return !a.isGreenTest();
+      }
+
+    };
+  }
+
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
       throws IOException, InterruptedException {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         new JUnitCompatibleConfiguration(), new NullDiscoveryListener(),
         new UnGroupedStrategy(), Option.<TestFilter> none(), test);
 
-    final SlaveArguments sa = new SlaveArguments(System.getProperties(),
-        coverOnlyTestees(), true);
+    final SlaveArguments sa = new SlaveArguments(coverOnlyTestees(), true);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
 

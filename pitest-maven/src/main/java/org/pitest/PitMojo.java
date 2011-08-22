@@ -279,7 +279,9 @@ public class PitMojo extends AbstractMojo {
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
     data.setVerbose(this.verbose);
-    data.addChildJVMArgs(this.jvmArgs);
+    if ( this.jvmArgs != null ) {
+      data.addChildJVMArgs(this.jvmArgs);
+    }
 
     data.setMutators(determineMutators());
     data.setTimeoutConstant(this.timeoutConstant);

@@ -267,7 +267,8 @@ public class TestMutationTesting {
 
   @Test
   public void shouldExportSystemPropertiesToSlaveProcess() {
-    System.setProperty("foo", "foo");
+    //System.setProperty("foo", "foo");
+    // note surefire ia configured to launch this test with -Dfoo=foo
     run(OneMutation.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
         Mutator.RETURN_VALS);
@@ -361,7 +362,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -381,7 +382,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

@@ -53,7 +53,7 @@ public class ReportOptions {
 
   private boolean                                    includeJarFiles          = false;
 
-  private List<String>                               jvmArgs                  = new ArrayList<String>();
+  private final List<String>                         jvmArgs                  = new ArrayList<String>();
   private int                                        numberOfThreads          = 0;
   private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
@@ -158,7 +158,7 @@ public class ReportOptions {
   }
 
   public void addChildJVMArgs(final List<String> args) {
-    this.jvmArgs = args;
+    this.jvmArgs.addAll(args);
   }
 
   public Option<ClassPath> getClassPath(final boolean declareCaches) {

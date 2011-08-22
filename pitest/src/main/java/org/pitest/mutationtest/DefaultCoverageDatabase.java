@@ -178,7 +178,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final PortFinder pf = PortFinder.INSTANCE;
     final int port = pf.getNextAvailablePort();
 
-    final SlaveArguments sa = new SlaveArguments(System.getProperties(),
+    final SlaveArguments sa = new SlaveArguments(
         convertToJVMClassFilter(this.data.getTargetClassesFilter()),
         this.data.isVerbose());
 
