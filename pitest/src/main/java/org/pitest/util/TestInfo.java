@@ -142,12 +142,16 @@ public abstract class TestInfo {
   }
 
   public static void checkJUnitVersion() {
-    final String version = junit.runner.Version.id();
-    final String[] parts = version.split("\\.");
-    final int major = Integer.parseInt(parts[0]);
-    final int minor = Integer.parseInt(parts[1]);
-    if ((major < 4) || ((major == 4) && (minor < 6))) {
-      throw new PitHelpError(Help.WRONG_JUNIT_VERSION, version);
+    try {
+      final String version = junit.runner.Version.id();
+      final String[] parts = version.split("\\.");
+      final int major = Integer.parseInt(parts[0]);
+      final int minor = Integer.parseInt(parts[1]);
+      if ((major < 4) || ((major == 4) && (minor < 6))) {
+        throw new PitHelpError(Help.WRONG_JUNIT_VERSION, version);
+      }
+    } catch (final NoClassDefFoundError er) {
+      throw new PitHelpError(Help.NO_JUNIT);
     }
 
   }

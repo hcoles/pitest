@@ -9,19 +9,26 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.TestMutationTesting.MetaDataExtractor;
+import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.Glob;
 
 public abstract class ReportTestBase {
 
-  private MetaDataExtractor metaDataExtractor;
-  protected ReportOptions   data;
+  private MetaDataExtractor           metaDataExtractor;
+  protected ReportOptions             data;
+
+  @Mock
+  protected ReportDirCreationStrategy makeDir;
 
   @Before
   public void setUp() {
+    MockitoAnnotations.initMocks(this);
     this.metaDataExtractor = new MetaDataExtractor();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
@@ -33,7 +40,8 @@ public abstract class ReportTestBase {
     return new ListenerFactory() {
 
       public TestListener getListener(final CoverageDatabase coverage,
-          final ReportOptions data, final long startTime) {
+          final File reportDir, final long startTime,
+          final SourceLocator locator) {
         return ReportTestBase.this.metaDataExtractor;
       }
 

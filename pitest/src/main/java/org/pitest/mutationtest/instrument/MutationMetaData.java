@@ -30,15 +30,11 @@ import org.pitest.mutationtest.results.MutationResult;
 public class MutationMetaData implements MetaData {
 
   private final MutationConfig             config;
-  private final Collection<String>         mutatedClasses;
   private final Collection<MutationResult> mutations;
 
-  protected MutationMetaData(final MutationConfig config,
-      final Collection<String> collection,
+  public MutationMetaData(final MutationConfig config,
       final Collection<MutationResult> mutations) {
     this.mutations = mutations;
-    this.mutatedClasses = collection;
-
     this.config = config;
   }
 
@@ -90,12 +86,18 @@ public class MutationMetaData implements MetaData {
   }
 
   public Collection<String> getMutatedClass() {
-    return this.mutatedClasses;
+    final Set<String> classes = new HashSet<String>(1);
+    FCollection.mapTo(this.mutations, mutationsToClass(), classes);
+    return classes;
   }
 
-  // public Statistics getStats() {
-  // return this.stats;
-  // }
+  private F<MutationResult, String> mutationsToClass() {
+    return new F<MutationResult, String>() {
+      public String apply(final MutationResult a) {
+        return a.getDetails().getClazz();
+      }
+    };
+  }
 
   public MutationConfig getConfig() {
     return this.config;

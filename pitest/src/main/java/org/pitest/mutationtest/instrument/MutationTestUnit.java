@@ -24,11 +24,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
@@ -311,25 +309,10 @@ public class MutationTestUnit extends AbstractTestUnit {
     final FunctionalList<MutationResult> results = FCollection.map(
         availableMutations, detailsToMutationResults(mutations));
 
-    final MetaData md = new MutationMetaData(this.config,
-        uniqueMutatedClasses(), results);
+    final MetaData md = new MutationMetaData(this.config, results);
 
     rc.notifyEnd(this.getDescription(), md);
 
-  }
-
-  private Collection<String> uniqueMutatedClasses() {
-    final Set<String> classes = new HashSet<String>();
-    FCollection.mapTo(this.availableMutations, mutationToMutee(), classes);
-    return classes;
-  }
-
-  private F<MutationDetails, String> mutationToMutee() {
-    return new F<MutationDetails, String>() {
-      public String apply(final MutationDetails a) {
-        return a.getClazz();
-      }
-    };
   }
 
   private F<MutationDetails, MutationResult> detailsToMutationResults(
