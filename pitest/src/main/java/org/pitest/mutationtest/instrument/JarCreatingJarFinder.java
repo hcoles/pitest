@@ -17,6 +17,11 @@ package org.pitest.mutationtest.instrument;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+import java.util.Collections;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -83,8 +88,8 @@ public class JarCreatingJarFinder implements JavaAgent {
     if (global.getValue(Attributes.Name.MANIFEST_VERSION) == null) {
       global.put(Attributes.Name.MANIFEST_VERSION, "1.0");
     }
-    final File l = new File(location);
-    global.putValue(BOOT_CLASSPATH, l.getAbsolutePath().replace('\\', '/'));
+    final File mylocation = new File(location);
+    global.putValue(BOOT_CLASSPATH, getBoothClassPath(mylocation));
     global.putValue(PREMAIN_CLASS, AGENT_CLASS_NAME);
     global.putValue(CAN_REDEFINE_CLASSES, "true");
     global.putValue(CAN_SET_NATIVE_METHOD, "true");
@@ -94,6 +99,32 @@ public class JarCreatingJarFinder implements JavaAgent {
     addClass(CodeCoverageStore.class, jos);
     addClass(InvokeReceiver.class, jos);
     jos.close();
+  }
+
+  private String getBoothClassPath(final File mylocation) {
+
+    String path = mylocation.getAbsolutePath().replace('\\', '/');
+
+    final List<String> agents = getEmmaJarsIfLoaded();
+
+    for (final String agentJar : agents) {
+      path = path + File.pathSeparator + agentJar;
+    }
+
+    return path;
+
+  }
+
+  private List<String> getEmmaJarsIfLoaded() {
+    try {
+      final Class<?> cls = Class.forName("com.vladium.emma.rt.RT");
+      final ProtectionDomain pDomain = cls.getProtectionDomain();
+      final CodeSource cSource = pDomain.getCodeSource();
+      final URL loc = cSource.getLocation();
+      return Collections.singletonList(loc.getFile());
+    } catch (final ClassNotFoundException e) {
+      return Collections.emptyList();
+    }
   }
 
   private void addClass(final Class<?> clazz, final JarOutputStream jos)
