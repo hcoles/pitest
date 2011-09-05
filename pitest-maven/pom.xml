@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.23</version>
+		<version>0.24-SNAPSHOT</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest-maven</artifactId>
-	<version>0.23</version>
+	<version>0.24-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>pitest-maven Maven Mojo</name>
 	<url>http://pitest.org</url>
@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>org.pitest</groupId>
 			<artifactId>pitest</artifactId>
-			<version>0.23</version>
+			<version>0.24-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
