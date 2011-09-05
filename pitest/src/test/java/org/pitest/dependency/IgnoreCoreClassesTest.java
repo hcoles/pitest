@@ -28,7 +28,7 @@ import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.dependency.DependencyExtractorTest.Foo;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
-import sun.security.util.ManifestEntryVerifier;
+//import sun.security.util.ManifestEntryVerifier;
 
 public class IgnoreCoreClassesTest {
 
@@ -44,10 +44,10 @@ public class IgnoreCoreClassesTest {
     assertIgnored(Integer.class);
   }
 
-  @Test
-  public void shouldIgnoreSunClasses() {
-    assertIgnored(ManifestEntryVerifier.class);
-  }
+  //@Test
+  //public void shouldIgnoreSunClasses() {
+  //  assertIgnored(ManifestEntryVerifier.class);
+  //}
 
   @Test
   public void shouldIgnoreLegecyJUnitClasses() {
@@ -85,7 +85,7 @@ public class IgnoreCoreClassesTest {
 
   private DependencyAccess makeAccessFor(final Class<?> clazz) {
     return new DependencyAccess(AccessType.METHOD, new Member("foo", "foo",
-        "()V"), new Member(clazz.getName(), "foo", "()V"));
+    "()V"), new Member(clazz.getName(), "foo", "()V"));
   }
 
 }

@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.TestMutationTesting.MetaDataExtractor;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.Glob;
@@ -51,7 +50,7 @@ public abstract class ReportTestBase {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

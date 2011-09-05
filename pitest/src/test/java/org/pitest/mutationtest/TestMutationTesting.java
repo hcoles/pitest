@@ -33,16 +33,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
-import org.pitest.Description;
 import org.pitest.Pitest;
-import org.pitest.TestResult;
 import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
-import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
@@ -51,10 +47,8 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
@@ -69,56 +63,6 @@ public class TestMutationTesting {
 
   private MetaDataExtractor   metaDataExtractor;
 
-  public static class MetaDataExtractor implements TestListener {
-
-    private final List<MutationResult> data = new ArrayList<MutationResult>();
-
-    public List<DetectionStatus> getDetectionStatus() {
-      final List<DetectionStatus> dss = new ArrayList<DetectionStatus>();
-      for (final MutationResult each : this.data) {
-        dss.add(each.getStatus());
-      }
-      return dss;
-    }
-
-    private void accumulateMetaData(final TestResult tr) {
-      final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
-      if (d.hasSome()) {
-        this.data.addAll(d.value().getMutations());
-      }
-    }
-
-    public void onTestError(final TestResult tr) {
-      accumulateMetaData(tr);
-    }
-
-    public void onTestFailure(final TestResult tr) {
-      accumulateMetaData(tr);
-    }
-
-    public void onTestSkipped(final TestResult tr) {
-      accumulateMetaData(tr);
-    }
-
-    public void onTestStart(final Description d) {
-
-    }
-
-    public void onTestSuccess(final TestResult tr) {
-      accumulateMetaData(tr);
-    }
-
-    public void onRunEnd() {
-      // TODO Auto-generated method stub
-
-    }
-
-    public void onRunStart() {
-      // TODO Auto-generated method stub
-
-    }
-
-  }
 
   @Before
   public void setUp() {
@@ -362,7 +306,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -382,7 +326,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);
