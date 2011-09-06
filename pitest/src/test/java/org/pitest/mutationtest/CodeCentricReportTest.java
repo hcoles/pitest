@@ -215,7 +215,7 @@ public class CodeCentricReportTest extends ReportTestBase {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
       final MutationCoverageReport testee = new MutationCoverageReport(
-          this.data, agent, listenerFactory(), false, this.makeDir);
+          this.data, agent, listenerFactory(), false);
 
       testee.run();
     } finally {

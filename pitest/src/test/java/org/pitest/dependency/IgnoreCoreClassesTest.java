@@ -44,10 +44,10 @@ public class IgnoreCoreClassesTest {
     assertIgnored(Integer.class);
   }
 
-  //@Test
-  //public void shouldIgnoreSunClasses() {
-  //  assertIgnored(ManifestEntryVerifier.class);
-  //}
+  // @Test
+  // public void shouldIgnoreSunClasses() {
+  // assertIgnored(ManifestEntryVerifier.class);
+  // }
 
   @Test
   public void shouldIgnoreLegecyJUnitClasses() {
@@ -85,7 +85,7 @@ public class IgnoreCoreClassesTest {
 
   private DependencyAccess makeAccessFor(final Class<?> clazz) {
     return new DependencyAccess(AccessType.METHOD, new Member("foo", "foo",
-    "()V"), new Member(clazz.getName(), "foo", "()V"));
+        "()V"), new Member(clazz.getName(), "foo", "()V"));
   }
 
 }

@@ -14,11 +14,8 @@
  */
 package org.pitest.mutationtest.report;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 
 import org.pitest.Description;
 import org.pitest.TestResult;
@@ -31,26 +28,16 @@ import org.pitest.util.Unchecked;
 
 public class CSVReportListener implements TestListener {
 
-  private final PrintWriter out;
+  private final Writer out;
 
   public CSVReportListener(final CoverageDatabase coverage,
-      final long startTime, final File reportDir,
+      final long startTime, final ResultOutputStrategy outputStrategy,
       final SourceLocator... locators) {
-    this(createOutputFile(reportDir));
+    this(outputStrategy.createWriterForFile("mutations.csv"));
 
   }
 
-  private static PrintWriter createOutputFile(final File reportDir) {
-    try {
-      final File outFile = new File(reportDir.getAbsolutePath()
-          + File.separator + "mutations.csv");
-      return new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-    } catch (final IOException ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
-  }
-
-  public CSVReportListener(final PrintWriter out) {
+  public CSVReportListener(final Writer out) {
     this.out = out;
   }
 
@@ -77,17 +64,26 @@ public class CSVReportListener implements TestListener {
   }
 
   public void onRunEnd() {
-    this.out.close();
+    try {
+      this.out.close();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
   }
 
   private void writeResult(final TestResult tr) {
-    for (final MutationMetaData metaData : extractMetaData(tr)) {
-      for (final MutationResult mutation : metaData.getMutations()) {
-        this.out.println(makeCsv(mutation.getDetails().getFilename(), mutation
-            .getDetails().getClazz(), mutation.getDetails().getMethod(),
-            mutation.getDetails().getLineNumber(), mutation.getStatus(),
-            createKillingTestDesc(mutation.getKillingTest())));
+    try {
+      for (final MutationMetaData metaData : extractMetaData(tr)) {
+        for (final MutationResult mutation : metaData.getMutations()) {
+          this.out.write(makeCsv(mutation.getDetails().getFilename(), mutation
+              .getDetails().getClazz(), mutation.getDetails().getMethod(),
+              mutation.getDetails().getLineNumber(), mutation.getStatus(),
+              createKillingTestDesc(mutation.getKillingTest()))
+              + System.getProperty("line.separator"));
+        }
       }
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
     }
   }
 

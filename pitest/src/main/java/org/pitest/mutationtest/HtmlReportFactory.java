@@ -15,18 +15,23 @@
 
 package org.pitest.mutationtest;
 
-import java.io.File;
-
 import org.pitest.extension.TestListener;
 import org.pitest.mutationtest.report.MutationHtmlReportListener;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.SourceLocator;
 
 public class HtmlReportFactory implements ListenerFactory {
 
+  private final ResultOutputStrategy outputStrategy;
+
+  public HtmlReportFactory(final ResultOutputStrategy outputStrategy) {
+    this.outputStrategy = outputStrategy;
+  }
+
   public TestListener getListener(final CoverageDatabase coverage,
-      final File reportDir, final long startTime, final SourceLocator locator) {
-    return new MutationHtmlReportListener(coverage, startTime, reportDir,
-        locator);
+      final long startTime, final SourceLocator locator) {
+    return new MutationHtmlReportListener(coverage, startTime,
+        this.outputStrategy, locator);
   }
 
 }

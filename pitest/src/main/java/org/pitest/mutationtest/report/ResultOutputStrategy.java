@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
+package org.pitest.mutationtest.report;
 
-package org.pitest.mutationtest;
+import java.io.Writer;
 
-import org.pitest.extension.TestListener;
-import org.pitest.mutationtest.report.SourceLocator;
+public interface ResultOutputStrategy {
 
-public interface ListenerFactory {
-
-  public TestListener getListener(final CoverageDatabase coverage,
-      final long startTime, SourceLocator locator);
+  Writer createWriterForFile(String sourceFile);
 
 }

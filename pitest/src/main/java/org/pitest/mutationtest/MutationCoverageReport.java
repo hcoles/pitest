@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -48,6 +47,7 @@ import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
+import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -56,22 +56,19 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
-  private static final Logger             LOG = Log.getLogger();
-  protected final ReportOptions           data;
-  protected final ListenerFactory         listenerFactory;
-  protected final JavaAgent               javaAgentFinder;
-  protected final boolean                 nonLocalClassPath;
-  private final ReportDirCreationStrategy makeReportDir;
+  private static final Logger     LOG = Log.getLogger();
+  protected final ReportOptions   data;
+  protected final ListenerFactory listenerFactory;
+  protected final JavaAgent       javaAgentFinder;
+  protected final boolean         nonLocalClassPath;
 
   public MutationCoverageReport(final ReportOptions data,
       final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
-      final boolean nonLocalClassPath,
-      final ReportDirCreationStrategy makeReportDir) {
+      final boolean nonLocalClassPath) {
     this.javaAgentFinder = javaAgentFinder;
     this.nonLocalClassPath = nonLocalClassPath;
     this.listenerFactory = listenerFactory;
     this.data = data;
-    this.makeReportDir = makeReportDir;
   }
 
   public final void run() {
@@ -103,8 +100,8 @@ public class MutationCoverageReport implements Runnable {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
       final MutationCoverageReport instance = new MutationCoverageReport(data,
-          agent, new HtmlReportFactory(), false,
-          new DefaultReportDirCreationStrategy());
+          agent, new HtmlReportFactory(new DatedDirectoryResultOutputStrategy(
+              data.getReportDir())), false);
 
       instance.run();
     } finally {
@@ -162,13 +159,10 @@ public class MutationCoverageReport implements Runnable {
     final Collection<ClassGrouping> codeClasses = coverageDatabase
         .getGroupedClasses();
 
-    final File reportDir = this.makeReportDir.createReportDir(this.data
-        .getReportDir());
-
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(coverageDatabase, reportDir, t0, new SmartSourceLocator(
-            this.data.getSourceDirs()));
+        .getListener(coverageDatabase, t0,
+            new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
     // staticConfig.addTestListener(ConsoleTestListener.);

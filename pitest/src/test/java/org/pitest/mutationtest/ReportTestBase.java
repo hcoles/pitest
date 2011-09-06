@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
@@ -19,11 +18,8 @@ import org.pitest.util.Glob;
 
 public abstract class ReportTestBase {
 
-  private MetaDataExtractor           metaDataExtractor;
-  protected ReportOptions             data;
-
-  @Mock
-  protected ReportDirCreationStrategy makeDir;
+  private MetaDataExtractor metaDataExtractor;
+  protected ReportOptions   data;
 
   @Before
   public void setUp() {
@@ -39,8 +35,7 @@ public abstract class ReportTestBase {
     return new ListenerFactory() {
 
       public TestListener getListener(final CoverageDatabase coverage,
-          final File reportDir, final long startTime,
-          final SourceLocator locator) {
+          final long startTime, final SourceLocator locator) {
         return ReportTestBase.this.metaDataExtractor;
       }
 
@@ -50,7 +45,7 @@ public abstract class ReportTestBase {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-    .getDetectionStatus();
+        .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

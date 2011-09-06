@@ -14,11 +14,9 @@
  */
 package org.pitest.mutationtest.report;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,20 +43,22 @@ import org.pitest.util.FileUtil;
 
 public class MutationHtmlReportListener implements TestListener {
 
+  private final ResultOutputStrategy          outputStrategy;
+
   private final MutatorScores                 mutatorScores = new MutatorScores();
   private final long                          startTime;
 
   private final Collection<SourceLocator>     sourceRoots   = new HashSet<SourceLocator>();
-  private final File                          reportDir;
+
   private final List<MutationTestSummaryData> summaryData   = new ArrayList<MutationTestSummaryData>();
   private final List<String>                  errors        = new ArrayList<String>();
   private final CoverageDatabase              coverage;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
-      final long startTime, final File reportDir,
+      final long startTime, final ResultOutputStrategy outputStrategy,
       final SourceLocator... locators) {
     this.coverage = coverage;
-    this.reportDir = reportDir;
+    this.outputStrategy = outputStrategy;
     this.startTime = startTime;
     this.sourceRoots.addAll(Arrays.asList(locators));
   }
@@ -69,7 +69,7 @@ public class MutationHtmlReportListener implements TestListener {
       processMetaData(d.value());
     } else {
       final Option<UnRunnableMutationTestMetaData> unrunnable = tr
-      .getValue(UnRunnableMutationTestMetaData.class);
+          .getValue(UnRunnableMutationTestMetaData.class);
       if (unrunnable.hasSome()) {
         processUnruntest(unrunnable.value());
       }
@@ -98,12 +98,11 @@ public class MutationHtmlReportListener implements TestListener {
 
       final String fileName = summaryData.getFileName();
 
-      final BufferedWriter bf = new BufferedWriter(new FileWriter(
-          this.reportDir.getAbsolutePath() + File.separatorChar + fileName));
+      final Writer writer = this.outputStrategy.createWriterForFile(fileName);
 
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
-      .getInstanceOf("templates/mutation/mutation_report");
+          .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", css);
       st.setAttribute("summary", summaryData);
 
@@ -117,8 +116,8 @@ public class MutationHtmlReportListener implements TestListener {
       st.setAttribute("mutatedClasses", value.getMutatedClass());
 
       // st.setAttribute("groups", groups);
-      bf.write(st.toString());
-      bf.close();
+      writer.write(st.toString());
+      writer.close();
 
     } catch (final IOException ex) {
       ex.printStackTrace();
@@ -127,7 +126,7 @@ public class MutationHtmlReportListener implements TestListener {
 
   private int calculateLineCoverage(final MutationMetaData value) {
     final long numberOfCoveredLines = this.coverage
-    .getNumberOfCoveredLines(value.getMutatedClass());
+        .getNumberOfCoveredLines(value.getMutatedClass());
 
     int lineCoverage = 0;
     if (numberOfCoveredLines != 0) {
@@ -135,7 +134,7 @@ public class MutationHtmlReportListener implements TestListener {
           this.coverage.getClassInfo(value.getMutatedClass()));
 
       lineCoverage = Math
-      .round(100f / numberOfCodeLines * numberOfCoveredLines);
+          .round(100f / numberOfCodeLines * numberOfCoveredLines);
 
     }
     return lineCoverage;
@@ -156,7 +155,7 @@ public class MutationHtmlReportListener implements TestListener {
     final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
     for (final String each : value.getSourceFiles()) {
       final MutationResultList mutationsForThisFile = value
-      .getResultsForSourceFile(each);
+          .getResultsForSourceFile(each);
       final List<Line> lines = createAnnotatedSourceCodeLines(each,
           mutationsForThisFile,
           this.coverage.getClassInfo(value.getClassesForSourceFile(each)));
@@ -240,9 +239,11 @@ public class MutationHtmlReportListener implements TestListener {
 
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
-      .getInstanceOf("templates/mutation/mutation_index");
-      final BufferedWriter bw = new BufferedWriter(new FileWriter(
-          this.reportDir.getAbsolutePath() + File.separatorChar + "index.html"));
+          .getInstanceOf("templates/mutation/mutation_index");
+
+      final Writer writer = this.outputStrategy
+          .createWriterForFile("index.html");
+
       st.setAttribute("summaryList", this.summaryData);
       st.setAttribute("errors", this.errors);
       st.setAttribute("numberOfMutations",
@@ -251,11 +252,10 @@ public class MutationHtmlReportListener implements TestListener {
           this.mutatorScores.getTotalDetectedMutations());
       st.setAttribute("duration", duration);
       st.setAttribute("mutatorScores", this.mutatorScores);
-      bw.write(st.toString());
-      bw.close();
+      writer.write(st.toString());
+      writer.close();
 
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

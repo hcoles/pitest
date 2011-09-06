@@ -23,7 +23,6 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
-import org.pitest.mutationtest.DefaultReportDirCreationStrategy;
 import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
@@ -31,6 +30,8 @@ import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
+import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.util.Glob;
 import org.pitest.util.JavaAgent;
 
@@ -236,8 +237,9 @@ public class PitMojo extends AbstractMojo {
     final JavaAgent jac = new JarCreatingJarFinder(cp);
     KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(jac.getJarLocation().value());
 
+    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(data.getReportDir());
     final MutationCoverageReport report = new MutationCoverageReport(data, ja,
-        new HtmlReportFactory(), true, new DefaultReportDirCreationStrategy());
+        new HtmlReportFactory(reportOutput), true);
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,

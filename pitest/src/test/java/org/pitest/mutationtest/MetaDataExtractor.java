@@ -25,7 +25,7 @@ import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
-public  class MetaDataExtractor implements TestListener {
+public class MetaDataExtractor implements TestListener {
 
   private final List<MutationResult> data = new ArrayList<MutationResult>();
 
