@@ -222,9 +222,8 @@ public class ReturnValsMutatorTest extends MutatorTestBase {
   @Test(expected = RuntimeException.class)
   public void shouldMutateReturnsOfNullObjectsToRuntimeExceptions()
       throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(AReturn.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new AReturn(null), mutant, "n/a");
+    final Mutant mutant = getFirstMutant(AReturn.class);
+    mutateAndCall(new AReturn(null), mutant);
   }
 
   @Test

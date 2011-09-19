@@ -45,8 +45,8 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   }
 
   private static boolean preventCodeFormattingMakingFinal(final boolean i) {
-	    return i;
- }
+    return i;
+  }
 
   private static class HasICONSTM1 implements Callable<String> {
     public String call() throws Exception {
@@ -77,13 +77,13 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasICONST0.class);
     assertMutantCallableReturns(new HasICONST0(), mutant, "1");
   }
-  
+
   private static class HasBooleanICONST0 implements Callable<String> {
-	    public String call() throws Exception {
-	      boolean b = false;
-	      b = preventCodeFormattingMakingFinal(b);
-	      return "" + b;
-	    }
+    public String call() throws Exception {
+      boolean b = false;
+      b = preventCodeFormattingMakingFinal(b);
+      return "" + b;
+    }
   }
 
   @Test
@@ -105,13 +105,13 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasICONST1.class);
     assertMutantCallableReturns(new HasICONST1(), mutant, "0");
   }
-  
+
   private static class HasBooleanICONST1 implements Callable<String> {
-	    public String call() throws Exception {
-	      boolean i = true;
-	      i = preventCodeFormattingMakingFinal(i);
-	      return "" + i;
-	    }
+    public String call() throws Exception {
+      boolean i = true;
+      i = preventCodeFormattingMakingFinal(i);
+      return "" + i;
+    }
   }
 
   @Test
