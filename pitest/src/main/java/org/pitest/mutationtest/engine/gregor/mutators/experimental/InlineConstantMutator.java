@@ -25,9 +25,9 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 /**
- * The <code>InlineConstantMutator</code> is a mutator that mutates
- * integer inline constants (including short, byte, long) by adding 1 and that
- * mutates float inline constants (including double) by replacing them with 1.
+ * The <code>InlineConstantMutator</code> is a mutator that mutates integer
+ * inline constants (including short, byte, long) by adding 1 and that mutates
+ * float inline constants (including double) by replacing them with 1.
  * 
  * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -44,6 +44,30 @@ public class InlineConstantMutator implements MethodMutatorFactory {
       this.context = context;
     }
 
+    private void mutate(final Double constant) {
+      // avoid addition to floating points as may yield same value
+
+      final Double replacement = (constant == 1D) ? 2D : 1D;
+
+      if (shouldMutate(constant, replacement)) {
+        translateToByteCode(replacement);
+      } else {
+        translateToByteCode(constant);
+      }
+    }
+
+    private void mutate(final Float constant) {
+      // avoid addition to floating points as may yield same value
+
+      final Float replacement = (constant == 1F) ? 2F : 1F;
+
+      if (shouldMutate(constant, replacement)) {
+        translateToByteCode(replacement);
+      } else {
+        translateToByteCode(constant);
+      }
+    }
+
     private void mutate(final Integer constant) {
 
       final Integer replacement = (constant == 1) ? 0 : constant + 1;
@@ -54,7 +78,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
         translateToByteCode(constant);
       }
     }
-    
+
     private void mutate(final Long constant) {
 
       final Long replacement = constant + 1;
@@ -67,13 +91,52 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
     }
 
+    private void mutate(final Number constant) {
+
+      if (constant instanceof Integer) {
+        mutate((Integer) constant);
+      } else if (constant instanceof Long) {
+        mutate((Long) constant);
+      } else if (constant instanceof Float) {
+        mutate((Float) constant);
+      } else if (constant instanceof Double) {
+        mutate((Double) constant);
+      } else {
+        throw new RuntimeException("Unsupported subtype of Number found:"
+            + constant.getClass());
+      }
+
+    }
+
     private <T extends Number> boolean shouldMutate(final T constant,
         final T replacement) {
       final MutationIdentifier mutationId = this.context.registerMutation(
-          InlineConstantMutator.this, "Substituted " + constant
-              + " with " + replacement);
+          InlineConstantMutator.this, "Substituted " + constant + " with "
+              + replacement);
 
       return this.context.shouldMutate(mutationId);
+    }
+
+    private void translateToByteCode(final Double constant) {
+      if (constant == 0D) {
+        super.visitInsn(Opcodes.DCONST_0);
+      } else if (constant == 1D) {
+        super.visitInsn(Opcodes.DCONST_1);
+      } else {
+        super.visitLdcInsn(constant);
+      }
+    }
+
+    private void translateToByteCode(final Float constant) {
+      if (constant == 0.0F) {
+        super.visitInsn(Opcodes.FCONST_0);
+      } else if (constant == 1.0F) {
+        super.visitInsn(Opcodes.FCONST_1);
+      } else if (constant == 2.0F) {
+        super.visitInsn(Opcodes.FCONST_2);
+      } else {
+        super.visitLdcInsn(constant);
+      }
     }
 
     private void translateToByteCode(final Integer constant) {
@@ -145,6 +208,16 @@ public class InlineConstantMutator implements MethodMutatorFactory {
         return Long.valueOf(0L);
       case Opcodes.LCONST_1:
         return Long.valueOf(1L);
+      case Opcodes.FCONST_0:
+        return Float.valueOf(0F);
+      case Opcodes.FCONST_1:
+        return Float.valueOf(1F);
+      case Opcodes.FCONST_2:
+        return Float.valueOf(2F);
+      case Opcodes.DCONST_0:
+        return Double.valueOf(0D);
+      case Opcodes.DCONST_1:
+        return Double.valueOf(1D);
       default:
         return null;
       }
@@ -165,14 +238,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
         return;
       }
 
-      if (inlineConstant instanceof Integer) {
-        mutate((Integer) inlineConstant);
-      } else if (inlineConstant instanceof Long) {
-        mutate((Long) inlineConstant);
-      } else {
-        throw new RuntimeException("Unsupported subtype of Number found:"
-            + inlineConstant.getClass());
-      }
+      mutate(inlineConstant);
     }
 
     /*
@@ -197,12 +263,8 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     @Override
     public void visitLdcInsn(Object constant) {
       // do not mutate strings or .class here
-      // avoid addition to floating points as may yield same value
-
-      if (constant instanceof Integer) {
-        mutate((Integer) constant);
-      } else if (constant instanceof Long) {
-        mutate((Long) constant);
+      if (constant instanceof Number) {
+        mutate((Number) constant);
       } else {
         super.visitLdcInsn(constant);
       }

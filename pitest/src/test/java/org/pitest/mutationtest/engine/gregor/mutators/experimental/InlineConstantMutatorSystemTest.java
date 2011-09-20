@@ -308,6 +308,21 @@ public class InlineConstantMutatorSystemTest extends MutatorTestBase {
         Byte.MAX_VALUE + 1);
   }
 
+  private static class HasIntegerMaxValue implements Callable<Integer> {
+
+    public Integer call() throws Exception {
+      return Integer.MAX_VALUE;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceIntegerMaxWithIntegerMin() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIntegerMaxValue.class);
+    assertMutantCallableReturns(new HasIntegerMaxValue(), mutant,
+        Integer.MIN_VALUE);
+  }  
+
   
   private static class HasLongLCONST0 implements Callable<Long> {
 
@@ -363,22 +378,141 @@ public class InlineConstantMutatorSystemTest extends MutatorTestBase {
   public void shouldReplaceLongMinus1With0() throws Exception {
     final Mutant mutant = getFirstMutant(HasLongLDCMinus1.class);
     assertMutantCallableReturns(new HasLongLDCMinus1(), mutant, 0L);
-  } 
+  }
+  
+  /*
+   * Double and Float
+   */
+  
+  private static class HasFloatFCONST0 implements Callable<Float> {
 
-  private static class HasIntegerMaxValue implements Callable<Integer> {
-
-    public Integer call() throws Exception {
-      return Integer.MAX_VALUE;
+    public Float call() throws Exception {
+      return 0.0F;
     }
 
   }
 
   @Test
-  public void shouldReplaceIntegerMaxWithIntegerMin() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntegerMaxValue.class);
-    assertMutantCallableReturns(new HasIntegerMaxValue(), mutant,
-        Integer.MIN_VALUE);
-  }  
+  public void shouldReplaceFloat0With1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasFloatFCONST0.class);
+    assertMutantCallableReturns(new HasFloatFCONST0(), mutant, 1.0F);
+  }
+
+  private static class HasFloatFCONST1 implements Callable<Float> {
+
+    public Float call() throws Exception {
+      return 1.0F;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceFloat1With2() throws Exception {
+    final Mutant mutant = getFirstMutant(HasFloatFCONST1.class);
+    assertMutantCallableReturns(new HasFloatFCONST1(), mutant, 2.0F);
+  }
   
+  private static class HasFloatFCONST2 implements Callable<Float> {
+
+    public Float call() throws Exception {
+      return 2.0F;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceFloat2With1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasFloatFCONST2.class);
+    assertMutantCallableReturns(new HasFloatFCONST2(), mutant, 1.0F);
+  }
   
+  private static class HasFloatLDC implements Callable<Float> {
+
+    public Float call() throws Exception {
+      return 8364.123F;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceFloatWith1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasFloatLDC.class);
+    assertMutantCallableReturns(new HasFloatLDC(), mutant, 1.0F);
+  }
+  
+  private static class HasFloatMultipleLDC implements Callable<Float> {
+
+    public Float call() throws Exception {
+      float f = 16.0F;
+      float f2 = 4.0F;
+      return f * f2;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceFirstFloatMutationPointOnly() throws Exception {
+    final Mutant mutant = getFirstMutant(HasFloatMultipleLDC.class);
+    assertMutantCallableReturns(new HasFloatMultipleLDC(), mutant, 4.0F);
+  }
+
+  private static class HasDoubleDCONST0 implements Callable<Double> {
+
+    public Double call() throws Exception {
+      return 0.0D;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceDouble0With1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasDoubleDCONST0.class);
+    assertMutantCallableReturns(new HasDoubleDCONST0(), mutant, 1.0D);
+  }
+
+  private static class HasDoubleDCONST1 implements Callable<Double> {
+
+    public Double call() throws Exception {
+      return 1.0D;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceDouble1With2() throws Exception {
+    final Mutant mutant = getFirstMutant(HasDoubleDCONST1.class);
+    assertMutantCallableReturns(new HasDoubleDCONST1(), mutant, 2.0D);
+  }
+  
+  private static class HasDoubleLDC implements Callable<Double> {
+
+    public Double call() throws Exception {
+      return 123456789.123D;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceDoubleWith1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasDoubleLDC.class);
+    assertMutantCallableReturns(new HasDoubleLDC(), mutant, 1.0D);
+  }
+  
+  private static class HasDoubleMultipleLDC implements Callable<Double> {
+
+    public Double call() throws Exception {
+      double d = 4578.1158D;
+      double d2 = 2.0D;
+      return d * d2;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceFirstDoubleMutationPointOnly() throws Exception {
+    final Mutant mutant = getFirstMutant(HasDoubleMultipleLDC.class);
+    assertMutantCallableReturns(new HasDoubleMultipleLDC(), mutant, 2.0D);
+  }
+
+
 }
