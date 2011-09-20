@@ -15,14 +15,10 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.FunctionalList;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
@@ -30,11 +26,11 @@ import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
  * @author Stefan
  * 
  */
-public class InlineConstantIncrementMutatorSystemTest extends MutatorTestBase {
+public class InlineConstantMutatorSystemTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyInlineConstants() {
-    createTesteeWith(new InlineConstantIncrementMutator());
+    createTesteeWith(new InlineConstantMutator());
   }
 
   private static class HasBooleanICONST0 implements Callable<Boolean> {
@@ -74,9 +70,9 @@ public class InlineConstantIncrementMutatorSystemTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotReplaceBooleanTrue() throws Exception {
-    final FunctionalList<MutationDetails> mutations = findMutationsFor(HasBooleanICONST1.class);
-    assertTrue(mutations.isEmpty());
+  public void shouldReplaceBooleanTrueWithFalse() throws Exception {
+    final Mutant mutant = getFirstMutant(HasBooleanICONST1.class);
+    assertMutantCallableReturns(new HasBooleanICONST1(), mutant, Boolean.FALSE);
   }
 
   private static class HasIntegerICONST1 implements Callable<Integer> {
@@ -88,9 +84,9 @@ public class InlineConstantIncrementMutatorSystemTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotReplaceInteger1() throws Exception {
-    final FunctionalList<MutationDetails> mutations = findMutationsFor(HasIntegerICONST1.class);
-    assertTrue(mutations.isEmpty());
+  public void shouldReplaceInteger1With0() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIntegerICONST1.class);
+    assertMutantCallableReturns(new HasIntegerICONST1(), mutant, 0);
   }
   
   private static class HasIntegerICONST2 implements Callable<Integer> {
@@ -369,6 +365,20 @@ public class InlineConstantIncrementMutatorSystemTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasLongLDCMinus1(), mutant, 0L);
   } 
 
+  private static class HasIntegerMaxValue implements Callable<Integer> {
 
+    public Integer call() throws Exception {
+      return Integer.MAX_VALUE;
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceIntegerMaxWithIntegerMin() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIntegerMaxValue.class);
+    assertMutantCallableReturns(new HasIntegerMaxValue(), mutant,
+        Integer.MIN_VALUE);
+  }  
+  
   
 }

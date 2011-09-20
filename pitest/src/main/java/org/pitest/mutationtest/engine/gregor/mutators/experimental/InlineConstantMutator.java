@@ -25,13 +25,14 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 /**
- * The <code>InlineConstantIncrementMutator</code> is a mutator that mutates
- * integer inline constants (including short, byte, long) by adding 1.
+ * The <code>InlineConstantMutator</code> is a mutator that mutates
+ * integer inline constants (including short, byte, long) by adding 1 and that
+ * mutates float inline constants (including double) by replacing them with 1.
  * 
  * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
-public class InlineConstantIncrementMutator implements MethodMutatorFactory {
+public class InlineConstantMutator implements MethodMutatorFactory {
 
   private class InlineConstantVisitor extends MethodAdapter implements
       MethodVisitor {
@@ -45,31 +46,20 @@ public class InlineConstantIncrementMutator implements MethodMutatorFactory {
 
     private void mutate(final Integer constant) {
 
-      final Integer replacement = constant + 1;
+      final Integer replacement = (constant == 1) ? 0 : constant + 1;
 
-      MutationIdentifier mutationId = this.context.registerMutation(
-          InlineConstantIncrementMutator.this, "Substituted " + constant
-              + " with " + replacement);
-
-      if (this.context.shouldMutate(mutationId)) {
+      if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
       } else {
         translateToByteCode(constant);
       }
     }
-
-    /**
-     * @param inlineConstant
-     */
+    
     private void mutate(final Long constant) {
 
       final Long replacement = constant + 1;
 
-      MutationIdentifier mutationId = this.context.registerMutation(
-          InlineConstantIncrementMutator.this, "Substituted " + constant
-              + " with " + replacement);
-
-      if (this.context.shouldMutate(mutationId)) {
+      if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
       } else {
         translateToByteCode(constant);
@@ -77,14 +67,13 @@ public class InlineConstantIncrementMutator implements MethodMutatorFactory {
 
     }
 
-    private void translateToByteCode(final Long constant) {
-      if (constant == 0L) {
-        super.visitInsn(Opcodes.LCONST_0);
-      } else if (constant == 1L) {
-        super.visitInsn(Opcodes.LCONST_1);
-      } else {
-        super.visitLdcInsn(constant);
-      }
+    private <T extends Number> boolean shouldMutate(final T constant,
+        final T replacement) {
+      final MutationIdentifier mutationId = this.context.registerMutation(
+          InlineConstantMutator.this, "Substituted " + constant
+              + " with " + replacement);
+
+      return this.context.shouldMutate(mutationId);
     }
 
     private void translateToByteCode(final Integer constant) {
@@ -116,6 +105,16 @@ public class InlineConstantIncrementMutator implements MethodMutatorFactory {
       }
     }
 
+    private void translateToByteCode(final Long constant) {
+      if (constant == 0L) {
+        super.visitInsn(Opcodes.LCONST_0);
+      } else if (constant == 1L) {
+        super.visitInsn(Opcodes.LCONST_1);
+      } else {
+        super.visitLdcInsn(constant);
+      }
+    }
+
     /**
      * Translates the opcode to a number (inline constant) if possible or
      * returns <code>null</code> if the opcode cannot be translated.
@@ -132,6 +131,8 @@ public class InlineConstantIncrementMutator implements MethodMutatorFactory {
         return Integer.valueOf(-1);
       case Opcodes.ICONST_0:
         return Integer.valueOf(0);
+      case Opcodes.ICONST_1:
+        return Integer.valueOf(1);
       case Opcodes.ICONST_2:
         return Integer.valueOf(2);
       case Opcodes.ICONST_3:
@@ -195,6 +196,8 @@ public class InlineConstantIncrementMutator implements MethodMutatorFactory {
      */
     @Override
     public void visitLdcInsn(Object constant) {
+      // do not mutate strings or .class here
+      // avoid addition to floating points as may yield same value
 
       if (constant instanceof Integer) {
         mutate((Integer) constant);

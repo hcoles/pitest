@@ -32,16 +32,16 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
  * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
-public class InlineConstantIncrementMutatorTest {
+public class InlineConstantMutatorTest {
 
   private static final Context           IGNORED_CONTEXT          = null;
   private static final MethodInfo        IGNORED_INFO             = null;
   private static final MethodVisitor     IGNORED_DELEGATE_VISITOR = mock(MethodVisitor.class);
-  private InlineConstantIncrementMutator mutator;
+  private InlineConstantMutator mutator;
 
   @Before
   public void setupMutator() {
-    this.mutator = new InlineConstantIncrementMutator();
+    this.mutator = new InlineConstantMutator();
   }
 
   @Test
