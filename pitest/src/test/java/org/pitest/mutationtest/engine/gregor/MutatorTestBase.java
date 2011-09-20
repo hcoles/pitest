@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0 
  * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and limitations under the License. 
  */
 package org.pitest.mutationtest.engine.gregor;
 
@@ -69,12 +69,12 @@ public abstract class MutatorTestBase {
     createTesteeWith(True.<MethodInfo> all(), mutators);
   }
 
-  protected void assertMutantCallableReturns(final Callable<String> unmutated,
-      final Mutant mutant, final String expected) throws Exception {
+  protected <T> void assertMutantCallableReturns(final Callable<T> unmutated,
+      final Mutant mutant, final T expected) throws Exception {
     assertEquals(expected, mutateAndCall(unmutated, mutant));
   }
 
-  protected String mutateAndCall(final Callable<String> unmutated,
+  protected <T> T mutateAndCall(final Callable<T> unmutated,
       final Mutant mutant) {
     try {
       final ClassLoader loader = createClassLoader(mutant);
@@ -108,9 +108,9 @@ public abstract class MutatorTestBase {
   }
 
   @SuppressWarnings("unchecked")
-  private String runInClassLoader(final ClassLoader loader,
-      final Callable<String> callable) throws Exception {
-    final Callable<String> c = (Callable<String>) IsolationUtils
+  private <T> T runInClassLoader(final ClassLoader loader,
+      final Callable<T> callable) throws Exception {
+    final Callable<T> c = (Callable<T>) IsolationUtils
         .cloneForLoader(callable, loader);
     return c.call();
 
