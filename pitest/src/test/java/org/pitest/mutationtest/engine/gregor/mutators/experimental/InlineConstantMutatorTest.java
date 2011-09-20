@@ -49,7 +49,7 @@ public class InlineConstantMutatorTest {
     assertNotNull("Globally unique id may not be null",
         this.mutator.getGloballyUniqueId());
     assertFalse("Globally unique id may not be empty", this.mutator
-        .getGloballyUniqueId().isEmpty());
+        .getGloballyUniqueId().length() == 0);
   }
 
   @Test
