@@ -34,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class InlineConstantMutator implements MethodMutatorFactory {
 
-  private class InlineConstantVisitor extends MethodAdapter implements
+  private final class InlineConstantVisitor extends MethodAdapter implements
       MethodVisitor {
     private final Context context;
 
@@ -81,7 +81,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
     private void mutate(final Long constant) {
 
-      final Long replacement = constant + 1;
+      final Long replacement = constant + 1L;
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
