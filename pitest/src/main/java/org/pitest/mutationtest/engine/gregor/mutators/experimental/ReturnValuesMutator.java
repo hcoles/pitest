@@ -15,10 +15,13 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import java.lang.reflect.Method;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
@@ -34,16 +37,42 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class ReturnValuesMutator implements MethodMutatorFactory {
 
+  public static Object mutateObjectInstance(final Object object,
+      final Class<?> clazz) {
+
+    if (Boolean.class == clazz) {
+      if (Boolean.TRUE.equals(object)) {
+        return Boolean.FALSE;
+      } else
+        return Boolean.TRUE;
+    }
+
+    if (Integer.class == clazz) {
+      Integer intValue = (Integer) object;
+      if (intValue == null) {
+        return Integer.valueOf(1);
+      } else if (intValue == 1) {
+        return Integer.valueOf(0);
+      } else {
+        return intValue + 1;
+      }
+    }
+
+    return object;
+  }
+
   private final class ReturnValuesMethodVisitor extends MethodAdapter {
 
     private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
 
     private final Context       context;
+    private final MethodInfo    methodInfo;
 
     private ReturnValuesMethodVisitor(final Context context,
-        final MethodVisitor delegateVisitor) {
+        final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
       super(delegateVisitor);
       this.context = context;
+      this.methodInfo = methodInfo;
     }
 
     private boolean shouldMutate(final String type, final String replacement) {
@@ -137,7 +166,25 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
         }
         break;
+      case Opcodes.ARETURN:
+        Type t = Type.getType(ReturnValuesMutator.class);
+        try {
+          Method m = ReturnValuesMutator.class.getMethod(
+              "mutateObjectInstance", Object.class, Class.class);
+          Type returnType = methodInfo.getReturnType();
 
+          if (shouldMutate("object reference", "[see docs for details]")) {
+            super.visitLdcInsn(returnType);
+            super.visitMethodInsn(Opcodes.INVOKESTATIC, t.getInternalName(),
+                "mutateObjectInstance", Type.getMethodDescriptor(m));
+            super
+                .visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
+          }
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+        super.visitInsn(Opcodes.ARETURN);
+        break;
       default:
         super.visitInsn(opcode);
         break;
@@ -159,7 +206,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     final ReturnValuesMethodVisitor visitor = new ReturnValuesMethodVisitor(
-        context, methodVisitor);
+        context, methodInfo, methodVisitor);
 
     return new LineTrackingMethodAdapter(methodInfo, context, visitor);
   }
