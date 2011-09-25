@@ -37,7 +37,7 @@ public class TimeoutWatchDogTest {
     MockitoAnnotations.initMocks(this);
   }
 
-  @Test(timeout = 200)
+  @Test(timeout = 220)
   public void shouldApplyExitStrategyAfterTimeIntervalHasPassed()
       throws InterruptedException {
     this.testee = new TimeoutWatchDog(this.exitStrategy,
