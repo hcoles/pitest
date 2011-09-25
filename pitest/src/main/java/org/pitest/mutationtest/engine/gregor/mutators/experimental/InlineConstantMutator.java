@@ -18,6 +18,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.PitError;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
@@ -102,7 +103,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
       } else if (constant instanceof Double) {
         mutate((Double) constant);
       } else {
-        throw new RuntimeException("Unsupported subtype of Number found:"
+        throw new PitError("Unsupported subtype of Number found:"
             + constant.getClass());
       }
 
