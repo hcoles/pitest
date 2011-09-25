@@ -285,4 +285,9 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     return this.getClass().getName();
   }
 
+  @Override
+  public String toString() {
+    return "EXPERIMENTAL_INLINE_CONSTANT_MUTATOR";
+  }
+
 }
