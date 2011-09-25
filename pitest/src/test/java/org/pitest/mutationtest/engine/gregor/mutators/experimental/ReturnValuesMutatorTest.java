@@ -15,8 +15,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -256,7 +254,26 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIntegerReturn(null), mutant,
         Integer.valueOf(1));
   }
+
+  private static class HasObjectReturn implements Callable<Object> {
+
+    private final Object value;
+
+    public HasObjectReturn(final Object value) {
+      this.value = value;
+    }
+    
+    public Object call() throws Exception {
+      return this.value;
+    }
+  }
   
+  @Test
+  public void shouldMutateReturnsOfNonNullObjectsToNull() throws Exception {
+    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
+    assertMutantCallableReturns(new HasObjectReturn(new Object()), mutant, null);
+  }
+
 
 //  private static class HasConstantObjectRefReturn implements Callable<Object> {
 //

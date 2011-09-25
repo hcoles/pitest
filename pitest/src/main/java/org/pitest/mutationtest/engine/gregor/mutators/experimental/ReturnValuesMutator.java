@@ -37,30 +37,6 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class ReturnValuesMutator implements MethodMutatorFactory {
 
-  public static Object mutateObjectInstance(final Object object,
-      final Class<?> clazz) {
-
-    if (Boolean.class == clazz) {
-      if (Boolean.TRUE.equals(object)) {
-        return Boolean.FALSE;
-      } else
-        return Boolean.TRUE;
-    }
-
-    if (Integer.class == clazz) {
-      Integer intValue = (Integer) object;
-      if (intValue == null) {
-        return Integer.valueOf(1);
-      } else if (intValue == 1) {
-        return Integer.valueOf(0);
-      } else {
-        return intValue + 1;
-      }
-    }
-
-    return object;
-  }
-
   private final class ReturnValuesMethodVisitor extends MethodAdapter {
 
     private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
@@ -75,6 +51,113 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
       this.methodInfo = methodInfo;
     }
 
+    private void mutateObjectReferenceReturn() {
+      final Type t = Type.getType(ReturnValuesMutator.class);
+      try {
+        final Method m = ReturnValuesMutator.class.getMethod(
+            "mutateObjectInstance", Object.class, Class.class);
+        final Type returnType = this.methodInfo.getReturnType();
+
+        if (shouldMutate("object reference", "[see docs for details]")) {
+          super.visitLdcInsn(returnType);
+          super.visitMethodInsn(Opcodes.INVOKESTATIC, t.getInternalName(),
+              "mutateObjectInstance", Type.getMethodDescriptor(m));
+          super.visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
+        }
+      } catch (final Exception e) {
+        throw new RuntimeException(e);
+      }
+      super.visitInsn(Opcodes.ARETURN);
+    }
+
+    /**
+     * Mutates a primitive double return (<code>Opcode.DRETURN</code>). The
+     * strategy used was translated from jumble BCEL code. The following is
+     * complicated by the problem of <tt>NaN</tt>s. By default the new value is
+     * <code>-(x + 1)</code>, but this doesn't work for <tt>NaN</tt>s. But for a
+     * <tt>NaN</tt> <code>x != x</code> is true, and we use this to detect them.
+     * 
+     * @see #mutatePrimitiveFloatReturn()
+     */
+    private void mutatePrimitiveDoubleReturn() {
+      if (shouldMutate("primitive double", "(x != NaN)? -(x + 1) : -1 ")) {
+        final Label label = new Label();
+
+        super.visitInsn(Opcodes.DUP2);
+        super.visitInsn(Opcodes.DUP2);
+        super.visitInsn(Opcodes.DCMPG);
+        super.visitJumpInsn(Opcodes.IFEQ, label);
+
+        super.visitInsn(Opcodes.POP2);
+        super.visitInsn(Opcodes.DCONST_0);
+
+        // the following code is executed in NaN case, too
+        super.visitLabel(label);
+        super.visitInsn(Opcodes.DCONST_1);
+        super.visitInsn(Opcodes.DADD);
+        super.visitInsn(Opcodes.DNEG);
+        super.visitInsn(Opcodes.DRETURN);
+      }
+    }
+
+    /**
+     * Mutates a primitive float return (<code>Opcode.FRETURN</code>). The
+     * strategy used was translated from jumble BCEL code. The following is
+     * complicated by the problem of <tt>NaN</tt>s. By default the new value is
+     * <code>-(x + 1)</code>, but this doesn't work for <tt>NaN</tt>s. But for a
+     * <tt>NaN</tt> <code>x != x</code> is true, and we use this to detect them.
+     * 
+     * @see #mutatePrimitiveDoubleReturn()
+     */
+    private void mutatePrimitiveFloatReturn() {
+      if (shouldMutate("primitive float", "(x != NaN)? -(x + 1) : -1 ")) {
+        final Label label = new Label();
+
+        super.visitInsn(Opcodes.DUP);
+        super.visitInsn(Opcodes.DUP);
+        super.visitInsn(Opcodes.FCMPG);
+        super.visitJumpInsn(Opcodes.IFEQ, label);
+
+        super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.FCONST_0);
+
+        // the following code is executed in NaN case, too
+        super.visitLabel(label);
+        super.visitInsn(Opcodes.FCONST_1);
+        super.visitInsn(Opcodes.FADD);
+        super.visitInsn(Opcodes.FNEG);
+        super.visitInsn(Opcodes.FRETURN);
+      }
+    }
+
+    private void mutatePrimitiveIntegerReturn() {
+
+      if (shouldMutate("primitive boolean/byte/short/integer",
+          "(x == 1) ? 0 : x + 1")) {
+        final Label label = new Label();
+
+        super.visitInsn(Opcodes.DUP);
+        super.visitInsn(Opcodes.ICONST_1);
+        super.visitJumpInsn(Opcodes.IF_ICMPEQ, label);
+
+        super.visitInsn(Opcodes.ICONST_1);
+        super.visitInsn(Opcodes.IADD);
+        super.visitInsn(Opcodes.IRETURN);
+
+        super.visitLabel(label);
+        super.visitInsn(Opcodes.ICONST_0);
+        super.visitInsn(Opcodes.IRETURN);
+      }
+    }
+
+    private void mutatePrimitiveLongReturn() {
+      if (shouldMutate("primitive long", "x + 1")) {
+        super.visitInsn(Opcodes.LCONST_1);
+        super.visitInsn(Opcodes.LADD);
+        super.visitInsn(Opcodes.LRETURN);
+      }
+    }
+
     private boolean shouldMutate(final String type, final String replacement) {
 
       final String description = String.format(DESCRIPTION_MESSAGE_PATTERN,
@@ -87,122 +170,92 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
-     */
     @Override
     public void visitInsn(final int opcode) {
-      final Label label = new Label();
 
       switch (opcode) {
       case Opcodes.IRETURN:
-
-        if (shouldMutate("primitive boolean/byte/short/integer",
-            "(x == 1) ? 0 : x + 1")) {
-          super.visitInsn(Opcodes.DUP);
-          super.visitInsn(Opcodes.ICONST_1);
-          super.visitJumpInsn(Opcodes.IF_ICMPEQ, label);
-
-          super.visitInsn(Opcodes.ICONST_1);
-          super.visitInsn(Opcodes.IADD);
-          super.visitInsn(Opcodes.IRETURN);
-
-          super.visitLabel(label);
-          super.visitInsn(Opcodes.ICONST_0);
-          super.visitInsn(Opcodes.IRETURN);
-        }
-
+        mutatePrimitiveIntegerReturn();
         break;
       case Opcodes.LRETURN:
-
-        if (shouldMutate("primitive long", "x + 1")) {
-          super.visitInsn(Opcodes.LCONST_1);
-          super.visitInsn(Opcodes.LADD);
-          super.visitInsn(Opcodes.LRETURN);
-        }
-
+        mutatePrimitiveLongReturn();
         break;
       case Opcodes.FRETURN:
-
-        if (shouldMutate("primitive float", "-(x + 1)")) {
-          // Strategy translated from jumble BCEL code
-          // The following is complicated by the problem of NaNs. By default
-          // the new value is -(x + 1), but this doesn't work for NaNs. But
-          // for a NaN x != x is true, and we use this to detect them.
-          super.visitInsn(Opcodes.DUP);
-          super.visitInsn(Opcodes.DUP);
-          super.visitInsn(Opcodes.FCMPG);
-          super.visitJumpInsn(Opcodes.IFEQ, label);
-          super.visitInsn(Opcodes.POP);
-          super.visitInsn(Opcodes.FCONST_0);
-          super.visitLabel(label);
-          super.visitInsn(Opcodes.FCONST_1);
-          super.visitInsn(Opcodes.FADD);
-          super.visitInsn(Opcodes.FNEG);
-          super.visitInsn(Opcodes.FRETURN);
-
-        }
+        mutatePrimitiveFloatReturn();
         break;
       case Opcodes.DRETURN:
-
-        if (shouldMutate("primitive double", "-(x + 1)")) {
-          // Strategy translated from jumble BCEL code
-          // The following is complicated by the problem of NaNs. By default
-          // the new value is -(x + 1), but this doesn't work for NaNs. But
-          // for a NaN x != x is true, and we use this to detect them.
-          super.visitInsn(Opcodes.DUP2);
-          super.visitInsn(Opcodes.DUP2);
-          super.visitInsn(Opcodes.DCMPG);
-          super.visitJumpInsn(Opcodes.IFEQ, label);
-          super.visitInsn(Opcodes.POP2);
-          super.visitInsn(Opcodes.DCONST_0);
-          super.visitLabel(label);
-          super.visitInsn(Opcodes.DCONST_1);
-          super.visitInsn(Opcodes.DADD);
-          super.visitInsn(Opcodes.DNEG);
-          super.visitInsn(Opcodes.DRETURN);
-
-        }
+        mutatePrimitiveDoubleReturn();
         break;
       case Opcodes.ARETURN:
-        Type t = Type.getType(ReturnValuesMutator.class);
-        try {
-          Method m = ReturnValuesMutator.class.getMethod(
-              "mutateObjectInstance", Object.class, Class.class);
-          Type returnType = methodInfo.getReturnType();
-
-          if (shouldMutate("object reference", "[see docs for details]")) {
-            super.visitLdcInsn(returnType);
-            super.visitMethodInsn(Opcodes.INVOKESTATIC, t.getInternalName(),
-                "mutateObjectInstance", Type.getMethodDescriptor(m));
-            super
-                .visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
-          }
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-        super.visitInsn(Opcodes.ARETURN);
+        mutateObjectReferenceReturn();
         break;
       default:
         super.visitInsn(opcode);
         break;
       }
+    }
+
+  }
+
+  private static final class ObjectReferenceReplacer {
+
+    /**
+     * See {@link ReturnValuesMutator#mutateObjectInstance(Object, Class)} for
+     * details.
+     */
+    private Object replaceObjectInstance(final Object object,
+        final Class<?> clazz) {
+
+      if (Boolean.class == clazz) {
+        if (Boolean.TRUE.equals(object)) {
+          return Boolean.FALSE;
+        } else {
+          return Boolean.TRUE;
+        }
+      }
+
+      if (Integer.class == clazz) {
+        final Integer intValue = (Integer) object;
+        if (intValue == null) {
+          return Integer.valueOf(1);
+        } else if (intValue == 1) {
+          return Integer.valueOf(0);
+        } else {
+          return intValue + 1;
+        }
+      }
+
+      return null;
 
     }
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.pitest.mutationtest.engine.gregor.MethodMutatorFactory#create(org.pitest
-   * .mutationtest.engine.gregor.Context,
-   * org.pitest.mutationtest.engine.gregor.MethodInfo,
-   * org.objectweb.asm.MethodVisitor)
+  /**
+   * Do not change thread safe singleton instantiation.
    */
+  private static final ObjectReferenceReplacer SINGLETON_REPLACER = new ObjectReferenceReplacer();
+
+  /**
+   * Mutates a given object instance / reference. The reference
+   * <code>object</code> may be <code>null</code>. The class given as second
+   * parameter <code>clazz</code> will be the class of the <code>object</code>
+   * or one of it's super classes. The returned object must be of type
+   * <code>clazz</code> or one of it's child classes.
+   * 
+   * @param object
+   *          the object reference to mutate, maybe <code>null</code>.
+   * @param clazz
+   *          the type the returned object must have. Usually that's also the
+   *          type of <code>object</code> but might be a super type of
+   *          <code>object</code>.
+   * @return the mutated object reference (can also be <code>null</code>).
+   */
+  public static Object mutateObjectInstance(final Object object,
+      final Class<?> clazz) {
+    return SINGLETON_REPLACER.replaceObjectInstance(object, clazz);
+  }
+
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     final ReturnValuesMethodVisitor visitor = new ReturnValuesMethodVisitor(
@@ -211,13 +264,6 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     return new LineTrackingMethodAdapter(methodInfo, context, visitor);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.pitest.mutationtest.engine.gregor.MethodMutatorFactory#getGloballyUniqueId
-   * ()
-   */
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }

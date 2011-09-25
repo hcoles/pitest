@@ -188,7 +188,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
      *         <code>null</code> if the opcode does not represent a
      *         number/constant.
      */
-    private Number translateToNumber(int opcode) {
+    private Number translateToNumber(final int opcode) {
       switch (opcode) {
       case Opcodes.ICONST_M1:
         return Integer.valueOf(-1);
@@ -247,8 +247,8 @@ public class InlineConstantMutator implements MethodMutatorFactory {
      * @see org.objectweb.asm.MethodAdapter#visitIntInsn(int, int)
      */
     @Override
-    public void visitIntInsn(int opcode, int operand) {
-      if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
+    public void visitIntInsn(final int opcode, final int operand) {
+      if ((opcode == Opcodes.BIPUSH) || (opcode == Opcodes.SIPUSH)) {
         mutate(operand);
       } else {
         super.visitIntInsn(opcode, operand);
@@ -261,7 +261,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
      * @see org.objectweb.asm.MethodAdapter#visitLdcInsn(java.lang.Object)
      */
     @Override
-    public void visitLdcInsn(Object constant) {
+    public void visitLdcInsn(final Object constant) {
       // do not mutate strings or .class here
       if (constant instanceof Number) {
         mutate((Number) constant);
@@ -274,7 +274,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    InlineConstantVisitor visitor = new InlineConstantVisitor(context,
+    final InlineConstantVisitor visitor = new InlineConstantVisitor(context,
         methodVisitor);
 
     return new LineTrackingMethodAdapter(methodInfo, context, visitor);
