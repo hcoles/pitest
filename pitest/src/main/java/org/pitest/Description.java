@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest;
@@ -29,6 +29,8 @@ import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.util.Functions;
+import org.pitest.util.TestInfo;
 
 public final class Description implements FunctionalIterable<Class<?>>,
     Serializable {
@@ -59,6 +61,10 @@ public final class Description implements FunctionalIterable<Class<?>>,
     return this.testClasses.iterator().next();
   }
 
+  public String getQualifiedName() {
+    return this.getFirstTestClass().getName() + "." + this.getName();
+  }
+
   public String getName() {
     return this.name;
   }
@@ -70,7 +76,7 @@ public final class Description implements FunctionalIterable<Class<?>>,
   @Override
   public String toString() {
     if (!this.testClasses.isEmpty()) {
-      return this.getFirstTestClass() + "." + this.name;
+      return this.getFirstTestClass().getName() + "." + this.name;
     } else {
       return this.name;
     }
@@ -144,6 +150,10 @@ public final class Description implements FunctionalIterable<Class<?>>,
     return FCollection.map(this, f);
   }
 
+  public <B> void mapTo(final F<Class<?>, B> f, final Collection<? super B> bs) {
+    FCollection.mapTo(this, f, bs);
+  }
+
   public <B> FunctionalList<B> flatMap(
       final F<Class<?>, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
@@ -151,6 +161,20 @@ public final class Description implements FunctionalIterable<Class<?>>,
 
   public FunctionalList<Class<?>> filter(final F<Class<?>, Boolean> predicate) {
     return null;
+  }
+
+  public Collection<String> getDirectTestees() {
+    return FCollection.flatMap(this.testClasses, classToTestees());
+  }
+
+  private F<Class<?>, Iterable<String>> classToTestees() {
+    return new F<Class<?>, Iterable<String>>() {
+
+      public Iterable<String> apply(final Class<?> a) {
+        return TestInfo.determineTestee(a).map(Functions.classToName());
+      }
+
+    };
   }
 
 }

@@ -1,4 +1,0 @@
-Premain-Class: org.pitest.mutationtest.instrument.HotSwapAgent
-Can-Redefine-Classes: true
-Can-Retransform-Classes: true
-Can-Set-Native-Method-Prefix: true

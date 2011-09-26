@@ -19,6 +19,10 @@ public class ClassInfo {
     this.interfaces = interfaces;
   }
 
+  public boolean isEnum() {
+    return this.superName.equals("java/lang/Enum");
+  }
+
   public int getVersion() {
     return this.version;
   }

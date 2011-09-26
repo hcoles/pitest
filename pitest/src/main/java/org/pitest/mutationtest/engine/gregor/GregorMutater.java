@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import static org.pitest.functional.Prelude.and;
+import static org.pitest.functional.Prelude.not;
 import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;
@@ -54,7 +55,7 @@ class GregorMutater implements Mutater {
   }
 
   public FunctionalList<MutationDetails> findMutations(
-      final Collection<String> classesToMutate) {
+      final Iterable<String> classesToMutate) {
     return FCollection.flatMap(classesToMutate, classToMutationDetails());
   }
 
@@ -89,7 +90,7 @@ class GregorMutater implements Mutater {
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();
     final MutatingClassAdapter mca = new MutatingClassAdapter(nv, context,
-        filterMethods(), classInfo, this.mutators);
+        filterMethods(context), classInfo, this.mutators);
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
@@ -118,7 +119,7 @@ class GregorMutater implements Mutater {
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     final MutatingClassAdapter mca = new MutatingClassAdapter(w, context,
-        filterMethods(), classInfo, FCollection.filter(this.mutators,
+        filterMethods(context), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
@@ -141,8 +142,9 @@ class GregorMutater implements Mutater {
   }
 
   @SuppressWarnings("unchecked")
-  private Predicate<MethodInfo> filterMethods() {
-    return and(this.filter, filterSyntheticMethods());
+  private Predicate<MethodInfo> filterMethods(final Context context) {
+    return and(this.filter, filterSyntheticMethods(),
+        not(isEnumMethod(context)));
   }
 
   private Predicate<MethodInfo> filterSyntheticMethods() {
@@ -155,10 +157,29 @@ class GregorMutater implements Mutater {
     };
   }
 
-  public Mutant getUnmodifiedClass(final String clazz) {
-    final MutationDetails details = new MutationDetails(
-        MutationIdentifier.unmutated(clazz), "", "unmutated", "none", -1);
-    return new Mutant(details, this.byteSource.apply(clazz).value());
+  private Predicate<MethodInfo> isEnumMethod(final Context context) {
+    return new Predicate<MethodInfo>() {
+      public Boolean apply(final MethodInfo a) {
+        return context.getClassInfo().isEnum()
+            && (isValueOfMethod(a) || isValuesMethod(a)
+                || a.isStaticInitializer() || isDefaultConstructor(a));
+      }
+
+      private boolean isDefaultConstructor(final MethodInfo a) {
+        return a.isConstructor() && (context.getLineNumber() == 1);
+      }
+
+      private boolean isValuesMethod(final MethodInfo a) {
+        return a.getName().equals("values") && a.takesNoParameters()
+            && a.isStatic();
+      }
+
+      private boolean isValueOfMethod(final MethodInfo a) {
+        return a.getName().equals("valueOf")
+            && a.getDesc().startsWith("(Ljava/lang/String;)") && a.isStatic();
+      }
+
+    };
   }
 
   public Set<MethodMutatorFactory> getMutators() {

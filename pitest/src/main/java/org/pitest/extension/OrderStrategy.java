@@ -18,6 +18,6 @@ import java.util.List;
 
 public interface OrderStrategy {
 
-  public List<TestUnit> order(List<TestUnit> tus);
+  public List<? extends TestUnit> order(List<? extends TestUnit> tus);
 
 }

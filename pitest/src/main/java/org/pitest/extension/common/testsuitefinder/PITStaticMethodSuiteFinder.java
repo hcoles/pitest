@@ -42,7 +42,7 @@ public class PITStaticMethodSuiteFinder implements TestSuiteFinder {
       for (final Method suiteMethod : suites) {
         final Collection<Class<?>> testClasses = (Collection<Class<?>>) suiteMethod
             .invoke(null);
-        FCollection.map(testClasses, classToTestClass(), result);
+        FCollection.mapTo(testClasses, classToTestClass(), result);
       }
 
       return result;

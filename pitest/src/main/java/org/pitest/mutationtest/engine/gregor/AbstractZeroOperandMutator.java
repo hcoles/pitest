@@ -52,7 +52,7 @@ public abstract class AbstractZeroOperandMutator extends
   private void createMutation(final int opcode) {
     final ZeroOperandMutation mutation = getMutations().get(opcode);
     final MutationIdentifier newId = this.context.registerMutation(
-        this.factory, mutation.decribe(opcode));
+        this.factory, mutation.decribe(opcode, this.methodInfo));
     if (this.context.shouldMutate(newId)) {
       mutation.apply(opcode, this.mv);
     } else {

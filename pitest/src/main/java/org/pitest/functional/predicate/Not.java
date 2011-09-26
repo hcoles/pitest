@@ -14,15 +14,17 @@
  */
 package org.pitest.functional.predicate;
 
+import org.pitest.functional.F;
+
 /**
  * @author henry
  * 
  */
 public final class Not<A> implements Predicate<A> {
 
-  private final Predicate<A> p;
+  private final F<A, Boolean> p;
 
-  public Not(final Predicate<A> p) {
+  public Not(final F<A, Boolean> p) {
     this.p = p;
   }
 

@@ -44,6 +44,10 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     return d;
   }
 
+  private static boolean preventCodeFormattingMakingFinal(final boolean i) {
+    return i;
+  }
+
   private static class HasICONSTM1 implements Callable<String> {
     public String call() throws Exception {
       int i = -1;
@@ -74,6 +78,20 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasICONST0(), mutant, "1");
   }
 
+  private static class HasBooleanICONST0 implements Callable<String> {
+    public String call() throws Exception {
+      boolean b = false;
+      b = preventCodeFormattingMakingFinal(b);
+      return "" + b;
+    }
+  }
+
+  @Test
+  public void shouldReplaceBooleanFalseWithTrue() throws Exception {
+    final Mutant mutant = getFirstMutant(HasBooleanICONST0.class);
+    assertMutantCallableReturns(new HasBooleanICONST0(), mutant, "true");
+  }
+
   private static class HasICONST1 implements Callable<String> {
     public String call() throws Exception {
       int i = 1;
@@ -86,6 +104,20 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   public void shouldReplaceInteger1With0() throws Exception {
     final Mutant mutant = getFirstMutant(HasICONST1.class);
     assertMutantCallableReturns(new HasICONST1(), mutant, "0");
+  }
+
+  private static class HasBooleanICONST1 implements Callable<String> {
+    public String call() throws Exception {
+      boolean i = true;
+      i = preventCodeFormattingMakingFinal(i);
+      return "" + i;
+    }
+  }
+
+  @Test
+  public void shouldReplaceBooleanTrueWithFalse() throws Exception {
+    final Mutant mutant = getFirstMutant(HasBooleanICONST1.class);
+    assertMutantCallableReturns(new HasBooleanICONST1(), mutant, "false");
   }
 
   private static class HasICONST2 implements Callable<String> {

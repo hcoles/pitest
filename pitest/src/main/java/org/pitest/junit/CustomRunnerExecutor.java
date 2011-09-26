@@ -14,10 +14,6 @@
  */
 package org.pitest.junit;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
@@ -27,62 +23,61 @@ import org.pitest.extension.ResultCollector;
 
 public class CustomRunnerExecutor {
 
-  private final Runner                              runner;
-  private ResultCollector                           rc;
-  private final Map<String, org.pitest.Description> descriptionLookup;
+  private final org.pitest.Description description;
+  private final Runner                 runner;
+  private ResultCollector              rc;
 
-  public CustomRunnerExecutor(final Runner runner, final ResultCollector rc,
-      final Map<String, org.pitest.Description> descriptionLookup) {
+  public CustomRunnerExecutor(final org.pitest.Description description,
+      final Runner runner, final ResultCollector rc) {
     this.runner = runner;
     this.rc = rc;
-    this.descriptionLookup = descriptionLookup;
-
+    this.description = description;
   }
 
   public void run() {
 
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new RunListener() {
-      private final Set<String> finished = new TreeSet<String>();
+
+      private boolean finished = false;
 
       @Override
       public void testFailure(final Failure failure) throws Exception {
-        final String d = descriptionToString(failure.getDescription());
-        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d),
-            failure.getException());
-        this.finished.add(d);
+
+        CustomRunnerExecutor.this.rc.notifyEnd(
+            CustomRunnerExecutor.this.description, failure.getException());
+        this.finished = true;
       }
 
       @Override
       public void testAssumptionFailure(final Failure failure) {
-        final String d = descriptionToString(failure.getDescription());
-
-        CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d),
-            failure.getException());
-        this.finished.add(d);
+        // FIXME should assumption failures not be mapped to skipped?
+        CustomRunnerExecutor.this.rc.notifyEnd(
+            CustomRunnerExecutor.this.description, failure.getException());
+        this.finished = true;
       }
 
       @Override
       public void testIgnored(final Description description) throws Exception {
-        final String d = descriptionToString(description);
 
-        CustomRunnerExecutor.this.rc.notifySkipped(convertDescription(d));
-
-        this.finished.add(d);
+        CustomRunnerExecutor.this.rc
+            .notifySkipped(CustomRunnerExecutor.this.description);
+        this.finished = true;
 
       }
 
       @Override
       public void testStarted(final Description description) throws Exception {
         CustomRunnerExecutor.this.rc
-            .notifyStart(convertDescription(descriptionToString(description)));
+            .notifyStart(CustomRunnerExecutor.this.description);
       }
 
       @Override
       public void testFinished(final Description description) throws Exception {
-        final String d = descriptionToString(description);
-        if (!this.finished.contains(d)) {
-          CustomRunnerExecutor.this.rc.notifyEnd(convertDescription(d));
+        // final String d = descriptionToString(description);
+        if (!this.finished) {
+          CustomRunnerExecutor.this.rc
+              .notifyEnd(CustomRunnerExecutor.this.description);
         }
 
       }
@@ -91,29 +86,6 @@ public class CustomRunnerExecutor {
     rn.addFirstListener(listener);
     this.runner.run(rn);
 
-  }
-
-  private org.pitest.Description convertDescription(final String desc) {
-    final org.pitest.Description description = this.descriptionLookup.get(desc);
-    if (description == null) {
-      return new org.pitest.Description(desc, CustomRunnerExecutor.class, null);
-    } else {
-      return description;
-    }
-  }
-
-  public static String descriptionToString(final Description d) {
-    final StringBuffer b = new StringBuffer();
-    descriptionToString(b, d);
-    return b.toString();
-  }
-
-  private static void descriptionToString(final StringBuffer b,
-      final Description d) {
-    for (final Description each : d.getChildren()) {
-      descriptionToString(b, each);
-    }
-    b.append(d.getMethodName());
   }
 
   public ResultCollector getRc() {

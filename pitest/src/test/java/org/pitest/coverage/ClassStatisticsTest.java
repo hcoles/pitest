@@ -17,7 +17,9 @@ package org.pitest.coverage;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,20 +34,11 @@ public class ClassStatisticsTest {
   }
 
   @Test
-  public void shouldTrackTotalNumberOfHitsToEachLine() {
+  public void shouldRecordVisitsToEachLine() {
     addLineHits(Arrays.asList(1, 1, 1, 2, 2, 20));
-    assertEquals(3, this.testee.getNumberOfHits(1).intValue());
-    assertEquals(2, this.testee.getNumberOfHits(2).intValue());
-    assertEquals(1, this.testee.getNumberOfHits(20).intValue());
+    final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1, 2, 20));
+    assertEquals(expected, this.testee.getUniqueVisitedLines());
   }
-
-  // @Test
-  // public void shouldClearLineCoverageStatsWhenRequested() {
-  // addLineHits(Arrays.asList(1, 1, 1));
-  // assertEquals(3, this.testee.getNumberOfHits(1).intValue());
-  // this.testee.clearLineCoverageStats();
-  // assertEquals(0, this.testee.getNumberOfHits(1).intValue());
-  // }
 
   private void addLineHits(final List<Integer> coveredLines) {
     for (final int each : coveredLines) {

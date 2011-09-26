@@ -22,16 +22,18 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
-import org.pitest.mutationtest.CodeCentricReport;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
-import org.pitest.mutationtest.TestCentricReport;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.instrument.KnownLocationJavaAgentJarFinder;
+import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
+import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.util.Glob;
+import org.pitest.util.JavaAgent;
 
 /**
  * Goal which runs a coverage mutation report
@@ -53,6 +55,38 @@ public class PitMojo extends AbstractMojo {
   private List<String>          targetClasses;
 
   /**
+   * Tests to run
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          targetTests;
+
+  /**
+   * Methods not to mutate
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          excludedMethods;
+
+
+  /**
+   * Classes not to mutate or run tests from
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          excludedClasses;
+
+  /**
+   * 
+   * @parameter
+   * 
+   */
+  private List<String>          avoidCallsTo;
+
+  /**
    * Classes in scope for dependency and coverage analysis
    * 
    * @parameter
@@ -71,7 +105,7 @@ public class PitMojo extends AbstractMojo {
    * Maximum distance to look from test to class. Relevant when mutating static
    * initializers
    * 
-   * @parameter
+   * @parameter default-value="-1"
    */
   private int                   maxDependencyDistance;
 
@@ -104,11 +138,40 @@ public class PitMojo extends AbstractMojo {
   private List<String>          mutators;
 
   /**
-   * Run in test centric mode
+   * Weighting to allow for timeouts
+   * 
+   * @parameter default-value="1.25"
+   */
+  private float                 timeoutFactor;
+
+  /**
+   * Constant factor to allow for timeouts
+   * 
+   * @parameter default-value="3000"
+   */
+  private long                  timeoutConstant;
+
+  /**
+   * Maximum number of mutations to allow per class
+   * 
+   * @parameter default-value="-1"
+   */
+  private int                   maxMutationsPerClass;
+
+
+  /**
+   * Arguments to pass to child processes
+   * 
+   * @parameter
+   */
+  private List<String>                jvmArgs;
+
+  /**
+   * Output verbose logging
    * 
    * @parameter default-value="false"
    */
-  private boolean               testCentric;
+  private boolean               verbose;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -149,6 +212,7 @@ public class PitMojo extends AbstractMojo {
 
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
+
     final Set<String> classPath = new HashSet<String>();
 
     try {
@@ -162,42 +226,24 @@ public class PitMojo extends AbstractMojo {
       e1.printStackTrace();
     }
 
-    final Artifact pitVersionInfo = this.pluginArtifactMap
-        .get("org.pitest:pitest");
-
     addOwnDependenciesToClassPath(classPath);
 
-    final ReportOptions data = new ReportOptions();
-    data.setClassPathElements(classPath);
-    data.setIsTestCentric(false);
-    data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
-    data.setIncludeJarFiles(this.includeJarFiles);
-
-    data.setTargetClasses(determineTargetClasses());
-    data.setClassesInScope(determineClassesInScope());
-    data.setMutateStaticInitializers(this.mutateStaticInitializers);
-    data.setNumberOfThreads(this.threads);
-
-    data.setReportDir(this.reportsDirectory.getAbsolutePath());
-
-    data.setMutators(determineMutators());
-    data.setIsTestCentric(this.testCentric);
-
-    final List<String> sourceRoots = new ArrayList<String>();
-    sourceRoots.addAll(this.project.getCompileSourceRoots());
-    sourceRoots.addAll(this.project.getTestCompileSourceRoots());
-
-    data.setSourceDirs(stringsTofiles(sourceRoots));
-
+    final ReportOptions data = parseReportOptions(classPath);
     System.out.println("Running report with " + data);
+    final ClassPath cp = data.getClassPath(true).getOrElse(new ClassPath());
 
-    final MutationCoverageReport report = pickReportType(data, pitVersionInfo);
+    // workaround for apparent java 1.5 JVM bug . . . might not play nicely
+    // with distributed testing
+    final JavaAgent jac = new JarCreatingJarFinder(cp);
+    KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(jac.getJarLocation().value());
 
-    // FIXME will we get a clash between junit & possibly PIT jars by using the
-    // plugin loader?
-    final ClassLoader loader = new DefaultPITClassloader(data
-        .getClassPath(true).getOrElse(new ClassPath()),
-        IsolationUtils.getContextClassLoader());
+    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(data.getReportDir());
+    final MutationCoverageReport report = new MutationCoverageReport(data, ja,
+        new HtmlReportFactory(reportOutput), true);
+
+    // Create new classloader under boot
+    final ClassLoader loader = new DefaultPITClassloader(cp,
+        IsolationUtils.bootClassLoader());
     final ClassLoader original = IsolationUtils.getContextClassLoader();
 
     try {
@@ -212,26 +258,67 @@ public class PitMojo extends AbstractMojo {
       throw new MojoExecutionException("fail", e);
     } finally {
       IsolationUtils.setContextClassLoader(original);
+      jac.close();
+      ja.close();
+
     }
   }
 
+  @SuppressWarnings("unchecked")
+  private ReportOptions parseReportOptions(final Set<String> classPath) {
+    final ReportOptions data = new ReportOptions();
+    data.setClassPathElements(classPath);
+    data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
+    data.setIncludeJarFiles(this.includeJarFiles);
+
+    data.setTargetClasses(determineTargetClasses());
+    data.setTargetTests(determineTargetTests());
+    data.setClassesInScope(determineClassesInScope());
+    data.setMutateStaticInitializers(this.mutateStaticInitializers);
+    data.setExcludedMethods(globStringsToPredicates(this.excludedMethods));
+    data.setExcludedClasses(globStringsToPredicates(this.excludedClasses));
+    data.setNumberOfThreads(this.threads);
+    data.setMaxMutationsPerClass(this.maxMutationsPerClass);
+
+    data.setReportDir(this.reportsDirectory.getAbsolutePath());
+    data.setVerbose(this.verbose);
+    if ( this.jvmArgs != null ) {
+      data.addChildJVMArgs(this.jvmArgs);
+    }
+
+    data.setMutators(determineMutators());
+    data.setTimeoutConstant(this.timeoutConstant);
+    data.setTimeoutFactor(this.timeoutFactor);
+    if (this.avoidCallsTo != null) {
+      data.setLoggingClasses(this.avoidCallsTo);
+    }
+
+    final List<String> sourceRoots = new ArrayList<String>();
+    sourceRoots.addAll(this.project.getCompileSourceRoots());
+    sourceRoots.addAll(this.project.getTestCompileSourceRoots());
+
+    data.setSourceDirs(stringsTofiles(sourceRoots));
+    return data;
+  }
+
+  private Collection<Predicate<String>> globStringsToPredicates(
+      final List<String> excludedMethods) {
+    return FCollection.map(excludedMethods, Glob.toGlobPredicate());
+  }
+
+  private Collection<Predicate<String>> determineTargetTests() {
+    return FCollection.map(this.targetTests, Glob.toGlobPredicate());
+  }
+
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {
-    for (Artifact dependency : this.pluginArtifactMap.values()) {
+    for (final Artifact dependency : filteredDependencies()) {
       classPath.add(dependency.getFile().getAbsolutePath());
     }
   }
 
-  private MutationCoverageReport pickReportType(ReportOptions data,
-      Artifact pitVersionInfo) {
-    if (!this.testCentric) {
-      return new CodeCentricReport(data, new KnownLocationJavaAgentJarFinder(
-          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-          true);
-    } else {
-      return new TestCentricReport(data, new KnownLocationJavaAgentJarFinder(
-          pitVersionInfo.getFile().getAbsolutePath()), new HtmlReportFactory(),
-          true);
-    }
+  private Collection<Artifact> filteredDependencies() {
+    final DependencyFilter filter = new DependencyFilter("org.pitest");
+    return FCollection.filter(this.pluginArtifactMap.values(), filter);
   }
 
   private Collection<MethodMutatorFactory> determineMutators() {

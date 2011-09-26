@@ -39,7 +39,7 @@ public class GroupLikedTypeOrderStrategy implements OrderStrategy {
     this.mutuallyExclusiveTypes.addAll(Arrays.asList(types));
   }
 
-  public List<TestUnit> order(final List<TestUnit> tus) {
+  public List<TestUnit> order(final List<? extends TestUnit> tus) {
     final Map<Class<?>, List<TestUnit>> matchesType = createMapOfMutallyExclusiveTypesToTestUnits();
 
     // add null for all the other classes
@@ -69,7 +69,8 @@ public class GroupLikedTypeOrderStrategy implements OrderStrategy {
     return groups;
   }
 
-  private void mapTestUnitsToTheirParentType(final List<TestUnit> tus,
+  private void mapTestUnitsToTheirParentType(
+      final List<? extends TestUnit> tus,
       final Map<Class<?>, List<TestUnit>> matchesType) {
     for (final TestUnit each : tus) {
       final List<TestUnit> bucket = matchesType

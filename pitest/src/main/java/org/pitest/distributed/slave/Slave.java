@@ -7,6 +7,7 @@ import java.lang.management.MemoryUsage;
 import java.net.InetSocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -20,6 +21,7 @@ import org.pitest.distributed.message.TestGroupExecuteMessage;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
 import org.pitest.util.FileUtil;
+import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 
 import com.hazelcast.core.Hazelcast;
@@ -27,6 +29,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
 
 public class Slave {
+  private final static Logger                          LOG                                     = Log
+                                                                                                   .getLogger();
 
   private static final int                             SUICIDE_MEMORY_LIMIT_PERCENT            = 98;
   private static final int                             ALLOWED_SUICIDE_BREACHES                = 0;
@@ -86,7 +90,7 @@ public class Slave {
           }
 
         } else {
-          System.out.println("Unknown notification: " + notification);
+          LOG.warning("Unknown notification: " + notification);
         }
       }
 
@@ -163,7 +167,7 @@ public class Slave {
           }
 
         } else {
-          System.out.println("Unknown notification: " + notification);
+          LOG.warning("Unknown notification: " + notification);
         }
       }
 

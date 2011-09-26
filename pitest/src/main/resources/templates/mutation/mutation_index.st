@@ -39,7 +39,7 @@ $summaryList:{ summary |
 </span>
 <span class='mutees'>
   <h2>Mutated classes</h2>
-  $summary.mutatedClasses : { clazz | $clazz.name$ }$ 
+  $summary.mutatedClasses : { clazz | $clazz$ }$ 
 </span>
 </div>
 <br/>

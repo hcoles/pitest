@@ -27,6 +27,11 @@ public class False<A> implements Predicate<A> {
     return (False<A>) INSTANCE;
   }
 
+  @SuppressWarnings("unchecked")
+  public static <A> False<A> instance(final Class<A> type) {
+    return (False<A>) INSTANCE;
+  }
+
   public Boolean apply(final A a) {
     return false;
   }

@@ -70,7 +70,7 @@ public abstract class AbstractPITJUnitRunner extends Runner implements
         }
       }
 
-      public void recieveTests(final Collection<? extends TestUnit> testUnits) {
+      public void receiveTests(final Collection<? extends TestUnit> testUnits) {
         for (final TestUnit each : testUnits) {
           final Description d = Description.createTestDescription(each
               .getDescription().getFirstTestClass(), each.getDescription()

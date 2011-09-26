@@ -16,7 +16,7 @@ package org.pitest.mutationtest.report;
 
 import java.util.List;
 
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationGrouping {
 

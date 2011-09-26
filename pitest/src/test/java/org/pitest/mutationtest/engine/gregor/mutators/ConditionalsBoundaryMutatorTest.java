@@ -49,7 +49,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIFLEWithILT() throws Exception {
+  public void shouldReplaceIFLEwithILT() throws Exception {
     final Mutant mutant = getFirstMutant(HasIFLE.class);
     assertMutantCallableReturns(new HasIFLE(1), mutant, "was > zero");
     assertMutantCallableReturns(new HasIFLE(-1), mutant, "was <= zero");
@@ -73,7 +73,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIFGEWithIFGT() throws Exception {
+  public void shouldReplaceIFGEwithIFGT() throws Exception {
     final Mutant mutant = getFirstMutant(HasIFGE.class);
     assertMutantCallableReturns(new HasIFGE(-1), mutant, "was < zero");
     assertMutantCallableReturns(new HasIFGE(1), mutant, "was >= zero");
@@ -97,7 +97,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIFGTWithIFGE() throws Exception {
+  public void shouldReplaceIFGTwithIFGE() throws Exception {
     final Mutant mutant = getFirstMutant(HasIFGT.class);
     assertMutantCallableReturns(new HasIFGT(-1), mutant, "was <= zero");
     assertMutantCallableReturns(new HasIFGT(1), mutant, "was > zero");
@@ -121,7 +121,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIFLTWithIFLE() throws Exception {
+  public void shouldReplaceIFLTwithIFLE() throws Exception {
     final Mutant mutant = getFirstMutant(HasIFLT.class);
     assertMutantCallableReturns(new HasIFLT(-1), mutant, "was < zero");
     assertMutantCallableReturns(new HasIFLT(1), mutant, "was >= zero");
@@ -146,7 +146,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceHasIF_ICMPLEWithHasIF_ICMPLT() throws Exception {
+  public void shouldReplaceICMPLEwithIF_ICMPLT() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ICMPLE.class);
     assertMutantCallableReturns(new HasIF_ICMPLE(1), mutant, "was > zero");
     assertMutantCallableReturns(new HasIF_ICMPLE(-1), mutant, "was <= zero");
@@ -171,7 +171,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIF_ICMPGEWithHasIF_ICMPGT() throws Exception {
+  public void shouldReplaceIF_ICMPGEwithIF_ICMPGT() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ICMPGE.class);
     assertMutantCallableReturns(new HasIF_ICMPGE(-1), mutant, "was < zero");
     assertMutantCallableReturns(new HasIF_ICMPGE(1), mutant, "was >= zero");
@@ -196,7 +196,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceHasIF_ICMPGTWithHasIF_ICMPGE() throws Exception {
+  public void shouldReplaceIF_ICMPGTwithIF_ICMPGE() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ICMPGT.class);
     assertMutantCallableReturns(new HasIF_ICMPGT(-1), mutant, "was <= zero");
     assertMutantCallableReturns(new HasIF_ICMPGT(1), mutant, "was > zero");
@@ -221,7 +221,7 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceHasIF_ICMPLTWithHasIF_ICMPGT() throws Exception {
+  public void shouldReplaceIF_ICMPLTwithIF_ICMPGT() throws Exception {
     final Mutant mutant = getFirstMutant(HasIF_ICMPLT.class);
     assertMutantCallableReturns(new HasIF_ICMPLT(-1), mutant, "was < zero");
     assertMutantCallableReturns(new HasIF_ICMPLT(1), mutant, "was >= zero");

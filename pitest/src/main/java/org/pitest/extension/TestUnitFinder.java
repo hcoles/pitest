@@ -17,13 +17,9 @@ package org.pitest.extension;
 
 import java.util.Collection;
 
-import org.pitest.internal.TestClass;
-
 public interface TestUnitFinder {
 
-  public boolean canHandle(Class<?> clazz, boolean alreadyHandled);
-
-  public Collection<TestUnit> findTestUnits(final TestClass clazz,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       TestUnitProcessor processor);
 

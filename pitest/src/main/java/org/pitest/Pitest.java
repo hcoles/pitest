@@ -25,7 +25,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
-import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestFilter;
@@ -40,11 +39,11 @@ import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
+import org.pitest.util.Log;
 
 public class Pitest {
 
-  private final static Logger       LOGGER = Logger.getLogger(Pitest.class
-                                               .getName());
+  private final static Logger       LOG = Log.getLogger();
 
   private final Configuration       initialConfig;
   private final StaticConfiguration initialStaticConfig;
@@ -85,12 +84,8 @@ public class Pitest {
       final Container container = containerUpdateFunction.apply(c,
           defaultContainer);
 
-      StaticConfiguration staticConfig = new DefaultStaticConfig(
-          this.initialStaticConfig);
-      for (final StaticConfigUpdater each : this.initialConfig
-          .staticConfigurationUpdaters()) {
-        staticConfig = each.apply(staticConfig, c);
-      }
+      final StaticConfiguration staticConfig = this.initialConfig
+          .staticConfigurationUpdater().apply(this.initialStaticConfig, c);
 
       final Option<TestFilter> filter = createTestFilter(staticConfig);
 
@@ -114,18 +109,20 @@ public class Pitest {
     }
   }
 
-  public void run(final Container container, final List<TestUnit> testUnits) {
+  public void run(final Container container,
+      final List<? extends TestUnit> testUnits) {
     this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
         testUnits);
   }
 
   private void run(final Container container,
-      final StaticConfiguration staticConfig, final List<TestUnit> testUnits) {
+      final StaticConfiguration staticConfig,
+      final List<? extends TestUnit> testUnits) {
 
-    final List<TestUnit> orderedTestUnits = staticConfig.getOrderStrategy()
-        .order(testUnits);
+    final List<? extends TestUnit> orderedTestUnits = staticConfig
+        .getOrderStrategy().order(testUnits);
 
-    LOGGER.info("Running " + orderedTestUnits.size() + " units");
+    LOG.info("Running " + orderedTestUnits.size() + " units");
 
     signalRunStartToAllListeners(staticConfig);
 
@@ -201,7 +198,7 @@ public class Pitest {
 
     signalRunEndToAllListeners(staticConfig);
 
-    LOGGER.info("Finished");
+    LOG.info("Finished");
 
   }
 
@@ -215,7 +212,7 @@ public class Pitest {
   }
 
   private Thread startFeederThread(final Container container,
-      final List<TestUnit> callables) {
+      final List<? extends TestUnit> callables) {
     final Runnable feeder = new Runnable() {
       public void run() {
         for (final TestUnit unit : callables) {

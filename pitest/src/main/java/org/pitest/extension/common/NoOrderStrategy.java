@@ -21,7 +21,7 @@ import org.pitest.extension.TestUnit;
 
 public class NoOrderStrategy implements OrderStrategy {
 
-  public List<TestUnit> order(final List<TestUnit> tus) {
+  public List<? extends TestUnit> order(final List<? extends TestUnit> tus) {
     return tus;
   }
 

@@ -1,20 +1,27 @@
 package org.pitest.mutationtest;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
-import org.pitest.functional.FunctionalCollection;
-import org.pitest.mutationtest.instrument.CoverageSource;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.domain.TestInfo;
+import org.pitest.mutationtest.instrument.ClassLine;
 
 public interface CoverageDatabase {
 
-  Map<ClassGrouping, List<String>> mapCodeToTests(
-      FunctionalCollection<Class<?>> tests,
-      Map<String, ClassGrouping> groupedByOuterClass) throws IOException;
+  boolean initialise();
 
-  void initialise(final FunctionalCollection<Class<?>> tests);
+  Collection<String> getParentClassesWithoutATest();
 
-  CoverageSource getCoverage(ClassGrouping code, List<String> tests);
+  Collection<TestInfo> getTestForLineNumber(ClassLine classLine);
+
+  Collection<ClassInfo> getClassInfo(Collection<String> classesForSourceFile);
+
+  int getNumberOfCoveredLines(Collection<String> mutatedClass);
+
+  Collection<TestInfo> getTestsForClass(String clazz);
+
+  Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
+
+  Collection<ClassGrouping> getGroupedClasses();
 
 }

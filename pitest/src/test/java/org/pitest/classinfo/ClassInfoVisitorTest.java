@@ -26,7 +26,7 @@ import org.pitest.coverage.codeassist.samples.NoDefaultConstructor;
 public class ClassInfoVisitorTest {
 
   @Test
-  public void testDetectsStandardCodeLines() throws Exception {
+  public void shouldDetectStandardCodeLines() throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
     final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
@@ -35,7 +35,7 @@ public class ClassInfoVisitorTest {
   }
 
   @Test
-  public void testDetectsCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor()
+  public void shouldDetectCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor()
       throws Exception {
     final String sampleName = HasDefaultConstructor.class.getName();
     final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
@@ -47,7 +47,7 @@ public class ClassInfoVisitorTest {
   }
 
   @Test
-  public void testDoesNotDetectCodeLineAtClassDeclarationsWhenClassHasNoDefaultConstructor()
+  public void shouldNotDetectCodeLineAtClassDeclarationsWhenClassHasNoDefaultConstructor()
       throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
     final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
@@ -58,7 +58,7 @@ public class ClassInfoVisitorTest {
   }
 
   @Test
-  public void testDoesNotRecordLineNumbersFromSyntheticBridgeMethods()
+  public void shouldNotRecordLineNumbersFromSyntheticBridgeMethods()
       throws Exception {
     final String sampleName = HasBridgeMethod.class.getName();
     final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,

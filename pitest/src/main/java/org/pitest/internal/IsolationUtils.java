@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.internal;
@@ -34,13 +34,29 @@ import org.pitest.util.Base64;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.core.BaseException;
+import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
 
-  private final static XStream                           XSTREAM_INSTANCE = new XStream();
-  private final static WeakHashMap<ClassLoader, XStream> CACHE            = new WeakHashMap<ClassLoader, XStream>();
+  private final static XStream                           XSTREAM_INSTANCE          = new XStream();
+  private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
+  private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
+
+                                                                                     public boolean fromDifferentLoader(
+                                                                                         final Class<?> clazz,
+                                                                                         final ClassLoader loader) {
+                                                                                       return IsolationUtils
+                                                                                           .fromDifferentLoader(
+                                                                                               clazz,
+                                                                                               loader);
+                                                                                     }
+
+                                                                                   };
+
+  public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
+    return LOADER_DETECTION_STRATEGY;
+  }
 
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
@@ -84,10 +100,10 @@ public abstract class IsolationUtils {
     }
   }
 
-  private static Class<?> convertForClassLoader(final ClassLoader loader,
+  public static Class<?> convertForClassLoader(final ClassLoader loader,
       final String name) {
     try {
-      return Class.forName(name, true, loader);
+      return Class.forName(name, false, loader);
     } catch (final ClassNotFoundException ex) {
       throw translateCheckedException(ex);
     }
@@ -161,7 +177,7 @@ public abstract class IsolationUtils {
       return fromXml(decodeTransportString(encodedXml));
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
-    } catch (final BaseException ex) {
+    } catch (final XStreamException ex) {
       throw new SerializationException(ex);
     }
   }
@@ -177,6 +193,23 @@ public abstract class IsolationUtils {
 
   public static Object clone(final Object object) {
     return cloneForLoader(object, getContextClassLoader());
+  }
+
+  public static boolean loaderAgnosticInstanceOf(final Object o,
+      final Class<?> clazz) {
+    final boolean instanceOf = clazz.isAssignableFrom(o.getClass());
+    if (!instanceOf) {
+      final Class<?> c = IsolationUtils.convertForClassLoader(
+          IsolationUtils.getContextClassLoader(), o.getClass());
+      return clazz.isAssignableFrom(c);
+    } else {
+      return instanceOf;
+    }
+
+  }
+
+  public static ClassLoader bootClassLoader() {
+    return Object.class.getClassLoader();
   }
 
 }

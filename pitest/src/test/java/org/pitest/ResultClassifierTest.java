@@ -5,8 +5,6 @@ package org.pitest;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.testunit.TestUnitState;
@@ -23,8 +21,7 @@ public class ResultClassifierTest {
   @Before
   public void createTestee() {
     this.testee = new DefaultResultClassifier();
-    this.description = new Description(null, Collections.<Class<?>> emptySet(),
-        null);
+    this.description = DescriptionMother.createEmptyDescription("foo");
   }
 
   @Test

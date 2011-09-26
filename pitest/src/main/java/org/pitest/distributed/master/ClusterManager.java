@@ -29,6 +29,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Log;
 
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Cluster;
@@ -41,9 +42,8 @@ import com.hazelcast.core.MessageListener;
 public class ClusterManager implements
     MessageListener<HandlerNotificationMessage>, MembershipListener {
 
-  private static final Logger                          LOGGER                      = Logger
-                                                                                       .getLogger(ClusterManager.class
-                                                                                           .getName());
+  private final static Logger                          LOG                         = Log
+                                                                                       .getLogger();
 
   private final Map<Long, TestGroupMemberRecord>       inprogressTestGroupHandlers = new ConcurrentHashMap<Long, TestGroupMemberRecord>();
 
@@ -101,11 +101,11 @@ public class ClusterManager implements
       final TestGroupMemberRecord record = this.inprogressTestGroupHandlers
           .get(message.getTestGroupId());
 
-      LOGGER.info("Awaiting completion of "
+      LOG.info("Awaiting completion of "
           + this.inprogressTestGroupHandlers.size() + " test groups.");
 
       if (record == null) {
-        LOGGER.warning("Could not find a matching record for test group id "
+        LOG.warning("Could not find a matching record for test group id "
             + message.getTestGroupId());
       } else {
 
@@ -126,14 +126,14 @@ public class ClusterManager implements
 
   private void handleComplete(final HandlerNotificationMessage message,
       final TestGroupMemberRecord record) {
-    LOGGER.info("Group " + message.getTestGroupId() + " is complete ");
+    LOG.info("Group " + message.getTestGroupId() + " is complete ");
     this.inprogressTestGroupHandlers.remove(message.getTestGroupId());
 
   }
 
   private void handleError(final HandlerNotificationMessage message) {
     // FIXME should retry error cases at least once
-    LOGGER.warning("Error reported handling test group by peer at "
+    LOG.warning("Error reported handling test group by peer at "
         + message.getHandler());
     this.inprogressTestGroupHandlers.remove(message.getTestGroupId());
   }
@@ -170,7 +170,7 @@ public class ClusterManager implements
         if (each.getHandler().hasSome()) {
           if (each.getHandler().value().equals(leaverAddress)) {
             each.setHandler(Option.<InetSocketAddress> none());
-            LOGGER.info("Reassigning group id " + each.getId());
+            LOG.info("Reassigning group id " + each.getId());
             submitTestGroupToGrid(each.getId(), each.getGroup());
           }
         }

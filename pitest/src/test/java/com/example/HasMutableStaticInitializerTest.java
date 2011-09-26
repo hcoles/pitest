@@ -28,6 +28,10 @@ public class HasMutableStaticInitializerTest {
 
   @Test
   public void testValueOfJ() {
+    // workaround to register this test as covering some part of the testee.
+    // static variable access does not currently register as coverage . . .
+    HasMutableStaticInitializer.noticeMe();
+
     assertEquals(101, HasMutableStaticInitializer.j);
   }
 }

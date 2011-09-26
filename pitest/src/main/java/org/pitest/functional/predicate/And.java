@@ -17,22 +17,24 @@ package org.pitest.functional.predicate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.pitest.functional.F;
+
 /**
  * @author henry
  * 
  */
 public class And<A> implements Predicate<A> {
 
-  private final Set<Predicate<A>> ps = new LinkedHashSet<Predicate<A>>();
+  private final Set<F<A, Boolean>> ps = new LinkedHashSet<F<A, Boolean>>();
 
-  public And(final Iterable<Predicate<A>> ps) {
-    for (final Predicate<A> each : ps) {
+  public And(final Iterable<? extends F<A, Boolean>> ps) {
+    for (final F<A, Boolean> each : ps) {
       this.ps.add(each);
     }
   }
 
   public Boolean apply(final A a) {
-    for (final Predicate<A> each : this.ps) {
+    for (final F<A, Boolean> each : this.ps) {
       if (!each.apply(a)) {
         return false;
       }

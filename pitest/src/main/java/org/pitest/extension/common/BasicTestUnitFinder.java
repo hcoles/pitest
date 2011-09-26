@@ -41,30 +41,29 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.EqualitySet;
 import org.pitest.internal.SignatureEqualityStrategy;
-import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 import org.pitest.teststeps.CallStep;
 import org.pitest.testunit.SteppedTestUnit;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
-  private final Predicate<Class<?>> filter;
-  private final Set<MethodFinder>   testMethodFinders   = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   beforeMethodFinders = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   afterMethodFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   beforeClassFinders  = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>   afterClassFinders   = new LinkedHashSet<MethodFinder>();
+  private final Set<InstantiationStrategy> instantiationStrategies = new LinkedHashSet<InstantiationStrategy>();
+  private final Set<MethodFinder>          testMethodFinders       = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          beforeMethodFinders     = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          afterMethodFinders      = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          beforeClassFinders      = new LinkedHashSet<MethodFinder>();
+  private final Set<MethodFinder>          afterClassFinders       = new LinkedHashSet<MethodFinder>();
 
-  public BasicTestUnitFinder(final Predicate<Class<?>> filter,
+  public BasicTestUnitFinder(
+      final Collection<InstantiationStrategy> instantiationStrategies,
       final Collection<MethodFinder> testMethodFinders,
       final Collection<MethodFinder> beforeMethodFinders,
       final Collection<MethodFinder> afterMethodFinders,
       final Collection<MethodFinder> beforeClassFinders,
       final Collection<MethodFinder> afterClassFinders) {
-    this.filter = filter;
+    this.instantiationStrategies.addAll(instantiationStrategies);
     this.testMethodFinders.addAll(testMethodFinders);
     this.beforeMethodFinders.addAll(beforeMethodFinders);
     this.afterMethodFinders.addAll(afterMethodFinders);
@@ -72,28 +71,24 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return this.filter.apply(clazz);
-  }
-
-  public Collection<TestUnit> findTestUnits(final TestClass testClass,
+  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
       final Configuration config, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
-          this.beforeMethodFinders, testClass.getClazz());
+          this.beforeMethodFinders, testClass);
       final Collection<TestMethod> afters = findTestMethods(
-          this.afterMethodFinders, testClass.getClazz());
+          this.afterMethodFinders, testClass);
 
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(
-          config, testClass.getClazz());
+          config, testClass);
       final List<TestStep> instantiations = instantiationStrategy
-          .instantiations(testClass.getClazz());
+          .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
         for (final TestMethod m : findTestMethods(this.testMethodFinders,
-            testClass.getClazz())) {
+            testClass)) {
           final TestStep step = instantiations.get(instantiation);
           units.add(createTestUnitForInstantiation(step,
               getNamePrefix(instantiations.size(), instantiation), befores,
@@ -101,7 +96,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         }
       }
 
-      listener.recieveTests(units);
+      listener.receiveTests(units);
 
       return this.createGroupings(FCollection.map(units, processor), testClass);
 
@@ -138,7 +133,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   private TestUnit createTestUnitForInstantiation(
       final TestStep instantiationStep, final String namePrefix,
       final Collection<TestMethod> befores,
-      final Collection<TestMethod> afters, final TestClass testClass,
+      final Collection<TestMethod> afters, final Class<?> testClass,
       final Configuration config, final TestMethod testMethod) {
 
     final List<TestStep> steps = new ArrayList<TestStep>();
@@ -156,7 +151,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
 
     final TestUnit unit = new SteppedTestUnit(new Description(namePrefix
-        + testMethod.getName(), testClass.getClazz(), testMethod), steps,
+        + testMethod.getName(), testClass, testMethod), steps,
         testMethod.getExpected());
     return unit;
 
@@ -165,7 +160,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   private InstantiationStrategy findInstantiationStrategy(
       final Configuration config, final Class<?> clazz) {
     final List<InstantiationStrategy> strategies = FCollection.filter(
-        config.instantiationStrategies(), canInstantiate(clazz));
+        this.instantiationStrategies, canInstantiate(clazz));
     if (strategies.isEmpty()) {
       throw new PitError("Cannot instantiate " + clazz);
     } else {
@@ -202,12 +197,12 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   private List<TestUnit> createGroupings(final List<TestUnit> tus,
-      final TestClass testClass) {
+      final Class<?> testClass) {
     final Collection<CallStep> beforeClasses = findMethodCalls(
-        this.beforeClassFinders, testClass.getClazz());
+        this.beforeClassFinders, testClass);
 
     final Collection<CallStep> afterClasses = findMethodCalls(
-        this.afterClassFinders, testClass.getClazz());
+        this.afterClassFinders, testClass);
 
     if (!beforeClasses.isEmpty() || (!afterClasses.isEmpty() && !tus.isEmpty())) {
       final TestUnit group = new MultipleTestGroup(tus);

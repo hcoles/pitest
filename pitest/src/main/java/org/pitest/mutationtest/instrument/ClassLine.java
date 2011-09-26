@@ -28,6 +28,10 @@ public final class ClassLine {
     return this.clazz;
   }
 
+  public String getJVMClassName() {
+    return getClazz().replace(".", "/");
+  }
+
   public int getLineNumber() {
     return this.lineNumber;
   }

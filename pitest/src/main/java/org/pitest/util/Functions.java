@@ -15,6 +15,7 @@
 package org.pitest.util;
 
 import java.lang.annotation.Annotation;
+import java.util.logging.Logger;
 
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
@@ -24,6 +25,7 @@ import org.pitest.internal.TestClass;
 import org.pitest.reflection.Reflection;
 
 public abstract class Functions {
+  private final static Logger LOG = Log.getLogger();
 
   public static Predicate<Class<?>> isInnerClass() {
     return new Predicate<Class<?>>() {
@@ -93,20 +95,17 @@ public abstract class Functions {
           final Class<?> clazz = Class.forName(className, false, loader);
           return Option.<Class<?>> some(clazz);
         } catch (final ClassNotFoundException e) {
-          System.out.println("Could not load " + className
+          LOG.warning("Could not load " + className
               + " (ClassNotFoundException)");
           return Option.none();
         } catch (final NoClassDefFoundError e) {
-          System.out.println("Could not load " + className
-              + " (NoClassDefFoundError)");
+          LOG.warning("Could not load " + className + " (NoClassDefFoundError)");
           return Option.none();
         } catch (final LinkageError e) {
-          System.out.println("Could not load " + className + " "
-              + e.getMessage());
+          LOG.warning("Could not load " + className + " " + e.getMessage());
           return Option.none();
         } catch (final SecurityException e) {
-          System.out.println("Could not load " + className + " "
-              + e.getMessage());
+          LOG.warning("Could not load " + className + " " + e.getMessage());
           return Option.none();
         }
       }
@@ -126,6 +125,15 @@ public abstract class Functions {
     return new Predicate<String>() {
       public Boolean apply(final String a) {
         return a.startsWith(filter);
+      }
+
+    };
+  }
+
+  public static Predicate<Class<?>> isInterface() {
+    return new Predicate<Class<?>>() {
+      public Boolean apply(final Class<?> a) {
+        return a.isInterface();
       }
 
     };

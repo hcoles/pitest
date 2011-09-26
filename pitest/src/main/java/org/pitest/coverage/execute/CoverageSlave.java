@@ -1,79 +1,109 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.coverage.execute;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.pitest.boot.CodeCoverageStore;
+import org.pitest.boot.HotSwapAgent;
 import org.pitest.coverage.CoverageTransformer;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.mutationtest.instrument.HotSwapAgent;
+import org.pitest.extension.TestUnit;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Log;
+import org.pitest.util.SafeDataInputStream;
 
 public class CoverageSlave {
 
+  private final static Logger LOG = Log.getLogger();
+
   public static void main(final String[] args) {
 
-    Writer w = null;
     ExitCode exitCode = ExitCode.OK;
-
+    Socket s = null;
+    CoveragePipe invokeQueue = null;
     try {
-      final File input = new File(args[0]);
-      final File outputFile = new File(args[1]);
 
-      System.out.println("Input file is " + input);
-      System.out.println("Output file is " + outputFile);
+      final int port = Integer.valueOf(args[0]);
+      s = new Socket("localhost", port);
 
-      final BufferedReader br = new BufferedReader(new InputStreamReader(
-          new FileInputStream(input)));
-      w = new OutputStreamWriter(new FileOutputStream(outputFile));
+      final SafeDataInputStream dis = new SafeDataInputStream(
+          s.getInputStream());
 
-      final SlaveArguments paramsFromParent = (SlaveArguments) IsolationUtils
-          .fromTransportString(br.readLine());
+      final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
 
-      System.setProperties(paramsFromParent.getSystemProperties());
+      Log.setVerbose(paramsFromParent.isVerbose());
 
-      br.close();
+      final DataOutputStream dos = new DataOutputStream(
+          new BufferedOutputStream(s.getOutputStream()));
+
+      invokeQueue = new CoveragePipe(dos);
+
+      CodeCoverageStore.init(invokeQueue);
 
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final CoverageWorker worker = new CoverageWorker(paramsFromParent, w);
+      final List<TestUnit> tus = getTestsFromParent(dis);
+
+      LOG.info(tus.size() + " tests received");
+
+      final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
 
       worker.run();
 
     } catch (final Throwable ex) {
-      ex.printStackTrace(System.out);
+      LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
+          ex);
+      ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
     } finally {
-      if (w != null) {
-        try {
-          w.close();
-        } catch (final IOException e) {
-          e.printStackTrace();
+      if (invokeQueue != null) {
+        invokeQueue.end();
+      }
+
+      try {
+        if (s != null) {
+          s.close();
         }
+      } catch (final IOException e) {
+        throw translateCheckedException(e);
       }
     }
 
     System.exit(exitCode.getCode());
+
+  }
+
+  private static List<TestUnit> getTestsFromParent(final SafeDataInputStream dis)
+      throws IOException {
+    final int count = dis.readInt();
+    final List<TestUnit> tus = new ArrayList<TestUnit>(count);
+    for (int i = 0; i != count; i++) {
+      tus.add(dis.read(TestUnit.class));
+    }
+    LOG.fine("Receiving " + count + " tests from parent");
+    return tus;
 
   }
 

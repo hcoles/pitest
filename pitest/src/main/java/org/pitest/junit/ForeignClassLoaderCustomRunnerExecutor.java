@@ -30,8 +30,6 @@ public class ForeignClassLoaderCustomRunnerExecutor {
   private final Runner runner;
   private List<String> queue;
 
-  // private final Map<String, org.pitest.Description> descriptionLookup;
-
   public ForeignClassLoaderCustomRunnerExecutor(final Runner runner) {
     this.runner = runner;
   }

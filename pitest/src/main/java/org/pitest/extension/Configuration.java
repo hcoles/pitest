@@ -15,23 +15,16 @@
 
 package org.pitest.extension;
 
-import java.util.Collection;
-import java.util.List;
-
 public interface Configuration {
 
-  public boolean allowConfigurationChange();
+  public TestUnitProcessor testUnitProcessor();
 
-  public List<InstantiationStrategy> instantiationStrategies();
+  public TestUnitFinder testUnitFinder();
 
-  public List<TestUnitProcessor> testUnitProcessors();
+  public TestSuiteFinder testSuiteFinder();
 
-  public List<TestUnitFinder> testUnitFinders();
+  public ConfigurationUpdater configurationUpdater();
 
-  public Collection<TestSuiteFinder> testSuiteFinders();
-
-  public Collection<ConfigurationUpdater> configurationUpdaters();
-
-  public Collection<StaticConfigUpdater> staticConfigurationUpdaters();
+  public StaticConfigUpdater staticConfigurationUpdater();
 
 }

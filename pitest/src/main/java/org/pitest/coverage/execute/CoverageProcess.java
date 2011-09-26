@@ -1,44 +1,35 @@
 package org.pitest.coverage.execute;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
-import org.pitest.functional.F;
-import org.pitest.functional.FunctionalList;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.util.InputStreamLineIterable;
+import org.pitest.extension.TestUnit;
+import org.pitest.functional.SideEffect1;
+import org.pitest.mutationtest.CoverageCommunicationThread;
+import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
 
-public class CoverageProcess extends WrappingProcess {
+public class CoverageProcess {
 
-  public CoverageProcess(final Args processArgs, final SlaveArguments arguments)
-      throws IOException {
-    super(processArgs, arguments, CoverageSlave.class);
+  private final WrappingProcess             process;
+  private final CoverageCommunicationThread crt;
+
+  public CoverageProcess(final ProcessArgs processArgs,
+      final SlaveArguments arguments, final int port, final List<TestUnit> tus,
+      final SideEffect1<CoverageResult> handler) throws IOException {
+    this.process = new WrappingProcess(port, processArgs, CoverageSlave.class);
+    this.crt = new CoverageCommunicationThread(port, arguments, tus, handler);
   }
 
-  public FunctionalList<CoverageResult> results() throws FileNotFoundException,
-      IOException {
-
-    final FileReader fr = new FileReader(this.getOutputFile());
-    try {
-      final InputStreamLineIterable li = new InputStreamLineIterable(fr);
-      return li.map(stringToCoverageResult());
-    } finally {
-      fr.close();
-    }
-
+  public void start() throws IOException {
+    this.process.start();
+    this.crt.start();
   }
 
-  private F<String, CoverageResult> stringToCoverageResult() {
-    return new F<String, CoverageResult>() {
-
-      public CoverageResult apply(final String a) {
-        return (CoverageResult) IsolationUtils.fromXml(a);
-
-      }
-
-    };
+  public int waitToDie() throws InterruptedException {
+    final int exitCode = this.process.waitToDie();
+    this.crt.waitToFinish();
+    return exitCode;
   }
 
 }

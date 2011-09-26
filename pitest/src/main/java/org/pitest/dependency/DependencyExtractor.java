@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.dependency;
 
@@ -19,6 +19,7 @@ import static org.pitest.functional.Prelude.not;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,18 +28,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
+import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassByteArraySource;
+import org.pitest.util.Functions;
+import org.pitest.util.Log;
 
 public class DependencyExtractor {
-
+  private final static Logger        LOG = Log.getLogger();
   private final int                  depth;
   private final ClassByteArraySource classToBytes;
 
@@ -48,10 +53,43 @@ public class DependencyExtractor {
     this.classToBytes = classToBytes;
   }
 
-  public Set<String> extractCallDependenciesForPackages(final String clazz,
-      final Predicate<String> targetPackages) throws IOException {
-    final Predicate<DependencyAccess> p = convertStringPredicateToDependencyAccessPredicate(targetPackages);
-    return extractCallDependencies(clazz, p);
+  @SuppressWarnings("unchecked")
+  public Collection<String> extractCallDependenciesForPackages(
+      final String clazz, final Predicate<String> targetPackages)
+      throws IOException {
+    final Set<String> allDependencies = extractCallDependencies(clazz,
+        IgnoreCoreClasses.INSTANCE);
+    return FCollection.filter(allDependencies,
+        and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
+  }
+
+  private F<String, Boolean> notSuppliedClass(final String clazz) {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(final String a) {
+        return !Functions.jvmClassToClassName().apply(a).equals(clazz);
+      }
+
+    };
+  }
+
+  private F<String, Boolean> asJVMNamePredicate(
+      final Predicate<String> predicate) {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(final String a) {
+        return predicate.apply(Functions.jvmClassToClassName().apply(a));
+      }
+
+    };
+  }
+
+  public Collection<String> extractCallDependenciesForPackages(
+      final String clazz, final Predicate<String> targetPackages,
+      final Predicate<DependencyAccess> doNotTraverse) throws IOException {
+    final Set<String> allDependencies = extractCallDependencies(clazz,
+        doNotTraverse);
+    return FCollection.filter(allDependencies, targetPackages);
   }
 
   Set<String> extractCallDependencies(final String clazz,
@@ -61,7 +99,7 @@ public class DependencyExtractor {
         .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
   }
 
-  public Set<String> extractCallDependencies(final String clazz,
+  private Set<String> extractCallDependencies(final String clazz,
       final TreeSet<String> visited, final Predicate<DependencyAccess> filter,
       final int currentDepth) throws IOException {
 
@@ -97,18 +135,6 @@ public class DependencyExtractor {
     return deps;
   }
 
-  private Predicate<DependencyAccess> convertStringPredicateToDependencyAccessPredicate(
-      final Predicate<String> targetPackages) {
-    return new Predicate<DependencyAccess>() {
-      public Boolean apply(final DependencyAccess a) {
-        final boolean r = targetPackages.apply(a.getDest().getOwner()
-            .replace("/", "."));
-        return r;
-      }
-    };
-
-  }
-
   private Set<DependencyAccess> extractRelevantDependencies(final String clazz,
       final Predicate<DependencyAccess> filter) throws IOException {
     final List<DependencyAccess> dependencies = extract(clazz, filter);
@@ -132,7 +158,7 @@ public class DependencyExtractor {
       final Predicate<DependencyAccess> filter) throws IOException {
     final Option<byte[]> bytes = this.classToBytes.apply(clazz);
     if (bytes.hasNone()) {
-      System.out.println("No bytes found for " + clazz);
+      LOG.warning("No bytes found for " + clazz);
       return Collections.emptyList();
     }
     final ClassReader reader = new ClassReader(bytes.value());

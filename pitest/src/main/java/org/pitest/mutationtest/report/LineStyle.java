@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.report;
 
-import org.pitest.mutationtest.instrument.ResultsReader.Confidence;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
+import org.pitest.mutationtest.results.Confidence;
+import org.pitest.mutationtest.results.DetectionStatus;
 
 public class LineStyle {
 

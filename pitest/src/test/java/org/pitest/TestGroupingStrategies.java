@@ -35,6 +35,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.GroupPerClassStrategy;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class TestGroupingStrategies {
 
@@ -59,6 +60,7 @@ public class TestGroupingStrategies {
 
   private static class HideFromJUnit {
 
+    @RunWith(PITJUnitRunner.class)
     @SuiteClasses({ SuiteWithNoClassOfOwn.class })
     @StaticConfigurationClass(GroupedSuite.class)
     public static class GroupedSuite extends DefaultStaticConfig {
@@ -68,6 +70,7 @@ public class TestGroupingStrategies {
       }
     }
 
+    @RunWith(PITJUnitRunner.class)
     @SuiteClasses({ SuiteWithNoClassOfOwn.class })
     @StaticConfigurationClass(UnGroupedSuite.class)
     public static class UnGroupedSuite extends DefaultStaticConfig {

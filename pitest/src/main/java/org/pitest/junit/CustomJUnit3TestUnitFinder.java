@@ -31,25 +31,20 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.TestClass;
 import org.pitest.junit.adapter.TestAdapter;
 import org.pitest.reflection.Reflection;
 
 public class CustomJUnit3TestUnitFinder implements TestUnitFinder {
 
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return isCustomJUnit3Class(clazz);
-  }
-
-  public Collection<TestUnit> findTestUnits(final TestClass a,
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration b, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
 
-    if (isCustomJUnit3Class(a.getClazz())) {
+    if (isCustomJUnit3Class(clazz)) {
       final List<TestUnit> units = new ArrayList<TestUnit>();
-      final TestSuite ts = new TestSuite(a.getClazz());
+      final TestSuite ts = new TestSuite(clazz);
       flattenSuite(ts, units);
-      listener.recieveTests(units);
+      listener.receiveTests(units);
       return FCollection.map(units, processor);
 
     } else {

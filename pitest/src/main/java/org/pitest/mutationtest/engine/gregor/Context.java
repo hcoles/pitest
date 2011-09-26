@@ -43,7 +43,7 @@ public class Context {
   private String                                methodName;
   private boolean                               mutationFindingDisabled = false;
 
-  public void registerMutation(final MutationDetails details) {
+  private void registerMutation(final MutationDetails details) {
     if (!this.mutationFindingDisabled) {
       this.mutations.add(details);
     }

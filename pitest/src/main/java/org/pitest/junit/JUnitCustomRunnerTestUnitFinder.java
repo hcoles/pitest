@@ -14,69 +14,93 @@
  */
 package org.pitest.junit;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-import org.junit.Rule;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.runner.Description;
+import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
+import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.TestClass;
-import org.pitest.junit.adapter.AbstractPITJUnitRunner;
-import org.pitest.junit.adapter.RunnerAdapter;
-import org.pitest.junit.adapter.RunnerAdapterDescriptionTestUnit;
-import org.pitest.reflection.Reflection;
+import org.pitest.functional.Option;
+import org.pitest.internal.IsolationUtils;
+import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  public boolean canHandle(final Class<?> clazz, final boolean alreadyHandled) {
-    return !alreadyHandled;
-  }
-
-  public Collection<TestUnit> findTestUnits(final TestClass a,
-      final Configuration b, final TestDiscoveryListener listener,
+  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
+      final Configuration config, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
-    final RunWith runWith = a.getClazz().getAnnotation(RunWith.class);
-    if (runwithNotHandledNatively(runWith) || hasMethodRule(a.getClazz())) {
 
-      final RunnerAdapter adapter = new RunnerAdapter(a.getClazz());
-      final List<RunnerAdapterDescriptionTestUnit> units = adapter
-          .getDescriptions();
-      listener.recieveTests(units);
+    final Collection<? extends TestUnit> units = createUnits(testClass,
+        listener);
 
-      return FCollection.map(Collections.<TestUnit> singletonList(adapter),
-          processor);
+    return FCollection.map(units, processor);
 
+  }
+
+  private Collection<? extends TestUnit> createUnits(final Class<?> clazz,
+      final TestDiscoveryListener listener) {
+    final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
+    if (Filterable.class.isAssignableFrom(runner.getClass())) {
+      return splitIntoFilteredUnits(runner.getDescription(), listener);
+    } else {
+      return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
+          clazz, Option.<Filter> none()));
     }
-
-    return Collections.emptyList();
   }
 
-  private boolean hasMethodRule(final Class<?> clazz) {
-    final Predicate<Field> p = new Predicate<Field>() {
-      public Boolean apply(final Field a) {
-        try {
-          return a.isAnnotationPresent(Rule.class);
-        } catch (final NoClassDefFoundError ex) {
-          return false;
-        }
+  private Collection<? extends TestUnit> splitIntoFilteredUnits(
+      final Description description, final TestDiscoveryListener listener) {
+
+    listener.enterClass(description.getTestClass());
+    final Collection<TestUnit> tus = FCollection.filter(
+        description.getChildren(), isTest()).map(descriptionToTestUnit());
+    listener.receiveTests(tus);
+    listener.leaveClass(description.getTestClass());
+
+    return tus;
+  }
+
+  private F<Description, TestUnit> descriptionToTestUnit() {
+    return new F<Description, TestUnit>() {
+
+      public TestUnit apply(final Description a) {
+        return descriptionToTest(a);
       }
+
     };
-    return !Reflection.publicFields(clazz, p).isEmpty();
   }
 
-  private boolean runwithNotHandledNatively(final RunWith runWith) {
-    return (runWith != null)
-        && !AbstractPITJUnitRunner.class.isAssignableFrom(runWith.value())
-        && !runWith.value().equals(Suite.class);
+  private F<Description, Boolean> isTest() {
+    return new F<Description, Boolean>() {
+
+      public Boolean apply(final Description a) {
+        return a.isTest();
+      }
+
+    };
+  }
+
+  private TestUnit descriptionToTest(final Description description) {
+
+    Class<?> clazz = description.getTestClass();
+    if (clazz == null) {
+      clazz = IsolationUtils.convertForClassLoader(
+          IsolationUtils.getContextClassLoader(), description.getClassName());
+    }
+    return new AdaptedJUnitTestUnit(clazz,
+        Option.some(createFilterFor(description)));
+  }
+
+  private Filter createFilterFor(final Description description) {
+    return new DescriptionFilter(description.toString());
   }
 
 }

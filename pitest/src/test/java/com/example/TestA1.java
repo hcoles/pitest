@@ -19,11 +19,11 @@ import java.util.concurrent.Callable;
 import junit.framework.TestCase;
 
 import org.junit.runner.RunWith;
-import org.pitest.annotations.TestClass;
+import org.pitest.annotations.ClassUnderTest;
 import org.pitest.junit.adapter.PITJUnitRunner;
 
 @RunWith(PITJUnitRunner.class)
-@TestClass(TestA1.Testee.class)
+@ClassUnderTest(TestA1.Testee.class)
 public class TestA1 extends TestCase {
 
   public static class Testee {

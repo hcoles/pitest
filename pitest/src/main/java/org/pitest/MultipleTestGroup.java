@@ -48,7 +48,7 @@ public class MultipleTestGroup extends AbstractTestUnit {
         return a.getDescription().getTestClasses();
       }
     };
-    FCollection.flatMap(children, f, uniqueClasses);
+    FCollection.flatMapTo(children, f, uniqueClasses);
     return new Description("MultipleTestGroup", uniqueClasses, null);
   }
 

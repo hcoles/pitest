@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.junit.adapter;
 
@@ -85,12 +85,11 @@ public class TestAdapter extends AbstractTestUnit {
 
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
-      final Class<? extends TestCase> activeClass = (Class<? extends TestCase>) IsolationUtils
-          .convertForClassLoader(loader, this.testClass);
+      final Class<?> activeClass = IsolationUtils.convertForClassLoader(loader,
+          this.testClass);
 
       rc.notifyStart(getDescription());
       final Object test = createTest(activeClass, this.testMethod);
@@ -124,7 +123,8 @@ public class TestAdapter extends AbstractTestUnit {
       }
 
     } catch (final Exception e) {
-      throw Unchecked.translateCheckedException(e);
+      throw Unchecked.translateCheckedException("Error creating test for "
+          + theClass + " " + name, e);
     }
 
     return test;

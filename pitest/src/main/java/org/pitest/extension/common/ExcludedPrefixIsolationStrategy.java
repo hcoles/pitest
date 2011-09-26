@@ -34,10 +34,6 @@ public class ExcludedPrefixIsolationStrategy implements IsolationStrategy {
     this.excludedPackagePrefixes.addAll(excludedPackagePrefixes);
   }
 
-  public void addExclude(final String value) {
-    this.excludedPackagePrefixes.add(value);
-  }
-
   public boolean shouldIsolate(final String name) {
     for (final String s : this.excludedPackagePrefixes) {
       if (name.startsWith(s)) {

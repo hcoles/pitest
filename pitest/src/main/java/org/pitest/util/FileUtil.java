@@ -38,4 +38,9 @@ public class FileUtil {
     return fileData.toString();
   }
 
+  public static String randomFilename() {
+    return System.currentTimeMillis()
+        + ("" + Math.random()).replaceAll("\\.", "");
+  }
+
 }

@@ -62,4 +62,11 @@ public class GlobTest {
     assertFalse(glob.matches("foo!!!!!car"));
   }
 
+  @Test
+  public void shouldBeCaseSensitice() {
+    final Glob glob = new Glob("foo*bar*car");
+    assertTrue(glob.matches("foo!!!bar!!!car"));
+    assertFalse(glob.matches("foo!!!Bar!!!car"));
+  }
+
 }

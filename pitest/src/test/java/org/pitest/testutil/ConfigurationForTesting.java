@@ -2,7 +2,6 @@ package org.pitest.testutil;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,11 +19,13 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
+import org.pitest.extension.common.NoTestFinder;
+import org.pitest.extension.common.NullConfigurationUpdater;
+import org.pitest.extension.common.NullStaticConfigUpdater;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.True;
-import org.pitest.mutationtest.MutationSuiteConfigUpdater;
+import org.pitest.junit.CompoundTestUnitFinder;
 
 public class ConfigurationForTesting implements Configuration {
 
@@ -46,13 +47,11 @@ public class ConfigurationForTesting implements Configuration {
 
   };
 
-  public List<TestUnitProcessor> testUnitProcessors() {
-    return Collections
-        .<TestUnitProcessor> singletonList(new IgnoreTestProcessor(
-            IgnoreAnnotationForTesting.class));
+  public TestUnitProcessor testUnitProcessor() {
+    return new IgnoreTestProcessor(IgnoreAnnotationForTesting.class);
   }
 
-  public List<TestUnitFinder> testUnitFinders() {
+  public TestUnitFinder testUnitFinder() {
     final Set<MethodFinder> beforeClassFinders = Collections
         .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
             BeforeClassAnnotationForTest.class));
@@ -72,32 +71,35 @@ public class ConfigurationForTesting implements Configuration {
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
     tmfs.add(new TestFinder());
 
-    return Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
-        True.<Class<?>> all(), tmfs, beforeMethodFinders, afterMethodFinders,
-        beforeClassFinders, afterClassFinders));
+    final List<InstantiationStrategy> instantiationStrategies =
+
+    Arrays
+        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+
+    return new CompoundTestUnitFinder(
+        Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
+            instantiationStrategies, tmfs, beforeMethodFinders,
+            afterMethodFinders, beforeClassFinders, afterClassFinders)));
   }
 
   public boolean allowConfigurationChange() {
     return true;
   }
 
-  public Collection<TestSuiteFinder> testSuiteFinders() {
-    return Arrays.<TestSuiteFinder> asList(new PITStaticMethodSuiteFinder());
+  public TestSuiteFinder testSuiteFinder() {
+    return new PITStaticMethodSuiteFinder();
   }
 
-  public List<InstantiationStrategy> instantiationStrategies() {
-    return Arrays
-        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+  public ConfigurationUpdater configurationUpdater() {
+    return new NullConfigurationUpdater();
   }
 
-  public Collection<ConfigurationUpdater> configurationUpdaters() {
-    return Collections
-        .<ConfigurationUpdater> singletonList(MutationSuiteConfigUpdater
-            .instance());
+  public StaticConfigUpdater staticConfigurationUpdater() {
+    return new NullStaticConfigUpdater();
   }
 
-  public Collection<StaticConfigUpdater> staticConfigurationUpdaters() {
-    return Collections.emptyList();
+  public TestUnitFinder mutationTestFinder() {
+    return new NoTestFinder();
   }
 
 }

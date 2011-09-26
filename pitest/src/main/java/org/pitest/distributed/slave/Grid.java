@@ -67,6 +67,7 @@ public class Grid {
 
     if ((worker != null) && worker.isAlive()) {
       worker.destroy();
+      worker.cleanup();
     }
 
     CommandLineMessage.report("Closed down");
