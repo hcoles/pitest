@@ -30,7 +30,7 @@ public class InsnSubstitution implements ZeroOperandMutation {
     mv.visitInsn(this.replacementOpcode);
   }
 
-  public String decribe(final int opCode) {
+  public String decribe(final int opCode, final MethodInfo methodInfo) {
     return this.message;
   }
 

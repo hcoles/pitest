@@ -20,6 +20,6 @@ public interface ZeroOperandMutation {
 
   public void apply(final int opCode, final MethodVisitor mv);
 
-  public String decribe(final int opCode);
+  public String decribe(final int opCode, final MethodInfo methodInfo);
 
 }

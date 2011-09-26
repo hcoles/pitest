@@ -14,18 +14,14 @@
  */
 package org.pitest.mutationtest.engine;
 
-import java.util.Collection;
-
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
 
 public interface Mutater {
 
-  public Mutant getUnmodifiedClass(final String clazz);
-
   public Mutant getMutation(MutationIdentifier id);
 
   public FunctionalList<MutationDetails> findMutations(
-      Collection<String> classesToMutate);
+      Iterable<String> classesToMutate);
 
 }

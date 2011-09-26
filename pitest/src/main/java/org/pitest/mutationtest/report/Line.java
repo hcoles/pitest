@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.report;
 
@@ -19,8 +19,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.ResultsReader.DetectionStatus;
-import org.pitest.mutationtest.instrument.ResultsReader.MutationResult;
+import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.results.MutationResult;
 
 public class Line {
   private final long                 number;
@@ -37,7 +37,7 @@ public class Line {
     final Comparator<MutationResult> c = new Comparator<MutationResult>() {
 
       public int compare(final MutationResult o1, final MutationResult o2) {
-        return o1.status.getRanking() - o2.status.getRanking();
+        return o1.getStatus().getRanking() - o2.getStatus().getRanking();
       }
 
     };
@@ -64,7 +64,7 @@ public class Line {
     if (this.mutations.isEmpty()) {
       return Option.none();
     }
-    return Option.some(this.mutations.get(0).status);
+    return Option.some(this.mutations.get(0).getStatus());
   }
 
   public int getNumberOfMutations() {

@@ -55,8 +55,6 @@ public final class TestClass {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     units.addAll(classConfig.testUnitFinder().findTestUnits(
         TestClass.this.getClazz(), classConfig, listener, applyProcessors));
-    units.addAll(classConfig.mutationTestFinder().findTestUnits(
-        TestClass.this.getClazz(), classConfig, listener, applyProcessors));
 
     return units;
   }

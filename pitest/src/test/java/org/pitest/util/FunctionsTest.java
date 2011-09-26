@@ -61,4 +61,14 @@ public class FunctionsTest {
 
   }
 
+  @Test
+  public void isInterfaceShouldReturnTrueWhenGivenAnInterface() {
+    assertTrue(Functions.isInterface().apply(Comparable.class));
+  }
+
+  @Test
+  public void isInterfaceShouldReturnFalseWhenGivenAConcreteClass() {
+    assertFalse(Functions.isInterface().apply(String.class));
+  }
+
 }

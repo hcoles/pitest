@@ -14,31 +14,19 @@
  */
 package org.pitest.mutationtest;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
 public final class MutationConfig {
 
-  private final int              threshold;
-  private final List<String>     jvmArgs;
-  private final MutationTestType type;
-  private final MutationEngine   engine;
+  private final List<String>   jvmArgs;
+  private final MutationEngine engine;
 
-  public MutationConfig(final MutationEngine engine,
-      final MutationTestType type, final int threshold, final String[] jvmArgs) {
-    this(engine, type, threshold, Arrays.asList(jvmArgs));
-  }
+  public MutationConfig(final MutationEngine engine, final List<String> jvmArgs) {
 
-  public MutationConfig(final MutationEngine engine,
-      final MutationTestType type, final int threshold,
-      final List<String> jvmArgs) {
-    this.type = type;
-    this.threshold = threshold;
     this.jvmArgs = jvmArgs;
     this.engine = engine;
   }
@@ -47,16 +35,12 @@ public final class MutationConfig {
     return this.engine.createMutator(this, loader);
   }
 
-  public int getThreshold() {
-    return this.threshold;
-  }
-
   public List<String> getJVMArgs() {
     return this.jvmArgs;
   }
 
-  public MutationTestType getRunType() {
-    return this.type;
+  public Collection<String> getMutatorNames() {
+    return this.engine.getMutatorNames();
   }
 
   @Override
@@ -67,8 +51,6 @@ public final class MutationConfig {
         + ((this.engine == null) ? 0 : this.engine.hashCode());
     result = prime * result
         + ((this.jvmArgs == null) ? 0 : this.jvmArgs.hashCode());
-    result = prime * result + this.threshold;
-    result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
     return result;
   }
 
@@ -98,28 +80,13 @@ public final class MutationConfig {
     } else if (!this.jvmArgs.equals(other.jvmArgs)) {
       return false;
     }
-    if (this.threshold != other.threshold) {
-      return false;
-    }
-    if (this.type == null) {
-      if (other.type != null) {
-        return false;
-      }
-    } else if (!this.type.equals(other.type)) {
-      return false;
-    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "MutationConfig [engine=" + this.engine + ", jvmArgs="
-        + this.jvmArgs + ", threshold=" + this.threshold + ", type="
-        + this.type + "]";
-  }
-
-  public Collection<String> getMutatorNames() {
-    return this.engine.getMutatorNames();
+    return "MutationConfig [jvmArgs=" + this.jvmArgs + ", engine="
+        + this.engine + "]";
   }
 
 }

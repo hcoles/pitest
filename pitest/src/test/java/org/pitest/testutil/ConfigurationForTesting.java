@@ -20,12 +20,12 @@ import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
+import org.pitest.extension.common.NullConfigurationUpdater;
 import org.pitest.extension.common.NullStaticConfigUpdater;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.junit.CompoundTestUnitFinder;
-import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class ConfigurationForTesting implements Configuration {
 
@@ -91,7 +91,7 @@ public class ConfigurationForTesting implements Configuration {
   }
 
   public ConfigurationUpdater configurationUpdater() {
-    return MutationSuiteConfigUpdater.instance();
+    return new NullConfigurationUpdater();
   }
 
   public StaticConfigUpdater staticConfigurationUpdater() {

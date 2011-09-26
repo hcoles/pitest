@@ -113,6 +113,15 @@ public abstract class Reflection {
 
   }
 
+  public static Predicate<Class<?>> isTopClass() {
+    return new Predicate<Class<?>>() {
+      public Boolean apply(final Class<?> a) {
+        return isTopClass(a);
+      }
+
+    };
+  }
+
   public static boolean isTopClass(final Class<?> clazz) {
     return getTopClass(clazz).equals(clazz);
   }

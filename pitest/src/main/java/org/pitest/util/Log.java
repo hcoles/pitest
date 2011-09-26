@@ -25,9 +25,33 @@ public class Log {
       LOGGER.setUseParentHandlers(false);
       final Handler handler = new ConsoleHandler();
       handler.setFormatter(new PlainFormatter());
-      LOGGER.addHandler(handler);
-      LOGGER.setLevel(Level.ALL);
+      addOrSetHandler(handler);
+      LOGGER.setLevel(Level.INFO);
       handler.setLevel(Level.ALL);
+    }
+  }
+
+  private static void addOrSetHandler(final Handler handler) {
+    if (LOGGER.getHandlers().length == 0) {
+      LOGGER.addHandler(handler);
+    } else {
+      LOGGER.getHandlers()[0] = handler;
+    }
+  }
+
+  public static void setVerbose(final boolean on) {
+    if (on) {
+      setLevel(Level.FINEST);
+    } else {
+      setLevel(Level.INFO);
+    }
+  }
+
+  private static void setLevel(final Level level) {
+
+    LOGGER.setLevel(level);
+    for (final Handler each : LOGGER.getHandlers()) {
+      each.setLevel(level);
     }
   }
 
@@ -59,6 +83,10 @@ public class Log {
       return buf.toString();
     }
 
+  }
+
+  public static boolean isVerbose() {
+    return Level.FINEST.equals(LOGGER.getLevel());
   }
 
 }

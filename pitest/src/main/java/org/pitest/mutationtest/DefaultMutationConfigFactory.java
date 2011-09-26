@@ -16,21 +16,17 @@ package org.pitest.mutationtest;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
+import org.pitest.functional.F;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
+import org.pitest.mutationtest.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.report.MutationTestSummaryData.MutationTestType;
 
-public final class DefaultMutationConfigFactory implements
-    MutationConfigFactory {
-
-  private final static Predicate<MethodInfo>           filter           = True
-                                                                            .<MethodInfo> all();
+public final class DefaultMutationConfigFactory {
 
   public final static Collection<MethodMutatorFactory> DEFAULT_MUTATORS = Arrays
                                                                             .<MethodMutatorFactory> asList(
@@ -49,58 +45,59 @@ public final class DefaultMutationConfigFactory implements
                                                                                 "org.slf4j",
                                                                                 "org.apache.commons.logging");
 
-  public static MutationEngine makeDefaultEngine() {
-    return new GregorMutationEngine(DEFAULT_MUTATORS, LOGGING_CLASSES, filter);
-  }
-
-  public MutationConfig createConfig(final MutationTest annotation) {
-    return new MutationConfig(createEngine(annotation),
-        MutationTestType.TEST_CENTRIC, annotation.threshold(),
-        Arrays.asList(annotation.jvmArgs()));
-  }
-
-  public static MutationConfig createConfig(final int threshold,
-      final Mutator... mutators) {
-    return new MutationConfig(createEngine(true, LOGGING_CLASSES, mutators),
-        MutationTestType.TEST_CENTRIC, threshold,
-        Collections.<String> emptyList());
-  }
-
-  private MutationEngine createEngine(final MutationTest annotation) {
-    return createEngine(true, LOGGING_CLASSES, annotation.mutators());
-  }
-
   public static MutationEngine createEngine(
       final boolean mutateStaticInitializers,
-      final Collection<String> loggingClasses, final Mutator... mutators) {
+      final Predicate<String> excludedMethods,
+      final Collection<String> loggingClasses,
+      final MethodMutatorFactory... mutators) {
     final Collection<MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
-    final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers);
-    return new GregorMutationEngine(ms, loggingClasses, filter);
-  }
-
-  private static Predicate<MethodInfo> pickFilter(
-      final boolean mutateStaticInitializers) {
-    if (!mutateStaticInitializers) {
-      return new Predicate<MethodInfo>() {
-
-        public Boolean apply(final MethodInfo a) {
-          return !a.isStaticInitializer();
-        }
-
-      };
-    } else {
-      return filter;
-    }
+    final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
+        Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
+    final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
+        filter, loggingClasses, ms);
+    return new GregorMutationEngine(config);
   }
 
   private static Collection<MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
-      final Mutator... mutators) {
+      final MethodMutatorFactory... mutators) {
     if (mutators.length != 0) {
       return Arrays.<MethodMutatorFactory> asList(mutators);
     } else {
       return DEFAULT_MUTATORS;
     }
 
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Predicate<MethodInfo> pickFilter(
+      final boolean mutateStaticInitializers,
+      final Predicate<MethodInfo> excludedMethods) {
+    if (!mutateStaticInitializers) {
+      return Prelude.and(excludedMethods, notStaticInitializer());
+    } else {
+      return excludedMethods;
+    }
+  }
+
+  private static F<MethodInfo, Boolean> stringToMethodInfoPredicate(
+      final Predicate<String> excludedMethods) {
+    return new Predicate<MethodInfo>() {
+
+      public Boolean apply(final MethodInfo a) {
+        return excludedMethods.apply(a.getName());
+      }
+
+    };
+  }
+
+  private static Predicate<MethodInfo> notStaticInitializer() {
+    return new Predicate<MethodInfo>() {
+
+      public Boolean apply(final MethodInfo a) {
+        return !a.isStaticInitializer();
+      }
+
+    };
   }
 
 };

@@ -1,27 +1,33 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.util;
 
+import static org.pitest.functional.Prelude.or;
+
 import java.io.IOException;
-import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.pitest.functional.FCollection;
+import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 
 public class JavaProcess {
 
@@ -73,10 +79,6 @@ public class JavaProcess {
     }
   }
 
-  public OutputStream stdIn() {
-    return this.process.getOutputStream();
-  }
-
   private static List<String> createLaunchArgs(final String javaProcess,
       final JavaAgent agentJarLocator, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs) {
@@ -84,14 +86,47 @@ public class JavaProcess {
     final List<String> cmd = new ArrayList<String>();
     cmd.add(javaProcess);
     cmd.addAll(args);
-    final Option<String> jarLocation = agentJarLocator.getJarLocation();
-    for (final String each : jarLocation) {
-      cmd.add("-javaagent:" + each);
-    }
+
+    addPITJavaAgent(agentJarLocator, cmd);
+    addLaunchJavaAgents(cmd);
 
     cmd.add(mainClass.getName());
     cmd.addAll(programArgs);
     return cmd;
+  }
+
+  private static void addPITJavaAgent(final JavaAgent agentJarLocator,
+      final List<String> cmd) {
+    final Option<String> jarLocation = agentJarLocator.getJarLocation();
+    for (final String each : jarLocation) {
+      cmd.add("-javaagent:" + each);
+    }
+  }
+
+  private static void addLaunchJavaAgents(final List<String> cmd) {
+    final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
+    @SuppressWarnings("unchecked")
+    final FunctionalList<String> agents = FCollection.filter(
+        rt.getInputArguments(), or(isJavaAgentParam(), isEnvironmentSetting()));
+    cmd.addAll(agents);
+  }
+
+  private static Predicate<String> isEnvironmentSetting() {
+    return new Predicate<String>() {
+      public Boolean apply(final String a) {
+        return a.startsWith("-D");
+      }
+    };
+  }
+
+  private static Predicate<String> isJavaAgentParam() {
+    return new Predicate<String>() {
+
+      public Boolean apply(final String a) {
+        return a.toLowerCase().startsWith("-javaagent");
+      }
+
+    };
   }
 
   public static JavaProcess launch(final SideEffect1<String> systemOutHandler,

@@ -10,7 +10,9 @@ public class LoadsResourcesFromClassPath {
     final InputStream stream = IsolationUtils.getContextClassLoader()
         .getResourceAsStream(
             "resource folder with spaces/text in folder with spaces.txt");
-    return stream != null;
+    final boolean result = stream != null; // store result to nudge compiler
+                                           // towards single IRETURN
+    return result;
   }
 
 }

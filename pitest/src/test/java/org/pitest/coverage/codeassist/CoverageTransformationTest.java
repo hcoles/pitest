@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.coverage.codeassist;
 
@@ -24,11 +24,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.coverage.CodeCoverageStore;
-import org.pitest.coverage.CoverageStatistics;
+import org.pitest.boot.CodeCoverageStore;
+import org.pitest.boot.InvokeReceiver;
 import org.pitest.coverage.codeassist.samples.ClassWithAMethod;
 import org.pitest.coverage.codeassist.samples.ClassWithInitialisedField;
-import org.pitest.coverage.execute.InvokeReceiver;
 
 public class CoverageTransformationTest {
 
@@ -36,7 +35,6 @@ public class CoverageTransformationTest {
   private static final int       CLASS_WITH_METHOD_METHOD_LINE       = 20;
   private static final int       FIRST_CLASS                         = 0;
   private CoverageTransformation testee;
-  private CoverageStatistics     invokeStatistics;
 
   @Mock
   private InvokeReceiver         invokeQueue;
@@ -45,8 +43,8 @@ public class CoverageTransformationTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     this.testee = new CoverageTransformation();
-    this.invokeStatistics = new CoverageStatistics();
-    CodeCoverageStore.init(this.invokeQueue, this.invokeStatistics);
+    CodeCoverageStore.resetClassCounter();
+    CodeCoverageStore.init(this.invokeQueue);
   }
 
   @Test
@@ -68,7 +66,7 @@ public class CoverageTransformationTest {
   }
 
   @Test
-  public void shouldRecordMultipleVisitsToTheSameLine() throws Exception {
+  public void willRecordMultipleVisitsToTheSameLine() throws Exception {
     final String sampleName = ClassWithAMethod.class.getName();
     final byte[] bytes = this.testee.transform(sampleName,
         ClassUtils.classAsBytes(sampleName));

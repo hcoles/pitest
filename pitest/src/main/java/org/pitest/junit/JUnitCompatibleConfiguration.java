@@ -27,9 +27,7 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.DefaultConfigurationUpdater;
 import org.pitest.extension.common.DefaultStaticConfigUpdater;
 import org.pitest.extension.common.IgnoreTestProcessor;
-import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
-import org.pitest.mutationtest.MutationSuiteConfigUpdater;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -44,10 +42,6 @@ public class JUnitCompatibleConfiguration implements Configuration {
     return new CombinedJUnitTestFinder();
   }
 
-  public boolean allowConfigurationChange() {
-    return true;
-  }
-
   public TestSuiteFinder testSuiteFinder() {
     return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
         new PITStaticMethodSuiteFinder(), new JUnit4SuiteFinder(),
@@ -55,18 +49,11 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   public ConfigurationUpdater configurationUpdater() {
-    return new CompoundConfigurationUpdater(
-        Arrays.<ConfigurationUpdater> asList(
-            MutationSuiteConfigUpdater.instance(),
-            new DefaultConfigurationUpdater()));
+    return new DefaultConfigurationUpdater();
   }
 
   public StaticConfigUpdater staticConfigurationUpdater() {
     return new DefaultStaticConfigUpdater();
-  }
-
-  public TestUnitFinder mutationTestFinder() {
-    return new NoTestFinder();
   }
 
 }

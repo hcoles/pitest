@@ -1,32 +1,26 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.report;
 
-import static org.pitest.mutationtest.report.DirectorySourceLocator.dir;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -36,54 +30,37 @@ import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.MutationMetaData;
-import org.pitest.mutationtest.instrument.Statistics;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.FileUtil;
 
 public class MutationHtmlReportListener implements TestListener {
 
+  private final ResultOutputStrategy          outputStrategy;
+
   private final MutatorScores                 mutatorScores = new MutatorScores();
   private final long                          startTime;
 
   private final Collection<SourceLocator>     sourceRoots   = new HashSet<SourceLocator>();
-  private final File                          reportDir;
+
   private final List<MutationTestSummaryData> summaryData   = new ArrayList<MutationTestSummaryData>();
   private final List<String>                  errors        = new ArrayList<String>();
+  private final CoverageDatabase              coverage;
 
-  public MutationHtmlReportListener() {
-    this(System.currentTimeMillis(), "./", dir("src/test/java"),
-        dir("src/main/java"), dir("src"), dir("test"), dir("source"),
-        dir("tst"), dir("java"));
-  }
-
-  public MutationHtmlReportListener(final String reportDir,
+  public MutationHtmlReportListener(final CoverageDatabase coverage,
+      final long startTime, final ResultOutputStrategy outputStrategy,
       final SourceLocator... locators) {
-    this(System.currentTimeMillis(), reportDir, locators);
-  }
-
-  public MutationHtmlReportListener(final long startTime,
-      final String reportDir, final SourceLocator... locators) {
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
-    final String timeString = sdf.format(new Date());
-    this.reportDir = new File(addPathSeperatorIfMissing(reportDir) + timeString);
-    this.reportDir.mkdirs();
-    this.sourceRoots.addAll(Arrays.asList(locators));
+    this.coverage = coverage;
+    this.outputStrategy = outputStrategy;
     this.startTime = startTime;
-  }
-
-  private String addPathSeperatorIfMissing(final String s) {
-    if (!s.endsWith(File.separator)) {
-      return s + File.separator;
-    } else {
-      return s;
-    }
+    this.sourceRoots.addAll(Arrays.asList(locators));
   }
 
   private void extractMetaData(final TestResult tr) {
@@ -108,50 +85,80 @@ public class MutationHtmlReportListener implements TestListener {
     try {
       this.mutatorScores.registerResults(value.getMutations());
 
-      final Statistics stats = value.getStats();
-
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
-      final MutationTestSummaryData summaryData = value.getSummaryData();
+
+      final int lineCoverage = calculateLineCoverage(value);
+
+      final MutationTestSummaryData summaryData = new MutationTestSummaryData(
+          value.getMutatedClass(), value.getTestClasses(),
+          value.getPercentageMutationCoverage(), lineCoverage);
       collectSummaryData(summaryData);
 
       final String fileName = summaryData.getFileName();
 
-      final BufferedWriter bf = new BufferedWriter(new FileWriter(
-          this.reportDir.getAbsolutePath() + File.separatorChar + fileName));
+      final Writer writer = this.outputStrategy.createWriterForFile(fileName);
 
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", css);
       st.setAttribute("summary", summaryData);
-      st.setAttribute("tests", getTests(value));
+
+      st.setAttribute("tests", value.getTargettedTests());
+
       st.setAttribute("mutators", value.getConfig().getMutatorNames());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(
-          value, stats);
+      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(value);
 
       st.setAttribute("sourceFiles", sourceFiles);
       st.setAttribute("mutatedClasses", value.getMutatedClass());
 
       // st.setAttribute("groups", groups);
-      bf.write(st.toString());
-      bf.close();
+      writer.write(st.toString());
+      writer.close();
 
     } catch (final IOException ex) {
       ex.printStackTrace();
     }
   }
 
+  private int calculateLineCoverage(final MutationMetaData value) {
+    final long numberOfCoveredLines = this.coverage
+        .getNumberOfCoveredLines(value.getMutatedClass());
+
+    int lineCoverage = 0;
+    if (numberOfCoveredLines != 0) {
+      final long numberOfCodeLines = FCollection.fold(accumulateCodeLines(), 0,
+          this.coverage.getClassInfo(value.getMutatedClass()));
+
+      lineCoverage = Math
+          .round(100f / numberOfCodeLines * numberOfCoveredLines);
+
+    }
+    return lineCoverage;
+  }
+
+  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
+    return new F2<Integer, ClassInfo, Integer>() {
+
+      public Integer apply(final Integer a, final ClassInfo b) {
+        return a + b.getCodeLines().size();
+      }
+
+    };
+  }
+
   private Collection<SourceFile> createAnnotatedSoureFiles(
-      final MutationMetaData value, final Statistics stats) throws IOException {
+      final MutationMetaData value) throws IOException {
     final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
     for (final String each : value.getSourceFiles()) {
       final MutationResultList mutationsForThisFile = value
           .getResultsForSourceFile(each);
       final List<Line> lines = createAnnotatedSourceCodeLines(each,
-          mutationsForThisFile, stats, value.getClassesForSourceFile(each));
+          mutationsForThisFile,
+          this.coverage.getClassInfo(value.getClassesForSourceFile(each)));
 
       sourceFiles.add(new SourceFile(each, lines, mutationsForThisFile
           .groupMutationsByLine()));
@@ -168,13 +175,12 @@ public class MutationHtmlReportListener implements TestListener {
 
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
       final MutationResultList mutationsForThisFile,
-      final Statistics statistics, final Collection<ClassInfo> classes)
-      throws IOException {
+      final Collection<ClassInfo> classes) throws IOException {
     final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
     if (reader.hasSome()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
-          mutationsForThisFile, statistics, classes);
+          mutationsForThisFile, this.coverage, classes);
       return alf.convert(reader.value());
     }
     return Collections.emptyList();
@@ -193,12 +199,6 @@ public class MutationHtmlReportListener implements TestListener {
       }
 
     };
-  }
-
-  private Collection<TestUnit> getTests(final MutationMetaData value) {
-
-    return value.getStats().getAllTests();
-
   }
 
   private Option<Reader> findSourceFile(final Collection<String> classes,
@@ -240,8 +240,10 @@ public class MutationHtmlReportListener implements TestListener {
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_index");
-      final BufferedWriter bw = new BufferedWriter(new FileWriter(
-          this.reportDir.getAbsolutePath() + File.separatorChar + "index.html"));
+
+      final Writer writer = this.outputStrategy
+          .createWriterForFile("index.html");
+
       st.setAttribute("summaryList", this.summaryData);
       st.setAttribute("errors", this.errors);
       st.setAttribute("numberOfMutations",
@@ -250,11 +252,10 @@ public class MutationHtmlReportListener implements TestListener {
           this.mutatorScores.getTotalDetectedMutations());
       st.setAttribute("duration", duration);
       st.setAttribute("mutatorScores", this.mutatorScores);
-      bw.write(st.toString());
-      bw.close();
+      writer.write(st.toString());
+      writer.close();
 
     } catch (final IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

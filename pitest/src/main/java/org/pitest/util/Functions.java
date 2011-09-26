@@ -130,4 +130,13 @@ public abstract class Functions {
     };
   }
 
+  public static Predicate<Class<?>> isInterface() {
+    return new Predicate<Class<?>>() {
+      public Boolean apply(final Class<?> a) {
+        return a.isInterface();
+      }
+
+    };
+  }
+
 }

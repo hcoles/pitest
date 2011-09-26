@@ -131,8 +131,8 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
   @Override
   public String toString() {
-    return "SteppedTestUnit [expected=" + this.expected + ", steps="
-        + this.steps + "]";
+    return "SteppedTestUnit [steps=" + this.steps + ", expected="
+        + this.expected + ", getDescription()=" + getDescription() + "]";
   }
 
 }

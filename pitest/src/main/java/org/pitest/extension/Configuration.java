@@ -19,8 +19,6 @@ public interface Configuration {
 
   public TestUnitProcessor testUnitProcessor();
 
-  public TestUnitFinder mutationTestFinder();
-
   public TestUnitFinder testUnitFinder();
 
   public TestSuiteFinder testSuiteFinder();

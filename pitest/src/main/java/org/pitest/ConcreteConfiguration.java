@@ -40,7 +40,6 @@ public final class ConcreteConfiguration implements Configuration {
   // private final boolean allowConfigurationChange;
   private TestUnitProcessor    testProcessor              = new IdentityTestUnitProcessor();
   private TestUnitFinder       testUnitFinder             = new NoTestFinder();
-  private TestUnitFinder       mutationTestFinder         = new NoTestFinder();
   private TestSuiteFinder      testSuiteFinder            = new NoTestSuiteFinder();
   private ConfigurationUpdater configurationUpdater       = new NullConfigurationUpdater();
   private StaticConfigUpdater  staticConfigurationUpdater = new NullStaticConfigUpdater();
@@ -75,8 +74,6 @@ public final class ConcreteConfiguration implements Configuration {
   }
 
   public void addConfiguration(final Configuration configuration) {
-    this.mutationTestFinder = new CompoundTestUnitFinder(Arrays.asList(
-        this.mutationTestFinder, configuration.mutationTestFinder()));
 
     this.testUnitFinder = new CompoundTestUnitFinder(Arrays.asList(
         this.testUnitFinder, configuration.testUnitFinder()));
@@ -96,14 +93,6 @@ public final class ConcreteConfiguration implements Configuration {
 
   public StaticConfigUpdater staticConfigurationUpdater() {
     return this.staticConfigurationUpdater;
-  }
-
-  public TestUnitFinder mutationTestFinder() {
-    return this.mutationTestFinder;
-  }
-
-  public void setMutationTestFinder(final TestUnitFinder mtf) {
-    this.mutationTestFinder = mtf;
   }
 
 }

@@ -18,11 +18,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Operations.combine;
 import static org.pitest.functional.Prelude.id;
 import static org.pitest.functional.Prelude.isEqualTo;
 import static org.pitest.functional.Prelude.isGreaterThan;
-import static org.pitest.functional.Prelude.toSingletonList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -157,8 +155,7 @@ public class MutableListTest {
   public void shouldApplyFlatMapToAllEntries() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
     assertEquals(new MutableList<Integer>(1, 2, 3),
-        this.testee.flatMap(combine(id(Integer.class),
-            toSingletonList(Integer.class))));
+        this.testee.flatMap(Prelude.asList(Integer.class)));
   }
 
   @Test

@@ -1,75 +1,67 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.mutationtest.instrument;
 
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.util.Log;
+import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
+import org.pitest.mutationtest.execute.Reporter;
+import org.pitest.util.MemoryEfficientHashMap;
 
 public class TimeOutDecoratedTestSource {
 
-  private final static Logger         LOG = Log.getLogger();
-
-  private final Statistics            stats;
-  private final List<TestUnit>        allTests;
+  private final Map<String, TestUnit> allTests = new MemoryEfficientHashMap<String, TestUnit>();
   private final TimeoutLengthStrategy timeoutStrategy;
+  private final Reporter              r;
 
-  public TimeOutDecoratedTestSource(final Statistics stats,
-      final TimeoutLengthStrategy timeoutStrategy, final List<TestUnit> allTests) {
-    this.stats = stats;
-    this.allTests = allTests;
+  public TimeOutDecoratedTestSource(
+      final TimeoutLengthStrategy timeoutStrategy,
+      final List<TestUnit> allTests, final Reporter r) {
     this.timeoutStrategy = timeoutStrategy;
+    mapTests(allTests);
+    this.r = r;
   }
 
-  public List<TestUnit> pickTests(final Mutant m) {
-    if (this.stats.hasCoverageData() && !hasMutationInStaticInitializer(m)) {
-      return decorateForTimeouts(
-          this.stats.getTestForLineNumber(m.getDetails().getClassLine()),
-          this.stats);
-    } else {
-      LOG.warning("Using untargetted tests");
-      return decorateForTimeouts(this.allTests, this.stats);
+  private void mapTests(final List<TestUnit> tests) {
+    for (final TestUnit each : tests) {
+      this.allTests.put(each.getDescription().toString(), each);
     }
   }
 
-  private List<TestUnit> decorateForTimeouts(final List<TestUnit> tests,
-      final Statistics stats) {
-    return FCollection.map(tests, decorateTestForTimeout(stats));
+  public List<TestUnit> translateTests(final List<TestInfo> testsInOrder) {
+    return FCollection.map(testsInOrder, testToTestUnit());
   }
 
-  private F<TestUnit, TestUnit> decorateTestForTimeout(final Statistics stats) {
-    return new F<TestUnit, TestUnit>() {
+  private F<TestInfo, TestUnit> testToTestUnit() {
+    return new F<TestInfo, TestUnit>() {
 
-      public TestUnit apply(final TestUnit tu) {
-        return new MutationTimeoutDecorator(tu,
-            TimeOutDecoratedTestSource.this.timeoutStrategy,
-            stats.getExecutionTime(tu));
+      public TestUnit apply(final TestInfo a) {
+
+        return new MutationTimeoutDecorator(
+            TimeOutDecoratedTestSource.this.allTests.get(a.getName()),
+            TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime(),
+            TimeOutDecoratedTestSource.this.r);
       }
 
     };
-  }
-
-  private boolean hasMutationInStaticInitializer(final Mutant mutant) {
-    return (mutant.getDetails().getId().isMutated())
-        && mutant.getDetails().isInStaticInitializer();
   }
 
 }

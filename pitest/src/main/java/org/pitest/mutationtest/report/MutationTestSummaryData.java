@@ -16,66 +16,17 @@ package org.pitest.mutationtest.report;
 
 import java.util.Collection;
 
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-
 public class MutationTestSummaryData {
 
-  public enum MutationTestType {
-    CODE_CENTRIC(new F<MutationTestSummaryData, Collection<String>>() {
-      public Collection<String> apply(final MutationTestSummaryData a) {
-        return FCollection.map(a.mutatedClasses, classInfoToName());
-      }
+  private final Collection<String> mutatedClasses;
+  private final Collection<String> testClasses;
+  private final Integer            mutationCoverage;
+  private final Integer            lineCoverage;
 
-      private F<ClassInfo, String> classInfoToName() {
-        return new F<ClassInfo, String>() {
-
-          public String apply(final ClassInfo a) {
-
-            return a.getName();
-          }
-
-        };
-      }
-    }),
-
-    TEST_CENTRIC(new F<MutationTestSummaryData, Collection<String>>() {
-
-      public Collection<String> apply(final MutationTestSummaryData a) {
-        return a.testClasses;
-      }
-    });
-
-    MutationTestType(
-        final F<MutationTestSummaryData, Collection<String>> drivingClassFunction) {
-      this.drivingClassFunction = drivingClassFunction;
-    }
-
-    private final F<MutationTestSummaryData, Collection<String>> drivingClassFunction;
-
-    public Collection<String> drivingClasses(
-        final MutationTestSummaryData summary) {
-      return this.drivingClassFunction.apply(summary);
-    }
-
-    public String mainDrivingClass(final MutationTestSummaryData summary) {
-      return drivingClasses(summary).iterator().next();
-    }
-
-  }
-
-  private final MutationTestType      runType;
-  private final Collection<ClassInfo> mutatedClasses;
-  private final Collection<String>    testClasses;
-  private final Integer               mutationCoverage;
-  private final Integer               lineCoverage;
-
-  public MutationTestSummaryData(final MutationTestType runType,
-      final Collection<ClassInfo> mutatedClasses,
+  public MutationTestSummaryData(final Collection<String> mutatedClasses,
       final Collection<String> testClasses, final Integer mutationCoverage,
       final Integer lineCoverage) {
-    this.runType = runType;
+
     this.mutatedClasses = mutatedClasses;
     this.testClasses = testClasses;
     this.mutationCoverage = mutationCoverage;
@@ -83,8 +34,8 @@ public class MutationTestSummaryData {
   }
 
   public String getFileName() {
-    final String mainDrivingClass = this.runType.mainDrivingClass(this);
-    final int otherClassCount = this.runType.drivingClasses(this).size() - 1;
+    final String mainDrivingClass = this.mutatedClasses.iterator().next();
+    final int otherClassCount = this.mutatedClasses.size() - 1;
 
     if (otherClassCount > 0) {
       return mainDrivingClass + "_and_" + otherClassCount + "_others.html";
@@ -93,7 +44,7 @@ public class MutationTestSummaryData {
     }
   }
 
-  public Collection<ClassInfo> getMutatedClasses() {
+  public Collection<String> getMutatedClasses() {
     return this.mutatedClasses;
   }
 
@@ -121,8 +72,6 @@ public class MutationTestSummaryData {
         * result
         + ((this.mutationCoverage == null) ? 0 : this.mutationCoverage
             .hashCode());
-    result = prime * result
-        + ((this.runType == null) ? 0 : this.runType.hashCode());
     result = prime * result
         + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
     return result;
@@ -159,13 +108,6 @@ public class MutationTestSummaryData {
         return false;
       }
     } else if (!this.mutationCoverage.equals(other.mutationCoverage)) {
-      return false;
-    }
-    if (this.runType == null) {
-      if (other.runType != null) {
-        return false;
-      }
-    } else if (!this.runType.equals(other.runType)) {
       return false;
     }
     if (this.testClasses == null) {

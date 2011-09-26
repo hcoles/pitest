@@ -23,7 +23,7 @@ public class FArrayTest {
   final Integer[] is = { 1, 2, 3, 4, 5 };
 
   @Test
-  public void shouldReturnsAllEntriesWhenFilteredOnTrue() {
+  public void shouldReturnAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = Arrays.asList(this.is);
     assertEquals(expected, FArray.filter(this.is, True.all()));
   }

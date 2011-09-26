@@ -1,6 +1,6 @@
 package org.pitest.coverage;
 
-import org.pitest.coverage.execute.InvokeReceiver;
+import org.pitest.boot.InvokeReceiver;
 
 public interface CoverageReceiver extends InvokeReceiver {
 

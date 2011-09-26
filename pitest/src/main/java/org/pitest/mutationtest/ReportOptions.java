@@ -1,53 +1,59 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest;
 
+import static org.pitest.functional.Prelude.and;
+import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 
 public class ReportOptions {
 
-  private boolean                                    isValid;
-
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
+  private Collection<Predicate<String>>              excludedMethods          = Collections
+                                                                                  .emptyList();
+
+  private Collection<Predicate<String>>              excludedClasses          = Collections
+                                                                                  .emptyList();
+
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
   private Collection<? extends MethodMutatorFactory> mutators;
 
+  private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
-
-  private boolean                                    showHelp;
 
   private boolean                                    includeJarFiles          = false;
 
-  private List<String>                               jvmArgs                  = new ArrayList<String>();
+  private final List<String>                         jvmArgs                  = new ArrayList<String>();
   private int                                        numberOfThreads          = 0;
   private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
@@ -56,19 +62,20 @@ public class ReportOptions {
 
   private Collection<String>                         loggingClasses           = new ArrayList<String>();
 
+  private int                                        maxMutationsPerClass;
+
+  private boolean                                    verbose                  = false;
+
   public ReportOptions() {
   }
 
-  public boolean isShowHelp() {
-    return this.showHelp;
+  public boolean isVerbose() {
+    return this.verbose;
   }
 
-  public void setShowHelp(final boolean showHelp) {
-    this.showHelp = showHelp;
-  }
-
+  @SuppressWarnings("unchecked")
   public Predicate<String> getClassesInScopeFilter() {
-    return or(this.classesInScope);
+    return and(or(this.classesInScope), not(isBlackListed()));
   }
 
   public void setClassesInScope(
@@ -130,16 +137,20 @@ public class ReportOptions {
     this.mutators = mutators;
   }
 
-  public boolean isValid() {
-    return this.isValid;
+  /**
+   * @return the dependencyAnalysisMaxDistance
+   */
+  public int getDependencyAnalysisMaxDistance() {
+    return this.dependencyAnalysisMaxDistance;
   }
 
-  public void setValid(final boolean isValid) {
-    this.isValid = isValid;
-  }
-
-  public boolean shouldShowHelp() {
-    return this.showHelp;
+  /**
+   * @param dependencyAnalysisMaxDistance
+   *          the dependencyAnalysisMaxDistance to set
+   */
+  public void setDependencyAnalysisMaxDistance(
+      final int dependencyAnalysisMaxDistance) {
+    this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
   }
 
   public List<String> getJvmArgs() {
@@ -147,7 +158,7 @@ public class ReportOptions {
   }
 
   public void addChildJVMArgs(final List<String> args) {
-    this.jvmArgs = args;
+    this.jvmArgs.addAll(args);
   }
 
   public Option<ClassPath> getClassPath(final boolean declareCaches) {
@@ -178,8 +189,9 @@ public class ReportOptions {
     return this.targetClasses;
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
-    return or(this.targetClasses);
+    return Prelude.and(or(this.targetClasses), not(isBlackListed()));
   }
 
   public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
@@ -241,26 +253,38 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [isValid=" + this.isValid + ", classesInScope="
+    return "ReportOptions [isValid=" + ", classesInScope="
         + this.classesInScope + ", targetClasses=" + this.targetClasses
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
-        + this.mutators + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + this.showHelp
-        + ", includeJarFiles=" + this.includeJarFiles + ", jvmArgs="
-        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
-        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
-        + this.timeoutConstant + ", targetTests=" + this.targetTests
-        + ", loggingClasses=" + this.loggingClasses + "]";
+        + this.mutators + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
+        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + "]";
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-      return True.all();
+      return not(isBlackListed());
     } else {
-      return or(this.targetTests);
+      return Prelude.and(or(this.targetTests), not(isBlackListed()));
     }
 
+  }
+
+  private Predicate<String> isBlackListed() {
+    return new Predicate<String>() {
+
+      public Boolean apply(final String a) {
+        return or(ReportOptions.this.excludedClasses).apply(a);
+      }
+
+    };
   }
 
   public Collection<String> getLoggingClasses() {
@@ -273,6 +297,32 @@ public class ReportOptions {
 
   public void setLoggingClasses(final Collection<String> loggingClasses) {
     this.loggingClasses = loggingClasses;
+  }
+
+  public Collection<Predicate<String>> getExcludedMethods() {
+    return this.excludedMethods;
+  }
+
+  public void setExcludedMethods(
+      final Collection<Predicate<String>> excludedMethods) {
+    this.excludedMethods = excludedMethods;
+  }
+
+  public int getMaxMutationsPerClass() {
+    return this.maxMutationsPerClass;
+  }
+
+  public void setMaxMutationsPerClass(final int maxMutationsPerClass) {
+    this.maxMutationsPerClass = maxMutationsPerClass;
+  }
+
+  public void setVerbose(final boolean verbose) {
+    this.verbose = verbose;
+  }
+
+  public void setExcludedClasses(
+      final Collection<Predicate<String>> excludedClasses) {
+    this.excludedClasses = excludedClasses;
   }
 
 }

@@ -5,25 +5,29 @@ import java.util.List;
 
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.CoverageReceiverThread;
+import org.pitest.mutationtest.CoverageCommunicationThread;
+import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
 
-public class CoverageProcess extends WrappingProcess {
+public class CoverageProcess {
 
-  private final CoverageReceiverThread crt;
+  private final WrappingProcess             process;
+  private final CoverageCommunicationThread crt;
 
-  public CoverageProcess(final Args processArgs,
+  public CoverageProcess(final ProcessArgs processArgs,
       final SlaveArguments arguments, final int port, final List<TestUnit> tus,
       final SideEffect1<CoverageResult> handler) throws IOException {
-    super(processArgs, arguments, CoverageSlave.class);
+    this.process = new WrappingProcess(port, processArgs, CoverageSlave.class);
+    this.crt = new CoverageCommunicationThread(port, arguments, tus, handler);
+  }
 
-    this.crt = new CoverageReceiverThread(port, tus, handler);
+  public void start() throws IOException {
+    this.process.start();
     this.crt.start();
   }
 
-  @Override
   public int waitToDie() throws InterruptedException {
-    final int exitCode = super.waitToDie();
+    final int exitCode = this.process.waitToDie();
     this.crt.waitToFinish();
     return exitCode;
   }
