@@ -5,3 +5,15 @@ syntax: regexp
 ^reports$
 syntax: regexp
 ^classpathCache$
+syntax: regexp
+^pitest/target$
+syntax: regexp
+^pitest-maven/target$
+syntax: regexp
+^pitest-maven/bin$
+syntax: glob
+*.classpath
+*.project
+*.settings
+*.svn
+release.properties
