@@ -20,6 +20,7 @@ import static org.pitest.mutationtest.results.DetectionStatus.MEMORY_ERROR;
 import static org.pitest.mutationtest.results.DetectionStatus.NON_VIABLE;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
+import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,7 +113,7 @@ public class TestMutationTesting {
     verifyResults(KILLED);
   }
 
-  public static class ThreeMutationsTwoTests {
+  public static class ThreeMutationsTwoMeaningfullTests {
     @TestAnnotationForTesting
     public void testReturnOne() {
       assertEquals(1, ThreeMutations.returnOne());
@@ -123,11 +124,15 @@ public class TestMutationTesting {
       assertEquals(2, ThreeMutations.returnTwo());
     }
 
+    @TestAnnotationForTesting
+    public void coverButDoNotTestReturnThree() {
+      ThreeMutations.returnThree();
+    }
   }
 
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
-    run(ThreeMutations.class, ThreeMutationsTwoTests.class, Mutator.RETURN_VALS);
+    run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class, Mutator.RETURN_VALS);
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -161,9 +166,9 @@ public class TestMutationTesting {
   }
 
   @Test
-  public void shouldReportSurvivingMutationsIfNoTestsAvailable() {
+  public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
     run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS);
-    verifyResults(SURVIVED, SURVIVED, SURVIVED);
+    verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
   public static class OneMutationTest {
@@ -211,7 +216,7 @@ public class TestMutationTesting {
   @Test
   public void shouldExportSystemPropertiesToSlaveProcess() {
     // System.setProperty("foo", "foo");
-    // note surefire ia configured to launch this test with -Dfoo=foo
+    // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutation.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
         Mutator.RETURN_VALS);
@@ -305,7 +310,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -325,7 +330,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-        .getDetectionStatus();
+    .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

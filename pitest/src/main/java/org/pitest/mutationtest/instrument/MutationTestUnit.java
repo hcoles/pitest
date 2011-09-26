@@ -111,28 +111,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     try {
       if (!this.availableMutations.isEmpty()) {
-
-        final String cp = createClassPath(loader);
-
-        final List<TestUnit> tests = findTestUnits(loader);
-
-        final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
-        if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
-          FCollection.forEach(
-              this.availableMutations,
-              putToMap(mutations, new MutationStatusTestPair(
-                  DetectionStatus.NOT_STARTED)));
-
-          runTestsInSeperateProcess(cp, tests, mutations);
-
-        } else {
-          FCollection.forEach(
-              this.availableMutations,
-              putToMap(mutations, new MutationStatusTestPair(
-                  DetectionStatus.SURVIVED)));
-        }
-        reportResults(mutations, this.availableMutations, rc, loader);
-
+        runTestsForMutations(rc, loader);
       } else {
         LOG.info("Skipping test " + this.getDescription()
             + " as no mutations found");
@@ -142,6 +121,35 @@ public class MutationTestUnit extends AbstractTestUnit {
       throw translateCheckedException(ex);
     }
 
+  }
+
+  private void runTestsForMutations(final ResultCollector rc,
+      final ClassLoader loader) throws IOException, InterruptedException {
+    final String cp = createClassPath(loader);
+
+    final List<TestUnit> tests = findTestUnits(loader);
+
+    final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
+    if (hasTestCoverage(tests)) {
+      setStatusForAvailableMutations(mutations, DetectionStatus.NOT_STARTED);
+      runTestsInSeperateProcess(cp, tests, mutations);
+
+    } else {
+      setStatusForAvailableMutations(mutations, DetectionStatus.NO_COVERAGE);
+    }
+    reportResults(mutations, this.availableMutations, rc, loader);
+  }
+
+  private void setStatusForAvailableMutations(
+      final Map<MutationDetails, MutationStatusTestPair> mutations, DetectionStatus status) {
+    FCollection.forEach(
+        this.availableMutations,
+        putToMap(mutations, new MutationStatusTestPair(
+            status)));
+  }
+
+  private boolean hasTestCoverage(final List<TestUnit> tests) {
+    return !tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests);
   }
 
   protected List<TestUnit> findTestUnits(final ClassLoader loader) {
@@ -167,9 +175,9 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-            .andStdout(captureStdOutIfVerbose())
-            .andStderr(printWith("stderr ")), fileArgs);
+        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andStdout(captureStdOutIfVerbose())
+        .andStderr(printWith("stderr ")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -253,7 +261,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestsInSeperateProcess(final String cp,
       final List<TestUnit> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
-      throws IOException, InterruptedException {
+  throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 
