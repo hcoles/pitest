@@ -57,7 +57,6 @@ import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.FileUtil;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -167,8 +166,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Collection<MutationDetails> remainingMutations,
       final List<TestUnit> tests, final String cp) throws IOException {
 
-    final SlaveArguments fileArgs = new SlaveArguments(
-        FileUtil.randomFilename(), remainingMutations, tests, this.config,
+    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations, tests, this.config,
         this.timeoutStrategy, Log.isVerbose());
 
     final PortFinder pf = PortFinder.INSTANCE;

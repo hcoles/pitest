@@ -16,8 +16,6 @@ package org.pitest.mutationtest.engine;
 
 public class MutationIdentifier {
 
-  private static final int UNMUTATED = -1;
-
   private final String     className;
   private final int        index;
   private final String     mutator;
@@ -33,13 +31,6 @@ public class MutationIdentifier {
     return this.className;
   }
 
-  public boolean isMutated() {
-    return this.index != UNMUTATED;
-  }
-
-  public static MutationIdentifier unmutated(final String clazz) {
-    return new MutationIdentifier(clazz, UNMUTATED, "NoMutation");
-  }
 
   public String getMutator() {
     return this.mutator;
@@ -50,10 +41,10 @@ public class MutationIdentifier {
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((this.className == null) ? 0 : this.className.hashCode());
+    + ((this.className == null) ? 0 : this.className.hashCode());
     result = prime * result + this.index;
     result = prime * result
-        + ((this.mutator == null) ? 0 : this.mutator.hashCode());
+    + ((this.mutator == null) ? 0 : this.mutator.hashCode());
     return result;
   }
 
@@ -96,7 +87,7 @@ public class MutationIdentifier {
   @Override
   public String toString() {
     return "Mutation -> className=" + this.className + ", index=" + this.index
-        + ", mutator=" + this.mutator;
+    + ", mutator=" + this.mutator;
   }
 
 }

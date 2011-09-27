@@ -154,8 +154,7 @@ public class MutationTestWorker {
   }
 
   private boolean hasMutationInStaticInitializer(final Mutant mutant) {
-    return (mutant.getDetails().getId().isMutated())
-    && mutant.getDetails().isInStaticInitializer();
+    return mutant.getDetails().isInStaticInitializer();
   }
 
   @Override
