@@ -28,6 +28,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.JavaAgent;
 
+import com.example.CoveredByEasyMock;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
@@ -141,6 +142,15 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setMaxMutationsPerClass(1);
     createAndRun();
     verifyResults(NO_COVERAGE);
+  }
+
+  @Test
+  public void shouldWorkWithEasyMock() {
+    this.data.setTargetClasses(predicateFor(CoveredByEasyMock.class));
+    this.data.setClassesInScope(predicateFor("com.example.*EasyMock*"));
+    this.data.setTargetTests(predicateFor(com.example.EasyMockTest.class));
+    createAndRun();
+    verifyResults(KILLED, KILLED, KILLED);
   }
 
   @Test
