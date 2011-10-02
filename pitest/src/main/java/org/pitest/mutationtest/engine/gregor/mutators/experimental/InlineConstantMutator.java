@@ -72,18 +72,18 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     private void mutate(final Integer constant) {
       final Integer replacement;
 
-      switch (constant) {
+      switch (constant.intValue()) {
       case 1:
-        replacement = 0;
+        replacement = Integer.valueOf(0);
         break;
       case Byte.MAX_VALUE:
-        replacement = Byte.MIN_VALUE;
+        replacement = Integer.valueOf(Byte.MIN_VALUE);
         break;
       case Short.MAX_VALUE:
-        replacement = Short.MIN_VALUE;
+        replacement = Integer.valueOf(Short.MIN_VALUE);
         break;
       default:
-        replacement = constant + 1;
+        replacement = Integer.valueOf(constant + 1);
         break;
       }
 
