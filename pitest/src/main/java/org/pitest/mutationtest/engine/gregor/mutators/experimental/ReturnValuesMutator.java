@@ -15,8 +15,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import java.lang.reflect.Method;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
@@ -37,6 +35,84 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class ReturnValuesMutator implements MethodMutatorFactory {
 
+  private static final class ObjectMutationMethod {
+
+    private final String mutatorMethodName;
+    private final String mutatorInternalName;
+    private final String mutationMethodDescriptor;
+
+    public ObjectMutationMethod() {
+
+      final Type mutatorType = Type.getType(ReturnValuesMutator.class);
+      this.mutatorInternalName = mutatorType.getInternalName();
+
+      this.mutatorMethodName = "mutateObjectInstance";
+
+      final Type objectType = Type.getType(Object.class);
+      final Type classType = Type.getType(Class.class);
+      this.mutationMethodDescriptor = Type.getMethodDescriptor(objectType,
+          new Type[] { objectType, classType });
+    }
+
+    public String getClassName() {
+      return this.mutatorInternalName;
+    }
+
+    public String getMethodDescriptor() {
+      return this.mutationMethodDescriptor;
+    }
+
+    public String getMethodName() {
+      return this.mutatorMethodName;
+    }
+
+  }
+
+  private static final class ObjectReferenceReplacer {
+
+    /**
+     * See {@link ReturnValuesMutator#mutateObjectInstance(Object, Class)} for
+     * details.
+     */
+    private Object replaceObjectInstance(final Object object,
+        final Class<?> clazz) {
+
+      if (Boolean.class == clazz) {
+        if (Boolean.TRUE.equals(object)) {
+          return Boolean.FALSE;
+        } else {
+          return Boolean.TRUE;
+        }
+      }
+
+      if (Integer.class == clazz) {
+        final Integer intValue = (Integer) object;
+        if (intValue == null) {
+          return Integer.valueOf(1);
+        } else if (intValue == 1) {
+          return Integer.valueOf(0);
+        } else {
+          return intValue + 1;
+        }
+      }
+
+      if (Object.class == clazz) {
+        if (object != null) {
+          return null;
+        } else {
+          return new Object();
+        }
+      }
+
+      if (object == null) {
+        throw new RuntimeException(
+            "Mutated null custom object to throwing runtime exception");
+      }
+      return null;
+    }
+
+  }
+
   private final class ReturnValuesMethodVisitor extends MethodAdapter {
 
     private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
@@ -52,20 +128,15 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     }
 
     private void mutateObjectReferenceReturn() {
-      final Type t = Type.getType(ReturnValuesMutator.class);
-      try {
-        final Method m = ReturnValuesMutator.class.getMethod(
-            "mutateObjectInstance", Object.class, Class.class);
+      if (shouldMutate("object reference", "[see docs for details]")) {
         final Type returnType = this.methodInfo.getReturnType();
 
-        if (shouldMutate("object reference", "[see docs for details]")) {
-          super.visitLdcInsn(returnType);
-          super.visitMethodInsn(Opcodes.INVOKESTATIC, t.getInternalName(),
-              "mutateObjectInstance", Type.getMethodDescriptor(m));
-          super.visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
-        }
-      } catch (final Exception e) {
-        throw new RuntimeException(e);
+        super.visitLdcInsn(returnType);
+        super.visitMethodInsn(Opcodes.INVOKESTATIC,
+            OBJECT_MUTATION_METHOD.getClassName(),
+            OBJECT_MUTATION_METHOD.getMethodName(),
+            OBJECT_MUTATION_METHOD.getMethodDescriptor());
+        super.visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
       }
       super.visitInsn(Opcodes.ARETURN);
     }
@@ -197,44 +268,15 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
   }
 
-  private static final class ObjectReferenceReplacer {
-
-    /**
-     * See {@link ReturnValuesMutator#mutateObjectInstance(Object, Class)} for
-     * details.
-     */
-    private Object replaceObjectInstance(final Object object,
-        final Class<?> clazz) {
-
-      if (Boolean.class == clazz) {
-        if (Boolean.TRUE.equals(object)) {
-          return Boolean.FALSE;
-        } else {
-          return Boolean.TRUE;
-        }
-      }
-
-      if (Integer.class == clazz) {
-        final Integer intValue = (Integer) object;
-        if (intValue == null) {
-          return Integer.valueOf(1);
-        } else if (intValue == 1) {
-          return Integer.valueOf(0);
-        } else {
-          return intValue + 1;
-        }
-      }
-
-      return null;
-
-    }
-
-  }
+  /**
+   * Do not change thread safe singleton instantiation.
+   */
+  private static final ObjectMutationMethod    OBJECT_MUTATION_METHOD = new ObjectMutationMethod();
 
   /**
    * Do not change thread safe singleton instantiation.
    */
-  private static final ObjectReferenceReplacer SINGLETON_REPLACER = new ObjectReferenceReplacer();
+  private static final ObjectReferenceReplacer SINGLETON_REPLACER     = new ObjectReferenceReplacer();
 
   /**
    * Mutates a given object instance / reference. The reference

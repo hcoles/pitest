@@ -15,6 +15,10 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -273,51 +277,45 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasObjectReturn.class);
     assertMutantCallableReturns(new HasObjectReturn(new Object()), mutant, null);
   }
-
-
-//  private static class HasConstantObjectRefReturn implements Callable<Object> {
-//
-//    private static final Object VALUE = new Object();
-//
-//    public Object call() throws Exception {
-//      return VALUE;
-//    }
-//  }
-//  
-//  
-//  private static class TestStrategy implements ObjectReferenceMutationStrategy {
-//    
-//  }
   
-  // new java.util.ArrayList [23]
-  // 3 dup
-  // 4 invokespecial java.util.ArrayList() [25]
-  // 7 astore_1 [x]
-  // 8 aload_1 [x]
-  // 9 new java.lang.Integer [26]
-  // 12 dup
-  // 13 iconst_1
-  // 14 invokespecial java.lang.Integer(int) [28]
-  // 17 invokeinterface java.util.Collection.add(java.lang.Object) : boolean
-  // [31] [nargs: 2]
-  // 22 pop
-  // 23 aload_1 [x]
-  // 24 invokeinterface java.util.Collection.iterator() : java.util.Iterator
-  // [37] [nargs: 1]
-  // 29 invokeinterface java.util.Iterator.next() : java.lang.Object [41]
-  // [nargs: 1]
-  // 34 checkcast java.lang.Integer [26]
-  // 37 areturn
-//  @Test
-//  public void shouldMutateObjectReferenceReturnValuesWithObjectReferenceMutationStrategy() throws Exception {
-//    final Object mutatedReturnValue = new Object();
-//    ReturnValuesMutator mutator = new ReturnValuesMutator(TestStrategy.class);
-//    
-//    this.createTesteeWith(mutator);
-//
-//    final Mutant mutant = getFirstMutant(HasConstantObjectRefReturn.class);
-//    assertMutantCallableReturns(new HasConstantObjectRefReturn(), mutant,
-//        mutatedReturnValue);
-//  }
+  @Test
+  public void shouldMutateReturnsOfNullObjectsToNewObject() throws Exception {
+    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
+    assertNotNull(mutateAndCall(new HasObjectReturn(null), mutant));
+  }
+  
+  private static class CustomObject extends Object {}
+  
+  private static class HasCustomObjectReturn implements Callable<CustomObject> {
+
+    private final CustomObject value;
+
+    public HasCustomObjectReturn(final CustomObject value) {
+      this.value = value;
+    }
+    
+    public CustomObject call() throws Exception {
+      return this.value;
+    }
+  }
+  
+  private static class AAA<T extends Comparable<T>> {
+    
+    public T getFoo() {
+      return null;
+    }
+  }
+
+  @Test
+  public void shouldMutateReturnsOfNonNullCustomObjectsToNull() throws Exception {
+    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
+    assertMutantCallableReturns(new HasCustomObjectReturn(new CustomObject()), mutant, null);
+  }
+  
+  @Test(expected = RuntimeException.class)
+  public void shouldMutateReturnsOfNullCustomObjectsToThrownRuntimeException() throws Exception {
+    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
+    mutateAndCall(new HasCustomObjectReturn(null), mutant);
+  }
 
 }
