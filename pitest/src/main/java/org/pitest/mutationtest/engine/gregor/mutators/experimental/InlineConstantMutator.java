@@ -70,8 +70,22 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     }
 
     private void mutate(final Integer constant) {
+      final Integer replacement;
 
-      final Integer replacement = (constant == 1) ? 0 : constant + 1;
+      switch (constant) {
+      case 1:
+        replacement = 0;
+        break;
+      case Byte.MAX_VALUE:
+        replacement = Byte.MIN_VALUE;
+        break;
+      case Short.MAX_VALUE:
+        replacement = Short.MIN_VALUE;
+        break;
+      default:
+        replacement = constant + 1;
+        break;
+      }
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);

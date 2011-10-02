@@ -245,31 +245,24 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
     public Integer call() throws Exception {
       short s = Short.MAX_VALUE;
-      
-      // note the strict inequation and note that s is greater than the maximum
-      // value which can be represented by short.
-      if (s > Short.MAX_VALUE) {
-        return (int)s;
-      }
-      return 0;
+
+      return (int)s;
     }
 
   }
 
   /**
-   * We tolerate that strange behavior can occur according short overflow. The
-   * JVM does not have a short type, it uses integer under the hood. If users
-   * complain about this behavior we should add exceptional handling for
-   * <code>Short.MAX_VALUE</code> which should be rolled to
-   * <code>Short.MIN_VALUE</code>. Note that the rolling will occur even if only
-   * Integer/int variables are used! So <code>int i = 32767;</code> will always
-   * be mutated to <code>int i = -32768;</code>.
+   * The JVM does not have a short type, it uses integer under the hood.
+   * <code>Short.MAX_VALUE</code> (=32767) will always be rolled to
+   * <code>Short.MIN_VALUE</code> (=-32768). Note that the rolling will occur
+   * even if only Integer/int variables are used! So <code>int i = 32767;</code>
+   * will always be mutated to <code>int i = -32768;</code>.
    */
   @Test
-  public void mayCauseStrangeShortOverflowBehavior() throws Exception {
+  public void shouldOverflowOnShortMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasShortOverflow.class);
     assertMutantCallableReturns(new HasShortOverflow(), mutant,
-        Short.MAX_VALUE + 1);
+        (int)Short.MIN_VALUE);
   }
 
   private static class HasByteOverflow implements Callable<Integer> {
@@ -277,31 +270,22 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     public Integer call() throws Exception {
       byte b = Byte.MAX_VALUE;
       
-      // note the strict inequation and note that s is greater than the maximum
-      // value which can be represented by byte.
-      if (b > Byte.MAX_VALUE) {
-        return (int)b;
-      }
-      
-      return 0;
+      return (int)b;
     }
-
   }
 
   /**
-   * We tolerate that strange behavior can occur according byte overflow. The
-   * JVM does not have a byte type, it uses integer under the hood. If users
-   * complain about this behavior we should add exceptional handling for
-   * <code>Byte.MAX_VALUE</code> which should be rolled to
-   * <code>Byte.MIN_VALUE</code>. Note that the rolling will occur even if only
-   * Integer/int variables are used! So <code>int i = 127;</code> will always be
-   * mutated to <code>int i = -128;</code>.
+   * The JVM does not have a byte type, it uses integer under the hood.
+   * <code>Byte.MAX_VALUE</code> (=127) will always be rolled to
+   * <code>Byte.MIN_VALUE</code> (=-128). Note that the rolling will occur even
+   * if only Integer/int variables are used! So <code>int i = 127;</code> will
+   * always be mutated to <code>int i = -128;</code>.
    */
   @Test
-  public void mayCauseStrangeByteOverflowBehavior() throws Exception {
+  public void shouldOverflowOnByteMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasByteOverflow.class);
     assertMutantCallableReturns(new HasByteOverflow(), mutant,
-        Byte.MAX_VALUE + 1);
+        (int)Byte.MIN_VALUE);
   }
 
   private static class HasIntegerMaxValue implements Callable<Integer> {
