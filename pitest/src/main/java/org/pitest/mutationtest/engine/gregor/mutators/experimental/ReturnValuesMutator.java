@@ -29,6 +29,12 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 /**
  * The <code>ReturnValuesMutator</code> mutates the return values of method
  * calls. Depending on the return type of the method another mutation is used.
+ * <p />
+ * <p>
+ * Replacements for primitive types are simple. Replacements of object
+ * references are handled by {@link ObjectReferenceReplacer}. Those replacements
+ * can get more complex.
+ * </p>
  * 
  * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -75,9 +81,9 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
      * details.
      */
     private Object replaceObjectInstance(final Object object,
-        final Class<?> clazz) {
+        final Class<?> declaredReturnType) {
 
-      if (Boolean.class == clazz) {
+      if (Boolean.class == declaredReturnType) {
         if (Boolean.TRUE.equals(object)) {
           return Boolean.FALSE;
         } else {
@@ -85,7 +91,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
         }
       }
 
-      if (Integer.class == clazz) {
+      if (Integer.class == declaredReturnType) {
         final Integer intValue = (Integer) object;
         if (intValue == null) {
           return Integer.valueOf(1);
@@ -96,7 +102,16 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
         }
       }
 
-      if (Object.class == clazz) {
+      if (Long.class == declaredReturnType) {
+        final Long longValue = (Long) object;
+        if (longValue == null) {
+          return Long.valueOf(1L);
+        } else {
+          return longValue + 1L;
+        }
+      }
+
+      if (Object.class == declaredReturnType) {
         if (object != null) {
           return null;
         } else {
@@ -106,8 +121,9 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
       if (object == null) {
         throw new RuntimeException(
-            "Mutated null custom object to throwing runtime exception");
+            "Mutated return of null object to throwing a runtime exception");
       }
+
       return null;
     }
 

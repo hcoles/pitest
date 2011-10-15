@@ -17,8 +17,6 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -153,7 +151,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldMutateReturnOfFloatNANToMinusOne() throws Exception {
+  public void shouldMutateReturnOfPrimitiveFloatNANToMinusOne() throws Exception {
     final Mutant mutant = getFirstMutant(HasPrimitiveFloatReturn.class);
     assertMutantCallableReturns(new HasPrimitiveFloatReturn(Float.NaN), mutant,
         -1F);
@@ -185,7 +183,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldMutateReturnOfDoubleNANToMinusOne() throws Exception {
+  public void shouldMutateReturnOfPrimitiveDoubleNANToMinusOne() throws Exception {
     final Mutant mutant = getFirstMutant(HasPrimitiveDoubleReturn.class);
     assertMutantCallableReturns(new HasPrimitiveDoubleReturn(Double.NaN),
         mutant, -1D);
@@ -224,6 +222,14 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasBooleanReturn(null), mutant,
         Boolean.TRUE);
   }
+  
+  @Test
+  public void cannotMutateReturnOfBooleanIfDeclaredAsObject() throws Exception {
+    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
+    assertMutantCallableReturns(new HasObjectReturn(Boolean.TRUE),
+        mutant, null);
+  }
+
 
   private static class HasIntegerReturn implements Callable<Integer> {
 
@@ -258,7 +264,43 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIntegerReturn(null), mutant,
         Integer.valueOf(1));
   }
+  
+  private static class HasLongReturn implements Callable<Long> {
 
+    private final Long value;
+
+    public HasLongReturn(final Long value) {
+      this.value = value;
+    }
+    
+    public Long call() throws Exception {
+      return this.value;
+    }
+  }
+
+  @Test
+  public void shouldMutateReturnOfLongToValuePlus1() throws Exception {
+    final Mutant mutant = getFirstMutant(HasLongReturn.class);
+    assertMutantCallableReturns(
+        new HasLongReturn(Long.valueOf(Integer.MAX_VALUE + 5l)), mutant,
+        Long.valueOf(Integer.MAX_VALUE + 6l));
+  }
+
+  @Test
+  public void shouldMutateReturnOfLongNullToOne() throws Exception {
+    final Mutant mutant = getFirstMutant(HasLongReturn.class);
+    assertMutantCallableReturns(new HasLongReturn(null), mutant,
+        Long.valueOf(1));
+  }
+
+  
+  @Test
+  public void cannotMutateReturnOfIntegerIfDeclaredAsObject() throws Exception {
+    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
+    assertMutantCallableReturns(new HasObjectReturn(Integer.valueOf(1)),
+        mutant, null);
+  }
+  
   private static class HasObjectReturn implements Callable<Object> {
 
     private final Object value;
@@ -299,23 +341,43 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
     }
   }
   
-  private static class AAA<T extends Comparable<T>> {
-    
-    public T getFoo() {
-      return null;
-    }
+  @Test
+  public void shouldMutateReturnsOfNonNullCustomObjectsToNull()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
+    assertMutantCallableReturns(new HasCustomObjectReturn(new CustomObject()),
+        mutant, null);
   }
 
-  @Test
-  public void shouldMutateReturnsOfNonNullCustomObjectsToNull() throws Exception {
-    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
-    assertMutantCallableReturns(new HasCustomObjectReturn(new CustomObject()), mutant, null);
-  }
-  
   @Test(expected = RuntimeException.class)
-  public void shouldMutateReturnsOfNullCustomObjectsToThrownRuntimeException() throws Exception {
+  public void shouldMutateReturnsOfNullCustomObjectsToThrownRuntimeException()
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
     mutateAndCall(new HasCustomObjectReturn(null), mutant);
+  }
+  
+  private static class HasGenericStuff<T> implements Callable<T>{
+
+    private final T object;
+    
+    private HasGenericStuff(final T object) {
+      this.object = object;
+    }
+    
+    public T call() throws Exception {
+      return this.object;
+    }
+    
+  }
+  
+  @Test(expected = ClassCastException.class)
+  public void cannotDetectGenericsStuff() {
+    final Mutant mutant = getFirstMutant(HasGenericStuff.class);
+    
+    // assigning to x causes a class cast exception! The returned object is
+    final CustomObject x = mutateAndCall(
+        new HasGenericStuff<CustomObject>(null), mutant);
+    assertNotNull(x); // this line never called but prevents x not used warning.
   }
 
 }
