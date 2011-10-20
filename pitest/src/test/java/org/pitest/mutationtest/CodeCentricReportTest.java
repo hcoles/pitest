@@ -16,8 +16,8 @@
 package org.pitest.mutationtest;
 
 import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
-import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +29,7 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.JavaAgent;
 
 import com.example.CoveredByEasyMock;
+import com.example.CoveredByJMockit;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
@@ -149,6 +150,15 @@ public class CodeCentricReportTest extends ReportTestBase {
     this.data.setTargetClasses(predicateFor(CoveredByEasyMock.class));
     this.data.setClassesInScope(predicateFor("com.example.*EasyMock*"));
     this.data.setTargetTests(predicateFor(com.example.EasyMockTest.class));
+    createAndRun();
+    verifyResults(KILLED, KILLED, KILLED);
+  }
+
+  @Test(expected=PitHelpError.class) // fails to calculate coverage for JMockit
+  public void doesNotWorkWithJMockit() {
+    this.data.setTargetClasses(predicateFor(CoveredByJMockit.class));
+    this.data.setClassesInScope(predicateFor("com.example.*JMockit*"));
+    this.data.setTargetTests(predicateFor(com.example.JMockitTest.class));
     createAndRun();
     verifyResults(KILLED, KILLED, KILLED);
   }
