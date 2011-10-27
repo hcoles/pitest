@@ -27,12 +27,12 @@ import org.pitest.functional.Option;
 
 public class DirectorySourceLocator implements SourceLocator {
 
-  private final File root;
-  private final F<File,Option<Reader>> fileToReader;
+  private final File                    root;
+  private final F<File, Option<Reader>> fileToReader;
 
-  private static class FileToReader implements F<File,Option<Reader>> {
+  private static class FileToReader implements F<File, Option<Reader>> {
 
-    public Option<Reader> apply(File f) {
+    public Option<Reader> apply(final File f) {
       if (f.exists()) {
         try {
           return Option.<Reader> some(new FileReader(f));
@@ -45,8 +45,8 @@ public class DirectorySourceLocator implements SourceLocator {
 
   };
 
-
-  DirectorySourceLocator(final File root, F<File,Option<Reader>> fileToReader) {
+  DirectorySourceLocator(final File root,
+      final F<File, Option<Reader>> fileToReader) {
     this.root = root;
     this.fileToReader = fileToReader;
   }
@@ -57,7 +57,8 @@ public class DirectorySourceLocator implements SourceLocator {
 
   public Option<Reader> locate(final Collection<String> classes,
       final String fileName) {
-    final List<Reader> matches = FCollection.flatMap(classes, classNameToSourceFileReader(fileName));
+    final List<Reader> matches = FCollection.flatMap(classes,
+        classNameToSourceFileReader(fileName));
     if (matches.isEmpty()) {
       return Option.none();
     } else {
@@ -65,11 +66,12 @@ public class DirectorySourceLocator implements SourceLocator {
     }
   }
 
-  private F<String,Iterable<Reader>> classNameToSourceFileReader(final String fileName) {
+  private F<String, Iterable<Reader>> classNameToSourceFileReader(
+      final String fileName) {
     return new F<String, Iterable<Reader>>() {
 
       public Iterable<Reader> apply(final String className) {
-        if ( className.contains(".")) {
+        if (className.contains(".")) {
           final File f = new File(className.replace(".", File.separator));
           return locate(f.getParent() + File.separator + fileName);
         } else {

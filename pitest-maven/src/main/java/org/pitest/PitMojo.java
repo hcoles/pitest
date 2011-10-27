@@ -2,6 +2,7 @@ package org.pitest;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,8 +23,8 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
-import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
@@ -31,7 +32,9 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.JavaAgent;
 
@@ -69,7 +72,6 @@ public class PitMojo extends AbstractMojo {
    * 
    */
   private List<String>          excludedMethods;
-
 
   /**
    * Classes not to mutate or run tests from
@@ -158,13 +160,19 @@ public class PitMojo extends AbstractMojo {
    */
   private int                   maxMutationsPerClass;
 
-
   /**
    * Arguments to pass to child processes
    * 
    * @parameter
    */
-  private List<String>                jvmArgs;
+  private List<String>          jvmArgs;
+
+  /**
+   * Formats to output during analysis phase
+   * 
+   * @parameter
+   */
+  private List<String>          outputFormats;
 
   /**
    * Output verbose logging
@@ -235,11 +243,17 @@ public class PitMojo extends AbstractMojo {
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
     final JavaAgent jac = new JarCreatingJarFinder(cp);
-    KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(jac.getJarLocation().value());
+    final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
+        jac.getJarLocation().value());
 
-    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(data.getReportDir());
+    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(
+        data.getReportDir());
+    final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
+        FCollection.map(data.getOutputFormats(),
+            OutputFormat.createFactoryForFormat(reportOutput)));
+
     final MutationCoverageReport report = new MutationCoverageReport(data, ja,
-        new HtmlReportFactory(reportOutput), true);
+        reportFactory, true);
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,
@@ -282,7 +296,7 @@ public class PitMojo extends AbstractMojo {
 
     data.setReportDir(this.reportsDirectory.getAbsolutePath());
     data.setVerbose(this.verbose);
-    if ( this.jvmArgs != null ) {
+    if (this.jvmArgs != null) {
       data.addChildJVMArgs(this.jvmArgs);
     }
 
@@ -298,7 +312,19 @@ public class PitMojo extends AbstractMojo {
     sourceRoots.addAll(this.project.getTestCompileSourceRoots());
 
     data.setSourceDirs(stringsTofiles(sourceRoots));
+
+    data.addOutputFormats(determineOutputFormats());
+
     return data;
+  }
+
+  private Collection<OutputFormat> determineOutputFormats() {
+    if (this.outputFormats != null) {
+      return FCollection.map(this.outputFormats,
+          Functions.stringToEnum(OutputFormat.class));
+    } else {
+      return Arrays.asList(OutputFormat.HTML);
+    }
   }
 
   private Collection<Predicate<String>> globStringsToPredicates(

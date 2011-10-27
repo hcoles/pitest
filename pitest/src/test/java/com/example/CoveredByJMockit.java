@@ -14,16 +14,14 @@
  */
 package com.example;
 
-
 public class CoveredByJMockit {
-
 
   public static interface AnInterface {
     public void callMe();
   }
 
-  public static void doStuff(AnInterface ai) {
-    for ( int i = 0; i != 2; i++) {
+  public static void doStuff(final AnInterface ai) {
+    for (int i = 0; i != 2; i++) {
       ai.callMe();
     }
   }

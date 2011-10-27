@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-
 public class DetectionStatusTest {
 
   @Test
@@ -47,7 +46,6 @@ public class DetectionStatusTest {
     assertTrue(DetectionStatus.MEMORY_ERROR.isDetected());
   }
 
-
   @Test
   public void shouldConsiderUnAnalysedMutationsAsUnDetected() {
     assertFalse(DetectionStatus.NOT_STARTED.isDetected());
@@ -60,7 +58,7 @@ public class DetectionStatusTest {
 
   @Test
   public void shouldConsiderRunErrorAsDetected() {
-    //really? dubious
+    // really? dubious
     assertTrue(DetectionStatus.RUN_ERROR.isDetected());
   }
 

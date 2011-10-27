@@ -20,8 +20,8 @@ public class CoveredByEasyMock {
     public void callMe();
   }
 
-  public void doStuff(AnInterface ai) {
-    for ( int i = 0; i != 2; i++) {
+  public void doStuff(final AnInterface ai) {
+    for (int i = 0; i != 2; i++) {
       ai.callMe();
     }
 

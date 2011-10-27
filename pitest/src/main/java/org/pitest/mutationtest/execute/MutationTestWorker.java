@@ -92,7 +92,7 @@ public class MutationTestWorker {
     LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
 
     final List<TestUnit> relevantTests = testSource
-    .translateTests(mutationDetails.getTestsInOrder());
+        .translateTests(mutationDetails.getTestsInOrder());
     // pickTests(mutatedClass);
 
     r.describe(mutationId);
@@ -102,8 +102,7 @@ public class MutationTestWorker {
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
-      mutationDetected =  new MutationStatusTestPair(
-          DetectionStatus.NO_COVERAGE);
+      mutationDetected = new MutationStatusTestPair(DetectionStatus.NO_COVERAGE);
     } else {
       LOG.info("" + relevantTests.size() + " relevant test for "
           + mutatedClass.getDetails().getMethod());
@@ -160,7 +159,7 @@ public class MutationTestWorker {
   @Override
   public String toString() {
     return "MutationTestWorker [mutater=" + this.mutater + ", loader="
-    + this.loader + ", hotswap=" + this.hotswap + "]";
+        + this.loader + ", hotswap=" + this.hotswap + "]";
   }
 
   protected MutationStatusTestPair doTestsDetectMutation(final Container c,

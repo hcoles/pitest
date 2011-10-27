@@ -43,7 +43,7 @@ public class DirectorySourceLocatorTest {
     this.root = new File(".");
     this.testee = new DirectorySourceLocator(this.root, this.locator);
     when(this.locator.apply(any(File.class)))
-    .thenReturn(Option.<Reader> none());
+        .thenReturn(Option.<Reader> none());
   }
 
   @Test
@@ -56,7 +56,7 @@ public class DirectorySourceLocatorTest {
   @Test
   public void shouldLocateSourceForClassesInNamedPacakges() {
     this.testee
-    .locate(Collections.singletonList("com.example.Foo"), "Foo.java");
+        .locate(Collections.singletonList("com.example.Foo"), "Foo.java");
     final File expected = new File(this.root + File.separator + "com"
         + File.separator + "example" + File.separator + "Foo.java");
     verify(this.locator).apply(expected);

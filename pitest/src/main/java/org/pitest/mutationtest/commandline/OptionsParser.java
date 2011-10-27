@@ -30,6 +30,7 @@ import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -53,6 +54,7 @@ public class OptionsParser {
   private final static String                       MAX_MUTATIONS_PER_CLASS_ARG    = "maxMutationsPerClass";
   private final static String                       VERBOSE                        = "verbose";
   private final static String                       EXCLUDED_CLASSES_ARG           = "excludedClasses";
+  private final static String                       OUTPUT_FORMATS                 = "outputFormats";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -73,6 +75,7 @@ public class OptionsParser {
   private final OptionSpec<Integer>                 maxMutationsPerClassSpec;
   private final OptionSpecBuilder                   verboseSpec;
   private final OptionSpec<String>                  excludedClassesSpec;
+  private final OptionSpec<OutputFormat>            outputFormatSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -180,6 +183,15 @@ public class OptionsParser {
             "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
 
     this.verboseSpec = this.parser.accepts(VERBOSE);
+
+    this.outputFormatSpec = this.parser
+        .accepts(OUTPUT_FORMATS)
+        .withRequiredArg()
+        .ofType(OutputFormat.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of formats in which to write output during the analysis pahse")
+        .defaultsTo(OutputFormat.HTML);
   }
 
   public ParseResult parse(final String[] args) {
@@ -211,6 +223,8 @@ public class OptionsParser {
       data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec
           .value(userArgs));
       data.setVerbose(userArgs.has(this.verboseSpec));
+
+      data.addOutputFormats(this.outputFormatSpec.values(userArgs));
 
       if (userArgs.has("?")) {
         return new ParseResult(data, "See above for supported parameters.");

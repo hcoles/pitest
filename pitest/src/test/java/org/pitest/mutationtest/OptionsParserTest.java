@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,6 +29,7 @@ import org.junit.Test;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.commandline.OptionsParser;
+import org.pitest.mutationtest.report.OutputFormat;
 
 public class OptionsParserTest {
 
@@ -194,6 +196,22 @@ public class OptionsParserTest {
   public void shouldParseVerboseFlag() {
     final ReportOptions actual = parseAddingRequiredArgs("--verbose");
     assertTrue(actual.isVerbose());
+  }
+
+  @Test
+  public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertEquals(new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML)),
+        actual.getOutputFormats());
+  }
+
+  @Test
+  public void shouldParseCommaSeperatedListOfOutputFormatsWhenSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
+        "HTML,CSV");
+    assertEquals(
+        new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML,
+            OutputFormat.CSV)), actual.getOutputFormats());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

@@ -18,9 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.results.DetectionStatus.MEMORY_ERROR;
 import static org.pitest.mutationtest.results.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
-import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,7 +132,8 @@ public class TestMutationTesting {
 
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
-    run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class, Mutator.RETURN_VALS);
+    run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
+        Mutator.RETURN_VALS);
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -310,7 +311,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-    .getGroupedClasses();
+        .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -330,7 +331,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-    .getDetectionStatus();
+        .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

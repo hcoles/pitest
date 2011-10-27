@@ -140,11 +140,10 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void setStatusForAvailableMutations(
-      final Map<MutationDetails, MutationStatusTestPair> mutations, DetectionStatus status) {
-    FCollection.forEach(
-        this.availableMutations,
-        putToMap(mutations, new MutationStatusTestPair(
-            status)));
+      final Map<MutationDetails, MutationStatusTestPair> mutations,
+      final DetectionStatus status) {
+    FCollection.forEach(this.availableMutations,
+        putToMap(mutations, new MutationStatusTestPair(status)));
   }
 
   private boolean hasTestCoverage(final List<TestUnit> tests) {
@@ -166,16 +165,16 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Collection<MutationDetails> remainingMutations,
       final List<TestUnit> tests, final String cp) throws IOException {
 
-    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations, tests, this.config,
-        this.timeoutStrategy, Log.isVerbose());
+    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
+        tests, this.config, this.timeoutStrategy, Log.isVerbose());
 
     final PortFinder pf = PortFinder.INSTANCE;
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-        .andStdout(captureStdOutIfVerbose())
-        .andStderr(printWith("stderr ")), fileArgs);
+            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+            .andStdout(captureStdOutIfVerbose())
+            .andStderr(printWith("stderr ")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -259,7 +258,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestsInSeperateProcess(final String cp,
       final List<TestUnit> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
-  throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 
