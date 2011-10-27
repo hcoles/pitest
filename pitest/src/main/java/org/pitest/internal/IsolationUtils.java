@@ -30,11 +30,11 @@ import java.util.WeakHashMap;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;
-import org.pitest.util.Base64;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
@@ -43,16 +43,16 @@ public abstract class IsolationUtils {
   private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
   private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
 
-                                                                                     public boolean fromDifferentLoader(
-                                                                                         final Class<?> clazz,
-                                                                                         final ClassLoader loader) {
-                                                                                       return IsolationUtils
-                                                                                           .fromDifferentLoader(
-                                                                                               clazz,
-                                                                                               loader);
-                                                                                     }
+    public boolean fromDifferentLoader(
+        final Class<?> clazz,
+        final ClassLoader loader) {
+      return IsolationUtils
+      .fromDifferentLoader(
+          clazz,
+          loader);
+    }
 
-                                                                                   };
+  };
 
   public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
     return LOADER_DETECTION_STRATEGY;
@@ -132,7 +132,7 @@ public abstract class IsolationUtils {
         public Boolean apply(final Method a) {
           if (a.getName().equals(m.getName())
               && a.getReturnType().getName()
-                  .equals(m.getReturnType().getName())) {
+              .equals(m.getReturnType().getName())) {
             final List<String> parameters = FCollection.map(
                 Arrays.asList(a.getParameterTypes()), classToName());
             return parameters.equals(params);
@@ -161,15 +161,17 @@ public abstract class IsolationUtils {
 
   public static String toTransportString(final Object o) {
     try {
-      return Base64.encodeBytes(toXml(o).getBytes("UTF-8"));
+      final Base64Encoder encoder = new Base64Encoder();
+      return encoder.encode(toXml(o).getBytes("UTF-8"));
     } catch (final UnsupportedEncodingException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
 
   public static String decodeTransportString(final String encodedXml)
-      throws IOException {
-    return new String(Base64.decode(encodedXml), "UTF-8");
+  throws IOException {
+    final Base64Encoder encoder = new Base64Encoder();
+    return new String(encoder.decode(encodedXml), "UTF-8");
   }
 
   public static Object fromTransportString(final String encodedXml) {
