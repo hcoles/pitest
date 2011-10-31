@@ -17,21 +17,9 @@ package org.pitest;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.StringReader;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
@@ -40,18 +28,9 @@ import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Unchecked;
 
-public class MojoToReportOptionsConverterTest extends AbstractMojoTestCase {
+public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   private MojoToReportOptionsConverter testee;
-
-  @Mock
-  private MavenProject                 project;
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    MockitoAnnotations.initMocks(this);
-  }
 
   public void testsParsesReportDir() {
     final ReportOptions actual = parseConfig("<reportsDirectory>Foo</reportsDirectory>");
@@ -266,45 +245,6 @@ public class MojoToReportOptionsConverterTest extends AbstractMojoTestCase {
     } catch (final Exception ex) {
       throw Unchecked.translateCheckedException(ex);
     }
-  }
-
-  private String createPomWithConfiguration(final String config) {
-    final String pom = "<project>\n" + //
-        "  <build>\n" + //
-        "    <plugins>\n" + //
-        "      <plugin>\n" + //
-        "        <groupId>org.pitest</groupId>\n" + //
-        "        <artifactId>pitest-maven</artifactId>\n" + //
-        "        <configuration>\n" + config + //
-        "        </configuration>\n" + //
-        "      </plugin>\n" + //
-        "    </plugins>\n" + //
-        "  </build>\n" + //
-        "</project>";
-    return pom;
-  }
-
-  private PitMojo createPITMojo(final String config) throws Exception {
-    final Xpp3Dom xpp3dom = Xpp3DomBuilder.build(new StringReader(config));
-    final PlexusConfiguration pluginConfiguration = extractPluginConfiguration(
-        "pitest-maven", xpp3dom);
-
-    final PitMojo pitMojo = new PitMojo();
-
-    // default the report dir to something
-    setVariableValueToObject(pitMojo, "reportsDirectory", new File("."));
-
-    configureMojo(pitMojo, pluginConfiguration);
-
-    setVariableValueToObject(pitMojo, "localRepository",
-        new StubArtifactRepository("repo"));
-
-    final Map<String, Artifact> pluginArtifacts = new HashMap<String, Artifact>();
-    setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
-
-    setVariableValueToObject(pitMojo, "project", this.project);
-
-    return pitMojo;
   }
 
 }
