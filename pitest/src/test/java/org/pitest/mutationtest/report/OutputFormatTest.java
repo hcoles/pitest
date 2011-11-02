@@ -38,8 +38,13 @@ public class OutputFormatTest {
   }
 
   @Test
-  public void casvFormatShouldReturnACSVReportFactory() {
+  public void csvFormatShouldReturnACSVReportFactory() {
     assertTrue(OutputFormat.CSV.createFactory(this.output) instanceof CSVReportFactory);
+  }
+
+  @Test
+  public void xmlFormatShouldReturnAnXMLReportFactory() {
+    assertTrue(OutputFormat.XML.createFactory(this.output) instanceof XMLReportFactory);
   }
 
 }
