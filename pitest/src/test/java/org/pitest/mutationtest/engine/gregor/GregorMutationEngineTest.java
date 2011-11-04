@@ -26,19 +26,21 @@ import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.config.DefaultMutationEngineConfiguration;
 
-
 public class GregorMutationEngineTest {
 
   private GregorMutationEngine testee;
 
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
-    Collection<MethodMutatorFactory> mutators = new ArrayList<MethodMutatorFactory>();
+    final Collection<MethodMutatorFactory> mutators = new ArrayList<MethodMutatorFactory>();
     mutators.add(Mutator.MATH);
     mutators.add(Mutator.CONDITIONALS_BOUNDARY);
-    DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(True.<MethodInfo>all(), Collections.<String>emptyList(), mutators);
+    final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
+        True.<MethodInfo> all(), Collections.<String> emptyList(), mutators);
     this.testee = new GregorMutationEngine(config);
-    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.getName(), Mutator.MATH.getName()),this.testee.getMutatorNames());
+    assertEquals(
+        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.getName(),
+            Mutator.MATH.getName()), this.testee.getMutatorNames());
 
   }
 

@@ -36,7 +36,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 public class InlineConstantMutator implements MethodMutatorFactory {
 
   private final class InlineConstantVisitor extends MethodAdapter implements
-  MethodVisitor {
+      MethodVisitor {
     private final Context context;
 
     public InlineConstantVisitor(final Context context,
@@ -127,7 +127,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
         final T replacement) {
       final MutationIdentifier mutationId = this.context.registerMutation(
           InlineConstantMutator.this, "Substituted " + constant + " with "
-          + replacement);
+              + replacement);
 
       return this.context.shouldMutate(mutationId);
     }

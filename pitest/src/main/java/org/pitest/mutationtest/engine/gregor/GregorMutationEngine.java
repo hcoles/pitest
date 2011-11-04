@@ -53,9 +53,9 @@ public class GregorMutationEngine implements MutationEngine {
     final int prime = 31;
     int result = 1;
     result = prime
-    * result
-    + ((this.mutationOperators == null) ? 0 : this.mutationOperators
-        .hashCode());
+        * result
+        + ((this.mutationOperators == null) ? 0 : this.mutationOperators
+            .hashCode());
     return result;
   }
 
@@ -84,7 +84,7 @@ public class GregorMutationEngine implements MutationEngine {
   @Override
   public String toString() {
     return "GregorMutationEngine [filter=" + this.filter
-    + ", mutationOperators=" + this.mutationOperators + "]";
+        + ", mutationOperators=" + this.mutationOperators + "]";
   }
 
   public Collection<String> getMutatorNames() {
@@ -94,7 +94,7 @@ public class GregorMutationEngine implements MutationEngine {
   private F<MethodMutatorFactory, String> toName() {
     return new F<MethodMutatorFactory, String>() {
 
-      public String apply(MethodMutatorFactory a) {
+      public String apply(final MethodMutatorFactory a) {
         return a.getName();
       }
 

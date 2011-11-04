@@ -43,16 +43,16 @@ public abstract class IsolationUtils {
   private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
   private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
 
-    public boolean fromDifferentLoader(
-        final Class<?> clazz,
-        final ClassLoader loader) {
-      return IsolationUtils
-      .fromDifferentLoader(
-          clazz,
-          loader);
-    }
+                                                                                     public boolean fromDifferentLoader(
+                                                                                         final Class<?> clazz,
+                                                                                         final ClassLoader loader) {
+                                                                                       return IsolationUtils
+                                                                                           .fromDifferentLoader(
+                                                                                               clazz,
+                                                                                               loader);
+                                                                                     }
 
-  };
+                                                                                   };
 
   public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
     return LOADER_DETECTION_STRATEGY;
@@ -132,7 +132,7 @@ public abstract class IsolationUtils {
         public Boolean apply(final Method a) {
           if (a.getName().equals(m.getName())
               && a.getReturnType().getName()
-              .equals(m.getReturnType().getName())) {
+                  .equals(m.getReturnType().getName())) {
             final List<String> parameters = FCollection.map(
                 Arrays.asList(a.getParameterTypes()), classToName());
             return parameters.equals(params);
@@ -169,7 +169,7 @@ public abstract class IsolationUtils {
   }
 
   public static String decodeTransportString(final String encodedXml)
-  throws IOException {
+      throws IOException {
     final Base64Encoder encoder = new Base64Encoder();
     return new String(encoder.decode(encodedXml), "UTF-8");
   }

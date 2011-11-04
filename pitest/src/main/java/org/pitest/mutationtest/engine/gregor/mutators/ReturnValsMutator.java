@@ -93,7 +93,7 @@ class ReturnValsMethodVisitor extends InsnMutator {
 
       public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "mutated return of Object value for "
-        + methodInfo.getDescription();
+            + methodInfo.getDescription();
       }
 
     };
@@ -110,7 +110,7 @@ class ReturnValsMethodVisitor extends InsnMutator {
 
       public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of long value with value + 1 for "
-        + methodInfo.getDescription();
+            + methodInfo.getDescription();
       }
 
     };
@@ -140,7 +140,7 @@ class ReturnValsMethodVisitor extends InsnMutator {
 
       public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of float value with -(x + 1) for "
-        + methodInfo.getDescription();
+            + methodInfo.getDescription();
       }
 
     };
@@ -170,7 +170,7 @@ class ReturnValsMethodVisitor extends InsnMutator {
 
       public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of double value with -(x + 1) for "
-        + methodInfo.getDescription();
+            + methodInfo.getDescription();
       }
 
     };

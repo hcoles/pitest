@@ -32,7 +32,8 @@ public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("CONDITIONALS_BOUNDARY_MUTATOR", ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName());
+    assertEquals("CONDITIONALS_BOUNDARY_MUTATOR",
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName());
   }
 
   private static int getZeroButPreventInlining() {

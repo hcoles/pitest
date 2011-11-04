@@ -74,8 +74,7 @@ public abstract class MutatorTestBase {
     assertEquals(expected, mutateAndCall(unmutated, mutant));
   }
 
-  protected <T> T mutateAndCall(final Callable<T> unmutated,
-      final Mutant mutant) {
+  protected <T> T mutateAndCall(final Callable<T> unmutated, final Mutant mutant) {
     try {
       final ClassLoader loader = createClassLoader(mutant);
       return runInClassLoader(loader, unmutated);
@@ -110,8 +109,8 @@ public abstract class MutatorTestBase {
   @SuppressWarnings("unchecked")
   private <T> T runInClassLoader(final ClassLoader loader,
       final Callable<T> callable) throws Exception {
-    final Callable<T> c = (Callable<T>) IsolationUtils
-        .cloneForLoader(callable, loader);
+    final Callable<T> c = (Callable<T>) IsolationUtils.cloneForLoader(callable,
+        loader);
     return c.call();
 
   }

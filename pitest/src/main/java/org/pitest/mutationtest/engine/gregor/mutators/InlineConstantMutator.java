@@ -53,33 +53,33 @@ class InlineConstantMethodVisitor extends InsnMutator {
 
   static {
     mutations.put(Opcodes.ICONST_M1, new InsnSubstitution(Opcodes.ICONST_1,
-    "Substituted -1 with 1"));
+        "Substituted -1 with 1"));
     mutations.put(Opcodes.ICONST_0, new InsnSubstitution(Opcodes.ICONST_1,
-    "Substituted 0 with 1"));
+        "Substituted 0 with 1"));
     mutations.put(Opcodes.ICONST_1, new InsnSubstitution(Opcodes.ICONST_0,
-    "Substituted 1 with 0"));
+        "Substituted 1 with 0"));
     mutations.put(Opcodes.ICONST_2, new InsnSubstitution(Opcodes.ICONST_3,
-    "Substituted 2 with 3"));
+        "Substituted 2 with 3"));
     mutations.put(Opcodes.ICONST_3, new InsnSubstitution(Opcodes.ICONST_4,
-    "Substituted 3 with 4"));
+        "Substituted 3 with 4"));
     mutations.put(Opcodes.ICONST_4, new InsnSubstitution(Opcodes.ICONST_5,
-    "Substituted 4 with 5"));
+        "Substituted 4 with 5"));
     mutations.put(Opcodes.ICONST_5, new InsnSubstitution(Opcodes.ICONST_M1,
-    "Substituted 5 with -1"));
+        "Substituted 5 with -1"));
     mutations.put(Opcodes.FCONST_0, new InsnSubstitution(Opcodes.FCONST_1,
-    "Substituted 0.0 with 1.0"));
+        "Substituted 0.0 with 1.0"));
     mutations.put(Opcodes.FCONST_1, new InsnSubstitution(Opcodes.FCONST_0,
-    "Substituted 1.0 with 0.0"));
+        "Substituted 1.0 with 0.0"));
     mutations.put(Opcodes.FCONST_2, new InsnSubstitution(Opcodes.FCONST_0,
-    "Substituted 2.0 with 0.0"));
+        "Substituted 2.0 with 0.0"));
     mutations.put(Opcodes.DCONST_0, new InsnSubstitution(Opcodes.DCONST_1,
-    "Substituted 0.0 with 1.0"));
+        "Substituted 0.0 with 1.0"));
     mutations.put(Opcodes.DCONST_1, new InsnSubstitution(Opcodes.DCONST_0,
-    "Substituted 1.0 with 0.0"));
+        "Substituted 1.0 with 0.0"));
     mutations.put(Opcodes.LCONST_0, new InsnSubstitution(Opcodes.LCONST_1,
-    "Substituted 0 with 1"));
+        "Substituted 0 with 1"));
     mutations.put(Opcodes.LCONST_1, new InsnSubstitution(Opcodes.LCONST_0,
-    "Substituted 1 with 0.0"));
+        "Substituted 1 with 0.0"));
 
   }
 
@@ -124,7 +124,7 @@ class InlineConstantMethodVisitor extends InsnMutator {
   private void createBiPushMutation(final int opcode, final int var) {
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, "Replaced constant value of " + var + " with "
-        + (var + 1));
+            + (var + 1));
     if (this.context.shouldMutate(newId)) {
       this.mv.visitIntInsn(opcode, (var + 1));
     } else {

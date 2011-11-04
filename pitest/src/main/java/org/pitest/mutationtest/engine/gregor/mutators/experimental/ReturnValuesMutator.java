@@ -121,7 +121,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
       if (object == null) {
         throw new RuntimeException(
-        "Mutated return of null object to throwing a runtime exception");
+            "Mutated return of null object to throwing a runtime exception");
       }
 
       return null;
@@ -220,7 +220,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     private void mutatePrimitiveIntegerReturn() {
 
       if (shouldMutate("primitive boolean/byte/short/integer",
-      "(x == 1) ? 0 : x + 1")) {
+          "(x == 1) ? 0 : x + 1")) {
         final Label label = new Label();
 
         super.visitInsn(Opcodes.DUP);

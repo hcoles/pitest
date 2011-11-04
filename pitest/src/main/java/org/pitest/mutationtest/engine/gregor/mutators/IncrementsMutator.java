@@ -54,7 +54,7 @@ class IncrementsMethodVisitor extends LineTrackingMethodAdapter {
   public void visitIincInsn(final int var, final int increment) {
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, "Changed increment from " + increment + " to "
-        + -increment);
+            + -increment);
     if (this.context.shouldMutate(newId)) {
       this.mv.visitIincInsn(var, -increment);
     } else {

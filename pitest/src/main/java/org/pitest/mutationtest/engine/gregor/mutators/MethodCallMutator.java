@@ -117,9 +117,9 @@ class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
   private boolean isCallToSuperOrOwnConstructor(final String name,
       final String owner) {
     return this.methodInfo.isConstructor()
-    && MethodInfo.isConstructor(name)
-    && (owner.equals(this.context.getClassInfo().getName()) || this.context
-        .getClassInfo().getSuperName().equals(owner));
+        && MethodInfo.isConstructor(name)
+        && (owner.equals(this.context.getClassInfo().getName()) || this.context
+            .getClassInfo().getSuperName().equals(owner));
   }
 
   private void popThisIfNotStatic(final int opcode) {

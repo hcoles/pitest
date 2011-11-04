@@ -41,7 +41,8 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_RETURN_VALUES_MUTATOR", new ReturnValuesMutator().getName());
+    assertEquals("EXPERIMENTAL_RETURN_VALUES_MUTATOR",
+        new ReturnValuesMutator().getName());
   }
 
   @Test
@@ -157,11 +158,11 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceLargeIntegerConstantsWithValuePlus1() throws Exception {
+  public void shouldReplaceLargeIntegerConstantsWithValuePlus1()
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasIntegerLDC.class);
     assertMutantCallableReturns(new HasIntegerLDC(), mutant, 987654321 + 1);
   }
-
 
   private static class HasIntegerICONSTM1 implements Callable<Integer> {
 
@@ -207,7 +208,8 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceSmallIntegerConstantsWithValuePlus1() throws Exception {
+  public void shouldReplaceSmallIntegerConstantsWithValuePlus1()
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasBIPUSH.class);
     assertMutantCallableReturns(new HasBIPUSH(), mutant, 29);
   }
@@ -221,7 +223,8 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceMediumIntegerConstantsWithValuePlus1() throws Exception {
+  public void shouldReplaceMediumIntegerConstantsWithValuePlus1()
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasSIPUSH.class);
     assertMutantCallableReturns(new HasSIPUSH(), mutant, 32701);
   }
@@ -231,7 +234,8 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     public Boolean call() throws Exception {
       int i = Short.MAX_VALUE;
 
-      if(i != Short.MAX_VALUE) {
+      if (i != Short.MAX_VALUE) {
+        i++; // prevent source formating from making final
         return Boolean.TRUE; // expected
       }
 
@@ -243,17 +247,16 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceFirstMutationPointOnly() throws Exception {
     final Mutant mutant = getFirstMutant(HasTwoMutationPoints.class);
-    assertMutantCallableReturns(new HasTwoMutationPoints(), mutant, Boolean.TRUE);
+    assertMutantCallableReturns(new HasTwoMutationPoints(), mutant,
+        Boolean.TRUE);
   }
-
-
 
   private static class HasShortOverflow implements Callable<Integer> {
 
     public Integer call() throws Exception {
       short s = Short.MAX_VALUE;
-
-      return (int)s;
+      s = preventSourceFormatingMakingFinal(s);
+      return (int) s;
     }
 
   }
@@ -269,16 +272,27 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   public void shouldOverflowOnShortMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasShortOverflow.class);
     assertMutantCallableReturns(new HasShortOverflow(), mutant,
-        (int)Short.MIN_VALUE);
+        (int) Short.MIN_VALUE);
+  }
+
+  public static short preventSourceFormatingMakingFinal(final short s) {
+    return s;
   }
 
   private static class HasByteOverflow implements Callable<Integer> {
 
     public Integer call() throws Exception {
       byte b = Byte.MAX_VALUE;
-
-      return (int)b;
+      b = preventSourceFormatingMakingFinal(b);
+      return (int) b;
     }
+  }
+
+  /**
+   * eclipse source cleanup will make everything final if possible
+   */
+  public static byte preventSourceFormatingMakingFinal(final byte b) {
+    return b;
   }
 
   /**
@@ -292,7 +306,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   public void shouldOverflowOnByteMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasByteOverflow.class);
     assertMutantCallableReturns(new HasByteOverflow(), mutant,
-        (int)Byte.MIN_VALUE);
+        (int) Byte.MIN_VALUE);
   }
 
   private static class HasIntegerMaxValue implements Callable<Integer> {
@@ -309,7 +323,6 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIntegerMaxValue(), mutant,
         Integer.MIN_VALUE);
   }
-
 
   private static class HasLongLCONST0 implements Callable<Long> {
 
@@ -432,9 +445,14 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     public Float call() throws Exception {
       float f = 16.0F;
       float f2 = 4.0F;
+      f = preventSourceFormatingMakingFinal(f);
+      f2 = preventSourceFormatingMakingFinal(f2);
       return f * f2;
     }
+  }
 
+  private static float preventSourceFormatingMakingFinal(final float f) {
+    return f;
   }
 
   @Test
@@ -490,9 +508,15 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     public Double call() throws Exception {
       double d = 4578.1158D;
       double d2 = 2.0D;
+      d = preventSourceFormatingMakingFinal(d);
+      d2 = preventSourceFormatingMakingFinal(d2);
       return d * d2;
     }
 
+  }
+
+  private static double preventSourceFormatingMakingFinal(final double d) {
+    return d;
   }
 
   @Test
@@ -500,6 +524,5 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasDoubleMultipleLDC.class);
     assertMutantCallableReturns(new HasDoubleMultipleLDC(), mutant, 2.0D);
   }
-
 
 }

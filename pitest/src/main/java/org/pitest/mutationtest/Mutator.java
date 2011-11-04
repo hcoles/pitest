@@ -70,28 +70,28 @@ public enum Mutator implements MethodMutatorFactory {
   CONDITIONALS_BOUNDARY(
       ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR),
 
-      /**
-       * Default mutator that mutates increments, decrements and assignment
-       * increments and decrements of local variables.
-       */
-      INCREMENTS(IncrementsMutator.INCREMENTS_MUTATOR),
+  /**
+   * Default mutator that mutates increments, decrements and assignment
+   * increments and decrements of local variables.
+   */
+  INCREMENTS(IncrementsMutator.INCREMENTS_MUTATOR),
 
-      /**
-       * Optional mutator that removes method calls to non void methods.
-       */
-      NON_VOID_METHOD_CALLS(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR),
+  /**
+   * Optional mutator that removes method calls to non void methods.
+   */
+  NON_VOID_METHOD_CALLS(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR),
 
-      /**
-       * Optional mutator that replaces constructor calls with null values.
-       */
-      CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
+  /**
+   * Optional mutator that replaces constructor calls with null values.
+   */
+  CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
 
-      /**
-       * Experimental mutator that mutates integer and floating point inline
-       * constants.
-       */
-      EXPERIMENTAL_INLINE_CONSTS(
-          new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator());
+  /**
+   * Experimental mutator that mutates integer and floating point inline
+   * constants.
+   */
+  EXPERIMENTAL_INLINE_CONSTS(
+      new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator());
 
   Mutator(final MethodMutatorFactory impl) {
     this.impl = impl;

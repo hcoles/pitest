@@ -47,7 +47,7 @@ public final class RunDetails implements Serializable {
     int result = 1;
     result = prime * result + (int) (this.dtime ^ (this.dtime >>> 32));
     result = prime * result
-    + ((this.master == null) ? 0 : this.master.hashCode());
+        + ((this.master == null) ? 0 : this.master.hashCode());
     return result;
   }
 
