@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,34 +12,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.report;
 
 import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.mutationtest.report.SourceLocator;
+import org.pitest.mutationtest.CoverageDatabase;
+import org.pitest.mutationtest.ListenerFactory;
 
-public class HtmlReportFactory implements ListenerFactory {
+public class XMLReportFactory implements ListenerFactory {
 
   private final ResultOutputStrategy outputStrategy;
 
-  public HtmlReportFactory(final ResultOutputStrategy outputStrategy) {
+  public XMLReportFactory(final ResultOutputStrategy outputStrategy) {
     this.outputStrategy = outputStrategy;
   }
 
   public TestListener getListener(final CoverageDatabase coverage,
       final long startTime, final SourceLocator locator) {
-    return new MutationHtmlReportListener(coverage, startTime,
-        this.outputStrategy, locator);
+    return new XMLReportListener(this.outputStrategy);
   }
 
   public static F<ResultOutputStrategy, ListenerFactory> createFactoryFunction() {
     return new F<ResultOutputStrategy, ListenerFactory>() {
 
       public ListenerFactory apply(final ResultOutputStrategy outputStrategy) {
-        return new HtmlReportFactory(outputStrategy);
+        return new XMLReportFactory(outputStrategy);
       }
 
     };

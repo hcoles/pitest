@@ -102,6 +102,7 @@ public class MutationTestWorker {
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
+      mutationDetected = new MutationStatusTestPair(DetectionStatus.NO_COVERAGE);
     } else {
       LOG.info("" + relevantTests.size() + " relevant test for "
           + mutatedClass.getDetails().getMethod());
@@ -152,8 +153,7 @@ public class MutationTestWorker {
   }
 
   private boolean hasMutationInStaticInitializer(final Mutant mutant) {
-    return (mutant.getDetails().getId().isMutated())
-        && mutant.getDetails().isInStaticInitializer();
+    return mutant.getDetails().isInStaticInitializer();
   }
 
   @Override

@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.pitest.functional.F;
@@ -32,6 +33,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
 
 public class ReportOptions {
 
@@ -65,6 +67,8 @@ public class ReportOptions {
   private int                                        maxMutationsPerClass;
 
   private boolean                                    verbose                  = false;
+
+  private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
 
   public ReportOptions() {
   }
@@ -323,6 +327,14 @@ public class ReportOptions {
   public void setExcludedClasses(
       final Collection<Predicate<String>> excludedClasses) {
     this.excludedClasses = excludedClasses;
+  }
+
+  public void addOutputFormats(final Collection<OutputFormat> formats) {
+    this.outputs.addAll(formats);
+  }
+
+  public Iterable<OutputFormat> getOutputFormats() {
+    return this.outputs;
   }
 
 }

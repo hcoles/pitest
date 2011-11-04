@@ -48,6 +48,7 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -99,9 +100,15 @@ public class MutationCoverageReport implements Runnable {
   private static void runReport(final ReportOptions data) {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
+
+      final DatedDirectoryResultOutputStrategy outputStrategy = new DatedDirectoryResultOutputStrategy(
+          data.getReportDir());
+      final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
+          FCollection.map(data.getOutputFormats(),
+              OutputFormat.createFactoryForFormat(outputStrategy)));
+
       final MutationCoverageReport instance = new MutationCoverageReport(data,
-          agent, new HtmlReportFactory(new DatedDirectoryResultOutputStrategy(
-              data.getReportDir())), false);
+          agent, reportFactory, false);
 
       instance.run();
     } finally {

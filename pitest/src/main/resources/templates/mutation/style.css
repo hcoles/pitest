@@ -36,3 +36,4 @@ padding-left: 5px;
 .non_viable {background-color: #aaffaa}
 .memory_error {background-color: #dde7ef}
 .not_started {background-color: #dde7ef; color : red}
+.no_coverage {background-color: #ffaaaa}

@@ -90,7 +90,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      boolean result = booleanMethod();
+      final boolean result = booleanMethod();
       return "" + result;
     }
   }
@@ -108,7 +108,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      double result = doubleMethod();
+      final double result = doubleMethod();
       return "" + result;
     }
   }
@@ -126,7 +126,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      byte result = byteMethod();
+      final byte result = byteMethod();
       return "" + result;
     }
   }
@@ -143,7 +143,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      char result = charMethod();
+      final char result = charMethod();
       return "" + result;
     }
   }
@@ -160,7 +160,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      short result = shortMethod();
+      final short result = shortMethod();
       return "" + result;
     }
   }
@@ -178,7 +178,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      long result = longMethod();
+      final long result = longMethod();
       return "" + result;
     }
   }
@@ -195,7 +195,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     }
 
     public String call() throws Exception {
-      float result = floatMethod();
+      final float result = floatMethod();
       return "" + result;
     }
   }

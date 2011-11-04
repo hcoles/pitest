@@ -1,20 +1,25 @@
 package org.pitest;
 
-import org.apache.maven.plugin.Mojo;
-import org.codehaus.plexus.PlexusTestCase;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 
-public class PitMojoTest extends PlexusTestCase {
+import org.pitest.mutationtest.ReportOptions;
+
+public class PitMojoTest extends BasePitMojoTest {
 
   private PitMojo testee;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    this.testee = (PitMojo) lookup(Mojo.ROLE);
+
   }
 
-  public void testCanCreateMojo() {
-    assertNotNull(this.testee);
+  public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
+      throws Exception {
+    this.testee = createPITMojo(createPomWithConfiguration(""));
+    this.testee.execute();
+    verify(this.executionStrategy).execute(any(ReportOptions.class));
   }
 
 }

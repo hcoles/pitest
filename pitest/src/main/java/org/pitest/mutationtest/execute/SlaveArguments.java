@@ -28,14 +28,11 @@ public class SlaveArguments {
   final List<TestUnit>              tests;
   final MutationConfig              config;
   final TimeoutLengthStrategy       timeoutStrategy;
-  final String                      outputFileName;
   final boolean                     verbose;
 
-  public SlaveArguments(final String outputFileName,
-      final Collection<MutationDetails> mutations, final List<TestUnit> tests,
-      final MutationConfig config, final TimeoutLengthStrategy timeoutStrategy,
-      final boolean verbose) {
-    this.outputFileName = outputFileName;
+  public SlaveArguments(final Collection<MutationDetails> mutations,
+      final List<TestUnit> tests, final MutationConfig config,
+      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose) {
     this.mutations = mutations;
     this.tests = tests;
     this.config = config;

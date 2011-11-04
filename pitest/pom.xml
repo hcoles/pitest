@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>pitest-parent</artifactId>
@@ -60,7 +61,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<!-- for PowerMockAgentTest -->
-					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -Dfoo=foo</argLine>
+					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -javaagent:${settings.localRepository}/org/dspace/dependencies/jmockit/dspace-jmockit/0.999.4/dspace-jmockit-0.999.4.jar -Dfoo=foo</argLine>
 				</configuration>
 			</plugin>
 
@@ -80,7 +81,7 @@
 
 							<artifactSet>
 								<includes>
-								    <include>xmlpull:xmlpull</include>
+									<include>xmlpull:xmlpull</include>
 									<include>com.thoughtworks.xstream:*</include>
 									<include>asm:*</include>
 									<include>xpp3:*</include>
@@ -90,9 +91,10 @@
 								</includes>
 							</artifactSet>
 
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-              </transformers>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
 
 							<relocations>
 								<relocation>
@@ -251,6 +253,20 @@
 			<version>1.4.9</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dspace.dependencies.jmockit</groupId>
+			<artifactId>dspace-jmockit</artifactId>
+			<version>0.999.4</version>
+			<scope>test</scope>
+		</dependency>
+
+
 	</dependencies>
 
 </project>
