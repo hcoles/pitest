@@ -1,17 +1,17 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
@@ -121,7 +121,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
       if (object == null) {
         throw new RuntimeException(
-            "Mutated return of null object to throwing a runtime exception");
+        "Mutated return of null object to throwing a runtime exception");
       }
 
       return null;
@@ -220,7 +220,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     private void mutatePrimitiveIntegerReturn() {
 
       if (shouldMutate("primitive boolean/byte/short/integer",
-          "(x == 1) ? 0 : x + 1")) {
+      "(x == 1) ? 0 : x + 1")) {
         final Label label = new Label();
 
         super.visitInsn(Opcodes.DUP);
@@ -324,6 +324,10 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
   public String getGloballyUniqueId() {
     return this.getClass().getName();
+  }
+
+  public String getName() {
+    return "EXPERIMENTAL_RETURN_VALUES_MUTATOR";
   }
 
 }
