@@ -24,7 +24,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.TestClass;
-import org.pitest.junit.adapter.AbstractPITJUnitRunner;
 
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 
@@ -45,8 +44,7 @@ public class JUnit4SuiteFinder implements TestSuiteFinder {
 
     final RunWith runWith = clazz.getAnnotation(RunWith.class);
     if (runWith != null) {
-      return (runWith.value().equals(Suite.class) || AbstractPITJUnitRunner.class
-          .isAssignableFrom(runWith.value()));
+      return (runWith.value().equals(Suite.class));
     }
     return false;
   }

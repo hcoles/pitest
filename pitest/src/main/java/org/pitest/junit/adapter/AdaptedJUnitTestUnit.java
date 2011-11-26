@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -35,7 +36,6 @@ import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.CustomRunnerExecutor;
 import org.pitest.junit.ForeignClassLoaderCustomRunnerExecutor;
-import org.pitest.junit.PossibilitiesBuilder;
 import org.pitest.reflection.Reflection;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.Log;
@@ -118,7 +118,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   }
 
   private static RunnerBuilder createRunnerBuilder(final Class<?> clazz) {
-    return new PossibilitiesBuilder(true);
+    return new AllDefaultPossibilitiesBuilder(true);
   }
 
   private void executeInDifferentClassLoader(final ClassLoader loader,
