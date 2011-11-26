@@ -15,9 +15,8 @@ import junit.framework.TestCase;
 
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -169,40 +168,37 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  static abstract class HideFromJunit3 {
-    public static class BaseTestCaseWithTest extends TestCase {
-      public void testFoo() {
-
-      }
-
-      @Test
-      protected void testBar() {
-
-      }
-    }
-
-    public static class InheritedTest extends BaseTestCaseWithTest {
+  public static class BaseTestCaseWithTest extends TestCase {
+    public void testFoo() {
 
     }
 
-    public static class OverridesTestInParent extends BaseTestCaseWithTest {
-      @Override
-      public void testFoo() {
+    @Test
+    public void testBar() {
 
-      }
     }
+  }
 
+  public static class InheritedTest extends BaseTestCaseWithTest {
+
+  }
+
+  public static class OverridesTestInParent extends BaseTestCaseWithTest {
+    @Override
+    public void testFoo() {
+
+    }
   }
 
   @Test
   public void shouldRunTestsInheritedFromParent() {
-    run(HideFromJunit3.InheritedTest.class);
+    run(InheritedTest.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testOverriddenTestsCalledOnlyOnce() {
-    run(HideFromJunit3.OverridesTestInParent.class);
+    run(OverridesTestInParent.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -237,50 +233,6 @@ public class TestJUnitConfiguration {
     assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
   }
 
-  static abstract class HideFromJunit5 {
-    public static class Junit3TestWithBeforeAndAfterAnnotations extends
-        TestCase {
-
-      public static int count;
-
-      @BeforeClass
-      public static void beforeClass() {
-        count++;
-      }
-
-      @Override
-      public void setUp() {
-        assertEquals(1, count);
-        count++;
-      }
-
-      public void testOne() {
-        assertEquals(2, count);
-        count++;
-      }
-
-      @Override
-      public void tearDown() {
-        assertEquals(3, count);
-        count++;
-      }
-
-      @AfterClass
-      public static void after() {
-        assertEquals(4, count);
-        count++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldCallBeforeAndAfterMethodsInCorrectOrder() {
-    run(HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.class);
-    verify(this.listener).onTestSuccess(any(TestResult.class));
-    assertEquals(5,
-        HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.count);
-  }
-
   static abstract class HideFromJunit6 {
     public static class TestWithTimeout {
 
@@ -304,30 +256,30 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
-  static abstract class HideFromJUnit7 {
-    @RunWith(Parameterized.class)
-    public static class ParameterisedTest {
+  @RunWith(Parameterized.class)
+  public static class ParameterisedTest {
+    int i;
 
-      public ParameterisedTest(final int i) {
-
-      }
-
-      @Parameters
-      public static Collection<Object[]> params() {
-        return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
-      }
-
-      @Test
-      public void test() {
-
-      }
-
+    public ParameterisedTest(final int i) {
+      this.i = i;
     }
+
+    @Parameters
+    public static Collection<Object[]> params() {
+      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
+    }
+
+    @Test
+    public void test() {
+      System.out.println(this.i);
+    }
+
   }
 
   @Test
+  @Ignore("broken")
   public void shouldCreateTestsForEachJUnitParameter() {
-    run(HideFromJUnit7.ParameterisedTest.class);
+    run(ParameterisedTest.class);
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 

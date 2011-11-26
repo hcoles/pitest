@@ -26,7 +26,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.annotations.StaticConfigurationClass;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
@@ -35,17 +34,18 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.GroupPerClassStrategy;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class TestGroupingStrategies {
 
-  private Pitest testee;
+  private Pitest        testee;
 
   @Mock
-  Container      container;
+  private Container     container;
 
   @Mock
-  ResultSource   rs;
+  private ResultSource  rs;
+
+  private Configuration conf;
 
   @Before
   public void setup() {
@@ -53,77 +53,65 @@ public class TestGroupingStrategies {
     when(this.container.getResultSource()).thenReturn(this.rs);
     when(this.container.awaitCompletion()).thenReturn(true);
     when(this.rs.resultsAvailable()).thenReturn(false);
-    final Configuration conf = new JUnitCompatibleConfiguration();
-    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    this.testee = new Pitest(staticConfig, conf);
+    this.conf = new JUnitCompatibleConfiguration();
   }
 
-  private static class HideFromJUnit {
+  @RunWith(Suite.class)
+  @SuiteClasses({ TestOne.class, TestTwo.class })
+  public static class ASuite {
 
-    @RunWith(PITJUnitRunner.class)
-    @SuiteClasses({ SuiteWithNoClassOfOwn.class })
-    @StaticConfigurationClass(GroupedSuite.class)
-    public static class GroupedSuite extends DefaultStaticConfig {
-      @Override
-      public GroupingStrategy getGroupingStrategy() {
-        return new GroupPerClassStrategy();
-      }
-    }
+  }
 
-    @RunWith(PITJUnitRunner.class)
-    @SuiteClasses({ SuiteWithNoClassOfOwn.class })
-    @StaticConfigurationClass(UnGroupedSuite.class)
-    public static class UnGroupedSuite extends DefaultStaticConfig {
-      @Override
-      public GroupingStrategy getGroupingStrategy() {
-        return new UnGroupedStrategy();
-      }
-    }
+  public static class TestOne {
 
-    @RunWith(Suite.class)
-    @SuiteClasses({ TestOne.class, TestTwo.class })
-    public static class SuiteWithNoClassOfOwn {
+    @Test
+    public void test() {
 
     }
 
-    public static class TestOne {
-      @SuppressWarnings("unused")
-      @Test
-      public void test() {
+    @Test
+    public void test2() {
 
-      }
+    }
+  }
 
-      @SuppressWarnings("unused")
-      @Test
-      public void test2() {
+  public static class TestTwo {
 
-      }
+    @Test
+    public void test() {
+
     }
 
-    public static class TestTwo {
-      @SuppressWarnings("unused")
-      @Test
-      public void test() {
+    @Test
+    public void test2() {
 
-      }
-
-      @SuppressWarnings("unused")
-      @Test
-      public void test2() {
-
-      }
     }
   }
 
   @Test
   public void shouldCorrectlyApplyTheGroupPerClassStrategy() {
-    this.testee.run(this.container, HideFromJUnit.GroupedSuite.class);
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig() {
+      @Override
+      public GroupingStrategy getGroupingStrategy() {
+        return new GroupPerClassStrategy();
+      }
+    };
+
+    this.testee = new Pitest(staticConfig, this.conf);
+    this.testee.run(this.container, ASuite.class);
     verify(this.container, times(2)).submit((any(TestUnit.class)));
   }
 
   @Test
   public void shouldCorrectlyApplyTheUngroupedStrategy() {
-    this.testee.run(this.container, HideFromJUnit.UnGroupedSuite.class);
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig() {
+      @Override
+      public GroupingStrategy getGroupingStrategy() {
+        return new UnGroupedStrategy();
+      }
+    };
+    this.testee = new Pitest(staticConfig, this.conf);
+    this.testee.run(this.container, ASuite.class);
     verify(this.container, times(4)).submit((any(TestUnit.class)));
   }
 }

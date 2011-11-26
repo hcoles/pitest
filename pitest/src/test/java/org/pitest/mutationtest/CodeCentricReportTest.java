@@ -18,6 +18,7 @@ package org.pitest.mutationtest;
 import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -155,14 +156,13 @@ public class CodeCentricReportTest extends ReportTestBase {
     verifyResults(KILLED, KILLED, KILLED);
   }
 
-  @Test(expected = PitHelpError.class)
-  // fails to calculate coverage for JMockit
-  public void doesNotWorkWithJMockit() {
+  @Test
+  public void shouldWorkWithJMockit() {
     this.data.setTargetClasses(predicateFor(CoveredByJMockit.class));
     this.data.setClassesInScope(predicateFor("com.example.*JMockit*"));
     this.data.setTargetTests(predicateFor(com.example.JMockitTest.class));
     createAndRun();
-    verifyResults(KILLED, KILLED, KILLED);
+    verifyResults(KILLED, KILLED, TIMED_OUT);
   }
 
   @Test
