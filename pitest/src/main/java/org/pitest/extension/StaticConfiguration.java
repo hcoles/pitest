@@ -26,6 +26,4 @@ public interface StaticConfiguration {
 
   public abstract GroupingStrategy getGroupingStrategy();
 
-  public abstract OrderStrategy getOrderStrategy();
-
 }

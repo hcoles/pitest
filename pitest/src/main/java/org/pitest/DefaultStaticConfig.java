@@ -18,13 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.OrderStrategy;
 import org.pitest.extension.ResultClassifier;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.common.GroupPerClassStrategy;
-import org.pitest.extension.common.NoOrderStrategy;
 
 public class DefaultStaticConfig implements StaticConfiguration {
 
@@ -32,12 +30,11 @@ public class DefaultStaticConfig implements StaticConfiguration {
   private GroupingStrategy                        groupingStrategy;
   private final Collection<TestListener>          testListeners          = new ArrayList<TestListener>();
   private final Collection<TestDiscoveryListener> testDiscoveryListeners = new ArrayList<TestDiscoveryListener>();
-  private OrderStrategy                           orderStrategy;
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
     this.groupingStrategy = new GroupPerClassStrategy();
-    this.orderStrategy = new NoOrderStrategy();
+
   }
 
   public DefaultStaticConfig(final StaticConfiguration orig) {
@@ -49,7 +46,7 @@ public class DefaultStaticConfig implements StaticConfiguration {
     this.testListeners.addAll(orig.getTestListeners());
     this.testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
     this.groupingStrategy = orig.getGroupingStrategy();
-    this.orderStrategy = orig.getOrderStrategy();
+
   }
 
   public Collection<TestListener> getTestListeners() {
@@ -74,10 +71,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
 
   public GroupingStrategy getGroupingStrategy() {
     return this.groupingStrategy;
-  }
-
-  public OrderStrategy getOrderStrategy() {
-    return this.orderStrategy;
   }
 
 }

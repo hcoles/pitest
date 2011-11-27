@@ -103,14 +103,11 @@ public class Pitest {
       final StaticConfiguration staticConfig,
       final List<? extends TestUnit> testUnits) {
 
-    final List<? extends TestUnit> orderedTestUnits = staticConfig
-        .getOrderStrategy().order(testUnits);
-
-    LOG.info("Running " + orderedTestUnits.size() + " units");
+    LOG.info("Running " + testUnits.size() + " units");
 
     signalRunStartToAllListeners(staticConfig);
 
-    final Thread feederThread = startFeederThread(container, orderedTestUnits);
+    final Thread feederThread = startFeederThread(container, testUnits);
 
     processResultsFromQueue(container, feederThread, staticConfig);
   }
