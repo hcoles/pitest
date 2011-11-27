@@ -23,7 +23,7 @@ import org.pitest.mutationtest.ListenerFactory;
  */
 public enum OutputFormat {
   HTML(HtmlReportFactory.createFactoryFunction()), CSV(CSVReportFactory
-      .createFactoryFunction());
+      .createFactoryFunction()), XML(XMLReportFactory.createFactoryFunction());
 
   private final F<ResultOutputStrategy, ListenerFactory> createFactory;
 
