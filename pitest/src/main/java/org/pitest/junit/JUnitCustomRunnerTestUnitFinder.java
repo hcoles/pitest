@@ -17,6 +17,7 @@ package org.pitest.junit;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -48,8 +49,15 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private Collection<? extends TestUnit> createUnits(final Class<?> clazz,
       final TestDiscoveryListener listener) {
+
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
-    if (Filterable.class.isAssignableFrom(runner.getClass()) && !isParameterizedTest(runner)) {
+    if ((runner == null)
+        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)) {
+      return Collections.emptyList();
+    }
+
+    if (Filterable.class.isAssignableFrom(runner.getClass())
+        && !isParameterizedTest(runner)) {
       return splitIntoFilteredUnits(runner.getDescription(), listener);
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
@@ -57,7 +65,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private boolean isParameterizedTest(Runner runner) {
+  private boolean isParameterizedTest(final Runner runner) {
     return Parameterized.class.isAssignableFrom(runner.getClass());
   }
 

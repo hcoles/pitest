@@ -32,13 +32,13 @@ public class GroupLikedTypeOrderStrategyTest {
 
   private GroupLikedTypeOrderStrategy testee;
 
-  static interface Target {
+  public static interface Target {
   }
 
-  static interface OtherTarget {
+  public static interface OtherTarget {
   }
 
-  static class BaseTest {
+  public static class BaseTest {
     @Test
     public void testOne() {
 
@@ -49,34 +49,34 @@ public class GroupLikedTypeOrderStrategyTest {
     }
   }
 
-  static class TargetTest1 extends BaseTest implements Target {
+  public static class TargetTest1 extends BaseTest implements Target {
 
   }
 
-  static class TargetTest2 extends BaseTest implements Target {
+  public static class TargetTest2 extends BaseTest implements Target {
   }
 
-  static class TargetTest3 extends BaseTest implements Target {
-
-  }
-
-  static class OtherTargetTest extends BaseTest implements OtherTarget {
+  public static class TargetTest3 extends BaseTest implements Target {
 
   }
 
-  static class OtherTargetTest2 extends BaseTest implements OtherTarget {
+  public static class OtherTargetTest extends BaseTest implements OtherTarget {
 
   }
 
-  static class NonTargetTest1 extends BaseTest {
+  public static class OtherTargetTest2 extends BaseTest implements OtherTarget {
 
   }
 
-  static class NonTargetTest2 extends BaseTest {
+  public static class NonTargetTest1 extends BaseTest {
 
   }
 
-  static class NonTargetTest3 extends BaseTest {
+  public static class NonTargetTest2 extends BaseTest {
+
+  }
+
+  public static class NonTargetTest3 extends BaseTest {
 
   }
 

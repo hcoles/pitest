@@ -20,13 +20,10 @@ public class CombinedJUnitTestFinder implements TestUnitFinder {
   public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,
       final TestUnitProcessor processor) {
-    // if (NativeJUnitTestFinder.canHandleNatively(clazz)) {
-    // return this.nativeFinder.findTestUnits(clazz, configuration, listener,
-    // processor);
-    // } else {
+
     return this.nonNativeFinder.findTestUnits(clazz, configuration, listener,
         processor);
-    // }
+
   }
 
 }

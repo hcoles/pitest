@@ -24,8 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Suite;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -56,18 +56,17 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     final Collection<TestUnit> actual = findWithTestee(TheoryTest.class);
     assertEquals(3, actual.size());
   }
-  
-  
+
   @RunWith(Parameterized.class)
   public static class ParameterisedTest {
-  
+
     public ParameterisedTest(final int i) {
- 
+
     }
 
     @Parameters
     public static Collection<Object[]> params() {
-      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 }, {4} });
+      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 }, { 4 } });
     }
 
     @Test
@@ -76,7 +75,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   }
 
-  
   @Test
   public void shouldCreateSingleTestUnitForParameterizedTest() {
     // fixme would be better to properly split into tests
@@ -156,6 +154,16 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
     return this.testee.findTestUnits(clazz, new ConcreteConfiguration(),
         this.listener, new IdentityTestUnitProcessor());
+  }
+
+  public static class NotATest {
+
+  }
+
+  @Test
+  public void shouldNotFindTestInNonTestClasses() {
+    final Collection<TestUnit> actual = findWithTestee(NotATest.class);
+    assertTrue(actual.isEmpty());
   }
 
 }

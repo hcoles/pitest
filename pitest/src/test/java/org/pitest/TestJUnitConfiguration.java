@@ -70,11 +70,13 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  public static class JUnit3TestWithSingleStringConstructor extends TestCase {
+  public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
+      extends TestCase {
 
     private final String name;
 
-    public JUnit3TestWithSingleStringConstructor(final String name) {
+    public JUnit3TestWithSingleStringConstructorAndJUnit4Annotations(
+        final String name) {
       super(name);
       this.name = name;
     }
@@ -85,6 +87,31 @@ public class TestJUnitConfiguration {
     }
 
     @Test
+    public void testTwo() {
+      assertEquals("testTwo", this.name);
+    }
+
+  };
+
+  @Test
+  public void shouldCallsSingleStringArgumentsConstructorWithTestNameWithAnnotations() {
+    run(JUnit3TestWithSingleStringConstructorAndJUnit4Annotations.class);
+    verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
+  }
+
+  public static class JUnit3TestWithSingleStringConstructor extends TestCase {
+
+    private final String name;
+
+    public JUnit3TestWithSingleStringConstructor(final String name) {
+      super(name);
+      this.name = name;
+    }
+
+    public void testOne() {
+      assertEquals("testOne", this.name);
+    }
+
     public void testTwo() {
       assertEquals("testTwo", this.name);
     }
@@ -230,18 +257,16 @@ public class TestJUnitConfiguration {
     assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
   }
 
-  static abstract class HideFromJunit6 {
-    public static class TestWithTimeout {
+  public static class TestWithTimeout {
 
-      @Test(timeout = 5)
-      protected void testBar() {
-        for (int i = 0; i != 10; i++) {
-          try {
-            Thread.sleep(1000);
-          } catch (final InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
+    @Test(timeout = 5)
+    public void testBar() {
+      for (int i = 0; i != 10; i++) {
+        try {
+          Thread.sleep(1000);
+        } catch (final InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
       }
     }
@@ -249,7 +274,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldTimeTestsOut() {
-    run(HideFromJunit6.TestWithTimeout.class);
+    run(TestWithTimeout.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
