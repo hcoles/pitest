@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -275,8 +274,7 @@ public class TestJUnitConfiguration {
   }
 
   @Test
-  @Ignore("broken")
-  public void shouldCreateTestsForEachJUnitParameter() {
+  public void shouldCreateTestForEachParameterOfParameterizedTest() {
     run(ParameterisedTest.class);
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }

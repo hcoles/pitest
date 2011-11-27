@@ -17,12 +17,15 @@ package org.pitest.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Suite;
+import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -52,6 +55,33 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void shouldFindTestsInJUnitTheoryTest() {
     final Collection<TestUnit> actual = findWithTestee(TheoryTest.class);
     assertEquals(3, actual.size());
+  }
+  
+  
+  @RunWith(Parameterized.class)
+  public static class ParameterisedTest {
+  
+    public ParameterisedTest(final int i) {
+ 
+    }
+
+    @Parameters
+    public static Collection<Object[]> params() {
+      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 }, {4} });
+    }
+
+    @Test
+    public void test() {
+    }
+
+  }
+
+  
+  @Test
+  public void shouldCreateSingleTestUnitForParameterizedTest() {
+    // fixme would be better to properly split into tests
+    final Collection<TestUnit> actual = findWithTestee(ParameterisedTest.class);
+    assertEquals(1, actual.size());
   }
 
   public static class CustomSuiteRunner extends Suite {
