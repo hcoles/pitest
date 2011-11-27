@@ -27,15 +27,11 @@ import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.CompoundTestDiscoveryListener;
-import org.pitest.extension.common.CompoundTestFilter;
-import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
@@ -87,25 +83,13 @@ public class Pitest {
       final StaticConfiguration staticConfig = this.initialConfig
           .staticConfigurationUpdater().apply(this.initialStaticConfig, c);
 
-      final Option<TestFilter> filter = createTestFilter(staticConfig);
-
       run(container,
           staticConfig,
           findTestUnitsForAllSuppliedClasses(
               this.initialConfig,
               new CompoundTestDiscoveryListener(staticConfig
                   .getDiscoveryListeners()),
-              staticConfig.getGroupingStrategy(), filter, c));
-    }
-  }
-
-  private Option<TestFilter> createTestFilter(
-      final StaticConfiguration staticConfig) {
-    if (staticConfig.getTestFilters().isEmpty()) {
-      return Option.none();
-    } else {
-      return Option.<TestFilter> some(new CompoundTestFilter(staticConfig
-          .getTestFilters()));
+              staticConfig.getGroupingStrategy(), c));
     }
   }
 
@@ -143,8 +127,7 @@ public class Pitest {
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
       final Configuration startConfig, final TestDiscoveryListener listener,
-      final GroupingStrategy groupStrategy,
-      final Option<TestFilter> testFilter, final Class<?>... classes) {
+      final GroupingStrategy groupStrategy, final Class<?>... classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
@@ -153,24 +136,8 @@ public class Pitest {
       testUnits.addAll(testUnitsFromClass);
     }
 
-    if (testFilter.hasSome()) {
-      return applyTestFilter(testFilter.value(), testUnits);
-    } else {
-      return testUnits;
-    }
+    return testUnits;
 
-  }
-
-  private static List<TestUnit> applyTestFilter(final TestFilter testFilter,
-      final List<TestUnit> testUnits) {
-    final F<TestUnit, Iterable<TestUnit>> f = new F<TestUnit, Iterable<TestUnit>>() {
-
-      public Iterable<TestUnit> apply(final TestUnit a) {
-        return a.filter(testFilter);
-      }
-
-    };
-    return FCollection.flatMap(testUnits, f);
   }
 
   private void processResultsFromQueue(final Container container,

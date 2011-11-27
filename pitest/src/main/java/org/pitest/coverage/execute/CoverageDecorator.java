@@ -18,10 +18,8 @@ import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.util.Log;
 
@@ -52,17 +50,6 @@ public class CoverageDecorator extends TestUnitDecorator {
     final long executionTime = System.currentTimeMillis() - t0;
     this.invokeQueue.recordTestOutcome(!wrappedCollector.shouldExit(),
         executionTime);
-
-  }
-
-  public Option<TestUnit> filter(final TestFilter filter) {
-    final Option<TestUnit> modifiedChild = this.child().filter(filter);
-    if (modifiedChild.hasSome()) {
-      return Option.<TestUnit> some(new CoverageDecorator(this.invokeQueue,
-          modifiedChild.value(), this.index));
-    } else {
-      return Option.none();
-    }
 
   }
 

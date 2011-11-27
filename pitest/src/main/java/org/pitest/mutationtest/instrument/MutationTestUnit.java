@@ -34,7 +34,6 @@ import org.pitest.MetaData;
 import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
@@ -153,11 +152,9 @@ public class MutationTestUnit extends AbstractTestUnit {
   protected List<TestUnit> findTestUnits(final ClassLoader loader) {
     final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
         Functions.stringToClass(loader));
-    // FIXME we do not apply any test filters. Is this what the user
-    // expects?
     return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
         new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tcs.toArray(new Class<?>[tcs.size()]));
+        tcs.toArray(new Class<?>[tcs.size()]));
   }
 
   private void runTestInSeperateProcessForMutationRange(

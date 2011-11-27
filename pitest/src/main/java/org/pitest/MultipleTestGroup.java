@@ -15,18 +15,15 @@
 
 package org.pitest;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.testunit.AbstractTestUnit;
 
 public class MultipleTestGroup extends AbstractTestUnit {
@@ -66,26 +63,6 @@ public class MultipleTestGroup extends AbstractTestUnit {
   @Override
   public Iterator<TestUnit> iterator() {
     return this.children.iterator();
-  }
-
-  @Override
-  public Option<TestUnit> filter(final TestFilter filter) {
-
-    final Collection<TestUnit> filtered = new ArrayList<TestUnit>(
-        this.children.size());
-    for (final TestUnit each : this.children) {
-      final Option<TestUnit> tu = each.filter(filter);
-      for (final TestUnit value : tu) {
-        filtered.add(value);
-      }
-    }
-
-    if (filtered.isEmpty()) {
-      return Option.none();
-    } else {
-      return Option.<TestUnit> some(new MultipleTestGroup(filtered));
-    }
-
   }
 
   @Override

@@ -14,7 +14,6 @@ import java.util.List;
 import org.junit.Test;
 import org.pitest.Pitest;
 import org.pitest.coverage.ClassStatistics;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
@@ -22,7 +21,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
@@ -145,7 +143,7 @@ public class CoverageProcessTest {
       throws IOException, InterruptedException {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         new JUnitCompatibleConfiguration(), new NullDiscoveryListener(),
-        new UnGroupedStrategy(), Option.<TestFilter> none(), test);
+        new UnGroupedStrategy(), test);
 
     final SlaveArguments sa = new SlaveArguments(coverOnlyTestees(), true);
 

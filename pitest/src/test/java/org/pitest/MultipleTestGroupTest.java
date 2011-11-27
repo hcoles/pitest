@@ -14,9 +14,7 @@
  */
 package org.pitest;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,9 +28,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 
 public class MultipleTestGroupTest {
@@ -61,35 +57,6 @@ public class MultipleTestGroupTest {
     this.testee = new MultipleTestGroup(
         Collections.singletonList(this.emptyTestUnit));
     assertSame(this.emptyTestUnit, this.testee.iterator().next());
-  }
-
-  @Test
-  public void shouldReturnGroupContainingChildrenMatchingFilter() {
-    when(this.emptyTestUnit2.filter(any(TestFilter.class))).thenReturn(
-        Option.some(this.emptyTestUnit2));
-    when(this.emptyTestUnit.filter(any(TestFilter.class))).thenReturn(
-        Option.<TestUnit> none());
-
-    this.testee = new MultipleTestGroup(Arrays.asList(this.emptyTestUnit,
-        this.emptyTestUnit2));
-    final Option<TestUnit> actual = this.testee.filter(irrelevant());
-    assertEquals(
-        Option.some(new MultipleTestGroup(Arrays.asList(this.emptyTestUnit2))),
-        actual);
-  }
-
-  @Test
-  public void shouldReturnNoneWhenNoChildrenMatchFilter() {
-    when(this.emptyTestUnit.filter(any(TestFilter.class))).thenReturn(
-        Option.<TestUnit> none());
-
-    this.testee = new MultipleTestGroup(Arrays.asList(this.emptyTestUnit));
-    final Option<TestUnit> actual = this.testee.filter(irrelevant());
-    assertEquals(Option.none(), actual);
-  }
-
-  private TestFilter irrelevant() {
-    return null;
   }
 
   @Test

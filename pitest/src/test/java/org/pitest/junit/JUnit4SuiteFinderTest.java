@@ -51,7 +51,6 @@ public class JUnit4SuiteFinderTest {
     }
   }
 
-
   @Test
   public void shouldReturnTestClassForEachClassInSuiteClassesAnnotationWhenRunnerIsSuite() {
     final TestClass annotated = new TestClass(

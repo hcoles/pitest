@@ -34,7 +34,6 @@ import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.execute.SlaveArguments;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
@@ -204,8 +203,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private List<TestUnit> extractRelevantTests(final Collection<Class<?>> tests) {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         this.initialConfig, new NullDiscoveryListener(),
-        new UnGroupedStrategy(), Option.<TestFilter> none(),
-        tests.toArray(new Class<?>[tests.size()]));
+        new UnGroupedStrategy(), tests.toArray(new Class<?>[tests.size()]));
 
     final List<TestUnit> tusWithinDistanceOfCodeClasses = filterTestsByDependencyAnalysis(tus);
     LOG.info("Dependency analysis reduced number of potential tests by "

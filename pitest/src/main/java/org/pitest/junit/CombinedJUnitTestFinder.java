@@ -11,11 +11,11 @@ import org.pitest.extension.TestUnitProcessor;
 
 public class CombinedJUnitTestFinder implements TestUnitFinder {
 
-  private final TestUnitFinder        nonNativeFinder = new CompoundTestUnitFinder(
-                                                          Arrays
-                                                              .asList(
-                                                                  new CustomJUnit3TestUnitFinder(),
-                                                                  new JUnitCustomRunnerTestUnitFinder()));
+  private final TestUnitFinder nonNativeFinder = new CompoundTestUnitFinder(
+                                                   Arrays
+                                                       .asList(
+                                                           new CustomJUnit3TestUnitFinder(),
+                                                           new JUnitCustomRunnerTestUnitFinder()));
 
   public Collection<TestUnit> findTestUnits(final Class<?> clazz,
       final Configuration configuration, final TestDiscoveryListener listener,

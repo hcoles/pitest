@@ -15,10 +15,8 @@
 package org.pitest.mutationtest.execute;
 
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 import org.pitest.util.Monitor;
 import org.pitest.util.TimeOutSystemExitSideEffect;
@@ -54,17 +52,6 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
           new TimingMetaDataResultCollector(rc, this.executionTime));
     } finally {
       timeoutWatchDog.requestStop();
-    }
-
-  }
-
-  public Option<TestUnit> filter(final TestFilter filter) {
-    final Option<TestUnit> modifiedChild = this.child().filter(filter);
-    if (modifiedChild.hasSome()) {
-      return Option.<TestUnit> some(new MutationTimeoutDecorator(modifiedChild
-          .value(), this.timeOutStrategy, this.executionTime, this.r));
-    } else {
-      return Option.none();
     }
 
   }

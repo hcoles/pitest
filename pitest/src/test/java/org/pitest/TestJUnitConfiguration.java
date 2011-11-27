@@ -33,12 +33,10 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
-import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestJUnitConfiguration {
@@ -390,7 +388,7 @@ public class TestJUnitConfiguration {
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
     final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
         this.testee, new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), CustomSuite.class);
+        CustomSuite.class);
 
     System.out.println(actual);
 
