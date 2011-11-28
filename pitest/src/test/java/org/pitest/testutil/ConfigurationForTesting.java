@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.pitest.TestMethod;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.StaticConfigUpdater;
@@ -20,7 +19,6 @@ import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
-import org.pitest.extension.common.NullConfigurationUpdater;
 import org.pitest.extension.common.NullStaticConfigUpdater;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
@@ -90,9 +88,7 @@ public class ConfigurationForTesting implements Configuration {
     return new PITStaticMethodSuiteFinder();
   }
 
-  public ConfigurationUpdater configurationUpdater() {
-    return new NullConfigurationUpdater();
-  }
+
 
   public StaticConfigUpdater staticConfigurationUpdater() {
     return new NullStaticConfigUpdater();

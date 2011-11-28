@@ -17,7 +17,6 @@ package org.pitest;
 import java.util.Arrays;
 
 import org.pitest.extension.Configuration;
-import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
@@ -25,10 +24,7 @@ import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.IdentityTestUnitProcessor;
 import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
-import org.pitest.extension.common.NullConfigurationUpdater;
 import org.pitest.extension.common.NullStaticConfigUpdater;
-import org.pitest.internal.TestClass;
-import org.pitest.junit.CompoundConfigurationUpdater;
 import org.pitest.junit.CompoundTestUnitFinder;
 
 /**
@@ -41,7 +37,6 @@ public final class ConcreteConfiguration implements Configuration {
   private TestUnitProcessor    testProcessor              = new IdentityTestUnitProcessor();
   private TestUnitFinder       testUnitFinder             = new NoTestFinder();
   private TestSuiteFinder      testSuiteFinder            = new NoTestSuiteFinder();
-  private ConfigurationUpdater configurationUpdater       = new NullConfigurationUpdater();
   private StaticConfigUpdater  staticConfigurationUpdater = new NullStaticConfigUpdater();
 
   public ConcreteConfiguration() {
@@ -63,15 +58,8 @@ public final class ConcreteConfiguration implements Configuration {
     return this.testSuiteFinder;
   }
 
-  public ConfigurationUpdater configurationUpdater() {
-    return this.configurationUpdater;
-  }
 
-  public static Configuration updateConfig(final Configuration startConfig,
-      final TestClass tc) {
-    return startConfig.configurationUpdater().updateConfiguration(
-        tc.getClazz(), startConfig);
-  }
+
 
   public void addConfiguration(final Configuration configuration) {
 
@@ -83,8 +71,7 @@ public final class ConcreteConfiguration implements Configuration {
         this.testProcessor, configuration.testUnitProcessor()));
     this.testSuiteFinder = new CompoundTestSuiteFinder(Arrays.asList(
         this.testSuiteFinder, configuration.testSuiteFinder()));
-    this.configurationUpdater = new CompoundConfigurationUpdater(Arrays.asList(
-        this.configurationUpdater, configuration.configurationUpdater()));
+    
     this.staticConfigurationUpdater = new CompoundStaticConfigurationUpdater(
         Arrays.asList(this.staticConfigurationUpdater,
             configuration.staticConfigurationUpdater()));

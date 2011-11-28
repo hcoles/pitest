@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.TestDiscoveryListener;
@@ -41,11 +40,9 @@ public final class TestClass {
   private Collection<TestUnit> getTestUnitsWithinClass(
       final Configuration startConfig, final TestDiscoveryListener listener) {
 
-    final Configuration classConfig = ConcreteConfiguration.updateConfig(
-        startConfig, this);
 
     final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
-        listener, classConfig, classConfig.testUnitProcessor());
+        listener, startConfig, startConfig.testUnitProcessor());
 
     return units;
   }
@@ -70,14 +67,11 @@ public final class TestClass {
 
     listener.enterClass(suiteClass.getClazz());
 
-    final Configuration classConfig = ConcreteConfiguration.updateConfig(
-        startConfig, suiteClass);
 
-    final Collection<TestClass> tcs = classConfig.testSuiteFinder().apply(
+    final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
     for (final TestClass tc : tcs) {
-      findTestUnits(tus, tc,
-          ConcreteConfiguration.updateConfig(classConfig, tc), groupStrategy,
+      findTestUnits(tus, tc,startConfig, groupStrategy,
           listener);
     }
     final Collection<TestUnit> testsInThisClass = suiteClass

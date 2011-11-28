@@ -19,12 +19,10 @@ import java.util.Arrays;
 import org.pitest.CompoundTestSuiteFinder;
 import org.pitest.CompoundTestUnitProcessor;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
-import org.pitest.extension.common.DefaultConfigurationUpdater;
 import org.pitest.extension.common.DefaultStaticConfigUpdater;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
@@ -48,9 +46,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
         new RunnerSuiteFinder()));
   }
 
-  public ConfigurationUpdater configurationUpdater() {
-    return new DefaultConfigurationUpdater();
-  }
+
 
   public StaticConfigUpdater staticConfigurationUpdater() {
     return new DefaultStaticConfigUpdater();
