@@ -54,11 +54,6 @@ public class Pitest {
     run(defaultContainer, Arrays.asList(classes));
   }
 
-  public void run(final Container defaultContainer,
-      final F2<Class<?>, Container, Container> containerUpdateFunction,
-      final Class<?>... classes) {
-    run(defaultContainer, containerUpdateFunction, Arrays.asList(classes));
-  }
 
   public void run(final Container defaultContainer,
       final Collection<Class<?>> classes) {

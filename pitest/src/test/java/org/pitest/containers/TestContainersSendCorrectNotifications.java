@@ -60,41 +60,10 @@ public class TestContainersSendCorrectNotifications {
 
   @Parameters
   public static Collection<Object[]> containers() {
-    return Arrays.asList(new Object[][] { { uncontainerFactory() },
-        { isolatedThreadPoolContainerFactory(2) },
-        { urlClassLoaderIsolatedThreadPoolContainerFactory(2) },
-        { unisolatedThreadPoolContainerFactory(1) },
-        { unisolatedThreadPoolContainerFactory(3) } });
+    return Arrays.asList(new Object[][] { { uncontainerFactory() }});
 
   }
 
-  private static Object unisolatedThreadPoolContainerFactory(final int threads) {
-    return new ContainerFactory() {
-      public Container getContainer() {
-        return new UnisolatedThreadPoolContainer(threads);
-      }
-
-    };
-  }
-
-  private static Object isolatedThreadPoolContainerFactory(final int threads) {
-    return new ContainerFactory() {
-      public Container getContainer() {
-        return new IsolatedThreadPoolContainer(threads, false);
-      }
-
-    };
-  }
-
-  private static Object urlClassLoaderIsolatedThreadPoolContainerFactory(
-      final int threads) {
-    return new ContainerFactory() {
-      public Container getContainer() {
-        return new IsolatedThreadPoolContainer(threads);
-      }
-
-    };
-  }
 
   private static Object uncontainerFactory() {
     return new ContainerFactory() {
