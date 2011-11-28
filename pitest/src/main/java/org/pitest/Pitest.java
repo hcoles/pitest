@@ -30,10 +30,8 @@ import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.CompoundTestDiscoveryListener;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 import org.pitest.util.Log;
 
@@ -54,26 +52,8 @@ public class Pitest {
     run(defaultContainer, Arrays.asList(classes));
   }
 
-
-  public void run(final Container defaultContainer,
-      final Collection<Class<?>> classes) {
-    final F2<Class<?>, Container, Container> containerUpdateFunction = new F2<Class<?>, Container, Container>() {
-
-      public Container apply(final Class<?> c, final Container defaultContainer) {
-        return new ContainerParser(c).create(defaultContainer);
-      }
-
-    };
-    run(defaultContainer, containerUpdateFunction, classes);
-  }
-
-  public void run(final Container defaultContainer,
-      final F2<Class<?>, Container, Container> containerUpdateFunction,
-      final Collection<Class<?>> classes) {
+  public void run(final Container container, final Collection<Class<?>> classes) {
     for (final Class<?> c : classes) {
-
-      final Container container = containerUpdateFunction.apply(c,
-          defaultContainer);
 
       run(container,
           this.initialStaticConfig,

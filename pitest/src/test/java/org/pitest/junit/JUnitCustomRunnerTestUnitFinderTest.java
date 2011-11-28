@@ -218,53 +218,53 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   public static class HasBeforeClassAnnotation {
-    
+
     @BeforeClass
     public static void before() {
-      
+
     }
-    
+
     @Test
     public void testOne() {
-      
+
     }
-    
+
     @Test
     public void testTwo() {
-      
+
     }
-    
+
   }
-  
+
   @Test
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithBeforeClass() {
     final Collection<TestUnit> actual = findWithTestee(HasBeforeClassAnnotation.class);
     assertEquals(1, actual.size());
   }
-  
+
   public static class HasAfterClassAnnotation {
-    
+
     @AfterClass
     public static void after() {
-      
+
     }
-    
+
     @Test
     public void testOne() {
-      
+
     }
-    
+
     @Test
     public void testTwo() {
-      
+
     }
-    
+
   }
-  
+
   @Test
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithAfterClass() {
     final Collection<TestUnit> actual = findWithTestee(HasAfterClassAnnotation.class);
     assertEquals(1, actual.size());
   }
-  
+
 }

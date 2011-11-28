@@ -72,12 +72,14 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private boolean shouldTreatAsOneUnit(Class<?> clazz) {
-    Set<Method> methods = Reflection.allMethods(clazz);
-    return hasAnnotation(methods,BeforeClass.class) || hasAnnotation(methods,AfterClass.class);
+  private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
+    final Set<Method> methods = Reflection.allMethods(clazz);
+    return hasAnnotation(methods, BeforeClass.class)
+        || hasAnnotation(methods, AfterClass.class);
   }
 
-  private boolean hasAnnotation(Set<Method> methods,final Class<? extends Annotation> annotation ) {
+  private boolean hasAnnotation(final Set<Method> methods,
+      final Class<? extends Annotation> annotation) {
     return FCollection.contains(methods, IsAnotatedWith.instance(annotation));
   }
 

@@ -60,10 +60,9 @@ public class TestContainersSendCorrectNotifications {
 
   @Parameters
   public static Collection<Object[]> containers() {
-    return Arrays.asList(new Object[][] { { uncontainerFactory() }});
+    return Arrays.asList(new Object[][] { { uncontainerFactory() } });
 
   }
-
 
   private static Object uncontainerFactory() {
     return new ContainerFactory() {
