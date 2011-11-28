@@ -33,8 +33,8 @@ public class GregorMutationEngineTest {
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
     final Collection<MethodMutatorFactory> mutators = new ArrayList<MethodMutatorFactory>();
-    mutators.add(Mutator.MATH);
     mutators.add(Mutator.CONDITIONALS_BOUNDARY);
+    mutators.add(Mutator.MATH);
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         True.<MethodInfo> all(), Collections.<String> emptyList(), mutators);
     this.testee = new GregorMutationEngine(config);

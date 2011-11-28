@@ -34,7 +34,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   public TestUnitFinder testUnitFinder() {
 
-    return new CombinedJUnitTestFinder();
+    return new JUnitCustomRunnerTestUnitFinder();
   }
 
   public TestSuiteFinder testSuiteFinder() {

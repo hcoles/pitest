@@ -15,7 +15,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.pitest.functional.F;
@@ -29,8 +29,8 @@ import org.pitest.mutationtest.engine.MutationEngine;
 
 public class GregorMutationEngine implements MutationEngine {
 
-  private final Set<MethodMutatorFactory> mutationOperators = new HashSet<MethodMutatorFactory>();
-  private final Set<String>               loggingClasses    = new HashSet<String>();
+  private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
+  private final Set<String>               loggingClasses    = new LinkedHashSet<String>();
 
   private final Predicate<MethodInfo>     filter;
 

@@ -53,6 +53,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
         || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)) {
+      System.out.println("________ Could not find tests in " + clazz);
       return Collections.emptyList();
     }
 
