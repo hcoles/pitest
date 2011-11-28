@@ -26,7 +26,7 @@ import org.pitest.testunit.IgnoredTestUnit;
 
 public class IgnoreTestProcessor implements TestUnitProcessor {
 
-  private static final long         serialVersionUID = 1L;
+  private static final long                 serialVersionUID = 1L;
   private final Class<? extends Annotation> annotationType;
 
   public IgnoreTestProcessor(final Class<? extends Annotation> annotation) {

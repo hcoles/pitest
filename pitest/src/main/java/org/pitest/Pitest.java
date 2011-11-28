@@ -80,16 +80,13 @@ public class Pitest {
       final Container container = containerUpdateFunction.apply(c,
           defaultContainer);
 
-      final StaticConfiguration staticConfig = this.initialConfig
-          .staticConfigurationUpdater().apply(this.initialStaticConfig, c);
-
       run(container,
-          staticConfig,
+          this.initialStaticConfig,
           findTestUnitsForAllSuppliedClasses(
               this.initialConfig,
-              new CompoundTestDiscoveryListener(staticConfig
-                  .getDiscoveryListeners()),
-              staticConfig.getGroupingStrategy(), c));
+              new CompoundTestDiscoveryListener(this.initialStaticConfig
+                  .getDiscoveryListeners()), this.initialStaticConfig
+                  .getGroupingStrategy(), c));
     }
   }
 

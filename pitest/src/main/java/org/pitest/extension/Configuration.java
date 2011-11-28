@@ -23,7 +23,4 @@ public interface Configuration {
 
   public TestSuiteFinder testSuiteFinder();
 
-
-  public StaticConfigUpdater staticConfigurationUpdater();
-
 }

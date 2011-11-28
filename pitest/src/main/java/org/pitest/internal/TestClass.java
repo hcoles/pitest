@@ -40,7 +40,6 @@ public final class TestClass {
   private Collection<TestUnit> getTestUnitsWithinClass(
       final Configuration startConfig, final TestDiscoveryListener listener) {
 
-
     final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
         listener, startConfig, startConfig.testUnitProcessor());
 
@@ -67,12 +66,10 @@ public final class TestClass {
 
     listener.enterClass(suiteClass.getClazz());
 
-
     final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
     for (final TestClass tc : tcs) {
-      findTestUnits(tus, tc,startConfig, groupStrategy,
-          listener);
+      findTestUnits(tus, tc, startConfig, groupStrategy, listener);
     }
     final Collection<TestUnit> testsInThisClass = suiteClass
         .getTestUnitsWithinClass(startConfig, listener);

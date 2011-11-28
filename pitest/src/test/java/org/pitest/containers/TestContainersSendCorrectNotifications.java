@@ -15,13 +15,10 @@
 package org.pitest.containers;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +31,6 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Description;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.annotations.PITSuite;
 import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
@@ -132,24 +128,6 @@ public class TestContainersSendCorrectNotifications {
     }
   };
 
-  public static class SmallSuite {
-    @SuppressWarnings("unchecked")
-    @PITSuite
-    public static List<Class<?>> suite() {
-      return Arrays.asList(OnePassingTest.class, OneFailingTest.class);
-    }
-  }
-
-  public static class LargeSuite {
-
-    public final static int SUITE_SIZE = 300;
-
-    @PITSuite
-    public static List<Class<?>> suite() {
-      return Collections.<Class<?>> nCopies(SUITE_SIZE, SmallSuite.class);
-    }
-  }
-
   @Test
   public void shouldSendCorrectNotificationsForSinglePassingTest() {
     run(OnePassingTest.class);
@@ -162,17 +140,6 @@ public class TestContainersSendCorrectNotifications {
     run(OneFailingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(this.listener).onTestFailure(any(TestResult.class));
-  }
-
-  @Test
-  public void shouldSendCorrectNotificationsForParallizableSuite() {
-    run(LargeSuite.class);
-    verify(this.listener, times(LargeSuite.SUITE_SIZE * 2)).onTestStart(
-        any(Description.class));
-    verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestSuccess(
-        any(TestResult.class));
-    verify(this.listener, times(LargeSuite.SUITE_SIZE)).onTestFailure(
-        any(TestResult.class));
   }
 
   private void run(final Class<?> clazz) {

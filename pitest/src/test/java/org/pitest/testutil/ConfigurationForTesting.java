@@ -11,7 +11,6 @@ import org.pitest.TestMethod;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
-import org.pitest.extension.StaticConfigUpdater;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.TestUnitProcessor;
@@ -19,9 +18,8 @@ import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
-import org.pitest.extension.common.NullStaticConfigUpdater;
+import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
-import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.junit.CompoundTestUnitFinder;
 
@@ -85,13 +83,7 @@ public class ConfigurationForTesting implements Configuration {
   }
 
   public TestSuiteFinder testSuiteFinder() {
-    return new PITStaticMethodSuiteFinder();
-  }
-
-
-
-  public StaticConfigUpdater staticConfigurationUpdater() {
-    return new NullStaticConfigUpdater();
+    return new NoTestSuiteFinder();
   }
 
   public TestUnitFinder mutationTestFinder() {
