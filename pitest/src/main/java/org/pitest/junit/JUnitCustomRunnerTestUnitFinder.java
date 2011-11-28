@@ -14,9 +14,14 @@
  */
 package org.pitest.junit;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -33,6 +38,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
+import org.pitest.reflection.IsAnotatedWith;
+import org.pitest.reflection.Reflection;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -53,17 +60,25 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
         || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)) {
-      System.out.println("________ Could not find tests in " + clazz);
       return Collections.emptyList();
     }
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
-        && !isParameterizedTest(runner)) {
+        && !isParameterizedTest(runner) && !shouldTreatAsOneUnit(clazz)) {
       return splitIntoFilteredUnits(runner.getDescription(), listener);
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
     }
+  }
+
+  private boolean shouldTreatAsOneUnit(Class<?> clazz) {
+    Set<Method> methods = Reflection.allMethods(clazz);
+    return hasAnnotation(methods,BeforeClass.class) || hasAnnotation(methods,AfterClass.class);
+  }
+
+  private boolean hasAnnotation(Set<Method> methods,final Class<? extends Annotation> annotation ) {
+    return FCollection.contains(methods, IsAnotatedWith.instance(annotation));
   }
 
   private boolean isParameterizedTest(final Runner runner) {
