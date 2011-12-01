@@ -159,7 +159,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceLargeIntegerConstantsWithValuePlus1()
-      throws Exception {
+  throws Exception {
     final Mutant mutant = getFirstMutant(HasIntegerLDC.class);
     assertMutantCallableReturns(new HasIntegerLDC(), mutant, 987654321 + 1);
   }
@@ -209,7 +209,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceSmallIntegerConstantsWithValuePlus1()
-      throws Exception {
+  throws Exception {
     final Mutant mutant = getFirstMutant(HasBIPUSH.class);
     assertMutantCallableReturns(new HasBIPUSH(), mutant, 29);
   }
@@ -224,7 +224,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceMediumIntegerConstantsWithValuePlus1()
-      throws Exception {
+  throws Exception {
     final Mutant mutant = getFirstMutant(HasSIPUSH.class);
     assertMutantCallableReturns(new HasSIPUSH(), mutant, 32701);
   }
@@ -251,12 +251,12 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
         Boolean.TRUE);
   }
 
-  private static class HasShortOverflow implements Callable<Integer> {
+  private static class HasShortOverflow implements Callable<Short> {
 
-    public Integer call() throws Exception {
+    public Short call() throws Exception {
       short s = Short.MAX_VALUE;
       s = preventSourceFormatingMakingFinal(s);
-      return (int) s;
+      return s;
     }
 
   }
@@ -272,6 +272,30 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   public void shouldOverflowOnShortMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasShortOverflow.class);
     assertMutantCallableReturns(new HasShortOverflow(), mutant,
+        Short.MIN_VALUE);
+  }
+
+  private static class HasIntegerAtMaxShortValue implements Callable<Integer> {
+
+    public Integer call() throws Exception {
+      int i = Short.MAX_VALUE;
+      i = preventSourceFormatingMakingFinal(i);
+      return i;
+    }
+
+  }
+
+  /**
+   * The JVM does not have a short type, it uses integer under the hood.
+   * <code>Short.MAX_VALUE</code> (=32767) will always be rolled to
+   * <code>Short.MIN_VALUE</code> (=-32768). Note that the rolling will occur
+   * even if only Integer/int variables are used! So <code>int i = 32767;</code>
+   * will always be mutated to <code>int i = -32768;</code>.
+   */
+  @Test
+  public void shouldOverflowIntegerOnShortMaxValue() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIntegerAtMaxShortValue.class);
+    assertMutantCallableReturns(new HasIntegerAtMaxShortValue(), mutant,
         (int) Short.MIN_VALUE);
   }
 
@@ -279,12 +303,12 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     return s;
   }
 
-  private static class HasByteOverflow implements Callable<Integer> {
+  private static class HasByteOverflow implements Callable<Byte> {
 
-    public Integer call() throws Exception {
+    public Byte call() throws Exception {
       byte b = Byte.MAX_VALUE;
       b = preventSourceFormatingMakingFinal(b);
-      return (int) b;
+      return  b;
     }
   }
 
@@ -306,7 +330,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   public void shouldOverflowOnByteMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasByteOverflow.class);
     assertMutantCallableReturns(new HasByteOverflow(), mutant,
-        (int) Byte.MIN_VALUE);
+        Byte.MIN_VALUE);
   }
 
   private static class HasIntegerMaxValue implements Callable<Integer> {
@@ -451,7 +475,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static float preventSourceFormatingMakingFinal(final float f) {
+  private static <T> T preventSourceFormatingMakingFinal(final T f) {
     return f;
   }
 
@@ -515,9 +539,6 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   }
 
-  private static double preventSourceFormatingMakingFinal(final double d) {
-    return d;
-  }
 
   @Test
   public void shouldReplaceFirstDoubleMutationPointOnly() throws Exception {
