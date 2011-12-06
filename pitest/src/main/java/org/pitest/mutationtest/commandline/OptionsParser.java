@@ -25,6 +25,7 @@ import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectFileParser;
 import org.pitest.project.ProjectFileParserException;
 import org.pitest.project.ProjectFileParserFactory;
+import org.pitest.util.ClasspathUtil;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -208,7 +209,7 @@ public class OptionsParser {
       final OptionSet userArgs = this.parser.parse(args);
 
       if (userArgs.has(PROJECT_FILE)) {
-        return loadProjectFile(data, userArgs);
+        return loadProjectFile(userArgs);
       } else {
         return parseCommandLine(data, userArgs);
       }
@@ -218,6 +219,13 @@ public class OptionsParser {
 
   }
 
+  /**
+   * Creates a new {@see ParseResult} object using the command line arguments.
+   *
+   * @param data     the {@see ReportOptions} to populate.
+   * @param userArgs the {@see OptionSet} which contains the command line arguments.
+   * @return a new {@see ParseResult}, correctly configured using the command line arguments.
+   */
   private ParseResult parseCommandLine(ReportOptions data, OptionSet userArgs) {
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(FCollection.map(
@@ -253,16 +261,29 @@ public class OptionsParser {
     }
   }
 
-  private ParseResult loadProjectFile(ReportOptions data, OptionSet userArgs) {
+  /**
+   * Creates a new {@see ParseResult} object, using the project file specified by the user on the command line.
+   *
+   * @param userArgs the {@see OptionSet} that contains all of the command line arguments.
+   * @return a correctly instantiated {@see ParseResult} using the project file to load arguments.
+   */
+  private ParseResult loadProjectFile(OptionSet userArgs) {
     try {
       ProjectFileParser parser = ProjectFileParserFactory.createParser();
 
       ReportOptions loaded = parser.loadProjectFile(new File((String) userArgs.valueOf(PROJECT_FILE)));
+
+      // as the process is already running, we need to add any additionally defined classpath elements
+      // to the system classloader so they are available to the methods later on.
+      for (String s : loaded.getClassPathElements()) {
+        ClasspathUtil.addPath(s);
+      }
+
       return new ParseResult(loaded, null);
     } catch (ProjectFileParserException e) {
-      return new ParseResult(data, "Project File ERROR: " + e.getMessage() + ".");
+      return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     } catch (ProjectConfigurationException e) {
-      return new ParseResult(data, "Project File ERROR: " + e.getMessage() + ".");
+      return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     }
   }
 
