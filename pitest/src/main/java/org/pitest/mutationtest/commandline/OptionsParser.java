@@ -14,68 +14,69 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
-
+import joptsimple.*;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.project.ProjectConfigurationException;
+import org.pitest.project.ProjectFileParser;
+import org.pitest.project.ProjectFileParserException;
+import org.pitest.project.ProjectFileParserFactory;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
 public class OptionsParser {
 
-  private final static String                       REPORT_DIR_ARG                 = "reportDir";
-  private final static String                       TARGET_CLASSES_ARG             = "targetClasses";
-  private final static String                       IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
-  private final static String                       SOURCE_DIR_ARG                 = "sourceDirs";
-  private final static String                       MUTATIONS_ARG                  = "mutators";
-  private final static String                       DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
-  private final static String                       CHILD_JVM_ARGS                 = "jvmArgs";
-  private final static String                       MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
-  private final static String                       THREADS_ARG                    = "threads";
-  private final static String                       INCLUDE_JAR_FILES              = "includeJarFiles";
-  private final static String                       TIMEOUT_FACTOR_ARG             = "timeoutFactor";
-  private final static String                       TIMEOUT_CONST_ARG              = "timeoutConst";
-  private final static String                       TEST_FILTER_ARGS               = "targetTests";
-  private final static String                       AVOID_CALLS_ARG                = "avoidCallsTo";
-  private final static String                       EXCLUDED_METHOD_ARG            = "excludedMethods";
-  private final static String                       MAX_MUTATIONS_PER_CLASS_ARG    = "maxMutationsPerClass";
-  private final static String                       VERBOSE                        = "verbose";
-  private final static String                       EXCLUDED_CLASSES_ARG           = "excludedClasses";
-  private final static String                       OUTPUT_FORMATS                 = "outputFormats";
+  public final static String REPORT_DIR_ARG = "reportDir";
+  public final static String TARGET_CLASSES_ARG = "targetClasses";
+  public final static String IN_SCOPE_CLASSES_ARG = "inScopeClasses";
+  public final static String SOURCE_DIR_ARG = "sourceDirs";
+  public final static String MUTATIONS_ARG = "mutators";
+  public final static String DEPENDENCY_DISTANCE_ARG = "dependencyDistance";
+  public final static String CHILD_JVM_ARGS = "jvmArgs";
+  public final static String MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
+  public final static String THREADS_ARG = "threads";
+  public final static String INCLUDE_JAR_FILES = "includeJarFiles";
+  public final static String TIMEOUT_FACTOR_ARG = "timeoutFactor";
+  public final static String TIMEOUT_CONST_ARG = "timeoutConst";
+  public final static String TEST_FILTER_ARGS = "targetTests";
+  public final static String AVOID_CALLS_ARG = "avoidCallsTo";
+  public final static String EXCLUDED_METHOD_ARG = "excludedMethods";
+  public final static String MAX_MUTATIONS_PER_CLASS_ARG = "maxMutationsPerClass";
+  public final static String VERBOSE = "verbose";
+  public final static String EXCLUDED_CLASSES_ARG = "excludedClasses";
+  public final static String OUTPUT_FORMATS = "outputFormats";
+  public final static String PROJECT_FILE = "projectFile";
+  public final static String CLASSPATH_ARG = "classPath";
 
-  private final OptionParser                        parser;
+  private final OptionParser parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
-  private final OptionSpec<String>                  targetClassesSpec;
-  private final OptionSpec<String>                  targetTestsSpec;
-  private final OptionSpec<String>                  inScopeClassesSpec;
-  private final OptionSpec<String>                  avoidCallsSpec;
-  private final OptionSpec<Integer>                 depth;
-  private final OptionSpec<Integer>                 threadsSpec;
-  private final OptionSpec<File>                    sourceDirSpec;
-  private final OptionSpec<Mutator>                 mutators;
-  private final OptionSpec<String>                  jvmArgs;
-  private final OptionSpecBuilder                   mutateStatics;
-  private final OptionSpecBuilder                   includeJarFilesSpec;
-  private final OptionSpec<Float>                   timeoutFactorSpec;
-  private final OptionSpec<Long>                    timeoutConstSpec;
-  private final OptionSpec<String>                  excludedMethodsSpec;
-  private final OptionSpec<Integer>                 maxMutationsPerClassSpec;
-  private final OptionSpecBuilder                   verboseSpec;
-  private final OptionSpec<String>                  excludedClassesSpec;
-  private final OptionSpec<OutputFormat>            outputFormatSpec;
+  private final OptionSpec<String> targetClassesSpec;
+  private final OptionSpec<String> targetTestsSpec;
+  private final OptionSpec<String> inScopeClassesSpec;
+  private final OptionSpec<String> avoidCallsSpec;
+  private final OptionSpec<Integer> depth;
+  private final OptionSpec<Integer> threadsSpec;
+  private final OptionSpec<File> sourceDirSpec;
+  private final OptionSpec<Mutator> mutators;
+  private final OptionSpec<String> jvmArgs;
+  private final OptionSpecBuilder mutateStatics;
+  private final OptionSpecBuilder includeJarFilesSpec;
+  private final OptionSpec<Float> timeoutFactorSpec;
+  private final OptionSpec<Long> timeoutConstSpec;
+  private final OptionSpec<String> excludedMethodsSpec;
+  private final OptionSpec<Integer> maxMutationsPerClassSpec;
+  private final OptionSpecBuilder verboseSpec;
+  private final OptionSpec<String> excludedClassesSpec;
+  private final OptionSpec<OutputFormat> outputFormatSpec;
+  private final OptionSpec<String> projectFile;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -83,6 +84,12 @@ public class OptionsParser {
 
     this.reportDirSpec = this.parser.accepts(REPORT_DIR_ARG).withRequiredArg()
         .describedAs("directory to create report folder in").required();
+
+    this.projectFile = this.parser
+        .accepts(PROJECT_FILE)
+        .withRequiredArg()
+        .ofType(String.class)
+        .describedAs("The name of the project file to use.");
 
     this.targetClassesSpec = this.parser
         .accepts(TARGET_CLASSES_ARG)
@@ -143,7 +150,7 @@ public class OptionsParser {
         .defaultsTo(
             Mutator.MATH,
             DefaultMutationConfigFactory.DEFAULT_MUTATORS
-                .toArray(new Mutator[] {}));
+                .toArray(new Mutator[]{}));
 
     this.jvmArgs = this.parser.accepts(CHILD_JVM_ARGS).withRequiredArg()
         .withValuesSeparatedBy(',')
@@ -199,42 +206,64 @@ public class OptionsParser {
     final ReportOptions data = new ReportOptions();
     try {
       final OptionSet userArgs = this.parser.parse(args);
-      data.setReportDir(userArgs.valueOf(this.reportDirSpec));
-      data.setTargetClasses(FCollection.map(
-          this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-      data.setClassesInScope(FCollection.map(
-          this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-      data.setTargetTests(FCollection.map(
-          this.targetTestsSpec.values(userArgs), Glob.toGlobPredicate()));
-      data.setSourceDirs(this.sourceDirSpec.values(userArgs));
-      data.setMutators(this.mutators.values(userArgs));
-      data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
-      data.addChildJVMArgs(this.jvmArgs.values(userArgs));
-      data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
-      data.setNumberOfThreads(this.threadsSpec.value(userArgs));
-      data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
-      data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
-      data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
-      data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
-      data.setExcludedMethods(FCollection.map(
-          this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
-      data.setExcludedClasses(FCollection.map(
-          this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-      data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec
-          .value(userArgs));
-      data.setVerbose(userArgs.has(this.verboseSpec));
 
-      data.addOutputFormats(this.outputFormatSpec.values(userArgs));
-
-      if (userArgs.has("?")) {
-        return new ParseResult(data, "See above for supported parameters.");
+      if (userArgs.has(PROJECT_FILE)) {
+        return loadProjectFile(data, userArgs);
       } else {
-        return new ParseResult(data, null);
+        return parseCommandLine(data, userArgs);
       }
     } catch (final OptionException uoe) {
       return new ParseResult(data, uoe.getLocalizedMessage());
     }
 
+  }
+
+  private ParseResult parseCommandLine(ReportOptions data, OptionSet userArgs) {
+    data.setReportDir(userArgs.valueOf(this.reportDirSpec));
+    data.setTargetClasses(FCollection.map(
+        this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setClassesInScope(FCollection.map(
+        this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setTargetTests(FCollection.map(
+        this.targetTestsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setSourceDirs(this.sourceDirSpec.values(userArgs));
+    data.setMutators(this.mutators.values(userArgs));
+    data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
+    data.addChildJVMArgs(this.jvmArgs.values(userArgs));
+    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
+    data.setNumberOfThreads(this.threadsSpec.value(userArgs));
+    data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
+    data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
+    data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
+    data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
+    data.setExcludedMethods(FCollection.map(
+        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedClasses(FCollection.map(
+        this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec
+        .value(userArgs));
+    data.setVerbose(userArgs.has(this.verboseSpec));
+
+    data.addOutputFormats(this.outputFormatSpec.values(userArgs));
+
+    if (userArgs.has("?")) {
+      return new ParseResult(data, "See above for supported parameters.");
+    } else {
+      return new ParseResult(data, null);
+    }
+  }
+
+  private ParseResult loadProjectFile(ReportOptions data, OptionSet userArgs) {
+    try {
+      ProjectFileParser parser = ProjectFileParserFactory.createParser();
+
+      ReportOptions loaded = parser.loadProjectFile(new File((String) userArgs.valueOf(PROJECT_FILE)));
+      return new ParseResult(loaded, null);
+    } catch (ProjectFileParserException e) {
+      return new ParseResult(data, "Project File ERROR: " + e.getMessage() + ".");
+    } catch (ProjectConfigurationException e) {
+      return new ParseResult(data, "Project File ERROR: " + e.getMessage() + ".");
+    }
   }
 
   public void printHelp() {
