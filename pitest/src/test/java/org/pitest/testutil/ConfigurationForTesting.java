@@ -13,9 +13,7 @@ import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
-import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
@@ -42,10 +40,6 @@ public class ConfigurationForTesting implements Configuration {
     }
 
   };
-
-  public TestUnitProcessor testUnitProcessor() {
-    return new IgnoreTestProcessor(IgnoreAnnotationForTesting.class);
-  }
 
   public TestUnitFinder testUnitFinder() {
     final Set<MethodFinder> beforeClassFinders = Collections

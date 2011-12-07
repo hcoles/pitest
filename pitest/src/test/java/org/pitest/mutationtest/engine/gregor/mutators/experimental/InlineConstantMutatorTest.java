@@ -159,7 +159,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceLargeIntegerConstantsWithValuePlus1()
-  throws Exception {
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasIntegerLDC.class);
     assertMutantCallableReturns(new HasIntegerLDC(), mutant, 987654321 + 1);
   }
@@ -209,7 +209,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceSmallIntegerConstantsWithValuePlus1()
-  throws Exception {
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasBIPUSH.class);
     assertMutantCallableReturns(new HasBIPUSH(), mutant, 29);
   }
@@ -224,7 +224,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldReplaceMediumIntegerConstantsWithValuePlus1()
-  throws Exception {
+      throws Exception {
     final Mutant mutant = getFirstMutant(HasSIPUSH.class);
     assertMutantCallableReturns(new HasSIPUSH(), mutant, 32701);
   }
@@ -271,8 +271,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   @Test
   public void shouldOverflowOnShortMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasShortOverflow.class);
-    assertMutantCallableReturns(new HasShortOverflow(), mutant,
-        Short.MIN_VALUE);
+    assertMutantCallableReturns(new HasShortOverflow(), mutant, Short.MIN_VALUE);
   }
 
   private static class HasIntegerAtMaxShortValue implements Callable<Integer> {
@@ -308,7 +307,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     public Byte call() throws Exception {
       byte b = Byte.MAX_VALUE;
       b = preventSourceFormatingMakingFinal(b);
-      return  b;
+      return b;
     }
   }
 
@@ -329,8 +328,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   @Test
   public void shouldOverflowOnByteMaxValue() throws Exception {
     final Mutant mutant = getFirstMutant(HasByteOverflow.class);
-    assertMutantCallableReturns(new HasByteOverflow(), mutant,
-        Byte.MIN_VALUE);
+    assertMutantCallableReturns(new HasByteOverflow(), mutant, Byte.MIN_VALUE);
   }
 
   private static class HasIntegerMaxValue implements Callable<Integer> {
@@ -538,7 +536,6 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
     }
 
   }
-
 
   @Test
   public void shouldReplaceFirstDoubleMutationPointOnly() throws Exception {

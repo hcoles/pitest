@@ -3,6 +3,7 @@ package org.pitest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -16,6 +17,7 @@ import junit.framework.TestCase;
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -71,7 +73,7 @@ public class TestJUnitConfiguration {
   }
 
   public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
-      extends TestCase {
+  extends TestCase {
 
     private final String name;
 
@@ -417,6 +419,56 @@ public class TestJUnitConfiguration {
 
     assertEquals(4, actual.size());
 
+  }
+
+  @Ignore
+  public static class AnnotatedAsIgnored {
+
+    @Test
+    public void ignoreMe() {
+
+    }
+
+    @Test
+    public void ignoreMeToo() {
+
+    }
+
+  };
+
+  @Test
+  public void shouldSkipAllMethodsInClassAnnotatedWithIgnore() {
+    run(AnnotatedAsIgnored.class);
+    verify(this.listener, times(1)).onTestSkipped((any(TestResult.class)));
+    verify(this.listener, never()).onTestStart(any(Description.class));
+  }
+
+  public static class HasMethodAnnotatedAsIgnored {
+
+    @Test
+    @Ignore
+    public void ignoreMe() {
+
+    }
+
+    @Test
+    @Ignore
+    public void ignoreMeToo() {
+
+    }
+
+    @Test
+    public void dontIgnoreMe() {
+
+    }
+
+  };
+
+  @Test
+  public void shouldSkipAllMethodsAnnotatedWithIgnore() {
+    run(HasMethodAnnotatedAsIgnored.class);
+    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
+    verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
 
   private void run(final Class<?> clazz) {

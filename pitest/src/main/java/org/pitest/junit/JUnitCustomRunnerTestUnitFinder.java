@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.junit;
 
@@ -32,7 +32,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -44,17 +43,13 @@ import org.pitest.reflection.Reflection;
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final Configuration config, final TestDiscoveryListener listener,
-      final TestUnitProcessor processor) {
+      final Configuration config, final TestDiscoveryListener listener) {
 
-    final Collection<? extends TestUnit> units = createUnits(testClass,
-        listener);
-
-    return FCollection.map(units, processor);
+    return createUnits(testClass, listener);
 
   }
 
-  private Collection<? extends TestUnit> createUnits(final Class<?> clazz,
+  private Collection<TestUnit> createUnits(final Class<?> clazz,
       final TestDiscoveryListener listener) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
@@ -87,7 +82,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return Parameterized.class.isAssignableFrom(runner.getClass());
   }
 
-  private Collection<? extends TestUnit> splitIntoFilteredUnits(
+  private Collection<TestUnit> splitIntoFilteredUnits(
       final Description description, final TestDiscoveryListener listener) {
 
     listener.enterClass(description.getTestClass());

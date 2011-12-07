@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.classinfo;
 
@@ -47,8 +47,6 @@ public class ClassInfo {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((this.codeLines == null) ? 0 : this.codeLines.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     return result;
   }
@@ -65,13 +63,6 @@ public class ClassInfo {
       return false;
     }
     final ClassInfo other = (ClassInfo) obj;
-    if (this.codeLines == null) {
-      if (other.codeLines != null) {
-        return false;
-      }
-    } else if (!this.codeLines.equals(other.codeLines)) {
-      return false;
-    }
     if (this.name == null) {
       if (other.name != null) {
         return false;

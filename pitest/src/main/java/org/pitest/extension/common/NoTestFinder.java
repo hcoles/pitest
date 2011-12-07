@@ -7,13 +7,11 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 
 public class NoTestFinder implements TestUnitFinder {
 
   public Collection<TestUnit> findTestUnits(final Class<?> clazz,
-      final Configuration configuration, final TestDiscoveryListener listener,
-      final TestUnitProcessor processor) {
+      final Configuration configuration, final TestDiscoveryListener listener) {
     return Collections.emptyList();
   }
 

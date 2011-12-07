@@ -7,7 +7,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 
 public class CompoundTestUnitFinder implements TestUnitFinder {
 
@@ -18,11 +17,10 @@ public class CompoundTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final Class<?> clazz,
-      final Configuration configuration, final TestDiscoveryListener listener,
-      final TestUnitProcessor processor) {
+      final Configuration configuration, final TestDiscoveryListener listener) {
     for (final TestUnitFinder each : this.tufs) {
       final Collection<TestUnit> tus = each.findTestUnits(clazz, configuration,
-          listener, processor);
+          listener);
       if (!tus.isEmpty()) {
         return tus;
       }

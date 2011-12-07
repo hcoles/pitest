@@ -22,7 +22,6 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 
 /**
@@ -41,17 +40,16 @@ public final class TestClass {
       final Configuration startConfig, final TestDiscoveryListener listener) {
 
     final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
-        listener, startConfig, startConfig.testUnitProcessor());
+        listener, startConfig);
 
     return units;
   }
 
   private Collection<TestUnit> findTestUnitsUsingAllTestFinders(
-      final TestDiscoveryListener listener, final Configuration classConfig,
-      final TestUnitProcessor applyProcessors) {
+      final TestDiscoveryListener listener, final Configuration classConfig) {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     units.addAll(classConfig.testUnitFinder().findTestUnits(
-        TestClass.this.getClazz(), classConfig, listener, applyProcessors));
+        TestClass.this.getClazz(), classConfig, listener));
 
     return units;
   }
