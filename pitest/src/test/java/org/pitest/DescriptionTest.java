@@ -6,14 +6,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.functional.F;
-import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.reflection.Reflection;
 
 public class DescriptionTest {
 
@@ -22,11 +18,9 @@ public class DescriptionTest {
   @Test
   public void shouldCloneViaXStreamWithoutError() throws Exception {
     try {
-      final Method m = Reflection.publicMethod(this.getClass(),
-          "shouldCloneViaXStreamWithoutError");
-      this.testee = new Description("foo", IOException.class, new TestMethod(m));
+      this.testee = new Description("foo", IOException.class);
       final Description actual = (Description) IsolationUtils
-          .clone(this.testee);
+      .clone(this.testee);
 
       assertEquals(this.testee, actual);
     } catch (final Throwable t) {
@@ -34,24 +28,10 @@ public class DescriptionTest {
     }
   }
 
-  @Test
-  public void shouldAcceptNullMethods() {
-    this.testee = new Description("foo", Collections.<Class<?>> emptySet(),
-        null);
-    assertEquals(Option.none(), this.testee.getMethod());
-  }
-
-  @Test
-  public void shouldStoreSuppliedMethod() {
-    final TestMethod tm = new TestMethod(null);
-    this.testee = new Description("foo", Collections.<Class<?>> emptySet(), tm);
-    assertEquals(Option.some(tm), this.testee.getMethod());
-  }
 
   @Test
   public void shouldReturnTrueIfContainsClassMatchingPredicate() {
-    this.testee = new Description("foo",
-        Collections.<Class<?>> singletonList(String.class), null);
+    this.testee = new Description("foo",String.class);
     assertTrue(this.testee.contains(theClass(String.class)));
   }
 
@@ -65,8 +45,7 @@ public class DescriptionTest {
 
   @Test
   public void shouldReturnFalseIfDoesNotContainClassMatchingPredicate() {
-    this.testee = new Description("foo",
-        Collections.<Class<?>> singletonList(Integer.class), null);
+    this.testee = new Description("foo", Integer.class);
     assertFalse(this.testee.contains(theClass(String.class)));
   }
 }

@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest;
@@ -65,6 +65,7 @@ public class Pitest {
     }
   }
 
+  // entry point for mutation testing
   public void run(final Container container,
       final List<? extends TestUnit> testUnits) {
     this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
@@ -88,10 +89,10 @@ public class Pitest {
       final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-          public void apply(final TestListener a) {
-            a.onRunStart();
-          }
-        });
+      public void apply(final TestListener a) {
+        a.onRunStart();
+      }
+    });
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
@@ -101,7 +102,7 @@ public class Pitest {
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-          .getTestUnits(startConfig, listener, groupStrategy);
+      .getTestUnits(startConfig, listener, groupStrategy);
       testUnits.addAll(testUnitsFromClass);
     }
 
@@ -141,10 +142,10 @@ public class Pitest {
   private void signalRunEndToAllListeners(final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-          public void apply(final TestListener a) {
-            a.onRunEnd();
-          }
-        });
+      public void apply(final TestListener a) {
+        a.onRunEnd();
+      }
+    });
   }
 
   private Thread startFeederThread(final Container container,
@@ -168,7 +169,7 @@ public class Pitest {
 
     for (final TestResult result : results) {
       final ResultType classifiedResult = staticConfig.getClassifier()
-          .classify(result);
+      .classify(result);
       FCollection.forEach(staticConfig.getTestListeners(),
           classifiedResult.getListenerFunction(result));
     }

@@ -55,7 +55,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   public AdaptedJUnitTestUnit(
       final ClassLoaderDetectionStrategy loaderDetection, final Class<?> clazz,
       final Option<Filter> filter) {
-    super(new org.pitest.Description(createName(clazz, filter), clazz, null));
+    super(new org.pitest.Description(createName(clazz, filter), clazz));
     this.loaderDetection = loaderDetection;
     this.clazz = clazz;
     this.filter = filter;
@@ -123,7 +123,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private void executeInDifferentClassLoader(final ClassLoader loader,
       final ResultCollector rc, final Runner runner)
-      throws IllegalAccessException, InvocationTargetException {
+  throws IllegalAccessException, InvocationTargetException {
 
     // must jump through hoops to run in different class loader
     // when even our framework classes may be duplicated
@@ -137,7 +137,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
     // set an uncloned list to receive results in
     final Method set = Reflection
-        .publicMethod(foreignCe.getClass(), "setQueue");
+    .publicMethod(foreignCe.getClass(), "setQueue");
     set.invoke(foreignCe, q);
     run.invoke(foreignCe);
 
@@ -146,7 +146,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
       final String type = results[0];
       if (type.equals("FAIL")) {
         final Throwable t = (Throwable) IsolationUtils
-            .fromTransportString(results[2]);
+        .fromTransportString(results[2]);
         rc.notifyEnd(this.getDescription(), t);
       } else if (type.equals("IGNORE")) {
         rc.notifySkipped(this.getDescription());
@@ -163,7 +163,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   @Override
   public String toString() {
     return "AdaptedJUnitTestUnit [clazz=" + this.clazz + ", filter="
-        + this.filter + "]";
+    + this.filter + "]";
   }
 
 }
