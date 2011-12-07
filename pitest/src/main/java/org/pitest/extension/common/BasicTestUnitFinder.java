@@ -83,7 +83,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(
           config, testClass);
       final List<TestStep> instantiations = instantiationStrategy
-      .instantiations(testClass);
+          .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
         for (final TestMethod m : findTestMethods(this.testMethodFinders,
             testClass)) {
@@ -149,8 +149,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
 
     final TestUnit unit = new SteppedTestUnit(new Description(namePrefix
-        + testMethod.getName(), testClass), steps,
-        testMethod.getExpected());
+        + testMethod.getName(), testClass), steps, testMethod.getExpected());
     return unit;
 
   }

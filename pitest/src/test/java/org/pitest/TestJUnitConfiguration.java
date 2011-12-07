@@ -73,7 +73,7 @@ public class TestJUnitConfiguration {
   }
 
   public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
-  extends TestCase {
+      extends TestCase {
 
     private final String name;
 

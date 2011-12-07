@@ -82,7 +82,7 @@ public class TimeoutDecoratorTest {
     this.testee.execute(this.loader, this.rc);
 
     verify(this.rc)
-    .notifyEnd(eq(this.description), any(TimeoutException.class));
+        .notifyEnd(eq(this.description), any(TimeoutException.class));
 
     verify(this.rc, never()).notifyEnd(eq(this.description));
 

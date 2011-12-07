@@ -14,7 +14,6 @@
  */
 package org.pitest;
 
-
 public class DescriptionMother {
 
   public static Description createEmptyDescription(final String name) {

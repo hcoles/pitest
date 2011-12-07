@@ -42,7 +42,7 @@ public class TimeOutDecoratedTestSource {
 
   private void mapTests(final List<TestUnit> tests) {
     for (final TestUnit each : tests) {
-      this.allTests.put(each.getDescription().toString(), each);
+      this.allTests.put(each.getDescription().getQualifiedName(), each);
     }
   }
 

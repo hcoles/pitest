@@ -54,7 +54,7 @@ public class GroupPerClassStrategyTest {
     final Collection<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
     final Collection<? extends TestUnit> actual = testee.group(null, tus);
     final Collection<? extends TestUnit> expected = Collections
-    .singleton(new MultipleTestGroup(tus));
+        .singleton(new MultipleTestGroup(tus));
     assertEquals(expected, actual);
   }
 

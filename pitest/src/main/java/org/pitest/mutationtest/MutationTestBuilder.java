@@ -157,8 +157,8 @@ public class MutationTestBuilder {
     return new F<MutationDetails, Iterable<String>>() {
 
       public Iterable<String> apply(final MutationDetails a) {
-        return FCollection.flatMap(a.getTestsInOrder(),
-            TestInfo.toDefiningClassNames());
+        return FCollection.map(a.getTestsInOrder(),
+            TestInfo.toDefiningClassName());
       }
 
     };

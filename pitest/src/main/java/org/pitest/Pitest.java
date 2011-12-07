@@ -89,10 +89,10 @@ public class Pitest {
       final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-      public void apply(final TestListener a) {
-        a.onRunStart();
-      }
-    });
+          public void apply(final TestListener a) {
+            a.onRunStart();
+          }
+        });
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
@@ -102,7 +102,7 @@ public class Pitest {
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-      .getTestUnits(startConfig, listener, groupStrategy);
+          .getTestUnits(startConfig, listener, groupStrategy);
       testUnits.addAll(testUnitsFromClass);
     }
 
@@ -142,10 +142,10 @@ public class Pitest {
   private void signalRunEndToAllListeners(final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-      public void apply(final TestListener a) {
-        a.onRunEnd();
-      }
-    });
+          public void apply(final TestListener a) {
+            a.onRunEnd();
+          }
+        });
   }
 
   private Thread startFeederThread(final Container container,
@@ -169,7 +169,7 @@ public class Pitest {
 
     for (final TestResult result : results) {
       final ResultType classifiedResult = staticConfig.getClassifier()
-      .classify(result);
+          .classify(result);
       FCollection.forEach(staticConfig.getTestListeners(),
           classifiedResult.getListenerFunction(result));
     }

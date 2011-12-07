@@ -138,7 +138,7 @@ public class MutationMetaData implements MetaData {
 
   public Collection<String> getTestClasses() {
     final Set<String> uniqueTestClasses = new HashSet<String>();
-    FCollection.flatMapTo(getTargettedTests(), TestInfo.toDefiningClassNames(),
+    FCollection.mapTo(getTargettedTests(), TestInfo.toDefiningClassName(),
         uniqueTestClasses);
     return uniqueTestClasses;
   }
