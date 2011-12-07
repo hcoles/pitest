@@ -1,15 +1,16 @@
 package org.pitest.project.impl;
 
 import org.pitest.project.ProjectFileParserException;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,17 +47,17 @@ public class XmlUtils {
   }
 
   /**
-   * Convenience method that will open the provided {@see File} and return the {@see Document} that is contained in the file.
+   * Convenience method that will open the provided {@see InputStream} and return the {@see Document} that is contained in the file.
    *
-   * @param f the {@see File} to parse.
+   * @param f the {@see InputStream} to parse the XML from.
    * @return the {@see Document} representation of the provided {@see File}.
    * @throws ProjectFileParserException if the provided {@see File} cannot be parsed.
    */
-  public static Document parseFile(File f) throws ProjectFileParserException {
+  public static Document parseFile(InputStream f) throws ProjectFileParserException {
     try {
       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-      Document doc = docBuilder.parse(new FileInputStream(f));
+      Document doc = docBuilder.parse(f);
       return doc;
     } catch (ParserConfigurationException e) {
       throw new ProjectFileParserException(e);

@@ -2,8 +2,7 @@ package org.pitest.project;
 
 import org.pitest.mutationtest.ReportOptions;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
+import java.io.InputStream;
 
 /**
  * A {@see ProjectFileParser} is responsible for parsing a project file and returning a fully configured
@@ -13,10 +12,10 @@ import java.io.File;
  */
 public interface ProjectFileParser {
   /**
-   * Loads the project file from the provided {@see File}, creating a new {@see ReportOptions} instance.
+   * Loads the project file from the provided {@see InputStream}, creating a new {@see ReportOptions} instance.
    *
-   * @param projectFile the {@see File} to load the {@see ReportOptions} from.
-   * @return a new {@see ReportOptions} instance, configured based on the provided {@see File}.
+   * @param stream the {@see InputStream} to load the {@see ReportOptions} from.
+   * @return a new {@see ReportOptions} instance, configured based on the provided {@see InputStream}.
    */
-  public ReportOptions loadProjectFile(File projectFile) throws ProjectFileParserException, ProjectConfigurationException;
+  public ReportOptions loadProjectFile(InputStream stream) throws ProjectFileParserException, ProjectConfigurationException;
 }

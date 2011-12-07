@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -207,23 +208,11 @@ public class DefaultProjectFileParser implements ProjectFileParser {
   /**
    * @inheritDoc
    */
-  public ReportOptions loadProjectFile(File projectFile) throws ProjectFileParserException, ProjectConfigurationException {
-    if (!projectFile.exists()) {
-      throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it does not exist.");
-    }
-
-    if (!projectFile.isFile()) {
-      throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it is a directory.");
-    }
-
-    if (!projectFile.canRead()) {
-      throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it cannot be read.");
-    }
-
-    Document doc = XmlUtils.parseFile(projectFile);
+  public ReportOptions loadProjectFile(InputStream inputStream) throws ProjectFileParserException, ProjectConfigurationException {
+    Document doc = XmlUtils.parseFile(inputStream);
 
     if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase(DOCUMENT_ROOT_ELEMENT_NAME)) {
-      throw new ProjectConfigurationException("Project file " + projectFile.getAbsolutePath() + " does not start with " + DOCUMENT_ROOT_ELEMENT_NAME + ".");
+      throw new ProjectConfigurationException("Project file does not start with " + DOCUMENT_ROOT_ELEMENT_NAME + ".");
     }
 
     ReportOptions ro = new ReportOptions();

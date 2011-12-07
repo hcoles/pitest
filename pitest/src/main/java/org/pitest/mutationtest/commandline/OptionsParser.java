@@ -30,6 +30,8 @@ import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -271,7 +273,21 @@ public class OptionsParser {
     try {
       ProjectFileParser parser = ProjectFileParserFactory.createParser();
 
-      ReportOptions loaded = parser.loadProjectFile(new File((String) userArgs.valueOf(PROJECT_FILE)));
+      File projectFile = new File((String) userArgs.valueOf(PROJECT_FILE));
+
+      if (!projectFile.exists()) {
+        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it does not exist.");
+      }
+
+      if (!projectFile.isFile()) {
+        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it is a directory.");
+      }
+
+      if (!projectFile.canRead()) {
+        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it cannot be read.");
+      }
+
+      ReportOptions loaded = parser.loadProjectFile(new FileInputStream(projectFile));
 
       // as the process is already running, we need to add any additionally defined classpath elements
       // to the system classloader so they are available to the methods later on.
@@ -283,6 +299,8 @@ public class OptionsParser {
     } catch (ProjectFileParserException e) {
       return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     } catch (ProjectConfigurationException e) {
+      return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
+    } catch (FileNotFoundException e) {
       return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     }
   }
