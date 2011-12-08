@@ -42,6 +42,12 @@ public class DefaultProjectFileParser implements ProjectFileParser {
   public static final String DOCUMENT_ROOT_ELEMENT_NAME = "project";
 
   /**
+   * The {@see FileSystemDelegate} instance to use to query the file system. Allows any access to the
+   * file system to be replaced if needed.
+   */
+  private FileSystemDelegate fileSystemDelegate;
+
+  /**
    * Helper method that will load all {@see FILTER_ELEMENT_NAME} elements from the provided {@see Element}
    * which are children of the {@see root} {@see Element}.
    *
@@ -69,9 +75,9 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     return FCollection.map(result, Glob.toGlobPredicate());
   }
 
-  private static void loadElementsAsStrings(List<String> result, Element targetTests, String type) {
-    if (targetTests != null) {
-      List<Element> directories = XmlUtils.getChildElements(targetTests, type);
+  private static void loadNameAttributesFromChildElements(List<String> result, Element element, String type) {
+    if (element != null) {
+      List<Element> directories = XmlUtils.getChildElements(element, type);
 
       for (Element e : directories) {
         String classpath = XmlUtils.getAttribute(e, NAME_ATTRIBUTE_NAME);
@@ -205,6 +211,17 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     return defaultValue;
   }
 
+  public DefaultProjectFileParser() {
+    this(new DefaultFileSystemDelegate());
+  }
+
+  public DefaultProjectFileParser(FileSystemDelegate del) {
+    if(del == null){
+      throw new IllegalArgumentException("Cannot create a new DefaultProjectFileParser with a null FileSystemDelegate instance.");
+    }
+    this.fileSystemDelegate = del;
+  }
+
   /**
    * @inheritDoc
    */
@@ -234,6 +251,16 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     ro.setVerbose(loadVerbose(doc));
 
     return ro;
+  }
+
+  /**
+   * Returns {@code true} if the provided {@see File} exists on the filesystem, {@code false} otherwise.
+   *
+   * @param f the {@see File} to test if it exists.
+   * @return {@code true} if the provided {@see File} exists on the filesystem, {@code false} otherwise.
+   */
+  protected boolean doesFileExist(String f) {
+    return fileSystemDelegate.doesFileExist(f);
   }
 
   /**
@@ -313,19 +340,18 @@ public class DefaultProjectFileParser implements ProjectFileParser {
         String filter = XmlUtils.getAttribute(e, NAME_ATTRIBUTE_NAME);
 
         if (filter != null && filter.length() > 0) {
-          File f = new File(filter);
-
-          if (!f.exists()) {
-            throw new ProjectConfigurationException("Cannot load source directory " + f.getAbsolutePath() + " as it does not exist.");
+          if (!doesFileExist(filter)) {
+            throw new ProjectConfigurationException("Cannot load source directory " + filter + " as it does not exist.");
           }
 
-          result.add(f);
+          result.add(new File(filter));
         }
       }
     }
 
     return result;
   }
+
 
   /**
    * Loads the {@see OptionsParser.REPORT_DIR_ARG} property from the project file.
@@ -433,10 +459,10 @@ public class DefaultProjectFileParser implements ProjectFileParser {
   private Collection<String> loadClassPathElements(Document doc) {
     List<String> result = new ArrayList<String>();
 
-    Element targetTests = XmlUtils.getChildElement(doc.getDocumentElement(), OptionsParser.CLASSPATH_ARG);
+    Element classpathElement = XmlUtils.getChildElement(doc.getDocumentElement(), OptionsParser.CLASSPATH_ARG);
 
-    loadElementsAsStrings(result, targetTests, DIRECTORY_ELEMENT_NAME);
-    loadElementsAsStrings(result, targetTests, JARFILE_ELEMENT_NAME);
+    loadNameAttributesFromChildElements(result, classpathElement, DIRECTORY_ELEMENT_NAME);
+    loadNameAttributesFromChildElements(result, classpathElement, JARFILE_ELEMENT_NAME);
 
     return result;
   }
