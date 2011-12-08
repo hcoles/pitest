@@ -71,8 +71,7 @@ public class TestInfoPriorisationComparatorTest {
   }
 
   private TestInfo testInfo(final int time, final String target) {
-    return new TestInfo("", target + time, time,
-        Collections.singleton(target));
+    return new TestInfo("", target + time, time, Collections.singleton(target));
   }
 
 }

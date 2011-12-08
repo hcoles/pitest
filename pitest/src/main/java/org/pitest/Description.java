@@ -39,7 +39,7 @@ public final class Description implements Serializable {
 
   public Collection<String> getDirectTestees() {
     return TestInfo.determineTestee(this.testClass)
-    .map(Functions.classToName());
+        .map(Functions.classToName());
   }
 
   public Class<?> getFirstTestClass() {
@@ -64,7 +64,7 @@ public final class Description implements Serializable {
     int result = 1;
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-    + ((this.testClass == null) ? 0 : this.testClass.hashCode());
+        + ((this.testClass == null) ? 0 : this.testClass.hashCode());
     return result;
   }
 
@@ -99,9 +99,8 @@ public final class Description implements Serializable {
 
   @Override
   public String toString() {
-    return "Description [testClass=" + this.testClass + ", name=" + this.name + "]";
+    return "Description [testClass=" + this.testClass + ", name=" + this.name
+        + "]";
   }
-
-
 
 }

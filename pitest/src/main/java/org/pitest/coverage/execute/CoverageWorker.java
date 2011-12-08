@@ -67,10 +67,8 @@ public class CoverageWorker implements Runnable {
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
       final CoverageReceiver queue) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
-    int index = 0;
     for (final TestUnit each : plainTests) {
-      decorated.add(new CoverageDecorator(queue, each, index));
-      index++;
+      decorated.add(new CoverageDecorator(queue, each));
     }
     return decorated;
   }

@@ -3,7 +3,6 @@ package org.pitest.coverage.execute;
 import java.io.IOException;
 import java.util.List;
 
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CoverageCommunicationThread;
 import org.pitest.util.ProcessArgs;
@@ -15,10 +14,12 @@ public class CoverageProcess {
   private final CoverageCommunicationThread crt;
 
   public CoverageProcess(final ProcessArgs processArgs,
-      final SlaveArguments arguments, final int port, final List<TestUnit> tus,
-      final SideEffect1<CoverageResult> handler) throws IOException {
+      final SlaveArguments arguments, final int port,
+      final List<String> testClases, final SideEffect1<CoverageResult> handler)
+      throws IOException {
     this.process = new WrappingProcess(port, processArgs, CoverageSlave.class);
-    this.crt = new CoverageCommunicationThread(port, arguments, tus, handler);
+    this.crt = new CoverageCommunicationThread(port, arguments, testClases,
+        handler);
   }
 
   public void start() throws IOException {

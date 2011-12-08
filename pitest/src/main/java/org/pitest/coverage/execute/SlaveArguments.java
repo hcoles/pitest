@@ -15,16 +15,23 @@ package org.pitest.coverage.execute;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
+import org.pitest.extension.Configuration;
 import org.pitest.functional.predicate.Predicate;
 
 public class SlaveArguments {
 
   private final Predicate<String> filter;
   private final boolean           verbose;
+  private final Configuration     pitConfig;
+  private final int               maxDependencyDistance;
 
-  public SlaveArguments(final Predicate<String> filter, final boolean verbose) {
+  public SlaveArguments(final Predicate<String> filter,
+      final Configuration pitConfig, final boolean verbose,
+      final int maxDependencyDistance) {
     this.filter = filter;
     this.verbose = verbose;
+    this.pitConfig = pitConfig;
+    this.maxDependencyDistance = maxDependencyDistance;
   }
 
   public Predicate<String> getFilter() {
@@ -33,6 +40,14 @@ public class SlaveArguments {
 
   public boolean isVerbose() {
     return this.verbose;
+  }
+
+  public Configuration getPitConfig() {
+    return this.pitConfig;
+  }
+
+  public int getDependencyAnalysisMaxDistance() {
+    return this.maxDependencyDistance;
   }
 
 }

@@ -130,7 +130,7 @@ public class MutationTestWorker {
     LOG.info("Mutation " + mutationId + " detected = " + mutationDetected);
   }
 
-  private Container createNewContainer(final ClassLoader activeloader) {
+  private static Container createNewContainer(final ClassLoader activeloader) {
     final Container c = new UnContainer() {
       @Override
       public void submit(final TestUnit group) {

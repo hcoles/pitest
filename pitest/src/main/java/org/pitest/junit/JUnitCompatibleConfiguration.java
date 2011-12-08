@@ -24,7 +24,6 @@ import org.pitest.extension.TestUnitFinder;
 public class JUnitCompatibleConfiguration implements Configuration {
 
   public TestUnitFinder testUnitFinder() {
-
     return new JUnitCustomRunnerTestUnitFinder();
   }
 

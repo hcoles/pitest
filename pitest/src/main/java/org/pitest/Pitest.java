@@ -53,16 +53,15 @@ public class Pitest {
   }
 
   public void run(final Container container, final Collection<Class<?>> classes) {
-    for (final Class<?> c : classes) {
 
-      run(container,
-          this.initialStaticConfig,
-          findTestUnitsForAllSuppliedClasses(
-              this.initialConfig,
-              new CompoundTestDiscoveryListener(this.initialStaticConfig
-                  .getDiscoveryListeners()), this.initialStaticConfig
-                  .getGroupingStrategy(), c));
-    }
+    run(container,
+        this.initialStaticConfig,
+        findTestUnitsForAllSuppliedClasses(
+            this.initialConfig,
+            new CompoundTestDiscoveryListener(this.initialStaticConfig
+                .getDiscoveryListeners()), this.initialStaticConfig
+                .getGroupingStrategy(), classes));
+
   }
 
   // entry point for mutation testing
@@ -97,7 +96,7 @@ public class Pitest {
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
       final Configuration startConfig, final TestDiscoveryListener listener,
-      final GroupingStrategy groupStrategy, final Class<?>... classes) {
+      final GroupingStrategy groupStrategy, final Iterable<Class<?>> classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {

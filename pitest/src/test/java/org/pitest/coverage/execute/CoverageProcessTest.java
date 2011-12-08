@@ -9,14 +9,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.List;
+import java.util.Arrays;
 
 import org.junit.Test;
-import org.pitest.Pitest;
 import org.pitest.coverage.ClassStatistics;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -141,11 +137,9 @@ public class CoverageProcessTest {
 
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
       throws IOException, InterruptedException {
-    final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
-        new JUnitCompatibleConfiguration(), new NullDiscoveryListener(),
-        new UnGroupedStrategy(), test);
 
-    final SlaveArguments sa = new SlaveArguments(coverOnlyTestees(), true);
+    final SlaveArguments sa = new SlaveArguments(coverOnlyTestees(),
+        new JUnitCompatibleConfiguration(), true, -1);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
 
@@ -161,7 +155,7 @@ public class CoverageProcessTest {
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(new ClassPath(true)).andJavaAgentFinder(agent), sa,
-        8186, tus, handler);
+        8186, Arrays.asList(test.getName()), handler);
     process.start();
     process.waitToDie();
     agent.close();

@@ -28,20 +28,16 @@ public class CoverageDecorator extends TestUnitDecorator {
   private final static Logger    LOG = Log.getLogger();
 
   private final CoverageReceiver invokeQueue;
-  private final int              index;
 
-  protected CoverageDecorator(final CoverageReceiver queue,
-      final TestUnit child, final int index) {
+  protected CoverageDecorator(final CoverageReceiver queue, final TestUnit child) {
     super(child);
     this.invokeQueue = queue;
-    this.index = index;
-
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     LOG.fine("Gathering coverage for test " + child().getDescription());
-    this.invokeQueue.recordTest(this.index);
+    this.invokeQueue.recordTest(child().getDescription());
 
     final long t0 = System.currentTimeMillis();
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(

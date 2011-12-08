@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import static org.pitest.functional.Prelude.isInstanceOf;
-import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
@@ -31,12 +29,8 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.MetaData;
-import org.pitest.Pitest;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -54,9 +48,7 @@ import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
-import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.PortFinder;
@@ -125,12 +117,10 @@ public class MutationTestUnit extends AbstractTestUnit {
       final ClassLoader loader) throws IOException, InterruptedException {
     final String cp = createClassPath(loader);
 
-    final List<TestUnit> tests = findTestUnits(loader);
-
     final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
-    if (hasTestCoverage(tests)) {
+    if (hasTestCoverage(this.testClasses)) {
       setStatusForAvailableMutations(mutations, DetectionStatus.NOT_STARTED);
-      runTestsInSeperateProcess(cp, tests, mutations);
+      runTestsInSeperateProcess(cp, this.testClasses, mutations);
 
     } else {
       setStatusForAvailableMutations(mutations, DetectionStatus.NO_COVERAGE);
@@ -145,25 +135,18 @@ public class MutationTestUnit extends AbstractTestUnit {
         putToMap(mutations, new MutationStatusTestPair(status)));
   }
 
-  private boolean hasTestCoverage(final List<TestUnit> tests) {
-    return !tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests);
-  }
-
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
-        Functions.stringToClass(loader));
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(),
-        tcs.toArray(new Class<?>[tcs.size()]));
+  private boolean hasTestCoverage(final Collection<String> tests) {
+    return !tests.isEmpty();
   }
 
   private void runTestInSeperateProcessForMutationRange(
       final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations,
-      final List<TestUnit> tests, final String cp) throws IOException {
+      final Collection<String> tests, final String cp) throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        tests, this.config, this.timeoutStrategy, Log.isVerbose());
+        tests, this.config, this.timeoutStrategy, Log.isVerbose(),
+        this.pitConfig);
 
     final PortFinder pf = PortFinder.INSTANCE;
 
@@ -253,7 +236,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestsInSeperateProcess(final String cp,
-      final List<TestUnit> tests,
+      final Collection<String> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
       throws IOException, InterruptedException {
 
@@ -326,12 +309,6 @@ public class MutationTestUnit extends AbstractTestUnit {
       }
 
     };
-  }
-
-  private boolean containsOnlyIgnoredTestUnits(final List<TestUnit> tests) {
-    // FIXME handle this more generically
-    return !FCollection.contains(tests,
-        not(isInstanceOf(IgnoredTestUnit.class)));
   }
 
   public MutationConfig getMutationConfig() {

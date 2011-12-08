@@ -22,10 +22,10 @@ public class TestInfo {
 
   private final String             name;
   private final int                time;
-  private final String definingClass;
+  private final String             definingClass;
   private final Collection<String> testees;
 
-  public TestInfo(String definingClass, final String name,
+  public TestInfo(final String definingClass, final String name,
       final int time, final Collection<String> testees) {
     this.definingClass = definingClass;
     this.name = name;
@@ -46,7 +46,6 @@ public class TestInfo {
     return this.name;
   }
 
-
   public static F<TestInfo, String> toDefiningClassName() {
     return new F<TestInfo, String>() {
 
@@ -66,42 +65,51 @@ public class TestInfo {
     final int prime = 31;
     int result = 1;
     result = prime * result
-    + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
+        + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-    result = prime * result + ((this.testees == null) ? 0 : this.testees.hashCode());
+    result = prime * result
+        + ((this.testees == null) ? 0 : this.testees.hashCode());
     result = prime * result + this.time;
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    TestInfo other = (TestInfo) obj;
+    }
+    final TestInfo other = (TestInfo) obj;
     if (this.definingClass == null) {
-      if (other.definingClass != null)
+      if (other.definingClass != null) {
         return false;
-    } else if (!this.definingClass.equals(other.definingClass))
+      }
+    } else if (!this.definingClass.equals(other.definingClass)) {
       return false;
+    }
     if (this.name == null) {
-      if (other.name != null)
+      if (other.name != null) {
         return false;
-    } else if (!this.name.equals(other.name))
+      }
+    } else if (!this.name.equals(other.name)) {
       return false;
+    }
     if (this.testees == null) {
-      if (other.testees != null)
+      if (other.testees != null) {
         return false;
-    } else if (!this.testees.equals(other.testees))
+      }
+    } else if (!this.testees.equals(other.testees)) {
       return false;
-    if (this.time != other.time)
+    }
+    if (this.time != other.time) {
       return false;
+    }
     return true;
   }
-
-
 
 }

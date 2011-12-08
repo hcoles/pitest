@@ -21,17 +21,29 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.pitest.Pitest;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.coverage.CoverageTransformer;
+import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.NullDiscoveryListener;
+import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
+import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Functions;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
+import org.pitest.util.Unchecked;
 
 public class CoverageSlave {
 
@@ -64,7 +76,7 @@ public class CoverageSlave {
       HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
           .getFilter()));
 
-      final List<TestUnit> tus = getTestsFromParent(dis);
+      final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
 
       LOG.info(tus.size() + " tests received");
 
@@ -95,16 +107,86 @@ public class CoverageSlave {
 
   }
 
-  private static List<TestUnit> getTestsFromParent(final SafeDataInputStream dis)
+  private static List<TestUnit> getTestsFromParent(
+      final SafeDataInputStream dis, final SlaveArguments paramsFromParent)
       throws IOException {
-    final int count = dis.readInt();
-    final List<TestUnit> tus = new ArrayList<TestUnit>(count);
-    for (int i = 0; i != count; i++) {
-      tus.add(dis.read(TestUnit.class));
-    }
-    LOG.fine("Receiving " + count + " tests from parent");
-    return tus;
+    final List<String> classes = receiveTestClassesFromParent(dis);
 
+    final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
+
+    final List<TestUnit> filteredTus = filterTestsByDependencyAnalysis(
+        paramsFromParent, tus);
+
+    LOG.info("Dependency analysis reduced number of potential tests by "
+        + (tus.size() - filteredTus.size()));
+    return filteredTus;
+
+  }
+
+  private static List<TestUnit> discoverTests(
+      final SlaveArguments paramsFromParent, final List<String> classes) {
+    final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
+        paramsFromParent.getPitConfig(), new NullDiscoveryListener(),
+        new UnGroupedStrategy(),
+        FCollection.flatMap(classes, Functions.stringToClass()));
+    LOG.info("Found  " + tus.size() + " tests");
+    return tus;
+  }
+
+  private static List<String> receiveTestClassesFromParent(
+      final SafeDataInputStream dis) {
+    final int count = dis.readInt();
+    final List<String> classes = new ArrayList<String>(count);
+    for (int i = 0; i != count; i++) {
+      classes.add(dis.readString());
+    }
+    LOG.fine("Receiving " + count + " tests classes from parent");
+    return classes;
+  }
+
+  private static List<TestUnit> filterTestsByDependencyAnalysis(
+      final SlaveArguments paramsFromParent, final List<TestUnit> tus) {
+    final ClassPath cp = new ClassPath();
+    final int maxDistance = paramsFromParent.getDependencyAnalysisMaxDistance();
+    if (maxDistance < 0) {
+      return tus;
+    } else {
+      return FCollection.filter(tus,
+          isWithinReach(maxDistance, paramsFromParent, cp));
+    }
+  }
+
+  private static F<TestUnit, Boolean> isWithinReach(final int maxDistance,
+      final SlaveArguments paramsFromParent, final ClassPath classPath) {
+    final DependencyExtractor analyser = new DependencyExtractor(
+        new ClassPathByteArraySource(classPath), maxDistance);
+
+    return new F<TestUnit, Boolean>() {
+      private final Map<String, Boolean> cache = new HashMap<String, Boolean>();
+
+      public Boolean apply(final TestUnit a) {
+        final String each = a.getDescription().getFirstTestClass().getName();
+        try {
+          boolean inReach;
+          if (this.cache.containsKey(each)) {
+            inReach = this.cache.get(each);
+          } else {
+            inReach = !analyser.extractCallDependenciesForPackages(each,
+                paramsFromParent.getFilter()).isEmpty();
+            this.cache.put(each, inReach);
+          }
+
+          if (inReach) {
+            return true;
+          }
+        } catch (final IOException e) {
+          throw Unchecked.translateCheckedException(e);
+        }
+
+        return false;
+      }
+
+    };
   }
 
 }

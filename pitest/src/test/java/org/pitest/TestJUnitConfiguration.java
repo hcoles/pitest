@@ -413,7 +413,7 @@ public class TestJUnitConfiguration {
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
     final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
         this.testee, new NullDiscoveryListener(), new UnGroupedStrategy(),
-        CustomSuite.class);
+        Arrays.<Class<?>> asList(CustomSuite.class));
 
     System.out.println(actual);
 

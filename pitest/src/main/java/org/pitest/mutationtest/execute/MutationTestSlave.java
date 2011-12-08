@@ -17,6 +17,8 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 import java.lang.management.MemoryNotificationInfo;
 import java.net.Socket;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,14 +26,21 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
+import org.pitest.Pitest;
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.extension.Configuration;
+import org.pitest.extension.TestUnit;
+import org.pitest.extension.common.NullDiscoveryListener;
+import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F2;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
@@ -70,12 +79,15 @@ public class MutationTestSlave {
       r = new DefaultReporter(s.getOutputStream());
       addMemoryWatchDog(r);
 
+      final ClassLoader loader = IsolationUtils.getContextClassLoader();
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.config.createMutator(IsolationUtils
-              .getContextClassLoader()), IsolationUtils.getContextClassLoader());
+          paramsFromParent.config.createMutator(loader), loader);
+
+      final List<TestUnit> tests = findTestsForTestClasses(loader,
+          paramsFromParent.testClasses, paramsFromParent.pitConfig);
 
       worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          paramsFromParent.timeoutStrategy, paramsFromParent.tests, r));
+          paramsFromParent.timeoutStrategy, tests, r));
 
     } catch (final Exception ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
@@ -92,6 +104,15 @@ public class MutationTestSlave {
       safelyCloseSocket(s);
     }
 
+  }
+
+  private static List<TestUnit> findTestsForTestClasses(
+      final ClassLoader loader, final Collection<String> testClasses,
+      final Configuration pitConfig) {
+    final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
+        Functions.stringToClass(loader));
+    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig,
+        new NullDiscoveryListener(), new UnGroupedStrategy(), tcs);
   }
 
   @SuppressWarnings("unchecked")
