@@ -14,17 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.Prelude.and;
-import static org.pitest.functional.Prelude.not;
-import static org.pitest.functional.Prelude.or;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -35,40 +24,45 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 
+import java.io.File;
+import java.util.*;
+
+import static org.pitest.functional.Prelude.*;
+
 public class ReportOptions {
 
-  private Collection<Predicate<String>>              classesInScope;
-  private Collection<Predicate<String>>              targetClasses;
-  private Collection<Predicate<String>>              excludedMethods          = Collections
-                                                                                  .emptyList();
+  private Collection<Predicate<String>> classesInScope;
+  private Collection<Predicate<String>> targetClasses;
+  private Collection<Predicate<String>> excludedMethods = Collections
+      .emptyList();
 
-  private Collection<Predicate<String>>              excludedClasses          = Collections
-                                                                                  .emptyList();
+  private Collection<Predicate<String>> excludedClasses = Collections
+      .emptyList();
 
-  private String                                     reportDir;
-  private Collection<File>                           sourceDirs;
-  private Collection<String>                         classPathElements;
+  private String reportDir;
+  private Collection<File> sourceDirs;
+  private Collection<String> classPathElements;
   private Collection<? extends MethodMutatorFactory> mutators;
 
-  private int                                        dependencyAnalysisMaxDistance;
-  private boolean                                    mutateStaticInitializers = true;
+  private int dependencyAnalysisMaxDistance;
+  private boolean mutateStaticInitializers = true;
 
-  private boolean                                    includeJarFiles          = false;
+  private boolean includeJarFiles = false;
 
-  private final List<String>                         jvmArgs                  = new ArrayList<String>();
-  private int                                        numberOfThreads          = 0;
-  private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
-  private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
+  private final List<String> jvmArgs = new ArrayList<String>();
+  private int numberOfThreads = 0;
+  private float timeoutFactor = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
+  private long timeoutConstant = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
-  private Collection<Predicate<String>>              targetTests;
+  private Collection<Predicate<String>> targetTests;
 
-  private Collection<String>                         loggingClasses           = new ArrayList<String>();
+  private Collection<String> loggingClasses = new ArrayList<String>();
 
-  private int                                        maxMutationsPerClass;
+  private int maxMutationsPerClass;
 
-  private boolean                                    verbose                  = false;
+  private boolean verbose = false;
 
-  private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
+  private final Collection<OutputFormat> outputs = new LinkedHashSet<OutputFormat>();
 
   public ReportOptions() {
   }
@@ -95,8 +89,7 @@ public class ReportOptions {
   }
 
   /**
-   * @param reportDir
-   *          the reportDir to set
+   * @param reportDir the reportDir to set
    */
   public void setReportDir(final String reportDir) {
     this.reportDir = reportDir;
@@ -118,8 +111,7 @@ public class ReportOptions {
   }
 
   /**
-   * @param sourceDirs
-   *          the sourceDirs to set
+   * @param sourceDirs the sourceDirs to set
    */
   public void setSourceDirs(final Collection<File> sourceDirs) {
     this.sourceDirs = sourceDirs;
@@ -133,8 +125,7 @@ public class ReportOptions {
   }
 
   /**
-   * @param mutators
-   *          the mutators to set
+   * @param mutators the mutators to set
    */
   public void setMutators(
       final Collection<? extends MethodMutatorFactory> mutators) {
@@ -149,8 +140,7 @@ public class ReportOptions {
   }
 
   /**
-   * @param dependencyAnalysisMaxDistance
-   *          the dependencyAnalysisMaxDistance to set
+   * @param dependencyAnalysisMaxDistance the dependencyAnalysisMaxDistance to set
    */
   public void setDependencyAnalysisMaxDistance(
       final int dependencyAnalysisMaxDistance) {
@@ -169,7 +159,7 @@ public class ReportOptions {
     if (this.classPathElements != null) {
       return Option.some(createClassPathFromElements(declareCaches));
     } else {
-      return Option.<ClassPath> none();
+      return Option.<ClassPath>none();
     }
   }
 
@@ -337,4 +327,11 @@ public class ReportOptions {
     return this.outputs;
   }
 
+  public Collection<Predicate<String>> getExcludedClasses() {
+    return excludedClasses;
+  }
+
+  public Collection<Predicate<String>> getClassesInScope() {
+    return classesInScope;
+  }
 }

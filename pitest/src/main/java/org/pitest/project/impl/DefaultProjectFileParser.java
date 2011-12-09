@@ -9,6 +9,7 @@ import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectFileParser;
 import org.pitest.project.ProjectFileParserException;
 import org.pitest.util.Glob;
+import org.pitest.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The default implementation of the {@see ProjectFileParser} interface. Uses a simple XML document to store
@@ -25,6 +27,7 @@ import java.util.List;
  * @author Aidan Morgan
  */
 public class DefaultProjectFileParser implements ProjectFileParser {
+
   /**
    * The name of the filter element.
    */
@@ -40,6 +43,9 @@ public class DefaultProjectFileParser implements ProjectFileParser {
   public static final String PROPERTY_VALUE_ATTRIBUTE_NAME = "value";
   public static final String JARFILE_ELEMENT_NAME = "jar";
   public static final String DOCUMENT_ROOT_ELEMENT_NAME = "project";
+
+  private final static Logger LOG = Log.getLogger();
+
 
   /**
    * The {@see FileSystemDelegate} instance to use to query the file system. Allows any access to the
@@ -75,7 +81,8 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     return FCollection.map(result, Glob.toGlobPredicate());
   }
 
-  private static void loadNameAttributesFromChildElements(List<String> result, Element element, String type) {
+  private static List<String> loadNameAttributesFromChildElements(Element element, String type) {
+    List<String> result = new ArrayList<String>();
     if (element != null) {
       List<Element> directories = XmlUtils.getChildElements(element, type);
 
@@ -87,6 +94,8 @@ public class DefaultProjectFileParser implements ProjectFileParser {
         }
       }
     }
+
+    return result;
   }
 
 
@@ -148,7 +157,11 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     String value = findProperty(doc, propertyName);
 
     if (value != null) {
-      return Float.valueOf(value);
+      try {
+        return Float.valueOf(value);
+      } catch (NumberFormatException e) {
+        LOG.warning("NumberFormatException thrown trying to parse [" + value + "] for property [" + propertyName + "] to a float.");
+      }
     }
 
     return defaultValue;
@@ -167,7 +180,11 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     String value = findProperty(doc, propertyName);
 
     if (value != null) {
-      return Long.valueOf(value);
+      try {
+        return Long.valueOf(value);
+      } catch (NumberFormatException e) {
+        LOG.warning("NumberFormatException thrown trying to parse [" + value + "] for property [" + propertyName + "] to a long.");
+      }
     }
 
     return defaultValue;
@@ -186,7 +203,11 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     String value = findProperty(doc, propertyName);
 
     if (value != null) {
-      return Integer.valueOf(value);
+      try {
+        return Integer.valueOf(value);
+      } catch (NumberFormatException e) {
+        LOG.warning("NumberFormatException thrown trying to parse [" + value + "] for property [" + propertyName + "] to an int.");
+      }
     }
 
     return defaultValue;
@@ -211,14 +232,24 @@ public class DefaultProjectFileParser implements ProjectFileParser {
     return defaultValue;
   }
 
+  /**
+   * Constructor.
+   * Creates a new {@see DefaultProjectFileParser} with a {@see DefaultFileSystemDelegate} as the {@see FileSystemDelegate}.
+   */
   public DefaultProjectFileParser() {
     this(new DefaultFileSystemDelegate());
   }
 
+  /**
+   * Constructor.
+   *
+   * @param del the {@see FileSystemDelegate} instance to use for accessing the file system.
+   */
   public DefaultProjectFileParser(FileSystemDelegate del) {
-    if(del == null){
+    if (del == null) {
       throw new IllegalArgumentException("Cannot create a new DefaultProjectFileParser with a null FileSystemDelegate instance.");
     }
+
     this.fileSystemDelegate = del;
   }
 
@@ -457,14 +488,14 @@ public class DefaultProjectFileParser implements ProjectFileParser {
    *         if no property is specified.
    */
   private Collection<String> loadClassPathElements(Document doc) {
-    List<String> result = new ArrayList<String>();
-
     Element classpathElement = XmlUtils.getChildElement(doc.getDocumentElement(), OptionsParser.CLASSPATH_ARG);
 
-    loadNameAttributesFromChildElements(result, classpathElement, DIRECTORY_ELEMENT_NAME);
-    loadNameAttributesFromChildElements(result, classpathElement, JARFILE_ELEMENT_NAME);
+    List<String> values = new ArrayList<String>();
 
-    return result;
+    values.addAll(loadNameAttributesFromChildElements(classpathElement, DIRECTORY_ELEMENT_NAME));
+    values.addAll(loadNameAttributesFromChildElements(classpathElement, JARFILE_ELEMENT_NAME));
+
+    return values;
   }
 
 

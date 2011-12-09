@@ -16,14 +16,31 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
   private Map<String, Boolean> resultMap;
 
   /**
+   * The default response to return if there is no canned response recorded.
+   */
+  private boolean defaultResult;
+
+  /**
    * Constructor
    */
   public StubFileSystemDelegate() {
-    resultMap = new HashMap<String, Boolean>();
+    this(false);
   }
 
   /**
+   * Constructor
+   *
+   * @param defaultResult the default value to return if there is no canned response recorded.
+   */
+  public StubFileSystemDelegate(boolean defaultResult) {
+    this.resultMap = new HashMap<String, Boolean>();
+    this.defaultResult = defaultResult;
+  }
+
+
+  /**
    * Adds the provided canned response for the provided file string.
+   *
    * @param s the file string to record a response for
    * @param b the response to give for the provided file string.
    */
@@ -35,10 +52,10 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
    * @inheritDoc
    */
   public boolean doesFileExist(String file) {
-    if(resultMap.containsKey(file)) {
+    if (resultMap.containsKey(file)) {
       return resultMap.get(file);
     }
 
-    return false;
+    return defaultResult;
   }
 }

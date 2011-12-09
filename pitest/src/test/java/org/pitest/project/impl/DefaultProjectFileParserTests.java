@@ -8,7 +8,6 @@ import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectFileParser;
 import org.pitest.project.ProjectFileParserException;
 import org.pitest.project.ProjectFileParserFactory;
-import org.powermock.api.easymock.PowerMock;
 
 import java.io.ByteArrayInputStream;
 
@@ -194,7 +193,6 @@ public class DefaultProjectFileParserTests {
   }
 
   @Test
-
   public void shouldAllowNoTargetClassesSpecified() throws ProjectConfigurationException, ProjectFileParserException {
     String fileContents =
         "<project>\n" +
@@ -246,8 +244,7 @@ public class DefaultProjectFileParserTests {
   }
 
   @Test
-  // I hate that this method has to throw Exception, blame the PowerMock guys!
-  public void shouldLoadSourceDirsFromFile() throws Exception {
+  public void shouldLoadSourceDirsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
     String fileContents =
         "<project>\n" +
             "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
@@ -256,10 +253,7 @@ public class DefaultProjectFileParserTests {
             "    </sourceDirs>\n" +
             "</project>";
 
-    StubFileSystemDelegate delegate = new StubFileSystemDelegate();
-    delegate.addResult("./src", true);
-
-    DefaultProjectFileParser fileParser = new DefaultProjectFileParser(delegate);
+    DefaultProjectFileParser fileParser = new DefaultProjectFileParser(new StubFileSystemDelegate(true));
 
     ReportOptions ro = fileParser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
 
@@ -268,8 +262,7 @@ public class DefaultProjectFileParserTests {
   }
 
   @Test
-  // I hate that this method has to throw Exception, blame the PowerMock guys!
-  public void shouldThrowExceptionIfSourceDirsDoesntExist() throws Exception {
+  public void shouldThrowExceptionIfSourceDirsDoesntExist() throws ProjectFileParserException {
     String fileContents =
         "<project>\n" +
             "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
@@ -280,15 +273,324 @@ public class DefaultProjectFileParserTests {
 
 
     try {
-      StubFileSystemDelegate delegate = new StubFileSystemDelegate();
-      delegate.addResult("./src", false);
+      DefaultProjectFileParser fileParser = new DefaultProjectFileParser(new StubFileSystemDelegate(false));
 
-      DefaultProjectFileParser fileParser = new DefaultProjectFileParser(delegate);
-
-      ReportOptions ro = fileParser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+      fileParser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
       Assert.fail("Should not be able to load a Project File if a source directory does not exist.");
     } catch (ProjectConfigurationException e) {
       // expected exception
     }
   }
+
+  @Test
+  public void shouldLoadNumberOfThreadsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <property name=\"threads\" value=\"4\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(4, ro.getNumberOfThreads());
+  }
+
+  @Test
+  public void shouldUseDefaultThreadNumber() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getNumberOfThreads());
+  }
+
+  @Test
+  public void shouldLoadStaticMutatorsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <property name=\"mutateStaticInits\" value=\"true\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertTrue(ro.isMutateStaticInitializers());
+  }
+
+  @Test
+  public void shouldUseDefaultStaticMutatorsValue() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertFalse(ro.isMutateStaticInitializers());
+  }
+
+  @Test
+  public void shouldLoadMaxMutationsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <property name=\"maxMutationsPerClass\" value=\"5\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(5, ro.getMaxMutationsPerClass());
+  }
+
+  @Test
+  public void shouldUseDefaultMaxMutationsValue() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(0, ro.getMaxMutationsPerClass());
+  }
+
+  @Test
+  public void shouldLoadIncludeJarFilesFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <property name=\"includeJarFiles\" value=\"true\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertTrue(ro.isIncludeJarFiles());
+  }
+
+  @Test
+  public void shouldUseDefaultIncludeJarFilesValue() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertFalse(ro.isIncludeJarFiles());
+  }
+
+  @Test
+  public void shouldAllowNoExcludedMethodsSpecified() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <excludedMethods/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(0, ro.getExcludedMethods().size());
+  }
+
+  @Test
+  public void shouldLoadExcludedMethodsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <excludedMethods>\n" +
+            "        <filter name=\"toString\"/>\n" +
+            "    </excludedMethods>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getExcludedMethods().size());
+  }
+
+  @Test
+  public void shouldAllowNoExcludedClassesSpecified() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <excludedClasses/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(0, ro.getExcludedClasses().size());
+  }
+
+  @Test
+  public void shouldLoadExcludedClassesFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <excludedClasses>\n" +
+            "        <filter name=\"Integer\"/>\n" +
+            "    </excludedClasses>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getExcludedClasses().size());
+  }
+
+  @Test
+  public void shouldLoadDependencyAnalysisMaxDistanceFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <property name=\"dependencyDistance\" value=\"5\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(5, ro.getDependencyAnalysisMaxDistance());
+  }
+
+  @Test
+  public void shouldUseDefaultDependencyAnalysisMaxDistanceValue() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(-1, ro.getDependencyAnalysisMaxDistance());
+  }
+
+  @Test
+  public void shouldAllowNoClassPathElementsSpecified() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <classPath/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(0, ro.getClassPathElements().size());
+  }
+
+  @Test
+  public void shouldLoadClassPathElementsAsDirectoriesFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <classPath>\n" +
+            "        <dir name=\"./build/obj\"/>\n" +
+            "    </classPath>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getClassPathElements().size());
+  }
+
+  @Test
+  public void shouldLoadClassPathElementsAsJarsFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <classPath>\n" +
+            "        <jar name=\"./build/obj\"/>\n" +
+            "    </classPath>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getClassPathElements().size());
+  }
+
+  @Test
+  public void shouldAllowNoClassesInScopeSpecified() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <inScopeClasses/>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(0, ro.getClassesInScope().size());
+  }
+
+  @Test
+  public void shouldLoadClassesInScopeFromFile() throws ProjectConfigurationException, ProjectFileParserException {
+    String fileContents =
+        "<project>\n" +
+            "    <property name=\"reportDir\" value=\"./reports\"/>\n" +
+            "    <inScopeClasses>\n" +
+            "        <filter name=\"org.pitest.*\"/>\n" +
+            "    </inScopeClasses>\n" +
+            "</project>";
+
+    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+    ReportOptions ro = parser.loadProjectFile(new ByteArrayInputStream(fileContents.getBytes()));
+
+    Assert.assertNotNull(ro);
+
+    Assert.assertEquals(1, ro.getClassesInScope().size());
+  }
+
+
+
 }
