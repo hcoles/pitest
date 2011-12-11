@@ -165,7 +165,7 @@ public class CoverageSlave {
       private final Map<String, Boolean> cache = new HashMap<String, Boolean>();
 
       public Boolean apply(final TestUnit a) {
-        final String each = a.getDescription().getFirstTestClass().getName();
+        final String each = a.getDescription().getFirstTestClass();
         try {
           boolean inReach;
           if (this.cache.containsKey(each)) {

@@ -14,33 +14,86 @@
  */
 package org.pitest.classinfo;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import org.objectweb.asm.Opcodes;
+import org.pitest.functional.F;
+import org.pitest.functional.Option;
 
 public class ClassInfo {
 
+  private final int          access;
   private final String       name;
-  private final Set<Integer> codeLines = new HashSet<Integer>();
+  private final Set<Integer> codeLines;
+  private final ClassPointer outerClass;
+  private final ClassPointer superClass;
 
-  public ClassInfo(final String name) {
-    this.name = name;
+  public ClassInfo(final ClassPointer superClass,
+      final ClassPointer outerClass, final ClassInfoBuilder builder) {
+    this.superClass = superClass;
+    this.outerClass = outerClass;
+    this.name = builder.name;
+    this.access = builder.access;
+    this.codeLines = builder.codeLines;
   }
 
-  public Set<Integer> getCodeLines() {
-    return this.codeLines;
+  public int getNumberOfCodeLines() {
+    return this.codeLines.size();
   }
 
   public boolean isCodeLine(final int line) {
     return this.codeLines.contains(line);
   }
 
-  public void registerCodeLine(final int line) {
-    this.codeLines.add(line);
+  public String getName() {
+    return this.name;
   }
 
-  public String getName() {
+  public boolean isInterface() {
+    return (this.access & Opcodes.ACC_INTERFACE) != 0;
+  }
 
-    return this.name;
+  public boolean isAbstract() {
+    return (this.access & Opcodes.ACC_ABSTRACT) != 0;
+  }
+
+  public boolean isTopLevelClass() {
+    return getOuterClass().hasNone();
+  }
+
+  public Option<ClassInfo> getOuterClass() {
+    return this.outerClass.fetch();
+  }
+
+  public ClassInfo getSuperClass() {
+    return this.superClass.fetch().value();
+  }
+
+  public static F<ClassInfo, Boolean> matchIfAbstract() {
+    return new F<ClassInfo, Boolean>() {
+      public Boolean apply(final ClassInfo a) {
+        return a.isAbstract();
+      }
+
+    };
+  }
+
+  public static F<ClassInfo, Boolean> matchIfInterface() {
+    return new F<ClassInfo, Boolean>() {
+      public Boolean apply(final ClassInfo a) {
+        return a.isInterface();
+      }
+
+    };
+  }
+
+  public static F<ClassInfo, Boolean> matchIfTopLevelClass() {
+    return new F<ClassInfo, Boolean>() {
+      public Boolean apply(final ClassInfo a) {
+        return a.isTopLevelClass();
+      }
+
+    };
   }
 
   @Override
@@ -71,6 +124,11 @@ public class ClassInfo {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClassInfo [name=" + this.name + "]";
   }
 
 }

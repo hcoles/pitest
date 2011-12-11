@@ -16,39 +16,39 @@
 package org.pitest;
 
 import java.io.Serializable;
-import java.util.Collection;
-
-import org.pitest.util.Functions;
-import org.pitest.util.TestInfo;
 
 public final class Description implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private final Class<?>    testClass;
+  private final String      testClass;
 
   private final String      name;
 
   public Description(final String name) {
-    this(name, null);
+    this(name, (String) null);
   }
 
   public Description(final String name, final Class<?> testClass) {
+    this(name, testClass.getName());
+  }
+
+  public Description(final String name, final String testClass) {
     this.testClass = testClass;
     this.name = name;
   }
 
-  public Collection<String> getDirectTestees() {
-    return TestInfo.determineTestee(this.testClass)
-        .map(Functions.classToName());
-  }
+  // public Collection<String> getDirectTestees() {
+  // return TestInfo.determineTestee(this.testClass)
+  // .map(Functions.classToName());
+  // }
 
-  public Class<?> getFirstTestClass() {
+  public String getFirstTestClass() {
     return this.testClass;
   }
 
   public String getQualifiedName() {
     if (this.testClass != null) {
-      return this.getFirstTestClass().getName() + "." + this.getName();
+      return this.getFirstTestClass() + "." + this.getName();
     } else {
       return this.getName();
     }

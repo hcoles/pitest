@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.classinfo;
 
@@ -28,42 +28,43 @@ public class ClassInfoVisitorTest {
   @Test
   public void shouldDetectStandardCodeLines() throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
 
-    assertTrue(actual.isCodeLine(25));
+    assertTrue(actual.codeLines.contains(25));
   }
 
   @Test
   public void shouldDetectCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor()
       throws Exception {
     final String sampleName = HasDefaultConstructor.class.getName();
-    final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertTrue(
         "first line of class with default constructor should be a code line",
-        actual.isCodeLine(17));
-    assertFalse("line before should not be a code line", actual.isCodeLine(16));
+        actual.codeLines.contains(17));
+    assertFalse("line before should not be a code line",
+        actual.codeLines.contains(16));
   }
 
   @Test
   public void shouldNotDetectCodeLineAtClassDeclarationsWhenClassHasNoDefaultConstructor()
       throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertFalse(
         "first line of class without default constructor should not be a code line",
-        actual.isCodeLine(17));
+        actual.codeLines.contains(17));
   }
 
   @Test
   public void shouldNotRecordLineNumbersFromSyntheticBridgeMethods()
       throws Exception {
     final String sampleName = HasBridgeMethod.class.getName();
-    final ClassInfo actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
-    assertFalse(actual.isCodeLine(1));
+    assertFalse(actual.codeLines.contains(1));
   }
 
 }

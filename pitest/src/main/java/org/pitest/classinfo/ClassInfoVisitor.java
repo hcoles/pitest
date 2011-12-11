@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.classinfo;
 
@@ -25,22 +25,48 @@ import org.pitest.coverage.codeassist.MethodFilteringAdapter;
 
 public class ClassInfoVisitor extends MethodFilteringAdapter {
 
-  private final ClassInfo classInfo;
+  private final ClassInfoBuilder classInfo;
 
-  private ClassInfoVisitor(final ClassInfo classInfo, final ClassVisitor writer) {
+  private ClassInfoVisitor(final ClassInfoBuilder classInfo,
+      final ClassVisitor writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
     this.classInfo = classInfo;
   }
 
-  public final static ClassInfo getClassInfo(final String name,
+  public final static ClassInfoBuilder getClassInfo(final String name,
       final byte[] bytes) {
     final ClassReader reader = new ClassReader(bytes);
     final ClassVisitor writer = new NullVisitor();
 
-    final ClassInfo info = new ClassInfo(name);
+    final ClassInfoBuilder info = new ClassInfoBuilder();
+    info.name = name;
     reader.accept(new ClassInfoVisitor(info, writer), 0);
-
     return info;
+  }
+
+  @Override
+  public void visit(final int version, final int access, final String name,
+      final String signature, final String superName, final String[] interfaces) {
+    super.visit(version, access, name, signature, superName, interfaces);
+    this.classInfo.access = access;
+    this.classInfo.superClass = superName;
+  }
+
+  @Override
+  public void visitOuterClass(final String owner, final String name,
+      final String desc) {
+    super.visitOuterClass(owner, name, desc);
+    this.classInfo.outerClass = owner;
+  }
+
+  @Override
+  public void visitInnerClass(final String name, final String outerName,
+      final String innerName, final int access) {
+    super.visitInnerClass(name, outerName, innerName, access);
+    if ((outerName != null)
+        && this.classInfo.name.replace(".", "/").equals(name)) {
+      this.classInfo.outerClass = outerName;
+    }
   }
 
   @Override
@@ -55,9 +81,9 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
 }
 
 class InfoMethodVisitor extends MethodAdapter {
-  private final ClassInfo classInfo;
+  private final ClassInfoBuilder classInfo;
 
-  public InfoMethodVisitor(final ClassInfo classInfo,
+  public InfoMethodVisitor(final ClassInfoBuilder classInfo,
       final MethodVisitor writer, final String name, final String methodDesc) {
     super(writer);
     this.classInfo = classInfo;

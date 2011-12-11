@@ -7,11 +7,8 @@ import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.noSideEffect;
 import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
-import static org.pitest.util.Functions.stringToClass;
-import static org.pitest.util.TestInfo.isWithinATestClass;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +22,7 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassInfoVisitor;
+import org.pitest.classinfo.Repository;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageProcess;
@@ -45,7 +42,6 @@ import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.instrument.ClassLine;
-import org.pitest.reflection.Reflection;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
@@ -54,22 +50,22 @@ import org.pitest.util.PortFinder;
 import org.pitest.util.ProcessArgs;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
-  private final static Logger                              LOG             = Log
-                                                                               .getLogger();
+  private final static Logger                              LOG           = Log
+  .getLogger();
 
   private final Configuration                              initialConfig;
   private final JavaAgent                                  javaAgentFinder;
   private final ClassPath                                  classPath;
   private final ReportOptions                              data;
 
-  private final Map<String, ClassInfo>                     nameToClassInfo = new MemoryEfficientHashMap<String, ClassInfo>();
-  private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage   = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
-  private final Map<Description, Long>                     times           = new MemoryEfficientHashMap<Description, Long>();
+  private final Repository                                 classRepository;
+  private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
+  private final Map<Description, Long>                     times         = new MemoryEfficientHashMap<Description, Long>();
 
-  private List<Class<?>>                                   codeClasses;
+  private List<String>                                     codeClasses;
   private Collection<ClassGrouping>                        groupedClasses;
 
-  private boolean                                          allTestsGreen   = true;
+  private boolean                                          allTestsGreen = true;
 
   public DefaultCoverageDatabase(final Configuration initialConfig,
       final ClassPath classPath, final JavaAgent javaAgentFinder,
@@ -78,28 +74,27 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.initialConfig = initialConfig;
+    this.classRepository = new Repository(new ClassPathByteArraySource(
+        classPath));
   }
 
   public boolean initialise() {
 
-    final Collection<Class<?>> completeClassPath = flatMap(completeClassPath(),
-        stringToClass());
+    final Collection<String> completeClassPath = completeClassPath();
 
     @SuppressWarnings("unchecked")
-    final FunctionalCollection<Class<?>> directlySuppliedTestsAndSuites = flatMap(
-        completeClassPathForTests(), stringToClass()).filter(
-        and(isWithinATestClass(), isNotAbstract()));
+    final FunctionalCollection<ClassInfo> directlySuppliedTestsAndSuites = flatMap(
+        completeClassPathForTests(), nameToClassInfo()).filter(
+            and(isWithinATestClass(), not(ClassInfo.matchIfAbstract())));
 
     calculateCoverage(directlySuppliedTestsAndSuites);
 
-    final Set<Class<?>> uniqueDiscoveredTestClasses = gatherUniqueClassesFromDescriptions(this.times
+    final Set<String> uniqueDiscoveredTestClasses = gatherUniqueClassesFromDescriptions(this.times
         .keySet());
 
     this.codeClasses = filter(
         extractCodeClasses(completeClassPath, uniqueDiscoveredTestClasses),
-        convertStringToClassFilter(this.data.getTargetClassesFilter()));
-
-    analyseClasses();
+        this.data.getTargetClassesFilter());
 
     this.groupedClasses = groupByOuterClass(this.codeClasses);
 
@@ -107,54 +102,43 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   }
 
-  private void analyseClasses() {
-    for (final ClassInfo each : namesToClassInfo(this.codeClasses)) {
-      this.nameToClassInfo.put(each.getName(), each);
-    }
+  private F<Object, Boolean> isNotAbstract() {
+    return null;
   }
 
-  private Collection<ClassInfo> namesToClassInfo(
-      final Collection<Class<?>> classes) {
-    return FCollection.flatMap(classes, nameToClassInfo());
+  private F<Object, Boolean> isWithinATestClass() {
+    return null;
   }
 
-  private F<Class<?>, Option<ClassInfo>> nameToClassInfo() {
-    return new F<Class<?>, Option<ClassInfo>>() {
+  private F<String, Option<ClassInfo>> nameToClassInfo() {
+    return new F<String, Option<ClassInfo>>() {
 
-      public Option<ClassInfo> apply(final Class<?> a) {
-        final ClassPathByteArraySource source = new ClassPathByteArraySource(
-            DefaultCoverageDatabase.this.classPath);
-        final Option<byte[]> bytes = source.apply(a.getName());
-        if (bytes.hasSome()) {
-          return Option.some(ClassInfoVisitor.getClassInfo(a.getName(),
-              bytes.value()));
-        } else {
-          return Option.none();
-        }
+      public Option<ClassInfo> apply(final String a) {
+        return DefaultCoverageDatabase.this.classRepository.fetchClass(a);
       }
 
     };
   }
 
-  private Set<Class<?>> gatherUniqueClassesFromDescriptions(
+  private Set<String> gatherUniqueClassesFromDescriptions(
       final Iterable<Description> descriptions) {
-    final Set<Class<?>> uniqueDiscoveredTestClasses = new HashSet<Class<?>>();
-    FCollection.mapTo(descriptions, descriptionToClass(),
+    final Set<String> uniqueDiscoveredTestClasses = new HashSet<String>();
+    FCollection.mapTo(descriptions, descriptionToClassName(),
         uniqueDiscoveredTestClasses);
     return uniqueDiscoveredTestClasses;
   }
 
-  private static F<Description, Class<?>> descriptionToClass() {
-    return new F<Description, Class<?>>() {
+  private static F<Description, String> descriptionToClassName() {
+    return new F<Description, String>() {
 
-      public Class<?> apply(final Description a) {
+      public String apply(final Description a) {
         return a.getFirstTestClass();
       }
 
     };
   }
 
-  private void calculateCoverage(final FunctionalCollection<Class<?>> tests) {
+  private void calculateCoverage(final FunctionalCollection<ClassInfo> tests) {
     try {
       final long t0 = System.currentTimeMillis();
 
@@ -171,11 +155,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     }
   }
 
-  private void gatherCoverageData(final Collection<Class<?>> tests)
-      throws IOException, InterruptedException {
+  private void gatherCoverageData(final Collection<ClassInfo> tests)
+  throws IOException, InterruptedException {
 
-    final List<String> filteredTests = FCollection.map(tests,
-        Functions.classToName());
+    final List<String> filteredTests = FCollection
+    .map(tests, classInfoToName());
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
@@ -196,6 +180,15 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     process.start();
     process.waitToDie();
+  }
+
+  private static F<ClassInfo, String> classInfoToName() {
+    return new F<ClassInfo, String>() {
+      public String apply(final ClassInfo a) {
+        return a.getName();
+      }
+
+    };
   }
 
   private SideEffect1<String> captureStandardOutIfVerbose() {
@@ -277,72 +270,51 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         this.data.getClassesInScopeFilter());
   }
 
-  private Predicate<Class<?>> isNotAbstract() {
-    return new Predicate<Class<?>>() {
-
-      public Boolean apply(final Class<?> a) {
-        return !a.isInterface() && !Modifier.isAbstract(a.getModifiers());
-      }
-
-    };
-  }
-
-  private List<Class<?>> extractCodeClasses(final Collection<Class<?>> targets,
-      final Collection<Class<?>> tests) {
-    final List<Class<?>> cs = new ArrayList<Class<?>>();
+  private List<String> extractCodeClasses(final Collection<String> targets,
+      final Collection<String> tests) {
+    final List<String> cs = new ArrayList<String>();
     cs.addAll(targets);
     cs.removeAll(tests);
     return cs;
   }
 
-  private F<Class<?>, Boolean> convertStringToClassFilter(
-      final Predicate<String> predicate) {
-    return new F<Class<?>, Boolean>() {
-
-      public Boolean apply(final Class<?> a) {
-        return predicate.apply(a.getName());
-      }
-
-    };
-  }
-
   private Collection<ClassGrouping> groupByOuterClass(
-      final Collection<Class<?>> classes) {
+      final Collection<String> classes) {
     final Map<String, ClassGrouping> group = new HashMap<String, ClassGrouping>();
-    forEach(classes, addToMap(group, Reflection.isTopClass()));
+    forEach(classes, addToMap(group, isTopClass()));
 
     forEach(classes, addToParentGrouping(group));
 
     if (group.isEmpty()) {
-      forEach(classes, addToMap(group, True.<Class<?>> all()));
+      forEach(classes, addToMap(group, True.<String> all()));
     }
 
     return group.values();
 
   }
 
-  private SideEffect1<Class<?>> addToMap(final Map<String, ClassGrouping> map,
-      final Predicate<Class<?>> predicate) {
-    return new SideEffect1<Class<?>>() {
+  private SideEffect1<String> addToMap(final Map<String, ClassGrouping> map,
+      final Predicate<String> predicate) {
+    return new SideEffect1<String>() {
 
-      public void apply(final Class<?> clazz) {
+      public void apply(final String clazz) {
         if (predicate.apply(clazz)) {
-          map.put(clazz.getName(), new ClassGrouping(clazz.getName(),
-              Collections.<String> emptyList()));
+          map.put(clazz,
+              new ClassGrouping(clazz, Collections.<String> emptyList()));
         }
       }
 
     };
   }
 
-  private SideEffect1<Class<?>> addToParentGrouping(
+  private SideEffect1<String> addToParentGrouping(
       final Map<String, ClassGrouping> map) {
-    return new SideEffect1<Class<?>>() {
+    return new SideEffect1<String>() {
 
-      public void apply(final Class<?> a) {
-        final Option<Class<?>> parent = Reflection.getParentClass(a);
+      public void apply(final String a) {
+        final Option<String> parent = getParentClass(a);
         if (parent.hasSome()) {
-          final ClassGrouping grouping = map.get(parent.value().getName());
+          final ClassGrouping grouping = map.get(parent.value());
           if (grouping != null) {
             grouping.addChild(a);
           }
@@ -355,10 +327,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   public Collection<String> getParentClassesWithoutATest() {
     @SuppressWarnings("unchecked")
-    final FunctionalList<String> codeClassNames = FCollection
-        .filter(this.codeClasses,
-            and(not(Functions.isInnerClass()), not(Functions.isInterface())))
-        .map(Functions.classToName()).map(Functions.classNameToJVMClassName());
+    final FunctionalList<String> codeClassNames = FCollection.filter(
+        this.codeClasses, and(not(isInnerClass()), not(isInterface()))).map(
+            Functions.classNameToJVMClassName());
     return codeClassNames.filter(Prelude.not(hasTest()));
   }
 
@@ -395,7 +366,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   public Collection<ClassInfo> getClassInfo(final Collection<String> classes) {
     final Collection<ClassInfo> cis = new ArrayList<ClassInfo>();
     for (final String each : classes) {
-      cis.add(this.nameToClassInfo.get(each));
+      cis.add(this.classRepository.fetchClass(each).value());
     }
     return cis;
   }
@@ -427,10 +398,14 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   private TestInfo descriptionToTestInfo(final Description description) {
     final int time = DefaultCoverageDatabase.this.times.get(description)
-        .intValue();
-
-    return new TestInfo(description.getFirstTestClass().getName(),
-        description.getQualifiedName(), time, description.getDirectTestees());
+    .intValue();
+    // FIXME determine direct testees
+    return new TestInfo(description.getFirstTestClass(),
+        description.getQualifiedName(), time, Collections.<String> emptyList());
+    // return new TestInfo(description.getFirstTestClass(),
+    // description.getQualifiedName(), time,
+    // org.pitest.util.TestInfo.determineTestee(description
+    // .getFirstTestClass()));
   }
 
   public Collection<ClassGrouping> getGroupedClasses() {

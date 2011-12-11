@@ -144,7 +144,7 @@ public class MutationHtmlReportListener implements TestListener {
     return new F2<Integer, ClassInfo, Integer>() {
 
       public Integer apply(final Integer a, final ClassInfo b) {
-        return a + b.getCodeLines().size();
+        return a + b.getNumberOfCodeLines();
       }
 
     };
