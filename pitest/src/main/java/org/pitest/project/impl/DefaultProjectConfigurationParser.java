@@ -6,14 +6,15 @@ import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.project.ProjectConfigurationException;
-import org.pitest.project.ProjectFileParser;
-import org.pitest.project.ProjectFileParserException;
+import org.pitest.project.ProjectConfigurationParser;
+import org.pitest.project.ProjectConfigurationParserException;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
  *
  * @author Aidan Morgan
  */
-public class DefaultProjectFileParser implements ProjectFileParser {
+public class DefaultProjectConfigurationParser implements ProjectConfigurationParser {
 
   /**
    * The name of the filter element.
@@ -236,7 +237,7 @@ public class DefaultProjectFileParser implements ProjectFileParser {
    * Constructor.
    * Creates a new {@see DefaultProjectFileParser} with a {@see DefaultFileSystemDelegate} as the {@see FileSystemDelegate}.
    */
-  public DefaultProjectFileParser() {
+  public DefaultProjectConfigurationParser() {
     this(new DefaultFileSystemDelegate());
   }
 
@@ -245,9 +246,9 @@ public class DefaultProjectFileParser implements ProjectFileParser {
    *
    * @param del the {@see FileSystemDelegate} instance to use for accessing the file system.
    */
-  public DefaultProjectFileParser(FileSystemDelegate del) {
+  public DefaultProjectConfigurationParser(FileSystemDelegate del) {
     if (del == null) {
-      throw new IllegalArgumentException("Cannot create a new DefaultProjectFileParser with a null FileSystemDelegate instance.");
+      throw new IllegalArgumentException("Cannot create a new DefaultProjectConfigurationParser with a null FileSystemDelegate instance.");
     }
 
     this.fileSystemDelegate = del;
@@ -256,7 +257,39 @@ public class DefaultProjectFileParser implements ProjectFileParser {
   /**
    * @inheritDoc
    */
-  public ReportOptions loadProjectFile(InputStream inputStream) throws ProjectFileParserException, ProjectConfigurationException {
+  public ReportOptions loadProject(String in) throws ProjectConfigurationParserException, ProjectConfigurationException {
+    try {
+
+      if (!fileSystemDelegate.exists(in)) {
+        throw new ProjectConfigurationParserException("Cannot load project from file " + in + " as it does not exist.");
+      }
+
+      if (!fileSystemDelegate.isFile(in)) {
+        throw new ProjectConfigurationParserException("Cannot load project from file " + in + " as it is a directory.");
+      }
+
+      if (!fileSystemDelegate.canRead(in)) {
+        throw new ProjectConfigurationParserException("Cannot load project from file " + in + " as it cannot be read.");
+      }
+
+      InputStream inputStream = fileSystemDelegate.openStream(in);
+
+      return loadConfiguration(inputStream);
+    } catch (IOException e) {
+      throw new ProjectConfigurationParserException(e);
+    }
+  }
+
+  /**
+   * Loads a new {@see ReportOptions} from the provided {@see InputStream}.
+   *
+   * @param inputStream the {@see InputStream} to load the {@see ReportOptions} from.
+   * @return a new {@see ReportOptions}, configured from the provided {@see InputStream}.
+   * @throws ProjectConfigurationParserException
+   *
+   * @throws ProjectConfigurationException
+   */
+  protected ReportOptions loadConfiguration(InputStream inputStream) throws ProjectConfigurationParserException, ProjectConfigurationException {
     Document doc = XmlUtils.parseFile(inputStream);
 
     if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase(DOCUMENT_ROOT_ELEMENT_NAME)) {
@@ -291,7 +324,7 @@ public class DefaultProjectFileParser implements ProjectFileParser {
    * @return {@code true} if the provided {@see File} exists on the filesystem, {@code false} otherwise.
    */
   protected boolean doesFileExist(String f) {
-    return fileSystemDelegate.doesFileExist(f);
+    return fileSystemDelegate.exists(f);
   }
 
   /**

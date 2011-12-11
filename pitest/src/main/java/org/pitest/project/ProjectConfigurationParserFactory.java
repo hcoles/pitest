@@ -1,6 +1,6 @@
 package org.pitest.project;
 
-import org.pitest.project.impl.DefaultProjectFileParser;
+import org.pitest.project.impl.DefaultProjectConfigurationParser;
 
 /**
  * The {@see ProjectFileParserFactory} is responsible for creating a {@see ProjectFileParser} instance based
@@ -10,43 +10,43 @@ import org.pitest.project.impl.DefaultProjectFileParser;
  *
  * @author Aidan Morgan
  */
-public class ProjectFileParserFactory {
+public class ProjectConfigurationParserFactory {
   /**
    * The name of the system property that is used to override the default {@see ProjectFileParser} implementation.
    */
-  public static final String PARSER_PROPERTY = "projectFileParser.impl";
+  public static final String PARSER_PROPERTY = "projectConfigurationParser.impl";
 
   /**
    * The name of the default {@see ProjectFileParser} instance to use.
    */
-  public static final String DEFAULT_PARSER = DefaultProjectFileParser.class.getName();
+  public static final String DEFAULT_PARSER = DefaultProjectConfigurationParser.class.getName();
 
   /**
    * Creates a new {@see ProjectFileParser} instance, based on the system property. If no system property is specified
    * then the default {@see ProjectFileParser} instance is returned.
    *
    * @return a new {@see ProjectFileParser} for parsing project files.
-   * @throws ProjectFileParserException if an exception occurs instantiating the {@see ProjectFileParser} instance.
+   * @throws ProjectConfigurationParserException if an exception occurs instantiating the {@see ProjectFileParser} instance.
    */
-  public static ProjectFileParser createParser() throws ProjectFileParserException {
+  public static ProjectConfigurationParser createParser() throws ProjectConfigurationParserException {
     try {
       String propertyValue = System.getProperty(PARSER_PROPERTY, DEFAULT_PARSER);
 
       Class parserClass = Class.forName(propertyValue);
       Object instance = parserClass.newInstance();
 
-      // if the new object isn't an instance of the ProjectFileParser interface, then throw an exception.
-      if (instance instanceof ProjectFileParser) {
-        return (ProjectFileParser) instance;
+      // if the new object isn't an instance of the ProjectConfigurationParser interface, then throw an exception.
+      if (instance instanceof ProjectConfigurationParser) {
+        return (ProjectConfigurationParser) instance;
       } else {
-        throw new ProjectFileParserException("Cannot create ProjectFileParser instance from class " + propertyValue + " as it does not implement " + ProjectFileParser.class.getName() + ".");
+        throw new ProjectConfigurationParserException("Cannot create ProjectConfigurationParser instance from class " + propertyValue + " as it does not implement " + ProjectConfigurationParser.class.getName() + ".");
       }
     } catch (ClassNotFoundException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     } catch (InstantiationException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     } catch (IllegalAccessException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     }
   }
 }

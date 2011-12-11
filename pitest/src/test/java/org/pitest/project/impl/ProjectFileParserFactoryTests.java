@@ -2,72 +2,72 @@ package org.pitest.project.impl;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import org.pitest.project.ProjectFileParser;
-import org.pitest.project.ProjectFileParserException;
-import org.pitest.project.ProjectFileParserFactory;
+import org.pitest.project.ProjectConfigurationParser;
+import org.pitest.project.ProjectConfigurationParserException;
+import org.pitest.project.ProjectConfigurationParserFactory;
 
 /**
  * @author Aidan Morgan
  */
 public class ProjectFileParserFactoryTests {
   @Test
-  public void shouldUseDefaultParserIfNoPropertySet() throws ProjectFileParserException {
-    ProjectFileParser parser = ProjectFileParserFactory.createParser();
+  public void shouldUseDefaultParserIfNoPropertySet() throws ProjectConfigurationParserException {
+    ProjectConfigurationParser parser = ProjectConfigurationParserFactory.createParser();
 
-    Assert.assertTrue(parser instanceof DefaultProjectFileParser);
+    Assert.assertTrue(parser instanceof DefaultProjectConfigurationParser);
   }
 
   @Test
-  public void shouldLoadSystemPropertyParser() throws ProjectFileParserException {
-    System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, FakeProjectFileParser.class.getName());
+  public void shouldLoadSystemPropertyParser() throws ProjectConfigurationParserException {
+    System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, FakeProjectConfigurationParser.class.getName());
 
     try {
-      ProjectFileParser parser = ProjectFileParserFactory.createParser();
-      Assert.assertTrue(parser instanceof FakeProjectFileParser);
+      ProjectConfigurationParser parser = ProjectConfigurationParserFactory.createParser();
+      Assert.assertTrue(parser instanceof FakeProjectConfigurationParser);
     } finally {
-      System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, ProjectFileParserFactory.DEFAULT_PARSER);
+      System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, ProjectConfigurationParserFactory.DEFAULT_PARSER);
     }
   }
 
   @Test
   public void shouldThrowExceptionIfParserDoesNotImplementInterface() {
-    System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, String.class.getName());
+    System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, String.class.getName());
 
     try {
-      ProjectFileParserFactory.createParser();
-      Assert.fail("Should not be able to create a ProjectFileParser that does not implement the interface.");
-    } catch (ProjectFileParserException e) {
+      ProjectConfigurationParserFactory.createParser();
+      Assert.fail("Should not be able to create a ProjectConfigurationParser that does not implement the interface.");
+    } catch (ProjectConfigurationParserException e) {
       // expected exception
     } finally {
-      System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, ProjectFileParserFactory.DEFAULT_PARSER);
+      System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, ProjectConfigurationParserFactory.DEFAULT_PARSER);
     }
   }
 
   @Test
   public void shouldThrowExceptionIfParserClassDoesNotExist() {
-    System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, "org.foo.example.DifferentProjectFileParser");
+    System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, "org.foo.example.DifferentProjectFileParser");
 
     try {
-      ProjectFileParserFactory.createParser();
-      Assert.fail("Should not be able to create a ProjectFileParser from a class that does not exist.");
-    } catch (ProjectFileParserException e) {
+      ProjectConfigurationParserFactory.createParser();
+      Assert.fail("Should not be able to create a ProjectConfigurationParser from a class that does not exist.");
+    } catch (ProjectConfigurationParserException e) {
       // expected exception
     } finally {
-      System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, ProjectFileParserFactory.DEFAULT_PARSER);
+      System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, ProjectConfigurationParserFactory.DEFAULT_PARSER);
     }
   }
 
   @Test
   public void shouldThrowExceptionIfParserDoesNotHaveANoArgsConstructor() {
-    System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, NoDefaultConstructorProjectFileParser.class.getName());
+    System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, NoDefaultConstructorProjectConfigurationParser.class.getName());
 
     try {
-      ProjectFileParserFactory.createParser();
-      Assert.fail("Should not be able to create a ProjectFileParser for a class with no default constructor..");
-    } catch (ProjectFileParserException e) {
+      ProjectConfigurationParserFactory.createParser();
+      Assert.fail("Should not be able to create a ProjectConfigurationParser for a class with no default constructor..");
+    } catch (ProjectConfigurationParserException e) {
       // expected exception
     } finally {
-      System.setProperty(ProjectFileParserFactory.PARSER_PROPERTY, ProjectFileParserFactory.DEFAULT_PARSER);
+      System.setProperty(ProjectConfigurationParserFactory.PARSER_PROPERTY, ProjectConfigurationParserFactory.DEFAULT_PARSER);
     }
   }
 }

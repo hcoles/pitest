@@ -2,8 +2,8 @@ package org.pitest.project.impl;
 
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.project.ProjectConfigurationException;
-import org.pitest.project.ProjectFileParser;
-import org.pitest.project.ProjectFileParserException;
+import org.pitest.project.ProjectConfigurationParser;
+import org.pitest.project.ProjectConfigurationParserException;
 
 import java.io.InputStream;
 
@@ -12,8 +12,8 @@ import java.io.InputStream;
  *
  * @author Aidan Morgan
  */
-public class FakeProjectFileParser implements ProjectFileParser {
-  public ReportOptions loadProjectFile(InputStream stream) throws ProjectFileParserException, ProjectConfigurationException {
+public class FakeProjectConfigurationParser implements ProjectConfigurationParser {
+  public ReportOptions loadProject(String project) throws ProjectConfigurationParserException, ProjectConfigurationException {
     return null;
   }
 }

@@ -22,16 +22,14 @@ import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.project.ProjectConfigurationException;
-import org.pitest.project.ProjectFileParser;
-import org.pitest.project.ProjectFileParserException;
-import org.pitest.project.ProjectFileParserFactory;
+import org.pitest.project.ProjectConfigurationParser;
+import org.pitest.project.ProjectConfigurationParserException;
+import org.pitest.project.ProjectConfigurationParserFactory;
 import org.pitest.util.ClasspathUtil;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -56,7 +54,7 @@ public class OptionsParser {
   public final static String VERBOSE = "verbose";
   public final static String EXCLUDED_CLASSES_ARG = "excludedClasses";
   public final static String OUTPUT_FORMATS = "outputFormats";
-  public final static String PROJECT_FILE = "projectFile";
+  public final static String PROJECT_FILE = "project";
   public final static String CLASSPATH_ARG = "classPath";
 
   private final OptionParser parser;
@@ -271,23 +269,10 @@ public class OptionsParser {
    */
   private ParseResult loadProjectFile(OptionSet userArgs) {
     try {
-      ProjectFileParser parser = ProjectFileParserFactory.createParser();
+      ProjectConfigurationParser parser = ProjectConfigurationParserFactory.createParser();
 
-      File projectFile = new File((String) userArgs.valueOf(PROJECT_FILE));
 
-      if (!projectFile.exists()) {
-        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it does not exist.");
-      }
-
-      if (!projectFile.isFile()) {
-        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it is a directory.");
-      }
-
-      if (!projectFile.canRead()) {
-        throw new ProjectFileParserException("Cannot load project from file " + projectFile.getAbsolutePath() + " as it cannot be read.");
-      }
-
-      ReportOptions loaded = parser.loadProjectFile(new FileInputStream(projectFile));
+      ReportOptions loaded = parser.loadProject((String) userArgs.valueOf(PROJECT_FILE));
 
       // as the process is already running, we need to add any additionally defined classpath elements
       // to the system classloader so they are available to the methods later on.
@@ -296,11 +281,9 @@ public class OptionsParser {
       }
 
       return new ParseResult(loaded, null);
-    } catch (ProjectFileParserException e) {
+    } catch (ProjectConfigurationParserException e) {
       return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     } catch (ProjectConfigurationException e) {
-      return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
-    } catch (FileNotFoundException e) {
       return new ParseResult(new ReportOptions(), "Project File ERROR: " + e.getMessage() + ".");
     }
   }

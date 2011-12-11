@@ -5,32 +5,32 @@ package org.pitest.project;
  *
  * @author Aidan Morgan
  */
-public class ProjectFileParserException extends Exception {
+public class ProjectConfigurationParserException extends Exception {
   /**
    * @inheritDoc
    */
-  public ProjectFileParserException() {
+  public ProjectConfigurationParserException() {
     super();
   }
 
   /**
    * @inheritDoc
    */
-  public ProjectFileParserException(String message) {
+  public ProjectConfigurationParserException(String message) {
     super(message);
   }
 
   /**
    * @inheritDoc
    */
-  public ProjectFileParserException(String message, Throwable cause) {
+  public ProjectConfigurationParserException(String message, Throwable cause) {
     super(message, cause);
   }
 
   /**
    * @inheritDoc
    */
-  public ProjectFileParserException(Throwable cause) {
+  public ProjectConfigurationParserException(Throwable cause) {
     super(cause);
   }
 }

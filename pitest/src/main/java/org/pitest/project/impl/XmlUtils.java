@@ -1,6 +1,6 @@
 package org.pitest.project.impl;
 
-import org.pitest.project.ProjectFileParserException;
+import org.pitest.project.ProjectConfigurationParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -51,20 +51,20 @@ public class XmlUtils {
    *
    * @param f the {@see InputStream} to parse the XML from.
    * @return the {@see Document} representation of the provided {@see File}.
-   * @throws ProjectFileParserException if the provided {@see File} cannot be parsed.
+   * @throws org.pitest.project.ProjectConfigurationParserException if the provided {@see File} cannot be parsed.
    */
-  public static Document parseFile(InputStream f) throws ProjectFileParserException {
+  public static Document parseFile(InputStream f) throws ProjectConfigurationParserException {
     try {
       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
       Document doc = docBuilder.parse(f);
       return doc;
     } catch (ParserConfigurationException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     } catch (SAXException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     } catch (IOException e) {
-      throw new ProjectFileParserException(e);
+      throw new ProjectConfigurationParserException(e);
     }
   }
 
