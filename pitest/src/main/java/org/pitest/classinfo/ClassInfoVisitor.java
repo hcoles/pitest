@@ -40,7 +40,7 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
     final ClassVisitor writer = new NullVisitor();
 
     final ClassInfoBuilder info = new ClassInfoBuilder();
-    info.name = name;
+    info.name = new ClassName(name);
     reader.accept(new ClassInfoVisitor(info, writer), 0);
     return info;
   }
@@ -65,7 +65,7 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
       final String innerName, final int access) {
     super.visitInnerClass(name, outerName, innerName, access);
     if ((outerName != null)
-        && this.classInfo.name.replace(".", "/").equals(name)) {
+        && this.classInfo.name.equals(new ClassName(name))) {
       this.classInfo.outerClass = outerName;
     }
   }

@@ -204,7 +204,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     }
   }
 
-  private Predicate<String> convertToJVMClassFilter(
+  private static Predicate<String> convertToJVMClassFilter(
       final Predicate<String> child) {
     return new Predicate<String>() {
       public Boolean apply(final String a) {

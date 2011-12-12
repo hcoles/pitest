@@ -42,4 +42,9 @@ public class ClassNameTest {
   }
 
 
+  @Test
+  public void shouldDisplayJavaNameInToString() {
+    ClassName testee = new ClassName("com/foo/bar");
+    assertEquals("com.foo.bar", testee.toString());
+  }
 }

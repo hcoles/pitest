@@ -14,6 +14,8 @@
  */
 package org.pitest.classinfo;
 
+import org.pitest.functional.F;
+
 public final class ClassName {
 
   private final String name;
@@ -32,6 +34,16 @@ public final class ClassName {
 
   public String asInternalName() {
     return this.name;
+  }
+
+  public static F<String, ClassName> stringToClassName() {
+    return new F<String, ClassName>() {
+
+      public ClassName apply(String clazz) {
+        return new ClassName(clazz);
+      }
+
+    };
   }
 
   @Override
@@ -62,7 +74,9 @@ public final class ClassName {
 
   @Override
   public String toString() {
-    return this.name;
+    return asJavaName();
   }
+
+
 
 }

@@ -15,10 +15,12 @@
 package org.pitest.classinfo;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
 import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 
 public class ClassInfo {
@@ -28,16 +30,16 @@ public class ClassInfo {
   private final Set<Integer> codeLines;
   private final ClassPointer outerClass;
   private final ClassPointer superClass;
-  private final Set<String>  annotations;
+  private final Collection<ClassName>  annotations;
 
   public ClassInfo(final ClassPointer superClass,
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
     this.superClass = superClass;
     this.outerClass = outerClass;
-    this.name = new ClassName(builder.name);
+    this.name = builder.name;
     this.access = builder.access;
     this.codeLines = builder.codeLines;
-    this.annotations = builder.annotations;
+    this.annotations = FCollection.map(builder.annotations, ClassName.stringToClassName());
   }
 
   public int getNumberOfCodeLines() {
@@ -73,11 +75,11 @@ public class ClassInfo {
   }
 
   public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
-    return hasAnnotation(annotation.getName());
+    return hasAnnotation(new ClassName(annotation));
   }
 
-  public boolean hasAnnotation(final String annotation) {
-    return this.annotations.contains(annotation.replace(".", "/"));
+  public boolean hasAnnotation(final ClassName annotation) {
+    return this.annotations.contains(annotation);
   }
 
   public boolean descendsFrom(final Class<?> clazz) {
