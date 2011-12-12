@@ -17,6 +17,7 @@ package org.pitest.util;
 import java.lang.annotation.Annotation;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
@@ -71,17 +72,17 @@ public abstract class Functions {
 
   }
 
-  public static F<String, Option<Class<?>>> stringToClass() {
-    return stringToClass(IsolationUtils.getContextClassLoader());
+  public static F<ClassName, Option<Class<?>>> nameToClass() {
+    return nameToClass(IsolationUtils.getContextClassLoader());
   }
 
-  public static F<String, Option<Class<?>>> stringToClass(
+  public static F<ClassName, Option<Class<?>>> nameToClass(
       final ClassLoader loader) {
-    return new F<String, Option<Class<?>>>() {
+    return new F<ClassName, Option<Class<?>>>() {
 
-      public Option<Class<?>> apply(final String className) {
+      public Option<Class<?>> apply(final ClassName className) {
         try {
-          final Class<?> clazz = Class.forName(className, false, loader);
+          final Class<?> clazz = Class.forName(className.asJavaName(), false, loader);
           return Option.<Class<?>> some(clazz);
         } catch (final ClassNotFoundException e) {
           LOG.warning("Could not load " + className

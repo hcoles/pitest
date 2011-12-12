@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import org.pitest.Pitest;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.TestUnit;
@@ -109,7 +110,7 @@ public class CoverageSlave {
   private static List<TestUnit> getTestsFromParent(
       final SafeDataInputStream dis, final SlaveArguments paramsFromParent)
       throws IOException {
-    final List<String> classes = receiveTestClassesFromParent(dis);
+    final List<ClassName> classes = receiveTestClassesFromParent(dis);
 
     final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
 
@@ -123,21 +124,20 @@ public class CoverageSlave {
   }
 
   private static List<TestUnit> discoverTests(
-      final SlaveArguments paramsFromParent, final List<String> classes) {
+      final SlaveArguments paramsFromParent, final List<ClassName> classes) {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
-        paramsFromParent.getPitConfig(),
-        new UnGroupedStrategy(),
-        FCollection.flatMap(classes, Functions.stringToClass()));
+        paramsFromParent.getPitConfig(), new UnGroupedStrategy(),
+        FCollection.flatMap(classes, Functions.nameToClass()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }
 
-  private static List<String> receiveTestClassesFromParent(
+  private static List<ClassName> receiveTestClassesFromParent(
       final SafeDataInputStream dis) {
     final int count = dis.readInt();
-    final List<String> classes = new ArrayList<String>(count);
+    final List<ClassName> classes = new ArrayList<ClassName>(count);
     for (int i = 0; i != count; i++) {
-      classes.add(dis.readString());
+      classes.add(new ClassName(dis.readString()));
     }
     LOG.fine("Receiving " + count + " tests classes from parent");
     return classes;

@@ -28,6 +28,7 @@ import javax.management.openmbean.CompositeData;
 
 import org.pitest.Pitest;
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.UnGroupedStrategy;
@@ -106,11 +107,12 @@ public class MutationTestSlave {
   }
 
   private static List<TestUnit> findTestsForTestClasses(
-      final ClassLoader loader, final Collection<String> testClasses,
+      final ClassLoader loader, final Collection<ClassName> testClasses,
       final Configuration pitConfig) {
     final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
-        Functions.stringToClass(loader));
-    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig, new UnGroupedStrategy(), tcs);
+        Functions.nameToClass(loader));
+    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig,
+        new UnGroupedStrategy(), tcs);
   }
 
   @SuppressWarnings("unchecked")

@@ -25,9 +25,9 @@ import org.pitest.extension.common.GroupPerClassStrategy;
 
 public class DefaultStaticConfig implements StaticConfiguration {
 
-  private ResultClassifier                        classifier;
-  private GroupingStrategy                        groupingStrategy;
-  private final Collection<TestListener>          testListeners          = new ArrayList<TestListener>();
+  private ResultClassifier               classifier;
+  private GroupingStrategy               groupingStrategy;
+  private final Collection<TestListener> testListeners = new ArrayList<TestListener>();
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
@@ -57,7 +57,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
   public final void addTestListener(final TestListener listener) {
     this.testListeners.add(listener);
   }
-
 
   public GroupingStrategy getGroupingStrategy() {
     return this.groupingStrategy;

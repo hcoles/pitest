@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.MetaData;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.functional.F;
@@ -67,10 +68,10 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   protected final Configuration             pitConfig;
 
-  protected final Collection<String>        testClasses;
+  protected final Collection<ClassName>        testClasses;
 
   public MutationTestUnit(final Collection<MutationDetails> availableMutations,
-      final Collection<String> testClasses, final Configuration pitConfig,
+      final Collection<ClassName> testClasses, final Configuration pitConfig,
       final MutationConfig mutationConfig, final Description description,
       final JavaAgent javaAgentFinder,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose) {
@@ -135,14 +136,14 @@ public class MutationTestUnit extends AbstractTestUnit {
         putToMap(mutations, new MutationStatusTestPair(status)));
   }
 
-  private boolean hasTestCoverage(final Collection<String> tests) {
+  private boolean hasTestCoverage(final Collection<ClassName> tests) {
     return !tests.isEmpty();
   }
 
   private void runTestInSeperateProcessForMutationRange(
       final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations,
-      final Collection<String> tests, final String cp) throws IOException {
+      final Collection<ClassName> tests, final String cp) throws IOException {
 
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
         tests, this.config, this.timeoutStrategy, Log.isVerbose(),
@@ -152,9 +153,9 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-            .andStdout(captureStdOutIfVerbose())
-            .andStderr(printWith("stderr ")), fileArgs);
+        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andStdout(captureStdOutIfVerbose())
+        .andStderr(printWith("stderr ")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -236,9 +237,9 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestsInSeperateProcess(final String cp,
-      final Collection<String> tests,
+      final Collection<ClassName> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
-      throws IOException, InterruptedException {
+  throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 

@@ -16,6 +16,7 @@ package org.pitest.mutationtest.execute;
 
 import java.util.Collection;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
@@ -24,14 +25,14 @@ import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 public class SlaveArguments {
 
   final Collection<MutationDetails> mutations;
-  final Collection<String>          testClasses;
+  final Collection<ClassName>          testClasses;
   final MutationConfig              config;
   final TimeoutLengthStrategy       timeoutStrategy;
   final boolean                     verbose;
   final Configuration               pitConfig;
 
   public SlaveArguments(final Collection<MutationDetails> mutations,
-      final Collection<String> tests, final MutationConfig config,
+      final Collection<ClassName> tests, final MutationConfig config,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final Configuration pitConfig) {
     this.mutations = mutations;

@@ -79,7 +79,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(testClass);
       final List<TestStep> instantiations = instantiationStrategy
-      .instantiations(testClass);
+          .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
         for (final TestMethod m : findTestMethods(this.testMethodFinders,
             testClass)) {

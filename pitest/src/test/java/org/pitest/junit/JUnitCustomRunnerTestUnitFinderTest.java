@@ -44,7 +44,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   private JUnitCustomRunnerTestUnitFinder testee;
 
-
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
@@ -85,7 +84,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public static class CustomSuiteRunner extends Suite {
 
     public CustomSuiteRunner(final Class<?> klass, final RunnerBuilder rb)
-    throws InitializationError {
+        throws InitializationError {
       super(klass, rb);
     }
 
@@ -173,8 +172,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Test
   public void shouldFindTestUnitsInCustomJUnit3Class() {
-    final Collection<TestUnit> actual = this.testee.findTestUnits(
-        JMockTest.class);
+    final Collection<TestUnit> actual = this.testee
+        .findTestUnits(JMockTest.class);
     assertFalse(actual.isEmpty());
   }
 
@@ -183,8 +182,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
     }
   }
-
-
 
   public static class HasBeforeClassAnnotation {
 

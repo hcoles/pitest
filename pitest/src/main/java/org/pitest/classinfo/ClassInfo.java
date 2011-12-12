@@ -24,7 +24,7 @@ import org.pitest.functional.Option;
 public class ClassInfo {
 
   private final int          access;
-  private final String       name;
+  private final ClassName     name;
   private final Set<Integer> codeLines;
   private final ClassPointer outerClass;
   private final ClassPointer superClass;
@@ -34,7 +34,7 @@ public class ClassInfo {
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
     this.superClass = superClass;
     this.outerClass = outerClass;
-    this.name = builder.name;
+    this.name = new ClassName(builder.name);
     this.access = builder.access;
     this.codeLines = builder.codeLines;
     this.annotations = builder.annotations;
@@ -48,7 +48,7 @@ public class ClassInfo {
     return this.codeLines.contains(line);
   }
 
-  public String getName() {
+  public ClassName getName() {
     return this.name;
   }
 
@@ -81,16 +81,16 @@ public class ClassInfo {
   }
 
   public boolean descendsFrom(final Class<?> clazz) {
-    return descendsFrom(clazz.getName());
+    return descendsFrom(new ClassName(clazz.getName()));
   }
 
-  private boolean descendsFrom(final String clazz) {
+  private boolean descendsFrom(final ClassName clazz) {
 
     if (this.getSuperClass().hasNone()) {
       return false;
     }
 
-    if (this.getSuperClass().value().getName().equals(clazz.replace(".", "/"))) {
+    if (this.getSuperClass().value().getName().equals(clazz)) {
       return true;
     }
 

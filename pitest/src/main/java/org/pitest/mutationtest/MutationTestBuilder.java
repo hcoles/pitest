@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
@@ -43,7 +44,7 @@ public class MutationTestBuilder {
   private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
   private final static Logger         LOG                                  = Log
-                                                                               .getLogger();
+  .getLogger();
 
   private final ReportOptions         data;
   private final JavaAgent             javaAgentFinder;
@@ -73,8 +74,7 @@ public class MutationTestBuilder {
           coverageDatabase, this.mutationConfig, classGroup,
           this.filterFactory.createFilter());
 
-      tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses,
-          classGroup.getParent()));
+      tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses));
 
     }
     return tus;
@@ -137,13 +137,11 @@ public class MutationTestBuilder {
   }
 
   private TestUnit createMutationTestUnit(final MutationConfig mutationConfig,
-      final Collection<MutationDetails> mutationsForClasses,
-      final String parentClassName) {
+      final Collection<MutationDetails> mutationsForClasses) {
 
-    final Description d = new Description(
-        "mutation test of " + parentClassName, MutationCoverageReport.class);
+    final Description d = new Description( "mutation test", (String)null);
 
-    final Set<String> uniqueTestClasses = new HashSet<String>();
+    final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
@@ -153,10 +151,10 @@ public class MutationTestBuilder {
             this.data.getTimeoutConstant()), this.data.isVerbose());
   }
 
-  private F<MutationDetails, Iterable<String>> mutationDetailsToTestClass() {
-    return new F<MutationDetails, Iterable<String>>() {
+  private F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
+    return new F<MutationDetails, Iterable<ClassName>>() {
 
-      public Iterable<String> apply(final MutationDetails a) {
+      public Iterable<ClassName> apply(final MutationDetails a) {
         return FCollection.map(a.getTestsInOrder(),
             TestInfo.toDefiningClassName());
       }

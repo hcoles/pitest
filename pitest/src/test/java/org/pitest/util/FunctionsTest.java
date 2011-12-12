@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
 
 public class FunctionsTest {
@@ -31,15 +32,15 @@ public class FunctionsTest {
   }
 
   @Test
-  public void stringToClassShouldReturnClassWhenKnownToLoader() {
+  public void nameToClassShouldReturnClassWhenKnownToLoader() {
     assertEquals(Option.some(String.class),
-        Functions.stringToClass().apply("java.lang.String"));
+        Functions.nameToClass().apply(new ClassName("java.lang.String")));
   }
 
   @Test
   public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
     assertEquals(Option.none(),
-        Functions.stringToClass().apply("org.unknown.Unknown"));
+        Functions.nameToClass().apply(new ClassName("org.unknown.Unknown")));
   }
 
   @Test

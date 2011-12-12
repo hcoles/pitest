@@ -16,6 +16,7 @@ package org.pitest.coverage.domain;
 
 import java.util.Collection;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 
 public class TestInfo {
@@ -46,11 +47,11 @@ public class TestInfo {
     return this.name;
   }
 
-  public static F<TestInfo, String> toDefiningClassName() {
-    return new F<TestInfo, String>() {
+  public static F<TestInfo, ClassName> toDefiningClassName() {
+    return new F<TestInfo, ClassName>() {
 
-      public String apply(final TestInfo a) {
-        return a.definingClass;
+      public ClassName apply(final TestInfo a) {
+        return new ClassName(a.definingClass);
       }
 
     };
@@ -65,10 +66,10 @@ public class TestInfo {
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
+    + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-        + ((this.testees == null) ? 0 : this.testees.hashCode());
+    + ((this.testees == null) ? 0 : this.testees.hashCode());
     result = prime * result + this.time;
     return result;
   }

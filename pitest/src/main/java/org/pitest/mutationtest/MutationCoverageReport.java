@@ -176,6 +176,23 @@ public class MutationCoverageReport implements Runnable {
     reportFailureForClassesWithoutTests(
         coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
 
+    final List<TestUnit> tus = buildMutationTests(initialConfig,
+        coverageDatabase, codeClasses);
+
+    LOG.info("Created  " + tus.size() + " mutation test units");
+    checkMutationsFounds(tus);
+
+    final Pitest pit = new Pitest(staticConfig);
+    pit.run(createContainer(), tus);
+
+    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
+        + " classes.");
+
+  }
+
+  private List<TestUnit> buildMutationTests(final Configuration initialConfig,
+      final CoverageDatabase coverageDatabase,
+      final Collection<ClassGrouping> codeClasses) {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
@@ -191,16 +208,7 @@ public class MutationCoverageReport implements Runnable {
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         initialConfig, coverageDatabase);
-
-    LOG.info("Created  " + tus.size() + " mutation test units");
-    checkMutationsFounds(tus);
-
-    final Pitest pit = new Pitest(staticConfig);
-    pit.run(createContainer(), tus);
-
-    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
-        + " classes.");
-
+    return tus;
   }
 
   private void checkMutationsFounds(final List<TestUnit> tus) {

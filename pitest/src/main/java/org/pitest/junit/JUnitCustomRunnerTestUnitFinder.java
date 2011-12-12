@@ -60,7 +60,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
     final Set<Method> methods = Reflection.allMethods(clazz);
     return hasAnnotation(methods, BeforeClass.class)
-    || hasAnnotation(methods, AfterClass.class);
+        || hasAnnotation(methods, AfterClass.class);
   }
 
   private boolean hasAnnotation(final Set<Method> methods,
@@ -74,8 +74,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private Collection<TestUnit> splitIntoFilteredUnits(
       final Description description) {
-    return FCollection.filter(
-        description.getChildren(), isTest()).map(descriptionToTestUnit());
+    return FCollection.filter(description.getChildren(), isTest()).map(
+        descriptionToTestUnit());
 
   }
 

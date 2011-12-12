@@ -36,21 +36,9 @@ public final class TestClass {
   }
 
   private Collection<TestUnit> getTestUnitsWithinClass(
-      final Configuration startConfig) {
-
-    final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
-        startConfig);
-
-    return units;
-  }
-
-  private Collection<TestUnit> findTestUnitsUsingAllTestFinders(
       final Configuration classConfig) {
-    final Collection<TestUnit> units = new ArrayList<TestUnit>();
-    units.addAll(classConfig.testUnitFinder().findTestUnits(
-        TestClass.this.getClazz()));
-
-    return units;
+    return classConfig.testUnitFinder()
+        .findTestUnits(TestClass.this.getClazz());
   }
 
   public Class<?> getClazz() {
@@ -61,19 +49,16 @@ public final class TestClass {
       final TestClass suiteClass, final Configuration startConfig,
       final GroupingStrategy groupStrategy) {
 
-
-
     final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
     for (final TestClass tc : tcs) {
       findTestUnits(tus, tc, startConfig, groupStrategy);
     }
     final Collection<TestUnit> testsInThisClass = suiteClass
-    .getTestUnitsWithinClass(startConfig);
+        .getTestUnitsWithinClass(startConfig);
     if (!testsInThisClass.isEmpty()) {
       tus.addAll(groupStrategy.group(suiteClass, testsInThisClass));
     }
-
 
   }
 
@@ -94,7 +79,7 @@ public final class TestClass {
     final int prime = 31;
     int result = 1;
     result = prime * result
-    + ((this.clazz == null) ? 0 : this.clazz.hashCode());
+        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
     return result;
   }
 
