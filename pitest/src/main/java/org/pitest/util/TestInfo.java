@@ -25,86 +25,61 @@ import org.pitest.help.PitHelpError;
 public abstract class TestInfo {
 
   /*
-  public static FunctionalIterable<Class<?>> determineTestee(final Class<?> test) {
-    final org.pitest.annotations.ClassUnderTest annotation = test
-    .getAnnotation(org.pitest.annotations.ClassUnderTest.class);
-    if (annotation == null) {
-      return FCollection.filter(determineTesteeFromName(test),
-          True.<Class<?>> all());
-    } else {
-      return new MutableList<Class<?>>(Arrays.asList(annotation.value()));
-    }
-  }
-
-  private static Option<Class<?>> determineTesteeFromName(final Class<?> test) {
-    final String name = test.getName();
-    final int testLength = "Test".length();
-    if (name.endsWith("Test")) {
-      final Option<Class<?>> guessed = tryName(name.substring(0, name.length()
-          - testLength));
-      if (guessed.hasSome()) {
-        return guessed;
-      }
-    }
-
-    final String className = getClassNameWithoutPackage(test);
-    if (className.startsWith("Test")) {
-      final String nameGuess = className.substring(testLength,
-          className.length());
-      final Option<Class<?>> guessed = tryName(test.getPackage().getName()
-          + "." + nameGuess);
-      if (guessed.hasNone()) {
-        if (test.getEnclosingClass() != null) {
-          return tryName(test.getEnclosingClass().getName() + "$" + nameGuess);
-        }
-      } else {
-        return guessed;
-      }
-    }
-
-    return Option.none();
-  }
-
-  private static String getClassNameWithoutPackage(final Class<?> clazz) {
-    if (clazz.getEnclosingClass() == null) {
-      return clazz.getName().substring(
-          clazz.getPackage().getName().length() + 1, clazz.getName().length());
-    } else {
-      return clazz.getName().substring(
-          clazz.getEnclosingClass().getName().length() + 1,
-          clazz.getName().length());
-    }
-  }
-
-  private static Option<Class<?>> tryName(final String name) {
-    try {
-      final Class<?> guessed = Class.forName(name, false,
-          IsolationUtils.getContextClassLoader());
-      return Option.<Class<?>> some(guessed);
-    } catch (final ClassNotFoundException e) {
-      return Option.none();
-    } catch (final NoClassDefFoundError e) {
-      // not clear why we get this occasionally
-      // when running with eclipse
-      return Option.none();
-    }
-  }
+   * public static FunctionalIterable<Class<?>> determineTestee(final Class<?>
+   * test) { final org.pitest.annotations.ClassUnderTest annotation = test
+   * .getAnnotation(org.pitest.annotations.ClassUnderTest.class); if (annotation
+   * == null) { return FCollection.filter(determineTesteeFromName(test),
+   * True.<Class<?>> all()); } else { return new
+   * MutableList<Class<?>>(Arrays.asList(annotation.value())); } }
+   * 
+   * private static Option<Class<?>> determineTesteeFromName(final Class<?>
+   * test) { final String name = test.getName(); final int testLength =
+   * "Test".length(); if (name.endsWith("Test")) { final Option<Class<?>>
+   * guessed = tryName(name.substring(0, name.length() - testLength)); if
+   * (guessed.hasSome()) { return guessed; } }
+   * 
+   * final String className = getClassNameWithoutPackage(test); if
+   * (className.startsWith("Test")) { final String nameGuess =
+   * className.substring(testLength, className.length()); final Option<Class<?>>
+   * guessed = tryName(test.getPackage().getName() + "." + nameGuess); if
+   * (guessed.hasNone()) { if (test.getEnclosingClass() != null) { return
+   * tryName(test.getEnclosingClass().getName() + "$" + nameGuess); } } else {
+   * return guessed; } }
+   * 
+   * return Option.none(); }
+   * 
+   * private static String getClassNameWithoutPackage(final Class<?> clazz) { if
+   * (clazz.getEnclosingClass() == null) { return clazz.getName().substring(
+   * clazz.getPackage().getName().length() + 1, clazz.getName().length()); }
+   * else { return clazz.getName().substring(
+   * clazz.getEnclosingClass().getName().length() + 1,
+   * clazz.getName().length()); } }
+   * 
+   * private static Option<Class<?>> tryName(final String name) { try { final
+   * Class<?> guessed = Class.forName(name, false,
+   * IsolationUtils.getContextClassLoader()); return Option.<Class<?>>
+   * some(guessed); } catch (final ClassNotFoundException e) { return
+   * Option.none(); } catch (final NoClassDefFoundError e) { // not clear why we
+   * get this occasionally // when running with eclipse return Option.none(); }
+   * }
    */
   public static Predicate<ClassInfo> isWithinATestClass() {
     return new Predicate<ClassInfo>() {
       public Boolean apply(final ClassInfo clazz) {
         final Option<ClassInfo> outerClass = clazz.getOuterClass();
-        return isATest(clazz) || outerClass.hasSome() && isATest(outerClass.value());
+        return isATest(clazz)
+            || (outerClass.hasSome() && isATest(outerClass.value()));
       }
     };
   }
 
-  public static boolean isATest(ClassInfo clazz) {
-    return    isJUnit3Test(clazz) || isJUnit4Test(clazz) || isATest(clazz.getSuperClass());
+  public static boolean isATest(final ClassInfo clazz) {
+    return isJUnit3Test(clazz) || isJUnit4Test(clazz)
+        || isATest(clazz.getSuperClass());
   }
 
-  private static boolean isATest(Option<ClassInfo> clazz) {
-    if ( clazz.hasSome() ) {
+  private static boolean isATest(final Option<ClassInfo> clazz) {
+    if (clazz.hasSome()) {
       return isATest(clazz.value());
     }
     return false;
@@ -120,14 +95,14 @@ public abstract class TestInfo {
   }
 
   public static boolean isJUnit3Test(final ClassInfo clazz) {
-    return clazz.descendsFrom(junit.framework.TestCase.class) || clazz.descendsFrom(junit.framework.TestSuite.class);
+    return clazz.descendsFrom(junit.framework.TestCase.class)
+        || clazz.descendsFrom(junit.framework.TestSuite.class);
   }
 
   public static boolean isJUnit4Test(final ClassInfo clazz) {
-    return clazz.hasAnnotation(RunWith.class) || clazz.hasAnnotation(Test.class);
+    return clazz.hasAnnotation(RunWith.class)
+        || clazz.hasAnnotation(Test.class);
   }
-
-
 
   public static void checkJUnitVersion() {
     try {

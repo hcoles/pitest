@@ -53,16 +53,6 @@ public class FunctionsTest {
   }
 
   @Test
-  public void isInnerClassShouldReturnTrueForInnerClasses() {
-    final Object o = new Object() {
-
-    };
-
-    assertTrue(Functions.isInnerClass().apply(o.getClass()));
-
-  }
-
-  @Test
   public void isInterfaceShouldReturnTrueWhenGivenAnInterface() {
     assertTrue(Functions.isInterface().apply(Comparable.class));
   }

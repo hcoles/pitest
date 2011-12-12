@@ -50,14 +50,14 @@ public class RepositoryTest {
   @Test
   public void shouldDetectInterfacesAsInterfaces() {
     final Option<ClassInfo> anInterface = this.testee
-    .fetchClass(Serializable.class);
+        .fetchClass(Serializable.class);
     assertTrue(anInterface.value().isInterface());
   }
 
   @Test
   public void shouldDetectInterfacesAsAbstract() {
     final Option<ClassInfo> anInterface = this.testee
-    .fetchClass(Serializable.class);
+        .fetchClass(Serializable.class);
     assertTrue(anInterface.value().isAbstract());
   }
 
@@ -142,21 +142,20 @@ public class RepositoryTest {
   @Test
   public void shouldReportNoSuperClassForObject() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(Object.class);
-    assertEquals(Option.none(), aClass.value()
-        .getSuperClass());
+    assertEquals(Option.none(), aClass.value().getSuperClass());
   }
 
   @Test
   public void shouldReportCodeLines() {
     final Option<ClassInfo> aClass = this.testee
-    .fetchClass(RepositoryTest.class);
+        .fetchClass(RepositoryTest.class);
     aClass.value().isCodeLine(139); // flakey
   }
 
   @Test
   public void matchIfTopLevelClassShouldReturnTrueForTopLevelClasses() {
     final Option<ClassInfo> aClass = this.testee
-    .fetchClass(RepositoryTest.class);
+        .fetchClass(RepositoryTest.class);
     System.out.println(aClass.value().getOuterClass());
     assertTrue(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
   }
@@ -164,7 +163,7 @@ public class RepositoryTest {
   @Test
   public void matchIfTopLevelClassShouldReturnFalseForInnerClasses() {
     final Option<ClassInfo> aClass = this.testee
-    .fetchClass(NonStaticInnerClass.class);
+        .fetchClass(NonStaticInnerClass.class);
     assertFalse(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
   }
 
@@ -175,8 +174,7 @@ public class RepositoryTest {
 
   @Test
   public void shouldRecordClassLevelAnnotations() {
-    final Option<ClassInfo> aClass = this.testee
-    .fetchClass(Annotated.class);
+    final Option<ClassInfo> aClass = this.testee.fetchClass(Annotated.class);
     assertTrue(aClass.value().hasAnnotation(Ignore.class));
   }
 
@@ -190,7 +188,7 @@ public class RepositoryTest {
   @Test
   public void shouldRecordMethodLevelAnnotations() {
     final Option<ClassInfo> aClass = this.testee
-    .fetchClass(HasAnnotatedMethod.class);
+        .fetchClass(HasAnnotatedMethod.class);
     assertTrue(aClass.value().hasAnnotation(Test.class));
   }
 
@@ -198,7 +196,7 @@ public class RepositoryTest {
 
   }
 
-  static class Top implements ITop{
+  static class Top implements ITop {
 
   }
 
@@ -212,8 +210,7 @@ public class RepositoryTest {
 
   @Test
   public void shouldCorrectlyNegotiateClassHierachies() {
-    final Option<ClassInfo> aClass = this.testee
-    .fetchClass(Bottom.class);
+    final Option<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
     assertTrue(aClass.value().descendsFrom(Middle.class));
     assertTrue(aClass.value().descendsFrom(Top.class));
     assertTrue(aClass.value().descendsFrom(Object.class));
@@ -222,14 +219,13 @@ public class RepositoryTest {
 
   @Test
   public void doesNotTreatInterfacesAsPartOfClassHierachy() {
-    final Option<ClassInfo> aClass = this.testee
-    .fetchClass(Bottom.class);
+    final Option<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
     assertFalse(aClass.value().descendsFrom(ITop.class));
   }
 
   private String getOuterClassNameFor(final Class<?> clazz) {
     return this.testee.fetchClass(clazz).value().getOuterClass().value()
-    .getName();
+        .getName();
   }
 
 }

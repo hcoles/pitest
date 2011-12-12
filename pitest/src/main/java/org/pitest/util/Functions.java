@@ -21,19 +21,9 @@ import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.reflection.Reflection;
 
 public abstract class Functions {
   private final static Logger LOG = Log.getLogger();
-
-  public static Predicate<Class<?>> isInnerClass() {
-    return new Predicate<Class<?>>() {
-      public Boolean apply(final Class<?> clazz) {
-        return Reflection.getParentClass(clazz).hasSome();
-      }
-
-    };
-  }
 
   public static F<String, String> classNameToJVMClassName() {
     return new F<String, String>() {

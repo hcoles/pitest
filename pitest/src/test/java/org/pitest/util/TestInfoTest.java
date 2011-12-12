@@ -77,7 +77,7 @@ public class TestInfoTest {
     assertTrue(TestInfo.isWithinATestClass().apply(fetchClass(Nested.class)));
   }
 
-  private ClassInfo fetchClass(Class<?> clazz) {
+  private ClassInfo fetchClass(final Class<?> clazz) {
     return this.repository.fetchClass(clazz).value();
   }
 

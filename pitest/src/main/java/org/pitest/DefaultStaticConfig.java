@@ -61,10 +61,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
     this.testListeners.add(listener);
   }
 
-  public final void addDiscoveryListener(final TestDiscoveryListener tdl) {
-    this.testDiscoveryListeners.add(tdl);
-  }
-
   public Collection<TestDiscoveryListener> getDiscoveryListeners() {
     return this.testDiscoveryListeners;
   }
