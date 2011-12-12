@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import org.pitest.CompoundTestSuiteFinder;
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 
@@ -30,6 +31,10 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public TestSuiteFinder testSuiteFinder() {
     return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
         new JUnit4SuiteFinder(), new RunnerSuiteFinder()));
+  }
+
+  public TestClassIdentifier testClassIdentifier() {
+    return new JUnitTestClassIdentifier();
   }
 
 }

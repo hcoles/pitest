@@ -63,19 +63,17 @@ public abstract class TestInfo {
    * get this occasionally // when running with eclipse return Option.none(); }
    * }
    */
-  public static Predicate<ClassInfo> isWithinATestClass() {
-    return new Predicate<ClassInfo>() {
-      public Boolean apply(final ClassInfo clazz) {
-        final Option<ClassInfo> outerClass = clazz.getOuterClass();
-        return isATest(clazz)
-            || (outerClass.hasSome() && isATest(outerClass.value()));
-      }
-    };
+  public static boolean isWithinATestClass(ClassInfo clazz) {
+
+    final Option<ClassInfo> outerClass = clazz.getOuterClass();
+    return isATest(clazz)
+    || (outerClass.hasSome() && isATest(outerClass.value()));
+
   }
 
   public static boolean isATest(final ClassInfo clazz) {
     return isJUnit3Test(clazz) || isJUnit4Test(clazz)
-        || isATest(clazz.getSuperClass());
+    || isATest(clazz.getSuperClass());
   }
 
   private static boolean isATest(final Option<ClassInfo> clazz) {
@@ -96,12 +94,12 @@ public abstract class TestInfo {
 
   public static boolean isJUnit3Test(final ClassInfo clazz) {
     return clazz.descendsFrom(junit.framework.TestCase.class)
-        || clazz.descendsFrom(junit.framework.TestSuite.class);
+    || clazz.descendsFrom(junit.framework.TestSuite.class);
   }
 
   public static boolean isJUnit4Test(final ClassInfo clazz) {
     return clazz.hasAnnotation(RunWith.class)
-        || clazz.hasAnnotation(Test.class);
+    || clazz.hasAnnotation(Test.class);
   }
 
   public static void checkJUnitVersion() {

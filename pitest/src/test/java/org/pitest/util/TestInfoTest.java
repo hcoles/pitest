@@ -74,7 +74,7 @@ public class TestInfoTest {
 
   @Test
   public void isWithinATestClassShouldReturnTrueForNestedClassesWithinATest() {
-    assertTrue(TestInfo.isWithinATestClass().apply(fetchClass(Nested.class)));
+    assertTrue(TestInfo.isWithinATestClass(fetchClass(Nested.class)));
   }
 
   private ClassInfo fetchClass(final Class<?> clazz) {

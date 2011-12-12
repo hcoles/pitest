@@ -17,8 +17,10 @@ package org.pitest;
 import java.util.Arrays;
 
 import org.pitest.extension.Configuration;
+import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.common.NoTestClassIdentifier;
 import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.junit.CompoundTestUnitFinder;
@@ -31,6 +33,7 @@ public final class ConcreteConfiguration implements Configuration {
 
   private TestUnitFinder  testUnitFinder  = new NoTestFinder();
   private TestSuiteFinder testSuiteFinder = new NoTestSuiteFinder();
+  private  TestClassIdentifier testClassIdentifier = new NoTestClassIdentifier();
 
   public ConcreteConfiguration() {
   }
@@ -55,6 +58,12 @@ public final class ConcreteConfiguration implements Configuration {
     this.testSuiteFinder = new CompoundTestSuiteFinder(Arrays.asList(
         this.testSuiteFinder, configuration.testSuiteFinder()));
 
+    this.testClassIdentifier = configuration.testClassIdentifier();
+
+  }
+
+  public TestClassIdentifier testClassIdentifier() {
+    return this.testClassIdentifier;
   }
 
 }

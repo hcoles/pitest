@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.ExtendedTestResult;
 import org.pitest.Pitest;
@@ -28,6 +27,7 @@ import org.pitest.TestResult;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.ClassLoaderFactory;
+import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
@@ -153,8 +153,8 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
-        new JUnitCompatibleConfiguration());
+    final Configuration initialConfig =
+      new JUnitCompatibleConfiguration();
 
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
@@ -164,12 +164,12 @@ public class MutationCoverageReport implements Runnable {
     }
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(coverageDatabase, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
+    .getListener(coverageDatabase, t0,
+        new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
     // staticConfig.addTestListener(ConsoleTestListener.);
