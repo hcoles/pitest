@@ -14,6 +14,7 @@
  */
 package org.pitest.classinfo;
 
+import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
@@ -27,6 +28,7 @@ public class ClassInfo {
   private final Set<Integer> codeLines;
   private final ClassPointer outerClass;
   private final ClassPointer superClass;
+  private final Set<String>  annotations;
 
   public ClassInfo(final ClassPointer superClass,
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
@@ -35,6 +37,7 @@ public class ClassInfo {
     this.name = builder.name;
     this.access = builder.access;
     this.codeLines = builder.codeLines;
+    this.annotations = builder.annotations;
   }
 
   public int getNumberOfCodeLines() {
@@ -65,8 +68,33 @@ public class ClassInfo {
     return this.outerClass.fetch();
   }
 
-  public ClassInfo getSuperClass() {
-    return this.superClass.fetch().value();
+  public Option<ClassInfo> getSuperClass() {
+    return this.superClass.fetch();
+  }
+
+  public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
+    return hasAnnotation(annotation.getName());
+  }
+
+  public boolean hasAnnotation(final String annotation) {
+    return this.annotations.contains(annotation.replace(".", "/"));
+  }
+
+  public boolean descendsFrom(final Class<?> clazz) {
+    return descendsFrom(clazz.getName());
+  }
+
+  private boolean descendsFrom(final String clazz) {
+
+    if (this.getSuperClass().hasNone()) {
+      return false;
+    }
+
+    if (this.getSuperClass().value().getName().equals(clazz.replace(".", "/"))) {
+      return true;
+    }
+
+    return getSuperClass().value().descendsFrom(clazz);
   }
 
   public static F<ClassInfo, Boolean> matchIfAbstract() {

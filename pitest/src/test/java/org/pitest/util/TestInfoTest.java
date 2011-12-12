@@ -17,10 +17,24 @@ package org.pitest.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.Repository;
+import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.internal.IsolationUtils;
 
 public class TestInfoTest {
+
+  private Repository repository;
+
+  @Before
+  public void setUp() {
+    this.repository = new Repository(new ClassloaderByteArraySource(
+        IsolationUtils.getContextClassLoader()));
+  }
 
   @Test
   public void checkJUnitVersionShouldNoThrowErrorIfVersionAbove4PointSix() {
@@ -33,17 +47,25 @@ public class TestInfoTest {
     class JU3Test extends TestCase {
 
     }
-    assertTrue(TestInfo.isATest().apply(JU3Test.class));
+    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
+  }
+
+  @Test
+  public void isATestShouldReturnTrueForJUnit3Suites() {
+    class JU3Test extends TestSuite {
+
+    }
+    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
   }
 
   @Test
   public void isATestShouldReturnTrueForJUnit4Tests() {
-    assertTrue(TestInfo.isATest().apply(TestInfoTest.class));
+    assertTrue(TestInfo.isATest().apply(fetchClass(TestInfoTest.class)));
   }
 
   @Test
   public void isATestShouldReturnFalseForNonTests() {
-    assertFalse(TestInfo.isATest().apply(String.class));
+    assertFalse(TestInfo.isATest().apply(fetchClass(String.class)));
   }
 
   static class Nested {
@@ -52,7 +74,11 @@ public class TestInfoTest {
 
   @Test
   public void isWithinATestClassShouldReturnTrueForNestedClassesWithinATest() {
-    assertTrue(TestInfo.isWithinATestClass().apply(Nested.class));
+    assertTrue(TestInfo.isWithinATestClass().apply(fetchClass(Nested.class)));
+  }
+
+  private ClassInfo fetchClass(Class<?> clazz) {
+    return this.repository.fetchClass(clazz).value();
   }
 
 }

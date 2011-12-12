@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassloaderByteArraySource;
@@ -49,14 +50,14 @@ public class RepositoryTest {
   @Test
   public void shouldDetectInterfacesAsInterfaces() {
     final Option<ClassInfo> anInterface = this.testee
-        .fetchClass(Serializable.class);
+    .fetchClass(Serializable.class);
     assertTrue(anInterface.value().isInterface());
   }
 
   @Test
   public void shouldDetectInterfacesAsAbstract() {
     final Option<ClassInfo> anInterface = this.testee
-        .fetchClass(Serializable.class);
+    .fetchClass(Serializable.class);
     assertTrue(anInterface.value().isAbstract());
   }
 
@@ -128,27 +129,34 @@ public class RepositoryTest {
   public void shouldReportSuperClass() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(Bar.class);
     assertEquals(Foo.class.getName().replace(".", "/"), aClass.value()
-        .getSuperClass().getName());
+        .getSuperClass().value().getName());
   }
 
   @Test
   public void shouldReportSuperClassAsObjectWhenNoneDeclared() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(Foo.class);
     assertEquals(Object.class.getName().replace(".", "/"), aClass.value()
-        .getSuperClass().getName());
+        .getSuperClass().value().getName());
+  }
+
+  @Test
+  public void shouldReportNoSuperClassForObject() {
+    final Option<ClassInfo> aClass = this.testee.fetchClass(Object.class);
+    assertEquals(Option.none(), aClass.value()
+        .getSuperClass());
   }
 
   @Test
   public void shouldReportCodeLines() {
     final Option<ClassInfo> aClass = this.testee
-        .fetchClass(RepositoryTest.class);
+    .fetchClass(RepositoryTest.class);
     aClass.value().isCodeLine(139); // flakey
   }
 
   @Test
   public void matchIfTopLevelClassShouldReturnTrueForTopLevelClasses() {
     final Option<ClassInfo> aClass = this.testee
-        .fetchClass(RepositoryTest.class);
+    .fetchClass(RepositoryTest.class);
     System.out.println(aClass.value().getOuterClass());
     assertTrue(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
   }
@@ -156,13 +164,72 @@ public class RepositoryTest {
   @Test
   public void matchIfTopLevelClassShouldReturnFalseForInnerClasses() {
     final Option<ClassInfo> aClass = this.testee
-        .fetchClass(NonStaticInnerClass.class);
+    .fetchClass(NonStaticInnerClass.class);
     assertFalse(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
+  }
+
+  @Ignore
+  static class Annotated {
+
+  }
+
+  @Test
+  public void shouldRecordClassLevelAnnotations() {
+    final Option<ClassInfo> aClass = this.testee
+    .fetchClass(Annotated.class);
+    assertTrue(aClass.value().hasAnnotation(Ignore.class));
+  }
+
+  static class HasAnnotatedMethod {
+    @Test
+    public void foo() {
+
+    }
+  }
+
+  @Test
+  public void shouldRecordMethodLevelAnnotations() {
+    final Option<ClassInfo> aClass = this.testee
+    .fetchClass(HasAnnotatedMethod.class);
+    assertTrue(aClass.value().hasAnnotation(Test.class));
+  }
+
+  static interface ITop {
+
+  }
+
+  static class Top implements ITop{
+
+  }
+
+  static class Middle extends Top {
+
+  }
+
+  static class Bottom extends Middle {
+
+  }
+
+  @Test
+  public void shouldCorrectlyNegotiateClassHierachies() {
+    final Option<ClassInfo> aClass = this.testee
+    .fetchClass(Bottom.class);
+    assertTrue(aClass.value().descendsFrom(Middle.class));
+    assertTrue(aClass.value().descendsFrom(Top.class));
+    assertTrue(aClass.value().descendsFrom(Object.class));
+    assertFalse(aClass.value().descendsFrom(String.class));
+  }
+
+  @Test
+  public void doesNotTreatInterfacesAsPartOfClassHierachy() {
+    final Option<ClassInfo> aClass = this.testee
+    .fetchClass(Bottom.class);
+    assertFalse(aClass.value().descendsFrom(ITop.class));
   }
 
   private String getOuterClassNameFor(final Class<?> clazz) {
     return this.testee.fetchClass(clazz).value().getOuterClass().value()
-        .getName();
+    .getName();
   }
 
 }

@@ -17,9 +17,7 @@ package org.pitest.classinfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pitest.functional.F;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassByteArraySource;
 
 public class Repository {
@@ -36,7 +34,7 @@ public class Repository {
   }
 
   public Option<ClassInfo> fetchClass(final String name) {
-    System.out.println("Fetching " + name);
+
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
       return Option.some(info);
@@ -77,26 +75,6 @@ public class Repository {
         return new DeferredClassPointer(this, clazz);
       }
     }
-  }
-
-  private Option<ClassInfo> getOuterClass(final ClassInfoBuilder classData) {
-    if (classData.outerClass != null) {
-      return this.fetchClass(classData.outerClass);
-    }
-    return Option.none();
-
-  }
-
-  private F<ClassInfo, Boolean> isWithinATestClass() {
-    return null;
-  }
-
-  public Predicate<String> isTopClass() {
-    return null;
-  }
-
-  public F<String, Boolean> isInnerClass() {
-    return null;
   }
 
 }

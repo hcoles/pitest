@@ -14,6 +14,7 @@
  */
 package org.pitest.classinfo;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
@@ -70,6 +71,14 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
   }
 
   @Override
+  public AnnotationVisitor visitAnnotation(final String desc,
+      final boolean visible) {
+    final String type = desc.substring(1, desc.length() - 1);
+    this.classInfo.registerAnnotation(type);
+    return super.visitAnnotation(desc, visible);
+  }
+
+  @Override
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
@@ -94,6 +103,14 @@ class InfoMethodVisitor extends MethodAdapter {
 
     this.classInfo.registerCodeLine(line);
 
+  }
+
+  @Override
+  public AnnotationVisitor visitAnnotation(final String desc,
+      final boolean visible) {
+    final String type = desc.substring(1, desc.length() - 1);
+    this.classInfo.registerAnnotation(type);
+    return super.visitAnnotation(desc, visible);
   }
 
 }

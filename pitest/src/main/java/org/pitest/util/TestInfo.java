@@ -14,27 +14,20 @@
  */
 package org.pitest.util;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.MutableList;
+import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.reflection.Reflection;
 
 public abstract class TestInfo {
 
+  /*
   public static FunctionalIterable<Class<?>> determineTestee(final Class<?> test) {
     final org.pitest.annotations.ClassUnderTest annotation = test
-        .getAnnotation(org.pitest.annotations.ClassUnderTest.class);
+    .getAnnotation(org.pitest.annotations.ClassUnderTest.class);
     if (annotation == null) {
       return FCollection.filter(determineTesteeFromName(test),
           True.<Class<?>> all());
@@ -96,50 +89,45 @@ public abstract class TestInfo {
       return Option.none();
     }
   }
-
-  public static Predicate<Class<?>> isWithinATestClass() {
-    return new Predicate<Class<?>>() {
-      public Boolean apply(final Class<?> clazz) {
-        final Option<Class<?>> outerClass = Reflection.getParentClass(clazz);
-        return isJUnit3Test(clazz) || isJUnit4Test(clazz)
-            || (outerClass.hasSome() && isATest().apply(outerClass.value()));
-      }
-
-    };
-  }
-
-  public static Predicate<Class<?>> isATest() {
-    return new Predicate<Class<?>>() {
-      public Boolean apply(final Class<?> clazz) {
-        final boolean isTest = isJUnit3Test(clazz) || isJUnit4Test(clazz);
-        return isTest;
-      }
-
-    };
-  }
-
-  public static boolean isJUnit3Test(final Class<?> clazz) {
-
-    return junit.framework.Test.class.isAssignableFrom(clazz);
-  }
-
-  public static boolean isJUnit4Test(final Class<?> clazz) {
-    return (clazz.getAnnotation(RunWith.class) != null) || hasTestMethod(clazz);
-  }
-
-  public static boolean hasTestMethod(final Class<?> clazz) {
-    final Predicate<Method> hasTestAnnotation = new Predicate<Method>() {
-      public Boolean apply(final Method a) {
-        return a.getAnnotation(Test.class) != null;
+   */
+  public static Predicate<ClassInfo> isWithinATestClass() {
+    return new Predicate<ClassInfo>() {
+      public Boolean apply(final ClassInfo clazz) {
+        final Option<ClassInfo> outerClass = clazz.getOuterClass();
+        return isATest(clazz) || outerClass.hasSome() && isATest(outerClass.value());
       }
     };
-    try {
-      return FCollection.contains(Reflection.allMethods(clazz),
-          hasTestAnnotation);
-    } catch (final NoClassDefFoundError e) {
-      return false;
+  }
+
+  public static boolean isATest(ClassInfo clazz) {
+    return    isJUnit3Test(clazz) || isJUnit4Test(clazz) || isATest(clazz.getSuperClass());
+  }
+
+  private static boolean isATest(Option<ClassInfo> clazz) {
+    if ( clazz.hasSome() ) {
+      return isATest(clazz.value());
     }
+    return false;
   }
+
+  public static Predicate<ClassInfo> isATest() {
+    return new Predicate<ClassInfo>() {
+      public Boolean apply(final ClassInfo clazz) {
+        return isATest(clazz);
+      }
+
+    };
+  }
+
+  public static boolean isJUnit3Test(final ClassInfo clazz) {
+    return clazz.descendsFrom(junit.framework.TestCase.class) || clazz.descendsFrom(junit.framework.TestSuite.class);
+  }
+
+  public static boolean isJUnit4Test(final ClassInfo clazz) {
+    return clazz.hasAnnotation(RunWith.class) || clazz.hasAnnotation(Test.class);
+  }
+
+
 
   public static void checkJUnitVersion() {
     try {

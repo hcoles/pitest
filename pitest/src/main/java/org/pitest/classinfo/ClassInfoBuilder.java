@@ -17,15 +17,20 @@ package org.pitest.classinfo;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClassInfoBuilder {
+class ClassInfoBuilder {
 
   int                access;
   String             name;
   String             outerClass;
   String             superClass;
-  final Set<Integer> codeLines = new HashSet<Integer>();
+  final Set<Integer> codeLines   = new HashSet<Integer>();
+  final Set<String>  annotations = new HashSet<String>();
 
   public void registerCodeLine(final int line) {
     this.codeLines.add(line);
+  }
+
+  public void registerAnnotation(final String annotation) {
+    this.annotations.add(annotation);
   }
 }
