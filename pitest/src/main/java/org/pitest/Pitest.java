@@ -26,10 +26,8 @@ import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfiguration;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.CompoundTestDiscoveryListener;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.TestClass;
@@ -57,9 +55,8 @@ public class Pitest {
         this.initialStaticConfig,
         findTestUnitsForAllSuppliedClasses(
             config,
-            new CompoundTestDiscoveryListener(this.initialStaticConfig
-                .getDiscoveryListeners()), this.initialStaticConfig
-                .getGroupingStrategy(), classes));
+            this.initialStaticConfig
+            .getGroupingStrategy(), classes));
 
   }
 
@@ -87,20 +84,20 @@ public class Pitest {
       final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-          public void apply(final TestListener a) {
-            a.onRunStart();
-          }
-        });
+      public void apply(final TestListener a) {
+        a.onRunStart();
+      }
+    });
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
-      final Configuration startConfig, final TestDiscoveryListener listener,
+      final Configuration startConfig,
       final GroupingStrategy groupStrategy, final Iterable<Class<?>> classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-          .getTestUnits(startConfig, listener, groupStrategy);
+      .getTestUnits(startConfig, groupStrategy);
       testUnits.addAll(testUnitsFromClass);
     }
 
@@ -140,10 +137,10 @@ public class Pitest {
   private void signalRunEndToAllListeners(final StaticConfiguration staticConfig) {
     FCollection.forEach(staticConfig.getTestListeners(),
         new SideEffect1<TestListener>() {
-          public void apply(final TestListener a) {
-            a.onRunEnd();
-          }
-        });
+      public void apply(final TestListener a) {
+        a.onRunEnd();
+      }
+    });
   }
 
   private Thread startFeederThread(final Container container,
@@ -167,7 +164,7 @@ public class Pitest {
 
     for (final TestResult result : results) {
       final ResultType classifiedResult = staticConfig.getClassifier()
-          .classify(result);
+      .classify(result);
       FCollection.forEach(staticConfig.getTestListeners(),
           classifiedResult.getListenerFunction(result));
     }

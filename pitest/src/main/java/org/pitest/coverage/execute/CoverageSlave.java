@@ -33,7 +33,6 @@ import org.pitest.boot.HotSwapAgent;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -126,7 +125,7 @@ public class CoverageSlave {
   private static List<TestUnit> discoverTests(
       final SlaveArguments paramsFromParent, final List<String> classes) {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
-        paramsFromParent.getPitConfig(), new NullDiscoveryListener(),
+        paramsFromParent.getPitConfig(),
         new UnGroupedStrategy(),
         FCollection.flatMap(classes, Functions.stringToClass()));
     LOG.info("Found  " + tus.size() + " tests");

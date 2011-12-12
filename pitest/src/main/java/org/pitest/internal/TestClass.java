@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 
@@ -37,19 +36,19 @@ public final class TestClass {
   }
 
   private Collection<TestUnit> getTestUnitsWithinClass(
-      final Configuration startConfig, final TestDiscoveryListener listener) {
+      final Configuration startConfig) {
 
     final Collection<TestUnit> units = findTestUnitsUsingAllTestFinders(
-        listener, startConfig);
+        startConfig);
 
     return units;
   }
 
   private Collection<TestUnit> findTestUnitsUsingAllTestFinders(
-      final TestDiscoveryListener listener, final Configuration classConfig) {
+      final Configuration classConfig) {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     units.addAll(classConfig.testUnitFinder().findTestUnits(
-        TestClass.this.getClazz(), listener));
+        TestClass.this.getClazz()));
 
     return units;
   }
@@ -60,29 +59,28 @@ public final class TestClass {
 
   private void findTestUnits(final List<TestUnit> tus,
       final TestClass suiteClass, final Configuration startConfig,
-      final GroupingStrategy groupStrategy, final TestDiscoveryListener listener) {
+      final GroupingStrategy groupStrategy) {
 
-    listener.enterClass(suiteClass.getClazz());
+
 
     final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
     for (final TestClass tc : tcs) {
-      findTestUnits(tus, tc, startConfig, groupStrategy, listener);
+      findTestUnits(tus, tc, startConfig, groupStrategy);
     }
     final Collection<TestUnit> testsInThisClass = suiteClass
-        .getTestUnitsWithinClass(startConfig, listener);
+    .getTestUnitsWithinClass(startConfig);
     if (!testsInThisClass.isEmpty()) {
       tus.addAll(groupStrategy.group(suiteClass, testsInThisClass));
     }
 
-    listener.leaveClass(suiteClass.getClazz());
 
   }
 
   public Collection<TestUnit> getTestUnits(final Configuration startConfig,
-      final TestDiscoveryListener listener, final GroupingStrategy groupStrategy) {
+      final GroupingStrategy groupStrategy) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
-    findTestUnits(tus, this, startConfig, groupStrategy, listener);
+    findTestUnits(tus, this, startConfig, groupStrategy);
     return tus;
   }
 
@@ -96,7 +94,7 @@ public final class TestClass {
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
+    + ((this.clazz == null) ? 0 : this.clazz.hashCode());
     return result;
   }
 

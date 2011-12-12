@@ -17,9 +17,6 @@ package org.pitest.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,11 +35,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
 
 import com.example.TheoryTest;
 
@@ -50,8 +44,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   private JUnitCustomRunnerTestUnitFinder testee;
 
-  @Mock
-  private TestDiscoveryListener           listener;
 
   @Before
   public void setup() {
@@ -93,7 +85,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public static class CustomSuiteRunner extends Suite {
 
     public CustomSuiteRunner(final Class<?> klass, final RunnerBuilder rb)
-        throws InitializationError {
+    throws InitializationError {
       super(klass, rb);
     }
 
@@ -160,7 +152,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
-    return this.testee.findTestUnits(clazz, this.listener);
+    return this.testee.findTestUnits(clazz);
   }
 
   public static class NotATest {
@@ -182,7 +174,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldFindTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        JMockTest.class, new NullDiscoveryListener());
+        JMockTest.class);
     assertFalse(actual.isEmpty());
   }
 
@@ -192,11 +184,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     }
   }
 
-  @Test
-  public void shouldListOfAllTestUnitsToDiscoveryListener() {
-    this.testee.findTestUnits(JMockTest.class, this.listener);
-    verify(this.listener, times(1)).receiveTests(anyListOf(TestUnit.class));
-  }
+
 
   public static class HasBeforeClassAnnotation {
 

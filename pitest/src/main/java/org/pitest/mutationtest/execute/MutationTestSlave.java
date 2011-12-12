@@ -30,7 +30,6 @@ import org.pitest.Pitest;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
@@ -111,8 +110,7 @@ public class MutationTestSlave {
       final Configuration pitConfig) {
     final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
         Functions.stringToClass(loader));
-    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(), tcs);
+    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig, new UnGroupedStrategy(), tcs);
   }
 
   @SuppressWarnings("unchecked")
@@ -141,7 +139,7 @@ public class MutationTestSlave {
         if (type.equals(MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED)) {
           final CompositeData cd = (CompositeData) notification.getUserData();
           final MemoryNotificationInfo memInfo = MemoryNotificationInfo
-              .from(cd);
+          .from(cd);
           CommandLineMessage.report(memInfo.getPoolName()
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());

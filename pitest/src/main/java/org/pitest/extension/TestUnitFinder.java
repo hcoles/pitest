@@ -19,7 +19,6 @@ import java.util.Collection;
 
 public interface TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final Class<?> clazz,
-      final TestDiscoveryListener listener);
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz);
 
 }

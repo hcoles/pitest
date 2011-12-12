@@ -28,7 +28,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
@@ -41,15 +40,7 @@ import org.pitest.reflection.Reflection;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final TestDiscoveryListener listener) {
-
-    return createUnits(testClass, listener);
-
-  }
-
-  private Collection<TestUnit> createUnits(final Class<?> clazz,
-      final TestDiscoveryListener listener) {
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
@@ -59,7 +50,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
         && !isParameterizedTest(runner) && !shouldTreatAsOneUnit(clazz)) {
-      return splitIntoFilteredUnits(runner.getDescription(), listener);
+      return splitIntoFilteredUnits(runner.getDescription());
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
@@ -69,7 +60,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
     final Set<Method> methods = Reflection.allMethods(clazz);
     return hasAnnotation(methods, BeforeClass.class)
-        || hasAnnotation(methods, AfterClass.class);
+    || hasAnnotation(methods, AfterClass.class);
   }
 
   private boolean hasAnnotation(final Set<Method> methods,
@@ -82,15 +73,10 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private Collection<TestUnit> splitIntoFilteredUnits(
-      final Description description, final TestDiscoveryListener listener) {
-
-    listener.enterClass(description.getTestClass());
-    final Collection<TestUnit> tus = FCollection.filter(
+      final Description description) {
+    return FCollection.filter(
         description.getChildren(), isTest()).map(descriptionToTestUnit());
-    listener.receiveTests(tus);
-    listener.leaveClass(description.getTestClass());
 
-    return tus;
   }
 
   private F<Description, TestUnit> descriptionToTestUnit() {

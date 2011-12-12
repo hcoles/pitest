@@ -31,7 +31,6 @@ import org.pitest.PitError;
 import org.pitest.TestMethod;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestStep;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -69,8 +68,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.afterClassFinders.addAll(afterClassFinders);
   }
 
-  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final TestDiscoveryListener listener) {
+  public Collection<TestUnit> findTestUnits(final Class<?> testClass) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
@@ -81,7 +79,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(testClass);
       final List<TestStep> instantiations = instantiationStrategy
-          .instantiations(testClass);
+      .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
         for (final TestMethod m : findTestMethods(this.testMethodFinders,
             testClass)) {
@@ -91,8 +89,6 @@ public class BasicTestUnitFinder implements TestUnitFinder {
               afters, testClass, m));
         }
       }
-
-      listener.receiveTests(units);
 
       return this.createGroupings(units, testClass);
 

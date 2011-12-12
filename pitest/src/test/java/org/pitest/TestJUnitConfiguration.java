@@ -36,7 +36,6 @@ import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
@@ -73,7 +72,7 @@ public class TestJUnitConfiguration {
   }
 
   public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
-      extends TestCase {
+  extends TestCase {
 
     private final String name;
 
@@ -412,7 +411,7 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
     final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new NullDiscoveryListener(), new UnGroupedStrategy(),
+        this.testee, new UnGroupedStrategy(),
         Arrays.<Class<?>> asList(CustomSuite.class));
 
     System.out.println(actual);

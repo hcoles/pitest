@@ -20,7 +20,6 @@ import java.util.Collection;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultClassifier;
 import org.pitest.extension.StaticConfiguration;
-import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.common.GroupPerClassStrategy;
 
@@ -29,7 +28,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
   private ResultClassifier                        classifier;
   private GroupingStrategy                        groupingStrategy;
   private final Collection<TestListener>          testListeners          = new ArrayList<TestListener>();
-  private final Collection<TestDiscoveryListener> testDiscoveryListeners = new ArrayList<TestDiscoveryListener>();
 
   public DefaultStaticConfig() {
     this.classifier = new DefaultResultClassifier();
@@ -44,7 +42,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
   public final void addConfiguration(final StaticConfiguration orig) {
     this.classifier = orig.getClassifier();
     this.testListeners.addAll(orig.getTestListeners());
-    this.testDiscoveryListeners.addAll(orig.getDiscoveryListeners());
     this.groupingStrategy = orig.getGroupingStrategy();
 
   }
@@ -61,9 +58,6 @@ public class DefaultStaticConfig implements StaticConfiguration {
     this.testListeners.add(listener);
   }
 
-  public Collection<TestDiscoveryListener> getDiscoveryListeners() {
-    return this.testDiscoveryListeners;
-  }
 
   public GroupingStrategy getGroupingStrategy() {
     return this.groupingStrategy;
