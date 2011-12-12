@@ -49,7 +49,7 @@ public final class TestClass {
       final TestDiscoveryListener listener, final Configuration classConfig) {
     final Collection<TestUnit> units = new ArrayList<TestUnit>();
     units.addAll(classConfig.testUnitFinder().findTestUnits(
-        TestClass.this.getClazz(), classConfig, listener));
+        TestClass.this.getClazz(), listener));
 
     return units;
   }

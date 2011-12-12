@@ -40,7 +40,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.ConcreteConfiguration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.NullDiscoveryListener;
@@ -161,8 +160,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
-    return this.testee.findTestUnits(clazz, new ConcreteConfiguration(),
-        this.listener);
+    return this.testee.findTestUnits(clazz, this.listener);
   }
 
   public static class NotATest {
@@ -184,7 +182,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldFindTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee.findTestUnits(
-        JMockTest.class, null, new NullDiscoveryListener());
+        JMockTest.class, new NullDiscoveryListener());
     assertFalse(actual.isEmpty());
   }
 
@@ -196,7 +194,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Test
   public void shouldListOfAllTestUnitsToDiscoveryListener() {
-    this.testee.findTestUnits(JMockTest.class, null, this.listener);
+    this.testee.findTestUnits(JMockTest.class, this.listener);
     verify(this.listener, times(1)).receiveTests(anyListOf(TestUnit.class));
   }
 

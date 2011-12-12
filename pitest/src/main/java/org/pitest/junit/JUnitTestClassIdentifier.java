@@ -20,8 +20,8 @@ import org.pitest.util.TestInfo;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
-  public boolean isATestClass(ClassInfo a) {
-    return  TestInfo.isWithinATestClass(a);
+  public boolean isATestClass(final ClassInfo a) {
+    return TestInfo.isWithinATestClass(a);
   }
 
 }

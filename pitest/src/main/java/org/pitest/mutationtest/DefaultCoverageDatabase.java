@@ -50,7 +50,7 @@ import org.pitest.util.ProcessArgs;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
   private final static Logger                              LOG           = Log
-  .getLogger();
+                                                                             .getLogger();
 
   private final Configuration                              initialConfig;
   private final JavaAgent                                  javaAgentFinder;
@@ -84,7 +84,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     @SuppressWarnings("unchecked")
     final FunctionalCollection<ClassInfo> directlySuppliedTestsAndSuites = flatMap(
         completeClassPathForTests(), nameToClassInfo()).filter(
-            and(isWithinATestClass(), not(ClassInfo.matchIfAbstract())));
+        and(isWithinATestClass(), not(ClassInfo.matchIfAbstract())));
 
     calculateCoverage(directlySuppliedTestsAndSuites);
 
@@ -94,7 +94,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     this.codeClasses = filter(completeClassPath,
         this.data.getTargetClassesFilter()).flatMap(nameToClassInfo()).filter(
-            not(isWithinATestClass()));
+        not(isWithinATestClass()));
 
     this.groupedClasses = groupByOuterClass(this.codeClasses);
 
@@ -105,8 +105,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private F<ClassInfo, Boolean> isWithinATestClass() {
     return new F<ClassInfo, Boolean>() {
 
-      public Boolean apply(ClassInfo a) {
-        return DefaultCoverageDatabase.this.initialConfig.testClassIdentifier().isATestClass(a);
+      public Boolean apply(final ClassInfo a) {
+        return DefaultCoverageDatabase.this.initialConfig.testClassIdentifier()
+            .isATestClass(a);
       }
 
     };
@@ -159,10 +160,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   private void gatherCoverageData(final Collection<ClassInfo> tests)
-  throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
 
     final List<String> filteredTests = FCollection
-    .map(tests, classInfoToName());
+        .map(tests, classInfoToName());
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
@@ -322,10 +323,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   public Collection<String> getParentClassesWithoutATest() {
     @SuppressWarnings("unchecked")
     final FunctionalList<String> codeClassNames = FCollection
-    .filter(
-        this.codeClasses,
-        and(ClassInfo.matchIfTopLevelClass(),
-            not(ClassInfo.matchIfInterface()))).map(classInfoToName());
+        .filter(
+            this.codeClasses,
+            and(ClassInfo.matchIfTopLevelClass(),
+                not(ClassInfo.matchIfInterface()))).map(classInfoToName());
     return codeClassNames.filter(Prelude.not(hasTest()));
   }
 
@@ -394,7 +395,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   private TestInfo descriptionToTestInfo(final Description description) {
     final int time = DefaultCoverageDatabase.this.times.get(description)
-    .intValue();
+        .intValue();
     // FIXME determine direct testees
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), time, Collections.<String> emptyList());

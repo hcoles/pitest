@@ -28,7 +28,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -43,7 +42,7 @@ import org.pitest.reflection.Reflection;
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final Configuration config, final TestDiscoveryListener listener) {
+      final TestDiscoveryListener listener) {
 
     return createUnits(testClass, listener);
 

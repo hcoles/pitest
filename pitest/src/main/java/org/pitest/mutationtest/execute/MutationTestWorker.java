@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.MultipleTestGroup;
 import org.pitest.Pitest;
@@ -167,13 +166,11 @@ public class MutationTestWorker {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final ConcreteConfiguration conf = new ConcreteConfiguration();
-
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
       staticConfig.addTestListener(new MutationTimingListener(System.out));
 
-      final Pitest pit = new Pitest(staticConfig, conf);
+      final Pitest pit = new Pitest(staticConfig);
       pit.run(c, createEarlyExitTestGroup(tests));
 
       return createStatusTestPair(listener);

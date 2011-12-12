@@ -72,7 +72,7 @@ public class TestMutationTesting {
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.addTestListener(this.metaDataExtractor);
-    this.pit = new Pitest(this.staticConfig, this.config);
+    this.pit = new Pitest(this.staticConfig);
   }
 
   public static class NoMutations {
@@ -311,7 +311,7 @@ public class TestMutationTesting {
     coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-    .getGroupedClasses();
+        .getGroupedClasses();
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -331,7 +331,7 @@ public class TestMutationTesting {
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
-    .getDetectionStatus();
+        .getDetectionStatus();
 
     Collections.sort(expected);
     Collections.sort(actual);

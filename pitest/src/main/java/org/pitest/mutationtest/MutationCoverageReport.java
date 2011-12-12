@@ -153,8 +153,7 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    final Configuration initialConfig =
-      new JUnitCompatibleConfiguration();
+    final Configuration initialConfig = new JUnitCompatibleConfiguration();
 
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
@@ -164,12 +163,12 @@ public class MutationCoverageReport implements Runnable {
     }
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-    .getGroupedClasses();
+        .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-    .getListener(coverageDatabase, t0,
-        new SmartSourceLocator(this.data.getSourceDirs()));
+        .getListener(coverageDatabase, t0,
+            new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
     // staticConfig.addTestListener(ConsoleTestListener.);
@@ -196,7 +195,7 @@ public class MutationCoverageReport implements Runnable {
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFounds(tus);
 
-    final Pitest pit = new Pitest(staticConfig, initialConfig);
+    final Pitest pit = new Pitest(staticConfig);
     pit.run(createContainer(), tus);
 
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()

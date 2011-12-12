@@ -3,7 +3,6 @@ package org.pitest.junit;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.pitest.extension.Configuration;
 import org.pitest.extension.TestDiscoveryListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -17,10 +16,9 @@ public class CompoundTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final Class<?> clazz,
-      final Configuration configuration, final TestDiscoveryListener listener) {
+      final TestDiscoveryListener listener) {
     for (final TestUnitFinder each : this.tufs) {
-      final Collection<TestUnit> tus = each.findTestUnits(clazz, configuration,
-          listener);
+      final Collection<TestUnit> tus = each.findTestUnits(clazz, listener);
       if (!tus.isEmpty()) {
         return tus;
       }

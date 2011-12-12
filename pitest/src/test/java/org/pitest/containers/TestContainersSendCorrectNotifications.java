@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.containers;
 
@@ -46,12 +46,13 @@ public class TestContainersSendCorrectNotifications {
 
   }
 
-  private final ContainerFactory containerFactory;
-  private StaticConfiguration    staticConfig;
-  private Pitest                 pit;
+  private final ContainerFactory  containerFactory;
+  private StaticConfiguration     staticConfig;
+  private Pitest                  pit;
 
   @Mock
-  private TestListener           listener;
+  private TestListener            listener;
+  private ConfigurationForTesting config;
 
   public TestContainersSendCorrectNotifications(
       final ContainerFactory containerFactory) {
@@ -76,10 +77,10 @@ public class TestContainersSendCorrectNotifications {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    final ConfigurationForTesting c = new ConfigurationForTesting();
+    this.config = new ConfigurationForTesting();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
-    this.pit = new Pitest(this.staticConfig, c);
+    this.pit = new Pitest(this.staticConfig);
   }
 
   public static class OnePassingTest {
@@ -111,7 +112,7 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private void run(final Class<?> clazz) {
-    this.pit.run(this.containerFactory.getContainer(), clazz);
+    this.pit.run(this.containerFactory.getContainer(), this.config, clazz);
   }
 
 }

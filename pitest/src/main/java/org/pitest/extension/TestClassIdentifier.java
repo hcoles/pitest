@@ -18,7 +18,6 @@ import org.pitest.classinfo.ClassInfo;
 
 public interface TestClassIdentifier {
 
-
   public boolean isATestClass(ClassInfo a);
 
 }

@@ -241,6 +241,21 @@ public class CodeCentricReportTest extends ReportTestBase {
     createAndRun();
   }
 
+  static class Outer {
+    static class Inner {
+      public int returnOne() {
+        return 1;
+      }
+    }
+  }
+
+  @Test
+  public void shouldRunMutationAnalysisForInnerClassWhenOuterClassHasNotCoverage() {
+    this.data.setTargetClasses(predicateFor(Outer.Inner.class));
+    createAndRun();
+    verifyResults(SURVIVED);
+  }
+
   private void createAndRun() {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {

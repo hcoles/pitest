@@ -35,8 +35,8 @@ public class ReflectionTest {
 
   @Test
   public void allMethodsShouldReturnPublicMethodsDeclaredByParent() {
-    Set<Method> actual = Reflection.allMethods(Child.class);
-    Method expected = Reflection.publicMethod(Parent.class, "foo");
+    final Set<Method> actual = Reflection.allMethods(Child.class);
+    final Method expected = Reflection.publicMethod(Parent.class, "foo");
     assertTrue(actual.contains(expected));
   }
 

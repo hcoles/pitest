@@ -56,7 +56,7 @@ public class TestJUnitConfiguration {
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
-    this.pitest = new Pitest(this.staticConfig, this.testee);
+    this.pitest = new Pitest(this.staticConfig);
   }
 
   public static class SimpleJUnit4Test {
@@ -472,7 +472,7 @@ public class TestJUnitConfiguration {
   }
 
   private void run(final Class<?> clazz) {
-    this.pitest.run(this.container, clazz);
+    this.pitest.run(this.container, this.testee, clazz);
   }
 
 }

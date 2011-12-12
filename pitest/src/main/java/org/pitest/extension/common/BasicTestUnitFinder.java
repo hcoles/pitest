@@ -29,7 +29,6 @@ import org.pitest.Description;
 import org.pitest.MultipleTestGroup;
 import org.pitest.PitError;
 import org.pitest.TestMethod;
-import org.pitest.extension.Configuration;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestDiscoveryListener;
@@ -71,7 +70,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final Configuration config, final TestDiscoveryListener listener) {
+      final TestDiscoveryListener listener) {
     try {
 
       final Collection<TestMethod> befores = findTestMethods(
@@ -80,8 +79,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
           this.afterMethodFinders, testClass);
 
       final List<TestUnit> units = new ArrayList<TestUnit>();
-      final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(
-          config, testClass);
+      final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(testClass);
       final List<TestStep> instantiations = instantiationStrategy
           .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
@@ -90,7 +88,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
           final TestStep step = instantiations.get(instantiation);
           units.add(createTestUnitForInstantiation(step,
               getNamePrefix(instantiations.size(), instantiation), befores,
-              afters, testClass, config, m));
+              afters, testClass, m));
         }
       }
 
@@ -132,7 +130,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final TestStep instantiationStep, final String namePrefix,
       final Collection<TestMethod> befores,
       final Collection<TestMethod> afters, final Class<?> testClass,
-      final Configuration config, final TestMethod testMethod) {
+      final TestMethod testMethod) {
 
     final List<TestStep> steps = new ArrayList<TestStep>();
 
@@ -154,8 +152,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
   }
 
-  private InstantiationStrategy findInstantiationStrategy(
-      final Configuration config, final Class<?> clazz) {
+  private InstantiationStrategy findInstantiationStrategy(final Class<?> clazz) {
     final List<InstantiationStrategy> strategies = FCollection.filter(
         this.instantiationStrategies, canInstantiate(clazz));
     if (strategies.isEmpty()) {

@@ -25,14 +25,13 @@ import org.pitest.classinfo.Repository;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
-
 public class JUnitTestClassIdentifierTest {
 
   private JUnitTestClassIdentifier testee;
-  private Repository classRepostory;
+  private Repository               classRepostory;
 
   @Before
-  public void setUp () {
+  public void setUp() {
     this.testee = new JUnitTestClassIdentifier();
     this.classRepostory = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()));
@@ -57,7 +56,7 @@ public class JUnitTestClassIdentifierTest {
   }
 
   @RunWith(Suite.class)
-  private static  class HasRunWith {
+  private static class HasRunWith {
 
   }
 
@@ -88,7 +87,6 @@ public class JUnitTestClassIdentifierTest {
     this.testee.isATestClass(find(HasTestAnnotation.Nested.class));
   }
 
-
   private static class DescendentOfTest extends HasTestAnnotation {
 
   }
@@ -98,7 +96,7 @@ public class JUnitTestClassIdentifierTest {
     this.testee.isATestClass(find(DescendentOfTest.class));
   }
 
-  private ClassInfo find(Class<?> clazz) {
+  private ClassInfo find(final Class<?> clazz) {
     return this.classRepostory.fetchClass(clazz).value();
   }
 

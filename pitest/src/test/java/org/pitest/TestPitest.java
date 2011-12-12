@@ -45,7 +45,7 @@ public class TestPitest {
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
-    this.testee = new Pitest(this.staticConfig, new ConfigurationForTesting());
+    this.testee = new Pitest(this.staticConfig);
   }
 
   public static class PassingTest {
@@ -283,6 +283,6 @@ public class TestPitest {
   }
 
   private void run(final Class<?> clazz) {
-    this.testee.run(this.container, clazz);
+    this.testee.run(this.container, new ConfigurationForTesting(), clazz);
   }
 }

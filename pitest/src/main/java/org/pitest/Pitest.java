@@ -39,25 +39,24 @@ public class Pitest {
 
   private final static Logger       LOG = Log.getLogger();
 
-  private final Configuration       initialConfig;
   private final StaticConfiguration initialStaticConfig;
 
-  public Pitest(final StaticConfiguration initialStaticConfig,
-      final Configuration initialConfig) {
-    this.initialConfig = new ConcreteConfiguration(initialConfig);
+  public Pitest(final StaticConfiguration initialStaticConfig) {
     this.initialStaticConfig = initialStaticConfig;
   }
 
-  public void run(final Container defaultContainer, final Class<?>... classes) {
-    run(defaultContainer, Arrays.asList(classes));
+  public void run(final Container defaultContainer, final Configuration config,
+      final Class<?>... classes) {
+    run(defaultContainer, config, Arrays.asList(classes));
   }
 
-  public void run(final Container container, final Collection<Class<?>> classes) {
+  public void run(final Container container, final Configuration config,
+      final Collection<Class<?>> classes) {
 
     run(container,
         this.initialStaticConfig,
         findTestUnitsForAllSuppliedClasses(
-            this.initialConfig,
+            config,
             new CompoundTestDiscoveryListener(this.initialStaticConfig
                 .getDiscoveryListeners()), this.initialStaticConfig
                 .getGroupingStrategy(), classes));

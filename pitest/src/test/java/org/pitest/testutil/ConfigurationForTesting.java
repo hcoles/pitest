@@ -29,13 +29,13 @@ public class ConfigurationForTesting implements Configuration {
 
     public Option<TestMethod> apply(final Method method) {
       final TestAnnotationForTesting annotation = method
-      .getAnnotation(TestAnnotationForTesting.class);
+          .getAnnotation(TestAnnotationForTesting.class);
 
       if (annotation != null) {
         final Class<? extends Throwable> expected = !annotation.expected()
-        .getName().equals(TestAnnotationForTesting.NONE.class.getName()) ? annotation
+            .getName().equals(TestAnnotationForTesting.NONE.class.getName()) ? annotation
             .expected() : null;
-            return Option.some(new TestMethod(method, expected));
+        return Option.some(new TestMethod(method, expected));
       } else {
         return Option.none();
       }
@@ -45,28 +45,28 @@ public class ConfigurationForTesting implements Configuration {
 
   public TestUnitFinder testUnitFinder() {
     final Set<MethodFinder> beforeClassFinders = Collections
-    .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-        BeforeClassAnnotationForTest.class));
+        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
+            BeforeClassAnnotationForTest.class));
 
     final Set<MethodFinder> afterClassFinders = Collections
-    .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-        AfterClassAnnotationForTest.class));
+        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
+            AfterClassAnnotationForTest.class));
 
     final Set<MethodFinder> beforeMethodFinders = Collections
-    .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-        BeforeAnnotationForTesting.class));
+        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
+            BeforeAnnotationForTesting.class));
 
     final Set<MethodFinder> afterMethodFinders = Collections
-    .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-        AfterAnnotationForTesting.class));
+        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
+            AfterAnnotationForTesting.class));
 
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
     tmfs.add(new TestFinder());
 
     final List<InstantiationStrategy> instantiationStrategies =
 
-      Arrays
-      .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
+    Arrays
+        .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
 
     return new CompoundTestUnitFinder(
         Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
@@ -89,7 +89,7 @@ public class ConfigurationForTesting implements Configuration {
   public TestClassIdentifier testClassIdentifier() {
     return new TestClassIdentifier() {
 
-      public boolean isATestClass(ClassInfo a) {
+      public boolean isATestClass(final ClassInfo a) {
         return a.hasAnnotation(TestAnnotationForTesting.class);
       }
 

@@ -19,7 +19,7 @@ import org.pitest.extension.TestClassIdentifier;
 
 public class NoTestClassIdentifier implements TestClassIdentifier {
 
-  public boolean isATestClass(ClassInfo a) {
+  public boolean isATestClass(final ClassInfo a) {
     return false;
   }
 
