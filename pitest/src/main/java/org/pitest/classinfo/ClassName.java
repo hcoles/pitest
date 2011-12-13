@@ -20,11 +20,11 @@ public final class ClassName {
 
   private final String name;
 
-  public ClassName(String name) {
+  public ClassName(final String name) {
     this.name = name.replace('.', '/');
   }
 
-  public ClassName(Class<?> clazz) {
+  public ClassName(final Class<?> clazz) {
     this(clazz.getName());
   }
 
@@ -39,7 +39,7 @@ public final class ClassName {
   public static F<String, ClassName> stringToClassName() {
     return new F<String, ClassName>() {
 
-      public ClassName apply(String clazz) {
+      public ClassName apply(final String clazz) {
         return new ClassName(clazz);
       }
 
@@ -55,28 +55,30 @@ public final class ClassName {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    ClassName other = (ClassName) obj;
+    }
+    final ClassName other = (ClassName) obj;
     if (this.name == null) {
-      if (other.name != null)
+      if (other.name != null) {
         return false;
-    } else if (!this.name.equals(other.name))
+      }
+    } else if (!this.name.equals(other.name)) {
       return false;
+    }
     return true;
   }
-
 
   @Override
   public String toString() {
     return asJavaName();
   }
-
-
 
 }

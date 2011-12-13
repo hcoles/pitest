@@ -25,7 +25,7 @@ import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 public class SlaveArguments {
 
   final Collection<MutationDetails> mutations;
-  final Collection<ClassName>          testClasses;
+  final Collection<ClassName>       testClasses;
   final MutationConfig              config;
   final TimeoutLengthStrategy       timeoutStrategy;
   final boolean                     verbose;

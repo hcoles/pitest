@@ -141,7 +141,7 @@ public class MutationTestSlave {
         if (type.equals(MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED)) {
           final CompositeData cd = (CompositeData) notification.getUserData();
           final MemoryNotificationInfo memInfo = MemoryNotificationInfo
-          .from(cd);
+              .from(cd);
           CommandLineMessage.report(memInfo.getPoolName()
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());

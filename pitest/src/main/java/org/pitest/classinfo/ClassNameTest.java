@@ -14,37 +14,36 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 
 public class ClassNameTest {
 
   @Test
   public void shouldConvertJavaNamesToInternalNames() {
-    ClassName testee = new ClassName("com.foo.bar");
+    final ClassName testee = new ClassName("com.foo.bar");
     assertEquals("com/foo/bar", testee.asInternalName());
   }
 
   @Test
   public void shouldConvertInternalNamesToJavaNames() {
-    ClassName testee = new ClassName("com/foo/bar");
+    final ClassName testee = new ClassName("com/foo/bar");
     assertEquals("com.foo.bar", testee.asJavaName());
   }
 
   @Test
   public void shouldTreatSameClassNameAsEqual() {
-    ClassName left = new ClassName("com/foo/bar");
-    ClassName right = new ClassName("com.foo.bar");
+    final ClassName left = new ClassName("com/foo/bar");
+    final ClassName right = new ClassName("com.foo.bar");
     assertTrue(left.equals(right));
     assertTrue(right.equals(left));
   }
 
-
   @Test
   public void shouldDisplayJavaNameInToString() {
-    ClassName testee = new ClassName("com/foo/bar");
+    final ClassName testee = new ClassName("com/foo/bar");
     assertEquals("com.foo.bar", testee.toString());
   }
 }

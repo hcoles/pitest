@@ -20,10 +20,10 @@ import org.pitest.classinfo.ClassName;
 
 public class MutationTestSummaryData {
 
-  private final Collection<String> mutatedClasses;
+  private final Collection<String>    mutatedClasses;
   private final Collection<ClassName> testClasses;
-  private final Integer            mutationCoverage;
-  private final Integer            lineCoverage;
+  private final Integer               mutationCoverage;
+  private final Integer               lineCoverage;
 
   public MutationTestSummaryData(final Collection<String> mutatedClasses,
       final Collection<ClassName> testClasses, final Integer mutationCoverage,
@@ -67,15 +67,15 @@ public class MutationTestSummaryData {
     final int prime = 31;
     int result = 1;
     result = prime * result
-    + ((this.lineCoverage == null) ? 0 : this.lineCoverage.hashCode());
+        + ((this.lineCoverage == null) ? 0 : this.lineCoverage.hashCode());
     result = prime * result
-    + ((this.mutatedClasses == null) ? 0 : this.mutatedClasses.hashCode());
+        + ((this.mutatedClasses == null) ? 0 : this.mutatedClasses.hashCode());
     result = prime
-    * result
-    + ((this.mutationCoverage == null) ? 0 : this.mutationCoverage
-        .hashCode());
+        * result
+        + ((this.mutationCoverage == null) ? 0 : this.mutationCoverage
+            .hashCode());
     result = prime * result
-    + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
+        + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
     return result;
   }
 

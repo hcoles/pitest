@@ -25,12 +25,12 @@ import org.pitest.functional.Option;
 
 public class ClassInfo {
 
-  private final int          access;
-  private final ClassName     name;
-  private final Set<Integer> codeLines;
-  private final ClassPointer outerClass;
-  private final ClassPointer superClass;
-  private final Collection<ClassName>  annotations;
+  private final int                   access;
+  private final ClassName             name;
+  private final Set<Integer>          codeLines;
+  private final ClassPointer          outerClass;
+  private final ClassPointer          superClass;
+  private final Collection<ClassName> annotations;
 
   public ClassInfo(final ClassPointer superClass,
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
@@ -39,7 +39,8 @@ public class ClassInfo {
     this.name = builder.name;
     this.access = builder.access;
     this.codeLines = builder.codeLines;
-    this.annotations = FCollection.map(builder.annotations, ClassName.stringToClassName());
+    this.annotations = FCollection.map(builder.annotations,
+        ClassName.stringToClassName());
   }
 
   public int getNumberOfCodeLines() {

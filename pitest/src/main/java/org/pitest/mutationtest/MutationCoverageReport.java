@@ -139,8 +139,7 @@ public class MutationCoverageReport implements Runnable {
   }
 
   protected ClassPath getClassPath() {
-    return this.data.getClassPath(this.nonLocalClassPath).getOrElse(
-        new ClassPath());
+    return this.data.getClassPath(this.nonLocalClassPath);
   }
 
   private void runReport() throws IOException {
@@ -163,12 +162,12 @@ public class MutationCoverageReport implements Runnable {
     }
 
     final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(coverageDatabase, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
+    .getListener(coverageDatabase, t0,
+        new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
     // staticConfig.addTestListener(ConsoleTestListener.);

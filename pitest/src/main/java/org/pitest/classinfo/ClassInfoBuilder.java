@@ -20,7 +20,7 @@ import java.util.Set;
 class ClassInfoBuilder {
 
   int                access;
-  ClassName             name;
+  ClassName          name;
   String             outerClass;
   String             superClass;
   final Set<Integer> codeLines   = new HashSet<Integer>();

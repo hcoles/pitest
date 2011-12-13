@@ -44,7 +44,7 @@ public class MutationTestBuilder {
   private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
   private final static Logger         LOG                                  = Log
-  .getLogger();
+                                                                               .getLogger();
 
   private final ReportOptions         data;
   private final JavaAgent             javaAgentFinder;
@@ -139,7 +139,7 @@ public class MutationTestBuilder {
   private TestUnit createMutationTestUnit(final MutationConfig mutationConfig,
       final Collection<MutationDetails> mutationsForClasses) {
 
-    final Description d = new Description( "mutation test", (String)null);
+    final Description d = new Description("mutation test", (String) null);
 
     final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),

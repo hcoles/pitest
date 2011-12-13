@@ -34,7 +34,7 @@ public class RunPitStrategy implements GoalStrategy {
   public void execute(final ReportOptions data) throws MojoExecutionException {
 
     System.out.println("Running report with " + data);
-    final ClassPath cp = data.getClassPath(true).getOrElse(new ClassPath());
+    final ClassPath cp = data.getClassPath(true);
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing

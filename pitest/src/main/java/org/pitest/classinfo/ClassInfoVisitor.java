@@ -64,8 +64,7 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
   public void visitInnerClass(final String name, final String outerName,
       final String innerName, final int access) {
     super.visitInnerClass(name, outerName, innerName, access);
-    if ((outerName != null)
-        && this.classInfo.name.equals(new ClassName(name))) {
+    if ((outerName != null) && this.classInfo.name.equals(new ClassName(name))) {
       this.classInfo.outerClass = outerName;
     }
   }

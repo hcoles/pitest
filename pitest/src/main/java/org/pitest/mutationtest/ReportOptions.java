@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
@@ -40,10 +39,10 @@ public class ReportOptions {
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
-                                                                                  .emptyList();
+  .emptyList();
 
   private Collection<Predicate<String>>              excludedClasses          = Collections
-                                                                                  .emptyList();
+  .emptyList();
 
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
@@ -165,16 +164,15 @@ public class ReportOptions {
     this.jvmArgs.addAll(args);
   }
 
-  public Option<ClassPath> getClassPath(final boolean declareCaches) {
+  public ClassPath getClassPath(final boolean declareCaches) {
     if (this.classPathElements != null) {
-      return Option.some(createClassPathFromElements(declareCaches));
+      return createClassPathFromElements(declareCaches);
     } else {
-      return Option.<ClassPath> none();
+      return new ClassPath(declareCaches);
     }
   }
 
   private ClassPath createClassPathFromElements(final boolean declareCaches) {
-
     return new ClassPath(
         FCollection.map(this.classPathElements, stringToFile()), true);
   }
@@ -258,17 +256,17 @@ public class ReportOptions {
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + ", classesInScope="
-        + this.classesInScope + ", targetClasses=" + this.targetClasses
-        + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
-        + ", classPathElements=" + this.classPathElements + ", mutators="
-        + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
-        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + "]";
+    + this.classesInScope + ", targetClasses=" + this.targetClasses
+    + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
+    + ", classPathElements=" + this.classPathElements + ", mutators="
+    + this.mutators + ", dependencyAnalysisMaxDistance="
+    + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+    + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
+    + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
+    + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+    + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+    + ", targetTests=" + this.targetTests + ", loggingClasses="
+    + this.loggingClasses + "]";
   }
 
   @SuppressWarnings("unchecked")
@@ -337,4 +335,11 @@ public class ReportOptions {
     return this.outputs;
   }
 
+  public Collection<Predicate<String>> getExcludedClasses() {
+    return this.excludedClasses;
+  }
+
+  public Collection<Predicate<String>> getClassesInScope() {
+    return this.classesInScope;
+  }
 }

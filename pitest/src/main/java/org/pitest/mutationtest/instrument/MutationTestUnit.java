@@ -68,7 +68,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   protected final Configuration             pitConfig;
 
-  protected final Collection<ClassName>        testClasses;
+  protected final Collection<ClassName>     testClasses;
 
   public MutationTestUnit(final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses, final Configuration pitConfig,
@@ -153,9 +153,9 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final MutationTestProcess worker = new MutationTestProcess(
         pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
-        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-        .andStdout(captureStdOutIfVerbose())
-        .andStderr(printWith("stderr ")), fileArgs);
+            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+            .andStdout(captureStdOutIfVerbose())
+            .andStderr(printWith("stderr ")), fileArgs);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
@@ -239,7 +239,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestsInSeperateProcess(final String cp,
       final Collection<ClassName> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
-  throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
 

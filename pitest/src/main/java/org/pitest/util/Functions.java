@@ -82,7 +82,8 @@ public abstract class Functions {
 
       public Option<Class<?>> apply(final ClassName className) {
         try {
-          final Class<?> clazz = Class.forName(className.asJavaName(), false, loader);
+          final Class<?> clazz = Class.forName(className.asJavaName(), false,
+              loader);
           return Option.<Class<?>> some(clazz);
         } catch (final ClassNotFoundException e) {
           LOG.warning("Could not load " + className

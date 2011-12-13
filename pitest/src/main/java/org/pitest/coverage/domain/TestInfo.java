@@ -66,10 +66,10 @@ public class TestInfo {
     final int prime = 31;
     int result = 1;
     result = prime * result
-    + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
+        + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-    + ((this.testees == null) ? 0 : this.testees.hashCode());
+        + ((this.testees == null) ? 0 : this.testees.hashCode());
     result = prime * result + this.time;
     return result;
   }
