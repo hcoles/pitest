@@ -94,124 +94,124 @@ public class OptionsParser {
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
     this.reportDirSpec = this.parser.accepts(REPORT_DIR_ARG).withRequiredArg()
-    .describedAs("directory to create report folder in").required();
+        .describedAs("directory to create report folder in").required();
 
     this.projectFileSpec = this.parser.accepts(PROJECT_FILE).withRequiredArg()
-    .ofType(String.class)
-    .describedAs("The name of the project file to use.");
+        .ofType(String.class)
+        .describedAs("The name of the project file to use.");
 
     this.targetClassesSpec = this.parser
-    .accepts(TARGET_CLASSES_ARG)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of filters to match against classes to test")
-    .required();
+        .accepts(TARGET_CLASSES_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filters to match against classes to test")
+        .required();
 
     this.avoidCallsSpec = this.parser
-    .accepts(AVOID_CALLS_ARG)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of packages to consider as untouchable logging calls");
+        .accepts(AVOID_CALLS_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of packages to consider as untouchable logging calls");
 
     this.targetTestsSpec = this.parser
-    .accepts(TEST_FILTER_ARGS)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of filters to match against tests to run");
+        .accepts(TEST_FILTER_ARGS)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filters to match against tests to run");
 
     this.inScopeClassesSpec = this.parser
-    .accepts(IN_SCOPE_CLASSES_ARG)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of filter to match against classes to consider in scope");
+        .accepts(IN_SCOPE_CLASSES_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filter to match against classes to consider in scope");
 
     this.depth = this.parser.accepts(DEPENDENCY_DISTANCE_ARG).withRequiredArg()
-    .ofType(Integer.class).defaultsTo(-1)
-    .describedAs("maximum distance to look from test for covered classes");
+        .ofType(Integer.class).defaultsTo(-1)
+        .describedAs("maximum distance to look from test for covered classes");
 
     this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()
-    .ofType(Integer.class).defaultsTo(1)
-    .describedAs("number of threads to use for testing");
+        .ofType(Integer.class).defaultsTo(1)
+        .describedAs("number of threads to use for testing");
 
     this.maxMutationsPerClassSpec = this.parser
-    .accepts(MAX_MUTATIONS_PER_CLASS_ARG).withRequiredArg()
-    .ofType(Integer.class).defaultsTo(0)
-    .describedAs("max number of mutations to allow for each class");
+        .accepts(MAX_MUTATIONS_PER_CLASS_ARG).withRequiredArg()
+        .ofType(Integer.class).defaultsTo(0)
+        .describedAs("max number of mutations to allow for each class");
 
     this.sourceDirSpec = this.parser.accepts(SOURCE_DIR_ARG).withRequiredArg()
-    .ofType(File.class).withValuesSeparatedBy(',')
-    .describedAs("comma seperated list of source directories").required();
+        .ofType(File.class).withValuesSeparatedBy(',')
+        .describedAs("comma seperated list of source directories").required();
 
     this.mutators = this.parser
-    .accepts(MUTATIONS_ARG)
-    .withRequiredArg()
-    .ofType(Mutator.class)
-    .withValuesSeparatedBy(',')
-    .describedAs("comma seperated list of mutation operators")
-    .defaultsTo(
-        Mutator.MATH,
-        DefaultMutationConfigFactory.DEFAULT_MUTATORS
-        .toArray(new Mutator[] {}));
+        .accepts(MUTATIONS_ARG)
+        .withRequiredArg()
+        .ofType(Mutator.class)
+        .withValuesSeparatedBy(',')
+        .describedAs("comma seperated list of mutation operators")
+        .defaultsTo(
+            Mutator.MATH,
+            DefaultMutationConfigFactory.DEFAULT_MUTATORS
+                .toArray(new Mutator[] {}));
 
     this.jvmArgs = this.parser.accepts(CHILD_JVM_ARGS).withRequiredArg()
-    .withValuesSeparatedBy(',')
-    .describedAs("comma seperated list of child JVM args");
+        .withValuesSeparatedBy(',')
+        .describedAs("comma seperated list of child JVM args");
 
     this.mutateStatics = this.parser.accepts(MUTATE_STATIC_INITIALIZERS_ARG);
 
     this.includeJarFilesSpec = this.parser.accepts(INCLUDE_JAR_FILES);
 
     this.timeoutFactorSpec = this.parser
-    .accepts(TIMEOUT_FACTOR_ARG)
-    .withOptionalArg()
-    .ofType(Float.class)
-    .describedAs("factor to apply to calculate maximum test duration")
-    .defaultsTo(
-        Float.valueOf(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR));
+        .accepts(TIMEOUT_FACTOR_ARG)
+        .withOptionalArg()
+        .ofType(Float.class)
+        .describedAs("factor to apply to calculate maximum test duration")
+        .defaultsTo(
+            Float.valueOf(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR));
 
     this.timeoutConstSpec = this.parser.accepts(TIMEOUT_CONST_ARG)
-    .withOptionalArg().ofType(Long.class)
-    .describedAs("constant to apply to calculate maximum test duration")
-    .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
+        .withOptionalArg().ofType(Long.class)
+        .describedAs("constant to apply to calculate maximum test duration")
+        .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
 
     this.excludedMethodsSpec = this.parser
-    .accepts(EXCLUDED_METHOD_ARG)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of filters to match against methods to exclude from mutation analysis");
+        .accepts(EXCLUDED_METHOD_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of filters to match against methods to exclude from mutation analysis");
 
     this.excludedClassesSpec = this.parser
-    .accepts(EXCLUDED_CLASSES_ARG)
-    .withRequiredArg()
-    .ofType(String.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
+        .accepts(EXCLUDED_CLASSES_ARG)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
 
     this.verboseSpec = this.parser.accepts(VERBOSE);
 
     this.outputFormatSpec = this.parser
-    .accepts(OUTPUT_FORMATS)
-    .withRequiredArg()
-    .ofType(OutputFormat.class)
-    .withValuesSeparatedBy(',')
-    .describedAs(
-    "comma seperated list of formats in which to write output during the analysis pahse")
-    .defaultsTo(OutputFormat.HTML);
+        .accepts(OUTPUT_FORMATS)
+        .withRequiredArg()
+        .ofType(OutputFormat.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma seperated list of formats in which to write output during the analysis pahse")
+        .defaultsTo(OutputFormat.HTML);
 
     this.additionalClassPathSpec = this.parser.accepts(CLASSPATH_ARG)
-    .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',')
-    .describedAs("coma seperated list of additional classpath elements");
+        .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',')
+        .describedAs("coma seperated list of additional classpath elements");
   }
 
   public ParseResult parse(final String[] args) {
@@ -278,9 +278,10 @@ public class OptionsParser {
     }
   }
 
-  private void setClassPath(OptionSet userArgs, final ReportOptions data) {
-    List<String> elements = new ArrayList<String>();
-    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(), elements);
+  private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
+    final List<String> elements = new ArrayList<String>();
+    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
+        elements);
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
   }
@@ -288,7 +289,7 @@ public class OptionsParser {
   private static F<File, String> fileToString() {
     return new F<File, String>() {
 
-      public String apply(File a) {
+      public String apply(final File a) {
         return a.getAbsolutePath();
       }
 
@@ -308,7 +309,7 @@ public class OptionsParser {
   private ParseResult loadProjectFile(final OptionSet userArgs) {
     try {
       final ProjectConfigurationParser parser = ProjectConfigurationParserFactory
-      .createParser();
+          .createParser();
 
       final ReportOptions loaded = parser.loadProject(userArgs
           .valueOf(this.projectFileSpec));

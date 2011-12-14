@@ -39,10 +39,10 @@ public class ReportOptions {
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
-  .emptyList();
+                                                                                  .emptyList();
 
   private Collection<Predicate<String>>              excludedClasses          = Collections
-  .emptyList();
+                                                                                  .emptyList();
 
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
@@ -256,17 +256,17 @@ public class ReportOptions {
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + ", classesInScope="
-    + this.classesInScope + ", targetClasses=" + this.targetClasses
-    + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
-    + ", classPathElements=" + this.classPathElements + ", mutators="
-    + this.mutators + ", dependencyAnalysisMaxDistance="
-    + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-    + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
-    + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-    + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-    + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-    + ", targetTests=" + this.targetTests + ", loggingClasses="
-    + this.loggingClasses + "]";
+        + this.classesInScope + ", targetClasses=" + this.targetClasses
+        + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
+        + ", classPathElements=" + this.classPathElements + ", mutators="
+        + this.mutators + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
+        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + "]";
   }
 
   @SuppressWarnings("unchecked")

@@ -18,48 +18,48 @@ import org.pitest.project.ProjectConfigurationParserFactory;
  */
 public class DefaultProjectConfigurationParserTests {
 
-  @Test(expected=ProjectConfigurationParserException.class)
+  @Test(expected = ProjectConfigurationParserException.class)
   public void shouldThrowExceptionIfFileDoesNotExist()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final StubFileSystemDelegate delegate = new StubFileSystemDelegate();
     delegate.setFileExists(false);
 
     final ProjectConfigurationParser parser = ProjectConfigurationParserFactory
-    .createParser();
+        .createParser();
     parser.loadProject("project");
 
   }
 
-  @Test(expected=ProjectConfigurationParserException.class)
+  @Test(expected = ProjectConfigurationParserException.class)
   public void shouldThrowExceptionIfFileIsADirectory()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final StubFileSystemDelegate delegate = new StubFileSystemDelegate();
     delegate.setFile(false);
 
     final ProjectConfigurationParser parser = ProjectConfigurationParserFactory
-    .createParser();
+        .createParser();
     parser.loadProject("project");
 
   }
 
-  @Test(expected=ProjectConfigurationParserException.class)
+  @Test(expected = ProjectConfigurationParserException.class)
   public void shouldThrowExceptionIfFileCannotBeRead()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final StubFileSystemDelegate delegate = new StubFileSystemDelegate();
     delegate.setCanRead(false);
 
     final ProjectConfigurationParser parser = ProjectConfigurationParserFactory
-    .createParser();
+        .createParser();
     parser.loadProject("project");
 
   }
 
-  @Test(expected=ProjectConfigurationException.class)
+  @Test(expected = ProjectConfigurationException.class)
   public void shouldThrowExceptionForInvalidRootElement()
-  throws ProjectConfigurationParserException, ProjectConfigurationException {
+      throws ProjectConfigurationParserException, ProjectConfigurationException {
     final String fileContents = "<pitest>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</pitest>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</pitest>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -69,10 +69,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldParseSuccessfullyForProjectDirectory()
-  throws ProjectConfigurationParserException, ProjectConfigurationException {
+      throws ProjectConfigurationParserException, ProjectConfigurationException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -83,9 +83,9 @@ public class DefaultProjectConfigurationParserTests {
     Assert.assertEquals("./reports", ro.getReportDir());
   }
 
-  @Test(expected=ProjectConfigurationException.class)
+  @Test(expected = ProjectConfigurationException.class)
   public void shouldThrowExceptionWhenNoProjectDirectorySpecified()
-  throws ProjectConfigurationParserException, ProjectConfigurationException {
+      throws ProjectConfigurationParserException, ProjectConfigurationException {
     final String fileContents = "<project>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
@@ -96,11 +96,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadVerbosePropertyFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"verbose\" value=\"true\"/>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"verbose\" value=\"true\"/>\n"
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -112,10 +112,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultVerboseValue()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -128,11 +128,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadTimeoutFactorFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"timeoutFactor\" value=\"1.75\"/>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"timeoutFactor\" value=\"1.75\"/>\n"
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -145,10 +145,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultTimeoutFactor()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -162,11 +162,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadTimeoutConstantFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"timeoutConst\" value=\"1500\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"timeoutConst\" value=\"1500\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -179,10 +179,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultTimeoutConstant()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -196,10 +196,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoTargetTestsSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <targetTests/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <targetTests/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -212,11 +212,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadTargetTestsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <targetTests>\n" + "        <filter name=\"org.pitest.*\"/>\n"
-      + "    </targetTests>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <targetTests>\n" + "        <filter name=\"org.pitest.*\"/>\n"
+        + "    </targetTests>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -229,10 +229,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoTargetClassesSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <targetClasses/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <targetClasses/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -245,11 +245,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadTargetClassesFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <targetClasses>\n" + "        <filter name=\"org.pitest.*\"/>\n"
-      + "    </targetClasses>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <targetClasses>\n" + "        <filter name=\"org.pitest.*\"/>\n"
+        + "    </targetClasses>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -262,10 +262,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoSourceDirs() throws ProjectConfigurationException,
-  ProjectConfigurationParserException {
+      ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <sourceDirs/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <sourceDirs/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -278,11 +278,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadSourceDirsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <sourceDirs>\n" + "        <dir name=\"./src\"/>\n"
-      + "    </sourceDirs>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <sourceDirs>\n" + "        <dir name=\"./src\"/>\n"
+        + "    </sourceDirs>\n" + "</project>";
 
     final StubFileSystemDelegate fileSystem = new StubFileSystemDelegate();
     fileSystem.setFileExists(true);
@@ -297,12 +297,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test(expected = ProjectConfigurationException.class)
   public void shouldThrowExceptionIfSourceDirsDoesntExist()
-  throws ProjectConfigurationParserException, ProjectConfigurationException {
+      throws ProjectConfigurationParserException, ProjectConfigurationException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <sourceDirs>\n" + "        <dir name=\"./src\"/>\n"
-      + "    </sourceDirs>\n" + "</project>";
-
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <sourceDirs>\n" + "        <dir name=\"./src\"/>\n"
+        + "    </sourceDirs>\n" + "</project>";
 
     final StubFileSystemDelegate fileSystem = new StubFileSystemDelegate(
         fileContents);
@@ -312,15 +311,14 @@ public class DefaultProjectConfigurationParserTests {
         fileSystem);
     parser.loadProject("project");
 
-
   }
 
   @Test
   public void shouldLoadNumberOfThreadsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"threads\" value=\"4\"/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"threads\" value=\"4\"/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -333,10 +331,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultThreadNumber()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -349,11 +347,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadStaticMutatorsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"mutateStaticInits\" value=\"true\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"mutateStaticInits\" value=\"true\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -366,10 +364,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultStaticMutatorsValue()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -382,11 +380,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadMaxMutationsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"maxMutationsPerClass\" value=\"5\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"maxMutationsPerClass\" value=\"5\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -399,10 +397,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultMaxMutationsValue()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -415,11 +413,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadIncludeJarFilesFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"includeJarFiles\" value=\"true\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"includeJarFiles\" value=\"true\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -432,10 +430,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultIncludeJarFilesValue()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -448,10 +446,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoExcludedMethodsSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <excludedMethods/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <excludedMethods/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -464,11 +462,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadExcludedMethodsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <excludedMethods>\n" + "        <filter name=\"toString\"/>\n"
-      + "    </excludedMethods>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <excludedMethods>\n" + "        <filter name=\"toString\"/>\n"
+        + "    </excludedMethods>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -481,10 +479,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoExcludedClassesSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <excludedClasses/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <excludedClasses/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -497,11 +495,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadExcludedClassesFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <excludedClasses>\n" + "        <filter name=\"Integer\"/>\n"
-      + "    </excludedClasses>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <excludedClasses>\n" + "        <filter name=\"Integer\"/>\n"
+        + "    </excludedClasses>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -514,11 +512,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadDependencyAnalysisMaxDistanceFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <property name=\"dependencyDistance\" value=\"5\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <property name=\"dependencyDistance\" value=\"5\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -531,10 +529,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldUseDefaultDependencyAnalysisMaxDistanceValue()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -547,10 +545,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoClassPathElementsSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <classPath/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <classPath/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -563,11 +561,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadClassPathElementsAsDirectoriesFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <classPath>\n" + "        <dir name=\"./build/obj\"/>\n"
-      + "    </classPath>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <classPath>\n" + "        <dir name=\"./build/obj\"/>\n"
+        + "    </classPath>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -580,11 +578,11 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadClassPathElementsAsJarsFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <classPath>\n" + "        <jar name=\"./build/obj\"/>\n"
-      + "    </classPath>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <classPath>\n" + "        <jar name=\"./build/obj\"/>\n"
+        + "    </classPath>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -597,10 +595,10 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldAllowNoClassesInScopeSpecified()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <inScopeClasses/>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <inScopeClasses/>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));
@@ -613,12 +611,12 @@ public class DefaultProjectConfigurationParserTests {
 
   @Test
   public void shouldLoadClassesInScopeFromFile()
-  throws ProjectConfigurationException, ProjectConfigurationParserException {
+      throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"
-      + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-      + "    <inScopeClasses>\n"
-      + "        <filter name=\"org.pitest.*\"/>\n"
-      + "    </inScopeClasses>\n" + "</project>";
+        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
+        + "    <inScopeClasses>\n"
+        + "        <filter name=\"org.pitest.*\"/>\n"
+        + "    </inScopeClasses>\n" + "</project>";
 
     final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
         new StubFileSystemDelegate(fileContents));

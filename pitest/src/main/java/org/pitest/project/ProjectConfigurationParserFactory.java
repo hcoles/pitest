@@ -22,7 +22,7 @@ public class ProjectConfigurationParserFactory {
    * The name of the default {@see ProjectFileParser} instance to use.
    */
   public static final String DEFAULT_PARSER  = DefaultProjectConfigurationParser.class
-  .getName();
+                                                 .getName();
 
   /**
    * Creates a new {@see ProjectFileParser} instance, based on the system
@@ -35,7 +35,7 @@ public class ProjectConfigurationParserFactory {
    *           instance.
    */
   public static ProjectConfigurationParser createParser()
-  throws ProjectConfigurationParserException {
+      throws ProjectConfigurationParserException {
     try {
       final String propertyValue = System.getProperty(PARSER_PROPERTY,
           DEFAULT_PARSER);
@@ -50,8 +50,8 @@ public class ProjectConfigurationParserFactory {
       } else {
         throw new ProjectConfigurationParserException(
             "Cannot create ProjectConfigurationParser instance from class "
-            + propertyValue + " as it does not implement "
-            + ProjectConfigurationParser.class.getName() + ".");
+                + propertyValue + " as it does not implement "
+                + ProjectConfigurationParser.class.getName() + ".");
       }
     } catch (final ClassNotFoundException e) {
       throw new ProjectConfigurationParserException(e);

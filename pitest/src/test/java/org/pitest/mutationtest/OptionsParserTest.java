@@ -51,7 +51,7 @@ public class OptionsParserTest {
   @Test
   public void shouldCreatePredicateFromCommaSeperatedListOfTargetClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
-    "foo*,bar*");
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -61,7 +61,7 @@ public class OptionsParserTest {
   @Test
   public void shouldCreatePredicateFromCommaSeperatedListOfInScopeClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--inScopeClasses",
-    "foo*,bar*");
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -71,7 +71,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeperatedListOfSourceDirectories() {
     final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
-    "foo/bar,bar/far");
+        "foo/bar,bar/far");
     assertEquals(Arrays.asList(new File("foo/bar"), new File("bar/far")),
         actual.getSourceDirs());
   }
@@ -118,7 +118,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseTimeOutFactor() {
     final ReportOptions actual = parseAddingRequiredArgs("--timeoutFactor",
-    "1.32");
+        "1.32");
     assertEquals(1.32f, actual.getTimeoutFactor(), 0.1);
   }
 
@@ -131,7 +131,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeperatedListOfTargetTestClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
-    "foo*,bar*");
+        "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
@@ -176,7 +176,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeperatedListOfClassesToAvoidCallTo() {
     final ReportOptions actual = parseAddingRequiredArgs("--avoidCallsTo",
-    "foo,bar,foo.bar");
+        "foo,bar,foo.bar");
     assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
         actual.getLoggingClasses());
   }
@@ -184,7 +184,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeperatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
-    "foo*,bar*,car");
+        "foo*,bar*,car");
     final Predicate<String> actualPredicate = Prelude.or(actual
         .getExcludedMethods());
     assertTrue(actualPredicate.apply("foox"));
@@ -209,7 +209,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeperatedListOfOutputFormatsWhenSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
-    "HTML,CSV");
+        "HTML,CSV");
     assertEquals(
         new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML,
             OutputFormat.CSV)), actual.getOutputFormats());
@@ -218,8 +218,8 @@ public class OptionsParserTest {
   @Test
   public void shouldAcceptCommaSeperatedListOfAdditionalClassPathElements() {
     final ReportOptions ro = parseAddingRequiredArgs("--classPath",
-    "/foo/bar,./boo");
-    Collection<String> actual =  ro.getClassPathElements();
+        "/foo/bar,./boo");
+    final Collection<String> actual = ro.getClassPathElements();
     assertTrue(actual.contains("/foo/bar"));
     assertTrue(actual.contains("./boo"));
   }
