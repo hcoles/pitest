@@ -61,13 +61,10 @@ public class MutationCoverageReport implements Runnable {
   protected final ReportOptions   data;
   protected final ListenerFactory listenerFactory;
   protected final JavaAgent       javaAgentFinder;
-  protected final boolean         nonLocalClassPath;
 
   public MutationCoverageReport(final ReportOptions data,
-      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
-      final boolean nonLocalClassPath) {
+      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory) {
     this.javaAgentFinder = javaAgentFinder;
-    this.nonLocalClassPath = nonLocalClassPath;
     this.listenerFactory = listenerFactory;
     this.data = data;
   }
@@ -108,7 +105,7 @@ public class MutationCoverageReport implements Runnable {
               OutputFormat.createFactoryForFormat(outputStrategy)));
 
       final MutationCoverageReport instance = new MutationCoverageReport(data,
-          agent, reportFactory, false);
+          agent, reportFactory);
 
       instance.run();
     } finally {
@@ -139,7 +136,7 @@ public class MutationCoverageReport implements Runnable {
   }
 
   protected ClassPath getClassPath() {
-    return this.data.getClassPath(this.nonLocalClassPath);
+    return this.data.getClassPath(true);
   }
 
   private void runReport() throws IOException {
