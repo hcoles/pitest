@@ -49,7 +49,7 @@ public class RunPitStrategy implements GoalStrategy {
             OutputFormat.createFactoryForFormat(reportOutput)));
 
     final MutationCoverageReport report = new MutationCoverageReport(data, ja,
-        reportFactory, true);
+        reportFactory);
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,
