@@ -271,7 +271,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     if (IsolationUtils.loaderAgnosticInstanceOf(loader, PITClassLoader.class)) {
       cp = getLocalClasspathFromLoader(loader);
     } else {
-      cp = new ClassPath(true).getLocalClassPath();
+      cp = new ClassPath().getLocalClassPath();
     }
 
     return cp;

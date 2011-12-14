@@ -156,7 +156,6 @@ public class RepositoryTest {
   public void matchIfTopLevelClassShouldReturnTrueForTopLevelClasses() {
     final Option<ClassInfo> aClass = this.testee
         .fetchClass(RepositoryTest.class);
-    System.out.println(aClass.value().getOuterClass());
     assertTrue(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
   }
 

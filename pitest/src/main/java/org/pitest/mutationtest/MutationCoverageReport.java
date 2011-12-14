@@ -136,7 +136,7 @@ public class MutationCoverageReport implements Runnable {
   }
 
   protected ClassPath getClassPath() {
-    return this.data.getClassPath(true);
+    return this.data.getClassPath();
   }
 
   private void runReport() throws IOException {

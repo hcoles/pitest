@@ -188,14 +188,14 @@ public class MutationHtmlReportListener implements TestListener {
 
   private Collection<String> classInfoToNames(
       final Collection<ClassInfo> classes) {
-    return FCollection.map(classes, classInfoToName());
+    return FCollection.map(classes, classInfoToJavaName());
   }
 
-  private F<ClassInfo, String> classInfoToName() {
+  private F<ClassInfo, String> classInfoToJavaName() {
     return new F<ClassInfo, String>() {
 
       public String apply(final ClassInfo a) {
-        return a.getName().asInternalName();
+        return a.getName().asJavaName();
       }
 
     };

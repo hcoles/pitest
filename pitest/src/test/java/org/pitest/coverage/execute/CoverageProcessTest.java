@@ -154,8 +154,8 @@ public class CoverageProcessTest {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(new ClassPath(true)).andJavaAgentFinder(agent), sa,
-        8186, Arrays.asList(test.getName()), handler);
+        .withClassPath(new ClassPath()).andJavaAgentFinder(agent), sa, 8186,
+        Arrays.asList(test.getName()), handler);
     process.start();
     process.waitToDie();
     agent.close();

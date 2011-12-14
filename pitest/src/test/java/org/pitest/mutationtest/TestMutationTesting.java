@@ -306,7 +306,7 @@ public class TestMutationTesting {
   private void createEngineAndRun(final ReportOptions data,
       final JavaAgent agent, final MethodMutatorFactory... mutators) {
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        this.config, new ClassPath(true), agent, data);
+        this.config, new ClassPath(), agent, data);
 
     coverageDatabase.initialise();
 

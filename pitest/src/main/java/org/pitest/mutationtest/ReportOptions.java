@@ -164,17 +164,17 @@ public class ReportOptions {
     this.jvmArgs.addAll(args);
   }
 
-  public ClassPath getClassPath(final boolean declareCaches) {
+  public ClassPath getClassPath() {
     if (this.classPathElements != null) {
-      return createClassPathFromElements(declareCaches);
+      return createClassPathFromElements();
     } else {
-      return new ClassPath(declareCaches);
+      return new ClassPath();
     }
   }
 
-  private ClassPath createClassPathFromElements(final boolean declareCaches) {
+  private ClassPath createClassPathFromElements() {
     return new ClassPath(
-        FCollection.map(this.classPathElements, stringToFile()), true);
+        FCollection.map(this.classPathElements, stringToFile()));
   }
 
   private F<String, File> stringToFile() {
