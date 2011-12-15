@@ -14,6 +14,28 @@
  */
 package org.pitest.mutationtest.commandline;
 
+import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
+import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
+import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
+import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_JAR_FILES;
+import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
+import static org.pitest.mutationtest.config.ConfigOption.PROJECT_FILE;
+import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
+import static org.pitest.mutationtest.config.ConfigOption.THREADS;
+import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
+import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
+import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,6 +51,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.project.ProjectConfigurationException;
@@ -39,28 +62,6 @@ import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
 public class OptionsParser {
-
-  public final static String                        REPORT_DIR_ARG                 = "reportDir";
-  public final static String                        TARGET_CLASSES_ARG             = "targetClasses";
-  public final static String                        IN_SCOPE_CLASSES_ARG           = "inScopeClasses";
-  public final static String                        SOURCE_DIR_ARG                 = "sourceDirs";
-  public final static String                        MUTATIONS_ARG                  = "mutators";
-  public final static String                        DEPENDENCY_DISTANCE_ARG        = "dependencyDistance";
-  public final static String                        CHILD_JVM_ARGS                 = "jvmArgs";
-  public final static String                        MUTATE_STATIC_INITIALIZERS_ARG = "mutateStaticInits";
-  public final static String                        THREADS_ARG                    = "threads";
-  public final static String                        INCLUDE_JAR_FILES              = "includeJarFiles";
-  public final static String                        TIMEOUT_FACTOR_ARG             = "timeoutFactor";
-  public final static String                        TIMEOUT_CONST_ARG              = "timeoutConst";
-  public final static String                        TEST_FILTER_ARGS               = "targetTests";
-  public final static String                        AVOID_CALLS_ARG                = "avoidCallsTo";
-  public final static String                        EXCLUDED_METHOD_ARG            = "excludedMethods";
-  public final static String                        MAX_MUTATIONS_PER_CLASS_ARG    = "maxMutationsPerClass";
-  public final static String                        VERBOSE                        = "verbose";
-  public final static String                        EXCLUDED_CLASSES_ARG           = "excludedClasses";
-  public final static String                        OUTPUT_FORMATS                 = "outputFormats";
-  public final static String                        PROJECT_FILE                   = "project";
-  public final static String                        CLASSPATH_ARG                  = "classPath";
 
   private final OptionParser                        parser;
   private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
@@ -89,15 +90,14 @@ public class OptionsParser {
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
-    this.reportDirSpec = this.parser.accepts(REPORT_DIR_ARG).withRequiredArg()
+    this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
 
-    this.projectFileSpec = this.parser.accepts(PROJECT_FILE).withRequiredArg()
+    this.projectFileSpec = parserAccepts(PROJECT_FILE).withRequiredArg()
         .ofType(String.class)
         .describedAs("The name of the project file to use.");
 
-    this.targetClassesSpec = this.parser
-        .accepts(TARGET_CLASSES_ARG)
+    this.targetClassesSpec = parserAccepts(TARGET_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
@@ -105,49 +105,44 @@ public class OptionsParser {
             "comma seperated list of filters to match against classes to test")
         .required();
 
-    this.avoidCallsSpec = this.parser
-        .accepts(AVOID_CALLS_ARG)
+    this.avoidCallsSpec = parserAccepts(AVOID_CALLS)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of packages to consider as untouchable logging calls");
 
-    this.targetTestsSpec = this.parser
-        .accepts(TEST_FILTER_ARGS)
+    this.targetTestsSpec = parserAccepts(TEST_FILTER)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filters to match against tests to run");
 
-    this.inScopeClassesSpec = this.parser
-        .accepts(IN_SCOPE_CLASSES_ARG)
+    this.inScopeClassesSpec = parserAccepts(IN_SCOPE_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filter to match against classes to consider in scope");
 
-    this.depth = this.parser.accepts(DEPENDENCY_DISTANCE_ARG).withRequiredArg()
+    this.depth = parserAccepts(DEPENDENCY_DISTANCE).withRequiredArg()
         .ofType(Integer.class).defaultsTo(-1)
         .describedAs("maximum distance to look from test for covered classes");
 
-    this.threadsSpec = this.parser.accepts(THREADS_ARG).withRequiredArg()
+    this.threadsSpec = parserAccepts(THREADS).withRequiredArg()
         .ofType(Integer.class).defaultsTo(1)
         .describedAs("number of threads to use for testing");
 
-    this.maxMutationsPerClassSpec = this.parser
-        .accepts(MAX_MUTATIONS_PER_CLASS_ARG).withRequiredArg()
-        .ofType(Integer.class).defaultsTo(0)
+    this.maxMutationsPerClassSpec = parserAccepts(MAX_MUTATIONS_PER_CLASS)
+        .withRequiredArg().ofType(Integer.class).defaultsTo(0)
         .describedAs("max number of mutations to allow for each class");
 
-    this.sourceDirSpec = this.parser.accepts(SOURCE_DIR_ARG).withRequiredArg()
+    this.sourceDirSpec = parserAccepts(SOURCE_DIR).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
         .describedAs("comma seperated list of source directories").required();
 
-    this.mutators = this.parser
-        .accepts(MUTATIONS_ARG)
+    this.mutators = parserAccepts(MUTATIONS)
         .withRequiredArg()
         .ofType(Mutator.class)
         .withValuesSeparatedBy(',')
@@ -157,47 +152,43 @@ public class OptionsParser {
             DefaultMutationConfigFactory.DEFAULT_MUTATORS
                 .toArray(new Mutator[] {}));
 
-    this.jvmArgs = this.parser.accepts(CHILD_JVM_ARGS).withRequiredArg()
+    this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
         .describedAs("comma seperated list of child JVM args");
 
-    this.mutateStatics = this.parser.accepts(MUTATE_STATIC_INITIALIZERS_ARG);
+    this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS);
 
-    this.includeJarFilesSpec = this.parser.accepts(INCLUDE_JAR_FILES);
+    this.includeJarFilesSpec = parserAccepts(INCLUDE_JAR_FILES);
 
-    this.timeoutFactorSpec = this.parser
-        .accepts(TIMEOUT_FACTOR_ARG)
+    this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR)
         .withOptionalArg()
         .ofType(Float.class)
         .describedAs("factor to apply to calculate maximum test duration")
         .defaultsTo(
             Float.valueOf(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR));
 
-    this.timeoutConstSpec = this.parser.accepts(TIMEOUT_CONST_ARG)
-        .withOptionalArg().ofType(Long.class)
+    this.timeoutConstSpec = parserAccepts(TIMEOUT_CONST).withOptionalArg()
+        .ofType(Long.class)
         .describedAs("constant to apply to calculate maximum test duration")
         .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
 
-    this.excludedMethodsSpec = this.parser
-        .accepts(EXCLUDED_METHOD_ARG)
+    this.excludedMethodsSpec = parserAccepts(EXCLUDED_METHOD)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filters to match against methods to exclude from mutation analysis");
 
-    this.excludedClassesSpec = this.parser
-        .accepts(EXCLUDED_CLASSES_ARG)
+    this.excludedClassesSpec = parserAccepts(EXCLUDED_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
 
-    this.verboseSpec = this.parser.accepts(VERBOSE);
+    this.verboseSpec = parserAccepts(VERBOSE);
 
-    this.outputFormatSpec = this.parser
-        .accepts(OUTPUT_FORMATS)
+    this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
         .ofType(OutputFormat.class)
         .withValuesSeparatedBy(',')
@@ -205,9 +196,13 @@ public class OptionsParser {
             "comma seperated list of formats in which to write output during the analysis pahse")
         .defaultsTo(OutputFormat.HTML);
 
-    this.additionalClassPathSpec = this.parser.accepts(CLASSPATH_ARG)
+    this.additionalClassPathSpec = parserAccepts(CLASSPATH)
         .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("coma seperated list of additional classpath elements");
+  }
+
+  private OptionSpecBuilder parserAccepts(ConfigOption option) {
+    return this.parser.accepts(option.getParamName());
   }
 
   public ParseResult parse(final String[] args) {
@@ -216,7 +211,7 @@ public class OptionsParser {
     try {
       final OptionSet userArgs = this.parser.parse(args);
 
-      if (userArgs.has(PROJECT_FILE)) {
+      if (userArgs.has(this.projectFileSpec)) {
         return loadProjectFile(userArgs);
       } else {
         return parseCommandLine(data, userArgs);

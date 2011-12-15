@@ -1,5 +1,22 @@
 package org.pitest.project.impl;
 
+import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
+import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_JAR_FILES;
+import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
+import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
+import static org.pitest.mutationtest.config.ConfigOption.THREADS;
+import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
+import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
+import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +28,7 @@ import java.util.logging.Logger;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
-import org.pitest.mutationtest.commandline.OptionsParser;
+import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
@@ -70,11 +87,11 @@ public class DefaultProjectConfigurationParser implements
    *         the provided {@see Document}.
    */
   private static Collection<Predicate<String>> loadFilters(final Document doc,
-      final String root) {
+      final ConfigOption root) {
     final List<String> result = new ArrayList<String>();
 
     final Element targetTests = XmlUtils.getChildElement(
-        doc.getDocumentElement(), root);
+        doc.getDocumentElement(), root.getParamName());
 
     if (targetTests != null) {
       final List<Element> filters = XmlUtils.getChildElements(targetTests,
@@ -125,7 +142,7 @@ public class DefaultProjectConfigurationParser implements
    *         the provided name, {@code null} otherwise.
    */
   private static String findProperty(final Document doc,
-      final String propertyName) {
+      final ConfigOption propertyName) {
     final List<Element> elements = XmlUtils.getChildElements(
         doc.getDocumentElement(), PROPERTY_ELEMENT_NAME);
 
@@ -135,7 +152,7 @@ public class DefaultProjectConfigurationParser implements
       final String value = XmlUtils.getAttribute(e,
           PROPERTY_VALUE_ATTRIBUTE_NAME);
 
-      if (name.equalsIgnoreCase(propertyName)) {
+      if (name.equalsIgnoreCase(propertyName.getParamName())) {
         return value;
       }
     }
@@ -159,7 +176,7 @@ public class DefaultProjectConfigurationParser implements
    *         default value.
    */
   private static boolean loadBooleanProperty(final Document doc,
-      final String propertyName, final boolean defaultValue) {
+      final ConfigOption propertyName, final boolean defaultValue) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -185,7 +202,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static float loadFloatProperty(final Document doc,
-      final String propertyName, final float defaultValue) {
+      final ConfigOption propertyName, final float defaultValue) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -216,7 +233,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static long loadLongProperty(final Document doc,
-      final String propertyName, final long defaultValue) {
+      final ConfigOption propertyName, final long defaultValue) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -247,7 +264,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static int loadIntProperty(final Document doc,
-      final String propertyName, final int defaultValue) {
+      final ConfigOption propertyName, final int defaultValue) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -278,7 +295,7 @@ public class DefaultProjectConfigurationParser implements
    *         default value.
    */
   private static String loadStringProperty(final Document doc,
-      final String propertyName, final String defaultValue) {
+      final ConfigOption propertyName, final String defaultValue) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -407,7 +424,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private boolean loadVerbose(final Document doc) {
-    return loadBooleanProperty(doc, OptionsParser.VERBOSE, false);
+    return loadBooleanProperty(doc, VERBOSE, false);
   }
 
   /**
@@ -421,7 +438,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private float loadTimeoutFactor(final Document doc) {
-    return loadFloatProperty(doc, OptionsParser.TIMEOUT_FACTOR_ARG,
+    return loadFloatProperty(doc, TIMEOUT_FACTOR,
         PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR);
   }
 
@@ -436,7 +453,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private long loadTimeoutConstant(final Document doc) {
-    return loadLongProperty(doc, OptionsParser.TIMEOUT_CONST_ARG,
+    return loadLongProperty(doc, TIMEOUT_CONST,
         PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
   }
 
@@ -450,7 +467,7 @@ public class DefaultProjectConfigurationParser implements
    *         from the project file, or empty if no property is specified.
    */
   private Collection<Predicate<String>> loadTargetTests(final Document doc) {
-    return loadFilters(doc, OptionsParser.TEST_FILTER_ARGS);
+    return loadFilters(doc, TEST_FILTER);
   }
 
   /**
@@ -463,7 +480,7 @@ public class DefaultProjectConfigurationParser implements
    *         from the project file, or empty if no property is specified.
    */
   private Collection<Predicate<String>> loadTargetClasses(final Document doc) {
-    return loadFilters(doc, OptionsParser.TARGET_CLASSES_ARG);
+    return loadFilters(doc, TARGET_CLASSES);
   }
 
   /**
@@ -483,7 +500,7 @@ public class DefaultProjectConfigurationParser implements
     final List<File> result = new ArrayList<File>();
 
     final Element targetTests = XmlUtils.getChildElement(
-        doc.getDocumentElement(), OptionsParser.SOURCE_DIR_ARG);
+        doc.getDocumentElement(), SOURCE_DIR.getParamName());
 
     if (targetTests != null) {
       final List<Element> directories = XmlUtils.getChildElements(targetTests,
@@ -521,12 +538,11 @@ public class DefaultProjectConfigurationParser implements
    */
   private String loadReportDir(final Document doc)
       throws ProjectConfigurationException {
-    final String val = loadStringProperty(doc, OptionsParser.REPORT_DIR_ARG,
-        null);
+    final String val = loadStringProperty(doc, REPORT_DIR, null);
 
     if (val == null) {
       throw new ProjectConfigurationException("A project file must have the "
-          + OptionsParser.REPORT_DIR_ARG + " attribute set.");
+          + REPORT_DIR + " attribute set.");
     }
 
     return val;
@@ -541,7 +557,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private int loadNumberOfThreads(final Document doc) {
-    return loadIntProperty(doc, OptionsParser.THREADS_ARG, 1);
+    return loadIntProperty(doc, THREADS, 1);
   }
 
   /**
@@ -555,8 +571,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private boolean loadMutateStaticInitialisers(final Document doc) {
-    return loadBooleanProperty(doc,
-        OptionsParser.MUTATE_STATIC_INITIALIZERS_ARG, false);
+    return loadBooleanProperty(doc, MUTATE_STATIC_INITIALIZERS, false);
   }
 
   /**
@@ -570,7 +585,7 @@ public class DefaultProjectConfigurationParser implements
    *         is specified.
    */
   private int loadMaxMutationsPerClass(final Document doc) {
-    return loadIntProperty(doc, OptionsParser.MAX_MUTATIONS_PER_CLASS_ARG, 0);
+    return loadIntProperty(doc, MAX_MUTATIONS_PER_CLASS, 0);
   }
 
   /**
@@ -584,7 +599,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private boolean loadIncludeJarFiles(final Document doc) {
-    return loadBooleanProperty(doc, OptionsParser.INCLUDE_JAR_FILES, false);
+    return loadBooleanProperty(doc, INCLUDE_JAR_FILES, false);
   }
 
   /**
@@ -598,7 +613,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private Collection<Predicate<String>> loadExcludedMethods(final Document doc) {
-    return loadFilters(doc, OptionsParser.EXCLUDED_METHOD_ARG);
+    return loadFilters(doc, EXCLUDED_METHOD);
   }
 
   /**
@@ -612,7 +627,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private Collection<Predicate<String>> loadExcludedClasses(final Document doc) {
-    return loadFilters(doc, OptionsParser.EXCLUDED_CLASSES_ARG);
+    return loadFilters(doc, EXCLUDED_CLASSES);
   }
 
   /**
@@ -626,7 +641,7 @@ public class DefaultProjectConfigurationParser implements
    *         is specified.
    */
   private int loadDependencyAnalysisMaxDistance(final Document doc) {
-    return loadIntProperty(doc, OptionsParser.DEPENDENCY_DISTANCE_ARG, -1);
+    return loadIntProperty(doc, DEPENDENCY_DISTANCE, -1);
   }
 
   /**
@@ -639,8 +654,7 @@ public class DefaultProjectConfigurationParser implements
    *         the project file, or the default value if no property is specified.
    */
   private Collection<String> loadClassPathElements(final Document doc) {
-    final Element classpathElement = XmlUtils.getChildElement(
-        doc.getDocumentElement(), OptionsParser.CLASSPATH_ARG);
+    final Element classpathElement = getElement(doc, CLASSPATH);
 
     final List<String> values = new ArrayList<String>();
 
@@ -663,6 +677,12 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private Collection<Predicate<String>> loadClassesInScope(final Document doc) {
-    return loadFilters(doc, OptionsParser.IN_SCOPE_CLASSES_ARG);
+    return loadFilters(doc, IN_SCOPE_CLASSES);
+  }
+
+  private Element getElement(final Document doc, ConfigOption param) {
+    final Element classpathElement = XmlUtils.getChildElement(
+        doc.getDocumentElement(), param.getParamName());
+    return classpathElement;
   }
 }
