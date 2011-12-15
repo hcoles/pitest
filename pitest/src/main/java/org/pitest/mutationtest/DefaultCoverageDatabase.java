@@ -271,8 +271,12 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   private Collection<String> completeClassPath() {
-    return this.classPath.getLocalDirectoryComponent().findClasses(
-        this.data.getClassesInScopeFilter());
+    if (this.data.isIncludeJarFiles()) {
+      return this.classPath.findClasses(this.data.getClassesInScopeFilter());
+    } else {
+      return this.classPath.getLocalDirectoryComponent().findClasses(
+          this.data.getClassesInScopeFilter());
+    }
   }
 
   private Collection<ClassGrouping> groupByOuterClass(

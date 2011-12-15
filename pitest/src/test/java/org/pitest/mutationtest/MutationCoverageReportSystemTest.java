@@ -20,13 +20,20 @@ import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.help.PitHelpError;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
 
 import com.example.CoveredByEasyMock;
@@ -36,7 +43,7 @@ import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
 import com.example.MultipleMutations;
 
-public class CodeCentricReportTest extends ReportTestBase {
+public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
@@ -241,6 +248,31 @@ public class CodeCentricReportTest extends ReportTestBase {
     createAndRun();
   }
 
+  @Test
+  public void shouldMutateClassesSuppliedToAlternateClassPath()
+      throws IOException {
+    // yes, this is horrid
+    final String location = FileUtil.randomFilename() + ".jar";
+    try {
+      final FileOutputStream fos = new FileOutputStream(location);
+      InputStream stream = IsolationUtils.getContextClassLoader()
+          .getResourceAsStream("outofcp.jar");
+      copy(stream, fos);
+      fos.close();
+
+      this.data.setClassesInScope(predicateFor("com.outofclasspath.*"));
+      this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
+      this.data.addClassPathElements(Arrays.asList(location));
+      this.data.setIncludeJarFiles(true);
+      this.data.setDependencyAnalysisMaxDistance(-1);
+      this.data.setExcludedClasses(predicateFor("*Power*", "*JMockit*"));
+      createAndRun();
+      verifyResults(KILLED);
+    } finally {
+      new File(location).delete();
+    }
+  }
+
   private void createAndRun() {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
@@ -250,6 +282,16 @@ public class CodeCentricReportTest extends ReportTestBase {
       testee.run();
     } finally {
       agent.close();
+    }
+  }
+
+  private static void copy(InputStream in, OutputStream out) throws IOException {
+    // Read bytes and write to destination until eof
+
+    byte[] buf = new byte[1024];
+    int len = 0;
+    while ((len = in.read(buf)) >= 0) {
+      out.write(buf, 0, len);
     }
   }
 

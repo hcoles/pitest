@@ -44,6 +44,8 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
@@ -320,7 +322,8 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        UnfilteredMutationFilter.factory(), this.config, data, agent);
+        UnfilteredMutationFilter.factory(), this.config, data, agent,
+        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         this.config, coverageDatabase);

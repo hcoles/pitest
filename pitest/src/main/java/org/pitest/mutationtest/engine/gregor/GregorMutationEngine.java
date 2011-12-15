@@ -21,7 +21,7 @@ import java.util.Set;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.config.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.Mutater;
@@ -41,9 +41,7 @@ public class GregorMutationEngine implements MutationEngine {
   }
 
   public Mutater createMutator(final MutationConfig config,
-      final ClassLoader loader) {
-    final ClassloaderByteArraySource byteSource = new ClassloaderByteArraySource(
-        loader);
+      final ClassByteArraySource byteSource) {
     return new GregorMutater(byteSource, this.filter, this.mutationOperators,
         this.loggingClasses);
   }

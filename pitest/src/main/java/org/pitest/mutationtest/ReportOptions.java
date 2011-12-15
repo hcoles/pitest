@@ -342,4 +342,23 @@ public class ReportOptions {
   public Collection<Predicate<String>> getClassesInScope() {
     return this.classesInScope;
   }
+
+  public void addClassPathElements(List<String> additionalClassPathElements) {
+    final List<String> elements = new ArrayList<String>();
+    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
+        elements);
+    elements.addAll(additionalClassPathElements);
+    setClassPathElements(elements);
+  }
+
+  private static F<File, String> fileToString() {
+    return new F<File, String>() {
+
+      public String apply(final File a) {
+        return a.getAbsolutePath();
+      }
+
+    };
+  }
+
 }

@@ -16,9 +16,7 @@ package org.pitest.mutationtest.commandline;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionException;
@@ -27,9 +25,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.ClassPath;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
@@ -279,21 +275,7 @@ public class OptionsParser {
   }
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
-    final List<String> elements = new ArrayList<String>();
-    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
-        elements);
-    elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
-    data.setClassPathElements(elements);
-  }
-
-  private static F<File, String> fileToString() {
-    return new F<File, String>() {
-
-      public String apply(final File a) {
-        return a.getAbsolutePath();
-      }
-
-    };
+    data.addClassPathElements(userArgs.valuesOf(this.additionalClassPathSpec));
   }
 
   /**

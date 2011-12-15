@@ -53,7 +53,7 @@ public abstract class ReportTestBase {
     assertEquals(expected, actual);
   }
 
-  protected Collection<Predicate<String>> predicateFor(final String glob) {
+  protected Collection<Predicate<String>> predicateFor(final String... glob) {
     return Glob.toGlobPredicates(Arrays.asList(glob));
   }
 

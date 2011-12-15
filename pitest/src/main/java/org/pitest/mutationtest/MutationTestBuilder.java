@@ -30,7 +30,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
@@ -51,16 +51,18 @@ public class MutationTestBuilder {
   private final MutationConfig        mutationConfig;
   private final Configuration         initialConfig;
   private final MutationFilterFactory filterFactory;
+  private final ClassByteArraySource  source;
 
   public MutationTestBuilder(final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
       final Configuration initialConfig, final ReportOptions data,
-      final JavaAgent javaAgentFinder) {
+      final JavaAgent javaAgentFinder, ClassByteArraySource source) {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.mutationConfig = mutationConfig;
     this.initialConfig = initialConfig;
     this.filterFactory = filterFactory;
+    this.source = source;
   }
 
   public List<TestUnit> createMutationTestUnits(
@@ -84,10 +86,8 @@ public class MutationTestBuilder {
       final CoverageDatabase coverageDatabase,
       final MutationConfig mutationConfig, final ClassGrouping classesToMutate,
       final MutationFilter filter) {
-    mutationConfig.createMutator(IsolationUtils.getContextClassLoader());
 
-    final Mutater m = mutationConfig.createMutator(IsolationUtils
-        .getContextClassLoader());
+    final Mutater m = mutationConfig.createMutator(this.source);
 
     final Collection<MutationDetails> availableMutations = filter.filter(m
         .findMutations(classesToMutate));
@@ -148,7 +148,8 @@ public class MutationTestBuilder {
     return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
         this.initialConfig, mutationConfig, d, this.javaAgentFinder,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose());
+            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
+            .getClassPath().getLocalClassPath());
   }
 
   private F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {

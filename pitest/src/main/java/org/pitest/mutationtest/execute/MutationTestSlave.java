@@ -35,6 +35,7 @@ import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
+import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
@@ -81,7 +82,8 @@ public class MutationTestSlave {
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.config.createMutator(loader), loader);
+          paramsFromParent.config.createMutator(new ClassloaderByteArraySource(
+              loader)), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, paramsFromParent.pitConfig);

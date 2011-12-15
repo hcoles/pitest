@@ -37,6 +37,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.commandline.OptionsParser;
@@ -200,7 +201,8 @@ public class MutationCoverageReport implements Runnable {
         this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
         limitMutationsPerClass(), new JUnitCompatibleConfiguration(),
-        this.data, this.javaAgentFinder);
+        this.data, this.javaAgentFinder, new ClassPathByteArraySource(
+            this.data.getClassPath()));
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         initialConfig, coverageDatabase);
