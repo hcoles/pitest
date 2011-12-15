@@ -51,14 +51,6 @@ public abstract class Prelude {
     return new Or<A>(ps);
   }
 
-  public static <T> Predicate<T> isInstanceOf(final Class<?> clazz) {
-    return new Predicate<T>() {
-      public Boolean apply(final T a) {
-        return clazz.isAssignableFrom(a.getClass());
-      }
-    };
-  };
-
   public final static <A> SideEffect1<A> accumulateTo(
       final Collection<A> collection) {
     return new SideEffect1<A>() {

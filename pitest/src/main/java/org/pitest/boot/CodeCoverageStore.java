@@ -59,8 +59,4 @@ public final class CodeCoverageStore {
     return classId++;
   }
 
-  public static void resetClassCounter() {
-    classId = 0;
-  }
-
 }

@@ -153,10 +153,6 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   }
 
-  public void addRoot(final ClassPathRoot root) {
-    this.roots.add(root);
-  }
-
   /** FIXME move somewhere common */
   static String[] getClassPathElements() {
     final String classPath = System.getProperty("java.class.path");
