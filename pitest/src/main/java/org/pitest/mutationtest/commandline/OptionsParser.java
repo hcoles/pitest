@@ -52,7 +52,6 @@ import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
@@ -127,15 +126,17 @@ public class OptionsParser {
             "comma seperated list of filter to match against classes to consider in scope");
 
     this.depth = parserAccepts(DEPENDENCY_DISTANCE).withRequiredArg()
-        .ofType(Integer.class).defaultsTo(-1)
+        .ofType(Integer.class)
+        .defaultsTo(DEPENDENCY_DISTANCE.getDefault(Integer.class))
         .describedAs("maximum distance to look from test for covered classes");
 
     this.threadsSpec = parserAccepts(THREADS).withRequiredArg()
-        .ofType(Integer.class).defaultsTo(1)
+        .ofType(Integer.class).defaultsTo(THREADS.getDefault(Integer.class))
         .describedAs("number of threads to use for testing");
 
     this.maxMutationsPerClassSpec = parserAccepts(MAX_MUTATIONS_PER_CLASS)
-        .withRequiredArg().ofType(Integer.class).defaultsTo(0)
+        .withRequiredArg().ofType(Integer.class)
+        .defaultsTo(MAX_MUTATIONS_PER_CLASS.getDefault(Integer.class))
         .describedAs("max number of mutations to allow for each class");
 
     this.sourceDirSpec = parserAccepts(SOURCE_DIR).withRequiredArg()
@@ -160,17 +161,15 @@ public class OptionsParser {
 
     this.includeJarFilesSpec = parserAccepts(INCLUDE_JAR_FILES);
 
-    this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR)
-        .withOptionalArg()
+    this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
         .ofType(Float.class)
         .describedAs("factor to apply to calculate maximum test duration")
-        .defaultsTo(
-            Float.valueOf(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR));
+        .defaultsTo(TIMEOUT_FACTOR.getDefault(Float.class));
 
     this.timeoutConstSpec = parserAccepts(TIMEOUT_CONST).withOptionalArg()
         .ofType(Long.class)
         .describedAs("constant to apply to calculate maximum test duration")
-        .defaultsTo(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
+        .defaultsTo(TIMEOUT_CONST.getDefault(Long.class));
 
     this.excludedMethodsSpec = parserAccepts(EXCLUDED_METHOD)
         .withRequiredArg()
@@ -196,8 +195,8 @@ public class OptionsParser {
             "comma seperated list of formats in which to write output during the analysis pahse")
         .defaultsTo(OutputFormat.HTML);
 
-    this.additionalClassPathSpec = parserAccepts(CLASSPATH)
-        .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',')
+    this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
+        .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("coma seperated list of additional classpath elements");
   }
 

@@ -29,7 +29,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
@@ -176,14 +175,14 @@ public class DefaultProjectConfigurationParser implements
    *         default value.
    */
   private static boolean loadBooleanProperty(final Document doc,
-      final ConfigOption propertyName, final boolean defaultValue) {
+      final ConfigOption propertyName) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
       return Boolean.valueOf(value);
     }
 
-    return defaultValue;
+    return propertyName.getDefault(Boolean.class);
   }
 
   /**
@@ -202,7 +201,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static float loadFloatProperty(final Document doc,
-      final ConfigOption propertyName, final float defaultValue) {
+      final ConfigOption propertyName) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -214,7 +213,7 @@ public class DefaultProjectConfigurationParser implements
       }
     }
 
-    return defaultValue;
+    return propertyName.getDefault(Float.class);
   }
 
   /**
@@ -233,7 +232,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static long loadLongProperty(final Document doc,
-      final ConfigOption propertyName, final long defaultValue) {
+      final ConfigOption propertyName) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -245,7 +244,7 @@ public class DefaultProjectConfigurationParser implements
       }
     }
 
-    return defaultValue;
+    return propertyName.getDefault(Long.class);
   }
 
   /**
@@ -264,7 +263,7 @@ public class DefaultProjectConfigurationParser implements
    *         value.
    */
   private static int loadIntProperty(final Document doc,
-      final ConfigOption propertyName, final int defaultValue) {
+      final ConfigOption propertyName) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
@@ -276,7 +275,7 @@ public class DefaultProjectConfigurationParser implements
       }
     }
 
-    return defaultValue;
+    return propertyName.getDefault(Integer.class);
   }
 
   /**
@@ -295,14 +294,14 @@ public class DefaultProjectConfigurationParser implements
    *         default value.
    */
   private static String loadStringProperty(final Document doc,
-      final ConfigOption propertyName, final String defaultValue) {
+      final ConfigOption propertyName) {
     final String value = findProperty(doc, propertyName);
 
     if (value != null) {
       return value;
     }
 
-    return defaultValue;
+    return propertyName.getDefault(String.class);
   }
 
   /**
@@ -424,7 +423,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private boolean loadVerbose(final Document doc) {
-    return loadBooleanProperty(doc, VERBOSE, false);
+    return loadBooleanProperty(doc, VERBOSE);
   }
 
   /**
@@ -438,8 +437,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private float loadTimeoutFactor(final Document doc) {
-    return loadFloatProperty(doc, TIMEOUT_FACTOR,
-        PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR);
+    return loadFloatProperty(doc, TIMEOUT_FACTOR);
   }
 
   /**
@@ -453,8 +451,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private long loadTimeoutConstant(final Document doc) {
-    return loadLongProperty(doc, TIMEOUT_CONST,
-        PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
+    return loadLongProperty(doc, TIMEOUT_CONST);
   }
 
   /**
@@ -538,7 +535,7 @@ public class DefaultProjectConfigurationParser implements
    */
   private String loadReportDir(final Document doc)
       throws ProjectConfigurationException {
-    final String val = loadStringProperty(doc, REPORT_DIR, null);
+    final String val = loadStringProperty(doc, REPORT_DIR);
 
     if (val == null) {
       throw new ProjectConfigurationException("A project file must have the "
@@ -557,7 +554,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private int loadNumberOfThreads(final Document doc) {
-    return loadIntProperty(doc, THREADS, 1);
+    return loadIntProperty(doc, THREADS);
   }
 
   /**
@@ -571,7 +568,7 @@ public class DefaultProjectConfigurationParser implements
    *         project file, or the default value if no property is specified.
    */
   private boolean loadMutateStaticInitialisers(final Document doc) {
-    return loadBooleanProperty(doc, MUTATE_STATIC_INITIALIZERS, false);
+    return loadBooleanProperty(doc, MUTATE_STATIC_INITIALIZERS);
   }
 
   /**
@@ -585,7 +582,7 @@ public class DefaultProjectConfigurationParser implements
    *         is specified.
    */
   private int loadMaxMutationsPerClass(final Document doc) {
-    return loadIntProperty(doc, MAX_MUTATIONS_PER_CLASS, 0);
+    return loadIntProperty(doc, MAX_MUTATIONS_PER_CLASS);
   }
 
   /**
@@ -599,7 +596,7 @@ public class DefaultProjectConfigurationParser implements
    *         specified.
    */
   private boolean loadIncludeJarFiles(final Document doc) {
-    return loadBooleanProperty(doc, INCLUDE_JAR_FILES, false);
+    return loadBooleanProperty(doc, INCLUDE_JAR_FILES);
   }
 
   /**
@@ -641,7 +638,7 @@ public class DefaultProjectConfigurationParser implements
    *         is specified.
    */
   private int loadDependencyAnalysisMaxDistance(final Document doc) {
-    return loadIntProperty(doc, DEPENDENCY_DISTANCE, -1);
+    return loadIntProperty(doc, DEPENDENCY_DISTANCE);
   }
 
   /**
