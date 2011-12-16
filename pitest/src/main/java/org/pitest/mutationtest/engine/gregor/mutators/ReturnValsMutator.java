@@ -93,7 +93,8 @@ class ReturnValsMethodVisitor extends InsnMutator {
 
       public String decribe(final int opCode, final MethodInfo methodInfo) {
         return "mutated return of Object value for "
-            + methodInfo.getDescription();
+            + methodInfo.getDescription()
+            + " to ( if (x != null) null else throw new RuntimeException )";
       }
 
     };
