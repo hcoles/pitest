@@ -88,7 +88,7 @@ public class TestGregorMutater extends MutatorTestBase {
 
   @Test
   public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
-    createTesteeWith(Mutator.values());
+    createTesteeWith(Mutator.ALL.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(AnEnum.class);
     assertTrue(actualDetails.isEmpty());
   }
@@ -106,7 +106,7 @@ public class TestGregorMutater extends MutatorTestBase {
 
   @Test
   public void shouldMutateCustomConstructorsAddedToEnums() {
-    createTesteeWith(Mutator.values());
+    createTesteeWith(Mutator.ALL.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(EnumWithCustomConstructor.class);
     assertFalse(actualDetails.isEmpty());
   }

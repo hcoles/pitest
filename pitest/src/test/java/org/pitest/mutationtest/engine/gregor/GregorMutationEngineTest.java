@@ -16,7 +16,6 @@ package org.pitest.mutationtest.engine.gregor;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +24,8 @@ import org.junit.Test;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.config.DefaultMutationEngineConfiguration;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class GregorMutationEngineTest {
 
@@ -32,15 +33,14 @@ public class GregorMutationEngineTest {
 
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
-    final Collection<MethodMutatorFactory> mutators = new ArrayList<MethodMutatorFactory>();
-    mutators.add(Mutator.CONDITIONALS_BOUNDARY);
-    mutators.add(Mutator.MATH);
+    final Collection<MethodMutatorFactory> mutators = Mutator.asCollection(
+        Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH);
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         True.<MethodInfo> all(), Collections.<String> emptyList(), mutators);
     this.testee = new GregorMutationEngine(config);
-    assertEquals(
-        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.getName(),
-            Mutator.MATH.getName()), this.testee.getMutatorNames());
+    assertEquals(Arrays.asList(
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),
+        MathMutator.MATH_MUTATOR.getName()), this.testee.getMutatorNames());
 
   }
 

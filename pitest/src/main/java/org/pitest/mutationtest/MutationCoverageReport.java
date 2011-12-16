@@ -193,9 +193,7 @@ public class MutationCoverageReport implements Runnable {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
-        this.data.getLoggingClasses(),
-        this.data.getMutators().toArray(
-            new Mutator[this.data.getMutators().size()]));
+        this.data.getLoggingClasses(), this.data.getMutators());
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());

@@ -12,20 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.config;
+package org.pitest.mutationtest;
 
-import java.util.Collection;
+import static org.junit.Assert.assertEquals;
 
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import java.util.Arrays;
 
-public interface MutationEngineConfiguration {
+import org.junit.Test;
+import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
-  Collection<? extends MethodMutatorFactory> mutators();
+public class MutatorTest {
 
-  public Predicate<MethodInfo> methodFilter();
-
-  public Collection<String> doNotMutateCallsTo();
+  @SuppressWarnings("unchecked")
+  @Test
+  public void shouldFlattenToGroupingsToCollectionsOfMethodMutatorFactories() {
+    assertEquals(Arrays.asList(MathMutator.MATH_MUTATOR,
+        InlineConstantMutator.INLINE_CONSTANT_MUTATOR), Mutator.asCollection(
+        Mutator.MATH, Mutator.INLINE_CONSTS));
+  }
 
 }

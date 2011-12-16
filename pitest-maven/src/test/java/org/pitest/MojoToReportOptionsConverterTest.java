@@ -92,7 +92,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>MATH</param>" + //
         "                  </mutators>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
+    assertEquals(
+        Mutator.asCollection(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
         actual.getMutators());
   }
 

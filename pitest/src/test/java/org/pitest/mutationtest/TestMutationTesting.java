@@ -111,7 +111,8 @@ public class TestMutationTesting {
 
   @Test
   public void shouldKillAllCoveredMutations() {
-    run(OneMutation.class, OneMutationFullTest.class, Mutator.RETURN_VALS);
+    run(OneMutation.class, OneMutationFullTest.class,
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
   }
 
@@ -135,7 +136,7 @@ public class TestMutationTesting {
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
     run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
-        Mutator.RETURN_VALS);
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -155,7 +156,8 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
-    run(NoMutations.class, NoMutationsTest.class, Mutator.RETURN_VALS);
+    run(NoMutations.class, NoMutationsTest.class,
+        Mutator.RETURN_VALS.asCollection());
     verifyResults();
   }
 
@@ -170,7 +172,7 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
-    run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS);
+    run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS.asCollection());
     verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
@@ -203,7 +205,8 @@ public class TestMutationTesting {
 
   @Test(timeout = 30000)
   public void shouldDetectAndEscapeFromInfiniteLoopsCausedByMutations() {
-    run(InfiniteLoop.class, InfiniteLoopTest.class, Mutator.INCREMENTS);
+    run(InfiniteLoop.class, InfiniteLoopTest.class,
+        Mutator.INCREMENTS.asCollection());
     verifyResults(KILLED, TIMED_OUT);
   }
 
@@ -222,7 +225,7 @@ public class TestMutationTesting {
     // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutation.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
-        Mutator.RETURN_VALS);
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
   }
 
@@ -237,7 +240,7 @@ public class TestMutationTesting {
   @Test
   public void shouldDetectUnviableMutations() {
     run(OneMutation.class, UnviableMutationsTest.class,
-        new UnviableClassMutator());
+        Collections.singleton(new UnviableClassMutator()));
     verifyResults(NON_VIABLE, NON_VIABLE);
 
   }
@@ -269,12 +272,13 @@ public class TestMutationTesting {
   @Ignore("flakey")
   @Test(timeout = 30000)
   public void shouldRecoverFromOutOfMemoryError() {
-    run(EatsMemoryWhenMutated.class, EatsMemoryTest.class, Mutator.INCREMENTS);
+    run(EatsMemoryWhenMutated.class, EatsMemoryTest.class,
+        Mutator.INCREMENTS.asCollection());
     verifyResults(KILLED, MEMORY_ERROR);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
-      final MethodMutatorFactory... mutators) {
+      final Collection<? extends MethodMutatorFactory> mutators) {
 
     final ReportOptions data = new ReportOptions();
 
@@ -306,7 +310,8 @@ public class TestMutationTesting {
   }
 
   private void createEngineAndRun(final ReportOptions data,
-      final JavaAgent agent, final MethodMutatorFactory... mutators) {
+      final JavaAgent agent,
+      final Collection<? extends MethodMutatorFactory> mutators) {
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         this.config, new ClassPath(), agent, data);
 

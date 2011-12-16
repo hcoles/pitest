@@ -59,10 +59,20 @@ public abstract class MutatorTestBase {
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
-      final Collection<String> loggingClasses,
-      final MethodMutatorFactory... mutators) {
+      final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), loggingClasses);
+        mutators, Collections.singletonList(Logger.class.getName()));
+  }
+
+  protected void createTesteeWith(final Predicate<MethodInfo> filter,
+      final Collection<String> loggingClasses,
+      final Collection<MethodMutatorFactory> mutators) {
+    this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
+        mutators, loggingClasses);
+  }
+
+  protected void createTesteeWith(Collection<MethodMutatorFactory> mutators) {
+    createTesteeWith(True.<MethodInfo> all(), mutators);
   }
 
   protected void createTesteeWith(final MethodMutatorFactory... mutators) {

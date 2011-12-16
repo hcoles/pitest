@@ -28,29 +28,19 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 public final class DefaultMutationConfigFactory {
 
-  public final static Collection<MethodMutatorFactory> DEFAULT_MUTATORS = Arrays
-                                                                            .<MethodMutatorFactory> asList(
-                                                                                Mutator.NEGATE_CONDITIONALS,
-                                                                                Mutator.CONDITIONALS_BOUNDARY,
-                                                                                Mutator.INCREMENTS,
-                                                                                Mutator.MATH,
-                                                                                Mutator.RETURN_VALS,
-                                                                                Mutator.VOID_METHOD_CALLS,
-                                                                                Mutator.INVERT_NEGS);
-
-  public final static Collection<String>               LOGGING_CLASSES  = Arrays
-                                                                            .asList(
-                                                                                "java.util.logging",
-                                                                                "org.apache.log4j",
-                                                                                "org.slf4j",
-                                                                                "org.apache.commons.logging");
+  public final static Collection<String> LOGGING_CLASSES = Arrays
+                                                             .asList(
+                                                                 "java.util.logging",
+                                                                 "org.apache.log4j",
+                                                                 "org.slf4j",
+                                                                 "org.apache.commons.logging");
 
   public static MutationEngine createEngine(
       final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
-      final MethodMutatorFactory... mutators) {
-    final Collection<MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
+      final Collection<? extends MethodMutatorFactory> mutators) {
+    final Collection<? extends MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
     final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
         Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
@@ -58,12 +48,12 @@ public final class DefaultMutationConfigFactory {
     return new GregorMutationEngine(config);
   }
 
-  private static Collection<MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
-      final MethodMutatorFactory... mutators) {
-    if (mutators.length != 0) {
-      return Arrays.<MethodMutatorFactory> asList(mutators);
+  private static Collection<? extends MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
+      final Collection<? extends MethodMutatorFactory> mutators) {
+    if (!mutators.isEmpty()) {
+      return mutators;
     } else {
-      return DEFAULT_MUTATORS;
+      return Mutator.DEFAULTS.asCollection();
     }
 
   }

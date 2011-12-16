@@ -28,8 +28,8 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
+import org.pitest.mutationtest.MutatorGrouping;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -131,14 +131,14 @@ public class MojoToReportOptionsConverter {
 
   private Collection<MethodMutatorFactory> determineMutators() {
     if (this.mojo.getMutators() != null) {
-      return FCollection.map(this.mojo.getMutators(), stringToMutator());
+      return FCollection.flatMap(this.mojo.getMutators(), stringToMutators());
     } else {
-      return DefaultMutationConfigFactory.DEFAULT_MUTATORS;
+      return Mutator.DEFAULTS.asCollection();
     }
   }
 
-  private F<String, MethodMutatorFactory> stringToMutator() {
-    return new F<String, MethodMutatorFactory>() {
+  private F<String, MutatorGrouping> stringToMutators() {
+    return new F<String, MutatorGrouping>() {
       public Mutator apply(final String a) {
         return Mutator.valueOf(a);
       }

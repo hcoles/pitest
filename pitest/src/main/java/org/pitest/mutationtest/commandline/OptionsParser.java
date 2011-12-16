@@ -48,7 +48,6 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
@@ -143,15 +142,10 @@ public class OptionsParser {
         .ofType(File.class).withValuesSeparatedBy(',')
         .describedAs("comma seperated list of source directories").required();
 
-    this.mutators = parserAccepts(MUTATIONS)
-        .withRequiredArg()
-        .ofType(Mutator.class)
-        .withValuesSeparatedBy(',')
+    this.mutators = parserAccepts(MUTATIONS).withRequiredArg()
+        .ofType(Mutator.class).withValuesSeparatedBy(',')
         .describedAs("comma seperated list of mutation operators")
-        .defaultsTo(
-            Mutator.MATH,
-            DefaultMutationConfigFactory.DEFAULT_MUTATORS
-                .toArray(new Mutator[] {}));
+        .defaultsTo(Mutator.DEFAULTS);
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
@@ -241,7 +235,7 @@ public class OptionsParser {
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
-    data.setMutators(this.mutators.values(userArgs));
+    data.setMutators(Mutator.asCollection(this.mutators.values(userArgs)));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));

@@ -26,12 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
@@ -97,8 +95,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test(expected = PitHelpError.class)
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
-    this.data.setMutators(Collections
-        .<MethodMutatorFactory> singletonList(Mutator.MATH));
+    this.data.setMutators(Mutator.MATH.asCollection());
     this.data
         .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
@@ -119,7 +116,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
-    this.data.setMutators(Arrays.asList(Mutator.RETURN_VALS));
+    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
 
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
