@@ -21,7 +21,6 @@ import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
-import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_JAR_FILES;
 import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
@@ -74,7 +73,6 @@ public class OptionsParser {
   private final OptionSpec<Mutator>                  mutators;
   private final OptionSpec<String>                   jvmArgs;
   private final OptionSpecBuilder                    mutateStatics;
-  private final OptionSpecBuilder                    includeJarFilesSpec;
   private final OptionSpec<Float>                    timeoutFactorSpec;
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
@@ -154,8 +152,6 @@ public class OptionsParser {
         .describedAs("comma seperated list of child JVM args");
 
     this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS);
-
-    this.includeJarFilesSpec = parserAccepts(INCLUDE_JAR_FILES);
 
     this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
         .ofType(Float.class)
@@ -246,7 +242,6 @@ public class OptionsParser {
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
-    data.setIncludeJarFiles(userArgs.has(this.includeJarFilesSpec));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));

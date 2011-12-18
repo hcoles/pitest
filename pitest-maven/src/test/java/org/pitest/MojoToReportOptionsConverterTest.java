@@ -111,13 +111,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(42, actual.getNumberOfThreads());
   }
 
-  public void testDeterminesIfIncludeJarFilesFlagIsSet() {
-    assertTrue(parseConfig("<includeJarFiles>true</includeJarFiles>")
-        .isIncludeJarFiles());
-    assertFalse(parseConfig("<includeJarFiles>false</includeJarFiles>")
-        .isIncludeJarFiles());
-  }
-
   public void testParsesTimeOutFactor() {
     final ReportOptions actual = parseConfig("<timeoutFactor>1.32</timeoutFactor>");
     assertEquals(1.32f, actual.getTimeoutFactor(), 0.1);

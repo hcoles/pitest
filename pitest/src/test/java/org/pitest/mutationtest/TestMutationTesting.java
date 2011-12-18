@@ -37,13 +37,14 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -312,8 +313,15 @@ public class TestMutationTesting {
   private void createEngineAndRun(final ReportOptions data,
       final JavaAgent agent,
       final Collection<? extends MethodMutatorFactory> mutators) {
-    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        this.config, new ClassPath(), agent, data);
+
+    CoverageOptions coverageOptions = data.createCoverageOptions(this.config);
+    LaunchOptions launchOptions = new LaunchOptions(agent, data.getJvmArgs());
+    MutationClassPaths cps = data.getMutationClassPaths();
+    CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+        coverageOptions, launchOptions, cps);
+
+    // final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+    // this.config, new ClassPath(), agent, data);
 
     coverageDatabase.initialise();
 

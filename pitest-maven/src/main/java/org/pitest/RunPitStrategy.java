@@ -15,6 +15,8 @@
 package org.pitest;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
@@ -23,6 +25,7 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.DefaultCoverageDatabase;
+import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
@@ -51,8 +54,13 @@ public class RunPitStrategy implements GoalStrategy {
         FCollection.map(data.getOutputFormats(),
             OutputFormat.createFactoryForFormat(reportOutput)));
 
+    CoverageOptions coverageOptions = data
+        .createCoverageOptions(new JUnitCompatibleConfiguration());
+    LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
+    MutationClassPaths cps = data.getMutationClassPaths();
+
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        new JUnitCompatibleConfiguration(), data.getClassPath(), ja, data);
+        coverageOptions, launchOptions, cps);
     final MutationCoverageReport report = new MutationCoverageReport(
         coverageDatabase, data, reportFactory);
 

@@ -37,6 +37,7 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.util.ExitCode;
@@ -62,7 +63,7 @@ public class CoverageSlave {
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
 
-      final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
+      final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
@@ -73,8 +74,8 @@ public class CoverageSlave {
 
       CodeCoverageStore.init(invokeQueue);
 
-      HotSwapAgent.addTransformer(new CoverageTransformer(paramsFromParent
-          .getFilter()));
+      HotSwapAgent.addTransformer(new CoverageTransformer(
+          convertToJVMClassFilter(paramsFromParent.getFilter())));
 
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
 
@@ -107,8 +108,18 @@ public class CoverageSlave {
 
   }
 
+  private static Predicate<String> convertToJVMClassFilter(
+      final Predicate<String> child) {
+    return new Predicate<String>() {
+      public Boolean apply(final String a) {
+        return child.apply(a.replace("/", "."));
+      }
+
+    };
+  }
+
   private static List<TestUnit> getTestsFromParent(
-      final SafeDataInputStream dis, final SlaveArguments paramsFromParent)
+      final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
       throws IOException {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
 
@@ -124,7 +135,7 @@ public class CoverageSlave {
   }
 
   private static List<TestUnit> discoverTests(
-      final SlaveArguments paramsFromParent, final List<ClassName> classes) {
+      final CoverageOptions paramsFromParent, final List<ClassName> classes) {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         paramsFromParent.getPitConfig(), new UnGroupedStrategy(),
         FCollection.flatMap(classes, Functions.nameToClass()));
@@ -144,7 +155,7 @@ public class CoverageSlave {
   }
 
   private static List<TestUnit> filterTestsByDependencyAnalysis(
-      final SlaveArguments paramsFromParent, final List<TestUnit> tus) {
+      final CoverageOptions paramsFromParent, final List<TestUnit> tus) {
     final ClassPath cp = new ClassPath();
     final int maxDistance = paramsFromParent.getDependencyAnalysisMaxDistance();
     if (maxDistance < 0) {
@@ -156,7 +167,7 @@ public class CoverageSlave {
   }
 
   private static F<TestUnit, Boolean> isWithinReach(final int maxDistance,
-      final SlaveArguments paramsFromParent, final ClassPath classPath) {
+      final CoverageOptions paramsFromParent, final ClassPath classPath) {
     final DependencyExtractor analyser = new DependencyExtractor(
         new ClassPathByteArraySource(classPath), maxDistance);
 

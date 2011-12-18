@@ -25,11 +25,15 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -44,6 +48,8 @@ public class ReportOptions {
   private Collection<Predicate<String>>              excludedClasses          = Collections
                                                                                   .emptyList();
 
+  private Predicate<String>                          codePaths;
+
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
@@ -51,8 +57,6 @@ public class ReportOptions {
 
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
-
-  private boolean                                    includeJarFiles          = false;
 
   private final List<String>                         jvmArgs                  = new ArrayList<String>();
   private int                                        numberOfThreads          = 0;
@@ -226,14 +230,6 @@ public class ReportOptions {
     this.numberOfThreads = numberOfThreads;
   }
 
-  public boolean isIncludeJarFiles() {
-    return this.includeJarFiles;
-  }
-
-  public void setIncludeJarFiles(final boolean includeJarFiles) {
-    this.includeJarFiles = includeJarFiles;
-  }
-
   public float getTimeoutFactor() {
     return this.timeoutFactor;
   }
@@ -262,12 +258,11 @@ public class ReportOptions {
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
-        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + "]";
+        + this.mutateStaticInitializers + ", showHelp=" + ", jvmArgs="
+        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
+        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
+        + this.timeoutConstant + ", targetTests=" + this.targetTests
+        + ", loggingClasses=" + this.loggingClasses + "]";
   }
 
   @SuppressWarnings("unchecked")
@@ -360,6 +355,14 @@ public class ReportOptions {
     setClassPathElements(elements);
   }
 
+  public Predicate<String> getCodePaths() {
+    return this.codePaths;
+  }
+
+  public void setCodePaths(Predicate<String> codePaths) {
+    this.codePaths = codePaths;
+  }
+
   private static F<File, String> fileToString() {
     return new F<File, String>() {
 
@@ -368,6 +371,19 @@ public class ReportOptions {
       }
 
     };
+  }
+
+  public CoverageOptions createCoverageOptions(Configuration config) {
+    return new CoverageOptions(this.getTargetClassesFilter(), config,
+        this.isVerbose(), this.getDependencyAnalysisMaxDistance());
+  }
+
+  public MutationClassPaths getMutationClassPaths() {
+    ClassFilter classFilter = new ClassFilter(this.getClassesInScopeFilter(),
+        this.getTargetTestsFilter(), this.getTargetClassesFilter());
+    PathFilter pathFilter = new PathFilter(new True<ClassPathRoot>(),
+        new True<ClassPathRoot>());
+    return new MutationClassPaths(this.getClassPath(), classFilter, pathFilter);
   }
 
 }

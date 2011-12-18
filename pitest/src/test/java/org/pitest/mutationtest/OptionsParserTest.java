@@ -111,12 +111,6 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldDetermineIfIncludeJarFilesFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--includeJarFiles");
-    assertTrue(actual.isIncludeJarFiles());
-  }
-
-  @Test
   public void shouldParseTimeOutFactor() {
     final ReportOptions actual = parseAddingRequiredArgs("--timeoutFactor",
         "1.32");

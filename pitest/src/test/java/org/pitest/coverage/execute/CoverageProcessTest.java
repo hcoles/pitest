@@ -138,7 +138,7 @@ public class CoverageProcessTest {
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
       throws IOException, InterruptedException {
 
-    final SlaveArguments sa = new SlaveArguments(coverOnlyTestees(),
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
         new JUnitCompatibleConfiguration(), true, -1);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();

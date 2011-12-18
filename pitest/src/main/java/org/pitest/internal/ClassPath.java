@@ -173,6 +173,11 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     return FCollection.filter(classNames(), nameFilter);
   }
 
+  public ClassPath getComponent(Predicate<ClassPathRoot> predicate) {
+    return new ClassPath(filter(this.roots, predicate).toArray(
+        new ClassPathRoot[0]));
+  }
+
   public ClassPath getLocalDirectoryComponent() {
     return new ClassPath(filter(this.roots, isALocalDirectory()).toArray(
         new ClassPathRoot[0]));

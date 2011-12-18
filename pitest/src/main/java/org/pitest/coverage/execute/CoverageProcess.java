@@ -14,7 +14,7 @@ public class CoverageProcess {
   private final CoverageCommunicationThread crt;
 
   public CoverageProcess(final ProcessArgs processArgs,
-      final SlaveArguments arguments, final int port,
+      final CoverageOptions arguments, final int port,
       final List<String> testClases, final SideEffect1<CoverageResult> handler)
       throws IOException {
     this.process = new WrappingProcess(port, processArgs, CoverageSlave.class);

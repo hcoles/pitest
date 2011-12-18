@@ -26,6 +26,8 @@ import org.pitest.Pitest;
 import org.pitest.TestResult;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
@@ -105,8 +107,13 @@ public class MutationCoverageReport implements Runnable {
 
       final Configuration initialConfig = new JUnitCompatibleConfiguration();
 
+      CoverageOptions coverageOptions = data
+          .createCoverageOptions(initialConfig);
+      LaunchOptions launchOptions = new LaunchOptions(agent, data.getJvmArgs());
+      MutationClassPaths cps = data.getMutationClassPaths();
+
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-          initialConfig, data.getClassPath(), agent, data);
+          coverageOptions, launchOptions, cps);
 
       final MutationCoverageReport instance = new MutationCoverageReport(
           coverageDatabase, data, reportFactory);
@@ -194,7 +201,7 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        limitMutationsPerClass(), new JUnitCompatibleConfiguration(),
+        limitMutationsPerClass(), this.coverageDatabase.getConfiguration(),
         this.data, this.coverageDatabase.getJavaAgent(),
         new ClassPathByteArraySource(this.data.getClassPath()));
 

@@ -18,14 +18,14 @@ package org.pitest.coverage.execute;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.predicate.Predicate;
 
-public class SlaveArguments {
+public class CoverageOptions {
 
   private final Predicate<String> filter;
   private final boolean           verbose;
   private final Configuration     pitConfig;
   private final int               maxDependencyDistance;
 
-  public SlaveArguments(final Predicate<String> filter,
+  public CoverageOptions(final Predicate<String> filter,
       final Configuration pitConfig, final boolean verbose,
       final int maxDependencyDistance) {
     this.filter = filter;

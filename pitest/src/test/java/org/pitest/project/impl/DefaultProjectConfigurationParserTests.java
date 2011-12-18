@@ -412,39 +412,6 @@ public class DefaultProjectConfigurationParserTests {
   }
 
   @Test
-  public void shouldLoadIncludeJarFilesFromFile()
-      throws ProjectConfigurationException, ProjectConfigurationParserException {
-    final String fileContents = "<project>\n"
-        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-        + "    <property name=\"includeJarFiles\" value=\"true\"/>\n"
-        + "</project>";
-
-    final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
-        new StubFileSystemDelegate(fileContents));
-    final ReportOptions ro = parser.loadProject("project");
-
-    Assert.assertNotNull(ro);
-
-    Assert.assertTrue(ro.isIncludeJarFiles());
-  }
-
-  @Test
-  public void shouldUseDefaultIncludeJarFilesValue()
-      throws ProjectConfigurationException, ProjectConfigurationParserException {
-    final String fileContents = "<project>\n"
-        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-        + "</project>";
-
-    final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
-        new StubFileSystemDelegate(fileContents));
-    final ReportOptions ro = parser.loadProject("project");
-
-    Assert.assertNotNull(ro);
-
-    Assert.assertFalse(ro.isIncludeJarFiles());
-  }
-
-  @Test
   public void shouldAllowNoExcludedMethodsSpecified()
       throws ProjectConfigurationException, ProjectConfigurationParserException {
     final String fileContents = "<project>\n"

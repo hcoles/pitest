@@ -1,6 +1,5 @@
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.FCollection.filter;
 import static org.pitest.functional.FCollection.flatMap;
 import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.Prelude.and;
@@ -26,9 +25,10 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageProcess;
 import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.execute.SlaveArguments;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
@@ -38,9 +38,7 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.JavaAgent;
@@ -53,10 +51,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private final static Logger                              LOG           = Log
                                                                              .getLogger();
 
-  private final Configuration                              initialConfig;
-  private final JavaAgent                                  javaAgentFinder;
-  private final ClassPath                                  classPath;
-  private final ReportOptions                              data;
+  private final CoverageOptions                            coverageOptions;
+  private final LaunchOptions                              launchOptions;
+  private final MutationClassPaths                         classPath;
 
   private final Repository                                 classRepository;
   private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
@@ -67,35 +64,26 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   private boolean                                          allTestsGreen = true;
 
-  public DefaultCoverageDatabase(final Configuration initialConfig,
-      final ClassPath classPath, final JavaAgent javaAgentFinder,
-      final ReportOptions data) {
+  public DefaultCoverageDatabase(CoverageOptions coverageOptions,
+      LaunchOptions launchOptions, final MutationClassPaths classPath) {
+    this.coverageOptions = coverageOptions;
     this.classPath = classPath;
-    this.data = data;
-    this.javaAgentFinder = javaAgentFinder;
-    this.initialConfig = initialConfig;
+    this.launchOptions = launchOptions;
     this.classRepository = new Repository(new ClassPathByteArraySource(
-        classPath));
+        classPath.getClassPath()));
   }
 
   public boolean initialise() {
 
-    final Collection<String> completeClassPath = completeClassPath();
-
     @SuppressWarnings("unchecked")
     final FunctionalCollection<ClassInfo> directlySuppliedTestsAndSuites = flatMap(
-        completeClassPathForTests(), nameToClassInfo()).filter(
+        this.classPath.test(), nameToClassInfo()).filter(
         and(isWithinATestClass(), not(ClassInfo.matchIfAbstract())));
 
     calculateCoverage(directlySuppliedTestsAndSuites);
 
-    // final Collection<ClassInfo> uniqueDiscoveredTestClasses =
-    // gatherUniqueClassesFromDescriptions(this.times
-    // .keySet());
-
-    this.codeClasses = filter(completeClassPath,
-        this.data.getTargetClassesFilter()).flatMap(nameToClassInfo()).filter(
-        not(isWithinATestClass()));
+    this.codeClasses = FCollection.flatMap(this.classPath.code(),
+        nameToClassInfo()).filter(not(isWithinATestClass()));
 
     this.groupedClasses = groupByOuterClass(this.codeClasses);
 
@@ -107,8 +95,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     return new F<ClassInfo, Boolean>() {
 
       public Boolean apply(final ClassInfo a) {
-        return DefaultCoverageDatabase.this.initialConfig.testClassIdentifier()
-            .isATestClass(a);
+        return DefaultCoverageDatabase.this.coverageOptions.getPitConfig()
+            .testClassIdentifier().isATestClass(a);
       }
 
     };
@@ -171,17 +159,13 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final PortFinder pf = PortFinder.INSTANCE;
     final int port = pf.getNextAvailablePort();
 
-    final SlaveArguments sa = new SlaveArguments(
-        convertToJVMClassFilter(this.data.getTargetClassesFilter()),
-        this.initialConfig, this.data.isVerbose(),
-        this.data.getDependencyAnalysisMaxDistance());
-
     final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(this.classPath).andJVMArgs(this.data.getJvmArgs())
-        .andJavaAgentFinder(this.javaAgentFinder)
+        .withClassPath(this.classPath.getClassPath())
+        .andJVMArgs(this.launchOptions.getChildJVMArgs())
+        .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
         .andStderr(printWith("stderr "))
-        .andStdout(captureStandardOutIfVerbose()), sa, port, filteredTests,
-        handler);
+        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions, port,
+        filteredTests, handler);
 
     process.start();
     process.waitToDie();
@@ -197,21 +181,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   private SideEffect1<String> captureStandardOutIfVerbose() {
-    if (this.data.isVerbose()) {
+    if (this.coverageOptions.isVerbose()) {
       return printWith("stdout ");
     } else {
       return noSideEffect(String.class);
     }
-  }
-
-  private static Predicate<String> convertToJVMClassFilter(
-      final Predicate<String> child) {
-    return new Predicate<String>() {
-      public Boolean apply(final String a) {
-        return child.apply(a.replace("/", "."));
-      }
-
-    };
   }
 
   private SideEffect1<CoverageResult> resultProcessor() {
@@ -262,20 +236,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       }
       testsForLine.add(this.descriptionToTestInfo(description));
 
-    }
-  }
-
-  private Iterable<String> completeClassPathForTests() {
-    return FCollection.filter(completeClassPath(),
-        this.data.getTargetTestsFilter());
-  }
-
-  private Collection<String> completeClassPath() {
-    if (this.data.isIncludeJarFiles()) {
-      return this.classPath.findClasses(this.data.getClassesInScopeFilter());
-    } else {
-      return this.classPath.getLocalDirectoryComponent().findClasses(
-          this.data.getClassesInScopeFilter());
     }
   }
 
@@ -445,11 +405,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   }
 
   public Configuration getConfiguration() {
-    return this.initialConfig;
+    return this.coverageOptions.getPitConfig();
   }
 
   public JavaAgent getJavaAgent() {
-    return this.javaAgentFinder;
+    return this.launchOptions.getJavaAgentFinder();
   }
 
 }

@@ -7,7 +7,7 @@ import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.execute.SlaveArguments;
+import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
@@ -20,10 +20,10 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
   static class SendData implements SideEffect1<SafeDataOutputStream> {
     private final static Logger  LOG = Log.getLogger();
-    private final SlaveArguments arguments;
+    private final CoverageOptions arguments;
     private final List<String>   testClasses;
 
-    SendData(final SlaveArguments arguments, final List<String> testClasses) {
+    SendData(final CoverageOptions arguments, final List<String> testClasses) {
       this.arguments = arguments;
       this.testClasses = testClasses;
     }
@@ -106,7 +106,7 @@ public class CoverageCommunicationThread extends CommunicationThread {
   }
 
   public CoverageCommunicationThread(final int port,
-      final SlaveArguments arguments, final List<String> tus,
+      final CoverageOptions arguments, final List<String> tus,
       final SideEffect1<CoverageResult> handler) {
     super(port, new SendData(arguments, tus), new Receive(handler));
 

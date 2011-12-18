@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -263,7 +265,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       this.data.setClassesInScope(predicateFor("com.outofclasspath.*"));
       this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
       this.data.addClassPathElements(Arrays.asList(location));
-      this.data.setIncludeJarFiles(true);
       this.data.setDependencyAnalysisMaxDistance(-1);
       this.data.setExcludedClasses(predicateFor("*Power*", "*JMockit*"));
       createAndRun();
@@ -276,9 +277,15 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   private void createAndRun() {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
+
+      CoverageOptions coverageOptions = this.data
+          .createCoverageOptions(new JUnitCompatibleConfiguration());
+      LaunchOptions launchOptions = new LaunchOptions(agent,
+          this.data.getJvmArgs());
+      MutationClassPaths cps = this.data.getMutationClassPaths();
+
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-          new JUnitCompatibleConfiguration(), this.data.getClassPath(), agent,
-          this.data);
+          coverageOptions, launchOptions, cps);
       final MutationCoverageReport testee = new MutationCoverageReport(
           coverageDatabase, this.data, listenerFactory());
 

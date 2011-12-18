@@ -4,7 +4,6 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
-import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_JAR_FILES;
 import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
@@ -386,7 +385,6 @@ public class DefaultProjectConfigurationParser implements
     ro.setDependencyAnalysisMaxDistance(loadDependencyAnalysisMaxDistance(doc));
     ro.setExcludedClasses(loadExcludedClasses(doc));
     ro.setExcludedMethods(loadExcludedMethods(doc));
-    ro.setIncludeJarFiles(loadIncludeJarFiles(doc));
     ro.setMaxMutationsPerClass(loadMaxMutationsPerClass(doc));
     ro.setMutateStaticInitializers(loadMutateStaticInitialisers(doc));
     ro.setNumberOfThreads(loadNumberOfThreads(doc));
@@ -583,20 +581,6 @@ public class DefaultProjectConfigurationParser implements
    */
   private int loadMaxMutationsPerClass(final Document doc) {
     return loadIntProperty(doc, MAX_MUTATIONS_PER_CLASS);
-  }
-
-  /**
-   * Loads the {@see OptionsParser.INCLUDE_JAR_FILES} property from the project
-   * file.
-   * 
-   * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.INCLUDE_JAR_FILES} property
-   *         from the project file, or the default value if no property is
-   *         specified.
-   */
-  private boolean loadIncludeJarFiles(final Document doc) {
-    return loadBooleanProperty(doc, INCLUDE_JAR_FILES);
   }
 
   /**
