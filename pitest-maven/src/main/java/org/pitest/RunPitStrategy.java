@@ -19,7 +19,10 @@ import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.CompoundListenerFactory;
+import org.pitest.mutationtest.CoverageDatabase;
+import org.pitest.mutationtest.DefaultCoverageDatabase;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
@@ -48,8 +51,10 @@ public class RunPitStrategy implements GoalStrategy {
         FCollection.map(data.getOutputFormats(),
             OutputFormat.createFactoryForFormat(reportOutput)));
 
-    final MutationCoverageReport report = new MutationCoverageReport(data, ja,
-        reportFactory);
+    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+        new JUnitCompatibleConfiguration(), data.getClassPath(), ja, data);
+    final MutationCoverageReport report = new MutationCoverageReport(
+        coverageDatabase, data, reportFactory);
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,

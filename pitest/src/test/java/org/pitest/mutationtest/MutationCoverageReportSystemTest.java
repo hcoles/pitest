@@ -30,6 +30,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
@@ -214,6 +215,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test(expected = PitHelpError.class)
   public void shouldReportHelpfulErrorIfNoMutationsFounds() {
+    this.data.setFailWhenNoMutations(true);
     this.data.setTargetClasses(predicateFor("foo"));
     this.data.setClassesInScope(predicateFor("foo"));
     createAndRun();
@@ -240,6 +242,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test(expected = PitHelpError.class)
   public void shouldExcludeFilteredClasses() {
+    this.data.setFailWhenNoMutations(true);
     this.data.setTargetClasses(predicateFor(FullyCoveredTestee.class));
     this.data.setExcludedClasses(predicateFor(FullyCoveredTestee.class));
     createAndRun();
@@ -273,8 +276,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   private void createAndRun() {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
+      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+          new JUnitCompatibleConfiguration(), this.data.getClassPath(), agent,
+          this.data);
       final MutationCoverageReport testee = new MutationCoverageReport(
-          this.data, agent, listenerFactory());
+          coverageDatabase, this.data, listenerFactory());
 
       testee.run();
     } finally {

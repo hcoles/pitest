@@ -20,6 +20,7 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_JAR_FILES;
 import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
@@ -61,28 +62,29 @@ import org.pitest.util.Unchecked;
 
 public class OptionsParser {
 
-  private final OptionParser                        parser;
-  private final ArgumentAcceptingOptionSpec<String> reportDirSpec;
-  private final OptionSpec<String>                  targetClassesSpec;
-  private final OptionSpec<String>                  targetTestsSpec;
-  private final OptionSpec<String>                  inScopeClassesSpec;
-  private final OptionSpec<String>                  avoidCallsSpec;
-  private final OptionSpec<Integer>                 depth;
-  private final OptionSpec<Integer>                 threadsSpec;
-  private final OptionSpec<File>                    sourceDirSpec;
-  private final OptionSpec<Mutator>                 mutators;
-  private final OptionSpec<String>                  jvmArgs;
-  private final OptionSpecBuilder                   mutateStatics;
-  private final OptionSpecBuilder                   includeJarFilesSpec;
-  private final OptionSpec<Float>                   timeoutFactorSpec;
-  private final OptionSpec<Long>                    timeoutConstSpec;
-  private final OptionSpec<String>                  excludedMethodsSpec;
-  private final OptionSpec<Integer>                 maxMutationsPerClassSpec;
-  private final OptionSpecBuilder                   verboseSpec;
-  private final OptionSpec<String>                  excludedClassesSpec;
-  private final OptionSpec<OutputFormat>            outputFormatSpec;
-  private final OptionSpec<String>                  projectFileSpec;
-  private final OptionSpec<String>                  additionalClassPathSpec;
+  private final OptionParser                         parser;
+  private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
+  private final OptionSpec<String>                   targetClassesSpec;
+  private final OptionSpec<String>                   targetTestsSpec;
+  private final OptionSpec<String>                   inScopeClassesSpec;
+  private final OptionSpec<String>                   avoidCallsSpec;
+  private final OptionSpec<Integer>                  depth;
+  private final OptionSpec<Integer>                  threadsSpec;
+  private final OptionSpec<File>                     sourceDirSpec;
+  private final OptionSpec<Mutator>                  mutators;
+  private final OptionSpec<String>                   jvmArgs;
+  private final OptionSpecBuilder                    mutateStatics;
+  private final OptionSpecBuilder                    includeJarFilesSpec;
+  private final OptionSpec<Float>                    timeoutFactorSpec;
+  private final OptionSpec<Long>                     timeoutConstSpec;
+  private final OptionSpec<String>                   excludedMethodsSpec;
+  private final OptionSpec<Integer>                  maxMutationsPerClassSpec;
+  private final OptionSpecBuilder                    verboseSpec;
+  private final OptionSpec<String>                   excludedClassesSpec;
+  private final OptionSpec<OutputFormat>             outputFormatSpec;
+  private final OptionSpec<String>                   projectFileSpec;
+  private final OptionSpec<String>                   additionalClassPathSpec;
+  private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -192,6 +194,10 @@ public class OptionsParser {
     this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("coma seperated list of additional classpath elements");
+
+    this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
+        .withRequiredArg().ofType(Boolean.class).defaultsTo(true)
+        .describedAs("whether to throw error if no mutations found");
   }
 
   private OptionSpecBuilder parserAccepts(ConfigOption option) {
@@ -252,6 +258,7 @@ public class OptionsParser {
     data.setVerbose(userArgs.has(this.verboseSpec));
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
+    data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
 
     setClassPath(userArgs, data);
 

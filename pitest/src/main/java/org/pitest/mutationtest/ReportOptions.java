@@ -66,6 +66,7 @@ public class ReportOptions {
   private int                                        maxMutationsPerClass;
 
   private boolean                                    verbose                  = false;
+  private boolean                                    failWhenNoMutations      = false;
 
   private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
 
@@ -341,6 +342,14 @@ public class ReportOptions {
 
   public Collection<Predicate<String>> getClassesInScope() {
     return this.classesInScope;
+  }
+
+  public boolean shouldFailWhenNoMutations() {
+    return this.failWhenNoMutations;
+  }
+
+  public void setFailWhenNoMutations(boolean failWhenNoMutations) {
+    this.failWhenNoMutations = failWhenNoMutations;
   }
 
   public void addClassPathElements(List<String> additionalClassPathElements) {

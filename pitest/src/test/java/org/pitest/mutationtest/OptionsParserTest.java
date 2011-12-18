@@ -225,6 +225,19 @@ public class OptionsParserTest {
     assertTrue(actual.contains("./boo"));
   }
 
+  @Test
+  public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
+    assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
+        .shouldFailWhenNoMutations());
+    assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
+        .shouldFailWhenNoMutations());
+  }
+
+  @Test
+  public void shouldFailWhenNoMutationsSetByDefault() {
+    assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
+  }
+
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();

@@ -36,7 +36,6 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -51,21 +50,20 @@ import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
-import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
-  private static final Logger     LOG = Log.getLogger();
-  protected final ReportOptions   data;
-  protected final ListenerFactory listenerFactory;
-  protected final JavaAgent       javaAgentFinder;
+  private static final Logger    LOG = Log.getLogger();
+  private final ReportOptions    data;
+  private final ListenerFactory  listenerFactory;
+  private final CoverageDatabase coverageDatabase;
 
-  public MutationCoverageReport(final ReportOptions data,
-      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory) {
-    this.javaAgentFinder = javaAgentFinder;
+  public MutationCoverageReport(final CoverageDatabase coverageDatabase,
+      final ReportOptions data, final ListenerFactory listenerFactory) {
+    this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;
   }
@@ -105,8 +103,13 @@ public class MutationCoverageReport implements Runnable {
           FCollection.map(data.getOutputFormats(),
               OutputFormat.createFactoryForFormat(outputStrategy)));
 
-      final MutationCoverageReport instance = new MutationCoverageReport(data,
-          agent, reportFactory);
+      final Configuration initialConfig = new JUnitCompatibleConfiguration();
+
+      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+          initialConfig, data.getClassPath(), agent, data);
+
+      final MutationCoverageReport instance = new MutationCoverageReport(
+          coverageDatabase, data, reportFactory);
 
       instance.run();
     } finally {
@@ -136,10 +139,6 @@ public class MutationCoverageReport implements Runnable {
     FCollection.forEach(classesWithOutATest, reportFailure);
   }
 
-  protected ClassPath getClassPath() {
-    return this.data.getClassPath();
-  }
-
   private void runReport() throws IOException {
 
     TestInfo.checkJUnitVersion();
@@ -150,31 +149,28 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    final Configuration initialConfig = new JUnitCompatibleConfiguration();
-
-    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
-
-    if (!coverageDatabase.initialise()) {
+    if (!this.coverageDatabase.initialise()) {
       throw new PitHelpError(Help.FAILING_TESTS);
     }
 
-    final Collection<ClassGrouping> codeClasses = coverageDatabase
+    final Collection<ClassGrouping> codeClasses = this.coverageDatabase
         .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(coverageDatabase, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
+        .getListener(this.coverageDatabase, t0, new SmartSourceLocator(
+            this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
     // staticConfig.addTestListener(ConsoleTestListener.);
 
     reportFailureForClassesWithoutTests(
-        coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
+        this.coverageDatabase.getParentClassesWithoutATest(),
+        mutationReportListener);
 
-    final List<TestUnit> tus = buildMutationTests(initialConfig,
-        coverageDatabase, codeClasses);
+    final List<TestUnit> tus = buildMutationTests(
+        this.coverageDatabase.getConfiguration(), this.coverageDatabase,
+        codeClasses);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFounds(tus);
@@ -199,8 +195,8 @@ public class MutationCoverageReport implements Runnable {
         this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
         limitMutationsPerClass(), new JUnitCompatibleConfiguration(),
-        this.data, this.javaAgentFinder, new ClassPathByteArraySource(
-            this.data.getClassPath()));
+        this.data, this.coverageDatabase.getJavaAgent(),
+        new ClassPathByteArraySource(this.data.getClassPath()));
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         initialConfig, coverageDatabase);
@@ -209,7 +205,11 @@ public class MutationCoverageReport implements Runnable {
 
   private void checkMutationsFounds(final List<TestUnit> tus) {
     if (tus.isEmpty()) {
-      throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
+      if (this.data.shouldFailWhenNoMutations()) {
+        throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
+      } else {
+        LOG.warning(Help.NO_MUTATIONS_FOUND.toString());
+      }
     }
   }
 

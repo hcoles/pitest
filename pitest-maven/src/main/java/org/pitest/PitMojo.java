@@ -156,6 +156,13 @@ public class PitMojo extends AbstractMojo {
   private boolean               verbose;
 
   /**
+   * Throw error if no mutations found
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean               failWhenNoMutations;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -295,5 +302,9 @@ public class PitMojo extends AbstractMojo {
 
   public ArtifactFactory getFactory() {
     return this.factory;
+  }
+
+  public boolean isFailWhenNoMutations() {
+    return this.failWhenNoMutations;
   }
 }

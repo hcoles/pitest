@@ -40,7 +40,8 @@ public enum ConfigOption {
   EXCLUDED_CLASSES("excludedClasses"), //
   OUTPUT_FORMATS("outputFormats"), //
   PROJECT_FILE("project"), //
-  CLASSPATH("classPath");
+  CLASSPATH("classPath"), //
+  FAIL_WHEN_NOT_MUTATIONS("failWhenNoMutations", true);
 
   private final String text;
   private final Object defaultValue;

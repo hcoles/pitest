@@ -444,4 +444,12 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     return getTestsForJVMClassName(classLine.getJVMClassName()).get(classLine);
   }
 
+  public Configuration getConfiguration() {
+    return this.initialConfig;
+  }
+
+  public JavaAgent getJavaAgent() {
+    return this.javaAgentFinder;
+  }
+
 }

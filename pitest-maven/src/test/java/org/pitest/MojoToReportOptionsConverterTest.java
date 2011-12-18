@@ -236,6 +236,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
             OutputFormat.CSV)), actual.getOutputFormats());
   }
 
+  public void testParsesFailWhenNotMutations() {
+    assertTrue(parseConfig("<failWhenNoMutations>true</failWhenNoMutations>")
+        .shouldFailWhenNoMutations());
+    assertFalse(parseConfig("<failWhenNoMutations>false</failWhenNoMutations>")
+        .shouldFailWhenNoMutations());
+  }
+
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
