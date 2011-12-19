@@ -30,8 +30,10 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.FileUtil;
@@ -282,7 +284,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
           .createCoverageOptions(new JUnitCompatibleConfiguration());
       LaunchOptions launchOptions = new LaunchOptions(agent,
           this.data.getJvmArgs());
-      MutationClassPaths cps = this.data.getMutationClassPaths();
+
+      PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
+          new True<ClassPathRoot>());
+      MutationClassPaths cps = new MutationClassPaths(this.data.getClassPath(),
+          this.data.createClassesFilter(), pf);
 
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps);

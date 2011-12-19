@@ -35,6 +35,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Functions;
 import org.pitest.util.Glob;
+import org.pitest.util.Log;
 
 public class MojoToReportOptionsConverter {
 
@@ -69,6 +70,15 @@ public class MojoToReportOptionsConverter {
   @SuppressWarnings("unchecked")
   private ReportOptions parseReportOptions(final Set<String> classPath) {
     final ReportOptions data = new ReportOptions();
+
+    if (this.mojo.getProject().getBuild() != null) {
+      Log.getLogger().info(
+          "Mutating from "
+              + this.mojo.getProject().getBuild().getOutputDirectory());
+      data.setCodePaths(Collections.singleton(this.mojo.getProject().getBuild()
+          .getOutputDirectory()));
+    }
+
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
     data.setFailWhenNoMutations(this.mojo.isFailWhenNoMutations());

@@ -31,12 +31,13 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.util.Glob;
 
 public class ReportOptions {
 
@@ -48,7 +49,7 @@ public class ReportOptions {
   private Collection<Predicate<String>>              excludedClasses          = Collections
                                                                                   .emptyList();
 
-  private Predicate<String>                          codePaths;
+  private Collection<String>                         codePaths;
 
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
@@ -355,14 +356,6 @@ public class ReportOptions {
     setClassPathElements(elements);
   }
 
-  public Predicate<String> getCodePaths() {
-    return this.codePaths;
-  }
-
-  public void setCodePaths(Predicate<String> codePaths) {
-    this.codePaths = codePaths;
-  }
-
   private static F<File, String> fileToString() {
     return new F<File, String>() {
 
@@ -373,17 +366,43 @@ public class ReportOptions {
     };
   }
 
+  @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions(Configuration config) {
-    return new CoverageOptions(this.getTargetClassesFilter(), config,
-        this.isVerbose(), this.getDependencyAnalysisMaxDistance());
+    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
+        this.getClassesInScopeFilter()), config, this.isVerbose(),
+        this.getDependencyAnalysisMaxDistance());
   }
 
   public MutationClassPaths getMutationClassPaths() {
-    ClassFilter classFilter = new ClassFilter(this.getClassesInScopeFilter(),
-        this.getTargetTestsFilter(), this.getTargetClassesFilter());
-    PathFilter pathFilter = new PathFilter(new True<ClassPathRoot>(),
-        new True<ClassPathRoot>());
-    return new MutationClassPaths(this.getClassPath(), classFilter, pathFilter);
+
+    return new MutationClassPaths(this.getClassPath(), createClassesFilter(),
+        createPathFilter());
   }
 
+  public ClassFilter createClassesFilter() {
+    return new ClassFilter(this.getClassesInScopeFilter(),
+        this.getTargetTestsFilter(), this.getTargetClassesFilter());
+  }
+
+  public PathFilter createPathFilter() {
+    return new PathFilter(createCodePathFilter(),
+        not(new DefaultDependencyPathPredicate()));
+  }
+
+  private Predicate<ClassPathRoot> createCodePathFilter() {
+    if (this.codePaths != null) {
+      return new PathNamePredicate(Prelude.or(Glob
+          .toGlobPredicates(this.codePaths)));
+    } else {
+      return new DefaultCodePathPredicate(50);
+    }
+  }
+
+  public Collection<String> getCodePaths() {
+    return this.codePaths;
+  }
+
+  public void setCodePaths(Collection<String> codePaths) {
+    this.codePaths = codePaths;
+  }
 }

@@ -316,7 +316,13 @@ public class TestMutationTesting {
 
     CoverageOptions coverageOptions = data.createCoverageOptions(this.config);
     LaunchOptions launchOptions = new LaunchOptions(agent, data.getJvmArgs());
-    MutationClassPaths cps = data.getMutationClassPaths();
+
+    PathFilter pf = new PathFilter(
+        Prelude.not(new DefaultDependencyPathPredicate()),
+        Prelude.not(new DefaultDependencyPathPredicate()));
+    MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
+        data.createClassesFilter(), pf);
+
     CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         coverageOptions, launchOptions, cps);
 

@@ -3,6 +3,7 @@ package org.pitest;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
+import org.apache.maven.model.Build;
 import org.pitest.mutationtest.ReportOptions;
 
 public class PitMojoTest extends BasePitMojoTest {
@@ -18,6 +19,9 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration(""));
+    Build build = new Build();
+    build.setOutputDirectory("foo");
+    this.testee.getProject().setBuild(build);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(ReportOptions.class));
   }

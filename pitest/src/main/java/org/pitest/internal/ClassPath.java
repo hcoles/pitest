@@ -85,6 +85,9 @@ public class ClassPath implements Iterable<ClassPathRoot> {
           rs.add(new DirectoryClassPathRoot(f));
         } else {
           try {
+            if (!f.canRead()) {
+              throw new IOException("Can't read the file " + f);
+            }
             rs.add(new ArchiveClassPathRoot(f));
           } catch (final ZipException ex) {
             LOG.warning("Can't open the archive " + f);

@@ -34,12 +34,9 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   private final File      file;
   private Option<ZipFile> root;
 
-  public ArchiveClassPathRoot(final File file) throws IOException {
+  public ArchiveClassPathRoot(final File file) {
     this.file = file;
     this.root = Option.none();
-    if (!file.canRead()) {
-      throw new IOException("Can't read the file " + file);
-    }
   }
 
   private ZipFile getRoot() {
