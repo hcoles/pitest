@@ -111,7 +111,7 @@ public enum ConfigOption {
   /**
    * Filter defining paths that should be treated as containing mutable code
    */
-  CODE_PATHS("codePaths");
+  CODE_PATHS("mutableCodePaths");
 
   private final String text;
   private final Object defaultValue;

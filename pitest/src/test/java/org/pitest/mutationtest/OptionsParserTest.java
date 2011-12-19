@@ -232,6 +232,13 @@ public class OptionsParserTest {
     assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
   }
 
+  @Test
+  public void shouldParseComaSeperatedListOfMutableCodePaths() {
+    ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
+        "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
+  }
+
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();

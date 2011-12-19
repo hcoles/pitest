@@ -17,6 +17,7 @@ package org.pitest.mutationtest.commandline;
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
+import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
@@ -83,6 +84,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   projectFileSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
+  private final ArgumentAcceptingOptionSpec<String>  codePaths;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -194,6 +196,13 @@ public class OptionsParser {
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
         .withRequiredArg().ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether to throw error if no mutations found");
+
+    this.codePaths = parserAccepts(CODE_PATHS)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "Globs identifying classpath roots containing mutable code");
   }
 
   private OptionSpecBuilder parserAccepts(ConfigOption option) {
@@ -254,6 +263,7 @@ public class OptionsParser {
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
+    data.setCodePaths(this.codePaths.values(userArgs));
 
     setClassPath(userArgs, data);
 

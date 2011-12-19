@@ -16,15 +16,11 @@ package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.Option;
 import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
@@ -35,12 +31,18 @@ public class DefaultCodePathPredicateTest {
 
   @Before
   public void seyUp() {
-    this.testee = new DefaultCodePathPredicate(50);
+    this.testee = new DefaultCodePathPredicate();
   }
 
   @Test
   public void shouldNotTreatJarFilesAsCode() {
     ClassPathRoot archiveRoot = new ArchiveClassPathRoot(new File("foo.jar"));
+    assertFalse(this.testee.apply(archiveRoot));
+  }
+
+  @Test
+  public void shouldNotTreatZipFilesAsCode() {
+    ClassPathRoot archiveRoot = new ArchiveClassPathRoot(new File("foo.zip"));
     assertFalse(this.testee.apply(archiveRoot));
   }
 
@@ -52,22 +54,15 @@ public class DefaultCodePathPredicateTest {
   }
 
   @Test
-  public void shouldNotTreatRootsWhereMoreThanThresholdOfClassesAreTestsAsCode() {
-    ClassPathRoot archiveRoot = mock(ClassPathRoot.class);
-    when(archiveRoot.cacheLocation()).thenReturn(Option.some("foo"));
-    when(archiveRoot.classNames()).thenReturn(
-        Arrays.asList("Code", "TestCode", "CodeTest", "Test", "YetMoreCode"));
+  public void shouldNotTreatDirectoriesEndingInBinTestAsCode() {
+    ClassPathRoot archiveRoot = new DirectoryClassPathRoot(new File(
+        "foo/bar/bin-test"));
     assertFalse(this.testee.apply(archiveRoot));
   }
 
   @Test
-  public void shouldTreatRootsWhereLessThenThresholdOfClassesAreTestsAsCode() {
-    ClassPathRoot archiveRoot = mock(ClassPathRoot.class);
-    when(archiveRoot.cacheLocation()).thenReturn(Option.some("foo"));
-    when(archiveRoot.classNames()).thenReturn(
-        Arrays
-            .asList("Code", "TestCode", "CodeTest", "MoreCode", "YetMoreCode"));
+  public void shouldTreatDirectoriesAsCode() {
+    ClassPathRoot archiveRoot = new DirectoryClassPathRoot(new File("foo/bar/"));
     assertTrue(this.testee.apply(archiveRoot));
   }
-
 }

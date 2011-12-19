@@ -369,8 +369,19 @@ public class ReportOptions {
   @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions(Configuration config) {
     return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
-        this.getClassesInScopeFilter()), config, this.isVerbose(),
-        this.getDependencyAnalysisMaxDistance());
+        this.getClassesInScopeFilter(), not(commonClasses())), config,
+        this.isVerbose(), this.getDependencyAnalysisMaxDistance());
+  }
+
+  private static F<String, Boolean> commonClasses() {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(String name) {
+        return name.startsWith("java") || name.startsWith("sun/")
+            || name.startsWith("org/junit") || name.startsWith("junit");
+      }
+
+    };
   }
 
   public MutationClassPaths getMutationClassPaths() {
@@ -394,7 +405,7 @@ public class ReportOptions {
       return new PathNamePredicate(Prelude.or(Glob
           .toGlobPredicates(this.codePaths)));
     } else {
-      return new DefaultCodePathPredicate(50);
+      return new DefaultCodePathPredicate();
     }
   }
 

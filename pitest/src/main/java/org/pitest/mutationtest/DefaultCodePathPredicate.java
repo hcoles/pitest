@@ -14,26 +14,15 @@
  */
 package org.pitest.mutationtest;
 
-import java.util.Collection;
-
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.classloader.ClassPathRoot;
 
 public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
 
-  private final int threshold;
-
-  DefaultCodePathPredicate(int threshold) {
-    this.threshold = threshold;
-  }
-
   public Boolean apply(ClassPathRoot a) {
     return a.cacheLocation().hasSome()
         && !isATestPath(a.cacheLocation().value())
-        && !isADependencyPath(a.cacheLocation().value())
-        && hasLessThanThresholdOfProbableTests(a);
+        && !isADependencyPath(a.cacheLocation().value());
   }
 
   private boolean isADependencyPath(String path) {
@@ -42,22 +31,7 @@ public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
   }
 
   private boolean isATestPath(String path) {
-    return path.endsWith("test-classes");
-  }
-
-  private boolean hasLessThanThresholdOfProbableTests(ClassPathRoot a) {
-    Collection<String> names = a.classNames();
-    int numberOfTests = FCollection.filter(names, mightBeATest()).size();
-    return ((100 / names.size()) * numberOfTests) < this.threshold;
-  }
-
-  private static F<String, Boolean> mightBeATest() {
-    return new F<String, Boolean>() {
-      public Boolean apply(String a) {
-        return a.contains("Test");
-      }
-
-    };
+    return path.endsWith("test-classes") || path.endsWith("bin-test");
   }
 
 }
