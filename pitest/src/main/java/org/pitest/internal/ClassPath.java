@@ -181,21 +181,6 @@ public class ClassPath implements Iterable<ClassPathRoot> {
         new ClassPathRoot[0]));
   }
 
-  public ClassPath getLocalDirectoryComponent() {
-    return new ClassPath(filter(this.roots, isALocalDirectory()).toArray(
-        new ClassPathRoot[0]));
-  }
-
-  private F<ClassPathRoot, Boolean> isALocalDirectory() {
-    return new F<ClassPathRoot, Boolean>() {
-
-      public Boolean apply(final ClassPathRoot a) {
-        return a instanceof DirectoryClassPathRoot;
-      }
-
-    };
-  }
-
   public String getLocalClassPath() {
     StringBuilder classpath = new StringBuilder();
     for (final ClassPathRoot each : this.roots) {
