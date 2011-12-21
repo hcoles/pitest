@@ -22,8 +22,8 @@ public class PathFilter {
   private final Predicate<ClassPathRoot> codeFilter;
   private final Predicate<ClassPathRoot> testFilter;
 
-  PathFilter(Predicate<ClassPathRoot> codeFilter,
-      Predicate<ClassPathRoot> testFilter) {
+  PathFilter(final Predicate<ClassPathRoot> codeFilter,
+      final Predicate<ClassPathRoot> testFilter) {
     this.codeFilter = codeFilter;
     this.testFilter = testFilter;
   }

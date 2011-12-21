@@ -205,7 +205,7 @@ public class OptionsParser {
             "Globs identifying classpath roots containing mutable code");
   }
 
-  private OptionSpecBuilder parserAccepts(ConfigOption option) {
+  private OptionSpecBuilder parserAccepts(final ConfigOption option) {
     return this.parser.accepts(option.getParamName());
   }
 

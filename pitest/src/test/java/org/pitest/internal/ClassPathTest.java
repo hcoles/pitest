@@ -58,7 +58,7 @@ public class ClassPathTest {
 
   @Test
   public void shouldReturnBytesFromClasspathInputeStream() throws IOException {
-    InputStream stream = Mockito.mock(InputStream.class);
+    final InputStream stream = Mockito.mock(InputStream.class);
     when(this.firstComponent.getData(any(String.class))).thenReturn(stream);
     this.testee.getClassData("foo");
     verify(stream).read(any(byte[].class));
@@ -86,7 +86,7 @@ public class ClassPathTest {
   private Predicate<ClassPathRoot> rootIsEqualTo(final String value) {
     return new Predicate<ClassPathRoot>() {
 
-      public Boolean apply(ClassPathRoot a) {
+      public Boolean apply(final ClassPathRoot a) {
         return a.cacheLocation().value().equals(value);
       }
 

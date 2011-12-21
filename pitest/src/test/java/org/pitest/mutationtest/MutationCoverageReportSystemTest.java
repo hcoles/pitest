@@ -27,15 +27,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.extension.Configuration;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
 
@@ -166,6 +169,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   @Test
+  @Ignore("does not seem to be possible to have TestNG on the classpath when jmockit agent is loaded")
   public void shouldWorkWithJMockit() {
     this.data.setTargetClasses(predicateFor(CoveredByJMockit.class));
     this.data.setClassesInScope(predicateFor("com.example.*JMockit*"));
@@ -259,7 +263,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     final String location = FileUtil.randomFilename() + ".jar";
     try {
       final FileOutputStream fos = new FileOutputStream(location);
-      InputStream stream = IsolationUtils.getContextClassLoader()
+      final InputStream stream = IsolationUtils.getContextClassLoader()
           .getResourceAsStream("outofcp.jar");
       copy(stream, fos);
       fos.close();
@@ -276,19 +280,32 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
+  @Test
+  public void shouldSupportTestNG() {
+    this.data
+        .setTargetClasses(predicateFor("com.example.testng.FullyCovered*"));
+    this.data.setVerbose(true);
+    createAndRun(new TestNGConfiguration());
+    verifyResults(KILLED);
+  }
+
   private void createAndRun() {
+    createAndRun(new JUnitCompatibleConfiguration());
+  }
+
+  private void createAndRun(final Configuration configuration) {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
 
-      CoverageOptions coverageOptions = this.data
-          .createCoverageOptions(new JUnitCompatibleConfiguration());
-      LaunchOptions launchOptions = new LaunchOptions(agent,
+      this.data.setConfiguration(configuration);
+      final CoverageOptions coverageOptions = this.data.createCoverageOptions();
+      final LaunchOptions launchOptions = new LaunchOptions(agent,
           this.data.getJvmArgs());
 
-      PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
+      final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
           new True<ClassPathRoot>());
-      MutationClassPaths cps = new MutationClassPaths(this.data.getClassPath(),
-          this.data.createClassesFilter(), pf);
+      final MutationClassPaths cps = new MutationClassPaths(
+          this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps);
@@ -301,10 +318,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
-  private static void copy(InputStream in, OutputStream out) throws IOException {
+  private static void copy(final InputStream in, final OutputStream out)
+      throws IOException {
     // Read bytes and write to destination until eof
 
-    byte[] buf = new byte[1024];
+    final byte[] buf = new byte[1024];
     int len = 0;
     while ((len = in.read(buf)) >= 0) {
       out.write(buf, 0, len);

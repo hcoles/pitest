@@ -12,25 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.testng;
 
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.classloader.ClassPathRoot;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.extension.TestClassIdentifier;
 
-public class DefaultDependencyPathPredicate implements Predicate<ClassPathRoot> {
+public class TestNGTestClassIdentifier implements TestClassIdentifier {
 
-  DefaultDependencyPathPredicate() {
-
-  }
-
-  public Boolean apply(final ClassPathRoot a) {
-    return a.cacheLocation().hasSome()
-        && isADependencyPath(a.cacheLocation().value());
-  }
-
-  private boolean isADependencyPath(final String path) {
-    final String lowerCasePath = path.toLowerCase();
-    return lowerCasePath.endsWith(".jar") || lowerCasePath.endsWith(".zip");
+  public boolean isATestClass(final ClassInfo a) {
+    return a.hasAnnotation(org.testng.annotations.Test.class);
   }
 
 }

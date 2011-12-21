@@ -40,7 +40,6 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.commandline.ParseResult;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -53,7 +52,6 @@ import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.util.Log;
-import org.pitest.util.TestInfo;
 import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
@@ -105,12 +103,10 @@ public class MutationCoverageReport implements Runnable {
           FCollection.map(data.getOutputFormats(),
               OutputFormat.createFactoryForFormat(outputStrategy)));
 
-      final Configuration initialConfig = new JUnitCompatibleConfiguration();
-
-      CoverageOptions coverageOptions = data
-          .createCoverageOptions(initialConfig);
-      LaunchOptions launchOptions = new LaunchOptions(agent, data.getJvmArgs());
-      MutationClassPaths cps = data.getMutationClassPaths();
+      final CoverageOptions coverageOptions = data.createCoverageOptions();
+      final LaunchOptions launchOptions = new LaunchOptions(agent,
+          data.getJvmArgs());
+      final MutationClassPaths cps = data.getMutationClassPaths();
 
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps);
@@ -148,7 +144,7 @@ public class MutationCoverageReport implements Runnable {
 
   private void runReport() throws IOException {
 
-    TestInfo.checkJUnitVersion();
+    // TestInfo.checkJUnitVersion();
 
     Log.setVerbose(this.data.isVerbose());
 

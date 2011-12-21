@@ -661,7 +661,7 @@ public class DefaultProjectConfigurationParser implements
     return loadFilters(doc, IN_SCOPE_CLASSES);
   }
 
-  private Element getElement(final Document doc, ConfigOption param) {
+  private Element getElement(final Document doc, final ConfigOption param) {
     final Element classpathElement = XmlUtils.getChildElement(
         doc.getDocumentElement(), param.getParamName());
     return classpathElement;

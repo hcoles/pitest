@@ -34,6 +34,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
+import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -41,6 +42,7 @@ import org.pitest.util.Glob;
 
 public class ReportOptions {
 
+  private Configuration                              config                   = new JUnitCompatibleConfiguration();
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
@@ -344,11 +346,12 @@ public class ReportOptions {
     return this.failWhenNoMutations;
   }
 
-  public void setFailWhenNoMutations(boolean failWhenNoMutations) {
+  public void setFailWhenNoMutations(final boolean failWhenNoMutations) {
     this.failWhenNoMutations = failWhenNoMutations;
   }
 
-  public void addClassPathElements(List<String> additionalClassPathElements) {
+  public void addClassPathElements(
+      final List<String> additionalClassPathElements) {
     final List<String> elements = new ArrayList<String>();
     FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
         elements);
@@ -367,16 +370,16 @@ public class ReportOptions {
   }
 
   @SuppressWarnings("unchecked")
-  public CoverageOptions createCoverageOptions(Configuration config) {
+  public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
-        this.getClassesInScopeFilter(), not(commonClasses())), config,
+        this.getClassesInScopeFilter(), not(commonClasses())), this.config,
         this.isVerbose(), this.getDependencyAnalysisMaxDistance());
   }
 
   private static F<String, Boolean> commonClasses() {
     return new F<String, Boolean>() {
 
-      public Boolean apply(String name) {
+      public Boolean apply(final String name) {
         return name.startsWith("java") || name.startsWith("sun/")
             || name.startsWith("org/junit") || name.startsWith("junit");
       }
@@ -413,7 +416,11 @@ public class ReportOptions {
     return this.codePaths;
   }
 
-  public void setCodePaths(Collection<String> codePaths) {
+  public void setCodePaths(final Collection<String> codePaths) {
     this.codePaths = codePaths;
+  }
+
+  public void setConfiguration(final Configuration configuration) {
+    this.config = configuration;
   }
 }

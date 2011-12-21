@@ -12,25 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package com.example.testng;
 
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.classloader.ClassPathRoot;
+import static org.testng.AssertJUnit.assertEquals;
 
-public class DefaultDependencyPathPredicate implements Predicate<ClassPathRoot> {
+import org.testng.annotations.Test;
 
-  DefaultDependencyPathPredicate() {
+public class FullyCoveredByTestNGTesteeTest {
 
+  @Test
+  public void testCoverMe() {
+    final FullyCoveredByTestNGTestee testee = new FullyCoveredByTestNGTestee();
+    assertEquals(1, testee.coverMe());
   }
-
-  public Boolean apply(final ClassPathRoot a) {
-    return a.cacheLocation().hasSome()
-        && isADependencyPath(a.cacheLocation().value());
-  }
-
-  private boolean isADependencyPath(final String path) {
-    final String lowerCasePath = path.toLowerCase();
-    return lowerCasePath.endsWith(".jar") || lowerCasePath.endsWith(".zip");
-  }
-
 }

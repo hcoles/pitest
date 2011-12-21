@@ -21,8 +21,8 @@ public class ClassFilter {
   private final Predicate<String> test;
   private final Predicate<String> code;
 
-  public ClassFilter(Predicate<String> scope, Predicate<String> test,
-      Predicate<String> code) {
+  public ClassFilter(final Predicate<String> scope,
+      final Predicate<String> test, final Predicate<String> code) {
     this.scope = scope;
     this.test = test;
     this.code = code;

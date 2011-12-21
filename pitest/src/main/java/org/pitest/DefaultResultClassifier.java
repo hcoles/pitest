@@ -28,9 +28,8 @@ public class DefaultResultClassifier implements ResultClassifier {
   private final Set<String> assertionTypes = new LinkedHashSet<String>();
 
   public DefaultResultClassifier() {
-    this.assertionTypes.add(java.lang.AssertionError.class.getName());
-    this.assertionTypes.add(junit.framework.AssertionFailedError.class
-        .getName());
+    this.assertionTypes.add("java.lang.AssertionError");
+    this.assertionTypes.add("junit.framework.AssertionFailedError");
   }
 
   public ResultType classify(final TestResult result) {

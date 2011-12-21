@@ -314,16 +314,18 @@ public class TestMutationTesting {
       final JavaAgent agent,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
-    CoverageOptions coverageOptions = data.createCoverageOptions(this.config);
-    LaunchOptions launchOptions = new LaunchOptions(agent, data.getJvmArgs());
+    data.setConfiguration(this.config);
+    final CoverageOptions coverageOptions = data.createCoverageOptions();
+    final LaunchOptions launchOptions = new LaunchOptions(agent,
+        data.getJvmArgs());
 
-    PathFilter pf = new PathFilter(
+    final PathFilter pf = new PathFilter(
         Prelude.not(new DefaultDependencyPathPredicate()),
         Prelude.not(new DefaultDependencyPathPredicate()));
-    MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
+    final MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 
-    CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         coverageOptions, launchOptions, cps);
 
     // final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(

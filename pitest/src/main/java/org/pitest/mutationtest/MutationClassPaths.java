@@ -23,8 +23,8 @@ public class MutationClassPaths {
   private final ClassFilter classFilter;
   private final PathFilter  pathFilter;
 
-  public MutationClassPaths(ClassPath classPath, ClassFilter classFilter,
-      PathFilter pathFilter) {
+  public MutationClassPaths(final ClassPath classPath,
+      final ClassFilter classFilter, final PathFilter pathFilter) {
     this.classPath = classPath;
     this.classFilter = classFilter;
     this.pathFilter = pathFilter;

@@ -22,10 +22,12 @@ import java.util.HashSet;
 
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.Unchecked;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
@@ -234,6 +236,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         .shouldFailWhenNoMutations());
     assertFalse(parseConfig("<failWhenNoMutations>false</failWhenNoMutations>")
         .shouldFailWhenNoMutations());
+  }
+
+  public void testParsesTestTypeToUse() {
+    assertTrue(parseConfig("<testType>TESTNG</testType>")
+        .createCoverageOptions().getPitConfig() instanceof TestNGConfiguration);
+    assertTrue(parseConfig("<testType>JUNIT</testType>")
+        .createCoverageOptions().getPitConfig() instanceof JUnitCompatibleConfiguration);
   }
 
   private ReportOptions parseConfig(final String xml) {

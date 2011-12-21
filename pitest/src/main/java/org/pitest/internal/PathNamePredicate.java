@@ -21,11 +21,11 @@ public class PathNamePredicate implements Predicate<ClassPathRoot> {
 
   private final Predicate<String> stringFilter;
 
-  public PathNamePredicate(Predicate<String> stringFilter) {
+  public PathNamePredicate(final Predicate<String> stringFilter) {
     this.stringFilter = stringFilter;
   }
 
-  public Boolean apply(ClassPathRoot a) {
+  public Boolean apply(final ClassPathRoot a) {
     return a.cacheLocation().hasSome()
         && this.stringFilter.apply(a.cacheLocation().value());
   }

@@ -56,7 +56,7 @@ public class MutationTestBuilder {
   public MutationTestBuilder(final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
       final Configuration initialConfig, final ReportOptions data,
-      final JavaAgent javaAgentFinder, ClassByteArraySource source) {
+      final JavaAgent javaAgentFinder, final ClassByteArraySource source) {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.mutationConfig = mutationConfig;

@@ -129,12 +129,12 @@ public enum Mutator implements MutatorGrouping {
   }
 
   public static Collection<MethodMutatorFactory> asCollection(
-      MutatorGrouping... groupings) {
+      final MutatorGrouping... groupings) {
     return FArray.flatMap(groupings, Prelude.id(MutatorGrouping.class));
   }
 
   public static Collection<MethodMutatorFactory> asCollection(
-      Collection<? extends MutatorGrouping> groups) {
+      final Collection<? extends MutatorGrouping> groups) {
     return FCollection.flatMap(groups, Prelude.id(MutatorGrouping.class));
   }
 

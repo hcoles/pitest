@@ -28,11 +28,13 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.MutatorGrouping;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
@@ -115,7 +117,18 @@ public class MojoToReportOptionsConverter {
 
     data.addOutputFormats(determineOutputFormats());
 
+    setTestType(data);
+
     return data;
+  }
+
+  private void setTestType(ReportOptions data) {
+    String testType = this.mojo.getTestType();
+    if (testType != null && testType.equalsIgnoreCase("TESTNG")) {
+      data.setConfiguration(new TestNGConfiguration());
+    } else {
+      data.setConfiguration(new JUnitCompatibleConfiguration());
+    }
   }
 
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {

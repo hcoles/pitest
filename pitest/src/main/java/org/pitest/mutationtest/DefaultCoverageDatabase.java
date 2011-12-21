@@ -64,8 +64,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   private boolean                                          allTestsGreen = true;
 
-  public DefaultCoverageDatabase(CoverageOptions coverageOptions,
-      LaunchOptions launchOptions, final MutationClassPaths classPath) {
+  public DefaultCoverageDatabase(final CoverageOptions coverageOptions,
+      final LaunchOptions launchOptions, final MutationClassPaths classPath) {
     this.coverageOptions = coverageOptions;
     this.classPath = classPath;
     this.launchOptions = launchOptions;

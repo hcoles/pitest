@@ -65,7 +65,7 @@ public class MutationCoverageReportTest {
     try {
       this.data.setFailWhenNoMutations(true);
       createAndRunTestee();
-    } catch (PitHelpError phe) {
+    } catch (final PitHelpError phe) {
       assertEquals(Help.FAILING_TESTS.toString(), phe.getMessage());
     }
   }
@@ -81,7 +81,7 @@ public class MutationCoverageReportTest {
     try {
       this.data.setFailWhenNoMutations(true);
       createAndRunTestee();
-    } catch (PitHelpError phe) {
+    } catch (final PitHelpError phe) {
       assertEquals(Help.NO_MUTATIONS_FOUND.toString(), phe.getMessage());
     }
   }

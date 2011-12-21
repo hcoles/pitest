@@ -21,7 +21,6 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.util.Glob;
 
 public class ReportOptionsTest {
@@ -38,8 +37,7 @@ public class ReportOptionsTest {
         .singleton("*")));
     this.testee.setClassesInScope(Glob.toGlobPredicates(Collections
         .singleton("*")));
-    CoverageOptions actual = this.testee
-        .createCoverageOptions(new JUnitCompatibleConfiguration());
+    final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("java/Integer"));
 
   }

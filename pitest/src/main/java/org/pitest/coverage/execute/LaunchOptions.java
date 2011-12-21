@@ -23,7 +23,8 @@ public class LaunchOptions {
   private final JavaAgent    javaAgentFinder;
   private final List<String> childJVMArgs;
 
-  public LaunchOptions(JavaAgent javaAgentFinder, List<String> childJVMArgs) {
+  public LaunchOptions(final JavaAgent javaAgentFinder,
+      final List<String> childJVMArgs) {
     this.javaAgentFinder = javaAgentFinder;
     this.childJVMArgs = childJVMArgs;
   }

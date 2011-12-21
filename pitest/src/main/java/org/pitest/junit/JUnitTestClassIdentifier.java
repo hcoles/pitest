@@ -16,7 +16,6 @@ package org.pitest.junit;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.TestClassIdentifier;
-import org.pitest.util.TestInfo;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 

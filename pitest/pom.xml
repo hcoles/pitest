@@ -60,9 +60,19 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<testNGArtifactName>none:none</testNGArtifactName>
+
 					<!-- for PowerMockAgentTest -->
-					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -javaagent:${settings.localRepository}/org/dspace/dependencies/jmockit/dspace-jmockit/0.999.4/dspace-jmockit-0.999.4.jar -Dfoo=foo</argLine>
+					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -Dfoo=foo</argLine>
 				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.testng</groupId>
+						<artifactId>testng</artifactId>
+						<version>6.1.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 
@@ -281,7 +291,12 @@
 			<version>0.999.4</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.1.1</version>
+			<scope>compile</scope>
+		</dependency>
 
 	</dependencies>
 

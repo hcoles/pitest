@@ -163,6 +163,13 @@ public class PitMojo extends AbstractMojo {
   private boolean               failWhenNoMutations;
 
   /**
+   * Type of tests to look for
+   * 
+   * @parameter default-value="JUNIT"
+   */
+  private String                testType;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -306,5 +313,9 @@ public class PitMojo extends AbstractMojo {
 
   public boolean isFailWhenNoMutations() {
     return this.failWhenNoMutations;
+  }
+
+  public String getTestType() {
+    return this.testType;
   }
 }

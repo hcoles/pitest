@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
-import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
@@ -19,9 +19,9 @@ import org.pitest.util.SafeDataOutputStream;
 public class CoverageCommunicationThread extends CommunicationThread {
 
   static class SendData implements SideEffect1<SafeDataOutputStream> {
-    private final static Logger  LOG = Log.getLogger();
+    private final static Logger   LOG = Log.getLogger();
     private final CoverageOptions arguments;
-    private final List<String>   testClasses;
+    private final List<String>    testClasses;
 
     SendData(final CoverageOptions arguments, final List<String> testClasses) {
       this.arguments = arguments;

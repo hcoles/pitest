@@ -71,7 +71,8 @@ public abstract class MutatorTestBase {
         mutators, loggingClasses);
   }
 
-  protected void createTesteeWith(Collection<MethodMutatorFactory> mutators) {
+  protected void createTesteeWith(
+      final Collection<MethodMutatorFactory> mutators) {
     createTesteeWith(True.<MethodInfo> all(), mutators);
   }
 

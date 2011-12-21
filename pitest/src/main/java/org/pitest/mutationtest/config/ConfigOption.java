@@ -116,11 +116,11 @@ public enum ConfigOption {
   private final String text;
   private final Object defaultValue;
 
-  ConfigOption(String text) {
+  ConfigOption(final String text) {
     this(text, null);
   }
 
-  ConfigOption(String text, Object defaultValue) {
+  ConfigOption(final String text, final Object defaultValue) {
     this.text = text;
     this.defaultValue = defaultValue;
   }
@@ -130,7 +130,7 @@ public enum ConfigOption {
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T getDefault(Class<T> type) {
+  public <T> T getDefault(final Class<T> type) {
     // so much for type safety
     return (T) this.defaultValue;
   }

@@ -234,7 +234,7 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseComaSeperatedListOfMutableCodePaths() {
-    ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
+    final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
         "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
   }
