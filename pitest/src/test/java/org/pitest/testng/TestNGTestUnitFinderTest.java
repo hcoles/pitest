@@ -24,15 +24,15 @@ import com.example.testng.AnnotatedAtMethodLevel;
 public class TestNGTestUnitFinderTest {
 
   @Test
-  public void shouldFindSingleTestUnitInAnnotatedClass() {
+  public void shouldFindTestUnitForEachPublicMethosInAnnotatedClass() {
     final TestNGTestUnitFinder testee = new TestNGTestUnitFinder();
-    assertEquals(1, testee.findTestUnits(AnnotatedAtClassLevel.class).size());
+    assertEquals(2, testee.findTestUnits(AnnotatedAtClassLevel.class).size());
   }
 
   @Test
-  public void shouldFindSingleTestUnitInClassWithAnnotatedMethods() {
+  public void shouldFindTestUnitForEachMethodInClassWithAnnotatedMethods() {
     final TestNGTestUnitFinder testee = new TestNGTestUnitFinder();
-    assertEquals(1, testee.findTestUnits(AnnotatedAtMethodLevel.class).size());
+    assertEquals(2, testee.findTestUnits(AnnotatedAtMethodLevel.class).size());
   }
 
   @Test

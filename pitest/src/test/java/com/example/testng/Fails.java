@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 public class Fails {
   @org.testng.annotations.Test
-  public void passes() {
+  public void fails() {
     assertTrue(false);
   }
 }

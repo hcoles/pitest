@@ -14,31 +14,70 @@
  */
 package org.pitest.testng;
 
+import java.util.Collections;
+
+import org.pitest.PitError;
 import org.pitest.extension.ResultCollector;
+import org.pitest.internal.ClassLoaderDetectionStrategy;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.testunit.AbstractTestUnit;
 import org.testng.ITestListener;
 import org.testng.TestNG;
+import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
+import org.testng.xml.XmlSuite;
+import org.testng.xml.XmlTest;
 
 public class TestNGTestUnit extends AbstractTestUnit {
 
-  private final Class<?> clazz;
+  private final ClassLoaderDetectionStrategy classloaderDetection;
+  private final Class<?>                     clazz;
+  private final String                       method;
 
-  public TestNGTestUnit(final Class<?> clazz) {
-    super(new org.pitest.Description(clazz.getName(), clazz));
+  public TestNGTestUnit(ClassLoaderDetectionStrategy classloaderDetection,
+      final Class<?> clazz, final String method) {
+    super(new org.pitest.Description(method, clazz));
     this.clazz = clazz;
+    this.classloaderDetection = classloaderDetection;
+    this.method = method;
+  }
+
+  public TestNGTestUnit(final Class<?> clazz, String method) {
+    this(IsolationUtils.loaderDetectionStrategy(), clazz, method);
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
-    // take a look at testnmethodfinder
+    if (this.classloaderDetection.fromDifferentLoader(this.clazz, loader)) {
+      throw new PitError(
+          "mutation of static initializers not currently supported for TestNG");
+    }
 
     final ITestListener listener = new TestNGAdapter(this.getDescription(), rc);
     final TestNG testng = new TestNG();
+
+    XmlSuite suite = createSuite();
+
     testng.setUseDefaultListeners(false);
-    testng.setTestClasses(new Class[] { this.clazz });
+
+    testng.setXmlSuites(Collections.singletonList(suite));
+
     testng.addListener(listener);
     testng.run();
+  }
+
+  private XmlSuite createSuite() {
+    XmlSuite suite = new XmlSuite();
+    suite.setName(this.clazz.getName());
+    XmlTest test = new XmlTest(suite);
+    test.setName(this.method);
+    XmlClass xclass = new XmlClass(this.clazz.getName());
+    XmlInclude include = new XmlInclude(this.method);
+    xclass.setIncludedMethods(Collections.singletonList(include));
+    test.setXmlClasses(Collections.singletonList(xclass));
+
+    return suite;
   }
 
 }

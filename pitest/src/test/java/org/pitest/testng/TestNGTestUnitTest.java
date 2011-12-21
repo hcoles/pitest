@@ -24,7 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.PitError;
 import org.pitest.extension.ResultCollector;
+import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
 
 import com.example.testng.Fails;
@@ -45,24 +47,47 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldReportTestStart() {
-    this.testee = new TestNGTestUnit(Passes.class);
+    this.testee = new TestNGTestUnit(Passes.class, "passes");
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
 
   @Test
   public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfully() {
-    this.testee = new TestNGTestUnit(Passes.class);
+    this.testee = new TestNGTestUnit(Passes.class, "passes");
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyEnd(this.testee.getDescription());
   }
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFails() {
-    this.testee = new TestNGTestUnit(Fails.class);
+    this.testee = new TestNGTestUnit(Fails.class, "fails");
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyEnd(eq(this.testee.getDescription()),
         any(AssertionFailedError.class));
+  }
+
+  @Test
+  public void shouldRunOnlyTheRequestedMethod() {
+    this.testee = new TestNGTestUnit(HasOnePassingAndOneFailingMethod.class,
+        "passes");
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifyEnd(eq(this.testee.getDescription()));
+  }
+
+  @Test(expected = PitError.class)
+  public void shouldReportErrorWhenRunInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, null);
+    this.testee.execute(this.loader, this.rc);
+  }
+
+  private ClassLoaderDetectionStrategy neverMatch() {
+    return new ClassLoaderDetectionStrategy() {
+      public boolean fromDifferentLoader(Class<?> clazz, ClassLoader loader) {
+        return true;
+      }
+
+    };
   }
 
 }

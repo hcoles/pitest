@@ -64,6 +64,16 @@
 
 					<!-- for PowerMockAgentTest -->
 					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -Dfoo=foo</argLine>
+
+					<includes>
+						<include>**/Test*.java</include>
+						<include>**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/*$*</exclude>
+						<exclude>**/com/*/**.java</exclude>
+						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
+					</excludes>
 				</configuration>
 
 				<dependencies>
