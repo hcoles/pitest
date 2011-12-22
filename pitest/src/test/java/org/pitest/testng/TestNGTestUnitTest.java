@@ -16,7 +16,6 @@ package org.pitest.testng;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -29,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.extension.ResultCollector;
 import org.pitest.internal.ClassLoaderDetectionStrategy;
@@ -36,7 +36,6 @@ import org.pitest.internal.IsolationUtils;
 
 import com.example.testng.Fails;
 import com.example.testng.HasGroups;
-import com.example.testng.HasOnePassingAndOneFailingMethod;
 import com.example.testng.Passes;
 
 public class TestNGTestUnitTest {
@@ -57,50 +56,40 @@ public class TestNGTestUnitTest {
   }
 
   @Test
-  public void shouldReportTestStart() {
-    this.testee = new TestNGTestUnit(Passes.class, "passes", this.config);
+  public void shouldReportTestClassStart() {
+    this.testee = new TestNGTestUnit(Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
 
   @Test
-  public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfully() {
-    this.testee = new TestNGTestUnit(Passes.class, "passes", this.config);
+  public void shouldReportTestMethodStart() {
+    this.testee = new TestNGTestUnit(Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
-    verify(this.rc, times(1)).notifyEnd(this.testee.getDescription());
+    verify(this.rc, times(1)).notifyStart(
+        new Description("passes", Passes.class));
+  }
+
+  @Test
+  public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfully() {
+    this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1))
+        .notifyEnd(new Description("passes", Passes.class));
   }
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFails() {
-    this.testee = new TestNGTestUnit(Fails.class, "fails", this.config);
+    this.testee = new TestNGTestUnit(Fails.class, this.config);
     this.testee.execute(this.loader, this.rc);
-    verify(this.rc, times(1)).notifyEnd(eq(this.testee.getDescription()),
+    verify(this.rc, times(1)).notifyEnd(
+        eq(new Description("fails", Fails.class)),
         any(AssertionFailedError.class));
-  }
-
-  @Test
-  public void shouldRunOnlyTheRequestedMethod() {
-    this.testee = new TestNGTestUnit(HasOnePassingAndOneFailingMethod.class,
-        "passes", this.config);
-    this.testee.execute(this.loader, this.rc);
-    verify(this.rc, never()).notifyEnd(eq(this.testee.getDescription()),
-        any(Throwable.class));
-  }
-
-  @Test
-  public void shouldRunAllMethodsWhenNoSpecificOneSpecified() {
-    this.testee = new TestNGTestUnit(HasOnePassingAndOneFailingMethod.class,
-        "all of them", this.config);
-    this.testee.execute(this.loader, this.rc);
-    verify(this.rc, times(1)).notifyEnd(eq(this.testee.getDescription()),
-        any(Throwable.class));
-    verify(this.rc, times(1)).notifyEnd(eq(this.testee.getDescription()));
   }
 
   @Test(expected = PitError.class)
   public void shouldReportErrorWhenRunInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, null,
-        this.config);
+    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, this.config);
     this.testee.execute(this.loader, this.rc);
   }
 
@@ -108,11 +97,24 @@ public class TestNGTestUnitTest {
   public void shouldNotRunTestsInExcludedGroups() {
     TestNGConfig excludeConfig = new TestNGConfig(Arrays.asList("exclude"),
         Collections.<String> emptyList());
-    this.testee = new TestNGTestUnit(HasGroups.class, "all methods",
-        excludeConfig);
+    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
     this.testee.execute(this.loader, this.rc);
-    verify(this.rc, times(2)).notifyEnd(this.testee.getDescription());
+    verify(this.rc, times(1)).notifyEnd(
+        new Description("includeGroup", HasGroups.class));
+    verify(this.rc, times(1)).notifyEnd(
+        new Description("noGroup", HasGroups.class));
+  }
 
+  @Test
+  public void shouldOnlyRunTestsInIncludedGroups() {
+    TestNGConfig excludeConfig = new TestNGConfig(
+        Collections.<String> emptyList(), Arrays.asList("include"));
+    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifyEnd(
+        new Description("includeGroup", HasGroups.class));
+    verify(this.rc, times(1)).notifyEnd(
+        new Description("includeAndExcludeGroup", HasGroups.class));
   }
 
   private ClassLoaderDetectionStrategy neverMatch() {

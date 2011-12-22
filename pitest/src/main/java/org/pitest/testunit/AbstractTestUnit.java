@@ -14,9 +14,6 @@
  */
 package org.pitest.testunit;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -31,10 +28,6 @@ public abstract class AbstractTestUnit implements TestUnit {
 
   public AbstractTestUnit(final Description description) {
     this.description = description;
-  }
-
-  public Iterator<TestUnit> iterator() {
-    return Collections.<TestUnit> emptyList().iterator();
   }
 
   public abstract void execute(final ClassLoader loader,

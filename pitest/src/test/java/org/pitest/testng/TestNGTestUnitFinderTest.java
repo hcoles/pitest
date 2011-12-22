@@ -42,8 +42,8 @@ public class TestNGTestUnitFinderTest {
   }
 
   @Test
-  public void shouldFindTestUnitForEachMethodInClassWithAnnotatedMethods() {
-    assertEquals(2, this.testee.findTestUnits(AnnotatedAtMethodLevel.class)
+  public void shouldFindSingleTestUnitClassWithAnnotatedMethods() {
+    assertEquals(1, this.testee.findTestUnits(AnnotatedAtMethodLevel.class)
         .size());
   }
 

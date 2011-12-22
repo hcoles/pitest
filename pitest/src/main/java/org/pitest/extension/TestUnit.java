@@ -20,7 +20,7 @@ import org.pitest.Description;
  * @author henry
  * 
  */
-public interface TestUnit extends Iterable<TestUnit> {
+public interface TestUnit {
 
   public void execute(ClassLoader loader, ResultCollector rc);
 

@@ -16,7 +16,6 @@
 package org.pitest;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -42,11 +41,6 @@ public class MultipleTestGroup extends AbstractTestUnit {
       }
     }
 
-  }
-
-  @Override
-  public Iterator<TestUnit> iterator() {
-    return this.children.iterator();
   }
 
   @Override

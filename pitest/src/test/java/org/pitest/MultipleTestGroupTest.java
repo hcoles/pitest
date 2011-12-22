@@ -14,14 +14,12 @@
  */
 package org.pitest;
 
-import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,13 +48,6 @@ public class MultipleTestGroupTest {
         new Description("foo", String.class));
     when(this.emptyTestUnit2.getDescription()).thenReturn(
         new Description("foo2", String.class));
-  }
-
-  @Test
-  public void shouldIterateOverChildTestUnits() {
-    this.testee = new MultipleTestGroup(
-        Collections.singletonList(this.emptyTestUnit));
-    assertSame(this.emptyTestUnit, this.testee.iterator().next());
   }
 
   @Test

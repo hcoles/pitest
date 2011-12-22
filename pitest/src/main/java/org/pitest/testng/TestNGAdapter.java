@@ -19,44 +19,63 @@ import org.pitest.extension.ResultCollector;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 
 public class TestNGAdapter implements ITestListener {
 
   private final ResultCollector rc;
   private final Description     description;
+  private final Class<?>        clazz;
+  private boolean               hasHadFailure = false;
+  private Throwable             error;
 
-  public TestNGAdapter(final Description d, final ResultCollector rc) {
+  public TestNGAdapter(final Class<?> clazz, final Description d,
+      final ResultCollector rc) {
     this.rc = rc;
     this.description = d;
+    this.clazz = clazz;
   }
 
   public void onFinish(final ITestContext arg0) {
+    if (this.error != null) {
+      this.rc.notifyEnd(this.description, this.error);
+    } else {
+      this.rc.notifyEnd(this.description);
+    }
   }
 
   public void onStart(final ITestContext arg0) {
-
+    this.rc.notifyStart(this.description);
   }
 
   public void onTestFailedButWithinSuccessPercentage(final ITestResult arg0) {
     // is this success or failure?
-    this.rc.notifyEnd(this.description);
+    this.rc.notifyEnd(makeDescription(arg0));
   }
 
   public void onTestFailure(final ITestResult arg0) {
-    this.rc.notifyEnd(this.description, arg0.getThrowable());
+    this.hasHadFailure = true;
+    this.error = arg0.getThrowable();
+    this.rc.notifyEnd(makeDescription(arg0), this.error);
   }
 
   public void onTestSkipped(final ITestResult arg0) {
-    this.rc.notifySkipped(this.description);
+    this.rc.notifySkipped(makeDescription(arg0));
   }
 
   public void onTestStart(final ITestResult arg0) {
-    this.rc.notifyStart(this.description);
+    if (this.hasHadFailure) {
+      throw new SkipException("skipping");
+    }
+    this.rc.notifyStart(makeDescription(arg0));
   }
 
   public void onTestSuccess(final ITestResult arg0) {
-    System.out.println(arg0.getMethod().getMethodName());
-    this.rc.notifyEnd(this.description);
+    this.rc.notifyEnd(makeDescription(arg0));
+  }
+
+  private Description makeDescription(ITestResult result) {
+    return new Description(result.getMethod().getMethodName(), this.clazz);
   }
 
 }

@@ -24,29 +24,31 @@ import org.pitest.testunit.AbstractTestUnit;
 import org.testng.ITestListener;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
-import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
+/**
+ * Runs tests within a class via TestNG. It would be possible to create a test
+ * unit per method using TestNG's filters but this is about ten times slower and
+ * probably more than negates any advantage from more finely targeting the
+ * tests.
+ */
 public class TestNGTestUnit extends AbstractTestUnit {
 
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
-  private final String                       method;
   private final TestNGConfig                 config;
 
   public TestNGTestUnit(ClassLoaderDetectionStrategy classloaderDetection,
-      final Class<?> clazz, final String method, final TestNGConfig config) {
-    super(new org.pitest.Description(method, clazz));
+      final Class<?> clazz, final TestNGConfig config) {
+    super(new org.pitest.Description("_", clazz));
     this.clazz = clazz;
     this.classloaderDetection = classloaderDetection;
-    this.method = method;
     this.config = config;
   }
 
-  public TestNGTestUnit(final Class<?> clazz, String method,
-      final TestNGConfig config) {
-    this(IsolationUtils.loaderDetectionStrategy(), clazz, method, config);
+  public TestNGTestUnit(final Class<?> clazz, final TestNGConfig config) {
+    this(IsolationUtils.loaderDetectionStrategy(), clazz, config);
   }
 
   @Override
@@ -57,7 +59,8 @@ public class TestNGTestUnit extends AbstractTestUnit {
           "mutation of static initializers not currently supported for TestNG");
     }
 
-    final ITestListener listener = new TestNGAdapter(this.getDescription(), rc);
+    final ITestListener listener = new TestNGAdapter(this.clazz,
+        this.getDescription(), rc);
     final TestNG testng = new TestNG();
 
     XmlSuite suite = createSuite();
@@ -74,10 +77,8 @@ public class TestNGTestUnit extends AbstractTestUnit {
     XmlSuite suite = new XmlSuite();
     suite.setName(this.clazz.getName());
     XmlTest test = new XmlTest(suite);
-    test.setName(this.method);
+    test.setName(this.clazz.getName());
     XmlClass xclass = new XmlClass(this.clazz.getName());
-    XmlInclude include = new XmlInclude(this.method);
-    xclass.setIncludedMethods(Collections.singletonList(include));
     test.setXmlClasses(Collections.singletonList(xclass));
     if (!this.config.getExcludedGroups().isEmpty()) {
       suite.setExcludedGroups(this.config.getExcludedGroups());
