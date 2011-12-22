@@ -16,29 +16,42 @@ package org.pitest.testng;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import com.example.testng.AbstractClass;
 import com.example.testng.AnnotatedAtClassLevel;
 import com.example.testng.AnnotatedAtMethodLevel;
 
 public class TestNGTestUnitFinderTest {
 
+  private TestNGTestUnitFinder testee;
+
+  @Before
+  public void setUp() {
+    this.testee = new TestNGTestUnitFinder();
+  }
+
   @Test
-  public void shouldFindTestUnitForEachPublicMethosInAnnotatedClass() {
-    final TestNGTestUnitFinder testee = new TestNGTestUnitFinder();
-    assertEquals(2, testee.findTestUnits(AnnotatedAtClassLevel.class).size());
+  public void shouldFindSingleTestUnitForAllPublicMethodsInAnnotatedClass() {
+    assertEquals(1, this.testee.findTestUnits(AnnotatedAtClassLevel.class)
+        .size());
   }
 
   @Test
   public void shouldFindTestUnitForEachMethodInClassWithAnnotatedMethods() {
-    final TestNGTestUnitFinder testee = new TestNGTestUnitFinder();
-    assertEquals(2, testee.findTestUnits(AnnotatedAtMethodLevel.class).size());
+    assertEquals(2, this.testee.findTestUnits(AnnotatedAtMethodLevel.class)
+        .size());
   }
 
   @Test
   public void shouldFindNoTestUnitsInUnannotatedClasses() {
-    final TestNGTestUnitFinder testee = new TestNGTestUnitFinder();
-    assertEquals(0, testee.findTestUnits(String.class).size());
+    assertEquals(0, this.testee.findTestUnits(String.class).size());
+  }
+
+  @Test
+  public void shouldNotFindTestUnitsInAbstractClasses() {
+    assertEquals(0, this.testee.findTestUnits(AbstractClass.class).size());
   }
 
 }

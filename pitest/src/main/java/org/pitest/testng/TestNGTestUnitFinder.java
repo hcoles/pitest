@@ -15,6 +15,7 @@
 package org.pitest.testng;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -22,7 +23,6 @@ import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.reflection.IsAnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -30,32 +30,49 @@ import org.pitest.reflection.Reflection;
 public class TestNGTestUnitFinder implements TestUnitFinder {
 
   public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
+    if (Modifier.isAbstract(clazz.getModifiers())) {
+      return Collections.emptyList();
+    }
+
     if (hasClassAnnotation(clazz)) {
       return findForAnnotatedClazz(clazz);
     } else if (hasMethodAnnotation(clazz)) {
       return findForAnnotateMethods(clazz);
-    } else {
-      return Collections.emptyList();
     }
+    return Collections.emptyList();
 
   }
 
-  @SuppressWarnings("unchecked")
   private Collection<TestUnit> findForAnnotatedClazz(Class<?> clazz) {
-    return FCollection.map(Reflection.publicMethods(clazz, Prelude.or(
-        IsAnotatedWith.instance(org.testng.annotations.Test.class),
-        notDefinedByObject())), methodToTestUnit(clazz));
+    // rather than second guess rules, treat as single unit for now
+    return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz,
+        "all tests"));
+
+    // return FCollection.map(Reflection.publicMethods(clazz, Prelude.or(
+    // IsAnotatedWith.instance(org.testng.annotations.Test.class),
+    // isMadeATestMethodByClassAnnotation())), methodToTestUnit(clazz));
   }
 
-  private Predicate<Method> notDefinedByObject() {
+  private Predicate<Method> isMadeATestMethodByClassAnnotation() {
     return new Predicate<Method>() {
 
       public Boolean apply(Method a) {
-        return a.getDeclaringClass() != Object.class;
+        return a.getDeclaringClass() != Object.class
+            && !Modifier.isStatic(a.getModifiers())
+            && Modifier.isPublic(a.getModifiers());
+        // && notAnnotatedWith(BeforeSuite.class, AfterSuite.class,
+        // BeforeTest.class, AfterTest.class, BeforeGroups.class,
+        // AfterGroups.class, BeforeClass.class, AfterClass.class,
+        // BeforeMethod.class, AfterMethod.class);
       }
 
     };
   }
+
+  // / protected boolean notAnnotatedWith(Class<? extends Annotation>
+  // annotations) {
+  // return FArray.filter(, predicate)
+  // }
 
   private Collection<TestUnit> findForAnnotateMethods(Class<?> clazz) {
     return FCollection.map(
