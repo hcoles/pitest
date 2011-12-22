@@ -14,12 +14,9 @@
  */
 package com.example.testng;
 
-import org.testng.annotations.Test;
+public class InheritsFromAnnotatedBase extends AnnotatedBase {
 
-@Test
-public class StaticMethods {
-
-  public static void aTest() {
+  public void aTest() {
 
   }
 

@@ -34,6 +34,7 @@ import org.pitest.mutationtest.MutatorGrouping;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestNGConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.Functions;
 import org.pitest.util.Glob;
@@ -125,7 +126,9 @@ public class MojoToReportOptionsConverter {
   private void setTestType(ReportOptions data) {
     String testType = this.mojo.getTestType();
     if (testType != null && testType.equalsIgnoreCase("TESTNG")) {
-      data.setConfiguration(new TestNGConfiguration());
+      TestNGConfig conf = new TestNGConfig(this.mojo.getExcludedTestNGGroups(),
+          this.mojo.getIncludedTestNGGroups());
+      data.setConfiguration(new TestNGConfiguration(conf));
     } else {
       data.setConfiguration(new JUnitCompatibleConfiguration());
     }

@@ -55,6 +55,7 @@ public class TestNGAdapter implements ITestListener {
   }
 
   public void onTestSuccess(final ITestResult arg0) {
+    System.out.println(arg0.getMethod().getMethodName());
     this.rc.notifyEnd(this.description);
   }
 

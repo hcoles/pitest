@@ -15,12 +15,20 @@
 package org.pitest.testng;
 
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.TestClassIdentifier;
+import org.pitest.functional.Option;
 
 public class TestNGTestClassIdentifier implements TestClassIdentifier {
+  private final static ClassName annotationName = new ClassName(
+                                                    "org.testng.annotations.Test");
 
   public boolean isATestClass(final ClassInfo a) {
-    return a.hasAnnotation(org.testng.annotations.Test.class);
+    return a.hasAnnotation(annotationName) || isATestClass(a.getSuperClass());
+  }
+
+  private boolean isATestClass(Option<ClassInfo> clazz) {
+    return clazz.hasSome() && isATestClass(clazz.value());
   }
 
 }

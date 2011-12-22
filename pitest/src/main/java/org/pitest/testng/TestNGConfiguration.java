@@ -22,8 +22,14 @@ import org.pitest.extension.common.NoTestSuiteFinder;
 
 public class TestNGConfiguration implements Configuration {
 
+  private final TestNGConfig config;
+
+  public TestNGConfiguration(TestNGConfig config) {
+    this.config = config;
+  }
+
   public TestUnitFinder testUnitFinder() {
-    return new TestNGTestUnitFinder();
+    return new TestNGTestUnitFinder(this.config);
   }
 
   public TestSuiteFinder testSuiteFinder() {

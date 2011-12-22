@@ -14,12 +14,9 @@
  */
 package com.example.testng;
 
-import org.testng.annotations.Test;
-
-@Test
-public class StaticMethods {
-
-  public static void aTest() {
+public class Passes {
+  @org.testng.annotations.Test
+  public void passes() {
 
   }
 

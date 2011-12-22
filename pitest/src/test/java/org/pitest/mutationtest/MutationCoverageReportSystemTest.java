@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,6 +39,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.testng.TestNGConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
@@ -285,7 +287,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data
         .setTargetClasses(predicateFor("com.example.testng.FullyCovered*"));
     this.data.setVerbose(true);
-    createAndRun(new TestNGConfiguration());
+    createAndRun(new TestNGConfiguration(new TestNGConfig(
+        Collections.<String> emptyList(), Collections.<String> emptyList())));
     verifyResults(KILLED);
   }
 

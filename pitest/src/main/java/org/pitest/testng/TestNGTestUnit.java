@@ -33,17 +33,20 @@ public class TestNGTestUnit extends AbstractTestUnit {
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
   private final String                       method;
+  private final TestNGConfig                 config;
 
   public TestNGTestUnit(ClassLoaderDetectionStrategy classloaderDetection,
-      final Class<?> clazz, final String method) {
+      final Class<?> clazz, final String method, final TestNGConfig config) {
     super(new org.pitest.Description(method, clazz));
     this.clazz = clazz;
     this.classloaderDetection = classloaderDetection;
     this.method = method;
+    this.config = config;
   }
 
-  public TestNGTestUnit(final Class<?> clazz, String method) {
-    this(IsolationUtils.loaderDetectionStrategy(), clazz, method);
+  public TestNGTestUnit(final Class<?> clazz, String method,
+      final TestNGConfig config) {
+    this(IsolationUtils.loaderDetectionStrategy(), clazz, method, config);
   }
 
   @Override
@@ -76,6 +79,13 @@ public class TestNGTestUnit extends AbstractTestUnit {
     XmlInclude include = new XmlInclude(this.method);
     xclass.setIncludedMethods(Collections.singletonList(include));
     test.setXmlClasses(Collections.singletonList(xclass));
+    if (!this.config.getExcludedGroups().isEmpty()) {
+      suite.setExcludedGroups(this.config.getExcludedGroups());
+    }
+
+    if (!this.config.getIncludedGroups().isEmpty()) {
+      suite.setIncludedGroups(this.config.getIncludedGroups());
+    }
 
     return suite;
   }

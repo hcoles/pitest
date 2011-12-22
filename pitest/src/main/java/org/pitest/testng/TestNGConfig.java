@@ -14,14 +14,27 @@
  */
 package org.pitest.testng;
 
-public class HasOnePassingAndOneFailingMethod {
-  @org.testng.annotations.Test
-  public void passes() {
+import java.util.Collections;
+import java.util.List;
 
+public class TestNGConfig {
+
+  private final List<String> excludedGroups;
+  private final List<String> includedGroups;
+
+  public TestNGConfig(List<String> excludedGroups, List<String> includedGroups) {
+    this.excludedGroups = (excludedGroups != null ? excludedGroups
+        : Collections.<String> emptyList());
+    this.includedGroups = (includedGroups != null ? includedGroups
+        : Collections.<String> emptyList());
   }
 
-  @org.testng.annotations.Test
-  public void fails() {
-    throw new RuntimeException("oops");
+  public List<String> getExcludedGroups() {
+    return this.excludedGroups;
   }
+
+  public List<String> getIncludedGroups() {
+    return this.includedGroups;
+  }
+
 }

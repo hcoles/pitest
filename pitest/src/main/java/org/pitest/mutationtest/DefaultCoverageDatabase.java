@@ -80,6 +80,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         this.classPath.test(), nameToClassInfo()).filter(
         and(isWithinATestClass(), not(ClassInfo.matchIfAbstract())));
 
+    LOG.info("Found " + directlySuppliedTestsAndSuites.size()
+        + " classes that might define tests");
+
     calculateCoverage(directlySuppliedTestsAndSuites);
 
     this.codeClasses = FCollection.flatMap(this.classPath.code(),

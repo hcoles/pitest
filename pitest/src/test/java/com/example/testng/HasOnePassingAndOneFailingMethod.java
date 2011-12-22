@@ -12,22 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.testng;
+package com.example.testng;
 
-import org.testng.annotations.Test;
+public class HasOnePassingAndOneFailingMethod {
+  @org.testng.annotations.Test
+  public void passes() {
 
-public class HasGroups {
-
-  @Test(groups = { "included", "excluded" })
-  public void testMethod1() {
   }
 
-  @Test(groups = { "included" })
-  public void testMethod2() {
+  @org.testng.annotations.Test
+  public void fails() {
+    throw new RuntimeException("oops");
   }
-
-  @Test(groups = { "excluded" })
-  public void testMethod3() {
-  }
-
 }

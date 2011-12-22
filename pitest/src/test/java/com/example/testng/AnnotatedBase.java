@@ -17,9 +17,13 @@ package com.example.testng;
 import org.testng.annotations.Test;
 
 @Test
-public class StaticMethods {
+public class AnnotatedBase {
 
-  public static void aTest() {
+  public void aBaseTest() {
+
+  }
+
+  protected void notATest() {
 
   }
 

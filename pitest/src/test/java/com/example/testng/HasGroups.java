@@ -12,12 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.testng;
+package com.example.testng;
 
-public class Passes {
-  @org.testng.annotations.Test
-  public void passes() {
+import org.testng.annotations.Test;
 
+public class HasGroups {
+
+  @Test(groups = { "include", "exclude" })
+  public void includeAndExcludeGroup() {
   }
 
+  @Test(groups = { "exclude" })
+  public void excludeGroup() {
+  }
+
+  @Test(groups = { "include" })
+  public void includeGroup() {
+  }
+
+  @Test
+  public void noGroup() {
+  }
 }

@@ -24,6 +24,7 @@ import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 import com.example.testng.AnnotatedAtClassLevel;
+import com.example.testng.InheritsFromAnnotatedBase;
 
 public class TestNGTestClassIdentifierTest {
 
@@ -53,6 +54,12 @@ public class TestNGTestClassIdentifierTest {
   public void shouldNotRecogniseUnAnnotatedClassesAsTests() {
     assertFalse(this.testee.isATestClass(this.classRepostory.fetchClass(
         String.class).value()));
+  }
+
+  @Test
+  public void shouldRecogniseUnannotaedClassesWithAnnotatedParentAsTests() {
+    assertTrue(this.testee.isATestClass(this.classRepostory.fetchClass(
+        InheritsFromAnnotatedBase.class).value()));
   }
 
 }

@@ -170,6 +170,20 @@ public class PitMojo extends AbstractMojo {
   private String                testType;
 
   /**
+   * TestNG Groups to exclude
+   * 
+   * @parameter
+   */
+  private List<String>          excludedTestNGGroups;
+
+  /**
+   * TestNG Groups to include
+   * 
+   * @parameter
+   */
+  private List<String>          includedTestNGGroups;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -318,4 +332,13 @@ public class PitMojo extends AbstractMojo {
   public String getTestType() {
     return this.testType;
   }
+
+  public List<String> getExcludedTestNGGroups() {
+    return this.excludedTestNGGroups;
+  }
+
+  public List<String> getIncludedTestNGGroups() {
+    return this.includedTestNGGroups;
+  }
+
 }

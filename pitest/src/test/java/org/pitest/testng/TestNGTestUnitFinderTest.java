@@ -16,10 +16,11 @@ package org.pitest.testng;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import com.example.testng.AbstractClass;
 import com.example.testng.AnnotatedAtClassLevel;
 import com.example.testng.AnnotatedAtMethodLevel;
 
@@ -29,7 +30,9 @@ public class TestNGTestUnitFinderTest {
 
   @Before
   public void setUp() {
-    this.testee = new TestNGTestUnitFinder();
+    TestNGConfig config = new TestNGConfig(Collections.<String> emptyList(),
+        Collections.<String> emptyList());
+    this.testee = new TestNGTestUnitFinder(config);
   }
 
   @Test
@@ -47,11 +50,6 @@ public class TestNGTestUnitFinderTest {
   @Test
   public void shouldFindNoTestUnitsInUnannotatedClasses() {
     assertEquals(0, this.testee.findTestUnits(String.class).size());
-  }
-
-  @Test
-  public void shouldNotFindTestUnitsInAbstractClasses() {
-    assertEquals(0, this.testee.findTestUnits(AbstractClass.class).size());
   }
 
 }

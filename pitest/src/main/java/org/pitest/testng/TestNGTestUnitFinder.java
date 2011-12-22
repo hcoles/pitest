@@ -29,10 +29,13 @@ import org.pitest.reflection.Reflection;
 
 public class TestNGTestUnitFinder implements TestUnitFinder {
 
+  private final TestNGConfig config;
+
+  public TestNGTestUnitFinder(TestNGConfig config) {
+    this.config = config;
+  }
+
   public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
-    if (Modifier.isAbstract(clazz.getModifiers())) {
-      return Collections.emptyList();
-    }
 
     if (hasClassAnnotation(clazz)) {
       return findForAnnotatedClazz(clazz);
@@ -46,7 +49,7 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
   private Collection<TestUnit> findForAnnotatedClazz(Class<?> clazz) {
     // rather than second guess rules, treat as single unit for now
     return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz,
-        "all tests"));
+        "all tests", this.config));
 
     // return FCollection.map(Reflection.publicMethods(clazz, Prelude.or(
     // IsAnotatedWith.instance(org.testng.annotations.Test.class),
@@ -81,11 +84,12 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
         methodToTestUnit(clazz));
   }
 
-  private static F<Method, TestUnit> methodToTestUnit(final Class<?> clazz) {
+  private F<Method, TestUnit> methodToTestUnit(final Class<?> clazz) {
     return new F<Method, TestUnit>() {
 
       public TestUnit apply(Method a) {
-        return new TestNGTestUnit(clazz, a.getName());
+        return new TestNGTestUnit(clazz, a.getName(),
+            TestNGTestUnitFinder.this.config);
       }
 
     };
