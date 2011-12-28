@@ -31,6 +31,7 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestNGConfiguration;
 
 public class OptionsParserTest {
 
@@ -237,6 +238,26 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
         "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
+  }
+
+  @Test
+  public void shouldParseComaSeperatedListOfExcludedTestGroups() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--excludedTestNGGroups", "foo,bar");
+    final TestNGConfiguration conf = (TestNGConfiguration) actual
+        .createCoverageOptions().getPitConfig();
+    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+        .getExcludedGroups());
+  }
+
+  @Test
+  public void shouldParseComaSeperatedListOfIncludedTestGroups() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--includedTestNGGroups", "foo,bar");
+    final TestNGConfiguration conf = (TestNGConfiguration) actual
+        .createCoverageOptions().getPitConfig();
+    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+        .getIncludedGroups());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

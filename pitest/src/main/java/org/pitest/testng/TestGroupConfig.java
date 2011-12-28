@@ -17,12 +17,13 @@ package org.pitest.testng;
 import java.util.Collections;
 import java.util.List;
 
-public class TestNGConfig {
+public class TestGroupConfig {
 
   private final List<String> excludedGroups;
   private final List<String> includedGroups;
 
-  public TestNGConfig(List<String> excludedGroups, List<String> includedGroups) {
+  public TestGroupConfig(final List<String> excludedGroups,
+      final List<String> includedGroups) {
     this.excludedGroups = (excludedGroups != null ? excludedGroups
         : Collections.<String> emptyList());
     this.includedGroups = (includedGroups != null ? includedGroups

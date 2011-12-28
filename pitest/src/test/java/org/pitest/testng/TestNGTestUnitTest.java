@@ -45,13 +45,13 @@ public class TestNGTestUnitTest {
 
   private ClassLoader     loader;
   private TestNGTestUnit  testee;
-  private TestNGConfig    config;
+  private TestGroupConfig config;
 
   @Before
   public void setUp() {
     this.loader = IsolationUtils.getContextClassLoader();
     MockitoAnnotations.initMocks(this);
-    this.config = new TestNGConfig(Collections.<String> emptyList(),
+    this.config = new TestGroupConfig(Collections.<String> emptyList(),
         Collections.<String> emptyList());
   }
 
@@ -95,8 +95,8 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldNotRunTestsInExcludedGroups() {
-    TestNGConfig excludeConfig = new TestNGConfig(Arrays.asList("exclude"),
-        Collections.<String> emptyList());
+    final TestGroupConfig excludeConfig = new TestGroupConfig(
+        Arrays.asList("exclude"), Collections.<String> emptyList());
     this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyEnd(
@@ -107,7 +107,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldOnlyRunTestsInIncludedGroups() {
-    TestNGConfig excludeConfig = new TestNGConfig(
+    final TestGroupConfig excludeConfig = new TestGroupConfig(
         Collections.<String> emptyList(), Arrays.asList("include"));
     this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
     this.testee.execute(this.loader, this.rc);
@@ -119,7 +119,8 @@ public class TestNGTestUnitTest {
 
   private ClassLoaderDetectionStrategy neverMatch() {
     return new ClassLoaderDetectionStrategy() {
-      public boolean fromDifferentLoader(Class<?> clazz, ClassLoader loader) {
+      public boolean fromDifferentLoader(final Class<?> clazz,
+          final ClassLoader loader) {
         return true;
       }
 

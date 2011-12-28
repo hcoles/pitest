@@ -25,9 +25,9 @@ import org.pitest.reflection.Reflection;
 
 public class TestNGTestUnitFinder implements TestUnitFinder {
 
-  private final TestNGConfig config;
+  private final TestGroupConfig config;
 
-  public TestNGTestUnitFinder(TestNGConfig config) {
+  public TestNGTestUnitFinder(final TestGroupConfig config) {
     this.config = config;
   }
 

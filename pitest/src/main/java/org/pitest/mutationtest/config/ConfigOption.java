@@ -111,7 +111,15 @@ public enum ConfigOption {
   /**
    * Filter defining paths that should be treated as containing mutable code
    */
-  CODE_PATHS("mutableCodePaths");
+  CODE_PATHS("mutableCodePaths"),
+  /**
+   * TestNG groups to include
+   */
+  INCLUDED_GROUPS("includedTestNGGroups"),
+  /**
+   * TestNG groups to exclude
+   */
+  EXCLUDED_GROUPS("excludedTestNGGroups");
 
   private final String text;
   private final Object defaultValue;

@@ -28,14 +28,14 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.MutatorGrouping;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
-import org.pitest.testng.TestNGConfig;
-import org.pitest.testng.TestNGConfiguration;
+import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
@@ -124,14 +124,14 @@ public class MojoToReportOptionsConverter {
   }
 
   private void setTestType(ReportOptions data) {
-    String testType = this.mojo.getTestType();
-    if (testType != null && testType.equalsIgnoreCase("TESTNG")) {
-      TestNGConfig conf = new TestNGConfig(this.mojo.getExcludedTestNGGroups(),
-          this.mojo.getIncludedTestNGGroups());
-      data.setConfiguration(new TestNGConfiguration(conf));
-    } else {
-      data.setConfiguration(new JUnitCompatibleConfiguration());
-    }
+    TestGroupConfig conf = new TestGroupConfig(
+        this.mojo.getExcludedTestNGGroups(),
+        this.mojo.getIncludedTestNGGroups());
+    ConfigurationFactory configFactory = new ConfigurationFactory(conf,
+        new ClassPathByteArraySource(data.getClassPath()));
+
+    data.setConfiguration(configFactory.createConfiguration());
+
   }
 
   private void addOwnDependenciesToClassPath(final Set<String> classPath) {

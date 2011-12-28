@@ -74,7 +74,7 @@ public class TestNGAdapter implements ITestListener {
     this.rc.notifyEnd(makeDescription(arg0));
   }
 
-  private Description makeDescription(ITestResult result) {
+  private Description makeDescription(final ITestResult result) {
     return new Description(result.getMethod().getMethodName(), this.clazz);
   }
 

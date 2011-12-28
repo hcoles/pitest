@@ -30,8 +30,8 @@ public class TestNGTestUnitFinderTest {
 
   @Before
   public void setUp() {
-    TestNGConfig config = new TestNGConfig(Collections.<String> emptyList(),
-        Collections.<String> emptyList());
+    final TestGroupConfig config = new TestGroupConfig(
+        Collections.<String> emptyList(), Collections.<String> emptyList());
     this.testee = new TestNGTestUnitFinder(config);
   }
 

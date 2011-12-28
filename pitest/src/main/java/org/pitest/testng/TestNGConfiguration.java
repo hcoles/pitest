@@ -22,9 +22,9 @@ import org.pitest.extension.common.NoTestSuiteFinder;
 
 public class TestNGConfiguration implements Configuration {
 
-  private final TestNGConfig config;
+  private final TestGroupConfig config;
 
-  public TestNGConfiguration(TestNGConfig config) {
+  public TestNGConfiguration(final TestGroupConfig config) {
     this.config = config;
   }
 
@@ -38,6 +38,10 @@ public class TestNGConfiguration implements Configuration {
 
   public TestClassIdentifier testClassIdentifier() {
     return new TestNGTestClassIdentifier();
+  }
+
+  public TestGroupConfig getGroupConfig() {
+    return this.config;
   }
 
 }

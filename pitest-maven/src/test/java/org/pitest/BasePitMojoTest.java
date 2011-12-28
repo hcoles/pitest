@@ -14,6 +14,8 @@
  */
 package org.pitest;
 
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -28,6 +30,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
+import org.pitest.internal.ClassPath;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
@@ -41,21 +46,35 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.initMocks(this);
+    when(this.project.getCompileClasspathElements())
+        .thenReturn(
+            FCollection.map(ClassPath.getClassPathElementsAsFiles(),
+                fileToString()));
+  }
+
+  private F<File, String> fileToString() {
+    return new F<File, String>() {
+
+      public String apply(File a) {
+        return a.getAbsolutePath();
+      }
+
+    };
   }
 
   protected String createPomWithConfiguration(final String config) {
     final String pom = "<project>\n" + //
-    "  <build>\n" + //
-    "    <plugins>\n" + //
-    "      <plugin>\n" + //
-    "        <groupId>org.pitest</groupId>\n" + //
-    "        <artifactId>pitest-maven</artifactId>\n" + //
-    "        <configuration>\n" + config + //
-    "        </configuration>\n" + //
-    "      </plugin>\n" + //
-    "    </plugins>\n" + //
-    "  </build>\n" + //
-    "</project>";
+        "  <build>\n" + //
+        "    <plugins>\n" + //
+        "      <plugin>\n" + //
+        "        <groupId>org.pitest</groupId>\n" + //
+        "        <artifactId>pitest-maven</artifactId>\n" + //
+        "        <configuration>\n" + config + //
+        "        </configuration>\n" + //
+        "      </plugin>\n" + //
+        "    </plugins>\n" + //
+        "  </build>\n" + //
+        "</project>";
     return pom;
   }
 

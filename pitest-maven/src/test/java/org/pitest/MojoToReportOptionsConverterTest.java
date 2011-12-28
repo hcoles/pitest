@@ -22,7 +22,6 @@ import java.util.HashSet;
 
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
@@ -238,11 +237,20 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         .shouldFailWhenNoMutations());
   }
 
-  public void testParsesTestTypeToUse() {
-    assertTrue(parseConfig("<testType>TESTNG</testType>")
-        .createCoverageOptions().getPitConfig() instanceof TestNGConfiguration);
-    assertTrue(parseConfig("<testType>JUNIT</testType>")
-        .createCoverageOptions().getPitConfig() instanceof JUnitCompatibleConfiguration);
+  public void testParsesTestGroupsToExclude() {
+    ReportOptions actual = parseConfig("<excludedTestNGGroups><value>foo</value><value>bar</value></excludedTestNGGroups>");
+    TestNGConfiguration conf = (TestNGConfiguration) actual
+        .createCoverageOptions().getPitConfig();
+    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+        .getExcludedGroups());
+  }
+
+  public void testParsesTestGroupsToInclude() {
+    ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    TestNGConfiguration conf = (TestNGConfiguration) actual
+        .createCoverageOptions().getPitConfig();
+    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+        .getIncludedGroups());
   }
 
   private ReportOptions parseConfig(final String xml) {

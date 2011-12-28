@@ -37,17 +37,18 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
-  private final TestNGConfig                 config;
+  private final TestGroupConfig              config;
 
-  public TestNGTestUnit(ClassLoaderDetectionStrategy classloaderDetection,
-      final Class<?> clazz, final TestNGConfig config) {
+  public TestNGTestUnit(
+      final ClassLoaderDetectionStrategy classloaderDetection,
+      final Class<?> clazz, final TestGroupConfig config) {
     super(new org.pitest.Description("_", clazz));
     this.clazz = clazz;
     this.classloaderDetection = classloaderDetection;
     this.config = config;
   }
 
-  public TestNGTestUnit(final Class<?> clazz, final TestNGConfig config) {
+  public TestNGTestUnit(final Class<?> clazz, final TestGroupConfig config) {
     this(IsolationUtils.loaderDetectionStrategy(), clazz, config);
   }
 
@@ -63,7 +64,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
         this.getDescription(), rc);
     final TestNG testng = new TestNG();
 
-    XmlSuite suite = createSuite();
+    final XmlSuite suite = createSuite();
 
     testng.setUseDefaultListeners(false);
 
@@ -74,11 +75,11 @@ public class TestNGTestUnit extends AbstractTestUnit {
   }
 
   private XmlSuite createSuite() {
-    XmlSuite suite = new XmlSuite();
+    final XmlSuite suite = new XmlSuite();
     suite.setName(this.clazz.getName());
-    XmlTest test = new XmlTest(suite);
+    final XmlTest test = new XmlTest(suite);
     test.setName(this.clazz.getName());
-    XmlClass xclass = new XmlClass(this.clazz.getName());
+    final XmlClass xclass = new XmlClass(this.clazz.getName());
     test.setXmlClasses(Collections.singletonList(xclass));
     if (!this.config.getExcludedGroups().isEmpty()) {
       suite.setExcludedGroups(this.config.getExcludedGroups());

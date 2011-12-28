@@ -27,7 +27,7 @@ public class TestNGTestClassIdentifier implements TestClassIdentifier {
     return a.hasAnnotation(annotationName) || isATestClass(a.getSuperClass());
   }
 
-  private boolean isATestClass(Option<ClassInfo> clazz) {
+  private boolean isATestClass(final Option<ClassInfo> clazz) {
     return clazz.hasSome() && isATestClass(clazz.value());
   }
 

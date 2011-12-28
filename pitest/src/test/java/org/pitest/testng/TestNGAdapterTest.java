@@ -68,7 +68,7 @@ public class TestNGAdapterTest {
 
   @Test
   public void shouldCallNotifyEndWithErrorWhenTestEndsFollowingError() {
-    Throwable throwable = new RuntimeException();
+    final Throwable throwable = new RuntimeException();
     when(this.result.getThrowable()).thenReturn(throwable);
     this.testee.onTestFailure(this.result);
     this.testee.onFinish(null);
@@ -86,7 +86,7 @@ public class TestNGAdapterTest {
 
   @Test
   public void shouldCallStartAndEndForMethodWhenError() {
-    Throwable throwable = new RuntimeException();
+    final Throwable throwable = new RuntimeException();
     when(this.result.getThrowable()).thenReturn(throwable);
     this.testee.onTestStart(this.result);
     this.testee.onTestFailure(this.result);
@@ -98,7 +98,7 @@ public class TestNGAdapterTest {
 
   @Test(expected = SkipException.class)
   public void shouldSkipRemainingTestsAfterFirstFailure() {
-    Throwable throwable = new RuntimeException();
+    final Throwable throwable = new RuntimeException();
     when(this.result.getThrowable()).thenReturn(throwable);
     this.testee.onTestFailure(this.result);
     this.testee.onTestStart(this.result);

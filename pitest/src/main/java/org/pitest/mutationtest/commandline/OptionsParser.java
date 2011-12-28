@@ -20,8 +20,10 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
@@ -49,14 +51,17 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
 import org.pitest.project.ProjectConfigurationParserFactory;
+import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -85,6 +90,8 @@ public class OptionsParser {
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
+  private final OptionSpec<String>                   excludedGroupsSpec;
+  private final OptionSpec<String>                   includedGroupsSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -203,6 +210,14 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "Globs identifying classpath roots containing mutable code");
+
+    this.includedGroupsSpec = parserAccepts(INCLUDED_GROUPS).withRequiredArg()
+        .ofType(String.class).withValuesSeparatedBy(',')
+        .describedAs("TestNG groups to include");
+
+    this.excludedGroupsSpec = parserAccepts(EXCLUDED_GROUPS).withRequiredArg()
+        .ofType(String.class).withValuesSeparatedBy(',')
+        .describedAs("TestNG groups to include");
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -266,6 +281,7 @@ public class OptionsParser {
     data.setCodePaths(this.codePaths.values(userArgs));
 
     setClassPath(userArgs, data);
+    setTestConfiguration(userArgs, data);
 
     if (userArgs.has("?")) {
       return new ParseResult(data, "See above for supported parameters.");
@@ -276,6 +292,17 @@ public class OptionsParser {
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
     data.addClassPathElements(userArgs.valuesOf(this.additionalClassPathSpec));
+  }
+
+  private void setTestConfiguration(final OptionSet userArgs,
+      final ReportOptions data) {
+    final TestGroupConfig conf = new TestGroupConfig(
+        this.excludedGroupsSpec.values(userArgs),
+        this.includedGroupsSpec.values(userArgs));
+    final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
+        new ClassPathByteArraySource(data.getClassPath()));
+
+    data.setConfiguration(configFactory.createConfiguration());
   }
 
   /**

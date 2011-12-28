@@ -34,7 +34,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -42,7 +41,7 @@ import org.pitest.util.Glob;
 
 public class ReportOptions {
 
-  private Configuration                              config                   = new JUnitCompatibleConfiguration();
+  private Configuration                              config;
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
@@ -423,4 +422,5 @@ public class ReportOptions {
   public void setConfiguration(final Configuration configuration) {
     this.config = configuration;
   }
+
 }
