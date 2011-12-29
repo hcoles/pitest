@@ -26,7 +26,6 @@ import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.report.OutputFormat;
-import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.Unchecked;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
@@ -239,17 +238,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testParsesTestGroupsToExclude() {
     ReportOptions actual = parseConfig("<excludedTestNGGroups><value>foo</value><value>bar</value></excludedTestNGGroups>");
-    TestNGConfiguration conf = (TestNGConfiguration) actual
-        .createCoverageOptions().getPitConfig();
-    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getExcludedGroups());
   }
 
   public void testParsesTestGroupsToInclude() {
     ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
-    TestNGConfiguration conf = (TestNGConfiguration) actual
-        .createCoverageOptions().getPitConfig();
-    assertEquals(Arrays.asList("foo", "bar"), conf.getGroupConfig()
+    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }
 

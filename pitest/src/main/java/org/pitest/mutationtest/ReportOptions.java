@@ -37,6 +37,7 @@ import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 
 public class ReportOptions {
@@ -75,6 +76,8 @@ public class ReportOptions {
   private boolean                                    failWhenNoMutations      = false;
 
   private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
+
+  private TestGroupConfig                            groupConfig;
 
   public ReportOptions() {
   }
@@ -421,6 +424,14 @@ public class ReportOptions {
 
   public void setConfiguration(final Configuration configuration) {
     this.config = configuration;
+  }
+
+  public void setGroupConfig(TestGroupConfig groupConfig) {
+    this.groupConfig = groupConfig;
+  }
+
+  public TestGroupConfig getGroupConfig() {
+    return this.groupConfig;
   }
 
 }

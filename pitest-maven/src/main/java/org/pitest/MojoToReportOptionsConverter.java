@@ -130,6 +130,7 @@ public class MojoToReportOptionsConverter {
     ConfigurationFactory configFactory = new ConfigurationFactory(conf,
         new ClassPathByteArraySource(data.getClassPath()));
 
+    data.setGroupConfig(conf);
     data.setConfiguration(configFactory.createConfiguration());
 
   }

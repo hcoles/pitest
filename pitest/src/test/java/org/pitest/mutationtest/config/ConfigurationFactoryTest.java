@@ -1,0 +1,97 @@
+/*
+ * Copyright 2011 Henry Coles
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and limitations under the License. 
+ */
+package org.pitest.mutationtest.config;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.pitest.functional.Option;
+import org.pitest.internal.ClassByteArraySource;
+import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.internal.IsolationUtils;
+import org.pitest.testng.TestGroupConfig;
+
+import com.example.testng.FullyCoveredByTestNGTesteeTest;
+
+public class ConfigurationFactoryTest {
+
+  private ConfigurationFactory testee;
+
+  @Mock
+  private TestGroupConfig      groupConfig;
+
+  @Mock
+  private ClassByteArraySource source;
+
+  private ClassByteArraySource realSource;
+
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    this.testee = new ConfigurationFactory(this.groupConfig, this.source);
+    this.realSource = new ClassloaderByteArraySource(
+        IsolationUtils.getContextClassLoader());
+    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
+        Option.<byte[]> none());
+    when(this.source.apply("org.testng.TestNG")).thenReturn(
+        Option.<byte[]> none());
+  }
+
+  @Test
+  public void shouldCreateAConfigurationThatFindsTestNGTestsWhenTestNGOnClassPath() {
+    when(this.source.apply("org.testng.TestNG")).thenReturn(
+        this.realSource.apply("org.testng.TestNG"));
+    assertFalse(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
+  }
+
+  @Test
+  public void shouldNotCreateAConfigurationThatFindsTestNGTestsWhenTestNGNotOnClassPath() {
+    assertTrue(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
+  }
+
+  @Test
+  public void shouldCreateAConfigurationThatFindsJUnitTestsWhenJUnitOnClassPath() {
+    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
+        this.realSource.apply("org.junit.runner.Runner"));
+    assertFalse(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
+  }
+
+  @Test
+  public void shouldNotCreateAConfigurationThatFindsJUnitTestsWhenJUnitNotOnClassPath() {
+    assertTrue(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
+  }
+
+  @Test
+  public void shouldCreateAConfigurationThatFindsBothTestNGAndJUnitTestsWhenBothAreOnClasspath() {
+    when(this.source.apply("org.testng.TestNG")).thenReturn(
+        this.realSource.apply("org.testng.TestNG"));
+    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
+        this.realSource.apply("org.junit.runner.Runner"));
+    assertFalse(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
+    assertFalse(this.testee.createConfiguration().testUnitFinder()
+        .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
+  }
+
+}
