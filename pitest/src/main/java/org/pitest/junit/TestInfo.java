@@ -19,8 +19,6 @@ import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.help.Help;
-import org.pitest.help.PitHelpError;
 
 public abstract class TestInfo {
 
@@ -61,21 +59,6 @@ public abstract class TestInfo {
   public static boolean isJUnit4Test(final ClassInfo clazz) {
     return clazz.hasAnnotation(RunWith.class)
         || clazz.hasAnnotation(Test.class);
-  }
-
-  public static void checkJUnitVersion() {
-    try {
-      final String version = junit.runner.Version.id();
-      final String[] parts = version.split("\\.");
-      final int major = Integer.parseInt(parts[0]);
-      final int minor = Integer.parseInt(parts[1]);
-      if ((major < 4) || ((major == 4) && (minor < 6))) {
-        throw new PitHelpError(Help.WRONG_JUNIT_VERSION, version);
-      }
-    } catch (final NoClassDefFoundError er) {
-      throw new PitHelpError(Help.NO_JUNIT);
-    }
-
   }
 
 }

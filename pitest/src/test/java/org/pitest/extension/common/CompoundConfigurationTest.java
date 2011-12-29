@@ -34,6 +34,9 @@ import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.functional.Option;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.TestClass;
 
 public class CompoundConfigurationTest {
@@ -120,6 +123,25 @@ public class CompoundConfigurationTest {
     when(this.testIdTwo.isATestClass(classInfo)).thenReturn(false);
 
     assertFalse(this.testee.testClassIdentifier().isATestClass(classInfo));
+  }
+
+  @Test
+  public void shouldReturnFirstFailedVerification() {
+    Option<PitHelpError> firstReturn = Option.some(new PitHelpError(
+        Help.NO_JUNIT));
+    when(this.childOne.verifyEnvironment()).thenReturn(firstReturn);
+    when(this.childTwo.verifyEnvironment()).thenReturn(
+        Option.some(new PitHelpError(Help.FAILING_TESTS)));
+    assertEquals(firstReturn, this.testee.verifyEnvironment());
+  }
+
+  @Test
+  public void shouldReturnNoErrorWhenNoChildrenFailVerification() {
+    when(this.childOne.verifyEnvironment()).thenReturn(
+        Option.<PitHelpError> none());
+    when(this.childTwo.verifyEnvironment()).thenReturn(
+        Option.<PitHelpError> none());
+    assertEquals(Option.none(), this.testee.verifyEnvironment());
   }
 
 }

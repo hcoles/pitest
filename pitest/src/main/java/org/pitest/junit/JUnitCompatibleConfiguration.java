@@ -21,6 +21,9 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.functional.Option;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -35,6 +38,22 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   public TestClassIdentifier testClassIdentifier() {
     return new JUnitTestClassIdentifier();
+  }
+
+  public Option<PitHelpError> verifyEnvironment() {
+    try {
+      final String version = junit.runner.Version.id();
+      final String[] parts = version.split("\\.");
+      final int major = Integer.parseInt(parts[0]);
+      final int minor = Integer.parseInt(parts[1]);
+      if ((major < 4) || ((major == 4) && (minor < 6))) {
+        return Option.some(new PitHelpError(Help.WRONG_JUNIT_VERSION, version));
+      }
+    } catch (final NoClassDefFoundError er) {
+      return Option.some(new PitHelpError(Help.NO_JUNIT));
+    }
+
+    return Option.none();
   }
 
 }

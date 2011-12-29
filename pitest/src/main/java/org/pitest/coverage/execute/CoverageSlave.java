@@ -67,6 +67,10 @@ public class CoverageSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
+      if (paramsFromParent.getPitConfig().verifyEnvironment().hasSome()) {
+        throw paramsFromParent.getPitConfig().verifyEnvironment().value();
+      }
+
       final DataOutputStream dos = new DataOutputStream(
           new BufferedOutputStream(s.getOutputStream()));
 

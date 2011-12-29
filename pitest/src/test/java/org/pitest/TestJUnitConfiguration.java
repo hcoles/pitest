@@ -37,6 +37,7 @@ import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.UnGroupedStrategy;
+import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestJUnitConfiguration {
@@ -468,6 +469,11 @@ public class TestJUnitConfiguration {
     run(HasMethodAnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
     verify(this.listener).onTestSuccess((any(TestResult.class)));
+  }
+
+  @Test
+  public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
+    assertEquals(Option.none(), this.testee.verifyEnvironment());
   }
 
   private void run(final Class<?> clazz) {

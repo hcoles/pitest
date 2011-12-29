@@ -15,6 +15,9 @@
 
 package org.pitest.extension;
 
+import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
+
 public interface Configuration {
 
   public TestUnitFinder testUnitFinder();
@@ -22,5 +25,7 @@ public interface Configuration {
   public TestSuiteFinder testSuiteFinder();
 
   public TestClassIdentifier testClassIdentifier();
+
+  public Option<PitHelpError> verifyEnvironment();
 
 }

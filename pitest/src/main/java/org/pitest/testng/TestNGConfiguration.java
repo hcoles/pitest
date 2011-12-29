@@ -19,6 +19,8 @@ import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
+import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 
 public class TestNGConfiguration implements Configuration {
 
@@ -42,6 +44,10 @@ public class TestNGConfiguration implements Configuration {
 
   public TestGroupConfig getGroupConfig() {
     return this.config;
+  }
+
+  public Option<PitHelpError> verifyEnvironment() {
+    return Option.none();
   }
 
 }

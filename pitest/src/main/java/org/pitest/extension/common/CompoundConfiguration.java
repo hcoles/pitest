@@ -14,6 +14,8 @@
  */
 package org.pitest.extension.common;
 
+import java.util.List;
+
 import org.pitest.CompoundTestSuiteFinder;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestClassIdentifier;
@@ -21,15 +23,19 @@ import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
 
 public class CompoundConfiguration implements Configuration {
 
+  private final Iterable<Configuration>     configs;
   private final CompoundTestUnitFinder      testUnitFinder;
   private final CompoundTestSuiteFinder     suiteFinder;
   private final CompoundTestClassIdentifier testIdentifier;
 
   public CompoundConfiguration(Iterable<Configuration> configs) {
+    this.configs = configs;
     this.testUnitFinder = new CompoundTestUnitFinder(FCollection.map(configs,
         asTestUnitFinders()));
     this.suiteFinder = new CompoundTestSuiteFinder(FCollection.map(configs,
@@ -77,6 +83,25 @@ public class CompoundConfiguration implements Configuration {
 
   public TestClassIdentifier testClassIdentifier() {
     return this.testIdentifier;
+  }
+
+  public Option<PitHelpError> verifyEnvironment() {
+    List<PitHelpError> verificationResults = FCollection.flatMap(this.configs,
+        verify());
+    if (verificationResults.isEmpty()) {
+      return Option.none();
+    }
+
+    return Option.some(verificationResults.iterator().next());
+  }
+
+  private F<Configuration, Iterable<PitHelpError>> verify() {
+    return new F<Configuration, Iterable<PitHelpError>>() {
+      public Iterable<PitHelpError> apply(Configuration a) {
+        return a.verifyEnvironment();
+      }
+
+    };
   }
 
 }

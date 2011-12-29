@@ -21,6 +21,7 @@ import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
 
 public class ConfigurationForTesting implements Configuration {
@@ -94,6 +95,10 @@ public class ConfigurationForTesting implements Configuration {
       }
 
     };
+  }
+
+  public Option<PitHelpError> verifyEnvironment() {
+    return Option.none();
   }
 
 }

@@ -37,12 +37,6 @@ public class TestInfoTest {
   }
 
   @Test
-  public void checkJUnitVersionShouldNoThrowErrorIfVersionAbove4PointSix() {
-    TestInfo.checkJUnitVersion();
-    // pass
-  }
-
-  @Test
   public void isATestShouldReturnTrueForJUnit3Tests() {
     class JU3Test extends TestCase {
 
