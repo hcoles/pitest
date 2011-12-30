@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
@@ -102,7 +101,6 @@ public class TestMutationTesting {
     }
   }
 
-  @ClassUnderTest(OneMutation.class)
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
