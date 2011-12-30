@@ -34,7 +34,7 @@ public class CompoundConfiguration implements Configuration {
   private final CompoundTestSuiteFinder     suiteFinder;
   private final CompoundTestClassIdentifier testIdentifier;
 
-  public CompoundConfiguration(Iterable<Configuration> configs) {
+  public CompoundConfiguration(final Iterable<Configuration> configs) {
     this.configs = configs;
     this.testUnitFinder = new CompoundTestUnitFinder(FCollection.map(configs,
         asTestUnitFinders()));
@@ -47,7 +47,7 @@ public class CompoundConfiguration implements Configuration {
   private F<Configuration, TestClassIdentifier> asTestIdentifier() {
 
     return new F<Configuration, TestClassIdentifier>() {
-      public TestClassIdentifier apply(Configuration a) {
+      public TestClassIdentifier apply(final Configuration a) {
         return a.testClassIdentifier();
       }
 
@@ -57,7 +57,7 @@ public class CompoundConfiguration implements Configuration {
 
   private F<Configuration, TestSuiteFinder> asSuiteFinders() {
     return new F<Configuration, TestSuiteFinder>() {
-      public TestSuiteFinder apply(Configuration a) {
+      public TestSuiteFinder apply(final Configuration a) {
         return a.testSuiteFinder();
       }
 
@@ -66,7 +66,7 @@ public class CompoundConfiguration implements Configuration {
 
   private static F<Configuration, TestUnitFinder> asTestUnitFinders() {
     return new F<Configuration, TestUnitFinder>() {
-      public TestUnitFinder apply(Configuration a) {
+      public TestUnitFinder apply(final Configuration a) {
         return a.testUnitFinder();
       }
 
@@ -86,8 +86,8 @@ public class CompoundConfiguration implements Configuration {
   }
 
   public Option<PitHelpError> verifyEnvironment() {
-    List<PitHelpError> verificationResults = FCollection.flatMap(this.configs,
-        verify());
+    final List<PitHelpError> verificationResults = FCollection.flatMap(
+        this.configs, verify());
     if (verificationResults.isEmpty()) {
       return Option.none();
     }
@@ -97,7 +97,7 @@ public class CompoundConfiguration implements Configuration {
 
   private F<Configuration, Iterable<PitHelpError>> verify() {
     return new F<Configuration, Iterable<PitHelpError>>() {
-      public Iterable<PitHelpError> apply(Configuration a) {
+      public Iterable<PitHelpError> apply(final Configuration a) {
         return a.verifyEnvironment();
       }
 

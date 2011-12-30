@@ -46,4 +46,49 @@ public class ClassNameTest {
     final ClassName testee = new ClassName("com/foo/bar");
     assertEquals("com.foo.bar", testee.toString());
   }
+
+  @Test
+  public void getNameWithoutPackageShouldReturnNameOnlyWhenClassIsOuterClass() {
+    assertEquals(new ClassName("String"),
+        new ClassName(String.class).getNameWithoutPackage());
+  }
+
+  static class Foo {
+
+  }
+
+  @Test
+  public void getNameWithoutPackageShouldReturnNameWhenClassIsInnerClass() {
+    assertEquals(new ClassName("ClassNameTest$Foo"),
+        new ClassName(Foo.class).getNameWithoutPackage());
+  }
+
+  @Test
+  public void getNameWithoutPackageShouldReturnNameWhenClassInPackageDefault() {
+    assertEquals(new ClassName("Foo"),
+        new ClassName("Foo").getNameWithoutPackage());
+  }
+
+  @Test
+  public void getPackageShouldReturnEmptyPackageWhenClassInPackageDefault() {
+    assertEquals(new ClassName(""), new ClassName("Foo").getPackage());
+  }
+
+  @Test
+  public void getPackageShouldReturnPackageWhenClassWithinAPackage() {
+    assertEquals(new ClassName("org.pitest.classinfo"), new ClassName(
+        ClassNameTest.class).getPackage());
+  }
+
+  @Test
+  public void withoutSuffixCharsShouldReturnPacakgeAndClassWithoutSuffixChars() {
+    assertEquals(new ClassName("com.example.Foo"), new ClassName(
+        "com.example.FooTest").withoutSuffixChars(4));
+  }
+
+  @Test
+  public void withoutPrefeixCharsShouldReturnPacakgeAndClassWithoutPrefixChars() {
+    assertEquals(new ClassName("com.example.Foo"), new ClassName(
+        "com.example.TestFoo").withoutPrefixChars(4));
+  }
 }

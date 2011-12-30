@@ -426,7 +426,7 @@ public class ReportOptions {
     this.config = configuration;
   }
 
-  public void setGroupConfig(TestGroupConfig groupConfig) {
+  public void setGroupConfig(final TestGroupConfig groupConfig) {
     this.groupConfig = groupConfig;
   }
 

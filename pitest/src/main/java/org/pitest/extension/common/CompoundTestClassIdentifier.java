@@ -23,11 +23,12 @@ public class CompoundTestClassIdentifier implements TestClassIdentifier {
 
   private final Iterable<TestClassIdentifier> children;
 
-  public CompoundTestClassIdentifier(Iterable<TestClassIdentifier> children) {
+  public CompoundTestClassIdentifier(
+      final Iterable<TestClassIdentifier> children) {
     this.children = children;
   }
 
-  public boolean isATestClass(ClassInfo a) {
+  public boolean isATestClass(final ClassInfo a) {
     return FCollection.contains(this.children, isATest(a));
   }
 
@@ -35,7 +36,7 @@ public class CompoundTestClassIdentifier implements TestClassIdentifier {
       final ClassInfo classInfo) {
     return new F<TestClassIdentifier, Boolean>() {
 
-      public Boolean apply(TestClassIdentifier a) {
+      public Boolean apply(final TestClassIdentifier a) {
         return a.isATestClass(classInfo);
       }
 

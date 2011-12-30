@@ -119,9 +119,9 @@ public class MutationTestBuilder {
         coveageDatabase, mutation);
     final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
         Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis,
-        new TestInfoPriorisationComparator(mutation.getClazz(),
-            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
+    Collections.sort(sortedTis, new TestInfoPriorisationComparator(
+        new ClassName(mutation.getClazz()),
+        TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
     return sortedTis;
   }
 

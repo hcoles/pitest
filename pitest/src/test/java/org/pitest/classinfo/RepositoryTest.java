@@ -38,6 +38,16 @@ public class RepositoryTest {
   }
 
   @Test
+  public void shouldReturnTrueWhenAskedForKnownClass() {
+    assertTrue(this.testee.hasClass(new ClassName(Integer.class)));
+  }
+
+  @Test
+  public void shouldReturnFalseWhenAskedForUnknownClass() {
+    assertFalse(this.testee.hasClass(new ClassName("never.heard.of.you")));
+  }
+
+  @Test
   public void shouldReturnNoneWhenAskedForUnknownClass() {
     assertEquals(Option.none(), this.testee.fetchClass("never.heard.of.you"));
   }

@@ -14,24 +14,23 @@
  */
 package org.pitest.coverage.domain;
 
-import java.util.Collection;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
+import org.pitest.functional.Option;
 
 public class TestInfo {
 
-  private final String             name;
-  private final int                time;
-  private final String             definingClass;
-  private final Collection<String> testees;
+  private final String            name;
+  private final int               time;
+  private final String            definingClass;
+  private final Option<ClassName> testee;
 
   public TestInfo(final String definingClass, final String name,
-      final int time, final Collection<String> testees) {
+      final int time, final Option<ClassName> testee) {
     this.definingClass = definingClass;
     this.name = name;
     this.time = time;
-    this.testees = testees;
+    this.testee = testee;
   }
 
   public String getName() {
@@ -57,8 +56,8 @@ public class TestInfo {
     };
   }
 
-  public boolean directlyHits(final String targetClass) {
-    return this.testees.contains(targetClass);
+  public boolean directlyHits(final ClassName targetClass) {
+    return this.testee.hasSome() && this.testee.value().equals(targetClass);
   }
 
   @Override
@@ -69,7 +68,7 @@ public class TestInfo {
         + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
     result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     result = prime * result
-        + ((this.testees == null) ? 0 : this.testees.hashCode());
+        + ((this.testee == null) ? 0 : this.testee.hashCode());
     result = prime * result + this.time;
     return result;
   }
@@ -100,11 +99,11 @@ public class TestInfo {
     } else if (!this.name.equals(other.name)) {
       return false;
     }
-    if (this.testees == null) {
-      if (other.testees != null) {
+    if (this.testee == null) {
+      if (other.testee != null) {
         return false;
       }
-    } else if (!this.testees.equals(other.testees)) {
+    } else if (!this.testee.equals(other.testee)) {
       return false;
     }
     if (this.time != other.time) {

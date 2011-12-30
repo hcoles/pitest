@@ -37,7 +37,7 @@ public class ConfigurationFactory {
   }
 
   public Configuration createConfiguration() {
-    Collection<Configuration> configs = new ArrayList<Configuration>();
+    final Collection<Configuration> configs = new ArrayList<Configuration>();
     final Repository classRepository = new Repository(this.source);
 
     if (classRepository.fetchClass("org.junit.runner.Runner").hasSome()) {

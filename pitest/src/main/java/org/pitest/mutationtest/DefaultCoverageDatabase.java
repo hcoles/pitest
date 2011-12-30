@@ -23,6 +23,7 @@ import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
+import org.pitest.classinfo.TestToClassMapper;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -63,6 +64,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private Collection<ClassGrouping>                        groupedClasses;
 
   private boolean                                          allTestsGreen = true;
+  private final TestToClassMapper                          testClassMapper;
 
   public DefaultCoverageDatabase(final CoverageOptions coverageOptions,
       final LaunchOptions launchOptions, final MutationClassPaths classPath) {
@@ -71,6 +73,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.launchOptions = launchOptions;
     this.classRepository = new Repository(new ClassPathByteArraySource(
         classPath.getClassPath()));
+    this.testClassMapper = new TestToClassMapper(this.classRepository);
   }
 
   public boolean initialise() {
@@ -366,9 +369,12 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private TestInfo descriptionToTestInfo(final Description description) {
     final int time = DefaultCoverageDatabase.this.times.get(description)
         .intValue();
-    // FIXME determine direct testees
+
+    Option<ClassName> testee = this.testClassMapper.findTestee(description
+        .getFirstTestClass());
+
     return new TestInfo(description.getFirstTestClass(),
-        description.getQualifiedName(), time, Collections.<String> emptyList());
+        description.getQualifiedName(), time, testee);
     // return new TestInfo(description.getFirstTestClass(),
     // description.getQualifiedName(), time,
     // org.pitest.util.TestInfo.determineTestee(description

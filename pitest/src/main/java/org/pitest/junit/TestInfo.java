@@ -20,7 +20,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 
-public abstract class TestInfo {
+abstract class TestInfo {
 
   public static boolean isWithinATestClass(final ClassInfo clazz) {
 

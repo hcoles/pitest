@@ -22,7 +22,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
+import org.pitest.functional.Option;
 
 public class TestInfoPriorisationComparatorTest {
 
@@ -33,7 +35,8 @@ public class TestInfoPriorisationComparatorTest {
 
   @Before
   public void setUp() {
-    this.testee = new TestInfoPriorisationComparator(TARGET, TIME_WEIGHTING);
+    this.testee = new TestInfoPriorisationComparator(new ClassName(TARGET),
+        TIME_WEIGHTING);
   }
 
   @Test
@@ -71,7 +74,8 @@ public class TestInfoPriorisationComparatorTest {
   }
 
   private TestInfo testInfo(final int time, final String target) {
-    return new TestInfo("", target + time, time, Collections.singleton(target));
+    return new TestInfo("", target + time, time, Option.some(new ClassName(
+        target)));
   }
 
 }

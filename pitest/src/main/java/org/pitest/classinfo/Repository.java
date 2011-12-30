@@ -22,11 +22,16 @@ import org.pitest.internal.ClassByteArraySource;
 
 public class Repository {
 
-  private final Map<String, ClassInfo> knownClasses = new HashMap<String, ClassInfo>();
-  private final ClassByteArraySource   source;
+  private final Map<ClassName, ClassInfo> knownClasses = new HashMap<ClassName, ClassInfo>();
+  private final ClassByteArraySource      source;
 
   public Repository(final ClassByteArraySource source) {
     this.source = source;
+  }
+
+  public boolean hasClass(final ClassName name) {
+    return this.knownClasses.containsKey(name)
+        || this.source.apply(name.asJavaName()).hasSome();
   }
 
   public Option<ClassInfo> fetchClass(final Class<?> clazz) {
@@ -34,7 +39,10 @@ public class Repository {
   }
 
   public Option<ClassInfo> fetchClass(final String name) {
+    return fetchClass(new ClassName(name));
+  }
 
+  public Option<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
       return Option.some(info);
@@ -45,11 +53,10 @@ public class Repository {
       this.knownClasses.put(name, maybeInfo.value());
     }
     return maybeInfo;
-
   }
 
-  private Option<ClassInfo> nameToClassInfo(final String name) {
-    final Option<byte[]> bytes = this.source.apply(name);
+  private Option<ClassInfo> nameToClassInfo(final ClassName name) {
+    final Option<byte[]> bytes = this.source.apply(name.asJavaName());
     if (bytes.hasSome()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
           bytes.value());

@@ -36,6 +36,35 @@ public final class ClassName {
     return this.name;
   }
 
+  public ClassName getNameWithoutPackage() {
+    final int lastSeperator = this.name.lastIndexOf('/');
+    if (lastSeperator != -1) {
+      return new ClassName(this.name.substring(lastSeperator + 1,
+          this.name.length()));
+    }
+    return this;
+  }
+
+  public ClassName getPackage() {
+    final int lastSeperator = this.name.lastIndexOf('/');
+    if (lastSeperator != -1) {
+      return new ClassName(this.name.substring(0, lastSeperator));
+    }
+    return new ClassName("");
+  }
+
+  public ClassName withoutPrefixChars(final int prefixLength) {
+    final String name = this.getNameWithoutPackage().asJavaName();
+    return new ClassName(this.getPackage().asJavaName() + "/"
+        + name.substring(prefixLength, name.length()));
+  }
+
+  public ClassName withoutSuffixChars(final int suffixLength) {
+    final String name = this.getNameWithoutPackage().asJavaName();
+    return new ClassName(this.getPackage().asJavaName() + "/"
+        + name.substring(0, name.length() - suffixLength));
+  }
+
   public static F<String, ClassName> stringToClassName() {
     return new F<String, ClassName>() {
 

@@ -76,7 +76,7 @@ public class CompoundConfigurationTest {
 
   @Test
   public void shouldFindTestsWhenAChildFindsTests() {
-    TestUnit tu = Mockito.mock(TestUnit.class);
+    final TestUnit tu = Mockito.mock(TestUnit.class);
     when(this.testFinderTwo.findTestUnits(any(Class.class))).thenReturn(
         Arrays.asList(tu));
     when(this.testFinderOne.findTestUnits(any(Class.class))).thenReturn(
@@ -97,7 +97,7 @@ public class CompoundConfigurationTest {
 
   @Test
   public void shouldFindSuiteClassesWhenAChildFindsSuiteClasses() {
-    TestClass tc = new TestClass(String.class);
+    final TestClass tc = new TestClass(String.class);
     when(this.suiteFinderOne.apply(any(TestClass.class))).thenReturn(
         Collections.<TestClass> emptyList());
     when(this.suiteFinderTwo.apply(any(TestClass.class))).thenReturn(
@@ -107,8 +107,8 @@ public class CompoundConfigurationTest {
 
   @Test
   public void shouldIdentifyClassAsATestClassWhenAChildIdentifiesItAsATest() {
-    ClassInfo classInfoA = Mockito.mock(ClassInfo.class);
-    ClassInfo classInfoB = Mockito.mock(ClassInfo.class);
+    final ClassInfo classInfoA = Mockito.mock(ClassInfo.class);
+    final ClassInfo classInfoB = Mockito.mock(ClassInfo.class);
     when(this.testIdOne.isATestClass(classInfoA)).thenReturn(true);
     when(this.testIdTwo.isATestClass(classInfoB)).thenReturn(true);
 
@@ -118,7 +118,7 @@ public class CompoundConfigurationTest {
 
   @Test
   public void shouldNotIdentifyClassAsATestClassWhenNoChildIdentifiesItAsATest() {
-    ClassInfo classInfo = Mockito.mock(ClassInfo.class);
+    final ClassInfo classInfo = Mockito.mock(ClassInfo.class);
     when(this.testIdOne.isATestClass(classInfo)).thenReturn(false);
     when(this.testIdTwo.isATestClass(classInfo)).thenReturn(false);
 
@@ -127,7 +127,7 @@ public class CompoundConfigurationTest {
 
   @Test
   public void shouldReturnFirstFailedVerification() {
-    Option<PitHelpError> firstReturn = Option.some(new PitHelpError(
+    final Option<PitHelpError> firstReturn = Option.some(new PitHelpError(
         Help.NO_JUNIT));
     when(this.childOne.verifyEnvironment()).thenReturn(firstReturn);
     when(this.childTwo.verifyEnvironment()).thenReturn(

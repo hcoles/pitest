@@ -36,11 +36,16 @@ public class ClassInfoVisitor extends MethodFilteringAdapter {
 
   public final static ClassInfoBuilder getClassInfo(final String name,
       final byte[] bytes) {
+    return getClassInfo(new ClassName(name), bytes);
+  }
+
+  public final static ClassInfoBuilder getClassInfo(final ClassName name,
+      final byte[] bytes) {
     final ClassReader reader = new ClassReader(bytes);
     final ClassVisitor writer = new NullVisitor();
 
     final ClassInfoBuilder info = new ClassInfoBuilder();
-    info.name = new ClassName(name);
+    info.name = name;
     reader.accept(new ClassInfoVisitor(info, writer), 0);
     return info;
   }
