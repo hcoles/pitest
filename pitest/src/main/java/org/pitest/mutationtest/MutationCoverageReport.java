@@ -60,12 +60,15 @@ public class MutationCoverageReport implements Runnable {
   private final ReportOptions    data;
   private final ListenerFactory  listenerFactory;
   private final CoverageDatabase coverageDatabase;
+  private final Timings          timings;
 
   public MutationCoverageReport(final CoverageDatabase coverageDatabase,
-      final ReportOptions data, final ListenerFactory listenerFactory) {
+      final ReportOptions data, final ListenerFactory listenerFactory,
+      Timings timings) {
     this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;
+    this.timings = timings;
   }
 
   public final void run() {
@@ -107,12 +110,13 @@ public class MutationCoverageReport implements Runnable {
       final LaunchOptions launchOptions = new LaunchOptions(agent,
           data.getJvmArgs());
       final MutationClassPaths cps = data.getMutationClassPaths();
+      final Timings timings = new Timings();
 
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-          coverageOptions, launchOptions, cps);
+          coverageOptions, launchOptions, cps, timings);
 
       final MutationCoverageReport instance = new MutationCoverageReport(
-          coverageDatabase, data, reportFactory);
+          coverageDatabase, data, reportFactory, timings);
 
       instance.run();
     } finally {
@@ -171,18 +175,24 @@ public class MutationCoverageReport implements Runnable {
         this.coverageDatabase.getParentClassesWithoutATest(),
         mutationReportListener);
 
+    this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<TestUnit> tus = buildMutationTests(
         this.coverageDatabase.getConfiguration(), this.coverageDatabase,
         codeClasses);
+    this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFounds(tus);
 
     final Pitest pit = new Pitest(staticConfig);
+    this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
     pit.run(createContainer(), tus);
+    this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
+
+    this.timings.report(System.out);
 
   }
 

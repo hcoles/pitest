@@ -72,7 +72,7 @@ public class MutationCoverageReportTest {
 
   private void createAndRunTestee() {
     this.testee = new MutationCoverageReport(this.coverageDb, this.data,
-        this.listenerFactory);
+        this.listenerFactory, new Timings());
     this.testee.run();
   }
 

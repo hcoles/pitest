@@ -27,6 +27,7 @@ import org.pitest.mutationtest.DefaultCoverageDatabase;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
@@ -57,10 +58,11 @@ public class RunPitStrategy implements GoalStrategy {
     LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
     MutationClassPaths cps = data.getMutationClassPaths();
 
+    Timings timings = new Timings();
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        coverageOptions, launchOptions, cps);
+        coverageOptions, launchOptions, cps, timings);
     final MutationCoverageReport report = new MutationCoverageReport(
-        coverageDatabase, data, reportFactory);
+        coverageDatabase, data, reportFactory, timings);
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,

@@ -66,18 +66,23 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private boolean                                          allTestsGreen = true;
   private final TestToClassMapper                          testClassMapper;
 
+  private final Timings                                    timings;
+
   public DefaultCoverageDatabase(final CoverageOptions coverageOptions,
-      final LaunchOptions launchOptions, final MutationClassPaths classPath) {
+      final LaunchOptions launchOptions, final MutationClassPaths classPath,
+      Timings timings) {
     this.coverageOptions = coverageOptions;
     this.classPath = classPath;
     this.launchOptions = launchOptions;
     this.classRepository = new Repository(new ClassPathByteArraySource(
         classPath.getClassPath()));
     this.testClassMapper = new TestToClassMapper(this.classRepository);
+    this.timings = timings;
   }
 
   public boolean initialise() {
 
+    this.timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
     @SuppressWarnings("unchecked")
     final FunctionalCollection<ClassInfo> directlySuppliedTestsAndSuites = flatMap(
         this.classPath.test(), nameToClassInfo()).filter(
@@ -85,8 +90,11 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     LOG.info("Found " + directlySuppliedTestsAndSuites.size()
         + " classes that might define tests");
+    this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
+    this.timings.registerStart(Timings.Stage.COVERAGE);
     calculateCoverage(directlySuppliedTestsAndSuites);
+    this.timings.registerEnd(Timings.Stage.COVERAGE);
 
     this.codeClasses = FCollection.flatMap(this.classPath.code(),
         nameToClassInfo()).filter(not(isWithinATestClass()));
@@ -118,24 +126,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     };
   }
-
-  // private Collection<ClassInfo> gatherUniqueClassesFromDescriptions(
-  // final Iterable<Description> descriptions) {
-  // final Set<String> uniqueDiscoveredTestClasses = new HashSet<String>();
-  // FCollection.mapTo(descriptions, descriptionToClassInfo(),
-  // uniqueDiscoveredTestClasses);
-  // return FCollection.flatMap(uniqueDiscoveredTestClasses, nameToClassInfo());
-  // }
-
-  // private static F<Description, String> descriptionToClassInfo() {
-  // return new F<Description, String>() {
-  //
-  // public String apply(final Description a) {
-  // return a.getFirstTestClass();
-  // }
-  //
-  // };
-  // }
 
   private void calculateCoverage(final FunctionalCollection<ClassInfo> tests) {
     try {

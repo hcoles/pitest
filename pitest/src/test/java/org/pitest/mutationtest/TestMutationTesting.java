@@ -323,8 +323,9 @@ public class TestMutationTesting {
     final MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 
+    Timings timings = new Timings();
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        coverageOptions, launchOptions, cps);
+        coverageOptions, launchOptions, cps, timings);
 
     // final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
     // this.config, new ClassPath(), agent, data);
