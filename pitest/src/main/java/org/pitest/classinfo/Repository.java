@@ -75,7 +75,8 @@ public class Repository {
     if (clazz == null) {
       return new DefaultClassPointer(null);
     } else {
-      final ClassInfo alreadyResolved = this.knownClasses.get(clazz);
+      final ClassInfo alreadyResolved = this.knownClasses.get(new ClassName(
+          clazz));
       if (alreadyResolved != null) {
         return new DefaultClassPointer(alreadyResolved);
       } else {
