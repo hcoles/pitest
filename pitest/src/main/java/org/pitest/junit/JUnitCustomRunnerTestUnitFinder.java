@@ -44,12 +44,13 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
-        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)) {
+        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
+        || isParameterizedTest(runner)) {
       return Collections.emptyList();
     }
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
-        && !isParameterizedTest(runner) && !shouldTreatAsOneUnit(clazz)) {
+        && !shouldTreatAsOneUnit(clazz)) {
       return splitIntoFilteredUnits(runner.getDescription());
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(

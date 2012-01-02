@@ -64,7 +64,7 @@ public class MutationCoverageReport implements Runnable {
 
   public MutationCoverageReport(final CoverageDatabase coverageDatabase,
       final ReportOptions data, final ListenerFactory listenerFactory,
-      Timings timings) {
+      final Timings timings) {
     this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;

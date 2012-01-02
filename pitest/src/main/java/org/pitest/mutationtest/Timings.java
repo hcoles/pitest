@@ -30,7 +30,7 @@ public class Timings {
 
     private final String description;
 
-    Stage(String desc) {
+    Stage(final String desc) {
       this.description = desc;
     }
 
@@ -42,19 +42,19 @@ public class Timings {
 
   private final Map<Stage, TimeSpan> timings = new LinkedHashMap<Stage, TimeSpan>();
 
-  public void registerStart(Stage stage) {
+  public void registerStart(final Stage stage) {
     this.timings.put(stage, new TimeSpan(System.currentTimeMillis(), 0));
   }
 
-  public void registerEnd(Stage stage) {
-    long end = System.currentTimeMillis();
+  public void registerEnd(final Stage stage) {
+    final long end = System.currentTimeMillis();
     this.timings.get(stage).setEnd(end);
   }
 
-  public void report(PrintStream ps) {
+  public void report(final PrintStream ps) {
     long total = 0;
     ps.println("--------------------------------------------------");
-    for (Entry<Stage, TimeSpan> each : this.timings.entrySet()) {
+    for (final Entry<Stage, TimeSpan> each : this.timings.entrySet()) {
       total = total + each.getValue().duration();
       ps.println("> " + each.getKey() + " : " + each.getValue());
     }

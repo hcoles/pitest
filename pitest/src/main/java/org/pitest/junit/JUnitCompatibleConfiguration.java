@@ -28,7 +28,9 @@ import org.pitest.help.PitHelpError;
 public class JUnitCompatibleConfiguration implements Configuration {
 
   public TestUnitFinder testUnitFinder() {
-    return new JUnitCustomRunnerTestUnitFinder();
+    return new CompoundTestUnitFinder(Arrays.asList(
+        new JUnitCustomRunnerTestUnitFinder(),
+        new ParameterisedJUnitTestFinder()));
   }
 
   public TestSuiteFinder testSuiteFinder() {

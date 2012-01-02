@@ -61,8 +61,7 @@ public class Pitest {
   // entry point for mutation testing
   public void run(final Container container,
       final List<? extends TestUnit> testUnits) {
-    this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
-        testUnits);
+    this.run(container, this.initialStaticConfig, testUnits);
   }
 
   private void run(final Container container,

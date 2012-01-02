@@ -310,7 +310,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final MutationClassPaths cps = new MutationClassPaths(
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
-      Timings timings = new Timings();
+      final Timings timings = new Timings();
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps, timings);
       final MutationCoverageReport testee = new MutationCoverageReport(

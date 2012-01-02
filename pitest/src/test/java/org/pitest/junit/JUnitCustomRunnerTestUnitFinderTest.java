@@ -65,7 +65,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
     @Parameters
     public static Collection<Object[]> params() {
-      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 }, { 4 } });
+      return Arrays.asList(new Object[][] { { 1 }, { 2 } });
     }
 
     @Test
@@ -75,10 +75,9 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   @Test
-  public void shouldCreateSingleTestUnitForParameterizedTest() {
-    // fixme would be better to properly split into tests
+  public void shouldNotFindTestInParameterisedTestClass() {
     final Collection<TestUnit> actual = findWithTestee(ParameterisedTest.class);
-    assertEquals(1, actual.size());
+    assertEquals(0, actual.size());
   }
 
   public static class CustomSuiteRunner extends Suite {

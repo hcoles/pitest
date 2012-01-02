@@ -70,7 +70,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   public DefaultCoverageDatabase(final CoverageOptions coverageOptions,
       final LaunchOptions launchOptions, final MutationClassPaths classPath,
-      Timings timings) {
+      final Timings timings) {
     this.coverageOptions = coverageOptions;
     this.classPath = classPath;
     this.launchOptions = launchOptions;
@@ -360,8 +360,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     final int time = DefaultCoverageDatabase.this.times.get(description)
         .intValue();
 
-    Option<ClassName> testee = this.testClassMapper.findTestee(description
-        .getFirstTestClass());
+    final Option<ClassName> testee = this.testClassMapper
+        .findTestee(description.getFirstTestClass());
 
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), time, testee);

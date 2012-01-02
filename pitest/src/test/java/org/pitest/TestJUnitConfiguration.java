@@ -54,7 +54,7 @@ public class TestJUnitConfiguration {
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig();
+    this.staticConfig = new DefaultStaticConfig(new UnGroupedStrategy());
     this.staticConfig.getTestListeners().add(this.listener);
     this.pitest = new Pitest(this.staticConfig);
   }
@@ -298,12 +298,17 @@ public class TestJUnitConfiguration {
       System.out.println(this.i);
     }
 
+    @Test
+    public void test2() {
+      System.out.println("> " + this.i);
+    }
+
   }
 
   @Test
   public void shouldCreateTestForEachParameterOfParameterizedTest() {
     run(ParameterisedTest.class);
-    verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
+    verify(this.listener, times(6)).onTestSuccess(any(TestResult.class));
   }
 
   static abstract class HideFromJUnit8 {
