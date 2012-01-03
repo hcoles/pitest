@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pitest.util.StringUtil;
 import org.pitest.util.TimeSpan;
 
 public class Timings {
@@ -53,14 +54,13 @@ public class Timings {
 
   public void report(final PrintStream ps) {
     long total = 0;
-    ps.println("--------------------------------------------------");
     for (final Entry<Stage, TimeSpan> each : this.timings.entrySet()) {
       total = total + each.getValue().duration();
       ps.println("> " + each.getKey() + " : " + each.getValue());
     }
-    ps.println("--------------------------------------------------");
+    ps.println(StringUtil.seperatorLine());
     ps.println("> Total " + " : " + new TimeSpan(0, total));
-    ps.println("--------------------------------------------------");
+    ps.println(StringUtil.seperatorLine());
   }
 
 }

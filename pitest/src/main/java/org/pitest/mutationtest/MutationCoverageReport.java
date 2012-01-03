@@ -51,7 +51,10 @@ import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
+import org.pitest.mutationtest.statistics.MutationStatisticsListener;
+import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
+import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
@@ -169,6 +172,9 @@ public class MutationCoverageReport implements Runnable {
             this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
+
+    final MutationStatisticsListener stats = new MutationStatisticsListener();
+    staticConfig.addTestListener(stats);
     // staticConfig.addTestListener(ConsoleTestListener.);
 
     reportFailureForClassesWithoutTests(
@@ -192,8 +198,23 @@ public class MutationCoverageReport implements Runnable {
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
 
+    printStats(stats);
+
+  }
+
+  private void printStats(final MutationStatisticsListener stats) {
+    System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Timings");
+    System.out.println(StringUtil.seperatorLine('='));
     this.timings.report(System.out);
 
+    System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Mutators");
+    System.out.println(StringUtil.seperatorLine('='));
+    for (final Score each : stats.getStatistics().getScores()) {
+      each.report(System.out);
+      System.out.println(StringUtil.seperatorLine());
+    }
   }
 
   private List<TestUnit> buildMutationTests(final Configuration initialConfig,

@@ -163,15 +163,6 @@ public abstract class Prelude {
     };
   }
 
-  public static F2<String, String, String> concatenateWith(
-      final String seperator) {
-    return new F2<String, String, String>() {
-      public String apply(final String a, final String b) {
-        return a + seperator + b;
-      }
-    };
-  }
-
   public static <T> F<T, Iterable<T>> asList(final Class<T> type) {
     return new F<T, Iterable<T>>() {
 

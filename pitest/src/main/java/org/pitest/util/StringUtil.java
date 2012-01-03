@@ -16,6 +16,22 @@ package org.pitest.util;
 
 public class StringUtil {
 
+  public static String newLine() {
+    return System.getProperty("line.separator");
+  }
+
+  public static String seperatorLine(final char c) {
+    return repeat(c, 80);
+  }
+
+  public static String seperatorLine() {
+    return repeat('-', 80);
+  }
+
+  public static String repeat(final char c, final int n) {
+    return new String(new char[n]).replace('\0', c);
+  }
+
   public static String escapeBasicHtmlChars(final String s) {
     final StringBuilder sb = new StringBuilder();
     escapeBasicHtmlChars(s, sb);
