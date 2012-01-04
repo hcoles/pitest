@@ -19,18 +19,20 @@ import org.pitest.mutationtest.results.DetectionStatus;
 
 public class MutationStatusTestPair {
 
+  private final int             numberOfTestsRun;
   private final DetectionStatus status;
   private final Option<String>  killingTest;
 
-  public MutationStatusTestPair(final DetectionStatus status) {
-    this.status = status;
-    this.killingTest = Option.some(null);
+  public MutationStatusTestPair(int numberOfTestsRun,
+      final DetectionStatus status) {
+    this(numberOfTestsRun, status, null);
   }
 
-  public MutationStatusTestPair(final DetectionStatus status,
-      final String killingTest) {
+  public MutationStatusTestPair(int numberOfTestsRun,
+      final DetectionStatus status, final String killingTest) {
     this.status = status;
     this.killingTest = Option.some(killingTest);
+    this.numberOfTestsRun = numberOfTestsRun;
   }
 
   public DetectionStatus getStatus() {
@@ -39,6 +41,10 @@ public class MutationStatusTestPair {
 
   public Option<String> getKillingTest() {
     return this.killingTest;
+  }
+
+  public int getNumberOfTestsRun() {
+    return this.numberOfTestsRun;
   }
 
   @Override

@@ -104,6 +104,15 @@ public class MutationStatisticsTest {
     assertEquals(">> Generated 2 mutations Killed 1 (50%)", actual[0]);
   }
 
+  @Test
+  public void shouldReportTotalNumberOfTestsRun() {
+    this.testee.registerResults(Arrays.asList(
+        makeResult(DetectionStatus.SURVIVED, 1),
+        makeResult(DetectionStatus.KILLED, 42)));
+    String[] actual = generateReportLines();
+    assertEquals(">> Ran 43 tests (21.5 tests per mutation)", actual[1]);
+  }
+
   private F<Score, Boolean> hasResultForMutator(final String mutator) {
     return new F<Score, Boolean>() {
 
@@ -114,9 +123,13 @@ public class MutationStatisticsTest {
   }
 
   private MutationResult makeResult(DetectionStatus status) {
+    return makeResult(status, 0);
+  }
+
+  private MutationResult makeResult(DetectionStatus status, int numberOfTests) {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
-        new MutationStatusTestPair(status, "foo"));
+        new MutationStatusTestPair(numberOfTests, status, "foo"));
     return mr;
   }
 

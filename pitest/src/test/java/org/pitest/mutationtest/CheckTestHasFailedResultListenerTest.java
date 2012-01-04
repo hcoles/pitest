@@ -80,4 +80,11 @@ public class CheckTestHasFailedResultListenerTest {
         new TimeoutException("foo")));
     assertEquals(Option.some(this.description), this.testee.lastFailingTest());
   }
+
+  @Test
+  public void shouldRecordNumberOfTestsRun() {
+    assertEquals(0, this.testee.getNumberOfTestsRun());
+    this.testee.onTestStart(null);
+    assertEquals(1, this.testee.getNumberOfTestsRun());
+  }
 }

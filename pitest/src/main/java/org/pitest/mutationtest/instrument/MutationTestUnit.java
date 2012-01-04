@@ -130,7 +130,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Map<MutationDetails, MutationStatusTestPair> mutations,
       final DetectionStatus status) {
     FCollection.forEach(this.availableMutations,
-        putToMap(mutations, new MutationStatusTestPair(status)));
+        putToMap(mutations, new MutationStatusTestPair(0, status)));
   }
 
   private boolean hasTestCoverage(final Collection<ClassName> tests) {
@@ -185,7 +185,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations) {
     allmutations.put(remainingMutations.iterator().next(),
-        new MutationStatusTestPair(DetectionStatus.STARTED));
+        new MutationStatusTestPair(0, DetectionStatus.STARTED));
   }
 
   private void correctResultForProcessExitCode(
@@ -195,7 +195,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     if (!exitCode.isOk()) {
       LOG.warning("Slave encountered error or timeout");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
-      final MutationStatusTestPair status = new MutationStatusTestPair(
+      final MutationStatusTestPair status = new MutationStatusTestPair(0,
           DetectionStatus.getForErrorExitCode(exitCode));
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");

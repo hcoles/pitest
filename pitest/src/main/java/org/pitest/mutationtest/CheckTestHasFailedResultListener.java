@@ -27,6 +27,7 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   private boolean             timedOut         = false;
   private Option<Description> lastFailingTest  = Option.none();
+  private int                 testsRun         = 0;
 
   public void onTestError(final TestResult tr) {
     recordFailingTest(tr);
@@ -49,12 +50,11 @@ public class CheckTestHasFailedResultListener implements TestListener {
   }
 
   public void onTestSkipped(final TestResult tr) {
-    // TODO Auto-generated method stub
 
   }
 
   public void onTestStart(final Description d) {
-    // TODO Auto-generated method stub
+    this.testsRun++;
 
   }
 
@@ -77,13 +77,15 @@ public class CheckTestHasFailedResultListener implements TestListener {
     return this.lastFailingTest;
   }
 
+  public int getNumberOfTestsRun() {
+    return this.testsRun;
+  }
+
   public void onRunEnd() {
-    // TODO Auto-generated method stub
 
   }
 
   public void onRunStart() {
-    // TODO Auto-generated method stub
 
   }
 

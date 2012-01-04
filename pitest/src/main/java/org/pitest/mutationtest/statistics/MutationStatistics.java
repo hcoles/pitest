@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.statistics;
 
 import java.io.PrintStream;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,8 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationStatistics {
-  private final Map<String, Score> mutatorTotalMap = new HashMap<String, Score>();
+  private final Map<String, Score> mutatorTotalMap  = new HashMap<String, Score>();
+  private long                     numberOfTestsRun = 0;
 
   public void registerResults(final Collection<MutationResult> results) {
     FCollection.forEach(results, register());
@@ -35,6 +37,8 @@ public class MutationStatistics {
     return new SideEffect1<MutationResult>() {
 
       public void apply(final MutationResult mr) {
+        MutationStatistics.this.numberOfTestsRun = MutationStatistics.this.numberOfTestsRun
+            + mr.getNumberOfTestsRun();
         final String key = mr.getDetails().getId().getMutator();
         Score total = MutationStatistics.this.mutatorTotalMap.get(key);
         if (total == null) {
@@ -96,6 +100,18 @@ public class MutationStatistics {
     out.println(">> Generated " + this.getTotalMutations()
         + " mutations Killed " + this.getTotalDetectedMutations() + " ("
         + this.getPercentageDetected() + "%)");
+    out.println(">> Ran " + this.numberOfTestsRun + " tests ("
+        + getTestsPerMutation() + " tests per mutation)");
+  }
+
+  private String getTestsPerMutation() {
+    if (this.getTotalMutations() == 0) {
+      return "0";
+    }
+
+    float testsPerMutation = this.numberOfTestsRun
+        / (float) this.getTotalMutations();
+    return new DecimalFormat("#.##").format(testsPerMutation);
   }
 
 }

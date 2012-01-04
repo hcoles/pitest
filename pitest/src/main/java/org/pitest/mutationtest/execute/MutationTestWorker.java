@@ -96,12 +96,13 @@ public class MutationTestWorker {
 
     r.describe(mutationId);
 
-    MutationStatusTestPair mutationDetected = new MutationStatusTestPair(
+    MutationStatusTestPair mutationDetected = new MutationStatusTestPair(0,
         DetectionStatus.SURVIVED);
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
-      mutationDetected = new MutationStatusTestPair(DetectionStatus.NO_COVERAGE);
+      mutationDetected = new MutationStatusTestPair(0,
+          DetectionStatus.NO_COVERAGE);
     } else {
       LOG.info("" + relevantTests.size() + " relevant test for "
           + mutatedClass.getDetails().getMethod());
@@ -118,7 +119,7 @@ public class MutationTestWorker {
         mutationDetected = doTestsDetectMutation(c, relevantTests);
       } else {
         LOG.info("Mutation " + mutationId + " was not viable ");
-        mutationDetected = new MutationStatusTestPair(
+        mutationDetected = new MutationStatusTestPair(0,
             DetectionStatus.NON_VIABLE);
       }
 
@@ -183,10 +184,12 @@ public class MutationTestWorker {
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
     if (listener.lastFailingTest().hasSome()) {
-      return new MutationStatusTestPair(listener.status(), listener
-          .lastFailingTest().value().getQualifiedName());
+      return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
+          listener.status(), listener.lastFailingTest().value()
+              .getQualifiedName());
     } else {
-      return new MutationStatusTestPair(listener.status());
+      return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
+          listener.status());
     }
   }
 

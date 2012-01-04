@@ -68,7 +68,7 @@ public class XMLReportListenerTest {
   private MutationResult createdKilledMutationWithKillingTestOf(
       final String killingTest) {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.KILLED, killingTest));
     return mr;
   }
@@ -84,7 +84,7 @@ public class XMLReportListenerTest {
 
   private MutationResult createSurvivingMutant() {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.SURVIVED));
     return mr;
   }

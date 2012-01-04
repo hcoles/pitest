@@ -41,6 +41,10 @@ public class MutationResult {
     return this.status.getStatus();
   }
 
+  public int getNumberOfTestsRun() {
+    return this.status.getNumberOfTestsRun();
+  }
+
   public String getStatusDescription() {
     for (final String test : getKillingTest()) {
       return getStatus() + " -> " + test;

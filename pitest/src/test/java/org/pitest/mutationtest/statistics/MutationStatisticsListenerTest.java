@@ -66,7 +66,7 @@ public class MutationStatisticsListenerTest {
   private MutationResult makeResult() {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
-        new MutationStatusTestPair(DetectionStatus.KILLED, "foo"));
+        new MutationStatusTestPair(1, DetectionStatus.KILLED, "foo"));
     return mr;
   }
 
