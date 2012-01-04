@@ -14,10 +14,12 @@
  */
 package org.pitest.mutationtest.statistics;
 
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.results.MutationResult;
@@ -47,6 +49,53 @@ public class MutationStatistics {
 
   public Iterable<Score> getScores() {
     return this.mutatorTotalMap.values();
+  }
+
+  public long getTotalMutations() {
+    return FCollection.fold(addTotals(), 0l, this.mutatorTotalMap.values());
+  }
+
+  public long getTotalDetectedMutations() {
+    return FCollection.fold(addDetectedTotals(), 0l,
+        this.mutatorTotalMap.values());
+  }
+
+  public long getPercentageDetected() {
+    if (getTotalMutations() == 0) {
+      return 100;
+    }
+
+    if (getTotalDetectedMutations() == 0) {
+      return 0;
+    }
+
+    return Math.round(100f / getTotalMutations() * getTotalDetectedMutations());
+  }
+
+  private F2<Long, Score, Long> addDetectedTotals() {
+    return new F2<Long, Score, Long>() {
+
+      public Long apply(Long a, Score b) {
+        return a + b.getTotalDetectedMutations();
+      }
+
+    };
+  }
+
+  private static F2<Long, Score, Long> addTotals() {
+    return new F2<Long, Score, Long>() {
+
+      public Long apply(Long a, Score b) {
+        return a + b.getTotalMutations();
+      }
+
+    };
+  }
+
+  public void report(PrintStream out) {
+    out.println(">> Generated " + this.getTotalMutations()
+        + " mutations Killed " + this.getTotalDetectedMutations() + " ("
+        + this.getPercentageDetected() + "%)");
   }
 
 }

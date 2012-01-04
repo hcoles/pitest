@@ -18,6 +18,9 @@ import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.pitest.functional.F;
+import org.pitest.functional.F2;
+import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.results.DetectionStatus;
 
 public class Score {
@@ -47,8 +50,52 @@ public class Score {
     return this.counts.values();
   }
 
+  public long getTotalMutations() {
+    return FCollection.fold(addTotals(), 0l, this.counts.values());
+  }
+
+  public long getTotalDetectedMutations() {
+    return FCollection.fold(addTotals(), 0l,
+        FCollection.filter(this.counts.values(), isDetected()));
+  }
+
+  public long getPercentageDetected() {
+    if (getTotalMutations() == 0) {
+      return 100;
+    }
+
+    if (getTotalDetectedMutations() == 0) {
+      return 0;
+    }
+
+    return Math.round(100f / getTotalMutations() * getTotalDetectedMutations());
+  }
+
+  private static F<StatusCount, Boolean> isDetected() {
+    return new F<StatusCount, Boolean>() {
+
+      public Boolean apply(StatusCount a) {
+        return a.status.isDetected();
+      }
+
+    };
+  }
+
+  private F2<Long, StatusCount, Long> addTotals() {
+    return new F2<Long, StatusCount, Long>() {
+
+      public Long apply(Long a, StatusCount b) {
+        return a + b.count;
+      }
+
+    };
+  }
+
   public void report(final PrintStream out) {
     out.println("> " + this.mutatorName);
+    out.println(">> Generated " + this.getTotalMutations() + " Killed "
+        + this.getTotalDetectedMutations() + " ("
+        + this.getPercentageDetected() + "%)");
     int i = 0;
     StringBuffer sb = new StringBuffer();
     for (final StatusCount each : this.counts.values()) {

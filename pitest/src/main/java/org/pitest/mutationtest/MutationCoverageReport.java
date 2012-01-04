@@ -209,6 +209,11 @@ public class MutationCoverageReport implements Runnable {
     this.timings.report(System.out);
 
     System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Statistics");
+    System.out.println(StringUtil.seperatorLine('='));
+    stats.getStatistics().report(System.out);
+
+    System.out.println(StringUtil.seperatorLine('='));
     System.out.println("- Mutators");
     System.out.println(StringUtil.seperatorLine('='));
     for (final Score each : stats.getStatistics().getScores()) {
