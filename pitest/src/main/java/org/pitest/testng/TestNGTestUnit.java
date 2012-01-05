@@ -62,12 +62,11 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
     final ITestListener listener = new TestNGAdapter(this.clazz,
         this.getDescription(), rc);
-    final TestNG testng = new TestNG();
+    final TestNG testng = new TestNG(false);
 
     final XmlSuite suite = createSuite();
 
-    testng.setUseDefaultListeners(false);
-
+    testng.setDefaultSuiteName(suite.getName());
     testng.setXmlSuites(Collections.singletonList(suite));
 
     testng.addListener(listener);
