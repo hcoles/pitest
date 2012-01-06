@@ -406,7 +406,7 @@ public class ReportOptions {
   }
 
   private Predicate<ClassPathRoot> createCodePathFilter() {
-    if (this.codePaths != null) {
+    if (this.codePaths != null && this.codePaths.isEmpty()) {
       return new PathNamePredicate(Prelude.or(Glob
           .toGlobPredicates(this.codePaths)));
     } else {
