@@ -15,10 +15,14 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
@@ -27,9 +31,20 @@ public class MutatorTest {
   @SuppressWarnings("unchecked")
   @Test
   public void shouldFlattenToGroupingsToCollectionsOfMethodMutatorFactories() {
-    assertEquals(Arrays.asList(MathMutator.MATH_MUTATOR,
-        InlineConstantMutator.INLINE_CONSTANT_MUTATOR), Mutator.asCollection(
-        Mutator.MATH, Mutator.INLINE_CONSTS));
+    assertEquals(
+        Arrays.asList(MathMutator.MATH_MUTATOR,
+            InlineConstantMutator.INLINE_CONSTANT_MUTATOR),
+        Mutator.asCollection(Arrays.asList(Mutator.MATH, Mutator.INLINE_CONSTS)));
+  }
+
+  @Test
+  public void shouldIncludeAllMutatorsWhenAllRequested() {
+    Set<MethodMutatorFactory> expected = new HashSet<MethodMutatorFactory>();
+    for (Mutator each : Mutator.values()) {
+      expected.addAll(Mutator.asCollection(each));
+    }
+    assertTrue(expected.containsAll(Mutator.asCollection(Mutator.ALL)));
+    assertTrue(Mutator.asCollection(Mutator.ALL).containsAll(expected));
   }
 
 }

@@ -108,7 +108,7 @@ public enum Mutator implements MutatorGrouping {
    * All the mutators
    */
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
-      EXPERIMENTAL_INLINE_CONSTS);
+      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS);
 
   Mutator(final MutatorGrouping... groups) {
     this.impls = asCollection(groups);
