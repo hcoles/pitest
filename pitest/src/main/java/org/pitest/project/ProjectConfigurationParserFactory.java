@@ -3,36 +3,36 @@ package org.pitest.project;
 import org.pitest.project.impl.DefaultProjectConfigurationParser;
 
 /**
- * The {@see ProjectFileParserFactory} is responsible for creating a {@see
- * ProjectFileParser} instance based on a system property.
+ * The ProjectConfigurationParserFactory is responsible for creating a
+ * ProjectConfigurationParser instance based on a system property.
  * <p/>
  * If the system property is not set, then the default implementation of the
- * {@see ProjectFileParser} is used instead.
+ * ProjectConfigurationParser is used instead.
  * 
  * @author Aidan Morgan
  */
 public class ProjectConfigurationParserFactory {
   /**
-   * The name of the system property that is used to override the default {@see
-   * ProjectFileParser} implementation.
+   * The name of the system property that is used to override the default
+   * ProjectConfigurationParser implementation.
    */
   public static final String PARSER_PROPERTY = "projectConfigurationParser.impl";
 
   /**
-   * The name of the default {@see ProjectFileParser} instance to use.
+   * The name of the default ProjectConfigurationParser instance to use.
    */
   public static final String DEFAULT_PARSER  = DefaultProjectConfigurationParser.class
                                                  .getName();
 
   /**
-   * Creates a new {@see ProjectFileParser} instance, based on the system
-   * property. If no system property is specified then the default {@see
-   * ProjectFileParser} instance is returned.
+   * Creates a new ProjectConfigurationParser instance, based on the system
+   * property. If no system property is specified then the default
+   * ProjectConfigurationParser instance is returned.
    * 
-   * @return a new {@see ProjectFileParser} for parsing project files.
+   * @return a new ProjectConfigurationParser for parsing project files.
    * @throws ProjectConfigurationParserException
-   *           if an exception occurs instantiating the {@see ProjectFileParser}
-   *           instance.
+   *           if an exception occurs instantiating the
+   *           ProjectConfigurationParser instance.
    */
   public static ProjectConfigurationParser createParser()
       throws ProjectConfigurationParserException {

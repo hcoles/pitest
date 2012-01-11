@@ -6,8 +6,8 @@ import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
 
 /**
- * A pretend {@see ProjectFileParser}, used for testing the {@see
- * org.pitest.project.ProjectFileParserFactory}.
+ * A pretend ProjectFileParser, used for testing the
+ * org.pitest.project.ProjectFileParserFactory.
  * 
  * @author Aidan Morgan
  */

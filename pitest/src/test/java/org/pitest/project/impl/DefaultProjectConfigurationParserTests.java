@@ -11,7 +11,7 @@ import org.pitest.project.ProjectConfigurationParserException;
 import org.pitest.project.ProjectConfigurationParserFactory;
 
 /**
- * Suite of tests that check that the {@see DefaultProjectFileParser} parses the
+ * Suite of tests that check that the DefaultProjectFileParser parses the
  * project file according to the rules.
  * 
  * @author Aidan Morgan

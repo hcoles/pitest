@@ -25,7 +25,6 @@ import org.pitest.boot.CodeCoverageStore;
 
 /**
  * @author ivanalx
- * @date 26.01.2009 15:48:26
  */
 public class CoverageMethodVisitor extends MethodAdapter {
   private final MethodVisitor methodVisitor;

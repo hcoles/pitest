@@ -37,8 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * The default implementation of the {@see ProjectFileParser} interface. Uses a
- * simple XML document to store all of the configuration information for a
+ * The default implementation of the ProjectConfigurationParser interface. Uses
+ * a simple XML document to store all of the configuration information for a
  * coverage report.
  * 
  * @author Aidan Morgan
@@ -66,23 +66,22 @@ public class DefaultProjectConfigurationParser implements
                                                                      .getLogger();
 
   /**
-   * The {@see FileSystemDelegate} instance to use to query the file system.
-   * Allows any access to the file system to be replaced if needed.
+   * The FileSystemDelegate instance to use to query the file system. Allows any
+   * access to the file system to be replaced if needed.
    */
   private final FileSystemDelegate fileSystemDelegate;
 
   /**
-   * Helper method that will load all {@see FILTER_ELEMENT_NAME} elements from
-   * the provided {@see Element} which are children of the {@see root} {@see
-   * Element}.
+   * Helper method that will load all FILTER_ELEMENT_NAME elements from the
+   * provided Element which are children of the root Element.
    * 
    * @param doc
-   *          the {@see Document} to process.
+   *          the Document to process.
    * @param root
-   *          the name of the root {@see Element} that will contain child {@see
-   *          Element}s named {@see FILTER_ELEMENT_NAME}
-   * @return a {@see Collection<Predicate<String>>} which contains the values in
-   *         the provided {@see Document}.
+   *          the name of the root Element that will contain child Elements
+   *          named FILTER_ELEMENT_NAME
+   * @return a Collection<Predicate<String>> which contains the values in the
+   *         provided Document.
    */
   private static Collection<Predicate<String>> loadFilters(final Document doc,
       final ConfigOption root) {
@@ -127,17 +126,17 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Helper method that will find the {@see PROPERTY_ELEMENT_NAME} property with
-   * the provided {@see propertyName} and return the value for it.
+   * Helper method that will find the property with the provided propertyName
+   * and return the value for it.
    * <p/>
-   * If no property {@see Element} can be found, then this will return null.
+   * If no property Element can be found, then this will return null.
    * 
    * @param doc
-   *          the {@see Document} to search.
+   *          the Document to search.
    * @param propertyName
-   *          the name of the {@see PROPERTY_ELEMENT_NAME} to find.
-   * @return the value of the {@see PROPERTY_ELEMENT_NAME} {@see Element} with
-   *         the provided name, {@code null} otherwise.
+   *          the name of the Element to find.
+   * @return the value of the Element with the provided name, {@code null}
+   *         otherwise.
    */
   private static String findProperty(final Document doc,
       final ConfigOption propertyName) {
@@ -159,13 +158,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the property with the provided name from the provided {@see Document}
-   * as a boolean, if no property is specified then returns the {@see
-   * defaultValue}.
+   * Loads the property with the provided name from the provided Document as a
+   * boolean, if no property is specified then returns the defaultValue.
    * 
    * @param doc
-   *          the {@see Document} to find the {@see PROPERTY_ELEMENT_NAME}
-   *          {@see Element} in.
+   *          the Document to find the Element in.
    * @param propertyName
    *          the name of the property to find.
    * @param defaultValue
@@ -185,13 +182,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the property with the provided name from the provided {@see Document}
-   * as a float, if no property is specified then returns the {@see
-   * defaultValue}.
+   * Loads the property with the provided name from the provided Document as a
+   * float, if no property is specified then returns the defaultValue.
    * 
    * @param doc
-   *          the {@see Document} to find the {@see PROPERTY_ELEMENT_NAME}
-   *          {@see Element} in.
+   *          the Document to find the Element in.
    * @param propertyName
    *          the name of the property to find.
    * @param defaultValue
@@ -216,13 +211,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the property with the provided name from the provided {@see Document}
-   * as a long, if no property is specified then returns the {@see defaultValue}
-   * .
+   * Loads the property with the provided name from the provided Document as a
+   * long, if no property is specified then returns the defaultValue .
    * 
    * @param doc
-   *          the {@see Document} to find the {@see PROPERTY_ELEMENT_NAME}
-   *          {@see Element} in.
+   *          the Document to find the Element in.
    * @param propertyName
    *          the name of the property to find.
    * @param defaultValue
@@ -247,13 +240,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the property with the provided name from the provided {@see Document}
-   * as an int, if no property is specified then returns the {@see defaultValue}
-   * .
+   * Loads the property with the provided name from the provided Document as an
+   * int, if no property is specified then returns the defaultValue .
    * 
    * @param doc
-   *          the {@see Document} to find the {@see PROPERTY_ELEMENT_NAME}
-   *          {@see Element} in.
+   *          the Document to find the Element in.
    * @param propertyName
    *          the name of the property to find.
    * @param defaultValue
@@ -278,13 +269,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the property with the provided name from the provided {@see Document}
-   * as a String, if no property is specified then returns the {@see
-   * defaultValue}.
+   * Loads the property with the provided name from the provided Document as a
+   * String, if no property is specified then returns the defaultValue.
    * 
    * @param doc
-   *          the {@see Document} to find the {@see PROPERTY_ELEMENT_NAME}
-   *          {@see Element} in.
+   *          the Document to find the Element in.
    * @param propertyName
    *          the name of the property to find.
    * @param defaultValue
@@ -304,8 +293,8 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Constructor. Creates a new {@see DefaultProjectFileParser} with a {@see
-   * DefaultFileSystemDelegate} as the {@see FileSystemDelegate}.
+   * Constructor. Creates a new DefaultProjectFileParser with a
+   * DefaultFileSystemDelegate as the FileSystemDelegate.
    */
   public DefaultProjectConfigurationParser() {
     this(new DefaultFileSystemDelegate());
@@ -315,8 +304,8 @@ public class DefaultProjectConfigurationParser implements
    * Constructor.
    * 
    * @param del
-   *          the {@see FileSystemDelegate} instance to use for accessing the
-   *          file system.
+   *          the FileSystemDelegate instance to use for accessing the file
+   *          system.
    */
   public DefaultProjectConfigurationParser(final FileSystemDelegate del) {
     if (del == null) {
@@ -327,9 +316,6 @@ public class DefaultProjectConfigurationParser implements
     this.fileSystemDelegate = del;
   }
 
-  /**
-   * @inheritDoc
-   */
   public ReportOptions loadProject(final String in)
       throws ProjectConfigurationParserException, ProjectConfigurationException {
     try {
@@ -358,12 +344,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads a new {@see ReportOptions} from the provided {@see InputStream}.
+   * Loads a new ReportOptions from the provided InputStream.
    * 
    * @param inputStream
-   *          the {@see InputStream} to load the {@see ReportOptions} from.
-   * @return a new {@see ReportOptions}, configured from the provided {@see
-   *         InputStream}.
+   *          the InputStream to load the ReportOptions from.
+   * @return a new ReportOptions, configured from the provided InputStream.
    * @throws ProjectConfigurationParserException
    * 
    * @throws ProjectConfigurationException
@@ -400,12 +385,12 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Returns {@code true} if the provided {@see File} exists on the filesystem,
+   * Returns {@code true} if the provided File exists on the filesystem,
    * {@code false} otherwise.
    * 
    * @param f
-   *          the {@see File} to test if it exists.
-   * @return {@code true} if the provided {@see File} exists on the filesystem,
+   *          the File to test if it exists.
+   * @return {@code true} if the provided File exists on the filesystem,
    *         {@code false} otherwise.
    */
   protected boolean doesFileExist(final String f) {
@@ -413,79 +398,72 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the {@see OptionsParser.VERBOSE} property from the project file.
+   * Loads the OptionsParser.VERBOSE property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.VERBOSE} property from the
-   *         project file, or the default value if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.VERBOSE property from the project
+   *         file, or the default value if no property is specified.
    */
   private boolean loadVerbose(final Document doc) {
     return loadBooleanProperty(doc, VERBOSE);
   }
 
   /**
-   * Loads the {@see OptionsParser.TIMEOUT_FACTOR_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.TIMEOUT_FACTOR_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.TIMEOUT_FACTOR_ARG} property
-   *         from the project file, or the default value if no property is
-   *         specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.TIMEOUT_FACTOR_ARG property from the
+   *         project file, or the default value if no property is specified.
    */
   private float loadTimeoutFactor(final Document doc) {
     return loadFloatProperty(doc, TIMEOUT_FACTOR);
   }
 
   /**
-   * Loads the {@see OptionsParser.TIMEOUT_CONST_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.TIMEOUT_CONST_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.TIMEOUT_CONST_ARG} property
-   *         from the project file, or the default value if no property is
-   *         specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.TIMEOUT_CONST_ARG property from the
+   *         project file, or the default value if no property is specified.
    */
   private long loadTimeoutConstant(final Document doc) {
     return loadLongProperty(doc, TIMEOUT_CONST);
   }
 
   /**
-   * Loads the {@see OptionsParser.TEST_FILTER_ARGS} property from the project
-   * file.
+   * Loads the OptionsParser.TEST_FILTER_ARGS property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.TEST_FILTER_ARGS} property
-   *         from the project file, or empty if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.TEST_FILTER_ARGS property from the
+   *         project file, or empty if no property is specified.
    */
   private Collection<Predicate<String>> loadTargetTests(final Document doc) {
     return loadFilters(doc, TEST_FILTER);
   }
 
   /**
-   * Loads the {@see OptionsParser.TARGET_CLASSES_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.TARGET_CLASSES_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.TARGET_CLASSES_ARG} property
-   *         from the project file, or empty if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.TARGET_CLASSES_ARG property from the
+   *         project file, or empty if no property is specified.
    */
   private Collection<Predicate<String>> loadTargetClasses(final Document doc) {
     return loadFilters(doc, TARGET_CLASSES);
   }
 
   /**
-   * Loads the {@see OptionsParser.SOURCE_DIR_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.SOURCE_DIR_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.SOURCE_DIR_ARG} property from
-   *         the project file, or the default value if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.SOURCE_DIR_ARG property from the
+   *         project file, or the default value if no property is specified.
    * @throws org.pitest.project.ProjectConfigurationException
    *           if a source directory is specified which does not exist on the
    *           filesystem.
@@ -520,14 +498,13 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the {@see OptionsParser.REPORT_DIR_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.REPORT_DIR_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.REPORT_DIR_ARG} property from
-   *         the project file, if no {@see OptionsParser.REPORT_DIR_ARG} is
-   *         specified then a {@see ProjectConfigurationException} is thrown.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.REPORT_DIR_ARG property from the
+   *         project file, if no OptionsParser.REPORT_DIR_ARG is specified then
+   *         a ProjectConfigurationException is thrown.
    * @throws org.pitest.project.ProjectConfigurationException
    *           if the project file is not specified.
    */
@@ -544,11 +521,11 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the {@see OptionsParser.THREADS_ARG} property from the project file.
+   * Loads the OptionsParser.THREADS_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.THREADS_ARG} property from the
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.THREADS_ARG property from the
    *         project file, or the default value if no property is specified.
    */
   private int loadNumberOfThreads(final Document doc) {
@@ -556,83 +533,79 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the {@see OptionsParser.MUTATE_STATIC_INITIALIZERS_ARG} property from
-   * the project file.
+   * Loads the OptionsParser.MUTATE_STATIC_INITIALIZERS_ARG property from the
+   * project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see
-   *         OptionsParser.MUTATE_STATIC_INITIALIZERS_ARG} property from the
-   *         project file, or the default value if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.MUTATE_STATIC_INITIALIZERS_ARG
+   *         property from the project file, or the default value if no property
+   *         is specified.
    */
   private boolean loadMutateStaticInitialisers(final Document doc) {
     return loadBooleanProperty(doc, MUTATE_STATIC_INITIALIZERS);
   }
 
   /**
-   * Loads the {@see OptionsParser.MAX_MUTATIONS_PER_CLASS_ARG} property from
-   * the project file.
+   * Loads the OptionsParser.MAX_MUTATIONS_PER_CLASS_ARG property from the
+   * project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.MAX_MUTATIONS_PER_CLASS_ARG}
-   *         property from the project file, or the default value if no property
-   *         is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.MAX_MUTATIONS_PER_CLASS_ARG property
+   *         from the project file, or the default value if no property is
+   *         specified.
    */
   private int loadMaxMutationsPerClass(final Document doc) {
     return loadIntProperty(doc, MAX_MUTATIONS_PER_CLASS);
   }
 
   /**
-   * Loads the {@see OptionsParser.EXCLUDED_METHOD_ARG} property from the
-   * project file.
+   * Loads the OptionsParser.EXCLUDED_METHOD_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.EXCLUDED_METHOD_ARG} property
-   *         from the project file, or the default value if no property is
-   *         specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.EXCLUDED_METHOD_ARG property from
+   *         the project file, or the default value if no property is specified.
    */
   private Collection<Predicate<String>> loadExcludedMethods(final Document doc) {
     return loadFilters(doc, EXCLUDED_METHOD);
   }
 
   /**
-   * Loads the {@see OptionsParser.EXCLUDED_CLASSES_ARG} property from the
-   * project file.
+   * Loads the OptionsParser.EXCLUDED_CLASSES_ARG property from the project
+   * file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.EXCLUDED_CLASSES_ARG} property
-   *         from the project file, or the default value if no property is
-   *         specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.EXCLUDED_CLASSES_ARG property from
+   *         the project file, or the default value if no property is specified.
    */
   private Collection<Predicate<String>> loadExcludedClasses(final Document doc) {
     return loadFilters(doc, EXCLUDED_CLASSES);
   }
 
   /**
-   * Loads the {@see OptionsParser.DEPENDENCY_DISTANCE_ARG} property from the
-   * project file.
+   * Loads the OptionsParser.DEPENDENCY_DISTANCE_ARG property from the project
+   * file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.DEPENDENCY_DISTANCE_ARG}
-   *         property from the project file, or the default value if no property
-   *         is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.DEPENDENCY_DISTANCE_ARG property
+   *         from the project file, or the default value if no property is
+   *         specified.
    */
   private int loadDependencyAnalysisMaxDistance(final Document doc) {
     return loadIntProperty(doc, DEPENDENCY_DISTANCE);
   }
 
   /**
-   * Loads the {@see OptionsParser.CLASSPATH_ARG} property from the project
-   * file.
+   * Loads the OptionsParser.CLASSPATH_ARG property from the project file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.CLASSPATH_ARG} property from
-   *         the project file, or the default value if no property is specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.CLASSPATH_ARG property from the
+   *         project file, or the default value if no property is specified.
    */
   private Collection<String> loadClassPathElements(final Document doc) {
     final Element classpathElement = getElement(doc, CLASSPATH);
@@ -648,14 +621,13 @@ public class DefaultProjectConfigurationParser implements
   }
 
   /**
-   * Loads the {@see OptionsParser.IN_SCOPE_CLASSES_ARG} property from the
-   * project file.
+   * Loads the OptionsParser.IN_SCOPE_CLASSES_ARG property from the project
+   * file.
    * 
    * @param doc
-   *          the {@see Document} to load the property from.
-   * @return the value of the {@see OptionsParser.IN_SCOPE_CLASSES_ARG} property
-   *         from the project file, or the default value if no property is
-   *         specified.
+   *          the Document to load the property from.
+   * @return the value of the OptionsParser.IN_SCOPE_CLASSES_ARG property from
+   *         the project file, or the default value if no property is specified.
    */
   private Collection<Predicate<String>> loadClassesInScope(final Document doc) {
     return loadFilters(doc, IN_SCOPE_CLASSES);

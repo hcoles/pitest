@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Default implementation of the {@see FileSystemDelegate} that redirects all
- * calls to the java {@see File} API.
+ * Default implementation of the FileSystemDelegate that redirects all calls to
+ * the java File API.
  * 
  * @author Aidan Morgan
  */

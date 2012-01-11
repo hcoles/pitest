@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A stub implementation of the {@see FileSystemDelegate} that allows canned
- * responses for specific file strings to be set up and returned.
+ * A stub implementation of the FileSystemDelegate that allows canned responses
+ * for specific file strings to be set up and returned.
  * 
  * @author Aidan Morgan
  */
@@ -29,7 +29,7 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
   private boolean                    canRead    = true;
 
   /**
-   * The {@see InputStream} to return for a provided file string.
+   * The InputStream to return for a provided file string.
    */
   private InputStream                inputStream;
   private final Map<String, Boolean> exists;
@@ -44,12 +44,12 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
   /**
    * Constructor.
    * <p/>
-   * Initialises the {@see StubFileSystemDelegate} as if the file exists, is a
-   * file and can be read.
+   * Initialises the StubFileSystemDelegate as if the file exists, is a file and
+   * can be read.
    * 
    * @param inputStream
-   *          the {@see InputStream} to return when the {@see
-   *          FileSystemDelegate.openStream} method is called.
+   *          the InputStream to return when the FileSystemDelegate.openStream
+   *          method is called.
    */
   public StubFileSystemDelegate(final InputStream inputStream) {
     this.inputStream = inputStream;
@@ -59,9 +59,9 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
   /**
    * Constructor.
    * <p/>
-   * Initialises the {@see StubFileSystemDelegate} as if the file exists, is a
-   * file, and can be read. The {@see FileSystemDelegate.openStream} method will
-   * return an {@see InputStream} which wraps the provided {@see fileContents}.
+   * Initialises the StubFileSystemDelegate as if the file exists, is a file,
+   * and can be read. The FileSystemDelegate.openStream method will return an
+   * InputStream which wraps the provided fileContents.
    * 
    * @param fileContents
    *          the expected contents of the file.
@@ -70,9 +70,6 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
     this(new ByteArrayInputStream(fileContents.getBytes()));
   }
 
-  /**
-   * @inheritDoc
-   */
   public boolean exists(final String f) {
     if (this.exists.containsKey(f)) {
       return this.exists.get(f);
@@ -81,70 +78,53 @@ public class StubFileSystemDelegate implements FileSystemDelegate {
     return this.fileExists;
   }
 
-  /**
-   * @inheritDoc
-   */
   public boolean isFile(final String projectFile) {
     return this.isFile;
   }
 
-  /**
-   * @inheritDoc
-   */
   public boolean canRead(final String projectFile) {
     return this.canRead;
   }
 
-  /**
-   * @inheritDoc
-   */
   public InputStream openStream(final String projectFile) throws IOException {
     return this.inputStream;
   }
 
   /**
-   * Sets the canned result for the {@see FileSystemDelegate.exists()} method
-   * call.
+   * Sets the canned result for the FileSystemDelegate.exists() method call.
    * 
    * @param fileExists
-   *          the result to return for a {@see FileSystemDelegate.exists()}
-   *          call.
+   *          the result to return for a FileSystemDelegate.exists() call.
    */
   public void setFileExists(final boolean fileExists) {
     this.fileExists = fileExists;
   }
 
   /**
-   * Sets the canned result for the {@see FileSystemDelegate.isFile()} method
-   * call.
+   * Sets the canned result for the FileSystemDelegate.isFile() method call.
    * 
    * @param file
-   *          the result to return for a {@see FileSystemDelegate.isFile()}
-   *          call.
+   *          the result to return for a FileSystemDelegate.isFile() call.
    */
   public void setFile(final boolean file) {
     this.isFile = file;
   }
 
   /**
-   * Sets the canned result for the {@see FileSystemDelegate.canRead()} method
-   * call.
+   * Sets the canned result for the FileSystemDelegate.canRead() method call.
    * 
    * @param canRead
-   *          the result to return for a {@see FileSystemDelegate.canRead()}
-   *          call.
+   *          the result to return for a FileSystemDelegate.canRead() call.
    */
   public void setCanRead(final boolean canRead) {
     this.canRead = canRead;
   }
 
   /**
-   * Sets the canned result for the {@see FileSystemDelegate.openStream()}
-   * method call.
+   * Sets the canned result for the FileSystemDelegate.openStream() method call.
    * 
    * @param inputStream
-   *          the result to return for a {@see FileSystemDelegate.openStream()}
-   *          call.
+   *          the result to return for a FileSystemDelegate.openStream() call.
    */
   public void setInputStream(final InputStream inputStream) {
     this.inputStream = inputStream;

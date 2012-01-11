@@ -22,7 +22,6 @@ import org.objectweb.asm.MethodVisitor;
 
 /**
  * @author ivanalx
- * @date 26.01.2009 15:47:10
  */
 public class CoverageClassVisitor extends MethodFilteringAdapter {
   private final int classId;

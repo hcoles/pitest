@@ -242,14 +242,14 @@ public class OptionsParser {
   }
 
   /**
-   * Creates a new {@see ParseResult} object using the command line arguments.
+   * Creates a new ParseResult object using the command line arguments.
    * 
    * @param data
-   *          the {@see ReportOptions} to populate.
+   *          the ReportOptions to populate.
    * @param userArgs
-   *          the {@see OptionSet} which contains the command line arguments.
-   * @return a new {@see ParseResult}, correctly configured using the command
-   *         line arguments.
+   *          the OptionSet which contains the command line arguments.
+   * @return a new ParseResult, correctly configured using the command line
+   *         arguments.
    */
   private ParseResult parseCommandLine(final ReportOptions data,
       final OptionSet userArgs) {
@@ -307,14 +307,13 @@ public class OptionsParser {
   }
 
   /**
-   * Creates a new {@see ParseResult} object, using the project file specified
-   * by the user on the command line.
+   * Creates a new ParseResult object, using the project file specified by the
+   * user on the command line.
    * 
    * @param userArgs
-   *          the {@see OptionSet} that contains all of the command line
-   *          arguments.
-   * @return a correctly instantiated {@see ParseResult} using the project file
-   *         to load arguments.
+   *          the OptionSet that contains all of the command line arguments.
+   * @return a correctly instantiated ParseResult using the project file to load
+   *         arguments.
    */
   private ParseResult loadProjectFile(final OptionSet userArgs) {
     try {
