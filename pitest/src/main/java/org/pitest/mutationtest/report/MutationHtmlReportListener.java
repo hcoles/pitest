@@ -247,7 +247,9 @@ public class MutationHtmlReportListener implements TestListener {
       final Writer writer = this.outputStrategy
           .createWriterForFile("index.html");
 
+      Collections.sort(this.summaryData);
       st.setAttribute("summaryList", this.summaryData);
+
       st.setAttribute("errors", this.errors);
       st.setAttribute("numberOfMutations",
           this.mutatorScores.getTotalMutations());

@@ -18,7 +18,8 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassName;
 
-public class MutationTestSummaryData {
+public class MutationTestSummaryData implements
+    Comparable<MutationTestSummaryData> {
 
   private final String                fileName;
   private final Collection<String>    mutatedClasses;
@@ -116,6 +117,10 @@ public class MutationTestSummaryData {
       return false;
     }
     return true;
+  }
+
+  public int compareTo(MutationTestSummaryData other) {
+    return this.getFileName().compareTo(other.getFileName());
   }
 
 }
