@@ -27,6 +27,12 @@ import org.pitest.mutationtest.config.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 
+/**
+ * The default (and currently only) mutation engine for PIT.
+ * 
+ * In case anyone was wondering I'm named after either Gregor Mendel or Gregor
+ * Samsa, or maybe both.
+ */
 public class GregorMutationEngine implements MutationEngine {
 
   private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();

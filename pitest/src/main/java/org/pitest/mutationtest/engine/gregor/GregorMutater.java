@@ -25,6 +25,7 @@ import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.NullVisitor;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -191,6 +192,10 @@ class GregorMutater implements Mutater {
     return "GregorMutater [filter=" + this.filter + ", byteSource="
         + this.byteSource + ", mutators=" + this.mutators + ", loggingClasses="
         + this.loggingClasses + "]";
+  }
+
+  public byte[] getOriginalClass(ClassName clazz) {
+    return this.byteSource.apply(clazz.asInternalName()).value();
   }
 
 }

@@ -55,7 +55,11 @@ import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
+
+import com.example.MutationsInNestedClasses;
+import com.example.MutationsInNestedClassesTest;
 
 public class TestMutationTesting {
 
@@ -81,7 +85,7 @@ public class TestMutationTesting {
 
   }
 
-  public static class OneMutation {
+  public static class OneMutationOnly {
     public static int returnOne() {
       return 1;
     }
@@ -104,13 +108,13 @@ public class TestMutationTesting {
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
-      assertEquals(1, OneMutation.returnOne());
+      assertEquals(1, OneMutationOnly.returnOne());
     }
   }
 
   @Test
   public void shouldKillAllCoveredMutations() {
-    run(OneMutation.class, OneMutationFullTest.class,
+    run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
   }
@@ -213,7 +217,7 @@ public class TestMutationTesting {
     @TestAnnotationForTesting
     public void testReturnOne() {
       if (System.getProperty("foo").equals("foo")) {
-        assertEquals(1, OneMutation.returnOne());
+        assertEquals(1, OneMutationOnly.returnOne());
       }
     }
   }
@@ -222,7 +226,7 @@ public class TestMutationTesting {
   public void shouldExportSystemPropertiesToSlaveProcess() {
     // System.setProperty("foo", "foo");
     // note surefire is configured to launch this test with -Dfoo=foo
-    run(OneMutation.class,
+    run(OneMutationOnly.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
         Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
@@ -231,14 +235,14 @@ public class TestMutationTesting {
   public static class UnviableMutationsTest {
     @TestAnnotationForTesting
     public void test() {
-      new OneMutation();
-      OneMutation.returnOne();
+      new OneMutationOnly();
+      OneMutationOnly.returnOne();
     }
   }
 
   @Test
   public void shouldDetectUnviableMutations() {
-    run(OneMutation.class, UnviableMutationsTest.class,
+    run(OneMutationOnly.class, UnviableMutationsTest.class,
         Collections.singleton(new UnviableClassMutator()));
     verifyResults(NON_VIABLE, NON_VIABLE);
 
@@ -276,6 +280,15 @@ public class TestMutationTesting {
     verifyResults(KILLED, MEMORY_ERROR);
   }
 
+  @Test
+  public void shouldIsolateMutationsFromNestedClasses() {
+    // see http://code.google.com/p/pitestrunner/issues/detail?id=17 for full
+    // description of this issue
+    run(MutationsInNestedClasses.class, MutationsInNestedClassesTest.class,
+        Mutator.RETURN_VALS.asCollection());
+    verifyResults(SURVIVED, SURVIVED);
+  }
+
   private void run(final Class<?> clazz, final Class<?> test,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
@@ -286,8 +299,8 @@ public class TestMutationTesting {
     data.setTargetTests(tests);
     data.setDependencyAnalysisMaxDistance(-1);
 
-    final Set<Predicate<String>> mutees = Collections.singleton(Prelude
-        .isEqualTo(clazz.getName()));
+    final Set<Predicate<String>> mutees = Collections.singleton(Functions
+        .startsWith(clazz.getName()));
     data.setTargetClasses(mutees);
 
     data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
@@ -326,9 +339,6 @@ public class TestMutationTesting {
     final Timings timings = new Timings();
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
         coverageOptions, launchOptions, cps, timings);
-
-    // final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-    // this.config, new ClassPath(), agent, data);
 
     coverageDatabase.initialise();
 

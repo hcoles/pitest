@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.MultipleTestGroup;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassName;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
@@ -44,6 +45,7 @@ import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.Log;
+import org.pitest.util.Unchecked;
 
 public class MutationTestWorker {
 
@@ -63,16 +65,38 @@ public class MutationTestWorker {
       final TimeOutDecoratedTestSource testSource) throws IOException,
       ClassNotFoundException {
 
-    // System.out.println("Mutating class " + classesToMutate);
-
-    for (final MutationDetails i : range) {
-      LOG.info("Running mutation " + i);
+    String lastMutatedClass = null;
+    for (final MutationDetails mutation : range) {
+      LOG.info("Running mutation " + mutation);
       final long t0 = System.currentTimeMillis();
-      processMutation(r, testSource, i);
+      if (haveAnOtherMutatedClassInJVM(lastMutatedClass, mutation)) {
+        restoreUnmutatedClass(lastMutatedClass);
+      }
+      processMutation(r, testSource, mutation);
+      lastMutatedClass = mutation.getClazz();
       LOG.fine("processed mutation in " + (System.currentTimeMillis() - t0)
           + " ms.");
     }
 
+  }
+
+  private void restoreUnmutatedClass(String lastMutatedClass) {
+    try {
+      byte[] originalClass = this.mutater.getOriginalClass(new ClassName(
+          lastMutatedClass));
+      LOG.info("Restoring class " + lastMutatedClass);
+      final Class<?> clazz = Class.forName(lastMutatedClass, false,
+          IsolationUtils.getContextClassLoader());
+      this.hotswap.apply(clazz, originalClass);
+    } catch (ClassNotFoundException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+  }
+
+  private boolean haveAnOtherMutatedClassInJVM(String lastMutatedClass,
+      final MutationDetails mutation) {
+    return lastMutatedClass != null
+        && !lastMutatedClass.equals(mutation.getClazz());
   }
 
   private void processMutation(final Reporter r,

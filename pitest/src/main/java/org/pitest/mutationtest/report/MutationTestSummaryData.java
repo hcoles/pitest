@@ -20,15 +20,17 @@ import org.pitest.classinfo.ClassName;
 
 public class MutationTestSummaryData {
 
+  private final String                fileName;
   private final Collection<String>    mutatedClasses;
   private final Collection<ClassName> testClasses;
   private final Integer               mutationCoverage;
   private final Integer               lineCoverage;
 
-  public MutationTestSummaryData(final Collection<String> mutatedClasses,
+  public MutationTestSummaryData(final String fileName,
+      final Collection<String> mutatedClasses,
       final Collection<ClassName> testClasses, final Integer mutationCoverage,
       final Integer lineCoverage) {
-
+    this.fileName = fileName;
     this.mutatedClasses = mutatedClasses;
     this.testClasses = testClasses;
     this.mutationCoverage = mutationCoverage;
@@ -36,14 +38,8 @@ public class MutationTestSummaryData {
   }
 
   public String getFileName() {
-    final String mainDrivingClass = this.mutatedClasses.iterator().next();
-    final int otherClassCount = this.mutatedClasses.size() - 1;
-
-    if (otherClassCount > 0) {
-      return mainDrivingClass + "_and_" + otherClassCount + "_others.html";
-    } else {
-      return mainDrivingClass + ".html";
-    }
+    ClassName name = new ClassName(getMutatedClasses().iterator().next());
+    return name.getPackage() + "." + this.fileName + ".html";
   }
 
   public Collection<String> getMutatedClasses() {

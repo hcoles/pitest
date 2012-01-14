@@ -80,20 +80,22 @@ public class MutationHtmlReportListener implements TestListener {
     this.errors.add(unrunnable.getReason());
   }
 
-  private void processMetaData(final MutationMetaData value) {
+  private void processMetaData(final MutationMetaData mutationMetaData) {
 
     try {
-      this.mutatorScores.registerResults(value.getMutations());
+      this.mutatorScores.registerResults(mutationMetaData.getMutations());
 
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
 
-      final int lineCoverage = calculateLineCoverage(value);
+      final int lineCoverage = calculateLineCoverage(mutationMetaData);
 
       final MutationTestSummaryData summaryData = new MutationTestSummaryData(
-          value.getMutatedClass(), value.getTestClasses(),
-          value.getPercentageMutationCoverage(), lineCoverage);
+          mutationMetaData.getFirstFileName(),
+          mutationMetaData.getMutatedClass(),
+          mutationMetaData.getTestClasses(),
+          mutationMetaData.getPercentageMutationCoverage(), lineCoverage);
       collectSummaryData(summaryData);
 
       final String fileName = summaryData.getFileName();
@@ -106,14 +108,15 @@ public class MutationHtmlReportListener implements TestListener {
       st.setAttribute("css", css);
       st.setAttribute("summary", summaryData);
 
-      st.setAttribute("tests", value.getTargettedTests());
+      st.setAttribute("tests", mutationMetaData.getTargettedTests());
 
-      st.setAttribute("mutators", value.getConfig().getMutatorNames());
+      st.setAttribute("mutators", mutationMetaData.getConfig()
+          .getMutatorNames());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(value);
+      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(mutationMetaData);
 
       st.setAttribute("sourceFiles", sourceFiles);
-      st.setAttribute("mutatedClasses", value.getMutatedClass());
+      st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClass());
 
       // st.setAttribute("groups", groups);
       writer.write(st.toString());

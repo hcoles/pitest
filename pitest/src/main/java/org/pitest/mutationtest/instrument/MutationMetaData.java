@@ -43,6 +43,10 @@ public class MutationMetaData implements MetaData {
     return this.mutations.size();
   }
 
+  public String getFirstFileName() {
+    return getSourceFiles().iterator().next();
+  }
+
   public Collection<String> getSourceFiles() {
 
     final Set<String> uniqueFilenames = new HashSet<String>();
