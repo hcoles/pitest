@@ -100,13 +100,6 @@ public class PitMojo extends AbstractMojo {
   private boolean               mutateStaticInitializers;
 
   /**
-   * Mutate classes within jar files and other archives
-   * 
-   * @parameter default-value="false"
-   */
-  private boolean               includeJarFiles;
-
-  /**
    * Maximum distance to look from test to class
    * 
    * @parameter
@@ -275,10 +268,6 @@ public class PitMojo extends AbstractMojo {
 
   public boolean isMutateStaticInitializers() {
     return this.mutateStaticInitializers;
-  }
-
-  public boolean isIncludeJarFiles() {
-    return this.includeJarFiles;
   }
 
   public List<String> getMutators() {
