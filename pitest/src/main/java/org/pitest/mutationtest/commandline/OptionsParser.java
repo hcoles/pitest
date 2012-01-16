@@ -102,7 +102,7 @@ public class OptionsParser {
 
     this.projectFileSpec = parserAccepts(PROJECT_FILE).withRequiredArg()
         .ofType(String.class)
-        .describedAs("The name of the project file to use.");
+        .describedAs("The name of the config file to use.");
 
     this.targetClassesSpec = parserAccepts(TARGET_CLASSES)
         .withRequiredArg()

@@ -156,13 +156,6 @@ public class PitMojo extends AbstractMojo {
   private boolean               failWhenNoMutations;
 
   /**
-   * Type of tests to look for
-   * 
-   * @parameter default-value="JUNIT"
-   */
-  private String                testType;
-
-  /**
    * TestNG Groups to exclude
    * 
    * @parameter
@@ -316,10 +309,6 @@ public class PitMojo extends AbstractMojo {
 
   public boolean isFailWhenNoMutations() {
     return this.failWhenNoMutations;
-  }
-
-  public String getTestType() {
-    return this.testType;
   }
 
   public List<String> getExcludedTestNGGroups() {

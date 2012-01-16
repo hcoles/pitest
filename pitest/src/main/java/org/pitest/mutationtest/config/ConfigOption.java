@@ -99,7 +99,7 @@ public enum ConfigOption {
   /**
    * External config file path
    */
-  PROJECT_FILE("project"),
+  PROJECT_FILE("configFile"),
   /**
    * Additional classpath entries to use
    */
