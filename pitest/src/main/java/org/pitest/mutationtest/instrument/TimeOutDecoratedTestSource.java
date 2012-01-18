@@ -22,6 +22,7 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
 import org.pitest.mutationtest.execute.Reporter;
 import org.pitest.util.MemoryEfficientHashMap;
@@ -47,18 +48,20 @@ public class TimeOutDecoratedTestSource {
   }
 
   public List<TestUnit> translateTests(final List<TestInfo> testsInOrder) {
-    return FCollection.map(testsInOrder, testToTestUnit());
+    return FCollection.flatMap(testsInOrder, testToTestUnit());
   }
 
-  private F<TestInfo, TestUnit> testToTestUnit() {
-    return new F<TestInfo, TestUnit>() {
+  private F<TestInfo, Option<TestUnit>> testToTestUnit() {
+    return new F<TestInfo, Option<TestUnit>>() {
 
-      public TestUnit apply(final TestInfo a) {
-
-        return new MutationTimeoutDecorator(
-            TimeOutDecoratedTestSource.this.allTests.get(a.getName()),
-            TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime(),
-            TimeOutDecoratedTestSource.this.r);
+      public Option<TestUnit> apply(final TestInfo a) {
+        TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a.getName());
+        if (tu != null) {
+          return Option.<TestUnit> some(new MutationTimeoutDecorator(tu,
+              TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime(),
+              TimeOutDecoratedTestSource.this.r));
+        }
+        return Option.none();
       }
 
     };
