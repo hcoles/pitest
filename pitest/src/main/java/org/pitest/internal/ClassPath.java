@@ -48,28 +48,21 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
 
-  // FIXME what's the consequence of allways declaring cache files?
-
   public ClassPath() {
-    this(ClassPath.getClassPathElementsAsFiles(), true);
-  }
-
-  public ClassPath(final boolean declareCaches) {
-    this(ClassPath.getClassPathElementsAsFiles(), declareCaches);
+    this(ClassPath.getClassPathElementsAsFiles());
   }
 
   public ClassPath(final ClassPathRoot... roots) {
     this.roots.addAll(Arrays.asList(roots));
   }
 
-  public ClassPath(final Collection<File> files, final boolean declareCaches) {
+  public ClassPath(final Collection<File> files) {
     final F<File, Boolean> exists = new F<File, Boolean>() {
       public Boolean apply(final File a) {
         return a.exists() && a.canRead();
       }
     };
-    this.roots.addAll(createRoots(FCollection.filter(files, exists),
-        declareCaches));
+    this.roots.addAll(createRoots(FCollection.filter(files, exists)));
   }
 
   public Collection<String> classNames() {
@@ -81,8 +74,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
   }
 
   // fixme should not be determining type here
-  private Collection<ClassPathRoot> createRoots(final Collection<File> files,
-      final boolean declareCaches) {
+  private Collection<ClassPathRoot> createRoots(final Collection<File> files) {
     File lastFile = null;
     try {
       final List<ClassPathRoot> rs = new ArrayList<ClassPathRoot>();
@@ -90,10 +82,13 @@ public class ClassPath implements Iterable<ClassPathRoot> {
       for (final File f : files) {
         lastFile = f;
         if (f.isDirectory()) {
-          rs.add(new DirectoryClassPathRoot(f, declareCaches));
+          rs.add(new DirectoryClassPathRoot(f));
         } else {
           try {
-            rs.add(new ArchiveClassPathRoot(f, declareCaches));
+            if (!f.canRead()) {
+              throw new IOException("Can't read the file " + f);
+            }
+            rs.add(new ArchiveClassPathRoot(f));
           } catch (final ZipException ex) {
             LOG.warning("Can't open the archive " + f);
           }
@@ -161,10 +156,6 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   }
 
-  public void addRoot(final ClassPathRoot root) {
-    this.roots.add(root);
-  }
-
   /** FIXME move somewhere common */
   static String[] getClassPathElements() {
     final String classPath = System.getProperty("java.class.path");
@@ -185,19 +176,9 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     return FCollection.filter(classNames(), nameFilter);
   }
 
-  public ClassPath getLocalDirectoryComponent() {
-    return new ClassPath(filter(this.roots, isALocalDirectory()).toArray(
+  public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {
+    return new ClassPath(filter(this.roots, predicate).toArray(
         new ClassPathRoot[0]));
-  }
-
-  private F<ClassPathRoot, Boolean> isALocalDirectory() {
-    return new F<ClassPathRoot, Boolean>() {
-
-      public Boolean apply(final ClassPathRoot a) {
-        return a instanceof DirectoryClassPathRoot;
-      }
-
-    };
   }
 
   public String getLocalClassPath() {

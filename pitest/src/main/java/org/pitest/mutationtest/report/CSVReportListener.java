@@ -21,7 +21,6 @@ import org.pitest.Description;
 import org.pitest.TestResult;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.Unchecked;
@@ -30,11 +29,8 @@ public class CSVReportListener implements TestListener {
 
   private final Writer out;
 
-  public CSVReportListener(final CoverageDatabase coverage,
-      final long startTime, final ResultOutputStrategy outputStrategy,
-      final SourceLocator... locators) {
+  public CSVReportListener(final ResultOutputStrategy outputStrategy) {
     this(outputStrategy.createWriterForFile("mutations.csv"));
-
   }
 
   public CSVReportListener(final Writer out) {

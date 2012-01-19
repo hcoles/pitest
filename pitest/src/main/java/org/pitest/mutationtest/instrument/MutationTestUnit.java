@@ -14,14 +14,11 @@
  */
 package org.pitest.mutationtest.instrument;
 
-import static org.pitest.functional.Prelude.isInstanceOf;
-import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,22 +28,15 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.MetaData;
-import org.pitest.Pitest;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ClassPath;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.PITClassLoader;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -55,15 +45,11 @@ import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
-import org.pitest.testunit.IgnoredTestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.FileUtil;
-import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.PortFinder;
 import org.pitest.util.ProcessArgs;
-import org.pitest.util.Unchecked;
 
 public class MutationTestUnit extends AbstractTestUnit {
 
@@ -74,16 +60,18 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final TimeoutLengthStrategy       timeoutStrategy;
   private final Collection<MutationDetails> availableMutations;
   private final boolean                     verbose;
+  private final String                      classPath;
 
   protected final Configuration             pitConfig;
 
-  protected final Collection<String>        testClasses;
+  protected final Collection<ClassName>     testClasses;
 
   public MutationTestUnit(final Collection<MutationDetails> availableMutations,
-      final Collection<String> testClasses, final Configuration pitConfig,
+      final Collection<ClassName> testClasses, final Configuration pitConfig,
       final MutationConfig mutationConfig, final Description description,
       final JavaAgent javaAgentFinder,
-      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose) {
+      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
+      final String classPath) {
     super(description);
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
@@ -92,6 +80,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     this.timeoutStrategy = timeoutStrategy;
     this.testClasses = testClasses;
     this.verbose = verbose;
+    this.classPath = classPath;
 
   }
 
@@ -100,39 +89,18 @@ public class MutationTestUnit extends AbstractTestUnit {
     try {
 
       rc.notifyStart(this.getDescription());
-      runTests(rc, loader);
+      runTests(rc);
     } catch (final Throwable ex) {
       rc.notifyEnd(this.getDescription(), ex);
     }
 
   }
 
-  private void runTests(final ResultCollector rc, final ClassLoader loader) {
+  private void runTests(final ResultCollector rc) {
 
     try {
       if (!this.availableMutations.isEmpty()) {
-
-        final String cp = createClassPath(loader);
-
-        final List<TestUnit> tests = findTestUnits(loader);
-
-        final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
-        if (!tests.isEmpty() && !containsOnlyIgnoredTestUnits(tests)) {
-          FCollection.forEach(
-              this.availableMutations,
-              putToMap(mutations, new MutationStatusTestPair(
-                  DetectionStatus.NOT_STARTED)));
-
-          runTestsInSeperateProcess(cp, tests, mutations);
-
-        } else {
-          FCollection.forEach(
-              this.availableMutations,
-              putToMap(mutations, new MutationStatusTestPair(
-                  DetectionStatus.SURVIVED)));
-        }
-        reportResults(mutations, this.availableMutations, rc, loader);
-
+        runTestsForMutations(rc);
       } else {
         LOG.info("Skipping test " + this.getDescription()
             + " as no mutations found");
@@ -144,29 +112,44 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   }
 
-  protected List<TestUnit> findTestUnits(final ClassLoader loader) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(this.testClasses,
-        Functions.stringToClass(loader));
-    // FIXME we do not apply any test filters. Is this what the user
-    // expects?
-    return Pitest.findTestUnitsForAllSuppliedClasses(this.pitConfig,
-        new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), tcs.toArray(new Class<?>[tcs.size()]));
+  private void runTestsForMutations(final ResultCollector rc)
+      throws IOException, InterruptedException {
+
+    final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
+    if (hasTestCoverage(this.testClasses)) {
+      setStatusForAvailableMutations(mutations, DetectionStatus.NOT_STARTED);
+      runTestsInSeperateProcess(this.testClasses, mutations);
+
+    } else {
+      setStatusForAvailableMutations(mutations, DetectionStatus.NO_COVERAGE);
+    }
+    reportResults(mutations, this.availableMutations, rc);
+  }
+
+  private void setStatusForAvailableMutations(
+      final Map<MutationDetails, MutationStatusTestPair> mutations,
+      final DetectionStatus status) {
+    FCollection.forEach(this.availableMutations,
+        putToMap(mutations, new MutationStatusTestPair(0, status)));
+  }
+
+  private boolean hasTestCoverage(final Collection<ClassName> tests) {
+    return !tests.isEmpty();
   }
 
   private void runTestInSeperateProcessForMutationRange(
       final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations,
-      final List<TestUnit> tests, final String cp) throws IOException {
+      final Collection<ClassName> tests) throws IOException {
 
-    final SlaveArguments fileArgs = new SlaveArguments(
-        FileUtil.randomFilename(), remainingMutations, tests, this.config,
-        this.timeoutStrategy, Log.isVerbose());
+    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
+        tests, this.config, this.timeoutStrategy, Log.isVerbose(),
+        this.pitConfig);
 
     final PortFinder pf = PortFinder.INSTANCE;
 
     final MutationTestProcess worker = new MutationTestProcess(
-        pf.getNextAvailablePort(), ProcessArgs.withClassPath(cp)
+        pf.getNextAvailablePort(), ProcessArgs.withClassPath(this.classPath)
             .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
             .andStdout(captureStdOutIfVerbose())
             .andStderr(printWith("stderr ")), fileArgs);
@@ -202,7 +185,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Map<MutationDetails, MutationStatusTestPair> allmutations,
       final Collection<MutationDetails> remainingMutations) {
     allmutations.put(remainingMutations.iterator().next(),
-        new MutationStatusTestPair(DetectionStatus.STARTED));
+        new MutationStatusTestPair(0, DetectionStatus.STARTED));
   }
 
   private void correctResultForProcessExitCode(
@@ -212,7 +195,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     if (!exitCode.isOk()) {
       LOG.warning("Slave encountered error or timeout");
       final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
-      final MutationStatusTestPair status = new MutationStatusTestPair(
+      final MutationStatusTestPair status = new MutationStatusTestPair(0,
           DetectionStatus.getForErrorExitCode(exitCode));
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
@@ -250,8 +233,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     return this.config.getJVMArgs();
   }
 
-  private void runTestsInSeperateProcess(final String cp,
-      final List<TestUnit> tests,
+  private void runTestsInSeperateProcess(final Collection<ClassName> tests,
       final Map<MutationDetails, MutationStatusTestPair> mutations)
       throws IOException, InterruptedException {
 
@@ -260,7 +242,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     while (!remainingMutations.isEmpty()) {
       LOG.info(remainingMutations.size() + " mutations left to test");
       runTestInSeperateProcessForMutationRange(mutations, remainingMutations,
-          tests, cp);
+          tests);
       remainingMutations = getUnrunMutationIds(mutations);
     }
 
@@ -280,31 +262,10 @@ public class MutationTestUnit extends AbstractTestUnit {
     return FCollection.filter(mutations.keySet(), p);
   }
 
-  private String createClassPath(final ClassLoader loader) {
-    String cp = null;
-    if (IsolationUtils.loaderAgnosticInstanceOf(loader, PITClassLoader.class)) {
-      cp = getLocalClasspathFromLoader(loader);
-    } else {
-      cp = new ClassPath(true).getLocalClassPath();
-    }
-
-    return cp;
-  }
-
-  private String getLocalClasspathFromLoader(final ClassLoader loader) {
-    final Method m = org.pitest.reflection.Reflection.publicMethod(
-        loader.getClass(), "getLocalClassPath");
-    try {
-      return (String) m.invoke(loader);
-    } catch (final Exception ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
-  }
-
   private void reportResults(
       final Map<MutationDetails, MutationStatusTestPair> mutations,
       final Collection<MutationDetails> availableMutations,
-      final ResultCollector rc, final ClassLoader loader) {
+      final ResultCollector rc) {
 
     final FunctionalList<MutationResult> results = FCollection.map(
         availableMutations, detailsToMutationResults(mutations));
@@ -324,12 +285,6 @@ public class MutationTestUnit extends AbstractTestUnit {
       }
 
     };
-  }
-
-  private boolean containsOnlyIgnoredTestUnits(final List<TestUnit> tests) {
-    // FIXME handle this more generically
-    return !FCollection.contains(tests,
-        not(isInstanceOf(IgnoredTestUnit.class)));
   }
 
   public MutationConfig getMutationConfig() {

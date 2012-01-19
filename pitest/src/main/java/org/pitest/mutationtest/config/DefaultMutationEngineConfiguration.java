@@ -23,19 +23,19 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 public class DefaultMutationEngineConfiguration implements
     MutationEngineConfiguration {
 
-  private final Predicate<MethodInfo>            methodFilter;
-  private final Collection<String>               doNotMutate;
-  private final Collection<MethodMutatorFactory> mutators;
+  private final Predicate<MethodInfo>                      methodFilter;
+  private final Collection<String>                         doNotMutate;
+  private final Collection<? extends MethodMutatorFactory> mutators;
 
   public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
       final Collection<String> loggingClasses,
-      final Collection<MethodMutatorFactory> mutators) {
+      final Collection<? extends MethodMutatorFactory> mutators) {
     this.methodFilter = filter;
     this.doNotMutate = loggingClasses;
     this.mutators = mutators;
   }
 
-  public Collection<MethodMutatorFactory> mutators() {
+  public Collection<? extends MethodMutatorFactory> mutators() {
     return this.mutators;
   }
 

@@ -22,19 +22,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.PathNamePredicate;
+import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.testng.TestGroupConfig;
+import org.pitest.util.Glob;
 
 public class ReportOptions {
 
+  private Configuration                              config;
   private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
@@ -43,6 +51,8 @@ public class ReportOptions {
   private Collection<Predicate<String>>              excludedClasses          = Collections
                                                                                   .emptyList();
 
+  private Collection<String>                         codePaths;
+
   private String                                     reportDir;
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
@@ -50,8 +60,6 @@ public class ReportOptions {
 
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers = true;
-
-  private boolean                                    includeJarFiles          = false;
 
   private final List<String>                         jvmArgs                  = new ArrayList<String>();
   private int                                        numberOfThreads          = 0;
@@ -65,6 +73,11 @@ public class ReportOptions {
   private int                                        maxMutationsPerClass;
 
   private boolean                                    verbose                  = false;
+  private boolean                                    failWhenNoMutations      = false;
+
+  private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
+
+  private TestGroupConfig                            groupConfig;
 
   public ReportOptions() {
   }
@@ -161,18 +174,17 @@ public class ReportOptions {
     this.jvmArgs.addAll(args);
   }
 
-  public Option<ClassPath> getClassPath(final boolean declareCaches) {
+  public ClassPath getClassPath() {
     if (this.classPathElements != null) {
-      return Option.some(createClassPathFromElements(declareCaches));
+      return createClassPathFromElements();
     } else {
-      return Option.<ClassPath> none();
+      return new ClassPath();
     }
   }
 
-  private ClassPath createClassPathFromElements(final boolean declareCaches) {
-
+  private ClassPath createClassPathFromElements() {
     return new ClassPath(
-        FCollection.map(this.classPathElements, stringToFile()), true);
+        FCollection.map(this.classPathElements, stringToFile()));
   }
 
   private F<String, File> stringToFile() {
@@ -223,14 +235,6 @@ public class ReportOptions {
     this.numberOfThreads = numberOfThreads;
   }
 
-  public boolean isIncludeJarFiles() {
-    return this.includeJarFiles;
-  }
-
-  public void setIncludeJarFiles(final boolean includeJarFiles) {
-    this.includeJarFiles = includeJarFiles;
-  }
-
   public float getTimeoutFactor() {
     return this.timeoutFactor;
   }
@@ -259,12 +263,11 @@ public class ReportOptions {
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + ", includeJarFiles="
-        + this.includeJarFiles + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + "]";
+        + this.mutateStaticInitializers + ", showHelp=" + ", jvmArgs="
+        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
+        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
+        + this.timeoutConstant + ", targetTests=" + this.targetTests
+        + ", loggingClasses=" + this.loggingClasses + "]";
   }
 
   @SuppressWarnings("unchecked")
@@ -323,6 +326,112 @@ public class ReportOptions {
   public void setExcludedClasses(
       final Collection<Predicate<String>> excludedClasses) {
     this.excludedClasses = excludedClasses;
+  }
+
+  public void addOutputFormats(final Collection<OutputFormat> formats) {
+    this.outputs.addAll(formats);
+  }
+
+  public Iterable<OutputFormat> getOutputFormats() {
+    return this.outputs;
+  }
+
+  public Collection<Predicate<String>> getExcludedClasses() {
+    return this.excludedClasses;
+  }
+
+  public Collection<Predicate<String>> getClassesInScope() {
+    return this.classesInScope;
+  }
+
+  public boolean shouldFailWhenNoMutations() {
+    return this.failWhenNoMutations;
+  }
+
+  public void setFailWhenNoMutations(final boolean failWhenNoMutations) {
+    this.failWhenNoMutations = failWhenNoMutations;
+  }
+
+  public void addClassPathElements(
+      final List<String> additionalClassPathElements) {
+    final List<String> elements = new ArrayList<String>();
+    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
+        elements);
+    elements.addAll(additionalClassPathElements);
+    setClassPathElements(elements);
+  }
+
+  private static F<File, String> fileToString() {
+    return new F<File, String>() {
+
+      public String apply(final File a) {
+        return a.getAbsolutePath();
+      }
+
+    };
+  }
+
+  @SuppressWarnings("unchecked")
+  public CoverageOptions createCoverageOptions() {
+    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
+        this.getClassesInScopeFilter(), not(commonClasses())), this.config,
+        this.isVerbose(), this.getDependencyAnalysisMaxDistance());
+  }
+
+  private static F<String, Boolean> commonClasses() {
+    return new F<String, Boolean>() {
+
+      public Boolean apply(final String name) {
+        return name.startsWith("java") || name.startsWith("sun/")
+            || name.startsWith("org/junit") || name.startsWith("junit");
+      }
+
+    };
+  }
+
+  public MutationClassPaths getMutationClassPaths() {
+
+    return new MutationClassPaths(this.getClassPath(), createClassesFilter(),
+        createPathFilter());
+  }
+
+  public ClassFilter createClassesFilter() {
+    return new ClassFilter(this.getClassesInScopeFilter(),
+        this.getTargetTestsFilter(), this.getTargetClassesFilter());
+  }
+
+  public PathFilter createPathFilter() {
+    return new PathFilter(createCodePathFilter(),
+        not(new DefaultDependencyPathPredicate()));
+  }
+
+  private Predicate<ClassPathRoot> createCodePathFilter() {
+    if (this.codePaths != null && !this.codePaths.isEmpty()) {
+      return new PathNamePredicate(Prelude.or(Glob
+          .toGlobPredicates(this.codePaths)));
+    } else {
+      return new DefaultCodePathPredicate();
+    }
+  }
+
+  public Collection<String> getCodePaths() {
+    return this.codePaths;
+  }
+
+  public void setCodePaths(final Collection<String> codePaths) {
+    this.codePaths = codePaths;
+  }
+
+  public void setConfiguration(final Configuration configuration) {
+    this.config = configuration;
+  }
+
+  public void setGroupConfig(final TestGroupConfig groupConfig) {
+    this.groupConfig = groupConfig;
+  }
+
+  public TestGroupConfig getGroupConfig() {
+    return this.groupConfig;
   }
 
 }

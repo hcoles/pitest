@@ -1,22 +1,27 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest;
 
-import org.objectweb.asm.MethodVisitor;
-import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.pitest.functional.FArray;
+import org.pitest.functional.FCollection;
+import org.pitest.functional.Prelude;
+import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
@@ -29,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
-public enum Mutator implements MethodMutatorFactory {
+public enum Mutator implements MutatorGrouping {
 
   /**
    * Default mutator that inverts the negation of integer and floating point
@@ -91,25 +96,46 @@ public enum Mutator implements MethodMutatorFactory {
    * constants.
    */
   EXPERIMENTAL_INLINE_CONSTS(
-      new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator());
+      new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator()),
 
-  Mutator(final MethodMutatorFactory impl) {
-    this.impl = impl;
+  /**
+   * Default mutators
+   */
+  DEFAULTS(INVERT_NEGS, RETURN_VALS, MATH, VOID_METHOD_CALLS,
+      NEGATE_CONDITIONALS, CONDITIONALS_BOUNDARY, INCREMENTS),
+
+  /**
+   * All the mutators
+   */
+  ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
+      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS);
+
+  Mutator(final MutatorGrouping... groups) {
+    this.impls = asCollection(groups);
   }
 
-  private final MethodMutatorFactory impl;
-
-  @Override
-  public String toString() {
-    return this.impl.toString();
+  Mutator(final MethodMutatorFactory... impls) {
+    this.impls = Arrays.asList(impls);
   }
 
-  public MethodVisitor create(final Context context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return this.impl.create(context, methodInfo, methodVisitor);
+  private final Iterable<MethodMutatorFactory> impls;
+
+  public Iterator<MethodMutatorFactory> iterator() {
+    return this.impls.iterator();
   }
 
-  public String getGloballyUniqueId() {
-    return this.impl.getGloballyUniqueId();
+  public Collection<MethodMutatorFactory> asCollection() {
+    return FCollection.filter(this.impls, True.<MethodMutatorFactory> all());
   }
+
+  public static Collection<MethodMutatorFactory> asCollection(
+      final MutatorGrouping... groupings) {
+    return FArray.flatMap(groupings, Prelude.id(MutatorGrouping.class));
+  }
+
+  public static Collection<MethodMutatorFactory> asCollection(
+      final Collection<? extends MutatorGrouping> groups) {
+    return FCollection.flatMap(groups, Prelude.id(MutatorGrouping.class));
+  }
+
 }

@@ -20,10 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.teststeps.CallStep;
 
@@ -50,17 +48,6 @@ public class BeforeAfterDecorator extends TestUnitDecorator {
     FCollection.forEach(this.before, e);
     this.child().execute(loader, rc);
     FCollection.forEach(this.after, e);
-
-  }
-
-  public Option<TestUnit> filter(final TestFilter filter) {
-    final Option<TestUnit> modifiedChild = this.child().filter(filter);
-    if (modifiedChild.hasSome()) {
-      return Option.<TestUnit> some(new BeforeAfterDecorator(modifiedChild
-          .value(), this.before, this.after));
-    } else {
-      return Option.none();
-    }
 
   }
 

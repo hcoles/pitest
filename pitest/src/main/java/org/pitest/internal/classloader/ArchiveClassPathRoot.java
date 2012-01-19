@@ -31,22 +31,12 @@ import org.pitest.util.Unchecked;
 
 public class ArchiveClassPathRoot implements ClassPathRoot {
 
-  private final boolean   declareCaches;
   private final File      file;
   private Option<ZipFile> root;
 
-  public ArchiveClassPathRoot(final File file) throws IOException {
-    this(file, false);
-  }
-
-  public ArchiveClassPathRoot(final File file, final boolean declareCaches)
-      throws IOException {
+  public ArchiveClassPathRoot(final File file) {
     this.file = file;
     this.root = Option.none();
-    this.declareCaches = declareCaches;
-    if (!file.canRead()) {
-      throw new IOException("Can't read the file " + file);
-    }
   }
 
   private ZipFile getRoot() {
@@ -107,10 +97,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   }
 
   public Option<String> cacheLocation() {
-    if (this.declareCaches) {
-      return Option.some(this.file.getAbsolutePath());
-    }
-    return Option.none();
+    return Option.some(this.file.getAbsolutePath());
   }
 
 }

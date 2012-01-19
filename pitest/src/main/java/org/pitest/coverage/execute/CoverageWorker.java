@@ -19,7 +19,6 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.containers.UnContainer;
@@ -49,13 +48,11 @@ public class CoverageWorker implements Runnable {
 
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final ConcreteConfiguration conf = new ConcreteConfiguration();
-
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
       staticConfig.addTestListener(new ErrorListener());
 
-      final Pitest pit = new Pitest(staticConfig, conf);
+      final Pitest pit = new Pitest(staticConfig);
       pit.run(c, decoratedTests);
 
     } catch (final Exception ex) {
@@ -67,10 +64,8 @@ public class CoverageWorker implements Runnable {
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
       final CoverageReceiver queue) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
-    int index = 0;
     for (final TestUnit each : plainTests) {
-      decorated.add(new CoverageDecorator(queue, each, index));
-      index++;
+      decorated.add(new CoverageDecorator(queue, each));
     }
     return decorated;
   }

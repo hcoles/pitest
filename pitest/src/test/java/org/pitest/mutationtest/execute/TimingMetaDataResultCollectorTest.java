@@ -42,7 +42,7 @@ public class TimingMetaDataResultCollectorTest {
     MockitoAnnotations.initMocks(this);
     this.testee = new TimingMetaDataResultCollector(this.rc, 42);
     this.description = new Description("foo",
-        TimingMetaDataResultCollectorTest.class, null);
+        TimingMetaDataResultCollectorTest.class);
   }
 
   @Test

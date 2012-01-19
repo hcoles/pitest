@@ -598,7 +598,7 @@ public class MemoryEfficientHashMap<K, V> implements Map<K, V>, Serializable {
   }
 
   /**
-   * Adapted from {@link org.apache.commons.collections.map.AbstractHashedMap}.
+   * Adapted from org.apache.commons.collections.map.AbstractHashedMap.
    */
   @SuppressWarnings("unchecked")
   protected void doReadObject(final ObjectInputStream in) throws IOException,
@@ -614,7 +614,7 @@ public class MemoryEfficientHashMap<K, V> implements Map<K, V>, Serializable {
   }
 
   /**
-   * Adapted from {@link org.apache.commons.collections.map.AbstractHashedMap}.
+   * Adapted from org.apache.commons.collections.map.AbstractHashedMap.
    */
   protected void doWriteObject(final ObjectOutputStream out) throws IOException {
     out.writeInt(this.keys.length);

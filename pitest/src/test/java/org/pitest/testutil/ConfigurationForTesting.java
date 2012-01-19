@@ -8,23 +8,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.TestMethod;
+import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.ConfigurationUpdater;
 import org.pitest.extension.InstantiationStrategy;
 import org.pitest.extension.MethodFinder;
-import org.pitest.extension.StaticConfigUpdater;
+import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 import org.pitest.extension.common.BasicTestUnitFinder;
-import org.pitest.extension.common.IgnoreTestProcessor;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestFinder;
-import org.pitest.extension.common.NullConfigurationUpdater;
-import org.pitest.extension.common.NullStaticConfigUpdater;
+import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
-import org.pitest.extension.common.testsuitefinder.PITStaticMethodSuiteFinder;
 import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
 
 public class ConfigurationForTesting implements Configuration {
@@ -46,10 +43,6 @@ public class ConfigurationForTesting implements Configuration {
     }
 
   };
-
-  public TestUnitProcessor testUnitProcessor() {
-    return new IgnoreTestProcessor(IgnoreAnnotationForTesting.class);
-  }
 
   public TestUnitFinder testUnitFinder() {
     final Set<MethodFinder> beforeClassFinders = Collections
@@ -87,19 +80,25 @@ public class ConfigurationForTesting implements Configuration {
   }
 
   public TestSuiteFinder testSuiteFinder() {
-    return new PITStaticMethodSuiteFinder();
-  }
-
-  public ConfigurationUpdater configurationUpdater() {
-    return new NullConfigurationUpdater();
-  }
-
-  public StaticConfigUpdater staticConfigurationUpdater() {
-    return new NullStaticConfigUpdater();
+    return new NoTestSuiteFinder();
   }
 
   public TestUnitFinder mutationTestFinder() {
     return new NoTestFinder();
+  }
+
+  public TestClassIdentifier testClassIdentifier() {
+    return new TestClassIdentifier() {
+
+      public boolean isATestClass(final ClassInfo a) {
+        return a.hasAnnotation(TestAnnotationForTesting.class);
+      }
+
+    };
+  }
+
+  public Option<PitHelpError> verifyEnvironment() {
+    return Option.none();
   }
 
 }

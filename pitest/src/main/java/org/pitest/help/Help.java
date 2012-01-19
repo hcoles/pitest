@@ -17,9 +17,12 @@ package org.pitest.help;
 public enum Help {
 
   NO_MUTATIONS_FOUND(
-      "No mutations found. This probably means there is an issue with either the supplied classpath or filters."), WRONG_JUNIT_VERSION(
-      "Unsupported JUnit version %s. PIT requires JUnit 4.6 or above."), FAILING_TESTS(
-      "All tests did not pass without mutation when calculating line coverage. Mutation testing requires a geen suite."), NO_JUNIT(
+      "No mutations found. This probably means there is an issue with either the supplied classpath or filters."), //
+  WRONG_JUNIT_VERSION(
+      "Unsupported JUnit version %s. PIT requires JUnit 4.6 or above."), //
+  FAILING_TESTS(
+      "All tests did not pass without mutation when calculating line coverage. Mutation testing requires a green suite."), //
+  NO_JUNIT(
       "JUnit was not found on the classpath. PIT requires JUnit 4.6 or above.");
 
   private final static String URL = "http://pitest.org";

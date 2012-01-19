@@ -109,7 +109,7 @@ public class AnnotatedLineFactory {
     final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
       public Boolean apply(final ClassInfo a) {
         return !AnnotatedLineFactory.this.statistics.getTestForLineNumber(
-            new ClassLine(a.getName(), line)).isEmpty();
+            new ClassLine(a.getName().asInternalName(), line)).isEmpty();
       }
     };
     return FCollection.contains(this.classesInFile, predicate);

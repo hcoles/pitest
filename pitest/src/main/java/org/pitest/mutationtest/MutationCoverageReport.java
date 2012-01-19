@@ -20,14 +20,16 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import org.pitest.ConcreteConfiguration;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.ExtendedTestResult;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.ClassLoaderFactory;
+import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
@@ -36,9 +38,8 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.commandline.ParseResult;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -48,27 +49,29 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
-import org.pitest.util.JavaAgent;
+import org.pitest.mutationtest.statistics.MutationStatisticsListener;
+import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
-import org.pitest.util.TestInfo;
+import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
-  private static final Logger     LOG = Log.getLogger();
-  protected final ReportOptions   data;
-  protected final ListenerFactory listenerFactory;
-  protected final JavaAgent       javaAgentFinder;
-  protected final boolean         nonLocalClassPath;
+  private static final Logger    LOG = Log.getLogger();
+  private final ReportOptions    data;
+  private final ListenerFactory  listenerFactory;
+  private final CoverageDatabase coverageDatabase;
+  private final Timings          timings;
 
-  public MutationCoverageReport(final ReportOptions data,
-      final JavaAgent javaAgentFinder, final ListenerFactory listenerFactory,
-      final boolean nonLocalClassPath) {
-    this.javaAgentFinder = javaAgentFinder;
-    this.nonLocalClassPath = nonLocalClassPath;
+  public MutationCoverageReport(final CoverageDatabase coverageDatabase,
+      final ReportOptions data, final ListenerFactory listenerFactory,
+      final Timings timings) {
+    this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;
+    this.timings = timings;
   }
 
   public final void run() {
@@ -99,9 +102,24 @@ public class MutationCoverageReport implements Runnable {
   private static void runReport(final ReportOptions data) {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
-      final MutationCoverageReport instance = new MutationCoverageReport(data,
-          agent, new HtmlReportFactory(new DatedDirectoryResultOutputStrategy(
-              data.getReportDir())), false);
+
+      final DatedDirectoryResultOutputStrategy outputStrategy = new DatedDirectoryResultOutputStrategy(
+          data.getReportDir());
+      final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
+          FCollection.map(data.getOutputFormats(),
+              OutputFormat.createFactoryForFormat(outputStrategy)));
+
+      final CoverageOptions coverageOptions = data.createCoverageOptions();
+      final LaunchOptions launchOptions = new LaunchOptions(agent,
+          data.getJvmArgs());
+      final MutationClassPaths cps = data.getMutationClassPaths();
+      final Timings timings = new Timings();
+
+      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+          coverageOptions, launchOptions, cps, timings);
+
+      final MutationCoverageReport instance = new MutationCoverageReport(
+          coverageDatabase, data, reportFactory, timings);
 
       instance.run();
     } finally {
@@ -131,14 +149,9 @@ public class MutationCoverageReport implements Runnable {
     FCollection.forEach(classesWithOutATest, reportFailure);
   }
 
-  protected ClassPath getClassPath() {
-    return this.data.getClassPath(this.nonLocalClassPath).getOrElse(
-        new ClassPath());
-  }
-
   private void runReport() throws IOException {
 
-    TestInfo.checkJUnitVersion();
+    // TestInfo.checkJUnitVersion();
 
     Log.setVerbose(this.data.isVerbose());
 
@@ -146,60 +159,96 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    final ConcreteConfiguration initialConfig = new ConcreteConfiguration(
-        new JUnitCompatibleConfiguration());
-
-    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        initialConfig, this.getClassPath(), this.javaAgentFinder, this.data);
-
-    if (!coverageDatabase.initialise()) {
+    if (!this.coverageDatabase.initialise()) {
       throw new PitHelpError(Help.FAILING_TESTS);
     }
 
-    final Collection<ClassGrouping> codeClasses = coverageDatabase
+    final Collection<ClassGrouping> codeClasses = this.coverageDatabase
         .getGroupedClasses();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(coverageDatabase, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
+        .getListener(this.coverageDatabase, t0, new SmartSourceLocator(
+            this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
+
+    final MutationStatisticsListener stats = new MutationStatisticsListener();
+    staticConfig.addTestListener(stats);
     // staticConfig.addTestListener(ConsoleTestListener.);
 
     reportFailureForClassesWithoutTests(
-        coverageDatabase.getParentClassesWithoutATest(), mutationReportListener);
+        this.coverageDatabase.getParentClassesWithoutATest(),
+        mutationReportListener);
 
-    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        this.data.isMutateStaticInitializers(),
-        Prelude.or(this.data.getExcludedMethods()),
-        this.data.getLoggingClasses(),
-        this.data.getMutators().toArray(
-            new Mutator[this.data.getMutators().size()]));
-
-    final MutationConfig mutationConfig = new MutationConfig(engine,
-        this.data.getJvmArgs());
-    final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        limitMutationsPerClass(), new JUnitCompatibleConfiguration(),
-        this.data, this.javaAgentFinder);
-
-    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
-        initialConfig, coverageDatabase);
+    this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
+    final List<TestUnit> tus = buildMutationTests(
+        this.coverageDatabase.getConfiguration(), this.coverageDatabase,
+        codeClasses);
+    this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFounds(tus);
 
-    final Pitest pit = new Pitest(staticConfig, initialConfig);
+    final Pitest pit = new Pitest(staticConfig);
+    this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
     pit.run(createContainer(), tus);
+    this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
         + " classes.");
 
+    printStats(stats);
+
+  }
+
+  private void printStats(final MutationStatisticsListener stats) {
+    System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Timings");
+    System.out.println(StringUtil.seperatorLine('='));
+    this.timings.report(System.out);
+
+    System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Statistics");
+    System.out.println(StringUtil.seperatorLine('='));
+    stats.getStatistics().report(System.out);
+
+    System.out.println(StringUtil.seperatorLine('='));
+    System.out.println("- Mutators");
+    System.out.println(StringUtil.seperatorLine('='));
+    for (final Score each : stats.getStatistics().getScores()) {
+      each.report(System.out);
+      System.out.println(StringUtil.seperatorLine());
+    }
+  }
+
+  private List<TestUnit> buildMutationTests(final Configuration initialConfig,
+      final CoverageDatabase coverageDatabase,
+      final Collection<ClassGrouping> codeClasses) {
+    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
+        this.data.isMutateStaticInitializers(),
+        Prelude.or(this.data.getExcludedMethods()),
+        this.data.getLoggingClasses(), this.data.getMutators());
+
+    final MutationConfig mutationConfig = new MutationConfig(engine,
+        this.data.getJvmArgs());
+    final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
+        limitMutationsPerClass(), this.coverageDatabase.getConfiguration(),
+        this.data, this.coverageDatabase.getJavaAgent(),
+        new ClassPathByteArraySource(this.data.getClassPath()));
+
+    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
+        initialConfig, coverageDatabase);
+    return tus;
   }
 
   private void checkMutationsFounds(final List<TestUnit> tus) {
     if (tus.isEmpty()) {
-      throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
+      if (this.data.shouldFailWhenNoMutations()) {
+        throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
+      } else {
+        LOG.warning(Help.NO_MUTATIONS_FOUND.toString());
+      }
     }
   }
 

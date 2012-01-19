@@ -41,4 +41,26 @@ public abstract class FArray {
     return dest;
   }
 
+  public static <A, B> void flatMapTo(final A[] as,
+      final F<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
+    if (as != null) {
+      for (final A a : as) {
+        for (final B each : f.apply(a)) {
+          bs.add(each);
+        }
+      }
+    }
+  }
+
+  public static <A, B> FunctionalList<B> flatMap(final A[] as,
+      final F<A, ? extends Iterable<B>> f) {
+    final FunctionalList<B> bs = emptyList();
+    flatMapTo(as, f, bs);
+    return bs;
+  }
+
+  private static <T> FunctionalList<T> emptyList() {
+    return new MutableList<T>();
+  }
+
 }

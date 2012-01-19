@@ -28,16 +28,10 @@ import org.pitest.functional.Option;
  */
 public class DirectoryClassPathRoot implements ClassPathRoot {
 
-  private final File    root;
-  private final boolean declareCaches;
+  private final File root;
 
   public DirectoryClassPathRoot(final File root) {
-    this(root, false);
-  }
-
-  public DirectoryClassPathRoot(final File root, final boolean declareCaches) {
     this.root = root;
-    this.declareCaches = declareCaches;
   }
 
   public InputStream getData(final String classname) throws IOException {
@@ -121,11 +115,7 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
   }
 
   public Option<String> cacheLocation() {
-    if (this.declareCaches) {
-      return Option.some(this.root.getAbsolutePath());
-    } else {
-      return Option.none();
-    }
+    return Option.some(this.root.getAbsolutePath());
   }
 
 }

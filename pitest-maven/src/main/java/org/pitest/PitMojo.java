@@ -1,39 +1,16 @@
 package org.pitest;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.DefaultPITClassloader;
-import org.pitest.mutationtest.DefaultMutationConfigFactory;
-import org.pitest.mutationtest.HtmlReportFactory;
-import org.pitest.mutationtest.MutationCoverageReport;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
-import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.util.Glob;
-import org.pitest.util.JavaAgent;
 
 /**
  * Goal which runs a coverage mutation report
@@ -69,7 +46,6 @@ public class PitMojo extends AbstractMojo {
    * 
    */
   private List<String>          excludedMethods;
-
 
   /**
    * Classes not to mutate or run tests from
@@ -124,13 +100,6 @@ public class PitMojo extends AbstractMojo {
   private boolean               mutateStaticInitializers;
 
   /**
-   * Mutate classes within jar files and other archives
-   * 
-   * @parameter default-value="false"
-   */
-  private boolean               includeJarFiles;
-
-  /**
    * Maximum distance to look from test to class
    * 
    * @parameter
@@ -158,13 +127,19 @@ public class PitMojo extends AbstractMojo {
    */
   private int                   maxMutationsPerClass;
 
-
   /**
    * Arguments to pass to child processes
    * 
    * @parameter
    */
-  private List<String>                jvmArgs;
+  private List<String>          jvmArgs;
+
+  /**
+   * Formats to output during analysis phase
+   * 
+   * @parameter
+   */
+  private List<String>          outputFormats;
 
   /**
    * Output verbose logging
@@ -172,6 +147,27 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="false"
    */
   private boolean               verbose;
+
+  /**
+   * Throw error if no mutations found
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean               failWhenNoMutations;
+
+  /**
+   * TestNG Groups to exclude
+   * 
+   * @parameter
+   */
+  private List<String>          excludedTestNGGroups;
+
+  /**
+   * TestNG Groups to include
+   * 
+   * @parameter
+   */
+  private List<String>          includedTestNGGroups;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -210,162 +206,117 @@ public class PitMojo extends AbstractMojo {
    */
   protected ArtifactFactory     factory;
 
-  @SuppressWarnings("unchecked")
+  private final GoalStrategy    goalStrategy;
+
+  public PitMojo() {
+    this(new RunPitStrategy());
+  }
+
+  public PitMojo(final GoalStrategy strategy) {
+    this.goalStrategy = strategy;
+  }
+
   public void execute() throws MojoExecutionException {
 
-    final Set<String> classPath = new HashSet<String>();
+    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
+    this.goalStrategy.execute(data);
 
-    try {
-      classPath.addAll(this.project.getTestClasspathElements());
-      classPath.addAll(this.project.getCompileClasspathElements());
-      classPath.addAll(this.project.getRuntimeClasspathElements());
-      classPath.addAll(this.project.getSystemClasspathElements());
-
-    } catch (final DependencyResolutionRequiredException e1) {
-      getLog().info(e1);
-      e1.printStackTrace();
-    }
-
-    addOwnDependenciesToClassPath(classPath);
-
-    final ReportOptions data = parseReportOptions(classPath);
-    System.out.println("Running report with " + data);
-    final ClassPath cp = data.getClassPath(true).getOrElse(new ClassPath());
-
-    // workaround for apparent java 1.5 JVM bug . . . might not play nicely
-    // with distributed testing
-    final JavaAgent jac = new JarCreatingJarFinder(cp);
-    KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(jac.getJarLocation().value());
-
-    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(data.getReportDir());
-    final MutationCoverageReport report = new MutationCoverageReport(data, ja,
-        new HtmlReportFactory(reportOutput), true);
-
-    // Create new classloader under boot
-    final ClassLoader loader = new DefaultPITClassloader(cp,
-        IsolationUtils.bootClassLoader());
-    final ClassLoader original = IsolationUtils.getContextClassLoader();
-
-    try {
-      IsolationUtils.setContextClassLoader(loader);
-
-      final Runnable run = (Runnable) IsolationUtils.cloneForLoader(report,
-          loader);
-
-      run.run();
-
-    } catch (final Exception e) {
-      throw new MojoExecutionException("fail", e);
-    } finally {
-      IsolationUtils.setContextClassLoader(original);
-      jac.close();
-      ja.close();
-
-    }
   }
 
-  @SuppressWarnings("unchecked")
-  private ReportOptions parseReportOptions(final Set<String> classPath) {
-    final ReportOptions data = new ReportOptions();
-    data.setClassPathElements(classPath);
-    data.setDependencyAnalysisMaxDistance(this.maxDependencyDistance);
-    data.setIncludeJarFiles(this.includeJarFiles);
-
-    data.setTargetClasses(determineTargetClasses());
-    data.setTargetTests(determineTargetTests());
-    data.setClassesInScope(determineClassesInScope());
-    data.setMutateStaticInitializers(this.mutateStaticInitializers);
-    data.setExcludedMethods(globStringsToPredicates(this.excludedMethods));
-    data.setExcludedClasses(globStringsToPredicates(this.excludedClasses));
-    data.setNumberOfThreads(this.threads);
-    data.setMaxMutationsPerClass(this.maxMutationsPerClass);
-
-    data.setReportDir(this.reportsDirectory.getAbsolutePath());
-    data.setVerbose(this.verbose);
-    if ( this.jvmArgs != null ) {
-      data.addChildJVMArgs(this.jvmArgs);
-    }
-
-    data.setMutators(determineMutators());
-    data.setTimeoutConstant(this.timeoutConstant);
-    data.setTimeoutFactor(this.timeoutFactor);
-    if (this.avoidCallsTo != null) {
-      data.setLoggingClasses(this.avoidCallsTo);
-    }
-
-    final List<String> sourceRoots = new ArrayList<String>();
-    sourceRoots.addAll(this.project.getCompileSourceRoots());
-    sourceRoots.addAll(this.project.getTestCompileSourceRoots());
-
-    data.setSourceDirs(stringsTofiles(sourceRoots));
-    return data;
+  public List<String> getTargetClasses() {
+    return this.targetClasses;
   }
 
-  private Collection<Predicate<String>> globStringsToPredicates(
-      final List<String> excludedMethods) {
-    return FCollection.map(excludedMethods, Glob.toGlobPredicate());
+  public List<String> getTargetTests() {
+    return this.targetTests;
   }
 
-  private Collection<Predicate<String>> determineTargetTests() {
-    return FCollection.map(this.targetTests, Glob.toGlobPredicate());
+  public List<String> getExcludedMethods() {
+    return this.excludedMethods;
   }
 
-  private void addOwnDependenciesToClassPath(final Set<String> classPath) {
-    for (final Artifact dependency : filteredDependencies()) {
-      classPath.add(dependency.getFile().getAbsolutePath());
-    }
+  public List<String> getExcludedClasses() {
+    return this.excludedClasses;
   }
 
-  private Collection<Artifact> filteredDependencies() {
-    final DependencyFilter filter = new DependencyFilter("org.pitest");
-    return FCollection.filter(this.pluginArtifactMap.values(), filter);
+  public List<String> getAvoidCallsTo() {
+    return this.avoidCallsTo;
   }
 
-  private Collection<MethodMutatorFactory> determineMutators() {
-    if (this.mutators != null) {
-      return FCollection.map(this.mutators, stringToMutator());
-    } else {
-      return DefaultMutationConfigFactory.DEFAULT_MUTATORS;
-    }
+  public List<String> getInScopeClasses() {
+    return this.inScopeClasses;
   }
 
-  private F<String, MethodMutatorFactory> stringToMutator() {
-    return new F<String, MethodMutatorFactory>() {
-      public Mutator apply(final String a) {
-        return Mutator.valueOf(a);
-      }
-
-    };
+  public File getReportsDirectory() {
+    return this.reportsDirectory;
   }
 
-  private Collection<Predicate<String>> determineClassesInScope() {
-    return returnOrDefaultToClassesLikeGroupName(this.inScopeClasses);
+  public int getMaxDependencyDistance() {
+    return this.maxDependencyDistance;
   }
 
-  private Collection<Predicate<String>> determineTargetClasses() {
-    return returnOrDefaultToClassesLikeGroupName(this.targetClasses);
+  public int getThreads() {
+    return this.threads;
   }
 
-  private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
-      final Collection<String> filters) {
-    if (filters == null) {
-      return Collections.<Predicate<String>> singleton(new Glob(this.project
-          .getGroupId() + "*"));
-    } else {
-      return FCollection.map(filters, Glob.toGlobPredicate());
-    }
+  public boolean isMutateStaticInitializers() {
+    return this.mutateStaticInitializers;
   }
 
-  private Collection<File> stringsTofiles(final List<String> sourceRoots) {
-    return FCollection.map(sourceRoots, stringToFile());
+  public List<String> getMutators() {
+    return this.mutators;
   }
 
-  private F<String, File> stringToFile() {
-    return new F<String, File>() {
-      public File apply(final String a) {
-        return new File(a);
-      }
-
-    };
+  public float getTimeoutFactor() {
+    return this.timeoutFactor;
   }
+
+  public long getTimeoutConstant() {
+    return this.timeoutConstant;
+  }
+
+  public int getMaxMutationsPerClass() {
+    return this.maxMutationsPerClass;
+  }
+
+  public List<String> getJvmArgs() {
+    return this.jvmArgs;
+  }
+
+  public List<String> getOutputFormats() {
+    return this.outputFormats;
+  }
+
+  public boolean isVerbose() {
+    return this.verbose;
+  }
+
+  public MavenProject getProject() {
+    return this.project;
+  }
+
+  public Map<String, Artifact> getPluginArtifactMap() {
+    return this.pluginArtifactMap;
+  }
+
+  public ArtifactRepository getLocalRepository() {
+    return this.localRepository;
+  }
+
+  public ArtifactFactory getFactory() {
+    return this.factory;
+  }
+
+  public boolean isFailWhenNoMutations() {
+    return this.failWhenNoMutations;
+  }
+
+  public List<String> getExcludedTestNGGroups() {
+    return this.excludedTestNGGroups;
+  }
+
+  public List<String> getIncludedTestNGGroups() {
+    return this.includedTestNGGroups;
+  }
+
 }

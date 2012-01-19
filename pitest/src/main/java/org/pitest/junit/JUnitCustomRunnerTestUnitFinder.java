@@ -1,71 +1,83 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.junit;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.TestDiscoveryListener;
+import org.junit.runners.Parameterized;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.TestUnitProcessor;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
+import org.pitest.reflection.IsAnotatedWith;
+import org.pitest.reflection.Reflection;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final Class<?> testClass,
-      final Configuration config, final TestDiscoveryListener listener,
-      final TestUnitProcessor processor) {
+  public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
 
-    final Collection<? extends TestUnit> units = createUnits(testClass,
-        listener);
-
-    return FCollection.map(units, processor);
-
-  }
-
-  private Collection<? extends TestUnit> createUnits(final Class<?> clazz,
-      final TestDiscoveryListener listener) {
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
-    if (Filterable.class.isAssignableFrom(runner.getClass())) {
-      return splitIntoFilteredUnits(runner.getDescription(), listener);
+    if ((runner == null)
+        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
+        || isParameterizedTest(runner)) {
+      return Collections.emptyList();
+    }
+
+    if (Filterable.class.isAssignableFrom(runner.getClass())
+        && !shouldTreatAsOneUnit(clazz)) {
+      return splitIntoFilteredUnits(runner.getDescription());
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
     }
   }
 
-  private Collection<? extends TestUnit> splitIntoFilteredUnits(
-      final Description description, final TestDiscoveryListener listener) {
+  private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
+    final Set<Method> methods = Reflection.allMethods(clazz);
+    return hasAnnotation(methods, BeforeClass.class)
+        || hasAnnotation(methods, AfterClass.class);
+  }
 
-    listener.enterClass(description.getTestClass());
-    final Collection<TestUnit> tus = FCollection.filter(
-        description.getChildren(), isTest()).map(descriptionToTestUnit());
-    listener.receiveTests(tus);
-    listener.leaveClass(description.getTestClass());
+  private boolean hasAnnotation(final Set<Method> methods,
+      final Class<? extends Annotation> annotation) {
+    return FCollection.contains(methods, IsAnotatedWith.instance(annotation));
+  }
 
-    return tus;
+  private boolean isParameterizedTest(final Runner runner) {
+    return Parameterized.class.isAssignableFrom(runner.getClass());
+  }
+
+  private Collection<TestUnit> splitIntoFilteredUnits(
+      final Description description) {
+    return FCollection.filter(description.getChildren(), isTest()).map(
+        descriptionToTestUnit());
+
   }
 
   private F<Description, TestUnit> descriptionToTestUnit() {

@@ -4,7 +4,9 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.domain.TestInfo;
+import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.util.JavaAgent;
 
 public interface CoverageDatabase {
 
@@ -23,5 +25,9 @@ public interface CoverageDatabase {
   Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
 
   Collection<ClassGrouping> getGroupedClasses();
+
+  Configuration getConfiguration();
+
+  JavaAgent getJavaAgent();
 
 }

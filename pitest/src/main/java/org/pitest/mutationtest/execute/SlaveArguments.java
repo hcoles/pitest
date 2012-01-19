@@ -15,9 +15,9 @@
 package org.pitest.mutationtest.execute;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.pitest.extension.TestUnit;
+import org.pitest.classinfo.ClassName;
+import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
@@ -25,22 +25,22 @@ import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 public class SlaveArguments {
 
   final Collection<MutationDetails> mutations;
-  final List<TestUnit>              tests;
+  final Collection<ClassName>       testClasses;
   final MutationConfig              config;
   final TimeoutLengthStrategy       timeoutStrategy;
-  final String                      outputFileName;
   final boolean                     verbose;
+  final Configuration               pitConfig;
 
-  public SlaveArguments(final String outputFileName,
-      final Collection<MutationDetails> mutations, final List<TestUnit> tests,
-      final MutationConfig config, final TimeoutLengthStrategy timeoutStrategy,
-      final boolean verbose) {
-    this.outputFileName = outputFileName;
+  public SlaveArguments(final Collection<MutationDetails> mutations,
+      final Collection<ClassName> tests, final MutationConfig config,
+      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
+      final Configuration pitConfig) {
     this.mutations = mutations;
-    this.tests = tests;
+    this.testClasses = tests;
     this.config = config;
     this.timeoutStrategy = timeoutStrategy;
     this.verbose = verbose;
+    this.pitConfig = pitConfig;
   }
 
   public boolean isVerbose() {

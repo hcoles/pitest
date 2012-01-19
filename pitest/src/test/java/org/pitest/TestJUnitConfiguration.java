@@ -3,6 +3,7 @@ package org.pitest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -15,9 +16,8 @@ import junit.framework.TestCase;
 
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -34,10 +34,8 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.NullDiscoveryListener;
 import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -56,9 +54,9 @@ public class TestJUnitConfiguration {
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig();
+    this.staticConfig = new DefaultStaticConfig(new UnGroupedStrategy());
     this.staticConfig.getTestListeners().add(this.listener);
-    this.pitest = new Pitest(this.staticConfig, this.testee);
+    this.pitest = new Pitest(this.staticConfig);
   }
 
   public static class SimpleJUnit4Test {
@@ -74,11 +72,13 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  public static class JUnit3TestWithSingleStringConstructor extends TestCase {
+  public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
+      extends TestCase {
 
     private final String name;
 
-    public JUnit3TestWithSingleStringConstructor(final String name) {
+    public JUnit3TestWithSingleStringConstructorAndJUnit4Annotations(
+        final String name) {
       super(name);
       this.name = name;
     }
@@ -89,6 +89,31 @@ public class TestJUnitConfiguration {
     }
 
     @Test
+    public void testTwo() {
+      assertEquals("testTwo", this.name);
+    }
+
+  };
+
+  @Test
+  public void shouldCallsSingleStringArgumentsConstructorWithTestNameWithAnnotations() {
+    run(JUnit3TestWithSingleStringConstructorAndJUnit4Annotations.class);
+    verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
+  }
+
+  public static class JUnit3TestWithSingleStringConstructor extends TestCase {
+
+    private final String name;
+
+    public JUnit3TestWithSingleStringConstructor(final String name) {
+      super(name);
+      this.name = name;
+    }
+
+    public void testOne() {
+      assertEquals("testOne", this.name);
+    }
+
     public void testTwo() {
       assertEquals("testTwo", this.name);
     }
@@ -169,40 +194,37 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  static abstract class HideFromJunit3 {
-    public static class BaseTestCaseWithTest extends TestCase {
-      public void testFoo() {
-
-      }
-
-      @Test
-      protected void testBar() {
-
-      }
-    }
-
-    public static class InheritedTest extends BaseTestCaseWithTest {
+  public static class BaseTestCaseWithTest extends TestCase {
+    public void testFoo() {
 
     }
 
-    public static class OverridesTestInParent extends BaseTestCaseWithTest {
-      @Override
-      public void testFoo() {
+    @Test
+    public void testBar() {
 
-      }
     }
+  }
 
+  public static class InheritedTest extends BaseTestCaseWithTest {
+
+  }
+
+  public static class OverridesTestInParent extends BaseTestCaseWithTest {
+    @Override
+    public void testFoo() {
+
+    }
   }
 
   @Test
   public void shouldRunTestsInheritedFromParent() {
-    run(HideFromJunit3.InheritedTest.class);
+    run(InheritedTest.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
   @Test
   public void testOverriddenTestsCalledOnlyOnce() {
-    run(HideFromJunit3.OverridesTestInParent.class);
+    run(OverridesTestInParent.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
 
@@ -237,62 +259,16 @@ public class TestJUnitConfiguration {
     assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
   }
 
-  static abstract class HideFromJunit5 {
-    public static class Junit3TestWithBeforeAndAfterAnnotations extends
-        TestCase {
+  public static class TestWithTimeout {
 
-      public static int count;
-
-      @BeforeClass
-      public static void beforeClass() {
-        count++;
-      }
-
-      @Override
-      public void setUp() {
-        assertEquals(1, count);
-        count++;
-      }
-
-      public void testOne() {
-        assertEquals(2, count);
-        count++;
-      }
-
-      @Override
-      public void tearDown() {
-        assertEquals(3, count);
-        count++;
-      }
-
-      @AfterClass
-      public static void after() {
-        assertEquals(4, count);
-        count++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldCallBeforeAndAfterMethodsInCorrectOrder() {
-    run(HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.class);
-    verify(this.listener).onTestSuccess(any(TestResult.class));
-    assertEquals(5,
-        HideFromJunit5.Junit3TestWithBeforeAndAfterAnnotations.count);
-  }
-
-  static abstract class HideFromJunit6 {
-    public static class TestWithTimeout {
-
-      @Test(timeout = 5)
-      protected void testBar() {
-        for (int i = 0; i != 10; i++) {
-          try {
-            Thread.sleep(1000);
-          } catch (final InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
+    @Test(timeout = 5)
+    public void testBar() {
+      for (int i = 0; i != 10; i++) {
+        try {
+          Thread.sleep(1000);
+        } catch (final InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
       }
     }
@@ -300,35 +276,39 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldTimeTestsOut() {
-    run(HideFromJunit6.TestWithTimeout.class);
+    run(TestWithTimeout.class);
     verify(this.listener).onTestError(any(TestResult.class));
   }
 
-  static abstract class HideFromJUnit7 {
-    @RunWith(Parameterized.class)
-    public static class ParameterisedTest {
+  @RunWith(Parameterized.class)
+  public static class ParameterisedTest {
+    int i;
 
-      public ParameterisedTest(final int i) {
-
-      }
-
-      @Parameters
-      public static Collection<Object[]> params() {
-        return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
-      }
-
-      @Test
-      public void test() {
-
-      }
-
+    public ParameterisedTest(final int i) {
+      this.i = i;
     }
+
+    @Parameters
+    public static Collection<Object[]> params() {
+      return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
+    }
+
+    @Test
+    public void test() {
+      System.out.println(this.i);
+    }
+
+    @Test
+    public void test2() {
+      System.out.println("> " + this.i);
+    }
+
   }
 
   @Test
-  public void shouldCreateTestsForEachJUnitParameter() {
-    run(HideFromJUnit7.ParameterisedTest.class);
-    verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
+  public void shouldCreateTestForEachParameterOfParameterizedTest() {
+    run(ParameterisedTest.class);
+    verify(this.listener, times(6)).onTestSuccess(any(TestResult.class));
   }
 
   static abstract class HideFromJUnit8 {
@@ -437,8 +417,8 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
     final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new NullDiscoveryListener(), new UnGroupedStrategy(),
-        Option.<TestFilter> none(), CustomSuite.class);
+        this.testee, new UnGroupedStrategy(),
+        Arrays.<Class<?>> asList(CustomSuite.class));
 
     System.out.println(actual);
 
@@ -446,8 +426,63 @@ public class TestJUnitConfiguration {
 
   }
 
+  @Ignore
+  public static class AnnotatedAsIgnored {
+
+    @Test
+    public void ignoreMe() {
+
+    }
+
+    @Test
+    public void ignoreMeToo() {
+
+    }
+
+  };
+
+  @Test
+  public void shouldSkipAllMethodsInClassAnnotatedWithIgnore() {
+    run(AnnotatedAsIgnored.class);
+    verify(this.listener, times(1)).onTestSkipped((any(TestResult.class)));
+    verify(this.listener, never()).onTestStart(any(Description.class));
+  }
+
+  public static class HasMethodAnnotatedAsIgnored {
+
+    @Test
+    @Ignore
+    public void ignoreMe() {
+
+    }
+
+    @Test
+    @Ignore
+    public void ignoreMeToo() {
+
+    }
+
+    @Test
+    public void dontIgnoreMe() {
+
+    }
+
+  };
+
+  @Test
+  public void shouldSkipAllMethodsAnnotatedWithIgnore() {
+    run(HasMethodAnnotatedAsIgnored.class);
+    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
+    verify(this.listener).onTestSuccess((any(TestResult.class)));
+  }
+
+  @Test
+  public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
+    assertEquals(Option.none(), this.testee.verifyEnvironment());
+  }
+
   private void run(final Class<?> clazz) {
-    this.pitest.run(this.container, clazz);
+    this.pitest.run(this.container, this.testee, clazz);
   }
 
 }

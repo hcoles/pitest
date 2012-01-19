@@ -15,18 +15,15 @@
 package org.pitest.extension;
 
 import org.pitest.Description;
-import org.pitest.functional.Option;
 
 /**
  * @author henry
  * 
  */
-public interface TestUnit extends Iterable<TestUnit> {
+public interface TestUnit {
 
   public void execute(ClassLoader loader, ResultCollector rc);
 
   public Description getDescription();
-
-  public Option<TestUnit> filter(TestFilter filter);
 
 }

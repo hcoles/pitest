@@ -6,9 +6,8 @@ import java.util.logging.Logger;
 import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
+import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.execute.SlaveArguments;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
@@ -20,13 +19,13 @@ import org.pitest.util.SafeDataOutputStream;
 public class CoverageCommunicationThread extends CommunicationThread {
 
   static class SendData implements SideEffect1<SafeDataOutputStream> {
-    private final static Logger  LOG = Log.getLogger();
-    private final SlaveArguments arguments;
-    private final List<TestUnit> tus;
+    private final static Logger   LOG = Log.getLogger();
+    private final CoverageOptions arguments;
+    private final List<String>    testClasses;
 
-    SendData(final SlaveArguments arguments, final List<TestUnit> tus) {
+    SendData(final CoverageOptions arguments, final List<String> testClasses) {
       this.arguments = arguments;
-      this.tus = tus;
+      this.testClasses = testClasses;
     }
 
     public void apply(final SafeDataOutputStream dos) {
@@ -43,9 +42,9 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
       // send individually to reduce memory overhead of deserializing large
       // suite
-      dos.writeInt(this.tus.size());
-      for (final TestUnit tu : this.tus) {
-        dos.write(tu);
+      dos.writeInt(this.testClasses.size());
+      for (final String tc : this.testClasses) {
+        dos.writeString(tc);
       }
       dos.flush();
       LOG.info("Sent tests to slave");
@@ -55,14 +54,12 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
   static class Receive implements ReceiveStrategy {
 
-    Description                               d  = null;
+    private Description                       d  = null;
     final CoverageStatistics                  cs = new CoverageStatistics();
     private final SideEffect1<CoverageResult> handler;
-    private final List<TestUnit>              tus;
 
-    Receive(final SideEffect1<CoverageResult> handler, final List<TestUnit> tus) {
+    Receive(final SideEffect1<CoverageResult> handler) {
       this.handler = handler;
-      this.tus = tus;
     }
 
     public void apply(final byte control, final SafeDataInputStream is) {
@@ -99,9 +96,7 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
         break;
       case Id.TEST_CHANGE:
-
-        final int index = is.readInt();
-        this.d = this.tus.get(index).getDescription();
+        this.d = is.read(Description.class);
         break;
       case Id.DONE:
 
@@ -111,9 +106,9 @@ public class CoverageCommunicationThread extends CommunicationThread {
   }
 
   public CoverageCommunicationThread(final int port,
-      final SlaveArguments arguments, final List<TestUnit> tus,
+      final CoverageOptions arguments, final List<String> tus,
       final SideEffect1<CoverageResult> handler) {
-    super(port, new SendData(arguments, tus), new Receive(handler, tus));
+    super(port, new SendData(arguments, tus), new Receive(handler));
 
   }
 

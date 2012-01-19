@@ -58,10 +58,6 @@ public class BaseThreadPoolContainer implements Container {
     this.executor.submit(c);
   }
 
-  protected ClassLoaderFactory loaderFactory() {
-    return this.loaderFactory;
-  }
-
   public void setMaxThreads(final int maxThreads) {
     this.executor.setCorePoolSize(maxThreads);
     this.executor.setMaximumPoolSize(maxThreads);
@@ -95,10 +91,6 @@ public class BaseThreadPoolContainer implements Container {
       }
 
     };
-  }
-
-  public BlockingQueue<TestResult> feedbackQueue() {
-    return this.feedbackQueue;
   }
 
 }

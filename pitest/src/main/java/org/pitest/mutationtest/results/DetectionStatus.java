@@ -20,7 +20,8 @@ public enum DetectionStatus {
   KILLED(true, Confidence.HIGH, 4), SURVIVED(false, Confidence.HIGH, 0), TIMED_OUT(
       true, Confidence.LOW, 2), NON_VIABLE(true, Confidence.HIGH, 3), MEMORY_ERROR(
       true, Confidence.LOW, 1), NOT_STARTED(false, Confidence.LOW, 1), STARTED(
-      false, Confidence.LOW, 1), RUN_ERROR(true, Confidence.LOW, 0);
+      false, Confidence.LOW, 1), RUN_ERROR(true, Confidence.LOW, 0), NO_COVERAGE(
+      false, Confidence.HIGH, 0);
 
   private final boolean    detected;
   private final Confidence confidence;

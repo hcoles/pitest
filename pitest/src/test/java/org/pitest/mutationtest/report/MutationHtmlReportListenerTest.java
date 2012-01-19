@@ -72,7 +72,7 @@ public class MutationHtmlReportListenerTest {
 
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
-        new MutationStatusTestPair(DetectionStatus.KILLED, "foo"));
+        new MutationStatusTestPair(1, DetectionStatus.KILLED, "foo"));
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
         .thenReturn(Option.<Reader> none());
     this.testee.onTestSuccess(createResult(mr));

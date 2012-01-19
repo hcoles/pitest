@@ -30,16 +30,18 @@ import java.util.WeakHashMap;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;
-import org.pitest.util.Base64;
+import org.pitest.util.PitXmlDriver;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
 
-  private final static XStream                           XSTREAM_INSTANCE          = new XStream();
+  private final static XStream                           XSTREAM_INSTANCE          = new XStream(
+                                                                                       new PitXmlDriver());
   private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
   private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
 
@@ -80,7 +82,7 @@ public abstract class IsolationUtils {
   private static XStream getXStreamForLoader(final ClassLoader loader) {
     XStream foreginXstream = CACHE.get(loader);
     if (foreginXstream == null) {
-      foreginXstream = new XStream();
+      foreginXstream = new XStream(new PitXmlDriver());
       foreginXstream.setClassLoader(loader);
       // possible that more than one instance will be created
       // per loader, but probably better than synchronizing the whole method
@@ -155,13 +157,15 @@ public abstract class IsolationUtils {
   public static String toXml(final Object o) {
     final Writer writer = new StringWriter();
     XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
+
     return writer.toString();
     // return XSTREAM_INSTANCE.toXML(o);
   }
 
   public static String toTransportString(final Object o) {
     try {
-      return Base64.encodeBytes(toXml(o).getBytes("UTF-8"));
+      final Base64Encoder encoder = new Base64Encoder();
+      return encoder.encode(toXml(o).getBytes("UTF-8"));
     } catch (final UnsupportedEncodingException e) {
       throw Unchecked.translateCheckedException(e);
     }
@@ -169,7 +173,8 @@ public abstract class IsolationUtils {
 
   public static String decodeTransportString(final String encodedXml)
       throws IOException {
-    return new String(Base64.decode(encodedXml), "UTF-8");
+    final Base64Encoder encoder = new Base64Encoder();
+    return new String(encoder.decode(encodedXml), "UTF-8");
   }
 
   public static Object fromTransportString(final String encodedXml) {

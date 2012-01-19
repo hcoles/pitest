@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.pitest.internal.TestClass;
-import org.pitest.junit.adapter.PITJUnitRunner;
 
 public class JUnit4SuiteFinderTest {
 
@@ -44,25 +43,12 @@ public class JUnit4SuiteFinderTest {
   }
 
   private static class HideFromJUnit {
-    @RunWith(PITJUnitRunner.class)
-    @SuiteClasses({ String.class, Integer.class })
-    private static class AnnotatedPit {
-
-    }
 
     @RunWith(Suite.class)
     @SuiteClasses({ String.class, Integer.class })
     private static class AnnotatedJUnit {
 
     }
-  }
-
-  @Test
-  public void shouldReturnTestClassForEachClassInSuiteClassesAnnotationWhenRunnerIsPit() {
-    final TestClass annotated = new TestClass(HideFromJUnit.AnnotatedPit.class);
-    final Collection<TestClass> expected = Arrays.asList(new TestClass(
-        String.class), new TestClass(Integer.class));
-    assertEquals(expected, this.testee.apply(annotated));
   }
 
   @Test

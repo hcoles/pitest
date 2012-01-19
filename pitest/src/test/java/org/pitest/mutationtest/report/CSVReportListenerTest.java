@@ -46,7 +46,7 @@ public class CSVReportListenerTest {
   @Test
   public void shouldOutputKillingTestWhenOneFound() throws IOException {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.KILLED, "foo"));
     final TestResult tr = createResult(mr);
     this.testee.onTestSuccess(tr);
@@ -57,7 +57,7 @@ public class CSVReportListenerTest {
   @Test
   public void shouldOutputNoneWhenNoKillingTestFound() throws IOException {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.SURVIVED));
     final TestResult tr = createResult(mr);
     this.testee.onTestSuccess(tr);

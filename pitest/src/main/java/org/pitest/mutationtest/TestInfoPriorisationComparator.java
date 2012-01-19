@@ -17,6 +17,7 @@ package org.pitest.mutationtest;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 
 public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
@@ -25,9 +26,9 @@ public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
   private static final long serialVersionUID = 1L;
 
   private final int         distanceTimeWeighting;
-  private final String      targetClass;
+  private final ClassName   targetClass;
 
-  public TestInfoPriorisationComparator(final String targetClass,
+  public TestInfoPriorisationComparator(final ClassName targetClass,
       final int distanceTimeWeighting) {
     this.targetClass = targetClass;
     this.distanceTimeWeighting = distanceTimeWeighting;

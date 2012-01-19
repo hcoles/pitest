@@ -1,25 +1,10 @@
 package org.pitest.util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class FileUtil {
-
-  public static boolean deleteDirectory(final File path) {
-    if (path.exists()) {
-      final File[] files = path.listFiles();
-      for (final File file : files) {
-        if (file.isDirectory()) {
-          deleteDirectory(file);
-        } else {
-          file.delete();
-        }
-      }
-    }
-    return (path.delete());
-  }
 
   public static String readToString(final InputStream is)
       throws java.io.IOException {

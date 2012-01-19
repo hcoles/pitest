@@ -14,10 +14,13 @@
  */
 package org.pitest.mutationtest.engine;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
 
 public interface Mutater {
+
+  public byte[] getOriginalClass(ClassName clazz);
 
   public Mutant getMutation(MutationIdentifier id);
 

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.MetaData;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -40,6 +41,10 @@ public class MutationMetaData implements MetaData {
 
   public int getNumberOfMutations() {
     return this.mutations.size();
+  }
+
+  public String getFirstFileName() {
+    return getSourceFiles().iterator().next();
   }
 
   public Collection<String> getSourceFiles() {
@@ -136,9 +141,9 @@ public class MutationMetaData implements MetaData {
     return classes;
   }
 
-  public Collection<String> getTestClasses() {
-    final Set<String> uniqueTestClasses = new HashSet<String>();
-    FCollection.flatMapTo(getTargettedTests(), TestInfo.toDefiningClassNames(),
+  public Collection<ClassName> getTestClasses() {
+    final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
+    FCollection.mapTo(getTargettedTests(), TestInfo.toDefiningClassName(),
         uniqueTestClasses);
     return uniqueTestClasses;
   }

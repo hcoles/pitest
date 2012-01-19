@@ -1,0 +1,97 @@
+/*
+ * Copyright 2011 Henry Coles
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
+package org.pitest.mutationtest.report;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.pitest.TestResult;
+import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.results.MutationResult;
+
+public class XMLReportListenerTest {
+
+  private XMLReportListener testee;
+
+  private Writer            out;
+
+  @Before
+  public void setup() {
+    this.out = new StringWriter();
+    this.testee = new XMLReportListener(this.out);
+  }
+
+  @Test
+  public void shouldCreateAValidXmlDocumentWhenNoResults() throws IOException {
+    this.testee.onRunStart();
+    this.testee.onRunEnd();
+    final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mutations>\n</mutations>\n";
+    assertEquals(expected, this.out.toString());
+  }
+
+  @Test
+  public void shouldOutputKillingTestWhenOneFound() throws IOException {
+    final MutationResult mr = createdKilledMutationWithKillingTestOf("foo");
+    final TestResult tr = createResult(mr);
+    this.testee.onTestSuccess(tr);
+    final String expected = "<mutation detected='true' status='KILLED'><sourceFile>file</sourceFile><mutatedClass>class</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest>foo</killingTest></mutation>\n";
+    assertEquals(expected, this.out.toString());
+  }
+
+  @Test
+  public void shouldEscapeGTAndLTSymbols() {
+    final MutationResult mr = createdKilledMutationWithKillingTestOf("<foo>");
+    final TestResult tr = createResult(mr);
+    this.testee.onTestSuccess(tr);
+    assertTrue(this.out.toString().contains("&#60;foo&#62;"));
+  }
+
+  private MutationResult createdKilledMutationWithKillingTestOf(
+      final String killingTest) {
+    final MutationResult mr = new MutationResult(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
+            DetectionStatus.KILLED, killingTest));
+    return mr;
+  }
+
+  @Test
+  public void shouldOutputNoneWhenNoKillingTestFound() throws IOException {
+    final MutationResult mr = createSurvivingMutant();
+    final TestResult tr = createResult(mr);
+    this.testee.onTestSuccess(tr);
+    final String expected = "<mutation detected='false' status='SURVIVED'><sourceFile>file</sourceFile><mutatedClass>class</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest/></mutation>\n";
+    assertEquals(expected, this.out.toString());
+  }
+
+  private MutationResult createSurvivingMutant() {
+    final MutationResult mr = new MutationResult(
+        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
+            DetectionStatus.SURVIVED));
+    return mr;
+  }
+
+  private TestResult createResult(final MutationResult... mrs) {
+    return MutationTestResultMother.createResult(MutationTestResultMother
+        .createMetaData(mrs));
+  }
+
+}

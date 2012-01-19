@@ -23,13 +23,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
@@ -50,16 +51,18 @@ public class MutationTestBuilder {
   private final MutationConfig        mutationConfig;
   private final Configuration         initialConfig;
   private final MutationFilterFactory filterFactory;
+  private final ClassByteArraySource  source;
 
   public MutationTestBuilder(final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
       final Configuration initialConfig, final ReportOptions data,
-      final JavaAgent javaAgentFinder) {
+      final JavaAgent javaAgentFinder, final ClassByteArraySource source) {
     this.data = data;
     this.javaAgentFinder = javaAgentFinder;
     this.mutationConfig = mutationConfig;
     this.initialConfig = initialConfig;
     this.filterFactory = filterFactory;
+    this.source = source;
   }
 
   public List<TestUnit> createMutationTestUnits(
@@ -73,8 +76,7 @@ public class MutationTestBuilder {
           coverageDatabase, this.mutationConfig, classGroup,
           this.filterFactory.createFilter());
 
-      tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses,
-          classGroup.getParent()));
+      tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses));
 
     }
     return tus;
@@ -84,10 +86,8 @@ public class MutationTestBuilder {
       final CoverageDatabase coverageDatabase,
       final MutationConfig mutationConfig, final ClassGrouping classesToMutate,
       final MutationFilter filter) {
-    mutationConfig.createMutator(IsolationUtils.getContextClassLoader());
 
-    final Mutater m = mutationConfig.createMutator(IsolationUtils
-        .getContextClassLoader());
+    final Mutater m = mutationConfig.createMutator(this.source);
 
     final Collection<MutationDetails> availableMutations = filter.filter(m
         .findMutations(classesToMutate));
@@ -119,9 +119,9 @@ public class MutationTestBuilder {
         coveageDatabase, mutation);
     final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
         Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis,
-        new TestInfoPriorisationComparator(mutation.getClazz(),
-            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
+    Collections.sort(sortedTis, new TestInfoPriorisationComparator(
+        new ClassName(mutation.getClazz()),
+        TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
     return sortedTis;
   }
 
@@ -137,29 +137,27 @@ public class MutationTestBuilder {
   }
 
   private TestUnit createMutationTestUnit(final MutationConfig mutationConfig,
-      final Collection<MutationDetails> mutationsForClasses,
-      final String parentClassName) {
+      final Collection<MutationDetails> mutationsForClasses) {
 
-    final Description d = new Description(
-        "mutation test of " + parentClassName, MutationCoverageReport.class,
-        null);
+    final Description d = new Description("mutation test", (String) null);
 
-    final Set<String> uniqueTestClasses = new HashSet<String>();
+    final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
     return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
         this.initialConfig, mutationConfig, d, this.javaAgentFinder,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose());
+            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
+            .getClassPath().getLocalClassPath());
   }
 
-  private F<MutationDetails, Iterable<String>> mutationDetailsToTestClass() {
-    return new F<MutationDetails, Iterable<String>>() {
+  private F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
+    return new F<MutationDetails, Iterable<ClassName>>() {
 
-      public Iterable<String> apply(final MutationDetails a) {
-        return FCollection.flatMap(a.getTestsInOrder(),
-            TestInfo.toDefiningClassNames());
+      public Iterable<ClassName> apply(final MutationDetails a) {
+        return FCollection.map(a.getTestsInOrder(),
+            TestInfo.toDefiningClassName());
       }
 
     };

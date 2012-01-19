@@ -19,7 +19,6 @@ package org.pitest.boot;
 
 /**
  * @author ivanalx
- * @date 26.01.2009 14:41:04
  */
 public final class CodeCoverageStore {
   public static final String    CODE_COVERAGE_CALCULATOR_CLASS_NAME;
@@ -57,10 +56,6 @@ public final class CodeCoverageStore {
 
   private static synchronized int nextId() {
     return classId++;
-  }
-
-  public static void resetClassCounter() {
-    classId = 0;
   }
 
 }

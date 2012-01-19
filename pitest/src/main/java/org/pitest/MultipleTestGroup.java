@@ -1,32 +1,24 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestUnit;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.testunit.AbstractTestUnit;
 
 public class MultipleTestGroup extends AbstractTestUnit {
@@ -36,20 +28,8 @@ public class MultipleTestGroup extends AbstractTestUnit {
   private final Collection<TestUnit> children;
 
   public MultipleTestGroup(final Collection<TestUnit> children) {
-    super(createDescription(children));
+    super(new Description("MultipleTestGroup"));
     this.children = children;
-  }
-
-  private static Description createDescription(
-      final Collection<TestUnit> children) {
-    final Set<Class<?>> uniqueClasses = new HashSet<Class<?>>();
-    final F<TestUnit, Iterable<Class<?>>> f = new F<TestUnit, Iterable<Class<?>>>() {
-      public Iterable<Class<?>> apply(final TestUnit a) {
-        return a.getDescription().getTestClasses();
-      }
-    };
-    FCollection.flatMapTo(children, f, uniqueClasses);
-    return new Description("MultipleTestGroup", uniqueClasses, null);
   }
 
   @Override
@@ -59,31 +39,6 @@ public class MultipleTestGroup extends AbstractTestUnit {
       if (rc.shouldExit()) {
         break;
       }
-    }
-
-  }
-
-  @Override
-  public Iterator<TestUnit> iterator() {
-    return this.children.iterator();
-  }
-
-  @Override
-  public Option<TestUnit> filter(final TestFilter filter) {
-
-    final Collection<TestUnit> filtered = new ArrayList<TestUnit>(
-        this.children.size());
-    for (final TestUnit each : this.children) {
-      final Option<TestUnit> tu = each.filter(filter);
-      for (final TestUnit value : tu) {
-        filtered.add(value);
-      }
-    }
-
-    if (filtered.isEmpty()) {
-      return Option.none();
-    } else {
-      return Option.<TestUnit> some(new MultipleTestGroup(filtered));
     }
 
   }

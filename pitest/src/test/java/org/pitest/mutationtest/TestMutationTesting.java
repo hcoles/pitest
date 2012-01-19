@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.results.DetectionStatus.MEMORY_ERROR;
 import static org.pitest.mutationtest.results.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
 
@@ -34,15 +35,17 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.annotations.ClassUnderTest;
 import org.pitest.containers.UnContainer;
+import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
@@ -52,7 +55,11 @@ import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
+
+import com.example.MutationsInNestedClasses;
+import com.example.MutationsInNestedClassesTest;
 
 public class TestMutationTesting {
 
@@ -71,14 +78,14 @@ public class TestMutationTesting {
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.addTestListener(this.metaDataExtractor);
-    this.pit = new Pitest(this.staticConfig, this.config);
+    this.pit = new Pitest(this.staticConfig);
   }
 
   public static class NoMutations {
 
   }
 
-  public static class OneMutation {
+  public static class OneMutationOnly {
     public static int returnOne() {
       return 1;
     }
@@ -98,21 +105,21 @@ public class TestMutationTesting {
     }
   }
 
-  @ClassUnderTest(OneMutation.class)
   public static class OneMutationFullTest {
     @TestAnnotationForTesting
     public void testReturnOne() {
-      assertEquals(1, OneMutation.returnOne());
+      assertEquals(1, OneMutationOnly.returnOne());
     }
   }
 
   @Test
   public void shouldKillAllCoveredMutations() {
-    run(OneMutation.class, OneMutationFullTest.class, Mutator.RETURN_VALS);
+    run(OneMutationOnly.class, OneMutationFullTest.class,
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
   }
 
-  public static class ThreeMutationsTwoTests {
+  public static class ThreeMutationsTwoMeaningfullTests {
     @TestAnnotationForTesting
     public void testReturnOne() {
       assertEquals(1, ThreeMutations.returnOne());
@@ -123,11 +130,16 @@ public class TestMutationTesting {
       assertEquals(2, ThreeMutations.returnTwo());
     }
 
+    @TestAnnotationForTesting
+    public void coverButDoNotTestReturnThree() {
+      ThreeMutations.returnThree();
+    }
   }
 
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
-    run(ThreeMutations.class, ThreeMutationsTwoTests.class, Mutator.RETURN_VALS);
+    run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -147,7 +159,8 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
-    run(NoMutations.class, NoMutationsTest.class, Mutator.RETURN_VALS);
+    run(NoMutations.class, NoMutationsTest.class,
+        Mutator.RETURN_VALS.asCollection());
     verifyResults();
   }
 
@@ -161,9 +174,9 @@ public class TestMutationTesting {
   }
 
   @Test
-  public void shouldReportSurvivingMutationsIfNoTestsAvailable() {
-    run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS);
-    verifyResults(SURVIVED, SURVIVED, SURVIVED);
+  public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
+    run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS.asCollection());
+    verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
   public static class OneMutationTest {
@@ -195,7 +208,8 @@ public class TestMutationTesting {
 
   @Test(timeout = 30000)
   public void shouldDetectAndEscapeFromInfiniteLoopsCausedByMutations() {
-    run(InfiniteLoop.class, InfiniteLoopTest.class, Mutator.INCREMENTS);
+    run(InfiniteLoop.class, InfiniteLoopTest.class,
+        Mutator.INCREMENTS.asCollection());
     verifyResults(KILLED, TIMED_OUT);
   }
 
@@ -203,7 +217,7 @@ public class TestMutationTesting {
     @TestAnnotationForTesting
     public void testReturnOne() {
       if (System.getProperty("foo").equals("foo")) {
-        assertEquals(1, OneMutation.returnOne());
+        assertEquals(1, OneMutationOnly.returnOne());
       }
     }
   }
@@ -211,25 +225,25 @@ public class TestMutationTesting {
   @Test
   public void shouldExportSystemPropertiesToSlaveProcess() {
     // System.setProperty("foo", "foo");
-    // note surefire ia configured to launch this test with -Dfoo=foo
-    run(OneMutation.class,
+    // note surefire is configured to launch this test with -Dfoo=foo
+    run(OneMutationOnly.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
-        Mutator.RETURN_VALS);
+        Mutator.RETURN_VALS.asCollection());
     verifyResults(KILLED);
   }
 
   public static class UnviableMutationsTest {
     @TestAnnotationForTesting
     public void test() {
-      new OneMutation();
-      OneMutation.returnOne();
+      new OneMutationOnly();
+      OneMutationOnly.returnOne();
     }
   }
 
   @Test
   public void shouldDetectUnviableMutations() {
-    run(OneMutation.class, UnviableMutationsTest.class,
-        new UnviableClassMutator());
+    run(OneMutationOnly.class, UnviableMutationsTest.class,
+        Collections.singleton(new UnviableClassMutator()));
     verifyResults(NON_VIABLE, NON_VIABLE);
 
   }
@@ -261,12 +275,22 @@ public class TestMutationTesting {
   @Ignore("flakey")
   @Test(timeout = 30000)
   public void shouldRecoverFromOutOfMemoryError() {
-    run(EatsMemoryWhenMutated.class, EatsMemoryTest.class, Mutator.INCREMENTS);
+    run(EatsMemoryWhenMutated.class, EatsMemoryTest.class,
+        Mutator.INCREMENTS.asCollection());
     verifyResults(KILLED, MEMORY_ERROR);
   }
 
+  @Test
+  public void shouldIsolateMutationsFromNestedClasses() {
+    // see http://code.google.com/p/pitestrunner/issues/detail?id=17 for full
+    // description of this issue
+    run(MutationsInNestedClasses.class, MutationsInNestedClassesTest.class,
+        Mutator.RETURN_VALS.asCollection());
+    verifyResults(SURVIVED, SURVIVED);
+  }
+
   private void run(final Class<?> clazz, final Class<?> test,
-      final MethodMutatorFactory... mutators) {
+      final Collection<? extends MethodMutatorFactory> mutators) {
 
     final ReportOptions data = new ReportOptions();
 
@@ -275,8 +299,8 @@ public class TestMutationTesting {
     data.setTargetTests(tests);
     data.setDependencyAnalysisMaxDistance(-1);
 
-    final Set<Predicate<String>> mutees = Collections.singleton(Prelude
-        .isEqualTo(clazz.getName()));
+    final Set<Predicate<String>> mutees = Collections.singleton(Functions
+        .startsWith(clazz.getName()));
     data.setTargetClasses(mutees);
 
     data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
@@ -298,9 +322,23 @@ public class TestMutationTesting {
   }
 
   private void createEngineAndRun(final ReportOptions data,
-      final JavaAgent agent, final MethodMutatorFactory... mutators) {
+      final JavaAgent agent,
+      final Collection<? extends MethodMutatorFactory> mutators) {
+
+    data.setConfiguration(this.config);
+    final CoverageOptions coverageOptions = data.createCoverageOptions();
+    final LaunchOptions launchOptions = new LaunchOptions(agent,
+        data.getJvmArgs());
+
+    final PathFilter pf = new PathFilter(
+        Prelude.not(new DefaultDependencyPathPredicate()),
+        Prelude.not(new DefaultDependencyPathPredicate()));
+    final MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
+        data.createClassesFilter(), pf);
+
+    final Timings timings = new Timings();
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        this.config, new ClassPath(true), agent, data);
+        coverageOptions, launchOptions, cps, timings);
 
     coverageDatabase.initialise();
 
@@ -314,7 +352,8 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        UnfilteredMutationFilter.factory(), this.config, data, agent);
+        UnfilteredMutationFilter.factory(), this.config, data, agent,
+        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
         this.config, coverageDatabase);

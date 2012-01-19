@@ -14,12 +14,10 @@
  */
 package org.pitest;
 
-import java.util.Collections;
-
 public class DescriptionMother {
 
   public static Description createEmptyDescription(final String name) {
-    return new Description(name, Collections.<Class<?>> emptySet(), null);
+    return new Description(name);
   }
 
 }

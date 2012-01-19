@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,6 +30,7 @@ import org.junit.Test;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.commandline.OptionsParser;
+import org.pitest.mutationtest.report.OutputFormat;
 
 public class OptionsParserTest {
 
@@ -90,7 +93,8 @@ public class OptionsParserTest {
   public void shouldParseCommaSeperatedListOfMutationOperators() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
-    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
+    assertEquals(
+        Mutator.asCollection(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
         actual.getMutators());
   }
 
@@ -104,12 +108,6 @@ public class OptionsParserTest {
   public void shouldParseNumberOfThreads() {
     final ReportOptions actual = parseAddingRequiredArgs("--threads", "42");
     assertEquals(42, actual.getNumberOfThreads());
-  }
-
-  @Test
-  public void shouldDetermineIfIncludeJarFilesFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--includeJarFiles");
-    assertTrue(actual.isIncludeJarFiles());
   }
 
   @Test
@@ -194,6 +192,67 @@ public class OptionsParserTest {
   public void shouldParseVerboseFlag() {
     final ReportOptions actual = parseAddingRequiredArgs("--verbose");
     assertTrue(actual.isVerbose());
+  }
+
+  @Test
+  public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertEquals(new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML)),
+        actual.getOutputFormats());
+  }
+
+  @Test
+  public void shouldParseCommaSeperatedListOfOutputFormatsWhenSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
+        "HTML,CSV");
+    assertEquals(
+        new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML,
+            OutputFormat.CSV)), actual.getOutputFormats());
+  }
+
+  @Test
+  public void shouldAcceptCommaSeperatedListOfAdditionalClassPathElements() {
+    final ReportOptions ro = parseAddingRequiredArgs("--classPath",
+        "/foo/bar,./boo");
+    final Collection<String> actual = ro.getClassPathElements();
+    assertTrue(actual.contains("/foo/bar"));
+    assertTrue(actual.contains("./boo"));
+  }
+
+  @Test
+  public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
+    assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
+        .shouldFailWhenNoMutations());
+    assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
+        .shouldFailWhenNoMutations());
+  }
+
+  @Test
+  public void shouldFailWhenNoMutationsSetByDefault() {
+    assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
+  }
+
+  @Test
+  public void shouldParseComaSeperatedListOfMutableCodePaths() {
+    final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
+        "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
+  }
+
+  @Test
+  public void shouldParseComaSeperatedListOfExcludedTestGroups() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--excludedTestNGGroups", "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
+        .getExcludedGroups());
+  }
+
+  @Test
+  public void shouldParseComaSeperatedListOfIncludedTestGroups() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--includedTestNGGroups", "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
+        .getIncludedGroups());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

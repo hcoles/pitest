@@ -51,14 +51,6 @@ public abstract class Prelude {
     return new Or<A>(ps);
   }
 
-  public static <T> Predicate<T> isInstanceOf(final Class<?> clazz) {
-    return new Predicate<T>() {
-      public Boolean apply(final T a) {
-        return clazz.isAssignableFrom(a.getClass());
-      }
-    };
-  };
-
   public final static <A> SideEffect1<A> accumulateTo(
       final Collection<A> collection) {
     return new SideEffect1<A>() {
@@ -168,15 +160,6 @@ public abstract class Prelude {
         return t.toString();
       }
 
-    };
-  }
-
-  public static F2<String, String, String> concatenateWith(
-      final String seperator) {
-    return new F2<String, String, String>() {
-      public String apply(final String a, final String b) {
-        return a + seperator + b;
-      }
     };
   }
 

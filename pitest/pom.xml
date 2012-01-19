@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.24-SNAPSHOT</version>
+		<version>0.26-SNAPSHOT</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
-	<version>0.24-SNAPSHOT</version>
+	<version>0.26-SNAPSHOT</version>
 	<name>pitest</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java</description>
@@ -59,9 +59,29 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<testNGArtifactName>none:none</testNGArtifactName>
+
 					<!-- for PowerMockAgentTest -->
 					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/1.4.9/powermock-module-javaagent-1.4.9.jar -Dfoo=foo</argLine>
+
+					<includes>
+						<include>**/Test*.java</include>
+						<include>**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/*$*</exclude>
+						<exclude>**/com/*/**.java</exclude>
+						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
+					</excludes>
 				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.testng</groupId>
+						<artifactId>testng</artifactId>
+						<version>6.1.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 
@@ -80,7 +100,7 @@
 
 							<artifactSet>
 								<includes>
-								    <include>xmlpull:xmlpull</include>
+									<include>xmlpull:xmlpull</include>
 									<include>com.thoughtworks.xstream:*</include>
 									<include>asm:*</include>
 									<include>xpp3:*</include>
@@ -90,9 +110,9 @@
 								</includes>
 							</artifactSet>
 
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-              </transformers>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
 
 							<relocations>
 								<relocation>
@@ -151,7 +171,27 @@
 				</executions>
 			</plugin>
 
-
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!--Workaround copied from https://github.com/orfjackal/jumi for 
+									issue with maven-shade-plugin There appears to be some stale state from previous 
+									executions of the Shade plugin, which manifest themselves as "We have a duplicate" 
+									warnings on build and also as some classes not being updated on build. -->
+								<delete file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 
@@ -188,11 +228,6 @@
 			<version>3.3</version>
 		</dependency>
 		<dependency>
-			<groupId>com.hazelcast</groupId>
-			<artifactId>hazelcast</artifactId>
-			<version>1.9.2</version>
-		</dependency>
-		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.4.1</version>
@@ -200,7 +235,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
+			<version>4.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -251,6 +286,25 @@
 			<version>1.4.9</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dspace.dependencies.jmockit</groupId>
+			<artifactId>dspace-jmockit</artifactId>
+			<version>0.999.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

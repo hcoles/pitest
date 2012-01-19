@@ -1,40 +1,30 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.util;
 
 import java.lang.annotation.Annotation;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.TestClass;
-import org.pitest.reflection.Reflection;
 
 public abstract class Functions {
   private final static Logger LOG = Log.getLogger();
-
-  public static Predicate<Class<?>> isInnerClass() {
-    return new Predicate<Class<?>>() {
-      public Boolean apply(final Class<?> clazz) {
-        return Reflection.getParentClass(clazz).hasSome();
-      }
-
-    };
-  }
 
   public static F<String, String> classNameToJVMClassName() {
     return new F<String, String>() {
@@ -82,17 +72,18 @@ public abstract class Functions {
 
   }
 
-  public static F<String, Option<Class<?>>> stringToClass() {
-    return stringToClass(IsolationUtils.getContextClassLoader());
+  public static F<ClassName, Option<Class<?>>> nameToClass() {
+    return nameToClass(IsolationUtils.getContextClassLoader());
   }
 
-  public static F<String, Option<Class<?>>> stringToClass(
+  public static F<ClassName, Option<Class<?>>> nameToClass(
       final ClassLoader loader) {
-    return new F<String, Option<Class<?>>>() {
+    return new F<ClassName, Option<Class<?>>>() {
 
-      public Option<Class<?>> apply(final String className) {
+      public Option<Class<?>> apply(final ClassName className) {
         try {
-          final Class<?> clazz = Class.forName(className, false, loader);
+          final Class<?> clazz = Class.forName(className.asJavaName(), false,
+              loader);
           return Option.<Class<?>> some(clazz);
         } catch (final ClassNotFoundException e) {
           LOG.warning("Could not load " + className
@@ -113,14 +104,6 @@ public abstract class Functions {
     };
   }
 
-  public static F<Class<?>, TestClass> classToTestClass() {
-    return new F<Class<?>, TestClass>() {
-      public TestClass apply(final Class<?> a) {
-        return new TestClass(a);
-      }
-    };
-  }
-
   public static Predicate<String> startsWith(final String filter) {
     return new Predicate<String>() {
       public Boolean apply(final String a) {
@@ -134,6 +117,16 @@ public abstract class Functions {
     return new Predicate<Class<?>>() {
       public Boolean apply(final Class<?> a) {
         return a.isInterface();
+      }
+
+    };
+  }
+
+  public static <T extends Enum<T>> F<String, T> stringToEnum(
+      final Class<T> clazz) {
+    return new F<String, T>() {
+      public T apply(final String name) {
+        return Enum.valueOf(clazz, name);
       }
 
     };

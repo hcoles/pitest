@@ -16,11 +16,9 @@ package org.pitest.mutationtest.engine;
 
 public class MutationIdentifier {
 
-  private static final int UNMUTATED = -1;
-
-  private final String     className;
-  private final int        index;
-  private final String     mutator;
+  private final String className;
+  private final int    index;
+  private final String mutator;
 
   public MutationIdentifier(final String className, final int index,
       final String mutatorUniqueId) {
@@ -31,14 +29,6 @@ public class MutationIdentifier {
 
   public String getClazz() {
     return this.className;
-  }
-
-  public boolean isMutated() {
-    return this.index != UNMUTATED;
-  }
-
-  public static MutationIdentifier unmutated(final String clazz) {
-    return new MutationIdentifier(clazz, UNMUTATED, "NoMutation");
   }
 
   public String getMutator() {

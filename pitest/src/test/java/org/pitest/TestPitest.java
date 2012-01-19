@@ -23,7 +23,6 @@ import org.pitest.testutil.AfterClassAnnotationForTest;
 import org.pitest.testutil.BeforeAnnotationForTesting;
 import org.pitest.testutil.BeforeClassAnnotationForTest;
 import org.pitest.testutil.ConfigurationForTesting;
-import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
 
 /**
@@ -46,7 +45,7 @@ public class TestPitest {
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
     this.staticConfig.getTestListeners().add(this.listener);
-    this.testee = new Pitest(this.staticConfig, new ConfigurationForTesting());
+    this.testee = new Pitest(this.staticConfig);
   }
 
   public static class PassingTest {
@@ -283,73 +282,7 @@ public class TestPitest {
     assertEquals(2, HasAfterMethod.callCount);
   }
 
-  @IgnoreAnnotationForTesting
-  public static class AnnotatedAsIgnored {
-
-    @TestAnnotationForTesting
-    public void ignoreMe() {
-
-    }
-
-    @TestAnnotationForTesting
-    public void ignoreMeToo() {
-
-    }
-
-  };
-
-  @Test
-  public void shouldSkipAllMethodsInClassAnnotatedWithIgnore() {
-    run(AnnotatedAsIgnored.class);
-    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
-  }
-
-  public static class HasMethodAnnotatedAsIgnored {
-
-    @TestAnnotationForTesting
-    @IgnoreAnnotationForTesting
-    public void ignoreMe() {
-
-    }
-
-    @TestAnnotationForTesting
-    @IgnoreAnnotationForTesting
-    public void ignoreMeToo() {
-
-    }
-
-    @TestAnnotationForTesting
-    public void dontIgnoreMe() {
-
-    }
-
-  };
-
-  @Test
-  public void shouldSkipAllMethodsAnnotatedWithIgnore() {
-    run(HasMethodAnnotatedAsIgnored.class);
-    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
-    verify(this.listener).onTestSuccess((any(TestResult.class)));
-  }
-
-  public static class HasMethodAnnotatedAsIgnoredAndWillRunAsGroup extends
-      HasMethodAnnotatedAsIgnored {
-
-    @BeforeClassAnnotationForTest
-    public static void before() {
-
-    }
-
-  };
-
-  @Test
-  public void shouldSkipMethodsWithinAnAtomicGroupThatAreAnnotatedWithIgnore() {
-    run(HasMethodAnnotatedAsIgnoredAndWillRunAsGroup.class);
-    verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
-    verify(this.listener).onTestSuccess((any(TestResult.class)));
-  }
-
   private void run(final Class<?> clazz) {
-    this.testee.run(this.container, clazz);
+    this.testee.run(this.container, new ConfigurationForTesting(), clazz);
   }
 }

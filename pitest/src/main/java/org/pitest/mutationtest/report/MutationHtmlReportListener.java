@@ -80,20 +80,22 @@ public class MutationHtmlReportListener implements TestListener {
     this.errors.add(unrunnable.getReason());
   }
 
-  private void processMetaData(final MutationMetaData value) {
+  private void processMetaData(final MutationMetaData mutationMetaData) {
 
     try {
-      this.mutatorScores.registerResults(value.getMutations());
+      this.mutatorScores.registerResults(mutationMetaData.getMutations());
 
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
 
-      final int lineCoverage = calculateLineCoverage(value);
+      final int lineCoverage = calculateLineCoverage(mutationMetaData);
 
       final MutationTestSummaryData summaryData = new MutationTestSummaryData(
-          value.getMutatedClass(), value.getTestClasses(),
-          value.getPercentageMutationCoverage(), lineCoverage);
+          mutationMetaData.getFirstFileName(),
+          mutationMetaData.getMutatedClass(),
+          mutationMetaData.getTestClasses(),
+          mutationMetaData.getPercentageMutationCoverage(), lineCoverage);
       collectSummaryData(summaryData);
 
       final String fileName = summaryData.getFileName();
@@ -106,14 +108,15 @@ public class MutationHtmlReportListener implements TestListener {
       st.setAttribute("css", css);
       st.setAttribute("summary", summaryData);
 
-      st.setAttribute("tests", value.getTargettedTests());
+      st.setAttribute("tests", mutationMetaData.getTargettedTests());
 
-      st.setAttribute("mutators", value.getConfig().getMutatorNames());
+      st.setAttribute("mutators", mutationMetaData.getConfig()
+          .getMutatorNames());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(value);
+      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(mutationMetaData);
 
       st.setAttribute("sourceFiles", sourceFiles);
-      st.setAttribute("mutatedClasses", value.getMutatedClass());
+      st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClass());
 
       // st.setAttribute("groups", groups);
       writer.write(st.toString());
@@ -144,7 +147,7 @@ public class MutationHtmlReportListener implements TestListener {
     return new F2<Integer, ClassInfo, Integer>() {
 
       public Integer apply(final Integer a, final ClassInfo b) {
-        return a + b.getCodeLines().size();
+        return a + b.getNumberOfCodeLines();
       }
 
     };
@@ -188,14 +191,14 @@ public class MutationHtmlReportListener implements TestListener {
 
   private Collection<String> classInfoToNames(
       final Collection<ClassInfo> classes) {
-    return FCollection.map(classes, classInfoToName());
+    return FCollection.map(classes, classInfoToJavaName());
   }
 
-  private F<ClassInfo, String> classInfoToName() {
+  private F<ClassInfo, String> classInfoToJavaName() {
     return new F<ClassInfo, String>() {
 
       public String apply(final ClassInfo a) {
-        return a.getName();
+        return a.getName().asJavaName();
       }
 
     };
@@ -244,7 +247,9 @@ public class MutationHtmlReportListener implements TestListener {
       final Writer writer = this.outputStrategy
           .createWriterForFile("index.html");
 
+      Collections.sort(this.summaryData);
       st.setAttribute("summaryList", this.summaryData);
+
       st.setAttribute("errors", this.errors);
       st.setAttribute("numberOfMutations",
           this.mutatorScores.getTotalMutations());

@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest;
@@ -26,18 +26,10 @@ import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.ResultSource;
 import org.pitest.extension.StaticConfiguration;
-import org.pitest.extension.TestDiscoveryListener;
-import org.pitest.extension.TestFilter;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.CompoundTestDiscoveryListener;
-import org.pitest.extension.common.CompoundTestFilter;
-import org.pitest.functional.F;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ContainerParser;
 import org.pitest.internal.TestClass;
 import org.pitest.util.Log;
 
@@ -45,88 +37,42 @@ public class Pitest {
 
   private final static Logger       LOG = Log.getLogger();
 
-  private final Configuration       initialConfig;
   private final StaticConfiguration initialStaticConfig;
 
-  public Pitest(final StaticConfiguration initialStaticConfig,
-      final Configuration initialConfig) {
-    this.initialConfig = new ConcreteConfiguration(initialConfig);
+  public Pitest(final StaticConfiguration initialStaticConfig) {
     this.initialStaticConfig = initialStaticConfig;
   }
 
-  public void run(final Container defaultContainer, final Class<?>... classes) {
-    run(defaultContainer, Arrays.asList(classes));
-  }
-
-  public void run(final Container defaultContainer,
-      final F2<Class<?>, Container, Container> containerUpdateFunction,
+  public void run(final Container defaultContainer, final Configuration config,
       final Class<?>... classes) {
-    run(defaultContainer, containerUpdateFunction, Arrays.asList(classes));
+    run(defaultContainer, config, Arrays.asList(classes));
   }
 
-  public void run(final Container defaultContainer,
+  public void run(final Container container, final Configuration config,
       final Collection<Class<?>> classes) {
-    final F2<Class<?>, Container, Container> containerUpdateFunction = new F2<Class<?>, Container, Container>() {
 
-      public Container apply(final Class<?> c, final Container defaultContainer) {
-        return new ContainerParser(c).create(defaultContainer);
-      }
+    run(container,
+        this.initialStaticConfig,
+        findTestUnitsForAllSuppliedClasses(config,
+            this.initialStaticConfig.getGroupingStrategy(), classes));
 
-    };
-    run(defaultContainer, containerUpdateFunction, classes);
   }
 
-  public void run(final Container defaultContainer,
-      final F2<Class<?>, Container, Container> containerUpdateFunction,
-      final Collection<Class<?>> classes) {
-    for (final Class<?> c : classes) {
-
-      final Container container = containerUpdateFunction.apply(c,
-          defaultContainer);
-
-      final StaticConfiguration staticConfig = this.initialConfig
-          .staticConfigurationUpdater().apply(this.initialStaticConfig, c);
-
-      final Option<TestFilter> filter = createTestFilter(staticConfig);
-
-      run(container,
-          staticConfig,
-          findTestUnitsForAllSuppliedClasses(
-              this.initialConfig,
-              new CompoundTestDiscoveryListener(staticConfig
-                  .getDiscoveryListeners()),
-              staticConfig.getGroupingStrategy(), filter, c));
-    }
-  }
-
-  private Option<TestFilter> createTestFilter(
-      final StaticConfiguration staticConfig) {
-    if (staticConfig.getTestFilters().isEmpty()) {
-      return Option.none();
-    } else {
-      return Option.<TestFilter> some(new CompoundTestFilter(staticConfig
-          .getTestFilters()));
-    }
-  }
-
+  // entry point for mutation testing
   public void run(final Container container,
       final List<? extends TestUnit> testUnits) {
-    this.run(container, new DefaultStaticConfig(this.initialStaticConfig),
-        testUnits);
+    this.run(container, this.initialStaticConfig, testUnits);
   }
 
   private void run(final Container container,
       final StaticConfiguration staticConfig,
       final List<? extends TestUnit> testUnits) {
 
-    final List<? extends TestUnit> orderedTestUnits = staticConfig
-        .getOrderStrategy().order(testUnits);
-
-    LOG.info("Running " + orderedTestUnits.size() + " units");
+    LOG.info("Running " + testUnits.size() + " units");
 
     signalRunStartToAllListeners(staticConfig);
 
-    final Thread feederThread = startFeederThread(container, orderedTestUnits);
+    final Thread feederThread = startFeederThread(container, testUnits);
 
     processResultsFromQueue(container, feederThread, staticConfig);
   }
@@ -142,35 +88,18 @@ public class Pitest {
   }
 
   public static List<TestUnit> findTestUnitsForAllSuppliedClasses(
-      final Configuration startConfig, final TestDiscoveryListener listener,
-      final GroupingStrategy groupStrategy,
-      final Option<TestFilter> testFilter, final Class<?>... classes) {
+      final Configuration startConfig, final GroupingStrategy groupStrategy,
+      final Iterable<Class<?>> classes) {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-          .getTestUnits(startConfig, listener, groupStrategy);
+          .getTestUnits(startConfig, groupStrategy);
       testUnits.addAll(testUnitsFromClass);
     }
 
-    if (testFilter.hasSome()) {
-      return applyTestFilter(testFilter.value(), testUnits);
-    } else {
-      return testUnits;
-    }
+    return testUnits;
 
-  }
-
-  private static List<TestUnit> applyTestFilter(final TestFilter testFilter,
-      final List<TestUnit> testUnits) {
-    final F<TestUnit, Iterable<TestUnit>> f = new F<TestUnit, Iterable<TestUnit>>() {
-
-      public Iterable<TestUnit> apply(final TestUnit a) {
-        return a.filter(testFilter);
-      }
-
-    };
-    return FCollection.flatMap(testUnits, f);
   }
 
   private void processResultsFromQueue(final Container container,

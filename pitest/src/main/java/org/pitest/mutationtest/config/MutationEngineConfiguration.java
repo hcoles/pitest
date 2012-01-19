@@ -22,7 +22,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 public interface MutationEngineConfiguration {
 
-  Collection<MethodMutatorFactory> mutators();
+  Collection<? extends MethodMutatorFactory> mutators();
 
   public Predicate<MethodInfo> methodFilter();
 

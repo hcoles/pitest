@@ -27,7 +27,7 @@ public abstract class ReportTestBase {
     this.metaDataExtractor = new MetaDataExtractor();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    this.data.setMutators(DefaultMutationConfigFactory.DEFAULT_MUTATORS);
+    this.data.setMutators(Mutator.DEFAULTS.asCollection());
     this.data.setClassesInScope(predicateFor("com.example.*"));
   }
 
@@ -53,7 +53,7 @@ public abstract class ReportTestBase {
     assertEquals(expected, actual);
   }
 
-  protected Collection<Predicate<String>> predicateFor(final String glob) {
+  protected Collection<Predicate<String>> predicateFor(final String... glob) {
     return Glob.toGlobPredicates(Arrays.asList(glob));
   }
 

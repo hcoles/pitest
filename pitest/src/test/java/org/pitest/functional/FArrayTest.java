@@ -6,6 +6,7 @@ package org.pitest.functional;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +49,33 @@ public class FArrayTest {
   @Test
   public void shouldReturnEmptyListWhenGivenNull() {
     assertEquals(Collections.emptyList(), FArray.filter(null, True.all()));
+  }
+
+  @Test
+  public void shouldApplyFlatMapToAllItems() {
+    final F<Integer, Collection<Integer>> f = new F<Integer, Collection<Integer>>() {
+      public List<Integer> apply(final Integer a) {
+        return Arrays.asList(a, a);
+      }
+    };
+    final Collection<Integer> expected = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4,
+        5, 5);
+    assertEquals(expected, FArray.flatMap(this.is, f));
+  }
+
+  @Test
+  public void flatMapShouldTreatNullAsEmptyIterable() {
+    assertEquals(Collections.emptyList(),
+        FArray.flatMap(null, objectToObjectIterable()));
+  }
+
+  private F<Object, Option<Object>> objectToObjectIterable() {
+    return new F<Object, Option<Object>>() {
+      public Option<Object> apply(final Object a) {
+        return Option.some(a);
+      }
+
+    };
   }
 
 }

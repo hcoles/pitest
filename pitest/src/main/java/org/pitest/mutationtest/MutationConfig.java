@@ -17,6 +17,7 @@ package org.pitest.mutationtest;
 import java.util.Collection;
 import java.util.List;
 
+import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 
@@ -26,13 +27,12 @@ public final class MutationConfig {
   private final MutationEngine engine;
 
   public MutationConfig(final MutationEngine engine, final List<String> jvmArgs) {
-
     this.jvmArgs = jvmArgs;
     this.engine = engine;
   }
 
-  public Mutater createMutator(final ClassLoader loader) {
-    return this.engine.createMutator(this, loader);
+  public Mutater createMutator(final ClassByteArraySource source) {
+    return this.engine.createMutator(this, source);
   }
 
   public List<String> getJVMArgs() {

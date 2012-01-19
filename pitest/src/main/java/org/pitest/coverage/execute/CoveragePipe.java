@@ -2,6 +2,7 @@ package org.pitest.coverage.execute;
 
 import java.io.DataOutputStream;
 
+import org.pitest.Description;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.SafeDataOutputStream;
@@ -26,11 +27,11 @@ public class CoveragePipe implements CoverageReceiver {
 
   }
 
-  public synchronized void recordTest(final int testIndex) {
+  public synchronized void recordTest(final Description description) {
 
     this.cache.reset();
     this.dos.writeByte(Id.TEST_CHANGE);
-    this.dos.writeInt(testIndex);
+    this.dos.write(description);
 
   }
 
