@@ -33,6 +33,10 @@
 		</developer>
 	</developers>
 
+    <properties>
+        <testng.version>6.1.1</testng.version>
+    </properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -58,6 +62,7 @@
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
 				<configuration>
 					<testNGArtifactName>none:none</testNGArtifactName>
 
@@ -79,7 +84,7 @@
 					<dependency>
 						<groupId>org.testng</groupId>
 						<artifactId>testng</artifactId>
-						<version>6.1.1</version>
+						<version>${testng.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -148,6 +153,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -198,6 +204,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 
@@ -301,7 +308,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.1.1</version>
+            <version>${testng.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
