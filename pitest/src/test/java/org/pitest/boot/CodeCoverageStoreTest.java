@@ -41,14 +41,14 @@ public class CodeCoverageStoreTest {
 
   @Test
   public void shouldRegisterNewClassesWithReceiver() {
-    int id = CodeCoverageStore.registerClass("Foo");
+    final int id = CodeCoverageStore.registerClass("Foo");
     verify(this.receiver).registerClass(id, "Foo");
   }
 
   @Test
   public void shouldGenerateNewClassIdForEachClass() {
-    int id = CodeCoverageStore.registerClass("Foo");
-    int id2 = CodeCoverageStore.registerClass("Bar");
+    final int id = CodeCoverageStore.registerClass("Foo");
+    final int id2 = CodeCoverageStore.registerClass("Bar");
     assertFalse(id == id2);
   }
 

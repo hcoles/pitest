@@ -67,7 +67,7 @@ public class TimeOutDecoratedTestSourceTest {
 
   @Test
   public void shouldReturnTestUnitWhenMatchingTestDetailSupplied() {
-    List<TestUnit> actual = this.testee.translateTests(Arrays
+    final List<TestUnit> actual = this.testee.translateTests(Arrays
         .asList(new TestInfo("foo", "one", 42, Option.<ClassName> none())));
     assertEquals(1, actual.size());
   }
@@ -76,7 +76,7 @@ public class TimeOutDecoratedTestSourceTest {
     return new TestUnit() {
       private final Description description = new Description(name);
 
-      public void execute(ClassLoader loader, ResultCollector rc) {
+      public void execute(final ClassLoader loader, final ResultCollector rc) {
       }
 
       public Description getDescription() {

@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -46,9 +46,9 @@ public class GregorMutaterTest {
 
   @Test
   public void shouldReturnUnmutatedClassWhenRequested() {
-    byte[] bytes = {};
+    final byte[] bytes = {};
     when(this.byteSource.apply(anyString())).thenReturn(Option.some(bytes));
-    byte[] actual = this.testee.getOriginalClass(new ClassName("foo"));
-    assertEquals(bytes, actual);
+    final byte[] actual = this.testee.getOriginalClass(new ClassName("foo"));
+    assertSame(bytes, actual);
   }
 }

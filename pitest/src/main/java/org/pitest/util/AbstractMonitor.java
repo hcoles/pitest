@@ -5,6 +5,7 @@ public abstract class AbstractMonitor extends Thread implements Monitor {
   private volatile boolean shouldRun = true;
 
   public AbstractMonitor() {
+    super("pit monitor thread");
     setDaemon(true);
   }
 

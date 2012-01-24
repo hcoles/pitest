@@ -16,36 +16,19 @@
 package org.pitest.mutationtest.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.pitest.util.SysdateFunction;
 
 public class PercentAndConstantTimeoutStrategyTest {
 
-  private final static long                 CURRENT_TIME = 1000000l;
-
   private PercentAndConstantTimeoutStrategy testee;
-
-  @Mock
-  private SysdateFunction                   constantDate;
-
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    when(this.constantDate.getTimeInMilliseconds()).thenReturn(CURRENT_TIME);
-  }
 
   @Test
   public void shouldReturnProductOfFactorAnTestTimePlusConstant() {
     final long time = 1;
-    this.testee = new PercentAndConstantTimeoutStrategy(this.constantDate,
-        1.2f, 666);
-    assertEquals((Math.round(1.2f * time) + 666) + CURRENT_TIME,
-        this.testee.getEndTime(time));
+    this.testee = new PercentAndConstantTimeoutStrategy(1.2f, 666);
+    assertEquals((Math.round(1.2f * time) + 666),
+        this.testee.getAllowedTime(time));
 
   }
 }

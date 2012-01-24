@@ -100,7 +100,7 @@ public class MutationStatisticsTest {
     this.testee.registerResults(Arrays.asList(
         makeResult(DetectionStatus.SURVIVED),
         makeResult(DetectionStatus.KILLED)));
-    String[] actual = generateReportLines();
+    final String[] actual = generateReportLines();
     assertEquals(">> Generated 2 mutations Killed 1 (50%)", actual[0]);
   }
 
@@ -109,7 +109,7 @@ public class MutationStatisticsTest {
     this.testee.registerResults(Arrays.asList(
         makeResult(DetectionStatus.SURVIVED, 1),
         makeResult(DetectionStatus.KILLED, 42)));
-    String[] actual = generateReportLines();
+    final String[] actual = generateReportLines();
     assertEquals(">> Ran 43 tests (21.5 tests per mutation)", actual[1]);
   }
 
@@ -122,11 +122,12 @@ public class MutationStatisticsTest {
     };
   }
 
-  private MutationResult makeResult(DetectionStatus status) {
+  private MutationResult makeResult(final DetectionStatus status) {
     return makeResult(status, 0);
   }
 
-  private MutationResult makeResult(DetectionStatus status, int numberOfTests) {
+  private MutationResult makeResult(final DetectionStatus status,
+      final int numberOfTests) {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
         new MutationStatusTestPair(numberOfTests, status, "foo"));

@@ -36,6 +36,7 @@ public class CommunicationThread extends Thread {
   public CommunicationThread(final int port,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
+    super("pit comms thread");
     this.setDaemon(true);
     this.port = port;
     this.sendInitialData = sendInitialData;
