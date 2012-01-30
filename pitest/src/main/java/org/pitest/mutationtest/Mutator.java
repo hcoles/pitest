@@ -99,6 +99,12 @@ public enum Mutator implements MutatorGrouping {
       new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator()),
 
   /**
+   * Experimental mutator that removed assignments to member variables.
+   */
+  EXPERIMENTAL_MEMBER_VARIABLE(
+      new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator()),
+
+  /**
    * Default mutators
    */
   DEFAULTS(INVERT_NEGS, RETURN_VALS, MATH, VOID_METHOD_CALLS,
@@ -108,7 +114,7 @@ public enum Mutator implements MutatorGrouping {
    * All the mutators
    */
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
-      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS);
+      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE);
 
   Mutator(final MutatorGrouping... groups) {
     this.impls = asCollection(groups);
