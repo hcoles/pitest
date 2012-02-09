@@ -25,8 +25,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
 import org.pitest.mutationtest.execute.Reporter;
+import org.pitest.mutationtest.execute.TimeOutSystemExitSideEffect;
 import org.pitest.util.MemoryEfficientHashMap;
-import org.pitest.util.TimeOutSystemExitSideEffect;
 
 public class TimeOutDecoratedTestSource {
 

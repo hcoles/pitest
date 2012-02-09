@@ -19,6 +19,7 @@ import java.io.OutputStream;
 
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataOutputStream;
 
 public class DefaultReporter implements Reporter {
@@ -44,8 +45,9 @@ public class DefaultReporter implements Reporter {
     this.w.flush();
   }
 
-  public synchronized void done() {
+  public synchronized void done(ExitCode exitCode) {
     this.w.writeByte(Id.DONE);
+    this.w.writeInt(exitCode.getCode());
     this.w.flush();
   }
 

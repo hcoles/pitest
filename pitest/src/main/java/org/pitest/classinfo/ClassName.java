@@ -14,11 +14,15 @@
  */
 package org.pitest.classinfo;
 
+import java.io.Serializable;
+
 import org.pitest.functional.F;
 
-public final class ClassName {
+public final class ClassName implements Serializable {
 
-  private final String name;
+  private static final long serialVersionUID = 1L;
+
+  private final String      name;
 
   public ClassName(final String name) {
     this.name = name.replace('.', '/');

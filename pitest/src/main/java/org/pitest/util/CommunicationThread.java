@@ -33,6 +33,8 @@ public class CommunicationThread extends Thread {
 
   private final int                               port;
 
+  private ExitCode                                exitCode;
+
   public CommunicationThread(final int port,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
@@ -82,11 +84,11 @@ public class CommunicationThread extends Thread {
   private void receiveResults(final SafeDataInputStream is) {
     byte control = is.readByte();
     while (control != Id.DONE) {
-
       this.receive.apply(control, is);
-
       control = is.readByte();
     }
+    exitCode = ExitCode.fromCode(is.readInt());
+
   }
 
   private void sendDataToSlave(final Socket clientSocket) throws IOException {
@@ -97,6 +99,11 @@ public class CommunicationThread extends Thread {
 
   public void waitToFinish() throws InterruptedException {
     this.join();
+  }
+
+  public ExitCode getExitCode() {
+    System.out.println("Exit code was " + exitCode);
+    return this.exitCode;
   }
 
 }
