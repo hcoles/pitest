@@ -16,8 +16,10 @@ package org.pitest.mutationtest.statistics;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.pitest.functional.F2;
@@ -111,7 +113,8 @@ public class MutationStatistics {
 
     final float testsPerMutation = this.numberOfTestsRun
         / (float) this.getTotalMutations();
-    return new DecimalFormat("#.##").format(testsPerMutation);
+    return new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH))
+        .format(testsPerMutation);
   }
 
 }
