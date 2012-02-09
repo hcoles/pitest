@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2012 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,31 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.io.IOException;
+import static org.mockito.Mockito.verify;
 
-import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.util.ExitCode;
 
-public interface Reporter {
+public class TimeOutSystemExitSideEffectTest {
 
-  public void describe(MutationIdentifier i) throws IOException;
+  @Mock
+  private Reporter reporter;
 
-  public void report(MutationIdentifier i,
-      MutationStatusTestPair mutationDetected) throws IOException;
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
-  public void done(ExitCode exitCode);
+  @Test
+  public void shouldReportExitCodeOfTimeOut() {
+    TimeOutSystemExitSideEffect testee = new TimeOutSystemExitSideEffect(
+        reporter);
+    testee.apply();
+    verify(reporter).done(ExitCode.TIMEOUT);
+
+  }
 
 }

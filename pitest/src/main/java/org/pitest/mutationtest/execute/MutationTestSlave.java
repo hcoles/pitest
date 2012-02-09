@@ -94,13 +94,12 @@ public class MutationTestSlave {
     } catch (final Exception ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
       if (r != null) {
-        r.done();
+        r.done(ExitCode.UNKNOWN_ERROR);
       }
       safelyCloseSocket(s);
-      System.exit(ExitCode.UNKNOWN_ERROR.getCode());
     } finally {
       if (r != null) {
-        r.done();
+        r.done(ExitCode.OK);
       }
 
       safelyCloseSocket(s);
@@ -148,8 +147,7 @@ public class MutationTestSlave {
               + " has exceeded the shutdown threshold : " + memInfo.getCount()
               + " times.\n" + memInfo.getUsage());
 
-          r.done();
-          System.exit(ExitCode.OUT_OF_MEMORY.getCode());
+          r.done(ExitCode.OUT_OF_MEMORY);
 
         } else {
           LOG.warning("Unknown notification: " + notification);

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import org.pitest.Description;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataOutputStream;
 
 public class CoveragePipe implements CoverageReceiver {
@@ -45,10 +46,9 @@ public class CoveragePipe implements CoverageReceiver {
   }
 
   public synchronized void end() {
-
     this.dos.writeByte(Id.DONE);
+    this.dos.writeInt(ExitCode.OK.getCode());
     this.dos.flush();
-
   }
 
   public synchronized void registerClass(final int id, final String className) {

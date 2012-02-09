@@ -30,6 +30,10 @@ public class WrappingProcess {
   public int waitToDie() throws InterruptedException {
     return this.process.waitToDie();
   }
+  
+  public void destroy() {
+    this.process.destroy();
+  }
 
   public int getPort() {
     return this.port;

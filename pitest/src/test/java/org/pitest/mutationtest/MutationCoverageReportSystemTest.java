@@ -49,9 +49,12 @@ import com.example.CoveredByJMockit;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
+import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 
 public class MutationCoverageReportSystemTest extends ReportTestBase {
+
+  private static final int ONE_MINUTE = 60000;
 
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
@@ -290,6 +293,15 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun(new TestNGConfiguration(new TestGroupConfig(
         Collections.<String> emptyList(), Collections.<String> emptyList())));
     verifyResults(KILLED);
+  }
+
+  @Test(timeout = ONE_MINUTE)
+  public void shouldTerminateWhenThreadpoolCreated() {
+    this.data.setTargetClasses(predicateFor(KeepAliveThread.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
+    createAndRun();
+    verifyResults(SURVIVED);
   }
 
   private void createAndRun() {
