@@ -39,8 +39,8 @@ public class MutatorTest {
 
   @Test
   public void shouldIncludeAllMutatorsWhenAllRequested() {
-    Set<MethodMutatorFactory> expected = new HashSet<MethodMutatorFactory>();
-    for (Mutator each : Mutator.values()) {
+    final Set<MethodMutatorFactory> expected = new HashSet<MethodMutatorFactory>();
+    for (final Mutator each : Mutator.values()) {
       expected.addAll(Mutator.asCollection(each));
     }
     assertTrue(expected.containsAll(Mutator.asCollection(Mutator.ALL)));

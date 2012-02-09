@@ -26,6 +26,7 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
 import org.pitest.mutationtest.execute.Reporter;
 import org.pitest.util.MemoryEfficientHashMap;
+import org.pitest.util.TimeOutSystemExitSideEffect;
 
 public class TimeOutDecoratedTestSource {
 
@@ -55,11 +56,14 @@ public class TimeOutDecoratedTestSource {
     return new F<TestInfo, Option<TestUnit>>() {
 
       public Option<TestUnit> apply(final TestInfo a) {
-        TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a.getName());
+        final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
+            .getName());
         if (tu != null) {
-          return Option.<TestUnit> some(new MutationTimeoutDecorator(tu,
-              TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime(),
-              TimeOutDecoratedTestSource.this.r));
+          return Option
+              .<TestUnit> some(new MutationTimeoutDecorator(tu,
+                  new TimeOutSystemExitSideEffect(
+                      TimeOutDecoratedTestSource.this.r),
+                  TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
         }
         return Option.none();
       }

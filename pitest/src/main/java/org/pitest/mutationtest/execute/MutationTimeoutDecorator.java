@@ -14,46 +14,87 @@
  */
 package org.pitest.mutationtest.execute;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
+import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
-import org.pitest.util.Monitor;
-import org.pitest.util.TimeOutSystemExitSideEffect;
+import org.pitest.util.Unchecked;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
   private static final long           serialVersionUID = 1L;
 
   private final TimeoutLengthStrategy timeOutStrategy;
+  private final SideEffect            timeOutSideEffect;
   private final long                  executionTime;
-  private final Reporter              r;
 
   public MutationTimeoutDecorator(final TestUnit child,
-      final TimeoutLengthStrategy timeStrategy, final long executionTime,
-      final Reporter r) {
+      final SideEffect timeOutSideEffect,
+      final TimeoutLengthStrategy timeStrategy, final long executionTime) {
     super(child);
+    this.timeOutSideEffect = timeOutSideEffect;
     this.executionTime = executionTime;
     this.timeOutStrategy = timeStrategy;
-    this.r = r;
   }
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
-    final long maxTime = this.timeOutStrategy.getEndTime(this.executionTime);
+    final long maxTime = this.timeOutStrategy
+        .getAllowedTime(this.executionTime);
 
-    final Monitor timeoutWatchDog = new TimeoutWatchDog(
-        new TimeOutSystemExitSideEffect(this.r), maxTime, this.child()
-            .getDescription().toString());
-    timeoutWatchDog.requestStart();
-    try {
-      this.child().execute(loader,
-          new TimingMetaDataResultCollector(rc, this.executionTime));
-    } finally {
-      timeoutWatchDog.requestStop();
+    final FutureTask<?> future = createFutureForChildTestUnit(loader, rc);
+    executeFutureWithTimeOut(maxTime, future);
+    if (!future.isDone()) {
+      this.timeOutSideEffect.apply();
     }
 
+  }
+
+  private void executeFutureWithTimeOut(final long maxTime,
+      final FutureTask<?> future) {
+    try {
+      future.get(maxTime, TimeUnit.MILLISECONDS);
+    } catch (final TimeoutException ex) {
+      // swallow
+    } catch (final InterruptedException e) {
+      // swallow
+    } catch (final ExecutionException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  private FutureTask<?> createFutureForChildTestUnit(final ClassLoader loader,
+      final ResultCollector rc) {
+    final FutureTask<?> future = new FutureTask<Object>(createCallableForChild(
+        loader, rc));
+    final Thread thread = new Thread(future);
+    thread.setDaemon(true);
+    thread.setName("mutationTestThread");
+    thread.start();
+    return future;
+  }
+
+  private Callable<Object> createCallableForChild(final ClassLoader loader,
+      final ResultCollector rc) {
+    return new Callable<Object>() {
+
+      public Object call() throws Exception {
+        child().execute(
+            loader,
+            new TimingMetaDataResultCollector(rc,
+                MutationTimeoutDecorator.this.executionTime));
+        return null;
+      }
+
+    };
   }
 
 }

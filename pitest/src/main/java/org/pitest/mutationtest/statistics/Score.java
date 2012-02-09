@@ -74,7 +74,7 @@ public class Score {
   private static F<StatusCount, Boolean> isDetected() {
     return new F<StatusCount, Boolean>() {
 
-      public Boolean apply(StatusCount a) {
+      public Boolean apply(final StatusCount a) {
         return a.status.isDetected();
       }
 
@@ -84,7 +84,7 @@ public class Score {
   private F2<Long, StatusCount, Long> addTotals() {
     return new F2<Long, StatusCount, Long>() {
 
-      public Long apply(Long a, StatusCount b) {
+      public Long apply(final Long a, final StatusCount b) {
         return a + b.count;
       }
 

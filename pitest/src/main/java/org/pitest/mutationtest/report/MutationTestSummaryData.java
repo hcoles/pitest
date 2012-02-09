@@ -39,7 +39,7 @@ public class MutationTestSummaryData implements
   }
 
   public String getFileName() {
-    ClassName name = new ClassName(getMutatedClasses().iterator().next());
+    final ClassName name = new ClassName(getMutatedClasses().iterator().next());
     return name.getPackage() + "." + this.fileName + ".html";
   }
 
@@ -119,7 +119,7 @@ public class MutationTestSummaryData implements
     return true;
   }
 
-  public int compareTo(MutationTestSummaryData other) {
+  public int compareTo(final MutationTestSummaryData other) {
     return this.getFileName().compareTo(other.getFileName());
   }
 

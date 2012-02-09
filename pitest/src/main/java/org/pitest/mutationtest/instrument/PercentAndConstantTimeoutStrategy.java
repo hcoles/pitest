@@ -15,33 +15,22 @@
 
 package org.pitest.mutationtest.instrument;
 
-import org.pitest.util.Sysdate;
-import org.pitest.util.SysdateFunction;
-
 public class PercentAndConstantTimeoutStrategy implements TimeoutLengthStrategy {
 
-  public static float           DEFAULT_FACTOR   = 1.25f;
-  public static long            DEFAULT_CONSTANT = 4000;
+  public static float DEFAULT_FACTOR   = 1.25f;
+  public static long  DEFAULT_CONSTANT = 4000;
 
-  private final SysdateFunction sysdate;
-  private final float           percent;
-  private final long            constant;
+  private final float percent;
+  private final long  constant;
 
   public PercentAndConstantTimeoutStrategy(final float percent,
       final long constant) {
-    this(Sysdate.SYSDATE, percent, constant);
-  }
-
-  public PercentAndConstantTimeoutStrategy(final SysdateFunction sysdate,
-      final float percent, final long constant) {
-    this.sysdate = sysdate;
     this.percent = percent;
     this.constant = constant;
   }
 
-  public long getEndTime(final long normalDuration) {
-    return this.sysdate.getTimeInMilliseconds()
-        + Math.round(normalDuration * this.percent) + this.constant;
+  public long getAllowedTime(final long normalDuration) {
+    return Math.round(normalDuration * this.percent) + this.constant;
   }
 
 }

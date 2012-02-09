@@ -80,22 +80,22 @@ public class MutationTestWorker {
 
   }
 
-  private void restoreUnmutatedClass(String lastMutatedClass) {
+  private void restoreUnmutatedClass(final String lastMutatedClass) {
     try {
-      byte[] originalClass = this.mutater.getOriginalClass(new ClassName(
+      final byte[] originalClass = this.mutater.getOriginalClass(new ClassName(
           lastMutatedClass));
       LOG.info("Restoring class " + lastMutatedClass);
       final Class<?> clazz = Class.forName(lastMutatedClass, false,
           IsolationUtils.getContextClassLoader());
       this.hotswap.apply(clazz, originalClass);
-    } catch (ClassNotFoundException ex) {
+    } catch (final ClassNotFoundException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
   }
 
-  private boolean haveAnOtherMutatedClassInJVM(String lastMutatedClass,
+  private boolean haveAnOtherMutatedClassInJVM(final String lastMutatedClass,
       final MutationDetails mutation) {
-    return lastMutatedClass != null
+    return (lastMutatedClass != null)
         && !lastMutatedClass.equals(mutation.getClazz());
   }
 

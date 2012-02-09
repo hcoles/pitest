@@ -194,7 +194,7 @@ class GregorMutater implements Mutater {
         + this.loggingClasses + "]";
   }
 
-  public byte[] getOriginalClass(ClassName clazz) {
+  public byte[] getOriginalClass(final ClassName clazz) {
     return this.byteSource.apply(clazz.asInternalName()).value();
   }
 

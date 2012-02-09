@@ -79,7 +79,7 @@ public class MutationStatistics {
   private F2<Long, Score, Long> addDetectedTotals() {
     return new F2<Long, Score, Long>() {
 
-      public Long apply(Long a, Score b) {
+      public Long apply(final Long a, final Score b) {
         return a + b.getTotalDetectedMutations();
       }
 
@@ -89,14 +89,14 @@ public class MutationStatistics {
   private static F2<Long, Score, Long> addTotals() {
     return new F2<Long, Score, Long>() {
 
-      public Long apply(Long a, Score b) {
+      public Long apply(final Long a, final Score b) {
         return a + b.getTotalMutations();
       }
 
     };
   }
 
-  public void report(PrintStream out) {
+  public void report(final PrintStream out) {
     out.println(">> Generated " + this.getTotalMutations()
         + " mutations Killed " + this.getTotalDetectedMutations() + " ("
         + this.getPercentageDetected() + "%)");
@@ -109,7 +109,7 @@ public class MutationStatistics {
       return "0";
     }
 
-    float testsPerMutation = this.numberOfTestsRun
+    final float testsPerMutation = this.numberOfTestsRun
         / (float) this.getTotalMutations();
     return new DecimalFormat("#.##").format(testsPerMutation);
   }

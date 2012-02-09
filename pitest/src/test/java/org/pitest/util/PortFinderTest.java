@@ -48,7 +48,9 @@ public class PortFinderTest {
       assertFalse(PortFinder.isPortAvailable(nextPort + 1));
       assertEquals(nextPort + 2, this.testee.getNextAvailablePort());
     } finally {
-      ss.close();
+      if (ss != null) {
+        ss.close();
+      }
     }
   }
 

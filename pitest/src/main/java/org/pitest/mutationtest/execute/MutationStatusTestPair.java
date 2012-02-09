@@ -23,12 +23,12 @@ public class MutationStatusTestPair {
   private final DetectionStatus status;
   private final Option<String>  killingTest;
 
-  public MutationStatusTestPair(int numberOfTestsRun,
+  public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status) {
     this(numberOfTestsRun, status, null);
   }
 
-  public MutationStatusTestPair(int numberOfTestsRun,
+  public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status, final String killingTest) {
     this.status = status;
     this.killingTest = Option.some(killingTest);
