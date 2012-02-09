@@ -98,7 +98,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   }
 
   static class NoInit implements Callable<Integer> {
-    private int x = 0;
+    private int x;
     public Integer call() throws Exception {
       return x;
     }
