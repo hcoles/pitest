@@ -14,8 +14,9 @@
  */
 package org.pitest.internal;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
@@ -30,9 +31,11 @@ public class PathNamePredicateTest {
 
   @Test
   public void shouldMatchRootsWithMatchingNames() {
-    final ClassPathRoot root = new DirectoryClassPathRoot(new File("/foo/bar"));
-    this.testee = new PathNamePredicate(Prelude.isEqualTo("/foo/bar"));
-    assertTrue(this.testee.apply(root));
+    final File testFile = new File("/foo/bar");
+    final ClassPathRoot root = new DirectoryClassPathRoot(testFile);
+    this.testee = new PathNamePredicate(Prelude.isEqualTo(testFile
+        .getAbsolutePath()));
+    assertThat(this.testee.apply(root), is(true));
   }
 
   @Test

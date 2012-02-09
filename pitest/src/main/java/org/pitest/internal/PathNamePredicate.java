@@ -25,9 +25,18 @@ public class PathNamePredicate implements Predicate<ClassPathRoot> {
     this.stringFilter = stringFilter;
   }
 
-  public Boolean apply(final ClassPathRoot a) {
-    return a.cacheLocation().hasSome()
-        && this.stringFilter.apply(a.cacheLocation().value());
+  public Boolean apply(final ClassPathRoot classPathRoot) {
+    return cacheLocationOptionExists(classPathRoot)
+        && cacheLocationMatchesFilter(classPathRoot);
+  }
+
+  private Boolean cacheLocationMatchesFilter(final ClassPathRoot classPathRoot) {
+    final String cacheLocationValue = classPathRoot.cacheLocation().value();
+    return this.stringFilter.apply(cacheLocationValue);
+  }
+
+  private boolean cacheLocationOptionExists(final ClassPathRoot a) {
+    return a.cacheLocation().hasSome();
   }
 
 }
