@@ -39,6 +39,7 @@
 	<modules>
 		<module>pitest-maven</module>
 		<module>pitest</module>
+                <module>pitest-ant</module>
   </modules>
 
 	<profiles>
