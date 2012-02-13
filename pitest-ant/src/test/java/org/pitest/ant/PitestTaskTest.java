@@ -63,137 +63,132 @@ public class PitestTaskTest {
     this.pitestTask.setProject(this.project);
   }
 
-  
-
   @Test
   public void shouldPassAvoidCallsOptionToJavaTask() {
     this.pitestTask.setAvoidCallsTo("avoidCalls");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--avoidCallsTo=avoidCalls");
   }
-  
+
   @Test
   public void shouldPassDependencyDistanceOptionToJavaTask() {
     this.pitestTask.setDependencyDistance("distance");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--dependencyDistance=distance");
   }
-  
+
   @Test
   public void shouldPassExcludedClassesOptionToJavaTask() {
     this.pitestTask.setExcludedClasses("String");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--excludedClasses=String");
   }
-  
+
   @Test
   public void shouldPassExcludedMethodsOptionToJavaTask() {
     this.pitestTask.setExcludedMethods("toString");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--excludedMethods=toString");
   }
-  
+
   @Test
   public void shouldPassInScopeClassesOptionToJavaTask() {
     this.pitestTask.setInScopeClasses("MyClass");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--inScopeClasses=MyClass");
   }
-  
+
   @Test
   public void shouldPassJvmArgsOptionToJavaTask() {
     this.pitestTask.setJvmArgs("-Da=a");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--jvmArgs=-Da=a");
   }
-  
-  
+
   @Test
   public void shouldPassMaxMutationsPerClassOptionToJavaTask() {
     this.pitestTask.setMaxMutationsPerClass("10");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--maxMutationsPerClass=10");
   }
-  
-  
+
   @Test
   public void shouldPassMutateStaticInitsOptionToJavaTask() {
     this.pitestTask.setMutateStaticInits("true");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutateStaticInits=true");
   }
-  
+
   @Test
   public void shouldPassMutatorsOptionToJavaTask() {
     this.pitestTask.setMutators("a,b");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutators=a,b");
   }
-  
+
   @Test
   public void shouldPassOutputFormatsOptionToJavaTask() {
     this.pitestTask.setOutputFormats("XML");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--outputFormats=XML");
   }
-  
+
   @Test
   public void shouldPassReportDirOptionToJavaTask() {
     this.pitestTask.setReportDir("report/");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--reportDir=report/");
   }
-  
+
   @Test
   public void shouldPassTargetClassesOptionToJavaTask() {
     this.pitestTask.setTargetClasses("com.*");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--targetClasses=com.*");
   }
-  
+
   @Test
   public void shouldPassTargetTestsOptionToJavaTask() {
     this.pitestTask.setTargetTests("Test*");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--targetTests=Test*");
   }
-  
+
   @Test
   public void shouldPassThreadsOptionToJavaTask() {
     this.pitestTask.setThreads("4");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--threads=4");
   }
-  
+
   @Test
   public void shouldPassTimeoutConstsOptionToJavaTask() {
     this.pitestTask.setTimeoutConst("100");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--timeoutConst=100");
   }
-  
+
   @Test
   public void shouldPassTimeoutFactorOptionToJavaTask() {
     this.pitestTask.setTimeoutFactor("1.20");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--timeoutFactor=1.20");
   }
-  
-  
+
   @Test
   public void shouldPassVerboseOptionToJavaTask() {
     this.pitestTask.setVerbose("true");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--verbose=true");
   }
-  
+
   @Test
   public void shouldPassIncludedTestNGGroupsOptionToJavaTask() {
     this.pitestTask.setIncludedTestNGGroups("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--includedTestNGGroups=foo");
   }
-  
+
   @Test
   public void shouldPassExcludedTestNGGroupsOptionToJavaTask() {
     this.pitestTask.setExcludedTestNGGroups("foo");
@@ -314,7 +309,7 @@ public class PitestTaskTest {
 
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
-    private final String[]      expectedPaths;
+    private final String[] expectedPaths;
 
     public PathMatcher(final String path) {
       this.expectedPaths = path.split(File.pathSeparator);
