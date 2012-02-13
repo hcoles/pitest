@@ -108,10 +108,6 @@ public class PitestTask extends Task {
     this.options.put("mutateStaticInits", value);
   }
 
-  public void setIncludeJarFiles(final String value) {
-    this.options.put("includeJarFiles", value);
-  }
-
   public void setMutators(final String value) {
     this.options.put("mutators", value);
   }
@@ -158,6 +154,14 @@ public class PitestTask extends Task {
 
   public void setClasspath(final String classpath) {
     this.classpath = classpath;
+  }
+  
+  public void setIncludedTestNGGroups(final String value) {
+    this.options.put("includedTestNGGroups", value);
+  }
+
+  public void setExcludedTestNGGroups(String value) {
+    this.options.put("excludedTestNGGroups", value);
   }
 
 }
