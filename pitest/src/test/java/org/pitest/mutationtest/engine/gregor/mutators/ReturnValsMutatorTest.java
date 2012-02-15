@@ -225,10 +225,4 @@ public class ReturnValsMutatorTest extends MutatorTestBase {
     mutateAndCall(new AReturn(null), mutant);
   }
 
-  @Test
-  public void shouldFindTheCorrectNumberOfMutations() {
-    final FunctionalList<MutationDetails> actual = findMutationsFor(Testee.class);
-    actual.forEach(print(MutationDetails.class));
-  }
-
 }

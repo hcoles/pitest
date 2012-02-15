@@ -59,8 +59,6 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceIntegerMinus1With1() throws Exception {
     final Mutant mutant = getFirstMutant(HasICONSTM1.class);
-    System.out.println(mutant);
-    this.printMutant(mutant);
     assertMutantCallableReturns(new HasICONSTM1(), mutant, "1");
   }
 
