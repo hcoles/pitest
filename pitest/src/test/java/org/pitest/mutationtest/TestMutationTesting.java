@@ -288,6 +288,15 @@ public class TestMutationTesting {
         Mutator.RETURN_VALS.asCollection());
     verifyResults(SURVIVED, SURVIVED);
   }
+  
+  
+  @Test
+  public void shouldRecordCorrectLineNumberForMutations() {
+    run(OneMutationOnly.class, OneMutationFullTest.class,
+        Mutator.RETURN_VALS.asCollection());
+    verifyLineNumbers(90);
+  }
+
 
   private void run(final Class<?> clazz, final Class<?> test,
       final Collection<? extends MethodMutatorFactory> mutators) {
@@ -365,6 +374,17 @@ public class TestMutationTesting {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor
         .getDetectionStatus();
+
+    Collections.sort(expected);
+    Collections.sort(actual);
+
+    assertEquals(expected, actual);
+  }
+
+  protected void verifyLineNumbers(final Integer... lineNumbers) {
+    final List<Integer> expected = Arrays.asList(lineNumbers);
+    final List<Integer> actual = this.metaDataExtractor
+        .getLineNumbers();
 
     Collections.sort(expected);
     Collections.sort(actual);

@@ -66,12 +66,18 @@ public class MetaDataExtractor implements TestListener {
 
   public void onRunEnd() {
     // TODO Auto-generated method stub
-
   }
 
   public void onRunStart() {
     // TODO Auto-generated method stub
+  }
 
+  public List<Integer> getLineNumbers() {
+    final List<Integer> dss = new ArrayList<Integer>();
+    for (final MutationResult each : this.data) {
+      dss.add(each.getDetails().getLineNumber());
+    }
+    return dss;
   }
 
 }
