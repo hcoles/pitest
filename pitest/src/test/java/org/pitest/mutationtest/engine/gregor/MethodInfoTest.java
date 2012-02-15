@@ -14,50 +14,170 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 public class MethodInfoTest {
 
-  private MethodInfo testee;
+  private static final int       NON_STATIC_MODIFIER    = 0;
+  private static final int       NON_SYNTHETIC_MODIFIER = 0;
+  private static final String    VOID_RETURN            = "()V";
+  private static final String    STRING_RETURN          = "()Ljava/lang/String;";
+  private static final int       STATIC_MODIFIER        = Opcodes.ACC_STATIC;
+  private static final String    NO_PARAMETERS          = "()V";
+  private static final String    ONE_PARAMETER          = "(Ljava/lang/String;)V";
+  private static final int       SYNTHETIC_MODIFIER     = Opcodes.ACC_SYNTHETIC;
+  private static final ClassInfo ENUMERATION_CLASS      = new ClassInfo(0, 0,
+                                                            "", "",
+                                                            "java/lang/Enum",
+                                                            new String[0]);
+  private final MethodInfo       methodInfo             = new MethodInfo();
 
   @Test
   public void isVoidShouldReturnTrueWhenMethodIsVoid() {
-    this.testee = new MethodInfo("", 0, "", "()V", "", null);
-    assertTrue(this.testee.isVoid());
+    final MethodInfo testee = methodInfo.withMethodDescriptor(VOID_RETURN);
+    assertThat(testee.isVoid(), is(true));
   }
 
   @Test
   public void isVoidShouldReturnFalseWhenMethodIsNotVoid() {
-    this.testee = new MethodInfo("", 0, "", "()Ljava/lang/String;", "", null);
-    assertFalse(this.testee.isVoid());
+    final MethodInfo testee = methodInfo.withMethodDescriptor(STRING_RETURN);
+    assertThat(testee.isVoid(), is(false));
   }
 
   @Test
   public void isStaticShouldReturnTrueWhenMethodIsStatic() {
-    this.testee = new MethodInfo("", Opcodes.ACC_STATIC, "", "", "", null);
-    assertTrue(this.testee.isStatic());
+    final MethodInfo testee = methodInfo.withAccess(STATIC_MODIFIER);
+    assertThat(testee.isStatic(), is(true));
   }
 
   @Test
   public void isStaticShouldReturnFalseWhenMethodIsNotStatic() {
-    this.testee = new MethodInfo("", 0, "", "", "", null);
-    assertFalse(this.testee.isStatic());
+    final MethodInfo testee = methodInfo.withAccess(NON_STATIC_MODIFIER);
+    assertThat(testee.isStatic(), is(false));
   }
 
   @Test
   public void takesNoParametersShouldReturnTrueWhenMethodTakesNoParameters() {
-    this.testee = new MethodInfo("", 0, "", "()V", "", null);
-    assertTrue(this.testee.takesNoParameters());
+    final MethodInfo testee = methodInfo.withMethodDescriptor(NO_PARAMETERS);
+    assertThat(testee.takesNoParameters(), is(true));
   }
 
   @Test
-  public void takesNoParametersShouldReturnFalseWhenMethodTakesNoParameters() {
-    this.testee = new MethodInfo("", 0, "", "(Ljava/lang/String;)V", "", null);
-    assertFalse(this.testee.takesNoParameters());
+  public void takesNoParametersShouldReturnFalseWhenMethodTakesOneParameter() {
+    final MethodInfo testee = methodInfo.withMethodDescriptor(ONE_PARAMETER);
+    assertThat(testee.takesNoParameters(), is(false));
   }
+
+  @Test
+  public void isConstructorShouldReturnTrueWhenMethodIsConstructor() {
+    final MethodInfo testee = methodInfo.withMethodName("<init>");
+    assertThat(testee.isConstructor(), is(true));
+  }
+
+  @Test
+  public void isConstructorShouldReturnTrueWhenMethodIsRegularMethod() {
+    final MethodInfo testee = methodInfo.withMethodName("toString");
+    assertThat(testee.isConstructor(), is(false));
+  }
+
+  @Test
+  public void isSyntheticShouldReturnTrueWhenSyntheticAccessFlagSet() {
+    final MethodInfo testee = methodInfo.withAccess(SYNTHETIC_MODIFIER);
+    assertThat(testee.isSynthetic(), is(true));
+  }
+
+  @Test
+  public void isSyntheticShouldReturnFalseWhenNoSyntheticAccessFlagSet() {
+    final MethodInfo testee = methodInfo.withAccess(NON_SYNTHETIC_MODIFIER);
+    assertThat(testee.isSynthetic(), is(false));
+  }
+
+  @Test
+  public void isStaticInitializerShouldReturnTrueWhenMethodIsStaticInitializer() {
+    final MethodInfo testee = methodInfo.withMethodName("<clinit>");
+    assertThat(testee.isStaticInitializer(), is(true));
+  }
+
+  @Test
+  public void getReturnTypeReturnsCorrectReturnType() {
+    final MethodInfo testee = methodInfo.withMethodDescriptor(STRING_RETURN);
+    assertThat(testee.getReturnType(), is(Type.getType(String.class)));
+  }
+
+  @Test
+  public void getDescriptionReturnsQualifiedMethodName() {
+    final String EXAMPLE_CLASS_NAME = "org.pitest.Example";
+    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0, 0,
+        EXAMPLE_CLASS_NAME, "", "", new String[0]);
+    final String EXAMPLE_METHOD_NAME = "myMethod";
+    final String QULIFIED_METHOD_NAME = EXAMPLE_CLASS_NAME + "::"
+        + EXAMPLE_METHOD_NAME;
+
+    final MethodInfo testee = methodInfo.withOwner(EXAMPLE_CLASS_INFO)
+        .withMethodName(EXAMPLE_METHOD_NAME);
+
+    assertThat(testee.getDescription(), is(QULIFIED_METHOD_NAME));
+  }
+
+  @Test
+  public void isGeneratedEnumMethodReturnsTrueIfMethodIsEnumValuesMethod() {
+    final MethodInfo testee = methodInfo
+        .withOwner(ENUMERATION_CLASS)
+        .withAccess(STATIC_MODIFIER)
+        .withMethodName("values")
+        .withMethodDescriptor(NO_PARAMETERS);
+
+    assertThat(testee.isGeneratedEnumMethod(), is(true));
+  }
+
+  @Test
+  public void isGeneratedEnumMethodReturnsTrueIfMethodIsEnumValueOfMethod() {
+    final MethodInfo testee = methodInfo
+        .withOwner(ENUMERATION_CLASS)
+        .withAccess(STATIC_MODIFIER)
+        .withMethodName("valueOf")
+        .withMethodDescriptor("(Ljava/lang/String;)Lorg/pitest/MyEnum;");
+
+    assertThat(testee.isGeneratedEnumMethod(), is(true));
+  }
+  
+  @Test
+  public void isGeneratedEnumMethodReturnsTrueIfMethodIsStaticInitializerInEnum() {
+    final MethodInfo testee = methodInfo
+        .withOwner(ENUMERATION_CLASS)
+        .withAccess(STATIC_MODIFIER)
+        .withMethodName("<clinit>");
+
+    assertThat(testee.isGeneratedEnumMethod(), is(true));
+  }
+
+  @Test
+  public void isGeneratedEnumMethodReturnsFalseForRegularEnumMethod() {
+    final MethodInfo testee = methodInfo
+        .withOwner(ENUMERATION_CLASS)
+        .withMethodName("getOwner");
+
+    assertThat(testee.isGeneratedEnumMethod(), is(false));
+  }
+  
+  @Test
+  public void isGeneratedEnumMethodReturnsFalseForNonEnumClasses() {
+    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0, 0,
+        "org/pitest/Example", "", "java/lang/Object", new String[0]);
+    final MethodInfo testee = methodInfo
+        .withOwner(EXAMPLE_CLASS_INFO)
+        .withAccess(STATIC_MODIFIER)
+        .withMethodName("values")
+        .withMethodDescriptor(NO_PARAMETERS);
+
+    assertThat(testee.isGeneratedEnumMethod(), is(false));
+  }
+
+
 
 }

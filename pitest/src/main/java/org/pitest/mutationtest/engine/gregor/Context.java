@@ -30,7 +30,6 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public class Context {
 
   private final Map<String, Integer>            mutatorIndexes          = new HashMap<String, Integer>();
-  // private int index = 0;
 
   private int                                   lastLineNumber;
 
@@ -82,16 +81,12 @@ public class Context {
     return this.classInfo;
   }
 
-  public String getClassName() {
-    return this.classInfo.getName();
+  private String getJavaClassName() {
+    return this.classInfo.getName().replace("/", ".");
   }
 
   public String getFileName() {
     return this.sourceFile;
-  }
-
-  public String getMethodName() {
-    return this.methodName;
   }
 
   public int getLineNumber() {
@@ -101,9 +96,9 @@ public class Context {
   public MutationIdentifier registerMutation(
       final MethodMutatorFactory factory, final String description) {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
-        getClassName().replace("/", "."));
+        getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
-        description, getMethodName(), getLineNumber());
+        description, this.methodName, this.lastLineNumber);
     registerMutation(details);
     return newId;
   }

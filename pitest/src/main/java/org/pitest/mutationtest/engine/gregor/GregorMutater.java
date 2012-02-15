@@ -161,25 +161,8 @@ class GregorMutater implements Mutater {
   private Predicate<MethodInfo> isEnumMethod(final Context context) {
     return new Predicate<MethodInfo>() {
       public Boolean apply(final MethodInfo a) {
-        return context.getClassInfo().isEnum()
-            && (isValueOfMethod(a) || isValuesMethod(a)
-                || a.isStaticInitializer() || isDefaultConstructor(a));
+        return a.isGeneratedEnumMethod();
       }
-
-      private boolean isDefaultConstructor(final MethodInfo a) {
-        return a.isConstructor() && (context.getLineNumber() == 1);
-      }
-
-      private boolean isValuesMethod(final MethodInfo a) {
-        return a.getName().equals("values") && a.takesNoParameters()
-            && a.isStatic();
-      }
-
-      private boolean isValueOfMethod(final MethodInfo a) {
-        return a.getName().equals("valueOf")
-            && a.getDesc().startsWith("(Ljava/lang/String;)") && a.isStatic();
-      }
-
     };
   }
 

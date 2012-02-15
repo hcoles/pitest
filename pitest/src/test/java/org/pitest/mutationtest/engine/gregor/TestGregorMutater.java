@@ -14,11 +14,15 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
@@ -108,7 +112,21 @@ public class TestGregorMutater extends MutatorTestBase {
   public void shouldMutateCustomConstructorsAddedToEnums() {
     createTesteeWith(Mutator.ALL.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(EnumWithCustomConstructor.class);
-    assertFalse(actualDetails.isEmpty());
+    assertThat(actualDetails, is(aNonEmptyCollection()));
+  }
+
+  private static Matcher<Collection<?>> aNonEmptyCollection() {
+    return new TypeSafeMatcher<Collection<?>>() {
+
+      public void describeTo(Description description) {
+        description.appendText("a non empty collection");
+      }
+
+      @Override
+      public boolean matchesSafely(Collection<?> item) {
+        return !item.isEmpty();
+      }
+    };
   }
 
   // public static class HasFinallyAroundReturnStatement {

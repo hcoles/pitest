@@ -56,13 +56,18 @@ public class MutatingClassVisitor extends ClassAdapter {
   }
 
   @Override
-  public MethodVisitor visitMethod(final int access, final String name,
-      final String desc, final String signature, final String[] exceptions) {
-    this.context.registerMethod(name);
-    final MethodVisitor methodVisitor = this.cv.visitMethod(access, name, desc,
-        signature, exceptions);
-    final MethodInfo info = new MethodInfo(this.context.getClassName(),
-        access, name, desc, signature, exceptions);
+  public MethodVisitor visitMethod(final int access, final String methodName,
+      final String methodDescriptor, final String signature, final String[] exceptions) {
+    this.context.registerMethod(methodName);
+    final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
+        methodDescriptor, signature, exceptions);
+
+    final MethodInfo info = new MethodInfo()
+        .withOwner(this.context.getClassInfo())
+        .withAccess(access)
+        .withMethodName(methodName)
+        .withMethodDescriptor(methodDescriptor);
+    
     if (this.filter.apply(info)) {
       return this.visitMethodForMutation(info, methodVisitor);
     } else {

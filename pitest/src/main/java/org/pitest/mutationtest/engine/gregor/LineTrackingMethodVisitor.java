@@ -20,11 +20,11 @@ import org.objectweb.asm.MethodVisitor;
 
 public class LineTrackingMethodVisitor extends MethodAdapter {
 
-  private final Context    context;
+  private final Context context;
 
   public LineTrackingMethodVisitor(final Context context,
-      final MethodVisitor mv) {
-    super(mv);
+      final MethodVisitor delegateMethodVisitor) {
+    super(delegateMethodVisitor);
     this.context = context;
   }
 

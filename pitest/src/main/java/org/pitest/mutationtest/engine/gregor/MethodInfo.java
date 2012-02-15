@@ -14,63 +14,44 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.Arrays;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 public class MethodInfo {
 
-  private final String   owner;
-  private final int      access;
-  private final String   name;
-  private final String   desc;
-  private final String   signature;
-  private final String[] exceptions;
+  private final ClassInfo owningClass;
+  private final int       access;
+  private final String    methodName;
+  private final String    methodDescriptor;
 
-  public MethodInfo(final String owner, final int access, final String name,
-      final String desc, final String signature, final String[] exceptions) {
-    this.owner = owner;
+  public MethodInfo() {
+    this(new ClassInfo(0, 0, "", "", "", new String[0]), 0, "", "()V");
+  }
+
+  private MethodInfo(final ClassInfo owningClass, final int access,
+      final String name, final String methodDescriptor) {
+    this.owningClass = owningClass;
     this.access = access;
-    this.name = name;
-    this.desc = desc;
-    this.signature = signature;
-    this.exceptions = exceptions;
+    this.methodName = name;
+    this.methodDescriptor = methodDescriptor;
   }
 
   public String getDescription() {
-    return getOwner() + "::" + getName();
-  }
-
-  public String getOwner() {
-    return this.owner;
-  }
-
-  public int getAccess() {
-    return this.access;
+    return owningClass.getName() + "::" + getName();
   }
 
   public String getName() {
-    return this.name;
+    return this.methodName;
   }
 
-  public String getDesc() {
-    return this.desc;
-  }
-
-  public String getSignature() {
-    return this.signature;
-  }
-
-  public String[] getExceptions() {
-    return this.exceptions;
+  public String getMethodDescriptor() {
+    return this.methodDescriptor;
   }
 
   @Override
   public String toString() {
-    return "MethodInfo [access=" + this.access + ", desc=" + this.desc
-        + ", exceptions=" + Arrays.toString(this.exceptions) + ", name="
-        + this.name + ", signature=" + this.signature + "]";
+    return "MethodInfo [access=" + this.access + ", desc="
+        + this.methodDescriptor + ",  name=" + this.methodName + "]";
   }
 
   public boolean isStatic() {
@@ -82,31 +63,62 @@ public class MethodInfo {
   }
 
   public boolean isConstructor() {
-    return isConstructor(this.name);
+    return isConstructor(this.methodName);
   }
 
-  public static boolean isConstructor(final String name) {
-    return "<init>".equals(name);
+  public static boolean isConstructor(final String methodName) {
+    return "<init>".equals(methodName);
   }
 
   public Type getReturnType() {
-    return Type.getReturnType(this.desc);
+    return Type.getReturnType(this.methodDescriptor);
   }
 
   public static boolean isVoid(final String desc) {
     return Type.getReturnType(desc).equals(Type.VOID_TYPE);
   }
 
-  public Boolean isStaticInitializer() {
-    return "<clinit>".equals(this.name);
+  public boolean isStaticInitializer() {
+    return "<clinit>".equals(this.methodName);
   }
 
   public boolean isVoid() {
-    return isVoid(this.desc);
+    return isVoid(this.methodDescriptor);
   }
 
   public boolean takesNoParameters() {
-    return this.desc.startsWith("()");
+    return this.methodDescriptor.startsWith("()");
+  }
+
+  public boolean isGeneratedEnumMethod() {
+    return owningClass.isEnum()
+        && (isValuesMethod() || isValueOfMethod() || isStaticInitializer());
+  }
+
+  private boolean isValuesMethod() {
+    return this.getName().equals("values") && takesNoParameters() && isStatic();
+  }
+
+  private boolean isValueOfMethod() {
+    return this.getName().equals("valueOf")
+        && methodDescriptor.startsWith("(Ljava/lang/String;)") && isStatic();
+  }
+
+  public MethodInfo withMethodDescriptor(String newDescriptor) {
+    return new MethodInfo(owningClass, access, methodName, newDescriptor);
+  }
+
+  public MethodInfo withAccess(int accessModifier) {
+    return new MethodInfo(owningClass, accessModifier, methodName,
+        methodDescriptor);
+  }
+
+  public MethodInfo withMethodName(String newMethodName) {
+    return new MethodInfo(owningClass, access, newMethodName, methodDescriptor);
+  }
+
+  public MethodInfo withOwner(ClassInfo newOwnerClass) {
+    return new MethodInfo(newOwnerClass, access, methodName, methodDescriptor);
   }
 
 }

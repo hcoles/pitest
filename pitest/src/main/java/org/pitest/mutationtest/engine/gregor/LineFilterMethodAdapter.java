@@ -10,8 +10,9 @@ class LineFilterMethodAdapter extends MethodAdapter {
   private final PremutationClassInfo classInfo;
 
   public LineFilterMethodAdapter(final Context context,
-      final PremutationClassInfo classInfo, final MethodVisitor mv) {
-    super(mv);
+      final PremutationClassInfo classInfo,
+      final MethodVisitor delegateMethodVisitor) {
+    super(delegateMethodVisitor);
     this.context = context;
     this.classInfo = classInfo;
   }
@@ -23,7 +24,6 @@ class LineFilterMethodAdapter extends MethodAdapter {
     } else {
       this.context.enableMutatations();
     }
-    // this.context.registerCurrentLine(line);
     this.mv.visitLineNumber(line, start);
   }
 
