@@ -82,10 +82,22 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
   static class HasFinalPrimitiveMemberVariable implements Callable<Integer> {
 
-    private int member2 = 5;
+    private final int member2;
+    
+    public HasFinalPrimitiveMemberVariable(int i) {
+      this.member2 = i;
+    }
     
     public Integer call() throws Exception {
       return member2;
+    }
+  }
+  
+  static class HasFinalPrimitiveMemberVariableStarter extends
+      MutantStarter<Integer> {
+    @Override
+    protected Callable<Integer> constructMutee() throws Exception {
+      return new HasFinalPrimitiveMemberVariable(5);
     }
   }
 
@@ -93,8 +105,8 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   public void shouldRemoveAssignmentToFinalPrimitiveMemberVariable()
       throws Exception {
     final Mutant mutant = getFirstMutant(HasFinalPrimitiveMemberVariable.class);
-    assertMutantCallableReturns(new MutantStarter<Integer>(
-        HasFinalPrimitiveMemberVariable.class), mutant, 0);
+    assertMutantCallableReturns(new HasFinalPrimitiveMemberVariableStarter(),
+        mutant, 0);
   }
 
   static class NoInit implements Callable<Integer> {
@@ -110,4 +122,27 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
     final FunctionalList<MutationDetails> mutations = findMutationsFor(NoInit.class);
     assertTrue("Expected no mutant created/available.", mutations.isEmpty());
   }
+
+  static class HasConstantFinalPrimitiveMemberVariable implements Callable<String> {
+
+    public final int member2 = 42;
+    
+    public String call() throws Exception {
+      Class<?> c = getClass();
+      Integer i = (Integer)c.getField("member2").get(this);
+      return "" + member2 + "-" + i; // will be optimized by compiler to "42-" + i;
+    }
+  }
+  
+  @Test
+  public void isUnableToCreateConsistentMutationForConstantFinalPrimitiveMember()
+      throws Exception {
+    // Attention: Mutant is created but return value ist still 42!!!
+    // Property member2 is mutated (as shown by the reflection stuff, but
+    // constant will be inlined by the compiler!
+    final Mutant mutant = getFirstMutant(HasConstantFinalPrimitiveMemberVariable.class);
+    assertMutantCallableReturns(new MutantStarter<String>(
+        HasConstantFinalPrimitiveMemberVariable.class), mutant, "42-0");
+  }
+  
 }
