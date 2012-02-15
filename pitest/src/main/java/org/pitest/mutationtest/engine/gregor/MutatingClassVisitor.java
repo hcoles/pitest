@@ -23,26 +23,22 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.functional.F;
 
-public class MutatingClassAdapter extends ClassAdapter {
+public class MutatingClassVisitor extends ClassAdapter {
 
   private final F<MethodInfo, Boolean>    filter;
   private final Context                   context;
   private final Set<MethodMutatorFactory> methodMutators = new HashSet<MethodMutatorFactory>();
   private final PremutationClassInfo      classInfo;
 
-  public MutatingClassAdapter(final ClassVisitor cv, final Context context,
-      final F<MethodInfo, Boolean> filter,
+  public MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
+      final Context context, final F<MethodInfo, Boolean> filter,
       final PremutationClassInfo classInfo,
       final Collection<MethodMutatorFactory> mutators) {
-    super(cv);
+    super(delegateClassVisitor);
     this.context = context;
     this.filter = filter;
     this.methodMutators.addAll(mutators);
     this.classInfo = classInfo;
-  }
-
-  public Context getContext() {
-    return this.context;
   }
 
   @Override
@@ -65,7 +61,7 @@ public class MutatingClassAdapter extends ClassAdapter {
     this.context.registerMethod(name);
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, name, desc,
         signature, exceptions);
-    final MethodInfo info = new MethodInfo(this.getContext().getClassName(),
+    final MethodInfo info = new MethodInfo(this.context.getClassName(),
         access, name, desc, signature, exceptions);
     if (this.filter.apply(info)) {
       return this.visitMethodForMutation(info, methodVisitor);
@@ -75,7 +71,7 @@ public class MutatingClassAdapter extends ClassAdapter {
 
   }
 
-  protected MethodVisitor visitMethodForMutation(final MethodInfo methodInfo,
+  private MethodVisitor visitMethodForMutation(final MethodInfo methodInfo,
       final MethodVisitor methodVisitor) {
 
     MethodVisitor next = methodVisitor;
@@ -83,13 +79,17 @@ public class MutatingClassAdapter extends ClassAdapter {
       next = each.create(this.context, methodInfo, next);
     }
 
-    return wrapWithLineFilter(next);
-
+    return wrapWithLineTracker(wrapWithLineFilter(next));
   }
 
-  private MethodVisitor wrapWithLineFilter(final MethodVisitor mv) {
-    // return mv;
-    return new LineFilterMethodAdapter(this.context, this.classInfo, mv);
+  private MethodVisitor wrapWithLineTracker(MethodVisitor wrappedMethodVisitor) {
+    return new LineTrackingMethodVisitor(this.context, wrappedMethodVisitor);
+  }
+
+  private MethodVisitor wrapWithLineFilter(
+      final MethodVisitor wrappedMethodVisitor) {
+    return new LineFilterMethodAdapter(this.context, this.classInfo,
+        wrappedMethodVisitor);
   }
 
 }

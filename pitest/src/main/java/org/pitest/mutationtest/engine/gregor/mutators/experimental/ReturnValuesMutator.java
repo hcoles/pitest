@@ -22,7 +22,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -316,10 +315,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    final ReturnValuesMethodVisitor visitor = new ReturnValuesMethodVisitor(
-        context, methodInfo, methodVisitor);
-
-    return new LineTrackingMethodAdapter(methodInfo, context, visitor);
+    return new ReturnValuesMethodVisitor(context, methodInfo, methodVisitor);
   }
 
   public String getGloballyUniqueId() {

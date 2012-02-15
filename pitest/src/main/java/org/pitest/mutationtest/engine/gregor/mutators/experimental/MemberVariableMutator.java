@@ -20,7 +20,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -71,10 +70,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(Context context, MethodInfo methodInfo,
       MethodVisitor methodVisitor) {
-    final MemberVariableVisitor visitor = new MemberVariableVisitor(context,
-        methodVisitor);
-
-    return new LineTrackingMethodAdapter(methodInfo, context, visitor);
+    return new MemberVariableVisitor(context, methodVisitor);
   }
 
   public String getGloballyUniqueId() {

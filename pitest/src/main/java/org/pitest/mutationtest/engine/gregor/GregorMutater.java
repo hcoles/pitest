@@ -90,7 +90,7 @@ class GregorMutater implements Mutater {
 
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();
-    final MutatingClassAdapter mca = new MutatingClassAdapter(nv, context,
+    final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
         filterMethods(context), classInfo, this.mutators);
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
@@ -119,7 +119,7 @@ class GregorMutater implements Mutater {
 
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-    final MutatingClassAdapter mca = new MutatingClassAdapter(w, context,
+    final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(context), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);

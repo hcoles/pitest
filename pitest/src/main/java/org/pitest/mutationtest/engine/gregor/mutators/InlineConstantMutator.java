@@ -21,7 +21,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.InsnMutator;
+import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -47,7 +47,7 @@ public enum InlineConstantMutator implements MethodMutatorFactory {
 
 }
 
-class InlineConstantMethodVisitor extends InsnMutator {
+class InlineConstantMethodVisitor extends AbstractInsnMutator {
 
   private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();
 
@@ -82,11 +82,16 @@ class InlineConstantMethodVisitor extends InsnMutator {
         "Substituted 1 with 0.0"));
 
   }
+  
+  private final MethodMutatorFactory factory;
+  private final Context context;
 
   public InlineConstantMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor writer) {
     super(factory, methodInfo, context, writer);
+    this.factory = factory;
+    this.context = context;
   }
 
   @Override

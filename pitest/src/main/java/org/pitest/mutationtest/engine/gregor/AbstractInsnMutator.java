@@ -16,48 +16,55 @@ package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Map;
 
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public abstract class AbstractZeroOperandMutator extends
-    LineTrackingMethodAdapter {
+public abstract class AbstractInsnMutator extends MethodAdapter {
 
-  protected final MethodMutatorFactory factory;
+  private final MethodMutatorFactory factory;
+  private final Context context;
+  private final MethodInfo methodInfo;
 
-  public AbstractZeroOperandMutator(final MethodMutatorFactory factory,
+  public AbstractInsnMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
-      final MethodVisitor writer) {
-    super(methodInfo, context, writer);
+      final MethodVisitor delegateMethodVisitor) {
+    super(delegateMethodVisitor);
     this.factory = factory;
+    this.methodInfo = methodInfo;
+    this.context = context;
   }
+
+  protected abstract Map<Integer, ZeroOperandMutation> getMutations();
 
   @Override
   public void visitInsn(final int opcode) {
     if (canMutate(opcode)) {
-      createMutation(opcode);
+      createMutationForInsnOpcode(opcode);
     } else {
       this.mv.visitInsn(opcode);
     }
-
   }
 
   private boolean canMutate(final int opcode) {
     return getMutations().containsKey(opcode);
   }
 
-  protected abstract Map<Integer, ZeroOperandMutation> getMutations();
-
-  protected abstract void applyUnmutatedInstruction(final int opcode);
-
-  private void createMutation(final int opcode) {
+  private void createMutationForInsnOpcode(final int opcode) {
     final ZeroOperandMutation mutation = getMutations().get(opcode);
+    
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, mutation.decribe(opcode, this.methodInfo));
+    
     if (this.context.shouldMutate(newId)) {
       mutation.apply(opcode, this.mv);
     } else {
       applyUnmutatedInstruction(opcode);
     }
+  }
+
+  private void applyUnmutatedInstruction(final int opcode) {
+    this.mv.visitInsn(opcode);
   }
 
 }

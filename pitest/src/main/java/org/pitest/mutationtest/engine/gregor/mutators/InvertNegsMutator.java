@@ -20,7 +20,7 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.InsnMutator;
+import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -45,7 +45,7 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
 
 }
 
-class InvertNegsMethodVisitor extends InsnMutator {
+class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   private static final String                            MESSAGE   = "removed negation";
   private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();

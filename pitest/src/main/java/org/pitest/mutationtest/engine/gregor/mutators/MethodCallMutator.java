@@ -24,13 +24,13 @@ import static org.objectweb.asm.Opcodes.POP2;
 
 import java.util.HashMap;
 
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.functional.F2;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -63,12 +63,14 @@ enum MethodCallMutator implements MethodMutatorFactory {
   }
 }
 
-class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
+class MethodCallMethodVisitor extends MethodAdapter {
 
   private final static HashMap<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
 
   private final F2<String, String, Boolean>   filter;
   private final MethodMutatorFactory          factory;
+  private final Context                       context;
+  private final MethodInfo                    methodInfo;
 
   static {
     RETURN_TYPE_MAP.put(Type.INT_TYPE, ICONST_0);
@@ -85,9 +87,11 @@ class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
       final Context context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
-    super(methodInfo, context, writer);
+    super(writer);
     this.factory = factory;
     this.filter = filter;
+    this.context = context;
+    this.methodInfo = methodInfo;
   }
 
   @Override

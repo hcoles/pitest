@@ -14,10 +14,10 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.LineTrackingMethodAdapter;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -27,7 +27,7 @@ public enum IncrementsMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new IncrementsMethodVisitor(methodInfo, context, methodVisitor, this);
+    return new IncrementsMethodVisitor(this, context, methodVisitor);
   }
 
   public String getGloballyUniqueId() {
@@ -39,15 +39,16 @@ public enum IncrementsMutator implements MethodMutatorFactory {
   }
 }
 
-class IncrementsMethodVisitor extends LineTrackingMethodAdapter {
+class IncrementsMethodVisitor extends MethodAdapter {
 
   private final MethodMutatorFactory factory;
+  private final Context context;
 
-  public IncrementsMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer,
-      final MethodMutatorFactory factory) {
-    super(methodInfo, context, writer);
+  public IncrementsMethodVisitor(final MethodMutatorFactory factory,
+      final Context context, final MethodVisitor delegateMethodVisitor) {
+    super(delegateMethodVisitor);
     this.factory = factory;
+    this.context = context;
   }
 
   @Override

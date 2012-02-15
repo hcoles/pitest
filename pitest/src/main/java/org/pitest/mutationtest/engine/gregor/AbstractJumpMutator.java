@@ -17,12 +17,14 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Map;
 
 import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public abstract class JumpMutator extends LineTrackingMethodAdapter {
+public abstract class AbstractJumpMutator extends MethodAdapter {
 
   private final MethodMutatorFactory factory;
+  private final Context context;
 
   public static class Substitution {
     public Substitution(final int newCode, final String description) {
@@ -34,28 +36,34 @@ public abstract class JumpMutator extends LineTrackingMethodAdapter {
     private final String description;
   }
 
-  public JumpMutator(final MethodInfo methodInfo, final Context context,
-      final MethodVisitor writer, final MethodMutatorFactory factory) {
-    super(methodInfo, context, writer);
+  public AbstractJumpMutator(final MethodMutatorFactory factory, final Context context,
+      final MethodVisitor writer) {
+    super(writer);
     this.factory = factory;
+    this.context = context;
   }
 
   protected abstract Map<Integer, Substitution> getMutations();
 
   @Override
   public void visitJumpInsn(final int opcode, final Label label) {
-    if (this.getMutations().containsKey(opcode)) {
-      createMutation(opcode, this.getMutations().get(opcode), label);
+    if (canMutate(opcode)) {
+      createMutationForJumpInsn(opcode, label);
     } else {
       this.mv.visitJumpInsn(opcode, label);
     }
-
   }
 
-  private void createMutation(final int opcode,
-      final Substitution substitution, final Label label) {
+  private boolean canMutate(final int opcode) {
+    return this.getMutations().containsKey(opcode);
+  }
+
+  private void createMutationForJumpInsn(final int opcode, final Label label) {
+    Substitution substitution = this.getMutations().get(opcode);
+    
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, substitution.description);
+    
     if (this.context.shouldMutate(newId)) {
       this.mv.visitJumpInsn(substitution.newCode, label);
     } else {

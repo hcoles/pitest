@@ -20,7 +20,7 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.JumpMutator;
+import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -30,8 +30,8 @@ public enum ConditionalsBoundaryMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalsBoundaryMethodVisitor(methodInfo, context,
-        methodVisitor, this);
+    return new ConditionalsBoundaryMethodVisitor(this, context,
+        methodVisitor);
   }
 
   public String getGloballyUniqueId() {
@@ -44,7 +44,7 @@ public enum ConditionalsBoundaryMutator implements MethodMutatorFactory {
 
 }
 
-class ConditionalsBoundaryMethodVisitor extends JumpMutator {
+class ConditionalsBoundaryMethodVisitor extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "changed conditional boundary";
   private final static Map<Integer, Substitution> mutations   = new HashMap<Integer, Substitution>();
@@ -64,10 +64,9 @@ class ConditionalsBoundaryMethodVisitor extends JumpMutator {
         DESCRIPTION));
   }
 
-  public ConditionalsBoundaryMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer,
-      final MethodMutatorFactory factory) {
-    super(methodInfo, context, writer, factory);
+  public ConditionalsBoundaryMethodVisitor(final MethodMutatorFactory factory,
+      final Context context, final MethodVisitor delegateMethodVisitor) {
+    super(factory, context, delegateMethodVisitor);
   }
 
   @Override

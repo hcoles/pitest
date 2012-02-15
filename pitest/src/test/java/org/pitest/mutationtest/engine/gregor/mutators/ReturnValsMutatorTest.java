@@ -14,15 +14,11 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.pitest.functional.Prelude.print;
-
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.coverage.execute.CoverageProcessTest.Testee;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;

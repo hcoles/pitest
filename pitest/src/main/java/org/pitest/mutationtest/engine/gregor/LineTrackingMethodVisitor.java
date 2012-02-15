@@ -18,16 +18,14 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
-public class LineTrackingMethodAdapter extends MethodAdapter {
+public class LineTrackingMethodVisitor extends MethodAdapter {
 
-  protected final Context    context;
-  protected final MethodInfo methodInfo;
+  private final Context    context;
 
-  public LineTrackingMethodAdapter(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor mv) {
+  public LineTrackingMethodVisitor(final Context context,
+      final MethodVisitor mv) {
     super(mv);
     this.context = context;
-    this.methodInfo = methodInfo;
   }
 
   @Override

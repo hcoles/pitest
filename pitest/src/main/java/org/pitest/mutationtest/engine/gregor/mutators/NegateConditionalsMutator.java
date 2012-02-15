@@ -20,7 +20,7 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.Context;
-import org.pitest.mutationtest.engine.gregor.JumpMutator;
+import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -30,8 +30,7 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalMethodVisitor(methodInfo, context, methodVisitor,
-        this);
+    return new ConditionalMethodVisitor(this, context, methodVisitor);
   }
 
   public String getGloballyUniqueId() {
@@ -44,7 +43,7 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
 }
 
-class ConditionalMethodVisitor extends JumpMutator {
+class ConditionalMethodVisitor extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "negated conditional";
   private final static Map<Integer, Substitution> mutations   = new HashMap<Integer, Substitution>();
@@ -78,10 +77,9 @@ class ConditionalMethodVisitor extends JumpMutator {
         DESCRIPTION));
   }
 
-  public ConditionalMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer,
-      final MethodMutatorFactory factory) {
-    super(methodInfo, context, writer, factory);
+  public ConditionalMethodVisitor(final MethodMutatorFactory factory,
+      final Context context, final MethodVisitor delegateMethodVisitor) {
+    super(factory, context, delegateMethodVisitor);
   }
 
   @Override
