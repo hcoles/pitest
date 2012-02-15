@@ -23,6 +23,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Path;
 import org.pitest.mutationtest.MutationCoverageReport;
+import org.pitest.mutationtest.config.ConfigOption;
 
 public class PitestTask extends Task {
 
@@ -81,87 +82,95 @@ public class PitestTask extends Task {
   }
 
   public void setReportDir(final String value) {
-    this.options.put("reportDir", value);
+    this.setOption(ConfigOption.REPORT_DIR, value);
   }
 
   public void setInScopeClasses(final String value) {
-    this.options.put("inScopeClasses", value);
+    this.setOption(ConfigOption.IN_SCOPE_CLASSES, value);
   }
 
   public void setTargetClasses(final String value) {
-    this.options.put("targetClasses", value);
+    this.setOption(ConfigOption.TARGET_CLASSES, value);
   }
 
   public void setTargetTests(final String value) {
-    this.options.put("targetTests", value);
+    this.setOption(ConfigOption.TEST_FILTER, value);
   }
 
   public void setDependencyDistance(final String value) {
-    this.options.put("dependencyDistance", value);
+    this.setOption(ConfigOption.DEPENDENCY_DISTANCE, value);
   }
 
   public void setThreads(final String value) {
-    this.options.put("threads", value);
+    this.setOption(ConfigOption.THREADS, value);
   }
 
   public void setMutateStaticInits(final String value) {
-    this.options.put("mutateStaticInits", value);
+    this.setOption(ConfigOption.MUTATE_STATIC_INITIALIZERS, value);
   }
 
   public void setMutators(final String value) {
-    this.options.put("mutators", value);
+    this.setOption(ConfigOption.MUTATIONS, value);
   }
 
   public void setExcludedMethods(final String value) {
-    this.options.put("excludedMethods", value);
+    this.setOption(ConfigOption.EXCLUDED_METHOD, value);
   }
 
   public void setExcludedClasses(final String value) {
-    this.options.put("excludedClasses", value);
+    this.setOption(ConfigOption.EXCLUDED_CLASSES, value);
   }
 
   public void setAvoidCallsTo(final String value) {
-    this.options.put("avoidCallsTo", value);
+    this.setOption(ConfigOption.AVOID_CALLS, value);
   }
 
   public void setVerbose(final String value) {
-    this.options.put("verbose", value);
+    this.setOption(ConfigOption.VERBOSE, value);
   }
 
   public void setTimeoutFactor(final String value) {
-    this.options.put("timeoutFactor", value);
+    this.setOption(ConfigOption.TIMEOUT_FACTOR, value);
   }
 
   public void setTimeoutConst(final String value) {
-    this.options.put("timeoutConst", value);
+    this.setOption(ConfigOption.TIMEOUT_CONST, value);
   }
 
   public void setMaxMutationsPerClass(final String value) {
-    this.options.put("maxMutationsPerClass", value);
+    this.setOption(ConfigOption.MAX_MUTATIONS_PER_CLASS, value);
   }
 
   public void setJvmArgs(final String value) {
-    this.options.put("jvmArgs", value);
+    this.setOption(ConfigOption.CHILD_JVM, value);
   }
 
   public void setOutputFormats(final String value) {
-    this.options.put("outputFormats", value);
+    this.setOption(ConfigOption.OUTPUT_FORMATS, value);
   }
 
   public void setSourceDir(final String value) {
-    this.options.put("sourceDir", value);
+    this.setOption(ConfigOption.SOURCE_DIR, value);
   }
 
   public void setClasspath(final String classpath) {
     this.classpath = classpath;
   }
 
+  public void setMutableCodePaths(final String glob) {
+    setOption(ConfigOption.CODE_PATHS, glob);
+  }
+
   public void setIncludedTestNGGroups(final String value) {
-    this.options.put("includedTestNGGroups", value);
+    this.setOption(ConfigOption.INCLUDED_GROUPS, value);
   }
 
   public void setExcludedTestNGGroups(final String value) {
-    this.options.put("excludedTestNGGroups", value);
+    this.setOption(ConfigOption.EXCLUDED_GROUPS, value);
+  }
+
+  private void setOption(ConfigOption option, String value) {
+    this.options.put(option.getParamName(), value);
   }
 
 }

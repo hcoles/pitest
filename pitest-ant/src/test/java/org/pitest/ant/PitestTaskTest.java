@@ -197,6 +197,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassMutableCodePathsToJavaTask() {
+    this.pitestTask.setMutableCodePaths("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--mutableCodePaths=foo");
+  }
+
+  @Test
   public void shouldOnlyPassTheSpecifiedOptions() throws Exception {
     this.pitestTask.setVerbose("true");
     this.pitestTask.execute(this.java);

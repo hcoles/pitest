@@ -1,0 +1,34 @@
+<project name="MyProject" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+		
+	<artifact:dependencies pathId="dependency.path">
+	  <dependency groupId="org.pitest" artifactId="pitest" version="0.25"/>
+	</artifact:dependencies>
+
+	
+	<path id="pitest.path">
+		<pathelement location="../target/classes/" />
+		<pathelement location="../target/test-classes/" />
+		<path refid="dependency.path"/>
+	</path>
+	
+	<taskdef name="pitest" classname="org.pitest.ant.PitestTask"
+		classpathref="pitest.path" />
+
+
+
+	<target name="clean">
+		<delete dir="../target/tempOut" />
+	</target>
+
+
+	<target name="mutationCoverage">
+		<pitest 
+			classPath="pitest.path" 
+			targetClasses="*Part*" 
+			mutableCodePaths="*test-classes*" 
+			reportDir="../target/tempOut" 
+			outputFormats="XML"
+			sourceDir="."/>
+	</target>
+
+</project>
