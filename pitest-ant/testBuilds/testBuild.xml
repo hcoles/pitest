@@ -12,7 +12,7 @@
 	</path>
 	
 	<taskdef name="pitest" classname="org.pitest.ant.PitestTask"
-		classpathref="pitest.path" />
+		classpathref="dependency.path" />
 
 
 

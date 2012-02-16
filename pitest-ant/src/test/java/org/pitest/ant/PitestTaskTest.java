@@ -211,7 +211,7 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--verbose=true");
     verify(this.arg).setValue("--targetClasses=com.*");
     verify(this.arg).setValue("--reportDir=report/");
-    verify(this.arg).setValue("--sourceDir=src/");
+    verify(this.arg).setValue("--sourceDirs=src/");
     verifyNoMoreInteractions(this.arg);
   }
 
@@ -281,7 +281,7 @@ public class PitestTaskTest {
   @Test
   public void shouldFailWhenNoSourceDirSupplied() throws Exception {
     this.exception.expect(BuildException.class);
-    this.exception.expectMessage("You must specify the sourceDir.");
+    this.exception.expectMessage("You must specify the sourceDirs.");
 
     this.pitestTask = new PitestTask();
     this.pitestTask.setClasspath("bin/");

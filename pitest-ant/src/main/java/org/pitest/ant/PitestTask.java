@@ -27,8 +27,10 @@ import org.pitest.mutationtest.config.ConfigOption;
 
 public class PitestTask extends Task {
 
-  private static final String[]     REQUIRED_OPTIONS = { "targetClasses",
-      "reportDir", "sourceDir"                      };
+  private static final String[]     REQUIRED_OPTIONS = {
+      ConfigOption.TARGET_CLASSES.getParamName(),
+      ConfigOption.REPORT_DIR.getParamName(),
+      ConfigOption.SOURCE_DIR.getParamName()        };
   private final Map<String, String> options          = new HashMap<String, String>();
   private String                    classpath;
 
