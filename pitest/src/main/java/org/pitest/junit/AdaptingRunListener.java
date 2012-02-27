@@ -26,6 +26,7 @@ class AdaptingRunListener extends RunListener {
   @Override
   public void testAssumptionFailure(final Failure failure) {
     // do nothing so treated as success
+    // see http://junit.sourceforge.net/doc/ReleaseNotes4.4.html#assumptions
   }
 
   @Override
