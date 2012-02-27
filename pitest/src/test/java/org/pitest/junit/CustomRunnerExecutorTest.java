@@ -12,34 +12,42 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+
 package org.pitest.junit;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.pitest.DescriptionMother;
 import org.pitest.extension.ResultCollector;
 
-public class CustomRunnerExecutor {
 
-  private final org.pitest.Description description;
-  private final Runner                 runner;
-  private ResultCollector              rc;
-
-  public CustomRunnerExecutor(final org.pitest.Description description,
-      final Runner runner, final ResultCollector rc) {
-    this.runner = runner;
-    this.rc = rc;
-    this.description = description;
+public class CustomRunnerExecutorTest {
+  
+  private CustomRunnerExecutor testee;
+  
+  @Mock
+  private Runner runner;
+  
+  @Mock
+  private ResultCollector rc;
+  
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    testee = new CustomRunnerExecutor(DescriptionMother.createEmptyDescription("foo"), runner, rc);
   }
-
-  public void run() {
-
-    final RunNotifier rn = new RunNotifier();
-    final RunListener listener = new AdaptingRunListener(description,rc);
-
-    rn.addFirstListener(listener);
-    this.runner.run(rn);
-
+  
+  @Test
+  public void shouldExecuteTheSuppliedRunner() {
+    testee.run();
+    verify(runner).run(any(RunNotifier.class));
   }
 
 }
