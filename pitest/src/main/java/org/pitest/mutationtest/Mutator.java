@@ -34,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
-public enum Mutator implements MutatorGrouping {
+public enum Mutator implements Iterable<MethodMutatorFactory> {
 
   /**
    * Default mutator that inverts the negation of integer and floating point
@@ -116,7 +116,7 @@ public enum Mutator implements MutatorGrouping {
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
       EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE);
 
-  Mutator(final MutatorGrouping... groups) {
+  Mutator(final Mutator... groups) {
     this.impls = asCollection(groups);
   }
 
@@ -135,13 +135,13 @@ public enum Mutator implements MutatorGrouping {
   }
 
   public static Collection<MethodMutatorFactory> asCollection(
-      final MutatorGrouping... groupings) {
-    return FArray.flatMap(groupings, Prelude.id(MutatorGrouping.class));
+      final Mutator... groupings) {
+    return FArray.flatMap(groupings, Prelude.id(Mutator.class));
   }
 
   public static Collection<MethodMutatorFactory> asCollection(
-      final Collection<? extends MutatorGrouping> groups) {
-    return FCollection.flatMap(groups, Prelude.id(MutatorGrouping.class));
+      final Collection<? extends Mutator> groups) {
+    return FCollection.flatMap(groups, Prelude.id(Mutator.class));
   }
 
 }

@@ -30,7 +30,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.Mutator;
-import org.pitest.mutationtest.MutatorGrouping;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -164,8 +163,8 @@ public class MojoToReportOptionsConverter {
     }
   }
 
-  private F<String, MutatorGrouping> stringToMutators() {
-    return new F<String, MutatorGrouping>() {
+  private F<String, Mutator> stringToMutators() {
+    return new F<String, Mutator>() {
       public Mutator apply(final String a) {
         return Mutator.valueOf(a);
       }

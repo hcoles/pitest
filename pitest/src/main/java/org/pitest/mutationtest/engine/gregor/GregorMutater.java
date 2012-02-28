@@ -145,7 +145,7 @@ class GregorMutater implements Mutater {
   @SuppressWarnings("unchecked")
   private Predicate<MethodInfo> filterMethods(final Context context) {
     return and(this.filter, filterSyntheticMethods(),
-        not(isEnumMethod(context)));
+        not(isGeneratedEnumMethod()));
   }
 
   private Predicate<MethodInfo> filterSyntheticMethods() {
@@ -158,7 +158,7 @@ class GregorMutater implements Mutater {
     };
   }
 
-  private Predicate<MethodInfo> isEnumMethod(final Context context) {
+  private Predicate<MethodInfo> isGeneratedEnumMethod() {
     return new Predicate<MethodInfo>() {
       public Boolean apply(final MethodInfo a) {
         return a.isGeneratedEnumMethod();

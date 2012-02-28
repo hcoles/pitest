@@ -38,17 +38,17 @@ public class GregorMutationEngine implements MutationEngine {
   private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
   private final Set<String>               loggingClasses    = new LinkedHashSet<String>();
 
-  private final Predicate<MethodInfo>     filter;
+  private final Predicate<MethodInfo>     methodFilter;
 
   public GregorMutationEngine(final MutationEngineConfiguration config) {
-    this.filter = config.methodFilter();
+    this.methodFilter = config.methodFilter();
     this.mutationOperators.addAll(config.mutators());
     this.loggingClasses.addAll(config.doNotMutateCallsTo());
   }
 
   public Mutater createMutator(final MutationConfig config,
       final ClassByteArraySource byteSource) {
-    return new GregorMutater(byteSource, this.filter, this.mutationOperators,
+    return new GregorMutater(byteSource, this.methodFilter, this.mutationOperators,
         this.loggingClasses);
   }
 
@@ -87,7 +87,7 @@ public class GregorMutationEngine implements MutationEngine {
 
   @Override
   public String toString() {
-    return "GregorMutationEngine [filter=" + this.filter
+    return "GregorMutationEngine [filter=" + this.methodFilter
         + ", mutationOperators=" + this.mutationOperators + "]";
   }
 

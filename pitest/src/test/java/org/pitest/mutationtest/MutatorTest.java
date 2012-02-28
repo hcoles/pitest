@@ -34,7 +34,7 @@ public class MutatorTest {
     assertEquals(
         Arrays.asList(MathMutator.MATH_MUTATOR,
             InlineConstantMutator.INLINE_CONSTANT_MUTATOR),
-        Mutator.asCollection(Arrays.asList(Mutator.MATH, Mutator.INLINE_CONSTS)));
+        Mutator.asCollection(Mutator.MATH, Mutator.INLINE_CONSTS));
   }
 
   @Test
