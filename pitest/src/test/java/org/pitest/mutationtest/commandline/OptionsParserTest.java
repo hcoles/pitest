@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.commandline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.Mutator;
+import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.report.OutputFormat;
 
