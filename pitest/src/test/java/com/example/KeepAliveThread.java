@@ -21,25 +21,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- *
- *
+ * 
+ * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class KeepAliveThread {
 
-  private ExecutorService ex;
-  
+  private final ExecutorService ex;
+
   public KeepAliveThread() {
-    int numberOfThreads = 5;
-    ex = Executors.newFixedThreadPool(numberOfThreads);
+    final int numberOfThreads = 5;
+    this.ex = Executors.newFixedThreadPool(numberOfThreads);
   }
 
   public Future<String> run() {
-    return ex.submit(new Callable<String>() {
+    return this.ex.submit(new Callable<String>() {
       public String call() throws Exception {
         return System.getProperty("foobar");
       }
     });
   }
-  
+
 }

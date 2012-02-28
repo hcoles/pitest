@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.junit;
+package org.pitest.junit.adapter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -27,27 +27,27 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.DescriptionMother;
 import org.pitest.extension.ResultCollector;
 
-
 public class CustomRunnerExecutorTest {
-  
+
   private CustomRunnerExecutor testee;
-  
+
   @Mock
-  private Runner runner;
-  
+  private Runner               runner;
+
   @Mock
-  private ResultCollector rc;
-  
+  private ResultCollector      rc;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new CustomRunnerExecutor(DescriptionMother.createEmptyDescription("foo"), runner, rc);
+    this.testee = new CustomRunnerExecutor(
+        DescriptionMother.createEmptyDescription("foo"), this.runner, this.rc);
   }
-  
+
   @Test
   public void shouldExecuteTheSuppliedRunner() {
-    testee.run();
-    verify(runner).run(any(RunNotifier.class));
+    this.testee.run();
+    verify(this.runner).run(any(RunNotifier.class));
   }
 
 }

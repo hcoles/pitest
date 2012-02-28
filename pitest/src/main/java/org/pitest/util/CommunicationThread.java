@@ -87,7 +87,7 @@ public class CommunicationThread extends Thread {
       this.receive.apply(control, is);
       control = is.readByte();
     }
-    exitCode = ExitCode.fromCode(is.readInt());
+    this.exitCode = ExitCode.fromCode(is.readInt());
 
   }
 
@@ -102,7 +102,7 @@ public class CommunicationThread extends Thread {
   }
 
   public ExitCode getExitCode() {
-    System.out.println("Exit code was " + exitCode);
+    System.out.println("Exit code was " + this.exitCode);
     return this.exitCode;
   }
 

@@ -1,8 +1,8 @@
 package org.pitest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -481,17 +481,17 @@ public class TestJUnitConfiguration {
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
     assertEquals(Option.none(), this.testee.verifyEnvironment());
   }
-  
+
   public static class HasAssumptionFailure {
     @Test
     public void testWithFailedAssumption() {
       assumeTrue(false);
     }
   }
-  
+
   @Test
   public void shouldTreatAssumptionFailuesAsSuccess() {
-    // see  http://junit.sourceforge.net/doc/ReleaseNotes4.4.html#assumptions
+    // see http://junit.sourceforge.net/doc/ReleaseNotes4.4.html#assumptions
     run(HasAssumptionFailure.class);
     verify(this.listener).onTestSuccess((any(TestResult.class)));
   }

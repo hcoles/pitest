@@ -45,18 +45,22 @@ public class MemberVariableMutator implements MethodMutatorFactory {
     @Override
     public void visitFieldInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      if (Opcodes.PUTFIELD == opcode && shouldMutate(name)) {
+      if ((Opcodes.PUTFIELD == opcode) && shouldMutate(name)) {
         // removed setting field
       } else {
         super.visitFieldInsn(opcode, owner, name, desc);
       }
     }
-    
-    /* (non-Javadoc)
-     * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int,
+     * java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+    public void visitMethodInsn(final int opcode, final String owner,
+        final String name, final String desc) {
       super.visitMethodInsn(opcode, owner, name, desc);
     }
 
@@ -69,8 +73,8 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   }
 
-  public MethodVisitor create(Context context, MethodInfo methodInfo,
-      MethodVisitor methodVisitor) {
+  public MethodVisitor create(final Context context,
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     final MemberVariableVisitor visitor = new MemberVariableVisitor(context,
         methodVisitor);
 

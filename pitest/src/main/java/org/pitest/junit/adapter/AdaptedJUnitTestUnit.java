@@ -34,8 +34,7 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.junit.CustomRunnerExecutor;
-import org.pitest.junit.ForeignClassLoaderCustomRunnerExecutor;
+import org.pitest.junit.adapter.foreignclassloader.ForeignClassLoaderCustomRunnerExecutor;
 import org.pitest.reflection.Reflection;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.Log;
@@ -127,7 +126,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
     // must jump through hoops to run in different class loader
     // when even our framework classes may be duplicated
-    // translate everything via stirngs
+    // translate everything via strings
     final List<String> q = new ArrayList<String>(runner.testCount() * 2);
     final ForeignClassLoaderCustomRunnerExecutor ce = new ForeignClassLoaderCustomRunnerExecutor(
         runner);
@@ -141,23 +140,13 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
     set.invoke(foreignCe, q);
     run.invoke(foreignCe);
 
-    for (final String each : q) {
-      final String results[] = each.split(",");
-      final String type = results[0];
-      if (type.equals("FAIL")) {
-        final Throwable t = (Throwable) IsolationUtils
-            .fromTransportString(results[2]);
-        rc.notifyEnd(this.getDescription(), t);
-      } else if (type.equals("IGNORE")) {
-        rc.notifySkipped(this.getDescription());
+    convertStringsToResults(rc, q);
+  }
 
-      } else if (type.equals("START")) {
-        rc.notifyStart(this.getDescription());
-
-      } else if (type.equals("END")) {
-        rc.notifyEnd(this.getDescription());
-      }
-    }
+  private void convertStringsToResults(final ResultCollector rc,
+      final List<String> q) {
+    ForeignClassLoaderCustomRunnerExecutor.applyEvents(q, rc,
+        this.getDescription());
   }
 
   @Override

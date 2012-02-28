@@ -20,18 +20,18 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
- *
- *
+ * 
+ * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class KeepAliveThreadTest {
 
   @Test
   public void testKeepAlive2() {
-    KeepAliveThread kat = new KeepAliveThread();
-    
+    final KeepAliveThread kat = new KeepAliveThread();
+
     kat.run();
-    
+
     assertNotNull(kat);
   }
 }

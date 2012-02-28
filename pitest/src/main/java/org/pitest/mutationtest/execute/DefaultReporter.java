@@ -45,7 +45,7 @@ public class DefaultReporter implements Reporter {
     this.w.flush();
   }
 
-  public synchronized void done(ExitCode exitCode) {
+  public synchronized void done(final ExitCode exitCode) {
     this.w.writeByte(Id.DONE);
     this.w.writeInt(exitCode.getCode());
     this.w.flush();

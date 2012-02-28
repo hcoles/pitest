@@ -1,4 +1,4 @@
-package org.pitest.junit;
+package org.pitest.junit.adapter;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -11,15 +11,15 @@ class AdaptingRunListener extends RunListener {
   private final ResultCollector        rc;
   private boolean                      finished = false;
 
-  public AdaptingRunListener(org.pitest.Description description,
-      ResultCollector rc) {
+  public AdaptingRunListener(final org.pitest.Description description,
+      final ResultCollector rc) {
     this.description = description;
     this.rc = rc;
   }
 
   @Override
   public void testFailure(final Failure failure) throws Exception {
-    rc.notifyEnd(description, failure.getException());
+    this.rc.notifyEnd(this.description, failure.getException());
     this.finished = true;
   }
 
@@ -31,20 +31,20 @@ class AdaptingRunListener extends RunListener {
 
   @Override
   public void testIgnored(final Description description) throws Exception {
-    rc.notifySkipped(this.description);
+    this.rc.notifySkipped(this.description);
     this.finished = true;
 
   }
 
   @Override
   public void testStarted(final Description description) throws Exception {
-    rc.notifyStart(this.description);
+    this.rc.notifyStart(this.description);
   }
 
   @Override
   public void testFinished(final Description description) throws Exception {
     if (!this.finished) {
-      rc.notifyEnd(this.description);
+      this.rc.notifyEnd(this.description);
     }
 
   }

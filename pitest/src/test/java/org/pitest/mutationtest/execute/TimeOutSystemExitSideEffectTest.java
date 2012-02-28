@@ -34,10 +34,10 @@ public class TimeOutSystemExitSideEffectTest {
 
   @Test
   public void shouldReportExitCodeOfTimeOut() {
-    TimeOutSystemExitSideEffect testee = new TimeOutSystemExitSideEffect(
-        reporter);
+    final TimeOutSystemExitSideEffect testee = new TimeOutSystemExitSideEffect(
+        this.reporter);
     testee.apply();
-    verify(reporter).done(ExitCode.TIMEOUT);
+    verify(this.reporter).done(ExitCode.TIMEOUT);
 
   }
 

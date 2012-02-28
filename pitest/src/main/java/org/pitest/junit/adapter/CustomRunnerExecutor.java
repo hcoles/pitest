@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.junit;
+package org.pitest.junit.adapter;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunListener;
@@ -23,7 +23,7 @@ public class CustomRunnerExecutor {
 
   private final org.pitest.Description description;
   private final Runner                 runner;
-  private ResultCollector              rc;
+  private final ResultCollector        rc;
 
   public CustomRunnerExecutor(final org.pitest.Description description,
       final Runner runner, final ResultCollector rc) {
@@ -35,7 +35,8 @@ public class CustomRunnerExecutor {
   public void run() {
 
     final RunNotifier rn = new RunNotifier();
-    final RunListener listener = new AdaptingRunListener(description,rc);
+    final RunListener listener = new AdaptingRunListener(this.description,
+        this.rc);
 
     rn.addFirstListener(listener);
     this.runner.run(rn);
