@@ -27,7 +27,8 @@ public enum Help {
   NO_SOURCE_FILE(
       "The class %s does not contain a source debug information. All classes must be compiled with source and line number debug information."), //
   NO_LINE_NUMBERS(
-      "The class %s does not contain line number debug information. All classes must be compiled with source and line number debug information.");
+      "The class %s does not contain line number debug information. All classes must be compiled with source and line number debug information."), //
+  NO_TEST_LIBRARY("No test library found on classpath. PIT requires either JUnit or TestNG");
 
   private final static String URL = "http://pitest.org";
   private final String        text;

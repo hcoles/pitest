@@ -62,7 +62,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
   private final Map<Description, Long>                     times         = new MemoryEfficientHashMap<Description, Long>();
 
-  private List<ClassInfo>                                  codeClasses;
+  private final List<ClassInfo>                            codeClasses;
   private Collection<ClassGrouping>                        groupedClasses;
 
   private boolean                                          allTestsGreen = true;
@@ -80,6 +80,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         classPath.getClassPath()));
     this.testClassMapper = new TestToClassMapper(this.classRepository);
     this.timings = timings;
+    this.codeClasses = FCollection.flatMap(this.classPath.code(),
+        nameToClassInfo()).filter(not(isWithinATestClass()));
   }
 
   public boolean initialise() {
@@ -97,9 +99,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.timings.registerStart(Timings.Stage.COVERAGE);
     calculateCoverage(directlySuppliedTestsAndSuites);
     this.timings.registerEnd(Timings.Stage.COVERAGE);
-
-    this.codeClasses = FCollection.flatMap(this.classPath.code(),
-        nameToClassInfo()).filter(not(isWithinATestClass()));
 
     this.groupedClasses = groupByOuterClass(this.codeClasses);
 

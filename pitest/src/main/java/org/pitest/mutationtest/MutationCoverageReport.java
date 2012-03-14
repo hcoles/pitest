@@ -24,7 +24,6 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.ExtendedTestResult;
 import org.pitest.Pitest;
 import org.pitest.TestResult;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -165,9 +164,9 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    this.coverageDatabase.initialise();
-
     verifyBuildSuitableForMutationTesting();
+    
+    this.coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = this.coverageDatabase
         .getGroupedClasses();
@@ -209,8 +208,6 @@ public class MutationCoverageReport implements Runnable {
   }
 
   private void verifyBuildSuitableForMutationTesting() {
-    final Collection<ClassInfo> codeClasses = this.coverageDatabase
-        .getCodeClasses();
     this.buildVerifier.verify(this.coverageDatabase);
   }
 

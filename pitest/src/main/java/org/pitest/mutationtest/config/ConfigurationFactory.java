@@ -20,6 +20,8 @@ import java.util.Collection;
 import org.pitest.classinfo.Repository;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.common.CompoundConfiguration;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testng.TestGroupConfig;
@@ -46,6 +48,10 @@ public class ConfigurationFactory {
 
     if (classRepository.fetchClass("org.testng.TestNG").hasSome()) {
       configs.add(new TestNGConfiguration(this.config));
+    }
+    
+    if (configs.isEmpty()) {
+      throw new PitHelpError(Help.NO_TEST_LIBRARY);
     }
 
     return new CompoundConfiguration(configs);

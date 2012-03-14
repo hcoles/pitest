@@ -26,7 +26,7 @@ import org.pitest.mutationtest.CoverageDatabase;
 
 public class DefaultBuildVerifier implements BuildVerifier {
 
-  public void verify(final CoverageDatabase coverageDatabase) {
+  public void verify(final CoverageDatabase coverageDatabase) {   
     final Collection<ClassInfo> codeClasses = coverageDatabase.getCodeClasses();
     FCollection.forEach(codeClasses, throwErrorIfHasNoLineNumbers());
     FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());

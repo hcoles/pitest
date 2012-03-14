@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
@@ -56,42 +57,57 @@ public class ConfigurationFactoryTest {
 
   @Test
   public void shouldCreateAConfigurationThatFindsTestNGTestsWhenTestNGOnClassPath() {
-    when(this.source.apply("org.testng.TestNG")).thenReturn(
-        this.realSource.apply("org.testng.TestNG"));
+    putTestNGOnClasspath();
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
   }
 
+
   @Test
   public void shouldNotCreateAConfigurationThatFindsTestNGTestsWhenTestNGNotOnClassPath() {
+    putJUnitOnClasspath();
     assertTrue(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
   }
 
   @Test
   public void shouldCreateAConfigurationThatFindsJUnitTestsWhenJUnitOnClassPath() {
-    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
-        this.realSource.apply("org.junit.runner.Runner"));
+    putJUnitOnClasspath();
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
   }
 
+
   @Test
   public void shouldNotCreateAConfigurationThatFindsJUnitTestsWhenJUnitNotOnClassPath() {
+    putTestNGOnClasspath();
     assertTrue(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
   }
 
   @Test
   public void shouldCreateAConfigurationThatFindsBothTestNGAndJUnitTestsWhenBothAreOnClasspath() {
-    when(this.source.apply("org.testng.TestNG")).thenReturn(
-        this.realSource.apply("org.testng.TestNG"));
-    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
-        this.realSource.apply("org.junit.runner.Runner"));
+    putTestNGOnClasspath();
+    putJUnitOnClasspath();
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
+  }
+  
+  @Test(expected=PitHelpError.class)
+  public void shouldThrowAnErrorIfNeitherTestNGOrJUnitOnClassPath() {
+    this.testee.createConfiguration();
+  }
+  
+  private void putTestNGOnClasspath() {
+    when(this.source.apply("org.testng.TestNG")).thenReturn(
+        this.realSource.apply("org.testng.TestNG"));
+  }
+  
+  private void putJUnitOnClasspath() {
+    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
+        this.realSource.apply("org.junit.runner.Runner"));
   }
 
 }
