@@ -232,6 +232,12 @@ public class RepositoryTest {
     assertFalse(aClass.value().descendsFrom(ITop.class));
   }
 
+  @Test
+  public void shouldRecordSourceFile() {
+    final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
+    assertEquals("String.java", aClass.value().getSourceFileName());
+  }
+
   private String getOuterClassNameFor(final Class<?> clazz) {
     return this.testee.fetchClass(clazz).value().getOuterClass().value()
         .getName().asInternalName();

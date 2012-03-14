@@ -40,6 +40,8 @@ import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.True;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.JavaAgent;
@@ -101,8 +103,16 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     this.groupedClasses = groupByOuterClass(this.codeClasses);
 
+    verifyBuildSuitableForMutationTesting();
+
     return this.allTestsGreen;
 
+  }
+
+  private void verifyBuildSuitableForMutationTesting() {
+    if (!this.allTestsGreen) {
+      throw new PitHelpError(Help.FAILING_TESTS);
+    }
   }
 
   private F<ClassInfo, Boolean> isWithinATestClass() {
@@ -365,10 +375,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), time, testee);
-    // return new TestInfo(description.getFirstTestClass(),
-    // description.getQualifiedName(), time,
-    // org.pitest.util.TestInfo.determineTestee(description
-    // .getFirstTestClass()));
+
   }
 
   public Collection<ClassGrouping> getGroupedClasses() {
@@ -409,6 +416,10 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
   public JavaAgent getJavaAgent() {
     return this.launchOptions.getJavaAgentFinder();
+  }
+
+  public Collection<ClassInfo> getCodeClasses() {
+    return this.codeClasses;
   }
 
 }

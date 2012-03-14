@@ -39,6 +39,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -326,7 +327,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps, timings);
       final MutationCoverageReport testee = new MutationCoverageReport(
-          coverageDatabase, this.data, listenerFactory(), timings);
+          coverageDatabase, this.data, listenerFactory(), timings,
+          new DefaultBuildVerifier());
 
       testee.run();
     } finally {

@@ -31,6 +31,7 @@ public class ClassInfo {
   private final ClassPointer          outerClass;
   private final ClassPointer          superClass;
   private final Collection<ClassName> annotations;
+  private final String                sourceFile;
 
   public ClassInfo(final ClassPointer superClass,
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
@@ -41,6 +42,7 @@ public class ClassInfo {
     this.codeLines = builder.codeLines;
     this.annotations = FCollection.map(builder.annotations,
         ClassName.stringToClassName());
+    this.sourceFile = builder.sourceFile;
   }
 
   public int getNumberOfCodeLines() {
@@ -73,6 +75,10 @@ public class ClassInfo {
 
   public Option<ClassInfo> getSuperClass() {
     return this.superClass.fetch();
+  }
+
+  public String getSourceFileName() {
+    return this.sourceFile;
   }
 
   public boolean hasAnnotation(final Class<? extends Annotation> annotation) {

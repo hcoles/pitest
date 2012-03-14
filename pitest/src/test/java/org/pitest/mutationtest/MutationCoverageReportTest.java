@@ -30,6 +30,7 @@ import org.pitest.extension.TestListener;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.report.SourceLocator;
+import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 public class MutationCoverageReportTest {
 
@@ -59,20 +60,9 @@ public class MutationCoverageReportTest {
 
   }
 
-  @Test
-  public void shouldReportErrorWhenTestsDoNotRunGreenWithoutMutation() {
-    when(this.coverageDb.initialise()).thenReturn(false);
-    try {
-      this.data.setFailWhenNoMutations(true);
-      createAndRunTestee();
-    } catch (final PitHelpError phe) {
-      assertEquals(Help.FAILING_TESTS.toString(), phe.getMessage());
-    }
-  }
-
   private void createAndRunTestee() {
     this.testee = new MutationCoverageReport(this.coverageDb, this.data,
-        this.listenerFactory, new Timings());
+        this.listenerFactory, new Timings(), new DefaultBuildVerifier());
     this.testee.run();
   }
 

@@ -23,6 +23,7 @@ class ClassInfoBuilder {
   ClassName          name;
   String             outerClass;
   String             superClass;
+  String             sourceFile;
   final Set<Integer> codeLines   = new HashSet<Integer>();
   final Set<String>  annotations = new HashSet<String>();
 
