@@ -1,22 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 <parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.26-SNAPSHOT</version>
+		<version>0.26</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest-ant</artifactId>
-    <version>0.26-SNAPSHOT</version>
+    <version>0.26</version>
     <name>PitestAnt</name>
 
     <dependencies>
        <dependency>
            <groupId>org.pitest</groupId>
            <artifactId>pitest</artifactId>
-           <version>0.26-SNAPSHOT</version>
+           <version>0.26</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
