@@ -4,18 +4,18 @@
 <parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.26</version>
+		<version>0.27-SNAPSHOT</version>
 	</parent>
 	<groupId>org.pitest</groupId>
 	<artifactId>pitest-ant</artifactId>
-    <version>0.26</version>
+    <version>0.27-SNAPSHOT</version>
     <name>PitestAnt</name>
 
     <dependencies>
        <dependency>
            <groupId>org.pitest</groupId>
            <artifactId>pitest</artifactId>
-           <version>0.26</version>
+           <version>0.27-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
