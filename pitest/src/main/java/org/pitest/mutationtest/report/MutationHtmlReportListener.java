@@ -50,7 +50,7 @@ public class MutationHtmlReportListener implements TestListener {
 
   private final Collection<SourceLocator>     sourceRoots   = new HashSet<SourceLocator>();
 
-  private final List<MutationTestSummaryData> summaryData   = new ArrayList<MutationTestSummaryData>();
+  private final List<MutationTestSummaryData> collectedSummaryData   = new ArrayList<MutationTestSummaryData>();
   private final List<String>                  errors        = new ArrayList<String>();
   private final CoverageDatabase              coverage;
 
@@ -170,8 +170,8 @@ public class MutationHtmlReportListener implements TestListener {
   }
 
   private void collectSummaryData(final MutationTestSummaryData summaryData) {
-    synchronized (this.summaryData) {
-      this.summaryData.add(summaryData);
+    synchronized (this.collectedSummaryData) {
+      this.collectedSummaryData.add(summaryData);
     }
 
   }
@@ -247,8 +247,8 @@ public class MutationHtmlReportListener implements TestListener {
       final Writer writer = this.outputStrategy
           .createWriterForFile("index.html");
 
-      Collections.sort(this.summaryData);
-      st.setAttribute("summaryList", this.summaryData);
+      Collections.sort(this.collectedSummaryData);
+      st.setAttribute("summaryList", this.collectedSummaryData);
 
       st.setAttribute("errors", this.errors);
       st.setAttribute("numberOfMutations",

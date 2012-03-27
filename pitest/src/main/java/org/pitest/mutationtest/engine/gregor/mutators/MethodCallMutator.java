@@ -23,6 +23,7 @@ import static org.objectweb.asm.Opcodes.POP;
 import static org.objectweb.asm.Opcodes.POP2;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -65,7 +66,7 @@ enum MethodCallMutator implements MethodMutatorFactory {
 
 class MethodCallMethodVisitor extends LineTrackingMethodAdapter {
 
-  private final static HashMap<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
+  private final static Map<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
 
   private final F2<String, String, Boolean>   filter;
   private final MethodMutatorFactory          factory;

@@ -183,11 +183,11 @@ public class DependencyExtractor {
 
   }
 
-  private F2<HashMap<String, List<DependencyAccess>>, DependencyAccess, HashMap<String, List<DependencyAccess>>> addDependenciesToMap() {
+  private F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
 
-    return new F2<HashMap<String, List<DependencyAccess>>, DependencyAccess, HashMap<String, List<DependencyAccess>>>() {
-      public HashMap<String, List<DependencyAccess>> apply(
-          final HashMap<String, List<DependencyAccess>> map,
+    return new F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>>() {
+      public Map<String, List<DependencyAccess>> apply(
+          final Map<String, List<DependencyAccess>> map,
           final DependencyAccess access) {
 
         List<DependencyAccess> list = map.get(access.getDest().getOwner());
