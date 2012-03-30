@@ -100,7 +100,7 @@ public class PitMojo extends AbstractMojo {
   private boolean               mutateStaticInitializers;
 
   /**
-   * Maximum distance to look from test to class
+   * Mutation operators to apply
    * 
    * @parameter
    */
