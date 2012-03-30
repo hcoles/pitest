@@ -17,3 +17,6 @@ syntax: glob
 *.settings
 *.svn
 release.properties
+
+syntax: regexp
+^pitest-ant/target$

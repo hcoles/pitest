@@ -17,6 +17,7 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.util.ExitCode;
 
 public interface Reporter {
 
@@ -25,6 +26,6 @@ public interface Reporter {
   public void report(MutationIdentifier i,
       MutationStatusTestPair mutationDetected) throws IOException;
 
-  public void done();
+  public void done(ExitCode exitCode);
 
 }

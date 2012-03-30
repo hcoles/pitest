@@ -14,6 +14,7 @@
  */
 package org.pitest.classinfo;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -65,6 +66,14 @@ public class ClassInfoVisitorTest {
     final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertFalse(actual.codeLines.contains(1));
+  }
+
+  @Test
+  public void shouldRecordSourceFile() throws ClassNotFoundException {
+    final String sampleName = String.class.getName();
+    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+        ClassUtils.classAsBytes(sampleName));
+    assertEquals("String.java", actual.sourceFile);
   }
 
 }

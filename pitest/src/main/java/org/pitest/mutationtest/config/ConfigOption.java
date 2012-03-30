@@ -49,7 +49,7 @@ public enum ConfigOption {
   CHILD_JVM("jvmArgs"),
   /**
    * Do/don't mutate static initializers (slow as new ClassLoader required for
-   * ech mutant)
+   * each mutant)
    */
   MUTATE_STATIC_INITIALIZERS("mutateStaticInits", false),
   /**

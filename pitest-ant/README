@@ -1,0 +1,16 @@
+Ant task to invoke Pitest tool.
+Usage:
+First define the task from the pitest jar
+  <path id="pitest.path" >
+    <fileset dir="../lib" includes="pitest*.jar" />
+  </path>
+  <taskdef name="pitest" classname="org.pitest.ant.PitestTask" classpathref="pitest.path" />
+
+Then use it in a target:
+  <path id="test.path">
+    ...
+    <fileset dir="../lib" includes="*.jar"/>
+    ...//put ALL your jars, the production,test ones and pittest jar.
+  </path>
+
+  <pitest classpath="test.path" targetClasses="org.mypackage*" inScopeClasses="org.mypackage*" reportDir="report/" sourceDir="src/" outputFormats="XML,HTML" />

@@ -14,11 +14,15 @@
  */
 package org.pitest.classinfo;
 
+import java.io.Serializable;
+
 import org.pitest.functional.F;
 
-public final class ClassName {
+public final class ClassName implements Serializable {
 
-  private final String name;
+  private static final long serialVersionUID = 1L;
+
+  private final String      name;
 
   public ClassName(final String name) {
     this.name = name.replace('.', '/');
@@ -54,15 +58,15 @@ public final class ClassName {
   }
 
   public ClassName withoutPrefixChars(final int prefixLength) {
-    final String name = this.getNameWithoutPackage().asJavaName();
+    final String nameWithoutPackage = this.getNameWithoutPackage().asJavaName();
     return new ClassName(this.getPackage().asJavaName() + "/"
-        + name.substring(prefixLength, name.length()));
+        + nameWithoutPackage.substring(prefixLength, nameWithoutPackage.length()));
   }
 
   public ClassName withoutSuffixChars(final int suffixLength) {
-    final String name = this.getNameWithoutPackage().asJavaName();
+    final String nameWithoutPacakge = this.getNameWithoutPackage().asJavaName();
     return new ClassName(this.getPackage().asJavaName() + "/"
-        + name.substring(0, name.length() - suffixLength));
+        + nameWithoutPacakge.substring(0, nameWithoutPacakge.length() - suffixLength));
   }
 
   public static F<String, ClassName> stringToClassName() {

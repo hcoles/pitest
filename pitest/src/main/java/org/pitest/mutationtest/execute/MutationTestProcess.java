@@ -8,6 +8,7 @@ import java.util.Map;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationTestCommunicationThread;
+import org.pitest.util.ExitCode;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.WrappingProcess;
 
@@ -43,10 +44,13 @@ public class MutationTestProcess {
 
   }
 
-  public int waitToDie() throws InterruptedException {
-    final int exitCode = this.process.waitToDie();
+  public ExitCode waitToDie() throws InterruptedException {
     this.thread.waitToFinish();
-    return exitCode;
+    this.process.destroy();
+    return this.thread.getExitCode();
+
+    // final int exitCode = this.process.waitToDie();
+    // return exitCode;
   }
 
 }

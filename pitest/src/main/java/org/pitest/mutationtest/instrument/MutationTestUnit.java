@@ -160,7 +160,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
     try {
-      exitCode = ExitCode.fromCode(worker.waitToDie());
+      exitCode = worker.waitToDie();
       LOG.fine("Exit code was - " + exitCode);
     } catch (final InterruptedException e1) {
       // swallow

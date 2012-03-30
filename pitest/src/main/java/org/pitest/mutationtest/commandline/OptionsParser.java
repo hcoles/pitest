@@ -317,10 +317,10 @@ public class OptionsParser {
    */
   private ParseResult loadProjectFile(final OptionSet userArgs) {
     try {
-      final ProjectConfigurationParser parser = ProjectConfigurationParserFactory
+      final ProjectConfigurationParser configParser = ProjectConfigurationParserFactory
           .createParser();
 
-      final ReportOptions loaded = parser.loadProject(userArgs
+      final ReportOptions loaded = configParser.loadProject(userArgs
           .valueOf(this.projectFileSpec));
 
       return new ParseResult(loaded, null);

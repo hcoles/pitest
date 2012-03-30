@@ -49,36 +49,36 @@ public enum InlineConstantMutator implements MethodMutatorFactory {
 
 class InlineConstantMethodVisitor extends AbstractInsnMutator {
 
-  private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();
+  private final static Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
 
   static {
-    mutations.put(Opcodes.ICONST_M1, new InsnSubstitution(Opcodes.ICONST_1,
+    MUTATIONS.put(Opcodes.ICONST_M1, new InsnSubstitution(Opcodes.ICONST_1,
         "Substituted -1 with 1"));
-    mutations.put(Opcodes.ICONST_0, new InsnSubstitution(Opcodes.ICONST_1,
+    MUTATIONS.put(Opcodes.ICONST_0, new InsnSubstitution(Opcodes.ICONST_1,
         "Substituted 0 with 1"));
-    mutations.put(Opcodes.ICONST_1, new InsnSubstitution(Opcodes.ICONST_0,
+    MUTATIONS.put(Opcodes.ICONST_1, new InsnSubstitution(Opcodes.ICONST_0,
         "Substituted 1 with 0"));
-    mutations.put(Opcodes.ICONST_2, new InsnSubstitution(Opcodes.ICONST_3,
+    MUTATIONS.put(Opcodes.ICONST_2, new InsnSubstitution(Opcodes.ICONST_3,
         "Substituted 2 with 3"));
-    mutations.put(Opcodes.ICONST_3, new InsnSubstitution(Opcodes.ICONST_4,
+    MUTATIONS.put(Opcodes.ICONST_3, new InsnSubstitution(Opcodes.ICONST_4,
         "Substituted 3 with 4"));
-    mutations.put(Opcodes.ICONST_4, new InsnSubstitution(Opcodes.ICONST_5,
+    MUTATIONS.put(Opcodes.ICONST_4, new InsnSubstitution(Opcodes.ICONST_5,
         "Substituted 4 with 5"));
-    mutations.put(Opcodes.ICONST_5, new InsnSubstitution(Opcodes.ICONST_M1,
+    MUTATIONS.put(Opcodes.ICONST_5, new InsnSubstitution(Opcodes.ICONST_M1,
         "Substituted 5 with -1"));
-    mutations.put(Opcodes.FCONST_0, new InsnSubstitution(Opcodes.FCONST_1,
+    MUTATIONS.put(Opcodes.FCONST_0, new InsnSubstitution(Opcodes.FCONST_1,
         "Substituted 0.0 with 1.0"));
-    mutations.put(Opcodes.FCONST_1, new InsnSubstitution(Opcodes.FCONST_0,
+    MUTATIONS.put(Opcodes.FCONST_1, new InsnSubstitution(Opcodes.FCONST_0,
         "Substituted 1.0 with 0.0"));
-    mutations.put(Opcodes.FCONST_2, new InsnSubstitution(Opcodes.FCONST_0,
+    MUTATIONS.put(Opcodes.FCONST_2, new InsnSubstitution(Opcodes.FCONST_0,
         "Substituted 2.0 with 0.0"));
-    mutations.put(Opcodes.DCONST_0, new InsnSubstitution(Opcodes.DCONST_1,
+    MUTATIONS.put(Opcodes.DCONST_0, new InsnSubstitution(Opcodes.DCONST_1,
         "Substituted 0.0 with 1.0"));
-    mutations.put(Opcodes.DCONST_1, new InsnSubstitution(Opcodes.DCONST_0,
+    MUTATIONS.put(Opcodes.DCONST_1, new InsnSubstitution(Opcodes.DCONST_0,
         "Substituted 1.0 with 0.0"));
-    mutations.put(Opcodes.LCONST_0, new InsnSubstitution(Opcodes.LCONST_1,
+    MUTATIONS.put(Opcodes.LCONST_0, new InsnSubstitution(Opcodes.LCONST_1,
         "Substituted 0 with 1"));
-    mutations.put(Opcodes.LCONST_1, new InsnSubstitution(Opcodes.LCONST_0,
+    MUTATIONS.put(Opcodes.LCONST_1, new InsnSubstitution(Opcodes.LCONST_0,
         "Substituted 1 with 0.0"));
 
   }
@@ -96,7 +96,7 @@ class InlineConstantMethodVisitor extends AbstractInsnMutator {
 
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
-    return mutations;
+    return MUTATIONS;
   }
 
   @Override

@@ -16,20 +16,12 @@ package org.pitest.util;
 
 public enum ExitCode {
 
-  OK(0, ErrorType.NONE), OUT_OF_MEMORY(11, ErrorType.HANDLED), FORCED_EXIT(12,
-      ErrorType.HANDLED), UNKNOWN_ERROR(13, ErrorType.UNHANDLED), TIMEOUT(14,
-      ErrorType.HANDLED);
+  OK(0), OUT_OF_MEMORY(11), UNKNOWN_ERROR(13), TIMEOUT(14);
 
-  private static enum ErrorType {
-    NONE, HANDLED, UNHANDLED;
-  }
+  private final int code;
 
-  private final int       code;
-  private final ErrorType errorType;
-
-  private ExitCode(final int code, final ErrorType errorType) {
+  private ExitCode(final int code) {
     this.code = code;
-    this.errorType = errorType;
   }
 
   public int getCode() {
@@ -47,15 +39,7 @@ public enum ExitCode {
   }
 
   public boolean isOk() {
-    return this.errorType.equals(ErrorType.NONE);
-  }
-
-  public boolean isHandledError() {
-    return this.errorType.equals(ErrorType.HANDLED);
-  }
-
-  public boolean isUnhandledError() {
-    return this.errorType.equals(ErrorType.UNHANDLED);
+    return this.equals(OK);
   }
 
 }

@@ -53,6 +53,8 @@ import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
+import org.pitest.mutationtest.verify.BuildVerifier;
+import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
@@ -64,14 +66,16 @@ public class MutationCoverageReport implements Runnable {
   private final ListenerFactory  listenerFactory;
   private final CoverageDatabase coverageDatabase;
   private final Timings          timings;
+  private final BuildVerifier    buildVerifier;
 
   public MutationCoverageReport(final CoverageDatabase coverageDatabase,
       final ReportOptions data, final ListenerFactory listenerFactory,
-      final Timings timings) {
+      final Timings timings, final BuildVerifier buildVerifier) {
     this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;
     this.timings = timings;
+    this.buildVerifier = buildVerifier;
   }
 
   public final void run() {
@@ -119,7 +123,8 @@ public class MutationCoverageReport implements Runnable {
           coverageOptions, launchOptions, cps, timings);
 
       final MutationCoverageReport instance = new MutationCoverageReport(
-          coverageDatabase, data, reportFactory, timings);
+          coverageDatabase, data, reportFactory, timings,
+          new DefaultBuildVerifier());
 
       instance.run();
     } finally {
@@ -159,9 +164,9 @@ public class MutationCoverageReport implements Runnable {
 
     final long t0 = System.currentTimeMillis();
 
-    if (!this.coverageDatabase.initialise()) {
-      throw new PitHelpError(Help.FAILING_TESTS);
-    }
+    verifyBuildSuitableForMutationTesting();
+    
+    this.coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = this.coverageDatabase
         .getGroupedClasses();
@@ -200,6 +205,10 @@ public class MutationCoverageReport implements Runnable {
 
     printStats(stats);
 
+  }
+
+  private void verifyBuildSuitableForMutationTesting() {
+    this.buildVerifier.verify(this.coverageDatabase);
   }
 
   private void printStats(final MutationStatisticsListener stats) {

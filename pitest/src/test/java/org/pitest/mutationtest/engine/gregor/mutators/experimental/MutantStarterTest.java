@@ -47,15 +47,15 @@ public class MutantStarterTest {
 
   @Test
   public void shouldConstructMuteeUsingNoArgConstrutor() throws Exception {
-    TestMutee createdMutant = new MutantStarter<TestMutee>(TestMutee.class)
-        .call();
+    final TestMutee createdMutant = new MutantStarter<TestMutee>(
+        TestMutee.class).call();
     assertNotNull(createdMutant);
   }
 
   @Test
   public void shouldConstructMuteeInCallMethod() throws Exception {
     TestMutee.muteeCreated = false;
-    MutantStarter<TestMutee> starter = new MutantStarter<TestMutee>(
+    final MutantStarter<TestMutee> starter = new MutantStarter<TestMutee>(
         TestMutee.class);
 
     assertFalse("TestMutee has not been created yet.", TestMutee.muteeCreated);
@@ -65,27 +65,28 @@ public class MutantStarterTest {
     assertTrue("TestMutee has been created in call() method",
         TestMutee.muteeCreated);
   }
-  
+
   private static class MutantStarterSubclass extends MutantStarter<Integer> {
     private final int number;
-    public MutantStarterSubclass(int number) {
+
+    public MutantStarterSubclass(final int number) {
       super();
       this.number = number;
     }
-    
+
     @Override
     protected Callable<Integer> constructMutee() throws Exception {
       return new Callable<Integer>() {
         public Integer call() throws Exception {
-          return number;
+          return MutantStarterSubclass.this.number;
         }
       };
     }
   }
-  
+
   @Test
   public void canBeSubclassedToUseOwnConstructionLogic() throws Exception {
-    assertEquals(42, (int)new MutantStarterSubclass(42).call());
+    assertEquals(42, (int) new MutantStarterSubclass(42).call());
   }
 
 }

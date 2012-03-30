@@ -69,10 +69,10 @@ public class JarCreatingJarFinder implements JavaAgent {
   private Option<String> createJar() {
     try {
 
-      final String location = FileUtil.randomFilename() + ".jar";
-      final FileOutputStream fos = new FileOutputStream(location);
-      createJarFromClassPathResources(fos, location);
-      return Option.some(location);
+      final String randomName = FileUtil.randomFilename() + ".jar";
+      final FileOutputStream fos = new FileOutputStream(randomName);
+      createJarFromClassPathResources(fos, randomName);
+      return Option.some(randomName);
 
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);

@@ -50,7 +50,7 @@ public class MutantStarter<T> implements Callable<T> {
    * @param mutantCallableClass
    *          class of mutant callable to create and use in <code>call()</code>.
    */
-  public MutantStarter(Class<? extends Callable<T>> mutantCallableClass) {
+  public MutantStarter(final Class<? extends Callable<T>> mutantCallableClass) {
     super();
     this.mutantCallableClass = mutantCallableClass;
   }
@@ -60,7 +60,7 @@ public class MutantStarter<T> implements Callable<T> {
   }
 
   protected Callable<T> constructMutee() throws Exception {
-    return mutantCallableClass.newInstance();
+    return this.mutantCallableClass.newInstance();
   }
 
 }

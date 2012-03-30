@@ -1,7 +1,7 @@
-package org.pitest.util;
+package org.pitest.mutationtest.execute;
 
 import org.pitest.functional.SideEffect;
-import org.pitest.mutationtest.execute.Reporter;
+import org.pitest.util.ExitCode;
 
 public class TimeOutSystemExitSideEffect implements SideEffect {
 
@@ -12,8 +12,7 @@ public class TimeOutSystemExitSideEffect implements SideEffect {
   }
 
   public void apply() {
-    this.r.done();
-    System.exit(ExitCode.TIMEOUT.getCode());
+    this.r.done(ExitCode.TIMEOUT);
   }
 
 }

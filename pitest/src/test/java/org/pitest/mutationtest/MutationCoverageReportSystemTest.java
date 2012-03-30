@@ -39,6 +39,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -49,9 +50,12 @@ import com.example.CoveredByJMockit;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
+import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 
 public class MutationCoverageReportSystemTest extends ReportTestBase {
+
+  private static final int ONE_MINUTE = 60000;
 
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
@@ -292,6 +296,15 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
+  @Test(timeout = ONE_MINUTE)
+  public void shouldTerminateWhenThreadpoolCreated() {
+    this.data.setTargetClasses(predicateFor(KeepAliveThread.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
+    createAndRun();
+    verifyResults(SURVIVED);
+  }
+
   private void createAndRun() {
     createAndRun(new JUnitCompatibleConfiguration());
   }
@@ -314,7 +327,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
           coverageOptions, launchOptions, cps, timings);
       final MutationCoverageReport testee = new MutationCoverageReport(
-          coverageDatabase, this.data, listenerFactory(), timings);
+          coverageDatabase, this.data, listenerFactory(), timings,
+          new DefaultBuildVerifier());
 
       testee.run();
     } finally {

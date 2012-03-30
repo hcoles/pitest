@@ -53,7 +53,6 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.testutil.ConfigurationForTesting;
-import org.pitest.testutil.IgnoreAnnotationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
@@ -165,12 +164,7 @@ public class TestMutationTesting {
   }
 
   public static class NoTests {
-    @TestAnnotationForTesting
-    @IgnoreAnnotationForTesting
-    public void fail() {
-      System.out.println("oops");
-      assertEquals(1, 2);
-    }
+
   }
 
   @Test
@@ -294,7 +288,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(90);
+    verifyLineNumbers(89);
   }
 
 
