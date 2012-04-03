@@ -84,11 +84,21 @@ public class MutatingClassVisitor extends ClassAdapter {
       next = each.create(this.context, methodInfo, next);
     }
 
-    return wrapWithLineTracker(wrapWithLineFilter(next));
+    return wrapWithLineTracker(wrapWithFilters(next));
   }
 
   private MethodVisitor wrapWithLineTracker(MethodVisitor wrappedMethodVisitor) {
     return new LineTrackingMethodVisitor(this.context, wrappedMethodVisitor);
+  }
+
+  private MethodVisitor wrapWithFilters(
+      final MethodVisitor wrappedMethodVisitor) {
+    return wrapWithLineFilter(wrapWithAssertFilter(wrappedMethodVisitor));
+  }
+  
+  private MethodVisitor wrapWithAssertFilter(MethodVisitor wrappedMethodVisitor) {
+    return new AvoidAssertsMethodAdapter(this.context,
+        wrappedMethodVisitor);
   }
 
   private MethodVisitor wrapWithLineFilter(

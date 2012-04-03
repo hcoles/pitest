@@ -15,8 +15,11 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+
 
 import java.util.Collection;
 
@@ -129,26 +132,39 @@ public class TestGregorMutater extends MutatorTestBase {
     };
   }
 
-  // public static class HasFinallyAroundReturnStatement {
-  // public int foo(int t) {
-  // try {
-  // return t;
-  // } finally {
-  // bar();
-  // }
-  //
-  // }
-  //
-  // public void bar() {
-  //
-  // }
-  // }
-  //
-  // @Test
-  // public void willGenerateMutatationsForBothBranchesOfTryFinallyBlock() {
-  // createTesteeWith(Mutator.VOID_METHOD_CALLS);
-  // final Collection<MutationDetails> actualDetails =
-  // findMutationsFor(HasFinallyAroundReturnStatement.class);
-  // assertEquals(2, actualDetails.size());
-  // }
+  public static class HasFinallyAroundReturnStatement {
+    public int foo(int t) {
+      try {
+        return t;
+      } finally {
+        bar();
+      }
+
+    }
+
+    public void bar() {
+
+    }
+  }
+
+  @Test
+  public void willGenerateMutatationsForBothBranchesOfTryFinallyBlock() {
+    createTesteeWith(Mutator.VOID_METHOD_CALLS.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor(HasFinallyAroundReturnStatement.class);
+    assertEquals(2, actualDetails.size());
+  }
+  
+  
+  public static class HasAssertStatement { 
+    public void foo(int i) {
+      assert (i != 1);
+    }
+  }
+  
+  @Test
+  public void shouldNotMutateAssertStatments() {
+    createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatement.class);
+    assertEquals(0, actualDetails.size());
+  }
 }

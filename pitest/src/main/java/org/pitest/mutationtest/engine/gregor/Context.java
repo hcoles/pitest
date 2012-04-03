@@ -18,7 +18,9 @@ import static org.pitest.functional.Prelude.isEqualTo;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
@@ -29,23 +31,28 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class Context {
 
-  private final Map<String, Integer>            mutatorIndexes          = new HashMap<String, Integer>();
+  private final Map<String, Integer>            mutatorIndexes                 = new HashMap<String, Integer>();
 
   private int                                   lastLineNumber;
 
   private ClassInfo                             classInfo;
   private String                                sourceFile;
 
-  private Option<MutationIdentifier>            target                  = Option
-                                                                            .none();
-  private final FunctionalList<MutationDetails> mutations               = new MutableList<MutationDetails>();
+  private Option<MutationIdentifier>            target                         = Option
+                                                                                   .none();
+  private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
   private String                                methodName;
-  private boolean                               mutationFindingDisabled = false;
+
+  private Set<String>                           mutationFindingDisabledReasons = new HashSet<String>();
 
   private void registerMutation(final MutationDetails details) {
-    if (!this.mutationFindingDisabled) {
+    if (!isMutationFindingDisabled()) {
       this.mutations.add(details);
     }
+  }
+
+  private boolean isMutationFindingDisabled() {
+    return !mutationFindingDisabledReasons.isEmpty();
   }
 
   public Option<MutationIdentifier> getTargetMutation() {
@@ -137,12 +144,12 @@ public class Context {
     return getTargetMutation().contains(isEqualTo(newId));
   }
 
-  public void disableMutations() {
-    this.mutationFindingDisabled = true;
+  public void disableMutations(String reason) {
+    this.mutationFindingDisabledReasons.add(reason);
   }
 
-  public void enableMutatations() {
-    this.mutationFindingDisabled = false;
+  public void enableMutatations(String reason) {
+    this.mutationFindingDisabledReasons.remove(reason);
   }
 
 }

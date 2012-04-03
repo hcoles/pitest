@@ -5,6 +5,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
 class LineFilterMethodAdapter extends MethodAdapter {
+  
+  private final static String DISABLE_REASON = "AVOIDED_METHOD";
 
   private final Context              context;
   private final PremutationClassInfo classInfo;
@@ -20,9 +22,9 @@ class LineFilterMethodAdapter extends MethodAdapter {
   @Override
   public void visitLineNumber(final int line, final Label start) {
     if (this.classInfo.isLoggingLine(line)) {
-      this.context.disableMutations();
+      this.context.disableMutations(DISABLE_REASON);
     } else {
-      this.context.enableMutatations();
+      this.context.enableMutatations(DISABLE_REASON);
     }
     this.mv.visitLineNumber(line, start);
   }
