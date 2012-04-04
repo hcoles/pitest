@@ -157,7 +157,7 @@ public class TestGregorMutater extends MutatorTestBase {
   
   public static class HasAssertStatement { 
     public void foo(int i) {
-      assert (i != 1);
+      assert (i+ 20 > 10);
     }
   }
   
@@ -166,5 +166,22 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatement.class);
     assertEquals(0, actualDetails.size());
+  }
+  
+  public static class HasAssertStatementAndOtherStatements { 
+    public int state;
+    public void foo(int i) {
+      assert (i+ 20 > 10);
+      if ( i > 1 ) {
+        state = 1;
+      }
+    }
+  }
+  
+  @Test
+  public void shouldMutateOtherStatementsWhenAssertIsPresent() {
+    createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatementAndOtherStatements.class);
+    assertEquals(1, actualDetails.size());
   }
 }

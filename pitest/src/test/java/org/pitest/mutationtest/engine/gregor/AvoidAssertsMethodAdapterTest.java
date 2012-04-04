@@ -71,6 +71,14 @@ public class AvoidAssertsMethodAdapterTest {
     testee.visitLabel(label);
     verify(context).enableMutatations(anyString());
   }
+  
+  @Test
+  public void shouldDisableMutationsForCodeSettingWhenAssertionDisabledFlagIsSetInStaticInitializer() {
+    testee.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "desiredAssertionStatus", "()Z");
+    verify(context).disableMutations(anyString());
+    testee.visitFieldInsn(Opcodes.PUTSTATIC, "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement", "$assertionsDisabled", "Z");
+    verify(context).enableMutatations(anyString());
+  }
 
   @Test
   public void shouldForwardInterceptedFieldInstructionsToChild() {
@@ -91,4 +99,10 @@ public class AvoidAssertsMethodAdapterTest {
     verify(child).visitJumpInsn(Opcodes.IFEQ, label);
   }
 
+  @Test
+  public void shouldForwardVisitMethodInsnToChild() {
+    testee.visitMethodInsn(1, "foo", "bar", "far");
+    verify(child).visitMethodInsn(1, "foo", "bar", "far");
+  }
+  
 }
