@@ -39,6 +39,15 @@ public class DatedDirectoryResultOutputStrategy implements ResultOutputStrategy 
 
   public Writer createWriterForFile(final String file) {
     try {
+      int fileSepIndex = file.lastIndexOf(File.separatorChar);
+      if (fileSepIndex>0) {
+          String directory = this.reportDir.getAbsolutePath()
+              + File.separatorChar +file.substring(0, fileSepIndex);
+          File directoryFile = new File(directory);
+          if (!directoryFile.exists()) {
+              directoryFile.mkdirs();
+          }
+      }
       return new BufferedWriter(new FileWriter(this.reportDir.getAbsolutePath()
           + File.separatorChar + file));
     } catch (final IOException ex) {

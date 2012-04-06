@@ -24,23 +24,47 @@ public class MutationTestSummaryData implements
   private final String                fileName;
   private final Collection<String>    mutatedClasses;
   private final Collection<ClassName> testClasses;
-  private final Integer               mutationCoverage;
-  private final Integer               lineCoverage;
+  private final long                  numberOfMutations;
+  private final long                  numberOfMutationsDetected;
+  private final long                  numberOfLines;
+  private final long                  numberOfLinesCovered;
 
   public MutationTestSummaryData(final String fileName,
       final Collection<String> mutatedClasses,
-      final Collection<ClassName> testClasses, final Integer mutationCoverage,
-      final Integer lineCoverage) {
+      final Collection<ClassName> testClasses, final long numberOfMutations,
+      final long numberOfMutationsDetected, final long numberOfLines,
+      final long numberOflinesCoveraged) {
     this.fileName = fileName;
     this.mutatedClasses = mutatedClasses;
     this.testClasses = testClasses;
-    this.mutationCoverage = mutationCoverage;
-    this.lineCoverage = lineCoverage;
+    this.numberOfMutations = numberOfMutations;
+    this.numberOfMutationsDetected = numberOfMutationsDetected;
+    this.numberOfLines = numberOfLines;
+    this.numberOfLinesCovered = numberOflinesCoveraged;
+  }
+
+  public long getNumberOfMutations() {
+    return numberOfMutations;
+  }
+
+  public long getNumberOfMutationsDetected() {
+    return numberOfMutationsDetected;
+  }
+
+  public long getNumberOfLines() {
+    return numberOfLines;
+  }
+
+  public long getNumberOfLinesCovered() {
+    return numberOfLinesCovered;
+  }
+
+  public String getClassName() {
+    return this.fileName;
   }
 
   public String getFileName() {
-    final ClassName name = new ClassName(getMutatedClasses().iterator().next());
-    return name.getPackage() + "." + this.fileName + ".html";
+    return this.fileName.replace('.', '_') + ".html";
   }
 
   public Collection<String> getMutatedClasses() {
@@ -52,25 +76,23 @@ public class MutationTestSummaryData implements
   }
 
   public Integer getMutationCoverage() {
-    return this.mutationCoverage;
+    return numberOfMutations == 0 ? 100 : Math
+        .round((100f * numberOfMutationsDetected) / numberOfMutations);
   }
 
   public Integer getLineCoverage() {
-    return this.lineCoverage;
+    return numberOfLines == 0 ? 100 : Math.round((100f * numberOfLinesCovered)
+        / numberOfLines);
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((this.lineCoverage == null) ? 0 : this.lineCoverage.hashCode());
+    result = prime * result + this.getLineCoverage();
     result = prime * result
         + ((this.mutatedClasses == null) ? 0 : this.mutatedClasses.hashCode());
-    result = prime
-        * result
-        + ((this.mutationCoverage == null) ? 0 : this.mutationCoverage
-            .hashCode());
+    result = prime * result + getMutationCoverage();
     result = prime * result
         + ((this.testClasses == null) ? 0 : this.testClasses.hashCode());
     return result;
@@ -88,11 +110,7 @@ public class MutationTestSummaryData implements
       return false;
     }
     final MutationTestSummaryData other = (MutationTestSummaryData) obj;
-    if (this.lineCoverage == null) {
-      if (other.lineCoverage != null) {
-        return false;
-      }
-    } else if (!this.lineCoverage.equals(other.lineCoverage)) {
+    if (!this.getLineCoverage().equals(other.getLineCoverage())) {
       return false;
     }
     if (this.mutatedClasses == null) {
@@ -102,11 +120,7 @@ public class MutationTestSummaryData implements
     } else if (!this.mutatedClasses.equals(other.mutatedClasses)) {
       return false;
     }
-    if (this.mutationCoverage == null) {
-      if (other.mutationCoverage != null) {
-        return false;
-      }
-    } else if (!this.mutationCoverage.equals(other.mutationCoverage)) {
+    if (!this.getMutationCoverage().equals(other.getMutationCoverage())) {
       return false;
     }
     if (this.testClasses == null) {
