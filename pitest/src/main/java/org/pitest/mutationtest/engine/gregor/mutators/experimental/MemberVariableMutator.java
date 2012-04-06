@@ -49,7 +49,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
         // removed setting field
 
         // pop the values which PUTFIELD would have used
-        if (Type.getReturnType(desc).getSize() == 2) {
+        if (Type.getType(desc).getSize() == 2) {
           super.visitInsn(Opcodes.POP2);
           super.visitInsn(Opcodes.POP);
         } else {
