@@ -18,6 +18,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -26,7 +27,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 /**
  * The <code>MemberVariableMutator</code> is a mutator that mutates assignments
  * to member variables by removing them.
- * 
+ *
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class MemberVariableMutator implements MethodMutatorFactory {
@@ -46,11 +47,20 @@ public class MemberVariableMutator implements MethodMutatorFactory {
         final String name, final String desc) {
       if (Opcodes.PUTFIELD == opcode && shouldMutate(name)) {
         // removed setting field
+
+        // pop the values which PUTFIELD would have used
+        if (Type.getReturnType(desc).getSize() == 2) {
+          super.visitInsn(Opcodes.POP2);
+          super.visitInsn(Opcodes.POP);
+        } else {
+          super.visitInsn(Opcodes.POP);
+          super.visitInsn(Opcodes.POP);
+        }
       } else {
         super.visitFieldInsn(opcode, owner, name, desc);
       }
     }
-    
+
     /* (non-Javadoc)
      * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String)
      */
