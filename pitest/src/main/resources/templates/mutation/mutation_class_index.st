@@ -73,9 +73,9 @@
     </thead>
     <tbody>
         <tr>
-            <td>$packageData.numberOfClasses$</td>
-            <td>$packageData.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.lineCoverage$%"></div><div class="coverage_ledgend">$packageData.numberOfLinesCovered$/$packageData.numberOfLines$</div></div></td>
-            <td>$packageData.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.mutationCoverage$%"></div><div class="coverage_ledgend">$packageData.numberOfMutationsDetected$/$packageData.numberOfMutations$</div></div></td>
+            <td>$packageData.totals.numberOfClasses$</td>
+            <td>$packageData.totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.totals.lineCoverage$%"></div><div class="coverage_ledgend">$packageData.totals.numberOfLinesCovered$/$packageData.totals.numberOfLines$</div></div></td>
+            <td>$packageData.totals.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.totals.mutationCoverage$%"></div><div class="coverage_ledgend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutations$</div></div></td>
         </tr>
     </tbody>
 </table>

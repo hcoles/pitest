@@ -24,8 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -52,7 +50,7 @@ public class MutationHtmlReportListener implements TestListener {
 
   private final Collection<SourceLocator>       sourceRoots        = new HashSet<SourceLocator>();
 
-  private final Map<String, PackageSummaryData> packageSummaryData = new TreeMap<String, PackageSummaryData>();
+  private final PackageSummaryMap packageSummaryData = new PackageSummaryMap();
   private final List<String>                    errors             = new ArrayList<String>();
   private final CoverageDatabase                coverage;
 
@@ -121,31 +119,27 @@ public class MutationHtmlReportListener implements TestListener {
   }
 
   private void collectPackageSummaries(MutationMetaData mutationMetaData) {
+    final MutationTotals totals = new MutationTotals();
+    totals.addClasses(1); // FIXME assumes 1 new top level class per meta data
+    totals.addLines(FCollection.fold(
+        accumulateCodeLines(), 0,
+        this.coverage.getClassInfo(mutationMetaData.getMutatedClass())));
+    totals.addLinesCovered(this.coverage.getNumberOfCoveredLines(mutationMetaData
+        .getMutatedClass()));
+    totals.addMutations(mutationMetaData.getNumberOfMutations());
+    totals.addMutationsDetetcted(mutationMetaData.getNumberOfDetetectedMutations());
+    
+   
     final MutationTestSummaryData summaryData = new MutationTestSummaryData(
         mutationMetaData.getFirstFileName(),
-        mutationMetaData.getMutatedClass(), mutationMetaData.getTestClasses(),
-        mutationMetaData.getNumberOfMutations(),
-        mutationMetaData.getNumberOfDetetectedMutations(), FCollection.fold(
-            accumulateCodeLines(), 0,
-            this.coverage.getClassInfo(mutationMetaData.getMutatedClass())),
-        this.coverage.getNumberOfCoveredLines(mutationMetaData
-            .getMutatedClass()));
+        mutationMetaData.getMutatedClass(), mutationMetaData.getTestClasses(), totals);
     String packageName = getPackageName(mutationMetaData);
     
-    PackageSummaryData psData = getPackageSummaryData(packageName);    
-    psData.addSummaryData(summaryData);
+    packageSummaryData.add(packageName, summaryData);    
+
   }
 
-  private PackageSummaryData getPackageSummaryData(String packageName) {
-    PackageSummaryData psData;
-    if (packageSummaryData.containsKey(packageName)) {
-      psData = packageSummaryData.get(packageName);
-    } else {
-      psData = new PackageSummaryData(packageName);
-      packageSummaryData.put(packageName, psData);
-    }
-    return psData;
-  }
+
 
   private String getPackageName(MutationMetaData mutationMetaData) {
     String fileName = mutationMetaData.getMutatedClass().iterator().next();
@@ -250,30 +244,20 @@ public class MutationHtmlReportListener implements TestListener {
         .getInstanceOf("templates/mutation/mutation_package_index");
 
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
-    long totalClasses = 0;
-    long totalLines = 0;
-    long totalLinesCovered = 0;
-    long totalNumberOfMutations = 0;
-    long totalNumberOfMutationsDetected = 0;
+    MutationTotals totals = new MutationTotals();
     for (PackageSummaryData psData : packageSummaryData.values()) {
-      totalClasses += psData.getNumberOfClasses();
-      totalLines += psData.getNumberOfLines();
-      totalLinesCovered += psData.getNumberOfLinesCovered();
-      totalNumberOfMutations += psData.getNumberOfMutations();
-      totalNumberOfMutationsDetected += psData.getNumberOfMutationsDetected();
+      totals.add(psData.getTotals());
       createPackageIndexPage(psData);
     }
-    int totalLineCoverage = Math.round((100f * totalLinesCovered) / totalLines);
-    int totalMutationCoverage = Math
-        .round((100f * totalNumberOfMutationsDetected) / totalNumberOfMutations);
 
-    st.setAttribute("numberOfClasses", totalClasses);
-    st.setAttribute("numberOfLines", totalLines);
-    st.setAttribute("numberOfLinesCovered", totalLinesCovered);
-    st.setAttribute("lineCoverage", totalLineCoverage);
-    st.setAttribute("numberOfMutations", totalNumberOfMutations);
-    st.setAttribute("numberOfMutationsDetected", totalNumberOfMutationsDetected);
-    st.setAttribute("mutationCoverage", totalMutationCoverage);
+//    st.setAttribute("numberOfClasses", totalClasses);
+//    st.setAttribute("numberOfLines", totalLines);
+//    st.setAttribute("numberOfLinesCovered", totalLinesCovered);
+//    st.setAttribute("lineCoverage", totalLineCoverage);
+//    st.setAttribute("numberOfMutations", totalNumberOfMutations);
+//    st.setAttribute("numberOfMutationsDetected", totalNumberOfMutationsDetected);
+//    st.setAttribute("mutationCoverage", totalMutationCoverage);
+    st.setAttribute("totals", totals);
     st.setAttribute("packageSummaries", packageSummaryData.values());
     try {
       writer.write(st.toString());

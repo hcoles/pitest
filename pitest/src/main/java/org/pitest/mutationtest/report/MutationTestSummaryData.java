@@ -24,39 +24,37 @@ public class MutationTestSummaryData implements
   private final String                fileName;
   private final Collection<String>    mutatedClasses;
   private final Collection<ClassName> testClasses;
-  private final long                  numberOfMutations;
-  private final long                  numberOfMutationsDetected;
-  private final long                  numberOfLines;
-  private final long                  numberOfLinesCovered;
+    
+  private final MutationTotals totals;
 
   public MutationTestSummaryData(final String fileName,
       final Collection<String> mutatedClasses,
-      final Collection<ClassName> testClasses, final long numberOfMutations,
-      final long numberOfMutationsDetected, final long numberOfLines,
-      final long numberOflinesCoveraged) {
+      final Collection<ClassName> testClasses, final MutationTotals totals) {
     this.fileName = fileName;
     this.mutatedClasses = mutatedClasses;
     this.testClasses = testClasses;
-    this.numberOfMutations = numberOfMutations;
-    this.numberOfMutationsDetected = numberOfMutationsDetected;
-    this.numberOfLines = numberOfLines;
-    this.numberOfLinesCovered = numberOflinesCoveraged;
+    this.totals = totals;
+
+  }
+  
+  public MutationTotals getTotals() {
+    return this.totals;
   }
 
   public long getNumberOfMutations() {
-    return numberOfMutations;
+    return totals.getNumberOfMutations();
   }
 
   public long getNumberOfMutationsDetected() {
-    return numberOfMutationsDetected;
+    return totals.getNumberOfMutationsDetected();
   }
 
   public long getNumberOfLines() {
-    return numberOfLines;
+    return totals.getNumberOfLines();
   }
 
   public long getNumberOfLinesCovered() {
-    return numberOfLinesCovered;
+    return totals.getNumberOfLinesCovered();
   }
 
   public String getClassName() {
@@ -76,13 +74,11 @@ public class MutationTestSummaryData implements
   }
 
   public Integer getMutationCoverage() {
-    return numberOfMutations == 0 ? 100 : Math
-        .round((100f * numberOfMutationsDetected) / numberOfMutations);
+    return totals.getMutationCoverage();
   }
 
   public Integer getLineCoverage() {
-    return numberOfLines == 0 ? 100 : Math.round((100f * numberOfLinesCovered)
-        / numberOfLines);
+    return totals.getLineCoverage();
   }
 
   @Override
