@@ -3,10 +3,10 @@ package org.pitest.mutationtest.execute;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.instrument.MutationStatusMap;
 import org.pitest.mutationtest.instrument.MutationTestCommunicationThread;
 import org.pitest.util.ExitCode;
 import org.pitest.util.ProcessArgs;
@@ -31,14 +31,13 @@ public class MutationTestProcess {
     this.process.start();
   }
 
-  public void results(
-      final Map<MutationDetails, MutationStatusTestPair> allmutations)
+  public void results(final MutationStatusMap allmutations)
       throws FileNotFoundException, IOException {
 
-    for (final MutationDetails each : allmutations.keySet()) {
+    for (final MutationDetails each : allmutations.allMutations()) {
       final MutationStatusTestPair status = this.thread.getStatus(each.getId());
       if (status != null) {
-        allmutations.put(each, status);
+        allmutations.setStatusForMutation(each, status);
       }
     }
 
@@ -48,9 +47,6 @@ public class MutationTestProcess {
     this.thread.waitToFinish();
     this.process.destroy();
     return this.thread.getExitCode();
-
-    // final int exitCode = this.process.waitToDie();
-    // return exitCode;
   }
 
 }

@@ -15,15 +15,11 @@
 package org.pitest.mutationtest.instrument;
 
 import static org.pitest.functional.Prelude.printWith;
-import static org.pitest.functional.Prelude.putToMap;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
@@ -31,19 +27,13 @@ import org.pitest.MetaData;
 import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.ExitCode;
 import org.pitest.util.JavaAgent;
@@ -87,7 +77,6 @@ public class MutationTestUnit extends AbstractTestUnit {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     try {
-
       rc.notifyStart(this.getDescription());
       runTests(rc);
     } catch (final Throwable ex) {
@@ -115,22 +104,16 @@ public class MutationTestUnit extends AbstractTestUnit {
   private void runTestsForMutations(final ResultCollector rc)
       throws IOException, InterruptedException {
 
-    final Map<MutationDetails, MutationStatusTestPair> mutations = new HashMap<MutationDetails, MutationStatusTestPair>();
+    final MutationStatusMap mutations = new MutationStatusMap();
     if (hasTestCoverage(this.testClasses)) {
-      setStatusForAvailableMutations(mutations, DetectionStatus.NOT_STARTED);
+      mutations.setStatusForMutations(this.availableMutations,
+          DetectionStatus.NOT_STARTED);
       runTestsInSeperateProcess(this.testClasses, mutations);
-
     } else {
-      setStatusForAvailableMutations(mutations, DetectionStatus.NO_COVERAGE);
+      mutations.setStatusForMutations(this.availableMutations,
+          DetectionStatus.NO_COVERAGE);
     }
     reportResults(mutations, this.availableMutations, rc);
-  }
-
-  private void setStatusForAvailableMutations(
-      final Map<MutationDetails, MutationStatusTestPair> mutations,
-      final DetectionStatus status) {
-    FCollection.forEach(this.availableMutations,
-        putToMap(mutations, new MutationStatusTestPair(0, status)));
   }
 
   private boolean hasTestCoverage(final Collection<ClassName> tests) {
@@ -138,26 +121,42 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestInSeperateProcessForMutationRange(
-      final Map<MutationDetails, MutationStatusTestPair> allmutations,
-      final Collection<MutationDetails> remainingMutations,
-      final Collection<ClassName> tests) throws IOException {
+      final MutationStatusMap mutations, final Collection<ClassName> tests)
+      throws IOException {
 
+    Collection<MutationDetails> remainingMutations = mutations
+        .getUnrunMutations();
+    final MutationTestProcess worker = createWorker(tests, remainingMutations);
+    worker.start();
+
+    setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(mutations,
+        remainingMutations);
+
+    final ExitCode exitCode = waitForSlaveToDie(worker);
+    worker.results(mutations);
+
+    correctResultForProcessExitCode(mutations, exitCode);
+
+  }
+
+  private MutationTestProcess createWorker(final Collection<ClassName> tests,
+      Collection<MutationDetails> remainingMutations) {
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
         tests, this.config, this.timeoutStrategy, Log.isVerbose(),
         this.pitConfig);
 
-    final PortFinder pf = PortFinder.INSTANCE;
-
+    
+    final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
+    .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+    .andStdout(captureStdOutIfVerbose())
+    .andStderr(printWith("stderr "));
+    
     final MutationTestProcess worker = new MutationTestProcess(
-        pf.getNextAvailablePort(), ProcessArgs.withClassPath(this.classPath)
-            .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-            .andStdout(captureStdOutIfVerbose())
-            .andStderr(printWith("stderr ")), fileArgs);
-    worker.start();
+        PortFinder.INSTANCE.getNextAvailablePort(), args, fileArgs);
+    return worker;
+  }
 
-    setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(allmutations,
-        remainingMutations);
-
+  private ExitCode waitForSlaveToDie(final MutationTestProcess worker) {
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
     try {
       exitCode = worker.waitToDie();
@@ -165,11 +164,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     } catch (final InterruptedException e1) {
       // swallow
     }
-
-    worker.results(allmutations);
-
-    correctResultForProcessExitCode(allmutations, exitCode);
-
+    return exitCode;
   }
 
   private SideEffect1<String> captureStdOutIfVerbose() {
@@ -182,51 +177,29 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(
-      final Map<MutationDetails, MutationStatusTestPair> allmutations,
+      final MutationStatusMap mutations,
       final Collection<MutationDetails> remainingMutations) {
-    allmutations.put(remainingMutations.iterator().next(),
-        new MutationStatusTestPair(0, DetectionStatus.STARTED));
+    mutations.setStatusForMutation(remainingMutations.iterator().next(),
+        DetectionStatus.STARTED);
   }
 
   private void correctResultForProcessExitCode(
-      final Map<MutationDetails, MutationStatusTestPair> mutations,
-      final ExitCode exitCode) {
+      final MutationStatusMap mutations, final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
       LOG.warning("Slave encountered error or timeout");
-      final Collection<MutationDetails> unfinishedRuns = getUnfinishedRuns(mutations);
-      final MutationStatusTestPair status = new MutationStatusTestPair(0,
-          DetectionStatus.getForErrorExitCode(exitCode));
+      final Collection<MutationDetails> unfinishedRuns = mutations
+          .getUnfinishedRuns();
+      final DetectionStatus status = DetectionStatus
+          .getForErrorExitCode(exitCode);
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
-      FCollection.forEach(unfinishedRuns, putToMap(mutations, status));
+      mutations.setStatusForMutations(unfinishedRuns, status);
+
     } else {
       LOG.fine("Slave exited ok");
     }
 
-  }
-
-  private Collection<MutationDetails> getUnfinishedRuns(
-      final Map<MutationDetails, MutationStatusTestPair> mutations) {
-
-    return FCollection.flatMap(mutations.entrySet(),
-        detectionStatusIs(DetectionStatus.STARTED));
-  }
-
-  private F<Entry<MutationDetails, MutationStatusTestPair>, Option<MutationDetails>> detectionStatusIs(
-      final DetectionStatus status) {
-    return new F<Entry<MutationDetails, MutationStatusTestPair>, Option<MutationDetails>>() {
-
-      public Option<MutationDetails> apply(
-          final Entry<MutationDetails, MutationStatusTestPair> a) {
-        if (a.getValue().getStatus().equals(status)) {
-          return Option.some(a.getKey());
-        } else {
-          return Option.none();
-        }
-      }
-
-    };
   }
 
   private List<String> getJVMArgs() {
@@ -234,57 +207,24 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestsInSeperateProcess(final Collection<ClassName> tests,
-      final Map<MutationDetails, MutationStatusTestPair> mutations)
-      throws IOException, InterruptedException {
+      final MutationStatusMap mutations) throws IOException,
+      InterruptedException {
 
-    Collection<MutationDetails> remainingMutations = getUnrunMutationIds(mutations);
-
-    while (!remainingMutations.isEmpty()) {
-      LOG.info(remainingMutations.size() + " mutations left to test");
-      runTestInSeperateProcessForMutationRange(mutations, remainingMutations,
-          tests);
-      remainingMutations = getUnrunMutationIds(mutations);
+    while (mutations.hasUnrunMutations()) {
+      runTestInSeperateProcessForMutationRange(mutations, tests);
     }
 
   }
 
-  private Collection<MutationDetails> getUnrunMutationIds(
-      final Map<MutationDetails, MutationStatusTestPair> mutations) {
-
-    final F<MutationDetails, Boolean> p = new F<MutationDetails, Boolean>() {
-
-      public Boolean apply(final MutationDetails a) {
-        final MutationStatusTestPair status = mutations.get(a);
-        return status.getStatus().equals(DetectionStatus.NOT_STARTED);
-      }
-
-    };
-    return FCollection.filter(mutations.keySet(), p);
-  }
-
-  private void reportResults(
-      final Map<MutationDetails, MutationStatusTestPair> mutations,
+  private void reportResults(final MutationStatusMap mutationsMap,
       final Collection<MutationDetails> availableMutations,
       final ResultCollector rc) {
 
-    final FunctionalList<MutationResult> results = FCollection.map(
-        availableMutations, detailsToMutationResults(mutations));
-
-    final MetaData md = new MutationMetaData(this.config, results);
+    final MetaData md = new MutationMetaData(this.config,
+        mutationsMap.createMutationResults());
 
     rc.notifyEnd(this.getDescription(), md);
 
-  }
-
-  private F<MutationDetails, MutationResult> detailsToMutationResults(
-      final Map<MutationDetails, MutationStatusTestPair> mutations) {
-    return new F<MutationDetails, MutationResult>() {
-
-      public MutationResult apply(final MutationDetails a) {
-        return new MutationResult(a, mutations.get(a));
-      }
-
-    };
   }
 
   public MutationConfig getMutationConfig() {

@@ -250,13 +250,6 @@ public class MutationHtmlReportListener implements TestListener {
       createPackageIndexPage(psData);
     }
 
-//    st.setAttribute("numberOfClasses", totalClasses);
-//    st.setAttribute("numberOfLines", totalLines);
-//    st.setAttribute("numberOfLinesCovered", totalLinesCovered);
-//    st.setAttribute("lineCoverage", totalLineCoverage);
-//    st.setAttribute("numberOfMutations", totalNumberOfMutations);
-//    st.setAttribute("numberOfMutationsDetected", totalNumberOfMutationsDetected);
-//    st.setAttribute("mutationCoverage", totalMutationCoverage);
     st.setAttribute("totals", totals);
     st.setAttribute("packageSummaries", packageSummaryData.values());
     try {
