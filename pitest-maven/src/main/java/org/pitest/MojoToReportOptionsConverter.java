@@ -87,7 +87,7 @@ public class MojoToReportOptionsConverter {
 
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
-    data.setClassesInScope(determineClassesInScope());
+   
     data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
     data.setExcludedMethods(globStringsToPredicates(this.mojo
         .getExcludedMethods()));
@@ -172,9 +172,6 @@ public class MojoToReportOptionsConverter {
     };
   }
 
-  private Collection<Predicate<String>> determineClassesInScope() {
-    return returnOrDefaultToClassesLikeGroupName(this.mojo.getInScopeClasses());
-  }
 
   private Collection<Predicate<String>> determineTargetClasses() {
     return returnOrDefaultToClassesLikeGroupName(this.mojo.getTargetClasses());

@@ -62,13 +62,6 @@ public class PitMojo extends AbstractMojo {
    */
   private List<String>          avoidCallsTo;
 
-  /**
-   * Classes in scope for dependency and coverage analysis
-   * 
-   * @parameter
-   * 
-   */
-  private List<String>          inScopeClasses;
 
   /**
    * Base directory where all reports are written to.
@@ -243,9 +236,6 @@ public class PitMojo extends AbstractMojo {
     return this.avoidCallsTo;
   }
 
-  public List<String> getInScopeClasses() {
-    return this.inScopeClasses;
-  }
 
   public File getReportsDirectory() {
     return this.reportsDirectory;

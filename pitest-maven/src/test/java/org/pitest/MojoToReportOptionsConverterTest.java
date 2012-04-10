@@ -50,18 +50,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  public void testCreatesPredicateFromListOfInScopeClassGlobs() {
-    final String xml = "<inScopeClasses>" + //
-        "                      <param>foo*</param>" + //
-        "                      <param>bar*</param>" + //
-        "                  </inScopeClasses>";
-
-    final ReportOptions actual = parseConfig(xml);
-    final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
-  }
 
   public void testUsesSourceDirectoriesFromProject() {
     when(this.project.getCompileSourceRoots()).thenReturn(Arrays.asList("src"));
@@ -133,19 +121,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  public void testParsesListOfExcludedClassGlobsAndApplyTheseToInScopeClasses() {
-    final String xml = "<excludedClasses>" + //
-        "                      <param>foo*</param>" + //
-        "                  </excludedClasses>" + //
-        "                  <inScopeClasses>" + //
-        "                      <param>foo*</param>" + //
-        "                      <param>bar*</param>" + //
-        "                  </inScopeClasses>";
-    final ReportOptions actual = parseConfig(xml);
-    final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
-    assertFalse(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-  }
+
 
   public void testParsesListOfExcludedClassGlobsAndApplyTheseToTests() {
     final String xml = "<excludedClasses>" + //
