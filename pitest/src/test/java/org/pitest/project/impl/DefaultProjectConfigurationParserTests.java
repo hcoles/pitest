@@ -560,38 +560,6 @@ public class DefaultProjectConfigurationParserTests {
     Assert.assertEquals(1, ro.getClassPathElements().size());
   }
 
-  @Test
-  public void shouldAllowNoClassesInScopeSpecified()
-      throws ProjectConfigurationException, ProjectConfigurationParserException {
-    final String fileContents = "<project>\n"
-        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-        + "    <inScopeClasses/>\n" + "</project>";
 
-    final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
-        new StubFileSystemDelegate(fileContents));
-    final ReportOptions ro = parser.loadProject("project");
-
-    Assert.assertNotNull(ro);
-
-    Assert.assertEquals(0, ro.getClassesInScope().size());
-  }
-
-  @Test
-  public void shouldLoadClassesInScopeFromFile()
-      throws ProjectConfigurationException, ProjectConfigurationParserException {
-    final String fileContents = "<project>\n"
-        + "    <property name=\"reportDir\" value=\"./reports\"/>\n"
-        + "    <inScopeClasses>\n"
-        + "        <filter name=\"org.pitest.*\"/>\n"
-        + "    </inScopeClasses>\n" + "</project>";
-
-    final DefaultProjectConfigurationParser parser = new DefaultProjectConfigurationParser(
-        new StubFileSystemDelegate(fileContents));
-    final ReportOptions ro = parser.loadProject("project");
-
-    Assert.assertNotNull(ro);
-
-    Assert.assertEquals(1, ro.getClassesInScope().size());
-  }
 
 }

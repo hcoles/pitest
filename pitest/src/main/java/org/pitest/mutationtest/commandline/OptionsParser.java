@@ -24,7 +24,6 @@ import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
-import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
@@ -71,7 +70,6 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
   private final OptionSpec<String>                   targetClassesSpec;
   private final OptionSpec<String>                   targetTestsSpec;
-  private final OptionSpec<String>                   inScopeClassesSpec;
   private final OptionSpec<String>                   avoidCallsSpec;
   private final OptionSpec<Integer>                  depth;
   private final OptionSpec<Integer>                  threadsSpec;
@@ -125,13 +123,6 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma seperated list of filters to match against tests to run");
-
-    this.inScopeClassesSpec = parserAccepts(IN_SCOPE_CLASSES)
-        .withRequiredArg()
-        .ofType(String.class)
-        .withValuesSeparatedBy(',')
-        .describedAs(
-            "comma seperated list of filter to match against classes to consider in scope");
 
     this.depth = parserAccepts(DEPENDENCY_DISTANCE).withRequiredArg()
         .ofType(Integer.class)
@@ -256,8 +247,6 @@ public class OptionsParser {
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(FCollection.map(
         this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setClassesInScope(FCollection.map(
-        this.inScopeClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));

@@ -97,7 +97,6 @@ public class MutationCoverageReport implements Runnable {
       System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
       final ReportOptions data = pr.getOptions();
-      setClassesInScopeToEqualTargetClassesIfNoValueSupplied(data);
       runReport(data);
     }
 
@@ -132,12 +131,7 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-  private static void setClassesInScopeToEqualTargetClassesIfNoValueSupplied(
-      final ReportOptions data) {
-    if (!data.hasValueForClassesInScope()) {
-      data.setClassesInScope(data.getTargetClasses());
-    }
-  }
+
 
   protected void reportFailureForClassesWithoutTests(
       final Collection<String> classesWithOutATest,

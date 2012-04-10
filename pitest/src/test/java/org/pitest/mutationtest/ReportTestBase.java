@@ -28,7 +28,6 @@ public abstract class ReportTestBase {
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     this.data.setMutators(Mutator.DEFAULTS.asCollection());
-    this.data.setClassesInScope(predicateFor("com.example.*"));
   }
 
   protected ListenerFactory listenerFactory() {

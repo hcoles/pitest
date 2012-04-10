@@ -26,10 +26,7 @@ public enum ConfigOption {
    * Filter defining classes to mutate
    */
   TARGET_CLASSES("targetClasses"),
-  /**
-   * Filter limiting the classes to examine to find tests and mutations
-   */
-  IN_SCOPE_CLASSES("inScopeClasses"),
+
   /**
    * Directories to examine to find source files to annotate when generating
    * report

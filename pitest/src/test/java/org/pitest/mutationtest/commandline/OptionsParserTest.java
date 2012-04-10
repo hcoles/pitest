@@ -61,15 +61,7 @@ public class OptionsParserTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  @Test
-  public void shouldCreatePredicateFromCommaSeperatedListOfInScopeClassGlobs() {
-    final ReportOptions actual = parseAddingRequiredArgs("--inScopeClasses",
-        "foo*,bar*");
-    final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
-  }
+
 
   @Test
   public void shouldParseCommaSeperatedListOfSourceDirectories() {
@@ -136,13 +128,15 @@ public class OptionsParserTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
+  
   @Test
-  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToInScopeClasses() {
-    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
-        "foo*", "--inScopeClasses", "foo*,bar*");
-    final Predicate<String> actualPredicate = actual.getClassesInScopeFilter();
-    assertFalse(actualPredicate.apply("foo_anything"));
+  public void shouldUseTargetClassesFilterForTestsWhenNoTargetTestsFilterSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
+        "foo*,bar*");
+    final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
+    assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
+    assertFalse(actualPredicate.apply("notfoobar"));
   }
 
   @Test

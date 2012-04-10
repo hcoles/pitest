@@ -309,12 +309,6 @@ public class TestMutationTesting {
     data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
     data.setTimeoutFactor(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR);
 
-    final ArrayList<Predicate<String>> inScope = new ArrayList<Predicate<String>>();
-    inScope.addAll(mutees);
-    inScope.addAll(tests);
-
-    data.setClassesInScope(inScope);
-
     final JavaAgent agent = new JarCreatingJarFinder();
 
     try {

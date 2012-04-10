@@ -17,21 +17,16 @@ package org.pitest.mutationtest;
 import org.pitest.functional.predicate.Predicate;
 
 public class ClassFilter {
-  private final Predicate<String> scope;
   private final Predicate<String> test;
   private final Predicate<String> code;
 
-  public ClassFilter(final Predicate<String> scope,
+  public ClassFilter(
       final Predicate<String> test, final Predicate<String> code) {
-    this.scope = scope;
     this.test = test;
     this.code = code;
 
   }
 
-  public Predicate<String> getScope() {
-    return this.scope;
-  }
 
   public Predicate<String> getTest() {
     return this.test;

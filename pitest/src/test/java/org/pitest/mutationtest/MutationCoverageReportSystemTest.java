@@ -168,7 +168,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldWorkWithEasyMock() {
     this.data.setTargetClasses(predicateFor(CoveredByEasyMock.class));
-    this.data.setClassesInScope(predicateFor("com.example.*EasyMock*"));
     this.data.setTargetTests(predicateFor(com.example.EasyMockTest.class));
     createAndRun();
     verifyResults(KILLED, KILLED, KILLED);
@@ -178,7 +177,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Ignore("does not seem to be possible to have TestNG on the classpath when jmockit agent is loaded")
   public void shouldWorkWithJMockit() {
     this.data.setTargetClasses(predicateFor(CoveredByJMockit.class));
-    this.data.setClassesInScope(predicateFor("com.example.*JMockit*"));
     this.data.setTargetTests(predicateFor(com.example.JMockitTest.class));
     createAndRun();
     verifyResults(KILLED, KILLED, TIMED_OUT);
@@ -187,7 +185,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldWorkWithPowerMock() {
     this.data.setTargetClasses(predicateFor("com.example.PowerMockCallFoo"));
-    this.data.setClassesInScope(predicateFor("com.example.Power*"));
     this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
     this.data.setVerbose(true);
     createAndRun();
@@ -198,7 +195,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldWorkWhenPowerMockReplacesCallsWithinMutee() {
     this.data
         .setTargetClasses(predicateFor("com.example.PowerMockCallsOwnMethod"));
-    this.data.setClassesInScope(predicateFor("com.example.Power*"));
     this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
     this.data.setVerbose(true);
     createAndRun();
@@ -208,7 +204,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldWorkWithMockitoJUnitRunner() {
     this.data.setTargetClasses(predicateFor("com.example.MockitoCallFoo"));
-    this.data.setClassesInScope(predicateFor("com.example.Mockito*"));
     this.data.setTargetTests(predicateFor(com.example.MockitoRunnerTest.class));
     this.data.setVerbose(true);
     createAndRun();
@@ -219,7 +214,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldWorkWithPowerMockJavaAgent() {
     this.data
         .setTargetClasses(predicateFor("com.example.PowerMockAgentCallFoo"));
-    this.data.setClassesInScope(predicateFor("com.example.Power*"));
     this.data
         .setTargetTests(predicateFor(com.example.PowerMockAgentTest.class));
     this.data.setVerbose(true);
@@ -231,7 +225,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldReportHelpfulErrorIfNoMutationsFounds() {
     this.data.setFailWhenNoMutations(true);
     this.data.setTargetClasses(predicateFor("foo"));
-    this.data.setClassesInScope(predicateFor("foo"));
     createAndRun();
   }
 
@@ -274,8 +267,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       copy(stream, fos);
       fos.close();
 
-      this.data.setClassesInScope(predicateFor("com.outofclasspath.*"));
       this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
+      this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
       this.data.addClassPathElements(Arrays.asList(location));
       this.data.setDependencyAnalysisMaxDistance(-1);
       this.data.setExcludedClasses(predicateFor("*Power*", "*JMockit*"));

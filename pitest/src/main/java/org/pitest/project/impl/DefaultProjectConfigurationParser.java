@@ -4,7 +4,6 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
-import static org.pitest.mutationtest.config.ConfigOption.IN_SCOPE_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
@@ -365,7 +364,7 @@ public class DefaultProjectConfigurationParser implements
     }
 
     final ReportOptions ro = new ReportOptions();
-    ro.setClassesInScope(loadClassesInScope(doc));
+
     ro.setClassPathElements(loadClassPathElements(doc));
     ro.setDependencyAnalysisMaxDistance(loadDependencyAnalysisMaxDistance(doc));
     ro.setExcludedClasses(loadExcludedClasses(doc));
@@ -620,18 +619,7 @@ public class DefaultProjectConfigurationParser implements
     return values;
   }
 
-  /**
-   * Loads the OptionsParser.IN_SCOPE_CLASSES_ARG property from the project
-   * file.
-   * 
-   * @param doc
-   *          the Document to load the property from.
-   * @return the value of the OptionsParser.IN_SCOPE_CLASSES_ARG property from
-   *         the project file, or the default value if no property is specified.
-   */
-  private Collection<Predicate<String>> loadClassesInScope(final Document doc) {
-    return loadFilters(doc, IN_SCOPE_CLASSES);
-  }
+
 
   private Element getElement(final Document doc, final ConfigOption param) {
     final Element classpathElement = XmlUtils.getChildElement(

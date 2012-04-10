@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
@@ -43,7 +42,6 @@ import org.pitest.util.Glob;
 public class ReportOptions {
 
   private Configuration                              config;
-  private Collection<Predicate<String>>              classesInScope;
   private Collection<Predicate<String>>              targetClasses;
   private Collection<Predicate<String>>              excludedMethods          = Collections
                                                                                   .emptyList();
@@ -86,15 +84,6 @@ public class ReportOptions {
     return this.verbose;
   }
 
-  @SuppressWarnings("unchecked")
-  public Predicate<String> getClassesInScopeFilter() {
-    return and(or(this.classesInScope), not(isBlackListed()));
-  }
-
-  public void setClassesInScope(
-      final Collection<Predicate<String>> classesInScope) {
-    this.classesInScope = classesInScope;
-  }
 
   /**
    * @return the reportDir
@@ -215,9 +204,6 @@ public class ReportOptions {
     this.targetTests = targetTestsPredicates;
   }
 
-  public boolean hasValueForClassesInScope() {
-    return (this.classesInScope != null) && !this.classesInScope.isEmpty();
-  }
 
   public boolean isMutateStaticInitializers() {
     return this.mutateStaticInitializers;
@@ -258,7 +244,7 @@ public class ReportOptions {
   @Override
   public String toString() {
     return "ReportOptions [isValid=" + ", classesInScope="
-        + this.classesInScope + ", targetClasses=" + this.targetClasses
+        +  this.targetClasses
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
@@ -273,7 +259,7 @@ public class ReportOptions {
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-      return not(isBlackListed());
+      return this.getTargetClassesFilter(); // if no tests specified assume the target classes filter covers both
     } else {
       return Prelude.and(or(this.targetTests), not(isBlackListed()));
     }
@@ -340,9 +326,6 @@ public class ReportOptions {
     return this.excludedClasses;
   }
 
-  public Collection<Predicate<String>> getClassesInScope() {
-    return this.classesInScope;
-  }
 
   public boolean shouldFailWhenNoMutations() {
     return this.failWhenNoMutations;
@@ -373,8 +356,7 @@ public class ReportOptions {
 
   @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions() {
-    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
-        this.getClassesInScopeFilter(), not(commonClasses())), this.config,
+    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),not(commonClasses())), this.config,
         this.isVerbose(), this.getDependencyAnalysisMaxDistance());
   }
 
@@ -396,7 +378,7 @@ public class ReportOptions {
   }
 
   public ClassFilter createClassesFilter() {
-    return new ClassFilter(this.getClassesInScopeFilter(),
+    return new ClassFilter(
         this.getTargetTestsFilter(), this.getTargetClassesFilter());
   }
 

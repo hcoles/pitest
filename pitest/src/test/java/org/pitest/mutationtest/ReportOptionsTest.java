@@ -35,8 +35,6 @@ public class ReportOptionsTest {
   public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
     this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
         .singleton("*")));
-    this.testee.setClassesInScope(Glob.toGlobPredicates(Collections
-        .singleton("*")));
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("java/Integer"));
 

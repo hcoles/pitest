@@ -23,8 +23,8 @@ public class CoverageProcess {
   }
 
   public void start() throws IOException {
-    this.process.start();
     this.crt.start();
+    this.process.start();
   }
 
   public int waitToDie() throws InterruptedException {
