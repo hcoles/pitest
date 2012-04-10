@@ -91,12 +91,6 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--excludedMethods=toString");
   }
 
-  @Test
-  public void shouldPassInScopeClassesOptionToJavaTask() {
-    this.pitestTask.setInScopeClasses("MyClass");
-    this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--inScopeClasses=MyClass");
-  }
 
   @Test
   public void shouldPassJvmArgsOptionToJavaTask() {

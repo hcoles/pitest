@@ -87,9 +87,6 @@ public class PitestTask extends Task {
     this.setOption(ConfigOption.REPORT_DIR, value);
   }
 
-  public void setInScopeClasses(final String value) {
-    this.setOption(ConfigOption.IN_SCOPE_CLASSES, value);
-  }
 
   public void setTargetClasses(final String value) {
     this.setOption(ConfigOption.TARGET_CLASSES, value);
