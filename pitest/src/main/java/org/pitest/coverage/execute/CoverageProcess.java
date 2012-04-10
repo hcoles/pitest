@@ -1,6 +1,7 @@
 package org.pitest.coverage.execute;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 
 import org.pitest.functional.SideEffect1;
@@ -14,11 +15,11 @@ public class CoverageProcess {
   private final CoverageCommunicationThread crt;
 
   public CoverageProcess(final ProcessArgs processArgs,
-      final CoverageOptions arguments, final int port,
+      final CoverageOptions arguments, final ServerSocket socket,
       final List<String> testClases, final SideEffect1<CoverageResult> handler)
       throws IOException {
-    this.process = new WrappingProcess(port, processArgs, CoverageSlave.class);
-    this.crt = new CoverageCommunicationThread(port, arguments, testClases,
+    this.process = new WrappingProcess(socket.getLocalPort(), processArgs, CoverageSlave.class);
+    this.crt = new CoverageCommunicationThread(socket, arguments, testClases,
         handler);
   }
 

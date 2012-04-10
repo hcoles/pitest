@@ -38,7 +38,7 @@ import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.ExitCode;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
-import org.pitest.util.PortFinder;
+import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
 
 public class MutationTestUnit extends AbstractTestUnit {
@@ -151,8 +151,9 @@ public class MutationTestUnit extends AbstractTestUnit {
     .andStdout(captureStdOutIfVerbose())
     .andStderr(printWith("stderr "));
     
+    SocketFinder sf = new SocketFinder();
     final MutationTestProcess worker = new MutationTestProcess(
-        PortFinder.INSTANCE.getNextAvailablePort(), args, fileArgs);
+        sf.getNextAvailableServerSocket(), args, fileArgs);
     return worker;
   }
 

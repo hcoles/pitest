@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.instrument;
 
+import java.net.ServerSocket;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -83,10 +84,10 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
   private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 
-  public MutationTestCommunicationThread(final int port,
+  public MutationTestCommunicationThread(final ServerSocket socket,
       final SlaveArguments arguments,
       final Map<MutationIdentifier, MutationStatusTestPair> idMap) {
-    super(port, new SendData(arguments), new Receive(idMap));
+    super(socket, new SendData(arguments), new Receive(idMap));
     this.idMap = idMap;
   }
 

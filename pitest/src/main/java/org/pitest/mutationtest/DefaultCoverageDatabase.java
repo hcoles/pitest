@@ -8,6 +8,7 @@ import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.printWith;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +48,7 @@ import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
-import org.pitest.util.PortFinder;
+import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
@@ -161,15 +162,15 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
     final SideEffect1<CoverageResult> handler = resultProcessor();
 
-    final PortFinder pf = PortFinder.INSTANCE;
-    final int port = pf.getNextAvailablePort();
+    final SocketFinder sf = new SocketFinder();
+    final ServerSocket socket = sf.getNextAvailableServerSocket();
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.classPath.getClassPath())
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
         .andStderr(printWith("stderr "))
-        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions, port,
+        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions, socket,
         filteredTests, handler);
 
     process.start();

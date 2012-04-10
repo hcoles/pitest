@@ -1,5 +1,6 @@
 package org.pitest.mutationtest;
 
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -105,10 +106,10 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
   }
 
-  public CoverageCommunicationThread(final int port,
+  public CoverageCommunicationThread(final ServerSocket socket,
       final CoverageOptions arguments, final List<String> tus,
       final SideEffect1<CoverageResult> handler) {
-    super(port, new SendData(arguments, tus), new Receive(handler));
+    super(socket, new SendData(arguments, tus), new Receive(handler));
 
   }
 

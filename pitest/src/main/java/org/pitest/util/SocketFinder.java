@@ -18,53 +18,41 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.logging.Logger;
 
-public enum PortFinder {
-
-  INSTANCE;
+public class SocketFinder {
 
   private final static Logger LOG             = Log.getLogger();
 
-  private final static int    MIN_PORT_NUMBER = 8081;
+  private final static int    MIN_PORT_NUMBER = 8091;
   private final static int    MAX_PORT_NUMBER = 9000;
 
   private int                 lastPortNumber  = MIN_PORT_NUMBER;
 
-  public synchronized int getNextAvailablePort() {
+  public synchronized ServerSocket getNextAvailableServerSocket() {
     this.lastPortNumber++;
-    while (!isPortAvailable(this.lastPortNumber)) {
+    ServerSocket socket = getIfAvailable(lastPortNumber);
+    while (socket == null) {
       this.lastPortNumber++;
 
       if (this.lastPortNumber > MAX_PORT_NUMBER) {
         this.lastPortNumber = 9000;
       }
+      socket = getIfAvailable(lastPortNumber);
     }
 
     LOG.fine("using port " + this.lastPortNumber);
 
-    return this.lastPortNumber;
+    return socket;
   }
 
-  public synchronized static boolean isPortAvailable(final int port) {
-
+  private static synchronized ServerSocket getIfAvailable(final int port) {
     ServerSocket ss = null;
     try {
       ss = new ServerSocket(port);
-      ss.setReuseAddress(true);
-      return true;
     } catch (final IOException e) {
       LOG.fine("port " + port + " is in use");
-    } finally {
+    } 
 
-      if (ss != null) {
-        try {
-          ss.close();
-        } catch (final IOException e) {
-          // swallow
-        }
-      }
-    }
-
-    return false;
+    return ss;
   }
 
 }

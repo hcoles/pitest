@@ -2,6 +2,7 @@ package org.pitest.mutationtest.execute;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.HashMap;
 
 import org.pitest.mutationtest.MutationDetails;
@@ -17,11 +18,11 @@ public class MutationTestProcess {
   private final WrappingProcess                 process;
   private final MutationTestCommunicationThread thread;
 
-  public MutationTestProcess(final int port, final ProcessArgs processArgs,
+  public MutationTestProcess(final ServerSocket socket, final ProcessArgs processArgs,
       final SlaveArguments arguments) {
-    this.process = new WrappingProcess(port, processArgs,
+    this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         MutationTestSlave.class);
-    this.thread = new MutationTestCommunicationThread(port, arguments,
+    this.thread = new MutationTestCommunicationThread(socket, arguments,
         new HashMap<MutationIdentifier, MutationStatusTestPair>());
 
   }

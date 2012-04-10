@@ -25,22 +25,20 @@ import org.pitest.mutationtest.instrument.protocol.Id;
 
 public class CommunicationThread extends Thread {
 
-  // private final static Logger LOG = Log
-  // .getLogger();
 
   private final SideEffect1<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
 
-  private final int                               port;
+  private final ServerSocket                               socket;
 
   private ExitCode                                exitCode;
 
-  public CommunicationThread(final int port,
+  public CommunicationThread(final ServerSocket socket,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
     super("pit comms thread");
     this.setDaemon(true);
-    this.port = port;
+    this.socket = socket;
     this.sendInitialData = sendInitialData;
     this.receive = receive;
   }
@@ -48,10 +46,8 @@ public class CommunicationThread extends Thread {
   @Override
   public final void run() {
 
-    ServerSocket socket = null;
     Socket clientSocket = null;
     try {
-      socket = new ServerSocket(this.port);
       clientSocket = socket.accept();
       final BufferedInputStream bif = new BufferedInputStream(
           clientSocket.getInputStream());
@@ -71,9 +67,8 @@ public class CommunicationThread extends Thread {
           clientSocket.close();
         }
 
-        if (socket != null) {
           socket.close();
-        }
+        
       } catch (final IOException e) {
         throw Unchecked.translateCheckedException(e);
       }
@@ -102,7 +97,6 @@ public class CommunicationThread extends Thread {
   }
 
   public ExitCode getExitCode() {
-    System.out.println("Exit code was " + this.exitCode);
     return this.exitCode;
   }
 
