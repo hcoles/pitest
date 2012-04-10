@@ -21,9 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,16 +33,13 @@ import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.UnGroupedStrategy;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
-import org.pitest.util.Unchecked;
 
 public class CoverageSlave {
 
@@ -128,9 +123,9 @@ public class CoverageSlave {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
 
     final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
-
-    final List<TestUnit> filteredTus = filterTestsByDependencyAnalysis(
-        paramsFromParent, tus);
+    
+    DependencyFilter filter = new DependencyFilter(new DependencyExtractor(new ClassPathByteArraySource(),paramsFromParent.getDependencyAnalysisMaxDistance()), paramsFromParent.getFilter());
+    final List<TestUnit> filteredTus = filter.filterTestsByDependencyAnalysis(tus);
 
     LOG.info("Dependency analysis reduced number of potential tests by "
         + (tus.size() - filteredTus.size()));
@@ -156,51 +151,6 @@ public class CoverageSlave {
     }
     LOG.fine("Receiving " + count + " tests classes from parent");
     return classes;
-  }
-
-  private static List<TestUnit> filterTestsByDependencyAnalysis(
-      final CoverageOptions paramsFromParent, final List<TestUnit> tus) {
-    final ClassPath cp = new ClassPath();
-    final int maxDistance = paramsFromParent.getDependencyAnalysisMaxDistance();
-    if (maxDistance < 0) {
-      return tus;
-    } else {
-      return FCollection.filter(tus,
-          isWithinReach(maxDistance, paramsFromParent, cp));
-    }
-  }
-
-  private static F<TestUnit, Boolean> isWithinReach(final int maxDistance,
-      final CoverageOptions paramsFromParent, final ClassPath classPath) {
-    final DependencyExtractor analyser = new DependencyExtractor(
-        new ClassPathByteArraySource(classPath), maxDistance);
-
-    return new F<TestUnit, Boolean>() {
-      private final Map<String, Boolean> cache = new HashMap<String, Boolean>();
-
-      public Boolean apply(final TestUnit a) {
-        final String each = a.getDescription().getFirstTestClass();
-        try {
-          boolean inReach;
-          if (this.cache.containsKey(each)) {
-            inReach = this.cache.get(each);
-          } else {
-            inReach = !analyser.extractCallDependenciesForPackages(each,
-                paramsFromParent.getFilter()).isEmpty();
-            this.cache.put(each, inReach);
-          }
-
-          if (inReach) {
-            return true;
-          }
-        } catch (final IOException e) {
-          throw Unchecked.translateCheckedException(e);
-        }
-
-        return false;
-      }
-
-    };
   }
 
 }

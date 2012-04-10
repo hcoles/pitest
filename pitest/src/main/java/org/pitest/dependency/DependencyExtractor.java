@@ -98,6 +98,10 @@ public class DependencyExtractor {
     return this
         .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
   }
+  
+  public int getMaxDistance() {
+    return this.depth;
+  }
 
   private Set<String> extractCallDependencies(final String clazz,
       final TreeSet<String> visited, final Predicate<DependencyAccess> filter,

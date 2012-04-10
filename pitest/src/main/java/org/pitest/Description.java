@@ -37,11 +37,6 @@ public final class Description implements Serializable {
     this.name = name;
   }
 
-  // public Collection<String> getDirectTestees() {
-  // return TestInfo.determineTestee(this.testClass)
-  // .map(Functions.classToName());
-  // }
-
   public String getFirstTestClass() {
     return this.testClass;
   }
