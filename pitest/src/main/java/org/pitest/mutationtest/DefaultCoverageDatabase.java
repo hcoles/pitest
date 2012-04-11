@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
@@ -151,11 +152,14 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       e.printStackTrace();
     } catch (final InterruptedException e) {
       e.printStackTrace();
+    } catch (ExecutionException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
   private void gatherCoverageData(final Collection<ClassInfo> tests)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, ExecutionException {
 
     final List<String> filteredTests = FCollection
         .map(tests, classInfoToName());

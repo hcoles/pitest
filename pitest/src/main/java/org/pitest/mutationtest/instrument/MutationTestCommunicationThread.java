@@ -34,7 +34,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
   private final static Logger LOG = Log.getLogger();
 
-  static class SendData implements SideEffect1<SafeDataOutputStream> {
+  private static class SendData implements SideEffect1<SafeDataOutputStream> {
     private final SlaveArguments arguments;
 
     SendData(final SlaveArguments arguments) {
@@ -47,7 +47,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
     }
   }
 
-  static class Receive implements ReceiveStrategy {
+  private static class Receive implements ReceiveStrategy {
 
     private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 

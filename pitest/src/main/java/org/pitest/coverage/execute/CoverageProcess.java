@@ -3,6 +3,7 @@ package org.pitest.coverage.execute;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.CoverageCommunicationThread;
@@ -23,15 +24,14 @@ public class CoverageProcess {
         handler);
   }
 
-  public void start() throws IOException {
+  public void start() throws IOException, InterruptedException {
     this.crt.start();
     this.process.start();
   }
 
-  public int waitToDie() throws InterruptedException {
-    final int exitCode = this.process.waitToDie();
+  public void waitToDie() throws InterruptedException, ExecutionException {
+    this.process.waitToDie();
     this.crt.waitToFinish();
-    return exitCode;
   }
 
 }

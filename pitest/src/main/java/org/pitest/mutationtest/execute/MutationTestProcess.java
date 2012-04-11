@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -27,7 +28,7 @@ public class MutationTestProcess {
 
   }
 
-  public void start() throws IOException {
+  public void start() throws IOException, InterruptedException {
     this.thread.start();
     this.process.start();
   }
@@ -44,10 +45,10 @@ public class MutationTestProcess {
 
   }
 
-  public ExitCode waitToDie() throws InterruptedException {
-    this.thread.waitToFinish();
+  public ExitCode waitToDie() throws InterruptedException, ExecutionException {
+    ExitCode exitCode = this.thread.waitToFinish();
     this.process.destroy();
-    return this.thread.getExitCode();
+    return exitCode;
   }
 
 }

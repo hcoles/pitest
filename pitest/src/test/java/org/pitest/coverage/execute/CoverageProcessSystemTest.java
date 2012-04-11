@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 import org.pitest.coverage.ClassStatistics;
@@ -27,7 +28,7 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
 
-public class CoverageProcessTest {
+public class CoverageProcessSystemTest {
 
   public static class Testee implements Runnable {
     public void foo() {
@@ -71,7 +72,7 @@ public class CoverageProcessTest {
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, ExecutionException {
 
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
 
@@ -94,7 +95,7 @@ public class CoverageProcessTest {
 
   @Test
   public void shouldCalculateCoverageOfClassesRunInDifferentClassLoader()
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestInDifferentClassLoader.class);
     assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
@@ -137,7 +138,7 @@ public class CoverageProcessTest {
   }
 
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, ExecutionException {
 
     final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
         new JUnitCompatibleConfiguration(), true, -1);

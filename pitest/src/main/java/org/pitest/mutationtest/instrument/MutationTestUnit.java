@@ -20,6 +20,7 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
@@ -122,7 +123,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   private void runTestInSeperateProcessForMutationRange(
       final MutationStatusMap mutations, final Collection<ClassName> tests)
-      throws IOException {
+      throws IOException, InterruptedException {
 
     Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
@@ -164,6 +165,9 @@ public class MutationTestUnit extends AbstractTestUnit {
       LOG.fine("Exit code was - " + exitCode);
     } catch (final InterruptedException e1) {
       // swallow
+    } catch (ExecutionException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return exitCode;
   }
