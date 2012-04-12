@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -50,7 +48,7 @@ public class MojoToReportOptionsConverter {
   @SuppressWarnings("unchecked")
   public ReportOptions convert() {
 
-    final Set<String> classPath = new HashSet<String>();
+    final List<String> classPath = new ArrayList<String>();
 
     try {
       classPath.addAll(this.mojo.getProject().getTestClasspathElements());
@@ -70,7 +68,7 @@ public class MojoToReportOptionsConverter {
   }
 
   @SuppressWarnings("unchecked")
-  private ReportOptions parseReportOptions(final Set<String> classPath) {
+  private ReportOptions parseReportOptions(final List<String> classPath) {
     final ReportOptions data = new ReportOptions();
 
     if (this.mojo.getProject().getBuild() != null) {
@@ -134,7 +132,7 @@ public class MojoToReportOptionsConverter {
 
   }
 
-  private void addOwnDependenciesToClassPath(final Set<String> classPath) {
+  private void addOwnDependenciesToClassPath(final List<String> classPath) {
     for (final Artifact dependency : filteredDependencies()) {
       classPath.add(dependency.getFile().getAbsolutePath());
     }

@@ -18,7 +18,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
@@ -41,15 +43,18 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   @Mock
   protected RunPitStrategy executionStrategy;
+  
+  protected List<String> classPath;
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.initMocks(this);
+    classPath = new ArrayList<String>(
+      FCollection.map(ClassPath.getClassPathElementsAsFiles(),
+          fileToString()));
     when(this.project.getCompileClasspathElements())
-        .thenReturn(
-            FCollection.map(ClassPath.getClassPathElementsAsFiles(),
-                fileToString()));
+        .thenReturn(classPath);
   }
 
   private F<File, String> fileToString() {

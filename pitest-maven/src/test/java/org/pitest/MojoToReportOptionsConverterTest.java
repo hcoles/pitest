@@ -223,6 +223,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }
+  
+  public void testMaintainsOrderOfClassPath() {
+    ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    assertEquals(this.classPath,actual.getClassPathElements());    
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {
