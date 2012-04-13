@@ -20,29 +20,27 @@ public class CoveragePipe implements CoverageReceiver {
   public synchronized void addCodelineInvoke(final int classId,
       final int lineNumber) {
 
-    if (!this.cache.checkHit(classId, lineNumber)) {
-      this.dos.writeByte(Id.LINE);
-      this.dos.writeInt(classId);
-      this.dos.writeInt(lineNumber);
-    }
+    this.cache.add(classId, lineNumber);
 
   }
 
-  public synchronized void recordTest(final Description description) {
-
+  public synchronized void newTest() {
     this.cache.reset();
-    this.dos.writeByte(Id.TEST_CHANGE);
-    this.dos.write(description);
-
   }
 
-  public synchronized void recordTestOutcome(final boolean wasGreen,
-      final long executionTime) {
+  public void recordTestOutcome(Description description, boolean wasGreen,
+      long executionTime) {
+
 
     this.dos.writeByte(Id.OUTCOME);
+    this.dos.write(description);
+    this.dos.writeLong(cache.size());
+    for ( Long each : cache.values() ) {
+      this.dos.writeLong(each);
+    }
     this.dos.writeBoolean(wasGreen);
     this.dos.writeLong(executionTime);
-
+ 
   }
 
   public synchronized void end() {
@@ -58,4 +56,6 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos.writeString(className);
 
   }
+
+
 }

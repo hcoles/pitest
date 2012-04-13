@@ -9,6 +9,7 @@ import org.pitest.PitError;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.execute.HitCache;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
@@ -55,8 +56,7 @@ public class CoverageCommunicationThread extends CommunicationThread {
 
   static class Receive implements ReceiveStrategy {
 
-    private Description                       d  = null;
-    final CoverageStatistics                  cs = new CoverageStatistics();
+    private final CoverageStatistics          cs = new CoverageStatistics();
     private final SideEffect1<CoverageResult> handler;
 
     Receive(final SideEffect1<CoverageResult> handler) {
@@ -76,32 +76,32 @@ public class CoverageCommunicationThread extends CommunicationThread {
         }
 
         break;
-      case Id.LINE:
-
-        final int classId = is.readInt();
-        final int lineId = is.readInt();
-
-        this.cs.visitLine(classId, lineId);
-
-        break;
       case Id.OUTCOME:
-
-        final boolean isGreen = is.readBoolean();
-        final long executionTime = is.readLong();
-        final CoverageResult cr = new CoverageResult(this.d, executionTime,
-            isGreen, this.cs.getClassStatistics());
-
-        this.handler.apply(cr);
-
-        this.cs.clearCoverageStats();
-
-        break;
-      case Id.TEST_CHANGE:
-        this.d = is.read(Description.class);
+        handleTestEnd(is);
         break;
       case Id.DONE:
 
       }
+    }
+
+    private void handleTestEnd(final SafeDataInputStream is) {
+      final Description d = is.read(Description.class);
+      final long size = is.readLong();
+      for (int i = 0; i != size; i++) {
+        long value = is.readLong();
+        int classId = HitCache.decodeClassId(value);
+        int lineNumber = HitCache.decodeLineId(value);
+        this.cs.visitLine(classId, lineNumber);
+      }
+      
+      final boolean isGreen = is.readBoolean();
+      final long executionTime = is.readLong();
+      final CoverageResult cr = new CoverageResult(d, executionTime,
+          isGreen, this.cs.getClassStatistics());
+
+      this.handler.apply(cr);
+
+      this.cs.clearCoverageStats();
     }
 
   }

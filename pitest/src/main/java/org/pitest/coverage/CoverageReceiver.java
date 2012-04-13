@@ -5,8 +5,8 @@ import org.pitest.boot.InvokeReceiver;
 
 public interface CoverageReceiver extends InvokeReceiver {
 
-  public abstract void recordTest(Description description);
+  public abstract void newTest();
 
-  public abstract void recordTestOutcome(boolean wasGreen, long executionTime);
+  public abstract void recordTestOutcome(Description description, boolean wasGreen, long executionTime);
 
 }

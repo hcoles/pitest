@@ -37,14 +37,14 @@ public class CoverageDecorator extends TestUnitDecorator {
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
     LOG.fine("Gathering coverage for test " + child().getDescription());
-    this.invokeQueue.recordTest(child().getDescription());
+    this.invokeQueue.newTest();
 
     final long t0 = System.currentTimeMillis();
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
         rc);
     this.child().execute(loader, wrappedCollector);
     final long executionTime = System.currentTimeMillis() - t0;
-    this.invokeQueue.recordTestOutcome(!wrappedCollector.shouldExit(),
+    this.invokeQueue.recordTestOutcome(child().getDescription(),!wrappedCollector.shouldExit(),
         executionTime);
 
   }

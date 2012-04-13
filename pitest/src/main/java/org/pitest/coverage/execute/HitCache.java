@@ -14,24 +14,37 @@
  */
 package org.pitest.coverage.execute;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
-class HitCache {
+public class HitCache {
 
-  private Set<Long> cache = new TreeSet<Long>();
+  private Set<Long> cache = new HashSet<Long>();
 
-  public boolean checkHit(final int classId, final int lineNumber) {
+  public void add(final int classId, final int lineNumber) {
     final long id = ((long) classId << 32) | lineNumber;
-    if (this.cache.contains(id)) {
-      return true;
-    } else {
-      this.cache.add(id);
-      return false;
-    }
+    this.cache.add(id);
   }
 
   public void reset() {
-    this.cache = new TreeSet<Long>();
+    this.cache = new HashSet<Long>();
   }
+  
+  public Collection<Long> values() {
+    return this.cache;
+  }
+  
+  public long size() {
+    return this.cache.size();
+  }
+  
+  public static int decodeClassId(long value) {
+    return (int) (value >> 32);
+  }
+
+  public static int decodeLineId(long value) {
+    return (int) (value & 0xFFFFFFFF);
+  }
+
 }

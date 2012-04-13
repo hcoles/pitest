@@ -14,11 +14,12 @@
  */
 package org.pitest.coverage.execute;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class HitCacheTest {
 
@@ -29,45 +30,21 @@ public class HitCacheTest {
     this.testee = new HitCache();
   }
 
-  @Test
-  public void shouldDetectThatLineHasBeenVisited() {
-    assertFalse(this.testee.checkHit(0, 1));
-    assertTrue(this.testee.checkHit(0, 1));
-  }
-
-  @Test
-  public void shouldDistinguishBetweenDifferentLines() {
-    final int clazz = Integer.MAX_VALUE;
-    for (int line = Integer.MAX_VALUE - 100000; line != Integer.MAX_VALUE; line++) {
-      assertFalse("should not have previous visit for line " + line,
-          this.testee.checkHit(clazz, line));
-      assertTrue("should have visit for line " + line,
-          this.testee.checkHit(clazz, line));
-    }
-  }
-
-  @Test
-  public void shouldDistinguishBetweenDifferentClasses() {
-    final int line = Integer.MAX_VALUE;
-    for (int clazz = Integer.MAX_VALUE - 1000000; clazz != Integer.MAX_VALUE; clazz++) {
-      assertFalse("should not have previous visit for class " + clazz,
-          this.testee.checkHit(clazz, line));
-      assertTrue("should have visit for class " + clazz,
-          this.testee.checkHit(clazz, line));
-    }
-  }
 
   @Test
   public void resetShouldCleanCache() {
-    this.testee.checkHit(0, 1);
+    this.testee.add(0, 1);
     this.testee.reset();
-    assertFalse(this.testee.checkHit(0, 1));
+    assertTrue(this.testee.values().isEmpty());
   }
 
   @Test
   public void shouldSupportMaxIntClassesAndMaxIntLinesPerClass() {
-    assertFalse(this.testee.checkHit(Integer.MAX_VALUE, Integer.MAX_VALUE));
-    assertTrue(this.testee.checkHit(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    testee.add(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    long encoded = testee.values().iterator().next();
+    assertEquals(Integer.MAX_VALUE, HitCache.decodeClassId(encoded));
+    assertEquals(Integer.MAX_VALUE, HitCache.decodeLineId(encoded));
   }
+
 
 }
