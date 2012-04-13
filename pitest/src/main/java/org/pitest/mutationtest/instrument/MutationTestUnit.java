@@ -166,7 +166,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     } catch (final InterruptedException e1) {
       // swallow
     } catch (ExecutionException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return exitCode;

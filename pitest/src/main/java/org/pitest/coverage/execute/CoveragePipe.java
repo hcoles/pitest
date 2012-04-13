@@ -28,7 +28,7 @@ public class CoveragePipe implements CoverageReceiver {
     this.cache.reset();
   }
 
-  public void recordTestOutcome(Description description, boolean wasGreen,
+  public synchronized void recordTestOutcome(Description description, boolean wasGreen,
       long executionTime) {
 
 
