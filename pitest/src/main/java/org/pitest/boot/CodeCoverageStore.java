@@ -17,25 +17,27 @@
 
 package org.pitest.boot;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author ivanalx
  */
 public final class CodeCoverageStore {
-  public static final String    CODE_COVERAGE_CALCULATOR_CLASS_NAME;
-  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME;
-  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC;
 
-  static {
-
-    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";// addCalc.getName();
-    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(II)V";
-    CODE_COVERAGE_CALCULATOR_CLASS_NAME = CodeCoverageStore.class.getName()
-        .replace('.', '/');
-
-  }
+  public static final String    CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
+                                                                              .getName()
+                                                                              .replace(
+                                                                                  '.',
+                                                                                  '/');
+  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
+  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
 
   private static InvokeReceiver invokeQueue;
-  private static int            classId = 0;
+  private static int            classId                                   = 0;
+
+  private static Set<Long>      lineHits                                  = new HashSet<Long>();
 
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
@@ -44,8 +46,16 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public static void visitLine(final int classId, final int codeLine) { // NO_UCD
-    invokeQueue.addCodelineInvoke(classId, codeLine);
+  public synchronized static void visitLine(final long lineId) { // NO_UCD
+    lineHits.add(lineId);
+  }
+
+  public synchronized static void reset() {
+    lineHits = new HashSet<Long>();
+  }
+
+  public static Collection<Long> getHits() {
+    return lineHits;
   }
 
   public static int registerClass(final String className) {
@@ -56,6 +66,18 @@ public final class CodeCoverageStore {
 
   private static synchronized int nextId() {
     return classId++;
+  }
+
+  public static int decodeClassId(final long value) {
+    return (int) (value >> 32);
+  }
+
+  public static int decodeLineId(final long value) {
+    return (int) (value & 0xFFFFFFFF);
+  }
+
+  public static long encode(final int classId, final int line) {
+    return ((long) classId << 32) | line;
   }
 
 }

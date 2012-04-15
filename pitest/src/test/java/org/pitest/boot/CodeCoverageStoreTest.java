@@ -14,6 +14,7 @@
  */
 package org.pitest.boot;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.verify;
 
@@ -33,11 +34,6 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.init(this.receiver);
   }
 
-  @Test
-  public void shouldPassLineVisitsToReceiver() {
-    CodeCoverageStore.visitLine(1, 42);
-    verify(this.receiver).addCodelineInvoke(1, 42);
-  }
 
   @Test
   public void shouldRegisterNewClassesWithReceiver() {
@@ -51,5 +47,19 @@ public class CodeCoverageStoreTest {
     final int id2 = CodeCoverageStore.registerClass("Bar");
     assertFalse(id == id2);
   }
+  
+  @Test
+  public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMaximum() {
+    long value = CodeCoverageStore.encode(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeClassId(value) );
+    assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeLineId(value) );
+  }
 
+  @Test
+  public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMinimum() {
+    long value = CodeCoverageStore.encode(Integer.MIN_VALUE, 0);
+    assertEquals(Integer.MIN_VALUE, CodeCoverageStore.decodeClassId(value) );
+    assertEquals(0, CodeCoverageStore.decodeLineId(value) );
+  }
+  
 }

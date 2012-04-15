@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.PitError;
+import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.execute.HitCache;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
@@ -89,8 +89,8 @@ public class CoverageCommunicationThread extends CommunicationThread {
       final long size = is.readLong();
       for (int i = 0; i != size; i++) {
         long value = is.readLong();
-        int classId = HitCache.decodeClassId(value);
-        int lineNumber = HitCache.decodeLineId(value);
+        int classId = CodeCoverageStore.decodeClassId(value);
+        int lineNumber = CodeCoverageStore.decodeLineId(value);
         this.cs.visitLine(classId, lineNumber);
       }
       

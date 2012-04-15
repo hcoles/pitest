@@ -1,8 +1,10 @@
 package org.pitest.coverage.execute;
 
 import java.io.DataOutputStream;
+import java.util.Collection;
 
 import org.pitest.Description;
+import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.ExitCode;
@@ -11,31 +13,25 @@ import org.pitest.util.SafeDataOutputStream;
 public class CoveragePipe implements CoverageReceiver {
 
   private final SafeDataOutputStream dos;
-  private final HitCache             cache = new HitCache();
+
 
   public CoveragePipe(final DataOutputStream dos) {
     this.dos = new SafeDataOutputStream(dos);
   }
 
-  public synchronized void addCodelineInvoke(final int classId,
-      final int lineNumber) {
-
-    this.cache.add(classId, lineNumber);
-
-  }
 
   public synchronized void newTest() {
-    this.cache.reset();
+    CodeCoverageStore.reset();
   }
 
   public synchronized void recordTestOutcome(Description description, boolean wasGreen,
       long executionTime) {
-
+    Collection<Long> hits = CodeCoverageStore.getHits();
 
     this.dos.writeByte(Id.OUTCOME);
     this.dos.write(description);
-    this.dos.writeLong(cache.size());
-    for ( Long each : cache.values() ) {
+    this.dos.writeLong(hits.size());
+    for ( Long each : hits ) {
       this.dos.writeLong(each);
     }
     this.dos.writeBoolean(wasGreen);
