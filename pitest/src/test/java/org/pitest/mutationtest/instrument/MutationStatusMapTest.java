@@ -83,5 +83,24 @@ public class MutationStatusMapTest {
 
     assertThat(testee.createMutationResults(), hasItems(resultOne, resultTwo));
   }
+  
+  @Test
+  public void shouldSetStatusToUncoveredWhenMutationHasNoTests() {
+    testee.setStatusForMutations(Arrays.asList(details,detailsTwo),
+        DetectionStatus.NOT_STARTED);
+    testee.markUncoveredMutations();
+    assertEquals(Collections.emptyList(),testee.getUnrunMutations());
+    
+    MutationStatusTestPair statusPairOne= new MutationStatusTestPair(42,DetectionStatus.NO_COVERAGE,"foo");
+    MutationResult resultOne = new MutationResult(details, statusPairOne);
+    testee.setStatusForMutation(details, statusPairOne );
+    
+    MutationStatusTestPair statusPairTwo = new MutationStatusTestPair(42,DetectionStatus.NO_COVERAGE,"bar");
+    MutationResult resultTwo = new MutationResult(detailsTwo, statusPairTwo);
+    testee.setStatusForMutation(detailsTwo, statusPairTwo );
+
+
+    assertThat(testee.createMutationResults(), hasItems(resultOne, resultTwo));
+  }
 
 }

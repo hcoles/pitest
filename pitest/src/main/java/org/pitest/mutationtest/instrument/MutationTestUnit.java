@@ -106,19 +106,15 @@ public class MutationTestUnit extends AbstractTestUnit {
       throws IOException, InterruptedException {
 
     final MutationStatusMap mutations = new MutationStatusMap();
-    if (hasTestCoverage(this.testClasses)) {
-      mutations.setStatusForMutations(this.availableMutations,
-          DetectionStatus.NOT_STARTED);
-      runTestsInSeperateProcess(this.testClasses, mutations);
-    } else {
-      mutations.setStatusForMutations(this.availableMutations,
-          DetectionStatus.NO_COVERAGE);
-    }
-    reportResults(mutations, this.availableMutations, rc);
-  }
 
-  private boolean hasTestCoverage(final Collection<ClassName> tests) {
-    return !tests.isEmpty();
+    mutations.setStatusForMutations(this.availableMutations,
+        DetectionStatus.NOT_STARTED);
+
+    mutations.markUncoveredMutations();
+
+    runTestsInSeperateProcess(this.testClasses, mutations);
+
+    reportResults(mutations, this.availableMutations, rc);
   }
 
   private void runTestInSeperateProcessForMutationRange(
@@ -146,12 +142,10 @@ public class MutationTestUnit extends AbstractTestUnit {
         tests, this.config, this.timeoutStrategy, Log.isVerbose(),
         this.pitConfig);
 
-    
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
-    .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-    .andStdout(captureStdOutIfVerbose())
-    .andStderr(printWith("stderr "));
-    
+        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andStdout(captureStdOutIfVerbose()).andStderr(printWith("stderr "));
+
     SocketFinder sf = new SocketFinder();
     final MutationTestProcess worker = new MutationTestProcess(
         sf.getNextAvailableServerSocket(), args, fileArgs);
