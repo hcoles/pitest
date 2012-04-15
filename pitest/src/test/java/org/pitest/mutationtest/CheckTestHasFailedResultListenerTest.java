@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.pitest.Description;
 import org.pitest.DescriptionMother;
 import org.pitest.TestResult;
-import org.pitest.TimeoutException;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.results.DetectionStatus;
 
@@ -55,12 +54,6 @@ public class CheckTestHasFailedResultListenerTest {
     assertEquals(DetectionStatus.KILLED, this.testee.status());
   }
 
-  @Test
-  public void shouldReturnDetectionStatusOfTimedOutWhenReceivesATimeoutException() {
-    this.testee.onTestError(new TestResult(this.description,
-        new TimeoutException("foo")));
-    assertEquals(DetectionStatus.TIMED_OUT, this.testee.status());
-  }
 
   @Test
   public void shouldRecordDescriptionOfLastFailingTest() {
@@ -74,12 +67,6 @@ public class CheckTestHasFailedResultListenerTest {
     assertEquals(Option.some(this.description), this.testee.lastFailingTest());
   }
 
-  @Test
-  public void shouldRecordDescriptionOfLastTimedOutTest() {
-    this.testee.onTestError(new TestResult(this.description,
-        new TimeoutException("foo")));
-    assertEquals(Option.some(this.description), this.testee.lastFailingTest());
-  }
 
   @Test
   public void shouldRecordNumberOfTestsRun() {

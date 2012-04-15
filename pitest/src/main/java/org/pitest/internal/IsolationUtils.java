@@ -93,7 +93,7 @@ public abstract class IsolationUtils {
     return foreginXstream;
   }
 
-  public static boolean fromDifferentLoader(final Class<?> clazz,
+  private static boolean fromDifferentLoader(final Class<?> clazz,
       final ClassLoader loader) {
     try {
       return clazz != loader.loadClass(clazz.getName());
@@ -200,18 +200,6 @@ public abstract class IsolationUtils {
     return cloneForLoader(object, getContextClassLoader());
   }
 
-  public static boolean loaderAgnosticInstanceOf(final Object o,
-      final Class<?> clazz) {
-    final boolean instanceOf = clazz.isAssignableFrom(o.getClass());
-    if (!instanceOf) {
-      final Class<?> c = IsolationUtils.convertForClassLoader(
-          IsolationUtils.getContextClassLoader(), o.getClass());
-      return clazz.isAssignableFrom(c);
-    } else {
-      return instanceOf;
-    }
-
-  }
 
   public static ClassLoader bootClassLoader() {
     return Object.class.getClassLoader();

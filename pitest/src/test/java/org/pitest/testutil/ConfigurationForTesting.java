@@ -17,7 +17,6 @@ import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
-import org.pitest.extension.common.NoTestFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.functional.Option;
@@ -75,16 +74,8 @@ public class ConfigurationForTesting implements Configuration {
             afterMethodFinders, beforeClassFinders, afterClassFinders)));
   }
 
-  public boolean allowConfigurationChange() {
-    return true;
-  }
-
   public TestSuiteFinder testSuiteFinder() {
     return new NoTestSuiteFinder();
-  }
-
-  public TestUnitFinder mutationTestFinder() {
-    return new NoTestFinder();
   }
 
   public TestClassIdentifier testClassIdentifier() {

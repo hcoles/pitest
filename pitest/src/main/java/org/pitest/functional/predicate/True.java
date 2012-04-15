@@ -20,7 +20,7 @@ package org.pitest.functional.predicate;
  */
 public class True<A> implements Predicate<A> {
 
-  public final static True<?> INSTANCE = new True<Object>();
+  private final static True<?> INSTANCE = new True<Object>();
 
   @SuppressWarnings("unchecked")
   public static <A> Predicate<A> all() {

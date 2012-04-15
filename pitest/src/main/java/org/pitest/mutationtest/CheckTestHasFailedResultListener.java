@@ -16,7 +16,6 @@ package org.pitest.mutationtest;
 
 import org.pitest.Description;
 import org.pitest.TestResult;
-import org.pitest.TimeoutException;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -25,28 +24,20 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   private static final long   serialVersionUID = 1L;
 
-  private boolean             timedOut         = false;
   private Option<Description> lastFailingTest  = Option.none();
   private int                 testsRun         = 0;
 
   public void onTestError(final TestResult tr) {
     recordFailingTest(tr);
-    checkForTimeOut(tr);
   }
 
   private void recordFailingTest(final TestResult tr) {
     this.lastFailingTest = Option.some(tr.getDescription());
   }
 
-  private void checkForTimeOut(final TestResult tr) {
-    if (tr.getThrowable() instanceof TimeoutException) {
-      this.timedOut = true;
-    }
-  }
 
   public void onTestFailure(final TestResult tr) {
     recordFailingTest(tr);
-    checkForTimeOut(tr);
   }
 
   public void onTestSkipped(final TestResult tr) {
@@ -59,14 +50,11 @@ public class CheckTestHasFailedResultListener implements TestListener {
   }
 
   public void onTestSuccess(final TestResult tr) {
-    // TODO Auto-generated method stub
-
+  
   }
 
   public DetectionStatus status() {
-    if (this.timedOut) {
-      return DetectionStatus.TIMED_OUT;
-    } else if (this.lastFailingTest.hasSome()) {
+    if (this.lastFailingTest.hasSome()) {
       return DetectionStatus.KILLED;
     } else {
       return DetectionStatus.SURVIVED;

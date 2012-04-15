@@ -113,7 +113,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     return b;
   }
 
-  public static byte[] streamToByteArray(final InputStream in)
+  private static byte[] streamToByteArray(final InputStream in)
       throws IOException {
     final byte[] array = new byte[in.available()];
     final ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
@@ -157,7 +157,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
   }
 
   /** FIXME move somewhere common */
-  static String[] getClassPathElements() {
+  private static String[] getClassPathElements() {
     final String classPath = System.getProperty("java.class.path");
     final String separator = File.pathSeparator;
     if (classPath != null) {
