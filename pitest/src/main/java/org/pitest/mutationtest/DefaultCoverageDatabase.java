@@ -49,8 +49,8 @@ import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
-import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
+import org.pitest.util.SocketFinder;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
   private final static Logger                              LOG           = Log
@@ -152,7 +152,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
       e.printStackTrace();
     } catch (final InterruptedException e) {
       e.printStackTrace();
-    } catch (ExecutionException e) {
+    } catch (final ExecutionException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -174,8 +174,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
         .andStderr(printWith("stderr "))
-        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions, socket,
-        filteredTests, handler);
+        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
+        socket, filteredTests, handler);
 
     process.start();
     process.waitToDie();

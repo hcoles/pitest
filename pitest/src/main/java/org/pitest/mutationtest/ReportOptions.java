@@ -84,7 +84,6 @@ public class ReportOptions {
     return this.verbose;
   }
 
-
   /**
    * @return the reportDir
    */
@@ -204,7 +203,6 @@ public class ReportOptions {
     this.targetTests = targetTestsPredicates;
   }
 
-
   public boolean isMutateStaticInitializers() {
     return this.mutateStaticInitializers;
   }
@@ -243,8 +241,7 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [isValid=" + ", classesInScope="
-        +  this.targetClasses
+    return "ReportOptions [isValid=" + ", classesInScope=" + this.targetClasses
         + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
         + ", classPathElements=" + this.classPathElements + ", mutators="
         + this.mutators + ", dependencyAnalysisMaxDistance="
@@ -259,7 +256,8 @@ public class ReportOptions {
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-      return this.getTargetClassesFilter(); // if no tests specified assume the target classes filter covers both
+      return this.getTargetClassesFilter(); // if no tests specified assume the
+                                            // target classes filter covers both
     } else {
       return Prelude.and(or(this.targetTests), not(isBlackListed()));
     }
@@ -326,7 +324,6 @@ public class ReportOptions {
     return this.excludedClasses;
   }
 
-
   public boolean shouldFailWhenNoMutations() {
     return this.failWhenNoMutations;
   }
@@ -356,8 +353,9 @@ public class ReportOptions {
 
   @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions() {
-    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),not(commonClasses())), this.config,
-        this.isVerbose(), this.getDependencyAnalysisMaxDistance());
+    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
+        not(commonClasses())), this.config, this.isVerbose(),
+        this.getDependencyAnalysisMaxDistance());
   }
 
   private static F<String, Boolean> commonClasses() {
@@ -378,11 +376,11 @@ public class ReportOptions {
   }
 
   public ClassFilter createClassesFilter() {
-    return new ClassFilter(
-        this.getTargetTestsFilter(), this.getTargetClassesFilter());
+    return new ClassFilter(this.getTargetTestsFilter(),
+        this.getTargetClassesFilter());
   }
 
-  public PathFilter createPathFilter() {
+  private PathFilter createPathFilter() {
     return new PathFilter(createCodePathFilter(),
         not(new DefaultDependencyPathPredicate()));
   }

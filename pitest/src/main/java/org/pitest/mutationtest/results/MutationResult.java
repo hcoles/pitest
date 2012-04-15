@@ -56,40 +56,46 @@ public class MutationResult {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((details == null) ? 0 : details.hashCode());
-    result = prime * result + ((status == null) ? 0 : status.hashCode());
+    result = prime * result
+        + ((this.details == null) ? 0 : this.details.hashCode());
+    result = prime * result
+        + ((this.status == null) ? 0 : this.status.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    MutationResult other = (MutationResult) obj;
-    if (details == null) {
-      if (other.details != null)
+    }
+    final MutationResult other = (MutationResult) obj;
+    if (this.details == null) {
+      if (other.details != null) {
         return false;
-    } else if (!details.equals(other.details))
+      }
+    } else if (!this.details.equals(other.details)) {
       return false;
-    if (status == null) {
-      if (other.status != null)
+    }
+    if (this.status == null) {
+      if (other.status != null) {
         return false;
-    } else if (!status.equals(other.status))
+      }
+    } else if (!this.status.equals(other.status)) {
       return false;
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "MutationResult [details=" + details + ", status=" + status + "]";
+    return "MutationResult [details=" + this.details + ", status="
+        + this.status + "]";
   }
-  
-  
-  
-  
 
 }

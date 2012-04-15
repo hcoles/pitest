@@ -49,7 +49,7 @@ public class ConfigurationFactory {
     if (classRepository.fetchClass("org.testng.TestNG").hasSome()) {
       configs.add(new TestNGConfiguration(this.config));
     }
-    
+
     if (configs.isEmpty()) {
       throw new PitHelpError(Help.NO_TEST_LIBRARY);
     }

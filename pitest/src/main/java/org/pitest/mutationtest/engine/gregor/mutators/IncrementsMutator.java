@@ -42,7 +42,7 @@ public enum IncrementsMutator implements MethodMutatorFactory {
 class IncrementsMethodVisitor extends MethodAdapter {
 
   private final MethodMutatorFactory factory;
-  private final Context context;
+  private final Context              context;
 
   public IncrementsMethodVisitor(final MethodMutatorFactory factory,
       final Context context, final MethodVisitor delegateMethodVisitor) {

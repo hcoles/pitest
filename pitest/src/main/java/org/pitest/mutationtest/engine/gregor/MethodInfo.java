@@ -37,7 +37,7 @@ public class MethodInfo {
   }
 
   public String getDescription() {
-    return owningClass.getName() + "::" + getName();
+    return this.owningClass.getName() + "::" + getName();
   }
 
   public String getName() {
@@ -91,7 +91,7 @@ public class MethodInfo {
   }
 
   public boolean isGeneratedEnumMethod() {
-    return owningClass.isEnum()
+    return this.owningClass.isEnum()
         && (isValuesMethod() || isValueOfMethod() || isStaticInitializer());
   }
 
@@ -101,24 +101,28 @@ public class MethodInfo {
 
   private boolean isValueOfMethod() {
     return this.getName().equals("valueOf")
-        && methodDescriptor.startsWith("(Ljava/lang/String;)") && isStatic();
+        && this.methodDescriptor.startsWith("(Ljava/lang/String;)")
+        && isStatic();
   }
 
-  public MethodInfo withMethodDescriptor(String newDescriptor) {
-    return new MethodInfo(owningClass, access, methodName, newDescriptor);
+  public MethodInfo withMethodDescriptor(final String newDescriptor) {
+    return new MethodInfo(this.owningClass, this.access, this.methodName,
+        newDescriptor);
   }
 
-  public MethodInfo withAccess(int accessModifier) {
-    return new MethodInfo(owningClass, accessModifier, methodName,
-        methodDescriptor);
+  public MethodInfo withAccess(final int accessModifier) {
+    return new MethodInfo(this.owningClass, accessModifier, this.methodName,
+        this.methodDescriptor);
   }
 
-  public MethodInfo withMethodName(String newMethodName) {
-    return new MethodInfo(owningClass, access, newMethodName, methodDescriptor);
+  public MethodInfo withMethodName(final String newMethodName) {
+    return new MethodInfo(this.owningClass, this.access, newMethodName,
+        this.methodDescriptor);
   }
 
-  public MethodInfo withOwner(ClassInfo newOwnerClass) {
-    return new MethodInfo(newOwnerClass, access, methodName, methodDescriptor);
+  public MethodInfo withOwner(final ClassInfo newOwnerClass) {
+    return new MethodInfo(newOwnerClass, this.access, this.methodName,
+        this.methodDescriptor);
   }
 
 }

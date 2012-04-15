@@ -200,7 +200,6 @@ public abstract class IsolationUtils {
     return cloneForLoader(object, getContextClassLoader());
   }
 
-
   public static ClassLoader bootClassLoader() {
     return Object.class.getClassLoader();
   }

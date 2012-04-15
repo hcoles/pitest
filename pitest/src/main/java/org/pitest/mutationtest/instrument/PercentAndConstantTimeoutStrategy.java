@@ -20,8 +20,8 @@ public class PercentAndConstantTimeoutStrategy implements TimeoutLengthStrategy 
   public final static float DEFAULT_FACTOR   = 1.25f;
   public final static long  DEFAULT_CONSTANT = 4000;
 
-  private final float percent;
-  private final long  constant;
+  private final float       percent;
+  private final long        constant;
 
   public PercentAndConstantTimeoutStrategy(final float percent,
       final long constant) {

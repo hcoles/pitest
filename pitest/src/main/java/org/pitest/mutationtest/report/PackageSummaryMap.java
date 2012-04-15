@@ -5,29 +5,26 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class PackageSummaryMap {
-  
+
   private final Map<String, PackageSummaryData> packageSummaryData = new TreeMap<String, PackageSummaryData>();
-  
-  
-  private PackageSummaryData getPackageSummaryData(String packageName) {
+
+  private PackageSummaryData getPackageSummaryData(final String packageName) {
     PackageSummaryData psData;
-    if (packageSummaryData.containsKey(packageName)) {
-      psData = packageSummaryData.get(packageName);
+    if (this.packageSummaryData.containsKey(packageName)) {
+      psData = this.packageSummaryData.get(packageName);
     } else {
       psData = new PackageSummaryData(packageName);
-      packageSummaryData.put(packageName, psData);
+      this.packageSummaryData.put(packageName, psData);
     }
     return psData;
   }
 
-
-  public void add(String packageName, MutationTestSummaryData data) {
+  public void add(final String packageName, final MutationTestSummaryData data) {
     getPackageSummaryData(packageName).addSummaryData(data);
   }
 
-
   public Collection<PackageSummaryData> values() {
-    return packageSummaryData.values();
+    return this.packageSummaryData.values();
   }
 
 }

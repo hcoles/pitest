@@ -37,12 +37,13 @@ public class CommunicationThread {
   }
 
   public void start() throws IOException, InterruptedException {
-    future = createFuture();
+    this.future = createFuture();
   }
 
   private FutureTask<ExitCode> createFuture() {
-    final FutureTask<ExitCode> future = new FutureTask<ExitCode>(new SocketReadingCallable(
-        socket, sendInitialData, receive));
+    final FutureTask<ExitCode> future = new FutureTask<ExitCode>(
+        new SocketReadingCallable(this.socket, this.sendInitialData,
+            this.receive));
     final Thread thread = new Thread(future);
     thread.setDaemon(true);
     thread.setName("pit communication");

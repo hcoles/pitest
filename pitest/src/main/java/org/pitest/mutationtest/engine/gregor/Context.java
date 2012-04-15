@@ -43,7 +43,7 @@ public class Context {
   private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
   private String                                methodName;
 
-  private Set<String>                           mutationFindingDisabledReasons = new HashSet<String>();
+  private final Set<String>                     mutationFindingDisabledReasons = new HashSet<String>();
 
   private void registerMutation(final MutationDetails details) {
     if (!isMutationFindingDisabled()) {
@@ -52,7 +52,7 @@ public class Context {
   }
 
   private boolean isMutationFindingDisabled() {
-    return !mutationFindingDisabledReasons.isEmpty();
+    return !this.mutationFindingDisabledReasons.isEmpty();
   }
 
   public Option<MutationIdentifier> getTargetMutation() {
@@ -144,11 +144,11 @@ public class Context {
     return getTargetMutation().contains(isEqualTo(newId));
   }
 
-  public void disableMutations(String reason) {
+  public void disableMutations(final String reason) {
     this.mutationFindingDisabledReasons.add(reason);
   }
 
-  public void enableMutatations(String reason) {
+  public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
   }
 

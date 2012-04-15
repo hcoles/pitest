@@ -98,7 +98,7 @@ public class DependencyExtractor {
     return this
         .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
   }
-  
+
   public int getMaxDistance() {
     return this.depth;
   }

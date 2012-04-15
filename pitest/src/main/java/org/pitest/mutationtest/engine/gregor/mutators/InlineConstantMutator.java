@@ -20,8 +20,8 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
+import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -82,9 +82,9 @@ class InlineConstantMethodVisitor extends AbstractInsnMutator {
         "Substituted 1 with 0.0"));
 
   }
-  
-  private final MethodMutatorFactory factory;
-  private final Context context;
+
+  private final MethodMutatorFactory                     factory;
+  private final Context                                  context;
 
   public InlineConstantMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,

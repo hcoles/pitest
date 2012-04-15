@@ -5,8 +5,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
 class LineFilterMethodAdapter extends MethodAdapter {
-  
-  private final static String DISABLE_REASON = "AVOIDED_METHOD";
+
+  private final static String        DISABLE_REASON = "AVOIDED_METHOD";
 
   private final Context              context;
   private final PremutationClassInfo classInfo;

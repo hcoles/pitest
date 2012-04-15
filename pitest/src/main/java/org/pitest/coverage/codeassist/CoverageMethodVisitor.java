@@ -45,7 +45,8 @@ public class CoverageMethodVisitor extends MethodAdapter {
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
-    this.methodVisitor.visitLdcInsn(CodeCoverageStore.encode(classId, line));
+    this.methodVisitor.visitLdcInsn(CodeCoverageStore
+        .encode(this.classId, line));
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME,

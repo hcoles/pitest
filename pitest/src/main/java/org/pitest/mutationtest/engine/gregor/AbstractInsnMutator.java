@@ -23,8 +23,8 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public abstract class AbstractInsnMutator extends MethodAdapter {
 
   private final MethodMutatorFactory factory;
-  private final Context context;
-  private final MethodInfo methodInfo;
+  private final Context              context;
+  private final MethodInfo           methodInfo;
 
   public AbstractInsnMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
@@ -52,10 +52,10 @@ public abstract class AbstractInsnMutator extends MethodAdapter {
 
   private void createMutationForInsnOpcode(final int opcode) {
     final ZeroOperandMutation mutation = getMutations().get(opcode);
-    
+
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, mutation.decribe(opcode, this.methodInfo));
-    
+
     if (this.context.shouldMutate(newId)) {
       mutation.apply(opcode, this.mv);
     } else {

@@ -110,17 +110,19 @@ public class MutationStatusMap {
   }
 
   public void markUncoveredMutations() {
-    setStatusForMutations(FCollection.filter(this.mutationMap.keySet(), hasNoCovereage()), DetectionStatus.NO_COVERAGE);
-    
+    setStatusForMutations(
+        FCollection.filter(this.mutationMap.keySet(), hasNoCovereage()),
+        DetectionStatus.NO_COVERAGE);
+
   }
 
   private F<MutationDetails, Boolean> hasNoCovereage() {
-    return new  F<MutationDetails, Boolean>() {
+    return new F<MutationDetails, Boolean>() {
 
-      public Boolean apply(MutationDetails a) {
+      public Boolean apply(final MutationDetails a) {
         return a.getTestsInOrder().isEmpty();
       }
-      
+
     };
   }
 

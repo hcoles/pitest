@@ -59,14 +59,18 @@ public final class ClassName implements Serializable {
 
   public ClassName withoutPrefixChars(final int prefixLength) {
     final String nameWithoutPackage = this.getNameWithoutPackage().asJavaName();
-    return new ClassName(this.getPackage().asJavaName() + "/"
-        + nameWithoutPackage.substring(prefixLength, nameWithoutPackage.length()));
+    return new ClassName(this.getPackage().asJavaName()
+        + "/"
+        + nameWithoutPackage.substring(prefixLength,
+            nameWithoutPackage.length()));
   }
 
   public ClassName withoutSuffixChars(final int suffixLength) {
     final String nameWithoutPacakge = this.getNameWithoutPackage().asJavaName();
-    return new ClassName(this.getPackage().asJavaName() + "/"
-        + nameWithoutPacakge.substring(0, nameWithoutPacakge.length() - suffixLength));
+    return new ClassName(this.getPackage().asJavaName()
+        + "/"
+        + nameWithoutPacakge.substring(0, nameWithoutPacakge.length()
+            - suffixLength));
   }
 
   public static F<String, ClassName> stringToClassName() {

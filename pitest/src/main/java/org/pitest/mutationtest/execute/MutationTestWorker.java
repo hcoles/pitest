@@ -49,7 +49,7 @@ import org.pitest.util.Unchecked;
 
 public class MutationTestWorker {
 
-  private final static Logger                   LOG = Log.getLogger();
+  private final static Logger                 LOG = Log.getLogger();
   private final Mutater                       mutater;
   private final ClassLoader                   loader;
   private final F2<Class<?>, byte[], Boolean> hotswap;

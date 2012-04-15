@@ -27,7 +27,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 /**
  * The <code>MemberVariableMutator</code> is a mutator that mutates assignments
  * to member variables by removing them.
- *
+ * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class MemberVariableMutator implements MethodMutatorFactory {
@@ -45,7 +45,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
     @Override
     public void visitFieldInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      if (Opcodes.PUTFIELD == opcode && shouldMutate(name)) {
+      if ((Opcodes.PUTFIELD == opcode) && shouldMutate(name)) {
         // removed setting field
 
         // pop the values which PUTFIELD would have used
@@ -61,11 +61,15 @@ public class MemberVariableMutator implements MethodMutatorFactory {
       }
     }
 
-    /* (non-Javadoc)
-     * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int,
+     * java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+    public void visitMethodInsn(final int opcode, final String owner,
+        final String name, final String desc) {
       super.visitMethodInsn(opcode, owner, name, desc);
     }
 
@@ -78,8 +82,8 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   }
 
-  public MethodVisitor create(Context context, MethodInfo methodInfo,
-      MethodVisitor methodVisitor) {
+  public MethodVisitor create(final Context context,
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MemberVariableVisitor(context, methodVisitor);
   }
 

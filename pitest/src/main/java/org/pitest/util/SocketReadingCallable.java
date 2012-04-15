@@ -16,15 +16,16 @@ class SocketReadingCallable implements Callable<ExitCode> {
   private final ReceiveStrategy                   receive;
   private final ServerSocket                      socket;
 
-  public SocketReadingCallable(ServerSocket socket,
-      SideEffect1<SafeDataOutputStream> sendInitialData, ReceiveStrategy receive) {
+  public SocketReadingCallable(final ServerSocket socket,
+      final SideEffect1<SafeDataOutputStream> sendInitialData,
+      final ReceiveStrategy receive) {
     this.socket = socket;
     this.sendInitialData = sendInitialData;
     this.receive = receive;
   }
 
   public ExitCode call() throws Exception {
-    Socket clientSocket = this.socket.accept();
+    final Socket clientSocket = this.socket.accept();
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
     try {
       final BufferedInputStream bif = new BufferedInputStream(
@@ -44,7 +45,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
         if (clientSocket != null) {
           clientSocket.close();
         }
-        socket.close();
+        this.socket.close();
       } catch (final IOException e) {
         throw Unchecked.translateCheckedException(e);
       }

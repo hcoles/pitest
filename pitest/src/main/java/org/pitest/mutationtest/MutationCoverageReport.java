@@ -131,8 +131,6 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-
-
   protected void reportFailureForClassesWithoutTests(
       final Collection<String> classesWithOutATest,
       final TestListener mutationReportListener) {
@@ -159,7 +157,7 @@ public class MutationCoverageReport implements Runnable {
     final long t0 = System.currentTimeMillis();
 
     verifyBuildSuitableForMutationTesting();
-    
+
     this.coverageDatabase.initialise();
 
     final Collection<ClassGrouping> codeClasses = this.coverageDatabase

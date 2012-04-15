@@ -48,8 +48,8 @@ public class GregorMutationEngine implements MutationEngine {
 
   public Mutater createMutator(final MutationConfig config,
       final ClassByteArraySource byteSource) {
-    return new GregorMutater(byteSource, this.methodFilter, this.mutationOperators,
-        this.loggingClasses);
+    return new GregorMutater(byteSource, this.methodFilter,
+        this.mutationOperators, this.loggingClasses);
   }
 
   @Override

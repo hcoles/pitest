@@ -19,8 +19,8 @@ public class MutationTestProcess {
   private final WrappingProcess                 process;
   private final MutationTestCommunicationThread thread;
 
-  public MutationTestProcess(final ServerSocket socket, final ProcessArgs processArgs,
-      final SlaveArguments arguments) {
+  public MutationTestProcess(final ServerSocket socket,
+      final ProcessArgs processArgs, final SlaveArguments arguments) {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         MutationTestSlave.class);
     this.thread = new MutationTestCommunicationThread(socket, arguments,
@@ -46,7 +46,7 @@ public class MutationTestProcess {
   }
 
   public ExitCode waitToDie() throws InterruptedException, ExecutionException {
-    ExitCode exitCode = this.thread.waitToFinish();
+    final ExitCode exitCode = this.thread.waitToFinish();
     this.process.destroy();
     return exitCode;
   }

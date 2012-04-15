@@ -57,17 +57,16 @@ public class MutatingClassVisitor extends ClassAdapter {
 
   @Override
   public MethodVisitor visitMethod(final int access, final String methodName,
-      final String methodDescriptor, final String signature, final String[] exceptions) {
+      final String methodDescriptor, final String signature,
+      final String[] exceptions) {
     this.context.registerMethod(methodName);
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
         methodDescriptor, signature, exceptions);
 
     final MethodInfo info = new MethodInfo()
-        .withOwner(this.context.getClassInfo())
-        .withAccess(access)
-        .withMethodName(methodName)
-        .withMethodDescriptor(methodDescriptor);
-    
+        .withOwner(this.context.getClassInfo()).withAccess(access)
+        .withMethodName(methodName).withMethodDescriptor(methodDescriptor);
+
     if (this.filter.apply(info)) {
       return this.visitMethodForMutation(info, methodVisitor);
     } else {
@@ -87,18 +86,18 @@ public class MutatingClassVisitor extends ClassAdapter {
     return wrapWithLineTracker(wrapWithFilters(next));
   }
 
-  private MethodVisitor wrapWithLineTracker(MethodVisitor wrappedMethodVisitor) {
+  private MethodVisitor wrapWithLineTracker(
+      final MethodVisitor wrappedMethodVisitor) {
     return new LineTrackingMethodVisitor(this.context, wrappedMethodVisitor);
   }
 
-  private MethodVisitor wrapWithFilters(
-      final MethodVisitor wrappedMethodVisitor) {
+  private MethodVisitor wrapWithFilters(final MethodVisitor wrappedMethodVisitor) {
     return wrapWithLineFilter(wrapWithAssertFilter(wrappedMethodVisitor));
   }
-  
-  private MethodVisitor wrapWithAssertFilter(MethodVisitor wrappedMethodVisitor) {
-    return new AvoidAssertsMethodAdapter(this.context,
-        wrappedMethodVisitor);
+
+  private MethodVisitor wrapWithAssertFilter(
+      final MethodVisitor wrappedMethodVisitor) {
+    return new AvoidAssertsMethodAdapter(this.context, wrappedMethodVisitor);
   }
 
   private MethodVisitor wrapWithLineFilter(

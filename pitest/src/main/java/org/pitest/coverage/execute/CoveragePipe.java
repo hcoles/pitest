@@ -14,29 +14,27 @@ public class CoveragePipe implements CoverageReceiver {
 
   private final SafeDataOutputStream dos;
 
-
   public CoveragePipe(final DataOutputStream dos) {
     this.dos = new SafeDataOutputStream(dos);
   }
-
 
   public synchronized void newTest() {
     CodeCoverageStore.reset();
   }
 
-  public synchronized void recordTestOutcome(Description description, boolean wasGreen,
-      long executionTime) {
-    Collection<Long> hits = CodeCoverageStore.getHits();
+  public synchronized void recordTestOutcome(final Description description,
+      final boolean wasGreen, final long executionTime) {
+    final Collection<Long> hits = CodeCoverageStore.getHits();
 
     this.dos.writeByte(Id.OUTCOME);
     this.dos.write(description);
     this.dos.writeLong(hits.size());
-    for ( Long each : hits ) {
+    for (final Long each : hits) {
       this.dos.writeLong(each);
     }
     this.dos.writeBoolean(wasGreen);
     this.dos.writeLong(executionTime);
- 
+
   }
 
   public synchronized void end() {
@@ -52,6 +50,5 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos.writeString(className);
 
   }
-
 
 }

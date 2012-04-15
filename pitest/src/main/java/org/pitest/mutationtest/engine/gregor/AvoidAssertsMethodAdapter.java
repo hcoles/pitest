@@ -50,7 +50,7 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc) {
 
-    if (opcode == Opcodes.INVOKEVIRTUAL && owner.equals("java/lang/Class")
+    if ((opcode == Opcodes.INVOKEVIRTUAL) && owner.equals("java/lang/Class")
         && name.equals("desiredAssertionStatus")) {
       this.context.disableMutations(DISABLE_REASON);
     }
@@ -63,10 +63,10 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
 
     if (name.equals("$assertionsDisabled")) {
       if (opcode == Opcodes.GETSTATIC) {
-        context.disableMutations(DISABLE_REASON);
-        assertBlockStarted = true;
+        this.context.disableMutations(DISABLE_REASON);
+        this.assertBlockStarted = true;
       } else if (opcode == Opcodes.PUTSTATIC) {
-        context.enableMutatations(DISABLE_REASON);
+        this.context.enableMutatations(DISABLE_REASON);
       }
     }
     super.visitFieldInsn(opcode, owner, name, desc);
@@ -74,22 +74,22 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
   }
 
   @Override
-  public void visitJumpInsn(int opcode, Label destination) {
-    if ((opcode == Opcodes.IFNE) && assertBlockStarted) {
+  public void visitJumpInsn(final int opcode, final Label destination) {
+    if ((opcode == Opcodes.IFNE) && this.assertBlockStarted) {
       this.destination = destination;
-      assertBlockStarted = false;
+      this.assertBlockStarted = false;
     }
     super.visitJumpInsn(opcode, destination);
 
   }
 
   @Override
-  public void visitLabel(Label label) {
+  public void visitLabel(final Label label) {
     // delegate to child first to ensure visitLabel not in scope for mutation
     super.visitLabel(label);
     if (this.destination == label) {
-      context.enableMutatations(DISABLE_REASON);
-      destination = null;
+      this.context.enableMutatations(DISABLE_REASON);
+      this.destination = null;
     }
   }
 

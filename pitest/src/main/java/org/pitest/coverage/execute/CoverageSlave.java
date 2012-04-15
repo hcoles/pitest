@@ -123,9 +123,13 @@ public class CoverageSlave {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
 
     final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
-    
-    DependencyFilter filter = new DependencyFilter(new DependencyExtractor(new ClassPathByteArraySource(),paramsFromParent.getDependencyAnalysisMaxDistance()), paramsFromParent.getFilter());
-    final List<TestUnit> filteredTus = filter.filterTestsByDependencyAnalysis(tus);
+
+    final DependencyFilter filter = new DependencyFilter(
+        new DependencyExtractor(new ClassPathByteArraySource(),
+            paramsFromParent.getDependencyAnalysisMaxDistance()),
+        paramsFromParent.getFilter());
+    final List<TestUnit> filteredTus = filter
+        .filterTestsByDependencyAnalysis(tus);
 
     LOG.info("Dependency analysis reduced number of potential tests by "
         + (tus.size() - filteredTus.size()));

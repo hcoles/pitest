@@ -15,17 +15,16 @@ import org.pitest.util.Unchecked;
 class DependencyFilter {
 
   private final DependencyExtractor analyser;
-  private final Predicate<String>    filter;
+  private final Predicate<String>   filter;
 
-  DependencyFilter(DependencyExtractor analyser,
-      Predicate<String> filter) {
+  DependencyFilter(final DependencyExtractor analyser,
+      final Predicate<String> filter) {
     this.analyser = analyser;
     this.filter = filter;
   }
 
-  List<TestUnit> filterTestsByDependencyAnalysis(
-      final List<TestUnit> tus) {
-    if (analyser.getMaxDistance() < 0) {
+  List<TestUnit> filterTestsByDependencyAnalysis(final List<TestUnit> tus) {
+    if (this.analyser.getMaxDistance() < 0) {
       return tus;
     } else {
       return FCollection.filter(tus, isWithinReach());
@@ -43,8 +42,9 @@ class DependencyFilter {
           if (this.cache.containsKey(testClass)) {
             return this.cache.get(testClass);
           } else {
-            boolean inReach = !analyser
-                .extractCallDependenciesForPackages(testClass, filter).isEmpty();
+            final boolean inReach = !DependencyFilter.this.analyser
+                .extractCallDependenciesForPackages(testClass,
+                    DependencyFilter.this.filter).isEmpty();
             this.cache.put(testClass, inReach);
             return inReach;
           }

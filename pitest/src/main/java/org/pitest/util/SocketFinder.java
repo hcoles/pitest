@@ -29,14 +29,14 @@ public class SocketFinder {
 
   public synchronized ServerSocket getNextAvailableServerSocket() {
     this.lastPortNumber++;
-    ServerSocket socket = getIfAvailable(lastPortNumber);
+    ServerSocket socket = getIfAvailable(this.lastPortNumber);
     while (socket == null) {
       this.lastPortNumber++;
 
       if (this.lastPortNumber > MAX_PORT_NUMBER) {
         this.lastPortNumber = 9000;
       }
-      socket = getIfAvailable(lastPortNumber);
+      socket = getIfAvailable(this.lastPortNumber);
     }
 
     LOG.fine("using port " + this.lastPortNumber);
@@ -50,7 +50,7 @@ public class SocketFinder {
       ss = new ServerSocket(port);
     } catch (final IOException e) {
       LOG.fine("port " + port + " is in use");
-    } 
+    }
 
     return ss;
   }

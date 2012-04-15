@@ -20,13 +20,11 @@ public class ClassFilter {
   private final Predicate<String> test;
   private final Predicate<String> code;
 
-  public ClassFilter(
-      final Predicate<String> test, final Predicate<String> code) {
+  public ClassFilter(final Predicate<String> test, final Predicate<String> code) {
     this.test = test;
     this.code = code;
 
   }
-
 
   public Predicate<String> getTest() {
     return this.test;

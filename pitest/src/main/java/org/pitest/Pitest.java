@@ -48,7 +48,7 @@ public class Pitest {
     run(defaultContainer, config, Arrays.asList(classes));
   }
 
-  public void run(final Container container, final Configuration config,
+  private void run(final Container container, final Configuration config,
       final Collection<Class<?>> classes) {
 
     run(container,

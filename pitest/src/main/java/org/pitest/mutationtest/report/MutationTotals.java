@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.report;
 
 public class MutationTotals {
-  
+
   private long numberOfClasses           = 0;
   private long numberOfLines             = 0;
   private long numberOfLinesCovered      = 0;
@@ -9,56 +9,57 @@ public class MutationTotals {
   private long numberOfMutationsDetected = 0;
 
   public long getNumberOfClasses() {
-    return numberOfClasses;
+    return this.numberOfClasses;
   }
 
-  public void addClasses(long classes) {
+  public void addClasses(final long classes) {
     this.numberOfClasses += classes;
   }
 
   public long getNumberOfLines() {
-    return numberOfLines;
+    return this.numberOfLines;
   }
 
-  public void addLines(long lines) {
+  public void addLines(final long lines) {
     this.numberOfLines += lines;
   }
 
   public long getNumberOfLinesCovered() {
-    return numberOfLinesCovered;
+    return this.numberOfLinesCovered;
   }
 
-  public void addLinesCovered(long linesCovered) {
+  public void addLinesCovered(final long linesCovered) {
     this.numberOfLinesCovered += linesCovered;
   }
 
   public long getNumberOfMutations() {
-    return numberOfMutations;
+    return this.numberOfMutations;
   }
 
-  public void addMutations(long mutations) {
+  public void addMutations(final long mutations) {
     this.numberOfMutations += mutations;
   }
 
   public long getNumberOfMutationsDetected() {
-    return numberOfMutationsDetected;
+    return this.numberOfMutationsDetected;
   }
 
-  public void addMutationsDetetcted(long mutationsKilled) {
+  public void addMutationsDetetcted(final long mutationsKilled) {
     this.numberOfMutationsDetected += mutationsKilled;
   }
 
   public int getLineCoverage() {
-    return numberOfLines == 0 ? 100 : Math.round((100f * numberOfLinesCovered)
-        / numberOfLines);
+    return this.numberOfLines == 0 ? 100 : Math
+        .round((100f * this.numberOfLinesCovered) / this.numberOfLines);
   }
 
   public int getMutationCoverage() {
-    return numberOfMutations == 0 ? 100 : Math
-        .round((100f * numberOfMutationsDetected) / numberOfMutations);
+    return this.numberOfMutations == 0 ? 100
+        : Math.round((100f * this.numberOfMutationsDetected)
+            / this.numberOfMutations);
   }
 
-  public void add(MutationTotals data) {
+  public void add(final MutationTotals data) {
     this.addClasses(data.getNumberOfClasses());
     this.addLines(data.getNumberOfLines());
     this.addLinesCovered(data.getNumberOfLinesCovered());

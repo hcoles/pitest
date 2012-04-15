@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public abstract class AbstractJumpMutator extends MethodAdapter {
 
   private final MethodMutatorFactory factory;
-  private final Context context;
+  private final Context              context;
 
   public static class Substitution {
     public Substitution(final int newCode, final String description) {
@@ -36,8 +36,8 @@ public abstract class AbstractJumpMutator extends MethodAdapter {
     private final String description;
   }
 
-  public AbstractJumpMutator(final MethodMutatorFactory factory, final Context context,
-      final MethodVisitor writer) {
+  public AbstractJumpMutator(final MethodMutatorFactory factory,
+      final Context context, final MethodVisitor writer) {
     super(writer);
     this.factory = factory;
     this.context = context;
@@ -59,11 +59,11 @@ public abstract class AbstractJumpMutator extends MethodAdapter {
   }
 
   private void createMutationForJumpInsn(final int opcode, final Label label) {
-    Substitution substitution = this.getMutations().get(opcode);
-    
+    final Substitution substitution = this.getMutations().get(opcode);
+
     final MutationIdentifier newId = this.context.registerMutation(
         this.factory, substitution.description);
-    
+
     if (this.context.shouldMutate(newId)) {
       this.mv.visitJumpInsn(substitution.newCode, label);
     } else {

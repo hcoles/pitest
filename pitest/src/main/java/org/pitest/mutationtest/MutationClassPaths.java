@@ -33,13 +33,15 @@ public class MutationClassPaths {
   public Iterable<String> code() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getCodeFilter())
-            .findClasses(this.classFilter.getCode()), this.classFilter.getCode());
+            .findClasses(this.classFilter.getCode()), this.classFilter
+            .getCode());
   }
 
   public Iterable<String> test() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getTestFilter())
-            .findClasses(this.classFilter.getTest()), this.classFilter.getTest());
+            .findClasses(this.classFilter.getTest()), this.classFilter
+            .getTest());
   }
 
   public ClassPath getClassPath() {

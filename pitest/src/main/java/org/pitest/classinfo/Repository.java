@@ -42,7 +42,7 @@ public class Repository {
     return fetchClass(new ClassName(name));
   }
 
-  public Option<ClassInfo> fetchClass(final ClassName name) {
+  private Option<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
       return Option.some(info);

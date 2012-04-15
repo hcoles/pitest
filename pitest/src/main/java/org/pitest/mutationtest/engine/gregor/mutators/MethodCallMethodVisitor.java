@@ -35,15 +35,14 @@ import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-
 class MethodCallMethodVisitor extends MethodAdapter {
 
-  private final static Map<Type, Integer> RETURN_TYPE_MAP = new HashMap<Type, Integer>();
+  private final static Map<Type, Integer>   RETURN_TYPE_MAP = new HashMap<Type, Integer>();
 
-  private final F2<String, String, Boolean>   filter;
-  private final MethodMutatorFactory          factory;
-  private final Context                       context;
-  private final MethodInfo                    methodInfo;
+  private final F2<String, String, Boolean> filter;
+  private final MethodMutatorFactory        factory;
+  private final Context                     context;
+  private final MethodInfo                  methodInfo;
 
   static {
     RETURN_TYPE_MAP.put(Type.INT_TYPE, ICONST_0);

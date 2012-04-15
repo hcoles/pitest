@@ -62,33 +62,39 @@ public class MutationStatusTestPair {
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((killingTest == null) ? 0 : killingTest.hashCode());
-    result = prime * result + numberOfTestsRun;
-    result = prime * result + ((status == null) ? 0 : status.hashCode());
+        + ((this.killingTest == null) ? 0 : this.killingTest.hashCode());
+    result = prime * result + this.numberOfTestsRun;
+    result = prime * result
+        + ((this.status == null) ? 0 : this.status.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    MutationStatusTestPair other = (MutationStatusTestPair) obj;
-    if (killingTest == null) {
-      if (other.killingTest != null)
+    }
+    final MutationStatusTestPair other = (MutationStatusTestPair) obj;
+    if (this.killingTest == null) {
+      if (other.killingTest != null) {
         return false;
-    } else if (!killingTest.equals(other.killingTest))
+      }
+    } else if (!this.killingTest.equals(other.killingTest)) {
       return false;
-    if (numberOfTestsRun != other.numberOfTestsRun)
+    }
+    if (this.numberOfTestsRun != other.numberOfTestsRun) {
       return false;
-    if (status != other.status)
+    }
+    if (this.status != other.status) {
       return false;
+    }
     return true;
   }
-  
-  
 
 }

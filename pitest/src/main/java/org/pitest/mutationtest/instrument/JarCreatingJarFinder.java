@@ -38,18 +38,18 @@ import org.pitest.util.Unchecked;
 
 public class JarCreatingJarFinder implements JavaAgent {
 
-  protected static final String  CAN_REDEFINE_CLASSES  = "Can-Redefine-Classes";
-  protected static final String  PREMAIN_CLASS         = "Premain-Class";
+  protected static final String CAN_REDEFINE_CLASSES  = "Can-Redefine-Classes";
+  protected static final String PREMAIN_CLASS         = "Premain-Class";
 
-  protected static final String  CAN_SET_NATIVE_METHOD = "Can-Set-Native-Method-Prefix";
-  protected static final String  BOOT_CLASSPATH        = "Boot-Class-Path";
+  protected static final String CAN_SET_NATIVE_METHOD = "Can-Set-Native-Method-Prefix";
+  protected static final String BOOT_CLASSPATH        = "Boot-Class-Path";
 
-  private final static String AGENT_CLASS_NAME      = HotSwapAgent.class
-                                                        .getName();
+  private final static String   AGENT_CLASS_NAME      = HotSwapAgent.class
+                                                          .getName();
 
-  private Option<String>      location              = Option.none();
+  private Option<String>        location              = Option.none();
 
-  private final ClassPath     classPath;
+  private final ClassPath       classPath;
 
   public JarCreatingJarFinder(final ClassPath cp) {
     this.classPath = cp;

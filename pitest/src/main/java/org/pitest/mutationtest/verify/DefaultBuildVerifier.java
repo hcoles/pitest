@@ -26,7 +26,7 @@ import org.pitest.mutationtest.CoverageDatabase;
 
 public class DefaultBuildVerifier implements BuildVerifier {
 
-  public void verify(final CoverageDatabase coverageDatabase) {   
+  public void verify(final CoverageDatabase coverageDatabase) {
     final Collection<ClassInfo> codeClasses = coverageDatabase.getCodeClasses();
     FCollection.forEach(codeClasses, throwErrorIfHasNoLineNumbers());
     FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
@@ -37,7 +37,8 @@ public class DefaultBuildVerifier implements BuildVerifier {
       public void apply(final ClassInfo a) {
         // ignore non top level classes - the compiler sometimes will generate
         // empty anonymous inner classes with no line numbers
-        if (!a.isInterface() && a.isTopLevelClass() && (a.getNumberOfCodeLines() == 0)) {
+        if (!a.isInterface() && a.isTopLevelClass()
+            && (a.getNumberOfCodeLines() == 0)) {
           throw new PitHelpError(Help.NO_LINE_NUMBERS, a.getName().asJavaName());
         }
       }

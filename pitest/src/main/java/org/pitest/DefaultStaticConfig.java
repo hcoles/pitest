@@ -29,7 +29,7 @@ public class DefaultStaticConfig implements StaticConfiguration {
   private final GroupingStrategy         groupingStrategy;
   private final Collection<TestListener> testListeners = new ArrayList<TestListener>();
 
-  public DefaultStaticConfig(final ResultClassifier classifier,
+  private DefaultStaticConfig(final ResultClassifier classifier,
       final GroupingStrategy groupStrategy) {
     this.classifier = classifier;
     this.groupingStrategy = groupStrategy;

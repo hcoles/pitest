@@ -45,7 +45,7 @@ public class BaseThreadPoolContainer implements Container {
     this.feedbackQueue = new ArrayBlockingQueue<TestResult>(BUFFER_SIZE);
   }
 
-  public boolean awaitTermination(final int i, final TimeUnit milliseconds)
+  private boolean awaitTermination(final int i, final TimeUnit milliseconds)
       throws InterruptedException {
     return this.executor.awaitTermination(i, milliseconds);
   }

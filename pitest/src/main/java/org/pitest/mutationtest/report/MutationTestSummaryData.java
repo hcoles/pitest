@@ -24,8 +24,8 @@ public class MutationTestSummaryData implements
   private final String                fileName;
   private final Collection<String>    mutatedClasses;
   private final Collection<ClassName> testClasses;
-    
-  private final MutationTotals totals;
+
+  private final MutationTotals        totals;
 
   public MutationTestSummaryData(final String fileName,
       final Collection<String> mutatedClasses,
@@ -36,25 +36,25 @@ public class MutationTestSummaryData implements
     this.totals = totals;
 
   }
-  
+
   public MutationTotals getTotals() {
     return this.totals;
   }
 
   public long getNumberOfMutations() {
-    return totals.getNumberOfMutations();
+    return this.totals.getNumberOfMutations();
   }
 
   public long getNumberOfMutationsDetected() {
-    return totals.getNumberOfMutationsDetected();
+    return this.totals.getNumberOfMutationsDetected();
   }
 
   public long getNumberOfLines() {
-    return totals.getNumberOfLines();
+    return this.totals.getNumberOfLines();
   }
 
   public long getNumberOfLinesCovered() {
-    return totals.getNumberOfLinesCovered();
+    return this.totals.getNumberOfLinesCovered();
   }
 
   public String getClassName() {
@@ -74,11 +74,11 @@ public class MutationTestSummaryData implements
   }
 
   public Integer getMutationCoverage() {
-    return totals.getMutationCoverage();
+    return this.totals.getMutationCoverage();
   }
 
   public Integer getLineCoverage() {
-    return totals.getLineCoverage();
+    return this.totals.getLineCoverage();
   }
 
   @Override

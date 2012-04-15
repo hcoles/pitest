@@ -35,7 +35,6 @@ public class CheckTestHasFailedResultListener implements TestListener {
     this.lastFailingTest = Option.some(tr.getDescription());
   }
 
-
   public void onTestFailure(final TestResult tr) {
     recordFailingTest(tr);
   }
@@ -50,7 +49,7 @@ public class CheckTestHasFailedResultListener implements TestListener {
   }
 
   public void onTestSuccess(final TestResult tr) {
-  
+
   }
 
   public DetectionStatus status() {

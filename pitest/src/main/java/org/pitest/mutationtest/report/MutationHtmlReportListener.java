@@ -44,15 +44,15 @@ import org.pitest.util.FileUtil;
 
 public class MutationHtmlReportListener implements TestListener {
 
-  private final ResultOutputStrategy            outputStrategy;
+  private final ResultOutputStrategy      outputStrategy;
 
-  private final MutatorScores                   mutatorScores      = new MutatorScores();
+  private final MutatorScores             mutatorScores      = new MutatorScores();
 
-  private final Collection<SourceLocator>       sourceRoots        = new HashSet<SourceLocator>();
+  private final Collection<SourceLocator> sourceRoots        = new HashSet<SourceLocator>();
 
-  private final PackageSummaryMap packageSummaryData = new PackageSummaryMap();
-  private final List<String>                    errors             = new ArrayList<String>();
-  private final CoverageDatabase                coverage;
+  private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
+  private final List<String>              errors             = new ArrayList<String>();
+  private final CoverageDatabase          coverage;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
       final long startTime, final ResultOutputStrategy outputStrategy,
@@ -118,32 +118,31 @@ public class MutationHtmlReportListener implements TestListener {
     }
   }
 
-  private void collectPackageSummaries(MutationMetaData mutationMetaData) {
+  private void collectPackageSummaries(final MutationMetaData mutationMetaData) {
     final MutationTotals totals = new MutationTotals();
     totals.addClasses(1); // FIXME assumes 1 new top level class per meta data
-    totals.addLines(FCollection.fold(
-        accumulateCodeLines(), 0,
+    totals.addLines(FCollection.fold(accumulateCodeLines(), 0,
         this.coverage.getClassInfo(mutationMetaData.getMutatedClass())));
-    totals.addLinesCovered(this.coverage.getNumberOfCoveredLines(mutationMetaData
-        .getMutatedClass()));
+    totals.addLinesCovered(this.coverage
+        .getNumberOfCoveredLines(mutationMetaData.getMutatedClass()));
     totals.addMutations(mutationMetaData.getNumberOfMutations());
-    totals.addMutationsDetetcted(mutationMetaData.getNumberOfDetetectedMutations());
-    
-   
+    totals.addMutationsDetetcted(mutationMetaData
+        .getNumberOfDetetectedMutations());
+
     final MutationTestSummaryData summaryData = new MutationTestSummaryData(
         mutationMetaData.getFirstFileName(),
-        mutationMetaData.getMutatedClass(), mutationMetaData.getTestClasses(), totals);
-    String packageName = getPackageName(mutationMetaData);
-    
-    packageSummaryData.add(packageName, summaryData);    
+        mutationMetaData.getMutatedClass(), mutationMetaData.getTestClasses(),
+        totals);
+    final String packageName = getPackageName(mutationMetaData);
+
+    this.packageSummaryData.add(packageName, summaryData);
 
   }
 
-
-
-  private String getPackageName(MutationMetaData mutationMetaData) {
-    String fileName = mutationMetaData.getMutatedClass().iterator().next();
-    int lastDot = fileName.lastIndexOf('.');
+  private String getPackageName(final MutationMetaData mutationMetaData) {
+    final String fileName = mutationMetaData.getMutatedClass().iterator()
+        .next();
+    final int lastDot = fileName.lastIndexOf('.');
     return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
   }
 
@@ -244,24 +243,24 @@ public class MutationHtmlReportListener implements TestListener {
         .getInstanceOf("templates/mutation/mutation_package_index");
 
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
-    MutationTotals totals = new MutationTotals();
-    for (PackageSummaryData psData : packageSummaryData.values()) {
+    final MutationTotals totals = new MutationTotals();
+    for (final PackageSummaryData psData : this.packageSummaryData.values()) {
       totals.add(psData.getTotals());
       createPackageIndexPage(psData);
     }
 
     st.setAttribute("totals", totals);
-    st.setAttribute("packageSummaries", packageSummaryData.values());
+    st.setAttribute("packageSummaries", this.packageSummaryData.values());
     try {
       writer.write(st.toString());
       writer.close();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
 
   }
 
-  private void createPackageIndexPage(PackageSummaryData psData) {
+  private void createPackageIndexPage(final PackageSummaryData psData) {
     final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
     final StringTemplate st = group
         .getInstanceOf("templates/mutation/mutation_class_index");
@@ -273,7 +272,7 @@ public class MutationHtmlReportListener implements TestListener {
     try {
       writer.write(st.toString());
       writer.close();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
 

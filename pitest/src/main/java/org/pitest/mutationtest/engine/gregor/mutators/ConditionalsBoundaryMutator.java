@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
+import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
@@ -30,8 +30,7 @@ public enum ConditionalsBoundaryMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalsBoundaryMethodVisitor(this, context,
-        methodVisitor);
+    return new ConditionalsBoundaryMethodVisitor(this, context, methodVisitor);
   }
 
   public String getGloballyUniqueId() {
