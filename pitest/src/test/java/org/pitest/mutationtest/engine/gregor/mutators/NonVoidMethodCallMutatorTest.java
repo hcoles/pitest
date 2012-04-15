@@ -20,15 +20,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.MethodCallMutatorTest.HasConstructorCall;
-import org.pitest.mutationtest.engine.gregor.mutators.MethodCallMutatorTest.HasIntMethodCall;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
+
 
 public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
 
@@ -220,5 +223,54 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(actual);
     mutateAndCall(new UsesReturnValueOfMethodCall(), mutant);
   }
+  
+  
+  private static class HasLogger implements Callable<String> {
+    @SuppressWarnings("unused")
+    private static Logger log = Logger.getLogger(HasLogger.class.getName());
 
+    public String call() throws Exception {
+      return "ok";
+    }
+  }
+
+  @Test
+  public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
+    createTesteeWith(True.<MethodInfo> all(),
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
+
+  }
+
+  
+  static class HasIntMethodCall implements Callable<String> {
+
+    private static int i = 0;
+
+    public int set(final int newVal) {
+      i = newVal;
+      return i + 42;
+    }
+
+    @SuppressWarnings("finally")
+    public String call() throws Exception {
+      int c = 2;
+      try {
+        c = set(1);
+      } finally {
+        return "" + c;
+      }
+    }
+
+  }
+
+  @Test
+  public void shouldReplaceAssignmentsFromIntMethodCallsWithZero()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(HasIntMethodCall.class);
+    assertMutantCallableReturns(new HasIntMethodCall(), mutant, "0");
+  }
+  
+  
+  
 }

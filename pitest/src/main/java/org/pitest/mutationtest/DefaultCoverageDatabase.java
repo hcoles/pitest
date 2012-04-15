@@ -359,7 +359,7 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     };
   }
 
-  public int getNumberOfCoveredLines(final String clazz) {
+  private int getNumberOfCoveredLines(final String clazz) {
     final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
         .replace(".", "/"));
     if (map != null) {

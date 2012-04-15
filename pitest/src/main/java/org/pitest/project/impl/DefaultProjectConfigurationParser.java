@@ -48,18 +48,18 @@ public class DefaultProjectConfigurationParser implements
   /**
    * The name of the filter element.
    */
-  public static final String       FILTER_ELEMENT_NAME           = "filter";
+  private static final String      FILTER_ELEMENT_NAME           = "filter";
 
   /**
    * The name of the name attribute.
    */
-  public static final String       NAME_ATTRIBUTE_NAME           = "name";
-  public static final String       DIRECTORY_ELEMENT_NAME        = "dir";
-  public static final String       PROPERTY_ELEMENT_NAME         = "property";
-  public static final String       PROPERTY_NAME_ATTRIBUTE_NAME  = "name";
-  public static final String       PROPERTY_VALUE_ATTRIBUTE_NAME = "value";
-  public static final String       JARFILE_ELEMENT_NAME          = "jar";
-  public static final String       DOCUMENT_ROOT_ELEMENT_NAME    = "project";
+  private static final String      NAME_ATTRIBUTE_NAME           = "name";
+  private static final String      DIRECTORY_ELEMENT_NAME        = "dir";
+  private static final String      PROPERTY_ELEMENT_NAME         = "property";
+  private static final String      PROPERTY_NAME_ATTRIBUTE_NAME  = "name";
+  private static final String      PROPERTY_VALUE_ATTRIBUTE_NAME = "value";
+  private static final String      JARFILE_ELEMENT_NAME          = "jar";
+  private static final String      DOCUMENT_ROOT_ELEMENT_NAME    = "project";
 
   private final static Logger      LOG                           = Log
                                                                      .getLogger();
@@ -352,7 +352,7 @@ public class DefaultProjectConfigurationParser implements
    * 
    * @throws ProjectConfigurationException
    */
-  protected ReportOptions loadConfiguration(final InputStream inputStream)
+  private ReportOptions loadConfiguration(final InputStream inputStream)
       throws ProjectConfigurationParserException, ProjectConfigurationException {
     final Document doc = XmlUtils.parseFile(inputStream);
 
@@ -392,7 +392,7 @@ public class DefaultProjectConfigurationParser implements
    * @return {@code true} if the provided File exists on the filesystem,
    *         {@code false} otherwise.
    */
-  protected boolean doesFileExist(final String f) {
+  private boolean doesFileExist(final String f) {
     return this.fileSystemDelegate.exists(f);
   }
 
@@ -618,8 +618,6 @@ public class DefaultProjectConfigurationParser implements
 
     return values;
   }
-
-
 
   private Element getElement(final Document doc, final ConfigOption param) {
     final Element classpathElement = XmlUtils.getChildElement(

@@ -17,12 +17,4 @@ public class ProjectConfigurationException extends Exception {
     super(message);
   }
 
-  public ProjectConfigurationException(final String message,
-      final Throwable cause) {
-    super(message, cause);
-  }
-
-  public ProjectConfigurationException(final Throwable cause) {
-    super(cause);
-  }
 }

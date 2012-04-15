@@ -18,8 +18,8 @@ import org.objectweb.asm.MethodVisitor;
 
 public class InsnSubstitution implements ZeroOperandMutation {
 
-  final int    replacementOpcode;
-  final String message;
+  private final int    replacementOpcode;
+  private final String message;
 
   public InsnSubstitution(final int replacementOpcode, final String message) {
     this.replacementOpcode = replacementOpcode;

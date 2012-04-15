@@ -25,7 +25,8 @@ public class CoverageCommunicationThread extends CommunicationThread {
     private final CoverageOptions arguments;
     private final List<String>    testClasses;
 
-    SendData(final CoverageOptions arguments, final List<String> testClasses) {
+    private SendData(final CoverageOptions arguments,
+        final List<String> testClasses) {
       this.arguments = arguments;
       this.testClasses = testClasses;
     }
@@ -59,7 +60,7 @@ public class CoverageCommunicationThread extends CommunicationThread {
     private final CoverageStatistics          cs = new CoverageStatistics();
     private final SideEffect1<CoverageResult> handler;
 
-    Receive(final SideEffect1<CoverageResult> handler) {
+    private Receive(final SideEffect1<CoverageResult> handler) {
       this.handler = handler;
     }
 
@@ -88,16 +89,16 @@ public class CoverageCommunicationThread extends CommunicationThread {
       final Description d = is.read(Description.class);
       final long size = is.readLong();
       for (int i = 0; i != size; i++) {
-        long value = is.readLong();
-        int classId = CodeCoverageStore.decodeClassId(value);
-        int lineNumber = CodeCoverageStore.decodeLineId(value);
+        final long value = is.readLong();
+        final int classId = CodeCoverageStore.decodeClassId(value);
+        final int lineNumber = CodeCoverageStore.decodeLineId(value);
         this.cs.visitLine(classId, lineNumber);
       }
-      
+
       final boolean isGreen = is.readBoolean();
       final long executionTime = is.readLong();
-      final CoverageResult cr = new CoverageResult(d, executionTime,
-          isGreen, this.cs.getClassStatistics());
+      final CoverageResult cr = new CoverageResult(d, executionTime, isGreen,
+          this.cs.getClassStatistics());
 
       this.handler.apply(cr);
 

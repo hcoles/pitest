@@ -16,7 +16,7 @@ public class MutatorScores {
     private int          count;
     private int          detected;
 
-    Total(final String name) {
+    private Total(final String name) {
       this.name = name;
     }
 

@@ -35,34 +35,6 @@ import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-enum MethodCallMutator implements MethodMutatorFactory {
-
-  METHOD_CALL_MUTATOR;
-
-  public MethodVisitor create(final Context context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, allMethods());
-  }
-
-  private F2<String, String, Boolean> allMethods() {
-    return new F2<String, String, Boolean>() {
-
-      public Boolean apply(final String a, final String b) {
-        return true;
-      }
-
-    };
-  }
-
-  public String getGloballyUniqueId() {
-    return this.getClass().getName();
-  }
-
-  public String getName() {
-    return name();
-  }
-}
 
 class MethodCallMethodVisitor extends MethodAdapter {
 

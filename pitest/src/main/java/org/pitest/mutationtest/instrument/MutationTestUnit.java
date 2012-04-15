@@ -39,8 +39,8 @@ import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.ExitCode;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
-import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
+import org.pitest.util.SocketFinder;
 
 public class MutationTestUnit extends AbstractTestUnit {
 
@@ -53,9 +53,9 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final boolean                     verbose;
   private final String                      classPath;
 
-  protected final Configuration             pitConfig;
+  private final Configuration               pitConfig;
 
-  protected final Collection<ClassName>     testClasses;
+  private final Collection<ClassName>       testClasses;
 
   public MutationTestUnit(final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses, final Configuration pitConfig,
@@ -121,7 +121,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final MutationStatusMap mutations, final Collection<ClassName> tests)
       throws IOException, InterruptedException {
 
-    Collection<MutationDetails> remainingMutations = mutations
+    final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
     final MutationTestProcess worker = createWorker(tests, remainingMutations);
     worker.start();
@@ -137,7 +137,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private MutationTestProcess createWorker(final Collection<ClassName> tests,
-      Collection<MutationDetails> remainingMutations) {
+      final Collection<MutationDetails> remainingMutations) {
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
         tests, this.config, this.timeoutStrategy, Log.isVerbose(),
         this.pitConfig);
@@ -146,7 +146,7 @@ public class MutationTestUnit extends AbstractTestUnit {
         .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
         .andStdout(captureStdOutIfVerbose()).andStderr(printWith("stderr "));
 
-    SocketFinder sf = new SocketFinder();
+    final SocketFinder sf = new SocketFinder();
     final MutationTestProcess worker = new MutationTestProcess(
         sf.getNextAvailableServerSocket(), args, fileArgs);
     return worker;
@@ -159,7 +159,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       LOG.fine("Exit code was - " + exitCode);
     } catch (final InterruptedException e1) {
       // swallow
-    } catch (ExecutionException e) {
+    } catch (final ExecutionException e) {
       e.printStackTrace();
     }
     return exitCode;

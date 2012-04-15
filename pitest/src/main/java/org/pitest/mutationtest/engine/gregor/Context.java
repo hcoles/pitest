@@ -59,7 +59,7 @@ public class Context {
     return this.target;
   }
 
-  public MutationIdentifier getNextMutationIdentifer(
+  private MutationIdentifier getNextMutationIdentifer(
       final MethodMutatorFactory factory, final String className) {
     final int index = getAndIncrementIndex(factory);
     return new MutationIdentifier(className, index,

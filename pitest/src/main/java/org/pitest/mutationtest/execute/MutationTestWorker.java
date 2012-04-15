@@ -50,9 +50,9 @@ import org.pitest.util.Unchecked;
 public class MutationTestWorker {
 
   private final static Logger                   LOG = Log.getLogger();
-  protected final Mutater                       mutater;
-  protected final ClassLoader                   loader;
-  protected final F2<Class<?>, byte[], Boolean> hotswap;
+  private final Mutater                       mutater;
+  private final ClassLoader                   loader;
+  private final F2<Class<?>, byte[], Boolean> hotswap;
 
   public MutationTestWorker(final F2<Class<?>, byte[], Boolean> hotswap,
       final Mutater mutater, final ClassLoader loader) {
@@ -186,7 +186,7 @@ public class MutationTestWorker {
         + this.loader + ", hotswap=" + this.hotswap + "]";
   }
 
-  protected MutationStatusTestPair doTestsDetectMutation(final Container c,
+  private MutationStatusTestPair doTestsDetectMutation(final Container c,
       final List<TestUnit> tests) {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();

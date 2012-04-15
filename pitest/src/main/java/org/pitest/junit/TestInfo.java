@@ -30,7 +30,7 @@ abstract class TestInfo {
 
   }
 
-  public static boolean isATest(final ClassInfo clazz) {
+  private static boolean isATest(final ClassInfo clazz) {
     return isJUnit3Test(clazz) || isJUnit4Test(clazz)
         || isATest(clazz.getSuperClass());
   }
@@ -51,12 +51,12 @@ abstract class TestInfo {
     };
   }
 
-  public static boolean isJUnit3Test(final ClassInfo clazz) {
+  private static boolean isJUnit3Test(final ClassInfo clazz) {
     return clazz.descendsFrom(junit.framework.TestCase.class)
         || clazz.descendsFrom(junit.framework.TestSuite.class);
   }
 
-  public static boolean isJUnit4Test(final ClassInfo clazz) {
+  private static boolean isJUnit4Test(final ClassInfo clazz) {
     return clazz.hasAnnotation(RunWith.class)
         || clazz.hasAnnotation(Test.class);
   }
