@@ -46,9 +46,13 @@ public class MutationTestProcess {
   }
 
   public ExitCode waitToDie() throws InterruptedException, ExecutionException {
-    final ExitCode exitCode = this.thread.waitToFinish();
-    this.process.destroy();
-    return exitCode;
+    try {
+      final ExitCode exitCode = this.thread.waitToFinish();
+      return exitCode;
+    } finally {
+      this.process.destroy();
+    }
+
   }
 
 }
