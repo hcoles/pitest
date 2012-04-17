@@ -47,6 +47,7 @@ import org.pitest.util.JavaAgent;
 
 import com.example.CoveredByEasyMock;
 import com.example.CoveredByJMockit;
+import com.example.CrashesJVMWhenMutated;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
@@ -296,6 +297,23 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
         .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
     createAndRun();
     verifyResults(SURVIVED);
+  }
+  
+  @Test
+  @Ignore
+  public void shouldNotEatCPUWhenSlaveJVMCrashes() {
+    
+    this.data.setTargetClasses(predicateFor(CrashesJVMWhenMutated.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
+    createAndRun();
+    
+    try {
+      Thread.sleep(10000000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   private void createAndRun() {

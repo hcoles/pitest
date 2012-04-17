@@ -6,6 +6,4 @@ public interface Monitor {
 
   public abstract void requestStart();
 
-  public abstract void waitForExit(long timeoutInMs);
-
 }
