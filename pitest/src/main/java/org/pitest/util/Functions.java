@@ -14,7 +14,6 @@
  */
 package org.pitest.util;
 
-import java.lang.annotation.Annotation;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
@@ -46,22 +45,6 @@ public abstract class Functions {
     };
   }
 
-  public static F<Class<?>, Boolean> hasAnnotation(
-      final Class<? extends Annotation> target) {
-    return new F<Class<?>, Boolean>() {
-      public Boolean apply(final Class<?> testClass) {
-        return (testClass.getAnnotation(target) != null);
-      }
-    };
-  }
-
-  public static F<Class<?>, Boolean> isAssignableFrom(final Class<?> clazz) {
-    return new F<Class<?>, Boolean>() {
-      public Boolean apply(final Class<?> a) {
-        return clazz.isAssignableFrom(a);
-      }
-    };
-  };
 
   public static F<Class<?>, String> classToName() {
     return new F<Class<?>, String>() {
@@ -113,14 +96,6 @@ public abstract class Functions {
     };
   }
 
-  public static Predicate<Class<?>> isInterface() {
-    return new Predicate<Class<?>>() {
-      public Boolean apply(final Class<?> a) {
-        return a.isInterface();
-      }
-
-    };
-  }
 
   public static <T extends Enum<T>> F<String, T> stringToEnum(
       final Class<T> clazz) {

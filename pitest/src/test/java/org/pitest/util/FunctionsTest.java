@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
@@ -53,15 +52,6 @@ public class FunctionsTest {
     assertFalse(Functions.startsWith("foo").apply("barfoo"));
   }
 
-  @Test
-  public void isInterfaceShouldReturnTrueWhenGivenAnInterface() {
-    assertTrue(Functions.isInterface().apply(Comparable.class));
-  }
-
-  @Test
-  public void isInterfaceShouldReturnFalseWhenGivenAConcreteClass() {
-    assertFalse(Functions.isInterface().apply(String.class));
-  }
 
   static enum Foo {
     A, B, C, Bar;
@@ -83,30 +73,5 @@ public class FunctionsTest {
     assertEquals("a.b.c", Functions.jvmClassToClassName().apply("a/b/c"));
   }
 
-  @Ignore
-  private static class HasIgnoreAnnotation {
 
-  }
-
-  @Test
-  public void hasAnnotationShouldReturnTrueWhenAnnotationIsPresent() {
-    assertTrue(Functions.hasAnnotation(Ignore.class).apply(
-        HasIgnoreAnnotation.class));
-  }
-
-  @Test
-  public void hasAnnotationShouldReturnFalseWhenAnnotationIsPresent() {
-    assertFalse(Functions.hasAnnotation(Test.class).apply(
-        HasIgnoreAnnotation.class));
-  }
-
-  @Test
-  public void isAssignableFromShouldReturnTrueWhenIsAssignable() {
-    assertTrue(Functions.isAssignableFrom(Number.class).apply(Long.class));
-  }
-
-  @Test
-  public void isAssignableFromShouldReturnFalseWhenIsNotAssignable() {
-    assertFalse(Functions.isAssignableFrom(Number.class).apply(String.class));
-  }
 }

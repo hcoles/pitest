@@ -16,6 +16,8 @@ package org.pitest.mutationtest.instrument;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,16 +30,24 @@ import java.util.jar.Manifest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.functional.Option;
+import org.pitest.internal.ClassByteArraySource;
 
 public class JarCreatingJarFinderTest {
 
   private JarCreatingJarFinder testee;
+  
+  @Mock
+  private ClassByteArraySource byteSource;
 
   @Before
   public void setUp() {
-    this.testee = new JarCreatingJarFinder();
+    MockitoAnnotations.initMocks(this);
+    when(byteSource.apply(anyString())).thenReturn(Option.some(new byte[1]));
+    this.testee = new JarCreatingJarFinder(byteSource);
   }
 
   @After

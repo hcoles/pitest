@@ -105,14 +105,16 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     for (final ClassPathRoot root : this.roots) {
       final InputStream s = root.getData(classname);
       if (s != null) {
-        b = StreamUtil.streamToByteArray(s);
-        s.close();
+        try {
+          b = StreamUtil.streamToByteArray(s);
+        } finally {
+          s.close();
+        }
         break;
       }
     }
     return b;
   }
-
 
   public URL findResource(final String name) {
     try {

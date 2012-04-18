@@ -191,11 +191,6 @@ public abstract class IsolationUtils {
     return XSTREAM_INSTANCE.fromXML(xml);
   }
 
-  public static Object fromXml(final String xml, final ClassLoader loader) {
-    final XStream xstream = getXStreamForLoader(loader);
-    return xstream.fromXML(xml);
-  }
-
   public static Object clone(final Object object) {
     return cloneForLoader(object, getContextClassLoader());
   }

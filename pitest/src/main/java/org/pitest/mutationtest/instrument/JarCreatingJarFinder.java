@@ -31,7 +31,8 @@ import org.pitest.boot.CodeCoverageStore;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.boot.InvokeReceiver;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassByteArraySource;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Unchecked;
@@ -49,14 +50,14 @@ public class JarCreatingJarFinder implements JavaAgent {
 
   private Option<String>        location              = Option.none();
 
-  private final ClassPath       classPath;
+  private final ClassByteArraySource       classByteSource;
 
-  public JarCreatingJarFinder(final ClassPath cp) {
-    this.classPath = cp;
+  public JarCreatingJarFinder(final ClassByteArraySource classByteSource) {
+    this.classByteSource = classByteSource;
   }
 
   public JarCreatingJarFinder() {
-    this(new ClassPath());
+    this(new ClassPathByteArraySource());
   }
 
   public Option<String> getJarLocation() {
@@ -137,7 +138,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   }
 
   private byte[] classBytes(final String className) throws IOException {
-    return this.classPath.getClassData(className);
+    return this.classByteSource.apply(className).value();
   }
 
   public void close() {

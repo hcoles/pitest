@@ -53,16 +53,6 @@ public class JavaProcess {
     this.process.destroy();
   }
 
-  public void cleanup() {
-    try {
-      this.process.getErrorStream().close();
-      this.process.getOutputStream().close();
-      this.process.getInputStream().close();
-    } catch (final IOException ex) {
-      ex.printStackTrace();
-    }
-  }
-
   public int waitToDie() throws InterruptedException {
     final int exitVal = this.process.waitFor();
     this.out.requestStop();
