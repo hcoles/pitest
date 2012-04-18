@@ -185,11 +185,11 @@ public class MutationTestUnit extends AbstractTestUnit {
       final MutationStatusMap mutations, final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
-      LOG.warning("Slave encountered error or timeout");
       final Collection<MutationDetails> unfinishedRuns = mutations
           .getUnfinishedRuns();
       final DetectionStatus status = DetectionStatus
           .getForErrorExitCode(exitCode);
+      LOG.warning("Slave exited abnormally due to " + status);
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       mutations.setStatusForMutations(unfinishedRuns, status);

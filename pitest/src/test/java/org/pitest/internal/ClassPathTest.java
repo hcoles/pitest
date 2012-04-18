@@ -57,9 +57,10 @@ public class ClassPathTest {
   }
 
   @Test
-  public void shouldReturnBytesFromClasspathInputeStream() throws IOException {
+  public void shouldReturnBytesFromClasspathInputStream() throws IOException {
     final InputStream stream = Mockito.mock(InputStream.class);
     when(this.firstComponent.getData(any(String.class))).thenReturn(stream);
+    when(stream.read(any(byte[].class))).thenReturn(-1);
     this.testee.getClassData("foo");
     verify(stream).read(any(byte[].class));
     verify(stream).close();
