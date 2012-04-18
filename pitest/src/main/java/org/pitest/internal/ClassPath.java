@@ -17,7 +17,6 @@ package org.pitest.internal;
 
 import static org.pitest.functional.FCollection.filter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +40,7 @@ import org.pitest.internal.classloader.ArchiveClassPathRoot;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.internal.classloader.DirectoryClassPathRoot;
 import org.pitest.util.Log;
+import org.pitest.util.StreamUtil;
 
 public class ClassPath implements Iterable<ClassPathRoot> {
 
@@ -105,7 +105,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     for (final ClassPathRoot root : this.roots) {
       final InputStream s = root.getData(classname);
       if (s != null) {
-        b = streamToByteArray(s);
+        b = StreamUtil.streamToByteArray(s);
         s.close();
         break;
       }
@@ -113,17 +113,6 @@ public class ClassPath implements Iterable<ClassPathRoot> {
     return b;
   }
 
-  private static byte[] streamToByteArray(final InputStream in)
-      throws IOException {
-    final byte[] array = new byte[in.available()];
-    final ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
-    int length = in.read(array);
-    while (length > 0) {
-      out.write(array, 0, length);
-      length = in.read(array);
-    }
-    return out.toByteArray();
-  }
 
   public URL findResource(final String name) {
     try {

@@ -27,50 +27,54 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.pitest.functional.Option;
+import org.pitest.util.StreamUtil;
 import org.pitest.util.Unchecked;
 
+/**
+ * ClassPathRoot wrapping a jar or zip file
+ */
 public class ArchiveClassPathRoot implements ClassPathRoot {
 
-  private final File      file;
-  private Option<ZipFile> root;
+  private final File file;
 
   public ArchiveClassPathRoot(final File file) {
     this.file = file;
-    this.root = Option.none();
-  }
-
-  private ZipFile getRoot() {
-    try {
-      synchronized (this.file) {
-
-        if (this.root.hasNone()) {
-          this.root = Option.some(new ZipFile(this.file));
-        }
-      }
-      return this.root.value();
-    } catch (final IOException ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
   }
 
   public InputStream getData(final String name) throws IOException {
-    final ZipEntry entry = this.getRoot().getEntry(
-        name.replace('.', '/') + ".class");
-    if (entry == null) {
-      return null;
+    ZipFile zip = getRoot();
+    try {
+      final ZipEntry entry = zip.getEntry(name.replace('.', '/') + ".class");
+      if (entry == null) {
+        return null;
+      }
+      return StreamUtil.copyStream(zip.getInputStream(entry));
+    } finally {
+      zip.close(); // closes input stream
     }
-    return this.getRoot().getInputStream(entry);
   }
 
   public URL getResource(final String name) throws MalformedURLException {
-    final ZipEntry entry = this.getRoot().getEntry(name);
-    if (entry != null) {
-      return new URL("jar:file:" + this.getRoot().getName() + "!/"
-          + entry.getName());
-    } else {
-      return null;
+    ZipFile zip = getRoot();
+    try {
+      final ZipEntry entry = zip.getEntry(name);
+      if (entry != null) {
+        return new URL("jar:file:" + zip.getName() + "!/" + entry.getName());
+      } else {
+        return null;
+      }
+    } finally {
+      closeQuietly(zip);
     }
 
+  }
+
+  private void closeQuietly(ZipFile zip) {
+    try {
+      zip.close();
+    } catch (IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
   }
 
   @Override
@@ -80,14 +84,19 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   public Collection<String> classNames() {
     final List<String> names = new ArrayList<String>();
-    final Enumeration<? extends ZipEntry> entries = this.getRoot().entries();
-    while (entries.hasMoreElements()) {
-      final ZipEntry entry = entries.nextElement();
-      if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
-        names.add(stringToClassName(entry.getName()));
+    ZipFile root = getRoot();
+    try {
+      final Enumeration<? extends ZipEntry> entries = root.entries();
+      while (entries.hasMoreElements()) {
+        final ZipEntry entry = entries.nextElement();
+        if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+          names.add(stringToClassName(entry.getName()));
+        }
       }
+      return names;
+    } finally {
+      closeQuietly(root);
     }
-    return names;
 
   }
 
@@ -98,6 +107,14 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   public Option<String> cacheLocation() {
     return Option.some(this.file.getAbsolutePath());
+  }
+
+  private ZipFile getRoot() {
+    try {
+      return new ZipFile(this.file);
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
   }
 
 }

@@ -17,8 +17,11 @@ package org.pitest.internal.classloader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -55,6 +58,17 @@ public class ArchiveClassPathRootTest {
   public void getDataShouldReturnInputStreamForAKnownClass() throws Exception {
     assertNotNull(this.testee.getData("injar.p1.P1Test"));
   }
+  
+  @Test
+  public void shouldReturnAReadableInputStream()  {
+    byte b[] = new byte[100];
+    try {
+      InputStream actual = this.testee.getData("injar.p1.P1Test");
+      actual.read(b);
+    } catch (IOException ex ) {
+      fail();
+    }
+  }
 
   @Test
   public void getResourceShouldReturnNullForAnUnknownResource()
@@ -66,4 +80,5 @@ public class ArchiveClassPathRootTest {
   public void getResourceShouldReturnURLForAKnownResource() throws Exception {
     assertNotNull(this.testee.getResource("injar/p1/P1Test.class"));
   }
+
 }
