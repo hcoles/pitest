@@ -19,6 +19,7 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
+import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CompoundListenerFactory;
@@ -45,7 +46,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
-    final JavaAgent jac = new JarCreatingJarFinder(cp);
+    final JavaAgent jac = new JarCreatingJarFinder(new ClassPathByteArraySource(cp));
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
         jac.getJarLocation().value());
 
