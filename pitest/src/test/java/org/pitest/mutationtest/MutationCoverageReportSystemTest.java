@@ -300,23 +300,12 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   @Test
-  @Ignore
   public void shouldMarkChildJVMCrashesAsRunErrors() {
     this.data.setMutators(Mutator.NEGATE_CONDITIONALS.asCollection());
     this.data.setTargetClasses(predicateFor(CrashesJVMWhenMutated.class));
     this.data
         .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
     createAndRun();
-
-    // not obviously testable - but can check that cpu is not been eaten as per
-    // http://stackoverflow.com/questions/10178162/infinite-100-cpu-usage-at-java-io-fileinputstream-readbytesnative-method/10187635#10187635
-    // by keeping main thread alive with code below
-    // try {
-    // Thread.sleep(10000000);
-    // } catch (InterruptedException e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
 
     // correct via Eclipse, crash code doesn't seem to work via maven (java 1.6.0_26-b03)
     verifyResults(RUN_ERROR);
