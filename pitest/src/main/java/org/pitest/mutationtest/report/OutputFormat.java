@@ -22,8 +22,8 @@ import org.pitest.mutationtest.ListenerFactory;
  * Quick and dirty list of valid output format types
  */
 public enum OutputFormat {
-  HTML(HtmlReportFactory.createFactoryFunction()), CSV(CSVReportFactory
-      .createFactoryFunction()), XML(XMLReportFactory.createFactoryFunction());
+  HTML(HtmlReportFactory.createFactoryFunction()), CSV(CSVReportFactory // NO_UCD
+      .createFactoryFunction()), XML(XMLReportFactory.createFactoryFunction()); // NO_UCD
 
   private final F<ResultOutputStrategy, ListenerFactory> createFactory;
 
