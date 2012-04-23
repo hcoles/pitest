@@ -20,7 +20,6 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.pitest.Description;
@@ -153,15 +152,8 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private ExitCode waitForSlaveToDie(final MutationTestProcess worker) {
-    ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
-    try {
-      exitCode = worker.waitToDie();
-      LOG.fine("Exit code was - " + exitCode);
-    } catch (final InterruptedException e1) {
-      // swallow
-    } catch (final ExecutionException e) {
-      e.printStackTrace();
-    }
+    ExitCode exitCode = worker.waitToDie();
+    LOG.fine("Exit code was - " + exitCode);
     return exitCode;
   }
 

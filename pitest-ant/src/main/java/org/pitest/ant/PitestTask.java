@@ -39,7 +39,7 @@ public class PitestTask extends Task {
     try {
       execute(new Java(this));
     } catch (final Throwable t) {
-      t.printStackTrace();
+      throw new BuildException(t);
     }
   }
 

@@ -28,7 +28,6 @@ public class StreamMonitor  extends Thread implements Monitor {
   private final SideEffect1<String> inputHandler;
 
 
- 
   public StreamMonitor(final InputStream in,
       final SideEffect1<String> inputHandler) {
     super("PIT Stream Monitor");
@@ -69,7 +68,7 @@ public class StreamMonitor  extends Thread implements Monitor {
 
     } catch (final IOException e) {
       requestStop();
-      LOG.warning("No longer able to read stream");
+      LOG.fine("No longer able to read stream.");
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }

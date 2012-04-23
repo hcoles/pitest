@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -45,10 +44,9 @@ public class MutationTestProcess {
 
   }
 
-  public ExitCode waitToDie() throws InterruptedException, ExecutionException {
+  public ExitCode waitToDie() {
     try {
-      final ExitCode exitCode = this.thread.waitToFinish();
-      return exitCode;
+      return this.thread.waitToFinish();
     } finally {
       this.process.destroy();
     }

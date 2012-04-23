@@ -307,7 +307,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
         .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
     createAndRun();
 
-    // correct via Eclipse, crash code doesn't seem to work via maven (java 1.6.0_26-b03)
     verifyResults(RUN_ERROR);
 
   }

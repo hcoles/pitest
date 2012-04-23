@@ -18,10 +18,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 
 public class CommunicationThread {
+  
+  private final static Logger               LOG = Log.getLogger();
 
   private final SideEffect1<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
@@ -51,9 +55,17 @@ public class CommunicationThread {
     return future;
   }
 
-  public ExitCode waitToFinish() throws InterruptedException,
-      ExecutionException {
-    return this.future.get();
+  public ExitCode waitToFinish() {
+    try {
+      return this.future.get();
+    } catch (ExecutionException e) {
+      LOG.log(Level.WARNING, "Error while watching child process", e);
+      return ExitCode.UNKNOWN_ERROR;
+    } catch (InterruptedException e) {
+      LOG.log(Level.WARNING, "interrupted while waiting for child process", e);
+      return ExitCode.UNKNOWN_ERROR;
+    } 
+ 
   }
 
 }
