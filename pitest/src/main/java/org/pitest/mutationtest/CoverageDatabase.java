@@ -12,8 +12,6 @@ public interface CoverageDatabase {
 
   boolean initialise();
 
-  Collection<String> getParentClassesWithoutATest();
-
   Collection<TestInfo> getTestForLineNumber(ClassLine classLine);
 
   Collection<ClassInfo> getClassInfo(Collection<String> classesForSourceFile);

@@ -21,9 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.DefaultStaticConfig;
-import org.pitest.ExtendedTestResult;
 import org.pitest.Pitest;
-import org.pitest.TestResult;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -35,7 +33,6 @@ import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
-import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPathByteArraySource;
@@ -47,7 +44,6 @@ import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
@@ -131,20 +127,6 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-  protected void reportFailureForClassesWithoutTests(
-      final Collection<String> classesWithOutATest,
-      final TestListener mutationReportListener) {
-    final SideEffect1<String> reportFailure = new SideEffect1<String>() {
-      public void apply(final String a) {
-        final TestResult tr = new ExtendedTestResult(null, null,
-            new UnRunnableMutationTestMetaData("Could not find any tests for "
-                + a));
-        mutationReportListener.onTestFailure(tr);
-      }
-
-    };
-    FCollection.forEach(classesWithOutATest, reportFailure);
-  }
 
   private void runReport() throws IOException {
 
@@ -172,11 +154,7 @@ public class MutationCoverageReport implements Runnable {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(stats);
-    // staticConfig.addTestListener(ConsoleTestListener.);
 
-    reportFailureForClassesWithoutTests(
-        this.coverageDatabase.getParentClassesWithoutATest(),
-        mutationReportListener);
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<TestUnit> tus = buildMutationTests(

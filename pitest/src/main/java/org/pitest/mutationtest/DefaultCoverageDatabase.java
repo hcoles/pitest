@@ -37,9 +37,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.Help;
@@ -296,26 +294,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     };
   }
 
-  public Collection<String> getParentClassesWithoutATest() {
-    @SuppressWarnings("unchecked")
-    final FunctionalList<String> codeClassNames = FCollection
-        .filter(
-            this.codeClasses,
-            and(ClassInfo.matchIfTopLevelClass(),
-                not(ClassInfo.matchIfInterface()))).map(classInfoToName());
-    return codeClassNames.filter(Prelude.not(hasTest()));
-  }
-
-  private F<String, Boolean> hasTest() {
-    return new F<String, Boolean>() {
-
-      public Boolean apply(final String a) {
-        return DefaultCoverageDatabase.this.classCoverage.containsKey(a
-            .replace('.', '/'));
-      }
-
-    };
-  }
 
   public Collection<TestInfo> getTestForLineNumber(final ClassLine classLine) {
     return FCollection.flatMap(this.classCoverage.values(),

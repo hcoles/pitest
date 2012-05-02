@@ -39,7 +39,6 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.MutationMetaData;
-import org.pitest.mutationtest.instrument.UnRunnableMutationTestMetaData;
 import org.pitest.util.FileUtil;
 
 public class MutationHtmlReportListener implements TestListener {
@@ -51,7 +50,6 @@ public class MutationHtmlReportListener implements TestListener {
   private final Collection<SourceLocator> sourceRoots        = new HashSet<SourceLocator>();
 
   private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
-  private final List<String>              errors             = new ArrayList<String>();
   private final CoverageDatabase          coverage;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
@@ -66,18 +64,9 @@ public class MutationHtmlReportListener implements TestListener {
     final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
     if (d.hasSome()) {
       processMetaData(d.value());
-    } else {
-      final Option<UnRunnableMutationTestMetaData> unrunnable = tr
-          .getValue(UnRunnableMutationTestMetaData.class);
-      if (unrunnable.hasSome()) {
-        processUnruntest(unrunnable.value());
-      }
-    }
+    } 
   }
 
-  private void processUnruntest(final UnRunnableMutationTestMetaData unrunnable) {
-    this.errors.add(unrunnable.getReason());
-  }
 
   private void processMetaData(final MutationMetaData mutationMetaData) {
 
