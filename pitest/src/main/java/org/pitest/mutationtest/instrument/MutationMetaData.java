@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.MetaData;
-import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -114,7 +113,6 @@ public class MutationMetaData implements MetaData {
   }
 
   private F<MutationResult, Boolean> mutationIsForFile(final String sourceFile) {
-    // TODO Auto-generated method stub
     return new F<MutationResult, Boolean>() {
 
       public Boolean apply(final MutationResult a) {
@@ -141,12 +139,6 @@ public class MutationMetaData implements MetaData {
     return classes;
   }
 
-  public Collection<ClassName> getTestClasses() {
-    final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
-    FCollection.mapTo(getTargettedTests(), TestInfo.toDefiningClassName(),
-        uniqueTestClasses);
-    return uniqueTestClasses;
-  }
 
   public Collection<TestInfo> getTargettedTests() {
     final Set<TestInfo> uniqueTests = new HashSet<TestInfo>();
@@ -154,7 +146,16 @@ public class MutationMetaData implements MetaData {
         uniqueTests);
     return uniqueTests;
   }
+  
+  public String getPackageName() {
+    final String fileName = getMutatedClass().iterator()
+        .next();
+    final int lastDot = fileName.lastIndexOf('.');
+    return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
+  }
+  
 
+  
   private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
     return new F<MutationResult, Iterable<TestInfo>>() {
 

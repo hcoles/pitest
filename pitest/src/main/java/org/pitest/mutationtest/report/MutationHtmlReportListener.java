@@ -45,8 +45,6 @@ public class MutationHtmlReportListener implements TestListener {
 
   private final ResultOutputStrategy      outputStrategy;
 
-  private final MutatorScores             mutatorScores      = new MutatorScores();
-
   private final Collection<SourceLocator> sourceRoots        = new HashSet<SourceLocator>();
 
   private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
@@ -60,7 +58,7 @@ public class MutationHtmlReportListener implements TestListener {
     this.sourceRoots.addAll(Arrays.asList(locators));
   }
 
-  private void extractMetaData(final TestResult tr) {
+  private void processMetaData(final TestResult tr) {
     final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
     if (d.hasSome()) {
       processMetaData(d.value());
@@ -71,14 +69,17 @@ public class MutationHtmlReportListener implements TestListener {
   private void processMetaData(final MutationMetaData mutationMetaData) {
 
     try {
-      this.mutatorScores.registerResults(mutationMetaData.getMutations());
-
+    
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css"));
+      
+      
       collectPackageSummaries(mutationMetaData);
-      final String fileName = (getPackageName(mutationMetaData)
-          + File.separator + mutationMetaData.getFirstFileName()).replace('.',
+      
+      
+      final String fileName = mutationMetaData.getPackageName()
+          + File.separator + mutationMetaData.getFirstFileName().replace('.',
           '_') + ".html";
 
       final Writer writer = this.outputStrategy.createWriterForFile(fileName);
@@ -93,12 +94,11 @@ public class MutationHtmlReportListener implements TestListener {
       st.setAttribute("mutators", mutationMetaData.getConfig()
           .getMutatorNames());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSoureFiles(mutationMetaData);
+      final Collection<SourceFile> sourceFiles = createAnnotatedSourceFiles(mutationMetaData);
 
       st.setAttribute("sourceFiles", sourceFiles);
       st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClass());
 
-      // st.setAttribute("groups", groups);
       writer.write(st.toString());
       writer.close();
 
@@ -120,20 +120,16 @@ public class MutationHtmlReportListener implements TestListener {
 
     final MutationTestSummaryData summaryData = new MutationTestSummaryData(
         mutationMetaData.getFirstFileName(),
-        mutationMetaData.getMutatedClass(), mutationMetaData.getTestClasses(),
+        mutationMetaData.getMutatedClass(), 
         totals);
-    final String packageName = getPackageName(mutationMetaData);
+    
+    final String packageName = mutationMetaData.getPackageName();
 
     this.packageSummaryData.add(packageName, summaryData);
 
   }
 
-  private String getPackageName(final MutationMetaData mutationMetaData) {
-    final String fileName = mutationMetaData.getMutatedClass().iterator()
-        .next();
-    final int lastDot = fileName.lastIndexOf('.');
-    return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
-  }
+
 
   private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
     return new F2<Integer, ClassInfo, Integer>() {
@@ -145,7 +141,7 @@ public class MutationHtmlReportListener implements TestListener {
     };
   }
 
-  private Collection<SourceFile> createAnnotatedSoureFiles(
+  private Collection<SourceFile> createAnnotatedSourceFiles(
       final MutationMetaData value) throws IOException {
     final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
     for (final String each : value.getSourceFiles()) {
@@ -201,15 +197,15 @@ public class MutationHtmlReportListener implements TestListener {
   }
 
   public void onTestError(final TestResult tr) {
-    extractMetaData(tr);
+    processMetaData(tr);
   }
 
   public void onTestFailure(final TestResult tr) {
-    extractMetaData(tr);
+    processMetaData(tr);
   }
 
   public void onTestSkipped(final TestResult tr) {
-    extractMetaData(tr);
+    processMetaData(tr);
   }
 
   public void onTestStart(final Description d) {
@@ -217,7 +213,7 @@ public class MutationHtmlReportListener implements TestListener {
   }
 
   public void onTestSuccess(final TestResult tr) {
-    extractMetaData(tr);
+    processMetaData(tr);
 
   }
 
