@@ -26,7 +26,7 @@ public class PackageSummaryData {
   }
 
   public String getPackageDirectory() {
-    return this.packageName.replace(".", "_");
+    return this.packageName;
   }
 
   public List<MutationTestSummaryData> getSummaryData() {

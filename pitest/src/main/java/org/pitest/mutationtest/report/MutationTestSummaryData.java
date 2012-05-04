@@ -58,7 +58,7 @@ public class MutationTestSummaryData implements
   }
 
   public String getFileName() {
-    return this.fileName.replace('.', '_') + ".html";
+    return this.fileName + ".html";
   }
 
   public Collection<String> getMutatedClasses() {

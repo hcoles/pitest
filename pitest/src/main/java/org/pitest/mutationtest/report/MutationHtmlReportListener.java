@@ -72,15 +72,12 @@ public class MutationHtmlReportListener implements TestListener {
     
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
-              "templates/mutation/style.css"));
-      
+              "templates/mutation/style.css")); 
       
       collectPackageSummaries(mutationMetaData);
-      
-      
+     
       final String fileName = mutationMetaData.getPackageName()
-          + File.separator + mutationMetaData.getFirstFileName().replace('.',
-          '_') + ".html";
+          + File.separator + mutationMetaData.getFirstFileName() + ".html";
 
       final Writer writer = this.outputStrategy.createWriterForFile(fileName);
 
