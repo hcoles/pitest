@@ -19,9 +19,12 @@ public class PackageSummaryMap {
     return psData;
   }
 
-  public void add(final String packageName, final MutationTestSummaryData data) {
-    getPackageSummaryData(packageName).addSummaryData(data);
+  public PackageSummaryData update(final String packageName, final MutationTestSummaryData data) {
+    PackageSummaryData psd = getPackageSummaryData(packageName);
+    psd.addSummaryData(data);
+    return psd;
   }
+  
 
   public Collection<PackageSummaryData> values() {
     return this.packageSummaryData.values();

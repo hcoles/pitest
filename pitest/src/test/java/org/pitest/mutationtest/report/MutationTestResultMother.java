@@ -14,17 +14,13 @@
  */
 package org.pitest.mutationtest.report;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.pitest.DescriptionMother;
 import org.pitest.ExtendedTestResult;
 import org.pitest.TestResult;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
@@ -41,10 +37,7 @@ public class MutationTestResultMother {
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {
-    final MutationEngine me = mock(MutationEngine.class);
-    final MutationConfig config = new MutationConfig(me,
-        Collections.<String> emptyList());
-    return new MutationMetaData(config, Arrays.asList(mrs));
+    return new MutationMetaData(Collections.<String>emptyList(), Arrays.asList(mrs));
   }
 
   public static TestResult createResult(final MutationMetaData md) {

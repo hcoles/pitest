@@ -32,7 +32,6 @@ import org.pitest.TestResult;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
@@ -67,17 +66,21 @@ public class MutationHtmlReportListener implements TestListener {
 
 
   private void processMetaData(final MutationMetaData mutationMetaData) {
+    PackageSummaryData packageData = collectPackageSummaries(mutationMetaData);
+ 
+    generateAnnotatedSourceFiles(packageData.getForSourceFile(mutationMetaData.getFirstFileName()));
+  }
 
+  private void generateAnnotatedSourceFiles(
+      final MutationTestSummaryData mutationMetaData) {
     try {
     
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
               "templates/mutation/style.css")); 
       
-      collectPackageSummaries(mutationMetaData);
-     
       final String fileName = mutationMetaData.getPackageName()
-          + File.separator + mutationMetaData.getFirstFileName() + ".html";
+          + File.separator + mutationMetaData.getFileName();
 
       final Writer writer = this.outputStrategy.createWriterForFile(fileName);
 
@@ -86,15 +89,14 @@ public class MutationHtmlReportListener implements TestListener {
           .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", css);
 
-      st.setAttribute("tests", mutationMetaData.getTargettedTests());
+      st.setAttribute("tests", mutationMetaData.getTests());
 
-      st.setAttribute("mutators", mutationMetaData.getConfig()
-          .getMutatorNames());
+      st.setAttribute("mutators", mutationMetaData.getMutators());
 
       final Collection<SourceFile> sourceFiles = createAnnotatedSourceFiles(mutationMetaData);
 
       st.setAttribute("sourceFiles", sourceFiles);
-      st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClass());
+      st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClasses());
 
       writer.write(st.toString());
       writer.close();
@@ -104,49 +106,21 @@ public class MutationHtmlReportListener implements TestListener {
     }
   }
 
-  private void collectPackageSummaries(final MutationMetaData mutationMetaData) {
-    final MutationTotals totals = new MutationTotals();
-    totals.addClasses(1); // FIXME assumes 1 new top level class per meta data
-    totals.addLines(FCollection.fold(accumulateCodeLines(), 0,
-        this.coverage.getClassInfo(mutationMetaData.getMutatedClass())));
-    totals.addLinesCovered(this.coverage
-        .getNumberOfCoveredLines(mutationMetaData.getMutatedClass()));
-    totals.addMutations(mutationMetaData.getNumberOfMutations());
-    totals.addMutationsDetetcted(mutationMetaData
-        .getNumberOfDetetectedMutations());
-
-    final MutationTestSummaryData summaryData = new MutationTestSummaryData(
-        mutationMetaData.getFirstFileName(),
-        mutationMetaData.getMutatedClass(), 
-        totals);
-    
+  private PackageSummaryData collectPackageSummaries(final MutationMetaData mutationMetaData) {    
     final String packageName = mutationMetaData.getPackageName();
-
-    this.packageSummaryData.add(packageName, summaryData);
-
+    return this.packageSummaryData.update(packageName, mutationMetaData.createSummaryData(this.coverage));
   }
 
-
-
-  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
-    return new F2<Integer, ClassInfo, Integer>() {
-
-      public Integer apply(final Integer a, final ClassInfo b) {
-        return a + b.getNumberOfCodeLines();
-      }
-
-    };
-  }
 
   private Collection<SourceFile> createAnnotatedSourceFiles(
-      final MutationMetaData value) throws IOException {
+      final MutationTestSummaryData mutationMetaData) throws IOException {
     final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
-    for (final String each : value.getSourceFiles()) {
-      final MutationResultList mutationsForThisFile = value
+    for (final String each : Collections.singletonList(mutationMetaData.getClassName())) {
+      final MutationResultList mutationsForThisFile = mutationMetaData
           .getResultsForSourceFile(each);
       final List<Line> lines = createAnnotatedSourceCodeLines(each,
           mutationsForThisFile,
-          this.coverage.getClassInfo(value.getClassesForSourceFile(each)));
+          this.coverage.getClassInfo(mutationMetaData.getClassesForSourceFile(each)));
 
       sourceFiles.add(new SourceFile(each, lines, mutationsForThisFile
           .groupMutationsByLine()));

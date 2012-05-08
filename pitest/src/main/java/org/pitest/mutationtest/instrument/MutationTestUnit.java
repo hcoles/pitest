@@ -210,7 +210,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       final Collection<MutationDetails> availableMutations,
       final ResultCollector rc) {
 
-    final MetaData md = new MutationMetaData(this.config,
+    final MetaData md = new MutationMetaData(this.config.getMutatorNames(),
         mutationsMap.createMutationResults());
 
     rc.notifyEnd(this.getDescription(), md);
