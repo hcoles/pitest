@@ -152,7 +152,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private ExitCode waitForSlaveToDie(final MutationTestProcess worker) {
-    ExitCode exitCode = worker.waitToDie();
+    final ExitCode exitCode = worker.waitToDie();
     LOG.fine("Exit code was - " + exitCode);
     return exitCode;
   }

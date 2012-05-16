@@ -20,13 +20,12 @@ import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 
-public class StreamMonitor  extends Thread implements Monitor {
+public class StreamMonitor extends Thread implements Monitor {
   private final static Logger       LOG = Log.getLogger();
 
   private final byte[]              buf = new byte[256];
   private final InputStream         in;
   private final SideEffect1<String> inputHandler;
-
 
   public StreamMonitor(final InputStream in,
       final SideEffect1<String> inputHandler) {
@@ -35,7 +34,6 @@ public class StreamMonitor  extends Thread implements Monitor {
     this.inputHandler = inputHandler;
     setDaemon(true);
   }
-
 
   public void requestStart() {
     start();
@@ -48,18 +46,17 @@ public class StreamMonitor  extends Thread implements Monitor {
     }
   }
 
-
   private void readFromStream() {
     try {
-      
+
       // If child JVM crashes reading stdout/stderr seems to sometimes
       // block and consume 100% cpu, so check stream is available first.
       // May still be an issue if child crashes during later read . . .
-      if ( this.in.available() == 0 ) {
+      if (this.in.available() == 0) {
         Thread.sleep(100);
         return;
       }
-      
+
       int i;
       while ((i = this.in.read(this.buf, 0, this.buf.length)) != -1) {
         final String output = new String(this.buf, 0, i);
@@ -69,15 +66,13 @@ public class StreamMonitor  extends Thread implements Monitor {
     } catch (final IOException e) {
       requestStop();
       LOG.fine("No longer able to read stream.");
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
-  
- 
+
   public void requestStop() {
     this.interrupt();
   }
-
 
 }

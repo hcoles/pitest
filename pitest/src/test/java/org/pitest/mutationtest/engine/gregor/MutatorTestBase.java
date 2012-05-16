@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifierClassVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Transformation;
 import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
 import org.pitest.functional.F;
@@ -48,7 +49,7 @@ public abstract class MutatorTestBase {
 
   protected FunctionalList<MutationDetails> findMutationsFor(
       final Class<?> clazz) {
-    return this.engine.findMutations(Collections.singleton(clazz.getName()));
+    return this.engine.findMutations(new ClassName(clazz));
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,

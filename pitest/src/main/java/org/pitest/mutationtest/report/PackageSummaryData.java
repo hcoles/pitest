@@ -6,32 +6,35 @@ import java.util.List;
 import java.util.Map;
 
 public class PackageSummaryData {
-  private final MutationTotals                totals      = new MutationTotals();
-  private final String                        packageName;
-  private final Map<String,MutationTestSummaryData> summaryData = new HashMap<String,MutationTestSummaryData>();
+
+  private final String                               packageName;
+  private final Map<String, MutationTestSummaryData> summaryData = new HashMap<String, MutationTestSummaryData>();
 
   public PackageSummaryData(final String packageName) {
     this.packageName = packageName;
   }
 
   public void addSummaryData(final MutationTestSummaryData data) {
-    MutationTestSummaryData existing = summaryData.get(data.getClassName());
-    if ( existing == null ) {
-      this.totals.add(data.getTotals());
-      this.summaryData.put(data.getClassName(),data);
+    final MutationTestSummaryData existing = this.summaryData.get(data
+        .getClassName());
+    if (existing == null) {
+      this.summaryData.put(data.getClassName(), data);
     } else {
-     totals.addIgnoringLinesAndClasses(data.getTotals()); 
-     existing.add(data);
+      existing.add(data);
     }
 
   }
 
-  public MutationTestSummaryData getForSourceFile(String filename) {
-    return summaryData.get(filename);
+  public MutationTestSummaryData getForSourceFile(final String filename) {
+    return this.summaryData.get(filename);
   }
-  
+
   public MutationTotals getTotals() {
-    return this.totals;
+    final MutationTotals mt = new MutationTotals();
+    for (final MutationTestSummaryData each : this.summaryData.values()) {
+      mt.add(each.getTotals());
+    }
+    return mt;
   }
 
   public String getPackageName() {

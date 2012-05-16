@@ -1,7 +1,6 @@
 package org.pitest.mutationtest;
 
 import static org.pitest.functional.FCollection.flatMap;
-import static org.pitest.functional.FCollection.forEach;
 import static org.pitest.functional.Prelude.and;
 import static org.pitest.functional.Prelude.noSideEffect;
 import static org.pitest.functional.Prelude.not;
@@ -12,7 +11,6 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.True;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPathByteArraySource;
@@ -62,8 +59,8 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
   private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
   private final Map<Description, Long>                     times         = new MemoryEfficientHashMap<Description, Long>();
 
+  // FIXME can be moved out of here
   private final List<ClassInfo>                            codeClasses;
-  private Collection<ClassGrouping>                        groupedClasses;
 
   private boolean                                          allTestsGreen = true;
   private final TestToClassMapper                          testClassMapper;
@@ -99,8 +96,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     this.timings.registerStart(Timings.Stage.COVERAGE);
     calculateCoverage(directlySuppliedTestsAndSuites);
     this.timings.registerEnd(Timings.Stage.COVERAGE);
-
-    this.groupedClasses = groupByOuterClass(this.codeClasses);
 
     verifyBuildSuitableForMutationTesting();
 
@@ -247,54 +242,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     }
   }
 
-  private Collection<ClassGrouping> groupByOuterClass(
-      final Collection<ClassInfo> classes) {
-    final Map<ClassName, ClassGrouping> group = new HashMap<ClassName, ClassGrouping>();
-    forEach(classes, addToMap(group, ClassInfo.matchIfTopLevelClass()));
-    forEach(classes, addToParentGrouping(group));
-
-    if (group.isEmpty()) {
-      forEach(classes, addToMap(group, True.<ClassInfo> all()));
-    }
-
-    return group.values();
-
-  }
-
-  private SideEffect1<ClassInfo> addToMap(
-      final Map<ClassName, ClassGrouping> map,
-      final F<ClassInfo, Boolean> predicate) {
-    return new SideEffect1<ClassInfo>() {
-
-      public void apply(final ClassInfo clazz) {
-        if (predicate.apply(clazz)) {
-          map.put(clazz.getName(), new ClassGrouping(clazz.getName()
-              .asInternalName(), Collections.<String> emptyList()));
-        }
-      }
-
-    };
-  }
-
-  private SideEffect1<ClassInfo> addToParentGrouping(
-      final Map<ClassName, ClassGrouping> map) {
-    return new SideEffect1<ClassInfo>() {
-
-      public void apply(final ClassInfo a) {
-        final Option<ClassInfo> parent = a.getOuterClass();
-        if (parent.hasSome()) {
-          final ClassGrouping grouping = map.get(parent.value().getName());
-          if (grouping != null) {
-            grouping.addChild(a.getName().asInternalName());
-          }
-        }
-
-      }
-
-    };
-  }
-
-
   public Collection<TestInfo> getTestForLineNumber(final ClassLine classLine) {
     return FCollection.flatMap(this.classCoverage.values(),
         flattenMap(classLine));
@@ -358,10 +305,6 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), time, testee);
 
-  }
-
-  public Collection<ClassGrouping> getGroupedClasses() {
-    return this.groupedClasses;
   }
 
   public Collection<TestInfo> getTestsForClass(final String clazz) {

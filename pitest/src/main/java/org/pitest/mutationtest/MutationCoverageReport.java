@@ -15,19 +15,21 @@
 package org.pitest.mutationtest;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.ClassLoaderFactory;
-import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
@@ -127,10 +129,7 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-
   private void runReport() throws IOException {
-
-    // TestInfo.checkJUnitVersion();
 
     Log.setVerbose(this.data.isVerbose());
 
@@ -142,9 +141,6 @@ public class MutationCoverageReport implements Runnable {
 
     this.coverageDatabase.initialise();
 
-    final Collection<ClassGrouping> codeClasses = this.coverageDatabase
-        .getGroupedClasses();
-
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
         .getListener(this.coverageDatabase, t0, new SmartSourceLocator(
@@ -155,11 +151,8 @@ public class MutationCoverageReport implements Runnable {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(stats);
 
-
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final List<TestUnit> tus = buildMutationTests(
-        this.coverageDatabase.getConfiguration(), this.coverageDatabase,
-        codeClasses);
+    final List<TestUnit> tus = buildMutationTests();
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -170,8 +163,7 @@ public class MutationCoverageReport implements Runnable {
     pit.run(createContainer(), tus);
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
-    LOG.info("Completed in " + timeSpan(t0) + ".  Tested " + codeClasses.size()
-        + " classes.");
+    LOG.info("Completed in " + timeSpan(t0));
 
     printStats(stats);
 
@@ -201,9 +193,7 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-  private List<TestUnit> buildMutationTests(final Configuration initialConfig,
-      final CoverageDatabase coverageDatabase,
-      final Collection<ClassGrouping> codeClasses) {
+  private List<TestUnit> buildMutationTests() {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
@@ -216,8 +206,11 @@ public class MutationCoverageReport implements Runnable {
         this.data, this.coverageDatabase.getJavaAgent(),
         new ClassPathByteArraySource(this.data.getClassPath()));
 
+    final Set<ClassName> codeClasses = new HashSet<ClassName>();
+    FCollection.mapTo(this.coverageDatabase.getCodeClasses(),
+        ClassInfo.toClassName(), codeClasses);
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
-        initialConfig, coverageDatabase);
+        this.coverageDatabase.getConfiguration(), this.coverageDatabase);
     return tus;
   }
 

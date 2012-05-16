@@ -8,8 +8,6 @@ $css$
 <body>
 
 
-$sourceFiles : { sourceFile | 
-
 <h1>$sourceFile.fileName$</h1>
 
 <table class="src">
@@ -28,6 +26,7 @@ $line.number$
 
 }$
 
+
 <tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
 
 $sourceFile.groups:{ group |
@@ -44,7 +43,6 @@ $group.mutations: { mutation | <p class='$mutation.status$'>$mutation.details.ht
 }$
 </table>
 
-}$
 
 <h2>Active mutators</h2>
 <ul>

@@ -165,7 +165,16 @@ public class ClassInfo {
 
   @Override
   public String toString() {
-    return "ClassInfo [name=" + this.name + "]";
+    return this.name.asJavaName();
+  }
+
+  public static F<ClassInfo, ClassName> toClassName() {
+    return new F<ClassInfo, ClassName>() {
+      public ClassName apply(final ClassInfo a) {
+        return a.getName();
+      }
+
+    };
   }
 
 }

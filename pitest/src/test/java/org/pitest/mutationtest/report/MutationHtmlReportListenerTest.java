@@ -22,12 +22,15 @@ import static org.mockito.Mockito.when;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.TestResult;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -49,13 +52,20 @@ public class MutationHtmlReportListenerTest {
 
   @Mock
   private Writer                     writer;
+  
+  @Mock
+  private ClassInfo classInfo;
 
+  @SuppressWarnings("unchecked")
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
 
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
+    when(this.classInfo.getName()).thenReturn(new ClassName("foo"));
+    when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(Collections.singleton(classInfo));
+    
     this.testee = new MutationHtmlReportListener(this.coverageDb, 0,
         this.outputStrategy, this.sourceLocator);
   }
@@ -69,14 +79,14 @@ public class MutationHtmlReportListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void shouldTryToLocateSourceFilesFromMutatedClasses() {
-
+    final String fileName = "foo.java";
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails("foo.java"),
-        new MutationStatusTestPair(1, DetectionStatus.KILLED, "foo"));
+        MutationTestResultMother.createDetails(fileName),
+        new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
         .thenReturn(Option.<Reader> none());
     this.testee.onTestSuccess(createResult(mr));
-    verify(this.sourceLocator).locate(any(Collection.class), eq("foo.java"));
+    verify(this.sourceLocator).locate(any(Collection.class), eq(fileName));
   }
 
   private TestResult createResult(final MutationResult... mrs) {

@@ -19,101 +19,60 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
+import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationTestSummaryData implements
     Comparable<MutationTestSummaryData> {
 
-  private final String                fileName;
-  private final Set<String> mutators = new HashSet<String>();
-  
+  private final String                     fileName;
+  private final Set<String>                mutators  = new HashSet<String>();
   private final Collection<MutationResult> mutations = new ArrayList<MutationResult>();
+  private final Set<ClassInfo>             classes   = new HashSet<ClassInfo>();
 
-  private final MutationTotals        totals;
+  private long                             numberOfCoveredLines;
 
   public MutationTestSummaryData(final String fileName,
-      Collection<MutationResult> results,
-      final Collection<String> mutators,
-      final MutationTotals totals) {
+      final Collection<MutationResult> results,
+      final Collection<String> mutators, final Collection<ClassInfo> classes,
+      final long numberOfCoveredLines) {
     this.fileName = fileName;
-    this.totals = totals;
-    this.mutations.addAll( results);
+    this.mutations.addAll(results);
     this.mutators.addAll(mutators);
+    this.classes.addAll(classes);
+    this.numberOfCoveredLines = numberOfCoveredLines;
   }
 
   public MutationTotals getTotals() {
-    return this.totals;
-  }
-
-  public long getNumberOfMutations() {
-    return this.totals.getNumberOfMutations();
-  }
-
-  public long getNumberOfMutationsDetected() {
-    return this.totals.getNumberOfMutationsDetected();
-  }
-
-  public long getNumberOfLines() {
-    return this.totals.getNumberOfLines();
-  }
-
-  public long getNumberOfLinesCovered() {
-    return this.totals.getNumberOfLinesCovered();
+    final MutationTotals mt = new MutationTotals();
+    mt.addClasses(this.getMutatedClasses().size());
+    mt.addMutations(this.getNumberOfMutations());
+    mt.addMutationsDetetcted(this.getNumberOfMutationsDetected());
+    mt.addLines(getNumberOfLines());
+    mt.addLinesCovered(this.numberOfCoveredLines);
+    return mt;
   }
 
   public String getPackageName() {
-    final String fileName = getMutatedClasses().iterator()
-        .next();
+    final String fileName = getMutatedClasses().iterator().next().getName()
+        .asJavaName();
     final int lastDot = fileName.lastIndexOf('.');
     return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
   }
-  
-  public String getClassName() {
-    return this.fileName;
-  }
 
-  public String getFileName() {
-    return this.fileName + ".html";
-  }
-
-  public Collection<String> getMutatedClasses() {
-    final Set<String> classes = new HashSet<String>(1);
-    FCollection.mapTo(this.mutations, mutationsToClass(), classes);
-    return classes;
-  }
-
-  private F<MutationResult, String> mutationsToClass() {
-    return new F<MutationResult, String>() {
-      public String apply(final MutationResult a) {
-        return a.getDetails().getClazz();
-      }
-    };
-  }
-
-
-  public Integer getMutationCoverage() {
-    return this.totals.getMutationCoverage();
-  }
-
-  public Integer getLineCoverage() {
-    return this.totals.getLineCoverage();
-  }
-
-
-  public int compareTo(final MutationTestSummaryData other) {
-    return this.getFileName().compareTo(other.getFileName());
-  }
-
-  public void add(MutationTestSummaryData data) {
-    totals.addIgnoringLinesAndClasses(data.getTotals());
+  public void add(final MutationTestSummaryData data) {
     this.mutations.addAll(data.mutations);
-    mutators.addAll(data.getMutators());
-    
+    this.mutators.addAll(data.getMutators());
+    final int classesBefore = this.classes.size();
+    this.classes.addAll(data.classes);
+    if (classesBefore < this.classes.size()) {
+      this.numberOfCoveredLines += data.numberOfCoveredLines;
+    }
   }
 
   public Collection<TestInfo> getTests() {
@@ -122,7 +81,64 @@ public class MutationTestSummaryData implements
         uniqueTests);
     return uniqueTests;
   }
-  
+
+  public String getClassName() {
+    return this.fileName;
+  }
+
+  public String getFileName() {
+    return this.fileName + ".html";
+  }
+
+  public Collection<ClassInfo> getMutatedClasses() {
+    return this.classes;
+  }
+
+  public Set<String> getMutators() {
+    return this.mutators;
+  }
+
+  public MutationResultList getResults() {
+    return new MutationResultList(this.mutations);
+  }
+
+  public Collection<ClassInfo> getClasses() {
+    return this.classes;
+  }
+
+
+  private int getNumberOfLines() {
+    return FCollection.fold(accumulateCodeLines(), 0, this.classes);
+  }
+
+  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
+    return new F2<Integer, ClassInfo, Integer>() {
+
+      public Integer apply(final Integer a, final ClassInfo b) {
+        return a + b.getNumberOfCodeLines();
+      }
+
+    };
+  }
+
+  private long getNumberOfMutations() {
+    return this.mutations.size();
+  }
+
+  private long getNumberOfMutationsDetected() {
+    int count = 0;
+    for (final MutationResult each : this.mutations) {
+      if (each.getStatus().isDetected()) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  public int compareTo(final MutationTestSummaryData other) {
+    return this.getFileName().compareTo(other.getFileName());
+  }
+
   private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
     return new F<MutationResult, Iterable<TestInfo>>() {
 
@@ -131,61 +147,6 @@ public class MutationTestSummaryData implements
       }
 
     };
-  }
-  
-  public Set<String> getMutators() {
-    return mutators;
-  }
-  
-  public Collection<String> getSourceFiles() {
-    final Set<String> uniqueFilenames = new HashSet<String>();
-    FCollection.mapTo(this.mutations, mutationResultToFileName(),
-        uniqueFilenames);
-    return uniqueFilenames;
-  }
-  
-  private F<MutationResult, String> mutationResultToFileName() {
-
-    return new F<MutationResult, String>() {
-
-      public String apply(final MutationResult a) {
-        return a.getDetails().getFilename();
-      }
-
-    };
-  }
-  
-  public MutationResultList getResultsForSourceFile(final String sourceFile) {
-    return new MutationResultList(FCollection.filter(this.mutations,
-        mutationIsForFile(sourceFile)));
-  }
-
-  private F<MutationResult, Boolean> mutationIsForFile(final String sourceFile) {
-    return new F<MutationResult, Boolean>() {
-
-      public Boolean apply(final MutationResult a) {
-        return a.getDetails().getFilename().equals(sourceFile);
-      }
-
-    };
-  }
-  
-  
-  public Collection<String> getClassesForSourceFile(final String sourceFileName) {
-    final Set<String> classes = new HashSet<String>();
-    final F<MutationResult, Iterable<String>> f = new F<MutationResult, Iterable<String>>() {
-      public Iterable<String> apply(final MutationResult a) {
-        if (a.getDetails().getFilename().equals(sourceFileName)) {
-          return Option.some(a.getDetails().getClazz());
-        } else {
-          return Option.none();
-        }
-
-      }
-
-    };
-    FCollection.flatMapTo(this.mutations, f, classes);
-    return classes;
   }
 
 

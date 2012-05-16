@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -61,24 +60,24 @@ public class MutationHtmlReportListener implements TestListener {
     final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
     if (d.hasSome()) {
       processMetaData(d.value());
-    } 
+    }
   }
-
 
   private void processMetaData(final MutationMetaData mutationMetaData) {
-    PackageSummaryData packageData = collectPackageSummaries(mutationMetaData);
- 
-    generateAnnotatedSourceFiles(packageData.getForSourceFile(mutationMetaData.getFirstFileName()));
+    final PackageSummaryData packageData = collectPackageSummaries(mutationMetaData);
+
+    generateAnnotatedSourceFile(packageData.getForSourceFile(mutationMetaData
+        .getFirstFileName()));
   }
 
-  private void generateAnnotatedSourceFiles(
+  private void generateAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) {
     try {
-    
+
       final String css = FileUtil.readToString(IsolationUtils
           .getContextClassLoader().getResourceAsStream(
-              "templates/mutation/style.css")); 
-      
+              "templates/mutation/style.css"));
+
       final String fileName = mutationMetaData.getPackageName()
           + File.separator + mutationMetaData.getFileName();
 
@@ -93,9 +92,9 @@ public class MutationHtmlReportListener implements TestListener {
 
       st.setAttribute("mutators", mutationMetaData.getMutators());
 
-      final Collection<SourceFile> sourceFiles = createAnnotatedSourceFiles(mutationMetaData);
+      final SourceFile sourceFile = createAnnotatedSourceFile(mutationMetaData);
 
-      st.setAttribute("sourceFiles", sourceFiles);
+      st.setAttribute("sourceFile", sourceFile);
       st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClasses());
 
       writer.write(st.toString());
@@ -106,26 +105,26 @@ public class MutationHtmlReportListener implements TestListener {
     }
   }
 
-  private PackageSummaryData collectPackageSummaries(final MutationMetaData mutationMetaData) {    
+  private PackageSummaryData collectPackageSummaries(
+      final MutationMetaData mutationMetaData) {
     final String packageName = mutationMetaData.getPackageName();
-    return this.packageSummaryData.update(packageName, mutationMetaData.createSummaryData(this.coverage));
+    return this.packageSummaryData.update(packageName,
+        mutationMetaData.createSummaryData(this.coverage));
   }
 
-
-  private Collection<SourceFile> createAnnotatedSourceFiles(
+  private SourceFile createAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) throws IOException {
-    final Collection<SourceFile> sourceFiles = new ArrayList<SourceFile>();
-    for (final String each : Collections.singletonList(mutationMetaData.getClassName())) {
-      final MutationResultList mutationsForThisFile = mutationMetaData
-          .getResultsForSourceFile(each);
-      final List<Line> lines = createAnnotatedSourceCodeLines(each,
-          mutationsForThisFile,
-          this.coverage.getClassInfo(mutationMetaData.getClassesForSourceFile(each)));
 
-      sourceFiles.add(new SourceFile(each, lines, mutationsForThisFile
-          .groupMutationsByLine()));
-    }
-    return sourceFiles;
+    final String className = mutationMetaData.getClassName();
+
+    final MutationResultList mutationsForThisFile = mutationMetaData
+        .getResults();
+
+    final List<Line> lines = createAnnotatedSourceCodeLines(className,
+        mutationsForThisFile, mutationMetaData.getClasses());
+
+    return new SourceFile(className, lines,
+        mutationsForThisFile.groupMutationsByLine());
   }
 
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
@@ -185,14 +184,13 @@ public class MutationHtmlReportListener implements TestListener {
 
   public void onTestSuccess(final TestResult tr) {
     processMetaData(tr);
-
   }
 
   public void onRunEnd() {
-    createIndexPage();
+    createIndexPages();
   }
 
-  private void createIndexPage() {
+  private void createIndexPages() {
 
     final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
     final StringTemplate st = group
@@ -219,7 +217,7 @@ public class MutationHtmlReportListener implements TestListener {
   private void createPackageIndexPage(final PackageSummaryData psData) {
     final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
     final StringTemplate st = group
-        .getInstanceOf("templates/mutation/mutation_class_index");
+        .getInstanceOf("templates/mutation/package_index");
 
     final Writer writer = this.outputStrategy.createWriterForFile(psData
         .getPackageDirectory() + File.separator + "index.html");

@@ -56,21 +56,13 @@ class GregorMutater implements Mutater {
   }
 
   public FunctionalList<MutationDetails> findMutations(
-      final Iterable<String> classesToMutate) {
-    return FCollection.flatMap(classesToMutate, classToMutationDetails());
-  }
+      final ClassName classToMutate) {
 
-  private F<String, Iterable<MutationDetails>> classToMutationDetails() {
-    return new F<String, Iterable<MutationDetails>>() {
+    final Context context = new Context();
+    context.setTargetMutation(Option.<MutationIdentifier> none());
+    return GregorMutater.this.byteSource.apply(classToMutate.asInternalName())
+        .flatMap(findMutations(context));
 
-      public Iterable<MutationDetails> apply(final String clazz) {
-        final Context context = new Context();
-        context.setTargetMutation(Option.<MutationIdentifier> none());
-        return GregorMutater.this.byteSource.apply(clazz).flatMap(
-            findMutations(context));
-      }
-
-    };
   }
 
   private F<byte[], Iterable<MutationDetails>> findMutations(

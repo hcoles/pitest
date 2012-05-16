@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 import org.pitest.functional.SideEffect1;
 
 public class CommunicationThread {
-  
-  private final static Logger               LOG = Log.getLogger();
+
+  private final static Logger                     LOG = Log.getLogger();
 
   private final SideEffect1<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
@@ -58,14 +58,14 @@ public class CommunicationThread {
   public ExitCode waitToFinish() {
     try {
       return this.future.get();
-    } catch (ExecutionException e) {
+    } catch (final ExecutionException e) {
       LOG.log(Level.WARNING, "Error while watching child process", e);
       return ExitCode.UNKNOWN_ERROR;
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       LOG.log(Level.WARNING, "interrupted while waiting for child process", e);
       return ExitCode.UNKNOWN_ERROR;
-    } 
- 
+    }
+
   }
 
 }

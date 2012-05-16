@@ -45,7 +45,6 @@ public abstract class Functions {
     };
   }
 
-
   public static F<Class<?>, String> classToName() {
     return new F<Class<?>, String>() {
       public String apply(final Class<?> clazz) {
@@ -95,7 +94,6 @@ public abstract class Functions {
 
     };
   }
-
 
   public static <T extends Enum<T>> F<String, T> stringToEnum(
       final Class<T> clazz) {

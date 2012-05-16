@@ -66,14 +66,14 @@ public class MutationTestBuilder {
   }
 
   public List<TestUnit> createMutationTestUnits(
-      final Collection<ClassGrouping> codeClasses,
-      final Configuration pitConfig, final CoverageDatabase coverageDatabase) {
+      final Collection<ClassName> codeClasses, final Configuration pitConfig,
+      final CoverageDatabase coverageDatabase) {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
 
-    for (final ClassGrouping classGroup : codeClasses) {
+    for (final ClassName clazz : codeClasses) {
 
       final Collection<MutationDetails> mutationsForClasses = createMutations(
-          coverageDatabase, this.mutationConfig, classGroup,
+          coverageDatabase, this.mutationConfig, clazz,
           this.filterFactory.createFilter());
 
       tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses));
@@ -84,13 +84,13 @@ public class MutationTestBuilder {
 
   private Collection<MutationDetails> createMutations(
       final CoverageDatabase coverageDatabase,
-      final MutationConfig mutationConfig, final ClassGrouping classesToMutate,
+      final MutationConfig mutationConfig, final ClassName clazz,
       final MutationFilter filter) {
 
     final Mutater m = mutationConfig.createMutator(this.source);
 
     final Collection<MutationDetails> availableMutations = filter.filter(m
-        .findMutations(classesToMutate));
+        .findMutations(clazz));
 
     assignTestsToMutations(availableMutations, coverageDatabase);
 

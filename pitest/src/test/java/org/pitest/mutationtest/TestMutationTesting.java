@@ -35,12 +35,15 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
@@ -288,7 +291,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(89);
+    verifyLineNumbers(92);
   }
 
 
@@ -339,8 +342,7 @@ public class TestMutationTesting {
 
     coverageDatabase.initialise();
 
-    final Collection<ClassGrouping> codeClasses = coverageDatabase
-        .getGroupedClasses();
+    final Collection<ClassName> codeClasses = FCollection.map(coverageDatabase.getCodeClasses(), ClassInfo.toClassName());
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),

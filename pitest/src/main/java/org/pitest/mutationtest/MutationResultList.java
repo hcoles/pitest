@@ -31,10 +31,10 @@ import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationResultList implements FunctionalIterable<MutationResult> {
 
-  private final List<MutationResult> impl;
+  private final List<MutationResult> impl = new ArrayList<MutationResult>();
 
-  public MutationResultList(final List<MutationResult> results) {
-    this.impl = results;
+  public MutationResultList(final Collection<MutationResult> results) {
+    this.impl.addAll(results);
   }
 
   public List<MutationGrouping> groupMutationsByLine() {

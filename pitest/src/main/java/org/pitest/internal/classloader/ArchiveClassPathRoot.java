@@ -42,7 +42,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   }
 
   public InputStream getData(final String name) throws IOException {
-    ZipFile zip = getRoot();
+    final ZipFile zip = getRoot();
     try {
       final ZipEntry entry = zip.getEntry(name.replace('.', '/') + ".class");
       if (entry == null) {
@@ -55,7 +55,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
   }
 
   public URL getResource(final String name) throws MalformedURLException {
-    ZipFile zip = getRoot();
+    final ZipFile zip = getRoot();
     try {
       final ZipEntry entry = zip.getEntry(name);
       if (entry != null) {
@@ -69,10 +69,10 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   }
 
-  private void closeQuietly(ZipFile zip) {
+  private void closeQuietly(final ZipFile zip) {
     try {
       zip.close();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
@@ -84,7 +84,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   public Collection<String> classNames() {
     final List<String> names = new ArrayList<String>();
-    ZipFile root = getRoot();
+    final ZipFile root = getRoot();
     try {
       final Enumeration<? extends ZipEntry> entries = root.entries();
       while (entries.hasMoreElements()) {

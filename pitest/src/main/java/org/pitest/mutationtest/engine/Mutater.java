@@ -24,7 +24,6 @@ public interface Mutater {
 
   public Mutant getMutation(MutationIdentifier id);
 
-  public FunctionalList<MutationDetails> findMutations(
-      Iterable<String> classesToMutate);
+  public FunctionalList<MutationDetails> findMutations(ClassName classToMutate);
 
 }

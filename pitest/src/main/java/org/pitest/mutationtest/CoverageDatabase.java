@@ -24,8 +24,6 @@ public interface CoverageDatabase {
 
   Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
 
-  Collection<ClassGrouping> getGroupedClasses();
-
   Configuration getConfiguration();
 
   JavaAgent getJavaAgent();

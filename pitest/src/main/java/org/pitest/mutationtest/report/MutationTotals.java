@@ -59,21 +59,17 @@ public class MutationTotals {
             / this.numberOfMutations);
   }
 
- // is this right if we have mutated nested classes seperately??
-  public void addIgnoringLinesAndClasses(final MutationTotals data) {
-    add(0,0,data);
-  }
-  
   public void add(final MutationTotals data) {
     add(data.getNumberOfLines(), data.getNumberOfClasses(), data);
   }
-  
-  private void add(long lines, long classes, final MutationTotals data) {
+
+  private void add(final long lines, final long classes,
+      final MutationTotals data) {
     this.addClasses(classes);
     this.addLines(lines);
     this.addLinesCovered(data.getNumberOfLinesCovered());
     this.addMutations(data.getNumberOfMutations());
-    this.addMutationsDetetcted(data.getNumberOfMutationsDetected()); 
+    this.addMutationsDetetcted(data.getNumberOfMutationsDetected());
   }
 
 }

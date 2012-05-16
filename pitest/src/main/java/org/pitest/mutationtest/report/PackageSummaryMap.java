@@ -19,12 +19,12 @@ public class PackageSummaryMap {
     return psData;
   }
 
-  public PackageSummaryData update(final String packageName, final MutationTestSummaryData data) {
-    PackageSummaryData psd = getPackageSummaryData(packageName);
+  public PackageSummaryData update(final String packageName,
+      final MutationTestSummaryData data) {
+    final PackageSummaryData psd = getPackageSummaryData(packageName);
     psd.addSummaryData(data);
     return psd;
   }
-  
 
   public Collection<PackageSummaryData> values() {
     return this.packageSummaryData.values();

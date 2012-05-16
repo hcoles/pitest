@@ -94,8 +94,8 @@
 $packageData.summaryData:{ summary | 
         <tr>
             <td><a href="./$summary.fileName$">$summary.className$</a></td>
-            <td><div class="coveragePercentage">$summary.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.lineCoverage$%"></div><div class="coverage_ledgend">$summary.numberOfLinesCovered$/$summary.numberOfLines$</div></div></td>
-            <td><div class="coveragePercentage">$summary.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.mutationCoverage$%"></div><div class="coverage_ledgend">$summary.numberOfMutationsDetected$/$summary.numberOfMutations$</div></div></td>
+            <td><div class="coveragePercentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.totals.lineCoverage$%"></div><div class="coverage_ledgend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
+            <td><div class="coveragePercentage">$summary.totals.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.totals.mutationCoverage$%"></div><div class="coverage_ledgend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
         </tr>
 }$
      </tbody>
