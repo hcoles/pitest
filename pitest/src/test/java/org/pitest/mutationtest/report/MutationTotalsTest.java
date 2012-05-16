@@ -68,13 +68,13 @@ public class MutationTotalsTest {
   @Test
   public void shouldAccumulateAddedValues() {
     MutationTotals extra = new MutationTotals();
-    extra.addClasses(2);
+    extra.addFiles(2);
     extra.addLines(8);
     extra.addLinesCovered(4);
     extra.addMutations(9);
     extra.addMutationsDetetcted(3);
     testee.add(extra);
-    assertEquals(2,testee.getNumberOfClasses());
+    assertEquals(2,testee.getNumberOfFiles());
     assertEquals(50,testee.getLineCoverage());
     assertEquals(33,testee.getMutationCoverage());
   }

@@ -8,17 +8,16 @@ import java.util.Map;
 public class PackageSummaryData {
 
   private final String                               packageName;
-  private final Map<String, MutationTestSummaryData> summaryData = new HashMap<String, MutationTestSummaryData>();
+  private final Map<String, MutationTestSummaryData> fileNameToSummaryData = new HashMap<String, MutationTestSummaryData>();
 
   public PackageSummaryData(final String packageName) {
     this.packageName = packageName;
   }
 
   public void addSummaryData(final MutationTestSummaryData data) {
-    final MutationTestSummaryData existing = this.summaryData.get(data
-        .getClassName());
+    final MutationTestSummaryData existing = this.fileNameToSummaryData.get(data.getFileName());
     if (existing == null) {
-      this.summaryData.put(data.getClassName(), data);
+      this.fileNameToSummaryData.put(data.getFileName(), data);
     } else {
       existing.add(data);
     }
@@ -26,17 +25,17 @@ public class PackageSummaryData {
   }
 
   public MutationTestSummaryData getForSourceFile(final String filename) {
-    return this.summaryData.get(filename);
+    return this.fileNameToSummaryData.get(filename);
   }
 
   public MutationTotals getTotals() {
     final MutationTotals mt = new MutationTotals();
-    for (final MutationTestSummaryData each : this.summaryData.values()) {
+    for (final MutationTestSummaryData each : this.fileNameToSummaryData.values()) {
       mt.add(each.getTotals());
     }
     return mt;
   }
-
+  
   public String getPackageName() {
     return this.packageName;
   }
@@ -46,6 +45,6 @@ public class PackageSummaryData {
   }
 
   public List<MutationTestSummaryData> getSummaryData() {
-    return new ArrayList<MutationTestSummaryData>(this.summaryData.values());
+    return new ArrayList<MutationTestSummaryData>(this.fileNameToSummaryData.values());
   }
 }

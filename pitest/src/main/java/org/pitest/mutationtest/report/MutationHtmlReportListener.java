@@ -79,7 +79,7 @@ public class MutationHtmlReportListener implements TestListener {
               "templates/mutation/style.css"));
 
       final String fileName = mutationMetaData.getPackageName()
-          + File.separator + mutationMetaData.getFileName();
+          + File.separator + mutationMetaData.getFileName() + ".html";
 
       final Writer writer = this.outputStrategy.createWriterForFile(fileName);
 
@@ -115,15 +115,15 @@ public class MutationHtmlReportListener implements TestListener {
   private SourceFile createAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) throws IOException {
 
-    final String className = mutationMetaData.getClassName();
+    final String fileName = mutationMetaData.getFileName();
 
     final MutationResultList mutationsForThisFile = mutationMetaData
         .getResults();
 
-    final List<Line> lines = createAnnotatedSourceCodeLines(className,
+    final List<Line> lines = createAnnotatedSourceCodeLines(fileName,
         mutationsForThisFile, mutationMetaData.getClasses());
 
-    return new SourceFile(className, lines,
+    return new SourceFile(fileName, lines,
         mutationsForThisFile.groupMutationsByLine());
   }
 
@@ -198,6 +198,7 @@ public class MutationHtmlReportListener implements TestListener {
 
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
+  
     for (final PackageSummaryData psData : this.packageSummaryData.values()) {
       totals.add(psData.getTotals());
       createPackageIndexPage(psData);

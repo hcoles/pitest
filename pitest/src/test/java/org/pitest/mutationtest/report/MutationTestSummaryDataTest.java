@@ -20,10 +20,10 @@ public class MutationTestSummaryDataTest {
   private final String FILE_NAME = "foo.java";
   
   @Test
-  public void shouldReturnCorrectNumberOfClassesWhenAnalysedInOneUnit() {
+  public void shouldReturnCorrectNumberOfFilesWhenAnalysedInOneUnit() {
     final ClassInfo clazz = makeClass();
     testee = buildSummaryData(clazz);
-    assertEquals(1, testee.getTotals().getNumberOfClasses());
+    assertEquals(1, testee.getTotals().getNumberOfFiles());
   }
   
   @Test
@@ -44,12 +44,12 @@ public class MutationTestSummaryDataTest {
   
 
   @Test
-  public void shouldReturnCorrectNumberOfClassesWhenOneClassAnalysedInTwoUnits() {
+  public void shouldReturnCorrectNumberOfFilesWhenOneClassAnalysedInTwoUnits() {
     final ClassInfo clazz = makeClass();
     testee = buildSummaryData(clazz);
     MutationTestSummaryData additonalDataForSameClass = buildSummaryData(clazz);
     testee.add(additonalDataForSameClass);
-    assertEquals(1, testee.getTotals().getNumberOfClasses());
+    assertEquals(1, testee.getTotals().getNumberOfFiles());
   }
   
   @Test
@@ -71,15 +71,7 @@ public class MutationTestSummaryDataTest {
     testee.add(additonalDataForSameClass);
     assertEquals(linesCovered, testee.getTotals().getNumberOfLinesCovered());
   }
-  
-  @Test
-  public void shouldReturnCorrectNumberOfClassesWhenCombiningResultsForDifferentClasses() {
-    testee = buildSummaryData( makeClass());
-    MutationTestSummaryData addiitonalDataForSameClass = buildSummaryData( makeClass());
-    testee.add(addiitonalDataForSameClass);
-    assertEquals(2, testee.getTotals().getNumberOfClasses());
-  }
-  
+    
   @Test
   public void shouldReturnCorrectNumberOfLinesWhenCombiningResultsForDifferentClasses() {
     testee = buildSummaryData( makeClass(100));

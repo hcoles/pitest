@@ -75,7 +75,7 @@ public class MutationTestBuilder {
       final Collection<MutationDetails> mutationsForClasses = createMutations(
           coverageDatabase, this.mutationConfig, clazz,
           this.filterFactory.createFilter());
-
+      
       tus.add(createMutationTestUnit(this.mutationConfig, mutationsForClasses));
 
     }

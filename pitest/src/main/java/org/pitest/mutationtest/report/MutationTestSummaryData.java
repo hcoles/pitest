@@ -50,7 +50,7 @@ public class MutationTestSummaryData implements
 
   public MutationTotals getTotals() {
     final MutationTotals mt = new MutationTotals();
-    mt.addClasses(this.getMutatedClasses().size());
+    mt.addFiles(1);
     mt.addMutations(this.getNumberOfMutations());
     mt.addMutationsDetetcted(this.getNumberOfMutationsDetected());
     mt.addLines(getNumberOfLines());
@@ -82,12 +82,9 @@ public class MutationTestSummaryData implements
     return uniqueTests;
   }
 
-  public String getClassName() {
-    return this.fileName;
-  }
 
   public String getFileName() {
-    return this.fileName + ".html";
+    return this.fileName;
   }
 
   public Collection<ClassInfo> getMutatedClasses() {
