@@ -3,9 +3,7 @@
  */
 package org.pitest;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.FileNotFoundException;
@@ -18,10 +16,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
-import org.pitest.testutil.AfterAnnotationForTesting;
-import org.pitest.testutil.AfterClassAnnotationForTest;
-import org.pitest.testutil.BeforeAnnotationForTesting;
-import org.pitest.testutil.BeforeClassAnnotationForTest;
 import org.pitest.testutil.ConfigurationForTesting;
 import org.pitest.testutil.TestAnnotationForTesting;
 
@@ -189,98 +183,6 @@ public class TestPitest {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  public static class HasBeforeAndAfterClassMethods {
-    static int beforeClassCallCount = 0;
-    static int afterClassCallCount  = 0;
-
-    @BeforeClassAnnotationForTest
-    public static void beforeClass() {
-      beforeClassCallCount++;
-    }
-
-    @TestAnnotationForTesting
-    public void firstTest() {
-      if ((beforeClassCallCount != 1) || (afterClassCallCount > 0)) {
-        throw new AssertionError();
-      }
-    }
-
-    @TestAnnotationForTesting
-    public void secondTest() {
-      if ((beforeClassCallCount != 1) || (afterClassCallCount > 0)) {
-        throw new AssertionError();
-      }
-    }
-
-    @AfterClassAnnotationForTest
-    public static void afterClass() {
-      afterClassCallCount++;
-    }
-
-  }
-
-  @Test
-  public void shouldCallBeforeAndAfterClassMethodsExactlyOnceBeforeAndAfterTestsAreRun() {
-    run(HasBeforeAndAfterClassMethods.class);
-    verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
-    assertEquals(1, HasBeforeAndAfterClassMethods.beforeClassCallCount);
-    assertEquals(1, HasBeforeAndAfterClassMethods.afterClassCallCount);
-  }
-
-  public static class HasBeforeMethod {
-
-    int callCount = 0;
-
-    @BeforeAnnotationForTesting
-    public void incrementCount() {
-      this.callCount++;
-    }
-
-    @TestAnnotationForTesting
-    public void testOne() {
-      assertEquals(1, this.callCount);
-    }
-
-    @TestAnnotationForTesting
-    public void testTwo() {
-      assertEquals(1, this.callCount);
-    }
-
-  };
-
-  @Test
-  public void shouldCallBeforeMethodsBeforeEachTest() {
-    run(HasBeforeMethod.class);
-    verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
-  }
-
-  public static class HasAfterMethod {
-
-    static int callCount;
-
-    @AfterAnnotationForTesting
-    public void incrementCount() {
-      callCount++;
-    }
-
-    @TestAnnotationForTesting
-    public void testOne() {
-      assertEquals(0, callCount);
-    }
-
-    @TestAnnotationForTesting
-    public void testTwo() {
-      assertEquals(1, callCount);
-    }
-
-  };
-
-  @Test
-  public void shouldCallAfterMethodsAfterEachTest() {
-    run(HasAfterMethod.class);
-    verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
-    assertEquals(2, HasAfterMethod.callCount);
-  }
 
   private void run(final Class<?> clazz) {
     this.testee.run(this.container, new ConfigurationForTesting(), clazz);

@@ -18,7 +18,6 @@ import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.common.BasicTestUnitFinder;
 import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestSuiteFinder;
-import org.pitest.extension.common.SimpleAnnotationTestMethodFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
@@ -44,21 +43,6 @@ public class ConfigurationForTesting implements Configuration {
   };
 
   public TestUnitFinder testUnitFinder() {
-    final Set<MethodFinder> beforeClassFinders = Collections
-        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-            BeforeClassAnnotationForTest.class));
-
-    final Set<MethodFinder> afterClassFinders = Collections
-        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-            AfterClassAnnotationForTest.class));
-
-    final Set<MethodFinder> beforeMethodFinders = Collections
-        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-            BeforeAnnotationForTesting.class));
-
-    final Set<MethodFinder> afterMethodFinders = Collections
-        .<MethodFinder> singleton(new SimpleAnnotationTestMethodFinder(
-            AfterAnnotationForTesting.class));
 
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
     tmfs.add(new TestFinder());
@@ -70,8 +54,7 @@ public class ConfigurationForTesting implements Configuration {
 
     return new CompoundTestUnitFinder(
         Collections.<TestUnitFinder> singletonList(new BasicTestUnitFinder(
-            instantiationStrategies, tmfs, beforeMethodFinders,
-            afterMethodFinders, beforeClassFinders, afterClassFinders)));
+            instantiationStrategies, tmfs)));
   }
 
   public TestSuiteFinder testSuiteFinder() {

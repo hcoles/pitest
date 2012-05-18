@@ -86,10 +86,4 @@ public class EqualitySetTest {
     assertFalse(this.testee.isEmpty());
   }
 
-  @Test
-  public void sizeShouldReturnNumberOfEntries() {
-    assertEquals(0, this.testee.size());
-    this.testee.add("foo");
-    assertEquals(1, this.testee.size());
-  }
 }

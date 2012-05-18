@@ -20,13 +20,11 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.pitest.Description;
-import org.pitest.MultipleTestGroup;
 import org.pitest.PitError;
 import org.pitest.TestMethod;
 import org.pitest.extension.InstantiationStrategy;
@@ -48,49 +46,33 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
   private final Set<InstantiationStrategy> instantiationStrategies = new LinkedHashSet<InstantiationStrategy>();
   private final Set<MethodFinder>          testMethodFinders       = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>          beforeMethodFinders     = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>          afterMethodFinders      = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>          beforeClassFinders      = new LinkedHashSet<MethodFinder>();
-  private final Set<MethodFinder>          afterClassFinders       = new LinkedHashSet<MethodFinder>();
 
   public BasicTestUnitFinder(
       final Collection<InstantiationStrategy> instantiationStrategies,
-      final Collection<MethodFinder> testMethodFinders,
-      final Collection<MethodFinder> beforeMethodFinders,
-      final Collection<MethodFinder> afterMethodFinders,
-      final Collection<MethodFinder> beforeClassFinders,
-      final Collection<MethodFinder> afterClassFinders) {
+      final Collection<MethodFinder> testMethodFinders) {
     this.instantiationStrategies.addAll(instantiationStrategies);
     this.testMethodFinders.addAll(testMethodFinders);
-    this.beforeMethodFinders.addAll(beforeMethodFinders);
-    this.afterMethodFinders.addAll(afterMethodFinders);
-    this.beforeClassFinders.addAll(beforeClassFinders);
-    this.afterClassFinders.addAll(afterClassFinders);
   }
 
   public Collection<TestUnit> findTestUnits(final Class<?> testClass) {
     try {
-
-      final Collection<TestMethod> befores = findTestMethods(
-          this.beforeMethodFinders, testClass);
-      final Collection<TestMethod> afters = findTestMethods(
-          this.afterMethodFinders, testClass);
 
       final List<TestUnit> units = new ArrayList<TestUnit>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(testClass);
       final List<TestStep> instantiations = instantiationStrategy
           .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
-        for (final TestMethod m : findTestMethods(this.testMethodFinders,
+        for (final TestMethod m : findTestMethods(
             testClass)) {
           final TestStep step = instantiations.get(instantiation);
-          units.add(createTestUnitForInstantiation(step,
-              getNamePrefix(instantiations.size(), instantiation), befores,
-              afters, testClass, m));
+          units
+              .add(createTestUnitForInstantiation(step,
+                  getNamePrefix(instantiations.size(), instantiation),
+                  testClass, m));
         }
       }
 
-      return this.createGroupings(units, testClass);
+      return units;
 
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
@@ -105,42 +87,14 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private Collection<CallStep> findMethodCalls(
-      final Collection<MethodFinder> finders, final Class<?> testClass) {
-
-    final Collection<TestMethod> methods = findTestMethods(finders, testClass);
-    return FCollection.map(methods, methodToCallStep());
-
-  }
-
-  private F<TestMethod, CallStep> methodToCallStep() {
-    final F<TestMethod, CallStep> f = new F<TestMethod, CallStep>() {
-      public CallStep apply(final TestMethod m) {
-        return new CallStep(m);
-      }
-    };
-    return f;
-  }
-
   private TestUnit createTestUnitForInstantiation(
       final TestStep instantiationStep, final String namePrefix,
-      final Collection<TestMethod> befores,
-      final Collection<TestMethod> afters, final Class<?> testClass,
-      final TestMethod testMethod) {
+      final Class<?> testClass, final TestMethod testMethod) {
 
     final List<TestStep> steps = new ArrayList<TestStep>();
 
     steps.add(instantiationStep);
-
-    for (final TestMethod each : befores) {
-      steps.add(new CallStep(each));
-    }
-
     steps.add(new CallStep(testMethod));
-
-    for (final TestMethod each : afters) {
-      steps.add(new CallStep(each));
-    }
 
     final TestUnit unit = new SteppedTestUnit(new Description(namePrefix
         + testMethod.getName(), testClass), steps, testMethod.getExpected());
@@ -168,8 +122,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     };
   }
 
-  private Collection<TestMethod> findTestMethods(
-      final Collection<MethodFinder> finders, final Class<?> clazz) {
+  private Collection<TestMethod> findTestMethods( final Class<?> clazz) {
 
     final EqualitySet<TestMethod> set = new EqualitySet<TestMethod>(
         new SignatureEqualityStrategy());
@@ -179,29 +132,11 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       }
     };
     final Collection<Method> methods = Reflection.allMethods(clazz);
-    for (final F<Method, Option<TestMethod>> mf : finders) {
+    for (final F<Method, Option<TestMethod>> mf : this.testMethodFinders) {
       FCollection.flatMap(methods, mf).forEach(addToSet);
     }
 
     return set.toCollection();
-  }
-
-  private List<TestUnit> createGroupings(final List<TestUnit> tus,
-      final Class<?> testClass) {
-    final Collection<CallStep> beforeClasses = findMethodCalls(
-        this.beforeClassFinders, testClass);
-
-    final Collection<CallStep> afterClasses = findMethodCalls(
-        this.afterClassFinders, testClass);
-
-    if (!beforeClasses.isEmpty() || (!afterClasses.isEmpty() && !tus.isEmpty())) {
-      final TestUnit group = new MultipleTestGroup(tus);
-      final TestUnit decorated = new BeforeAfterDecorator(group, beforeClasses,
-          afterClasses);
-      return Collections.<TestUnit> singletonList(decorated);
-    } else {
-      return tus;
-    }
   }
 
 }

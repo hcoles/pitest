@@ -64,20 +64,9 @@ public class EqualitySet<T> implements Iterable<T> {
     return this.members.iterator();
   }
 
-  public int size() {
-    return this.members.size();
-  }
-
   public Collection<T> toCollection() {
     return this.members;
   }
 
-  // public Object[] toArray() {
-  // return this.members.toArray();
-  // }
-
-  // public <A> A[] toArray(final A[] arg0) {
-  // return this.members.toArray(arg0);
-  // }
 
 }

@@ -14,9 +14,6 @@
  */
 package org.pitest.extension.common;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -37,9 +34,6 @@ public abstract class TestUnitDecorator implements TestUnit {
     return this.child;
   }
 
-  public Iterator<TestUnit> iterator() {
-    return Collections.<TestUnit> singletonList(this.child).iterator();
-  }
 
   public abstract void execute(ClassLoader loader, ResultCollector rc);
 
