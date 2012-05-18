@@ -27,6 +27,7 @@ import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PROJECT_FILE;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
@@ -90,6 +91,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
+  private final OptionSpec<Integer>                  mutationUnitSizeSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -209,6 +211,13 @@ public class OptionsParser {
     this.excludedGroupsSpec = parserAccepts(EXCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("TestNG groups to include");
+
+    this.mutationUnitSizeSpec = parserAccepts(MUTATION_UNIT_SIZE)
+        .withRequiredArg()
+        .ofType(Integer.class)
+        .describedAs(
+            "Maximum number of mutations to include within a single unit of analysis")
+        .defaultsTo(MUTATION_UNIT_SIZE.getDefault(Integer.class));
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -268,6 +277,7 @@ public class OptionsParser {
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
     data.setCodePaths(this.codePaths.values(userArgs));
+    data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);

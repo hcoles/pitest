@@ -5,7 +5,9 @@ package org.pitest.functional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -160,6 +162,33 @@ public class FCollectionTest {
     assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
         FCollection.flatten(is));
 
+  }
+  
+  @Test
+  public void shouldSplitCollectionIntoOneBucketWhenListSizeEqualToBucketSize() {
+    this.is = Arrays.asList(1, 2, 3);
+    List<List<Integer>> actual =  FCollection.splitToLength(3,is);
+    assertEquals(1, actual.size());
+    assertThat(actual.get(0), hasItems(1,2,3));
+  }
+  
+  @Test
+  public void shouldSplitCollectionIntoTwoBucketsWhenListSizeOneGreaterThanBucketSize() {
+    this.is = Arrays.asList(1, 2, 3);
+    List<List<Integer>> actual =  FCollection.splitToLength(2,is);
+    assertEquals(2, actual.size());
+    assertThat(actual.get(0), hasItems(1,2));
+    assertThat(actual.get(1), hasItems(3));
+  }
+  
+  @Test
+  public void shouldSplitCollectionIntoManyBucketsWhenListManyTimesGreaterThanBucketSize() {
+    this.is = Arrays.asList(1, 2, 3,4,5,6,7,8,9,10,11);
+    List<List<Integer>> actual =  FCollection.splitToLength(2,is);
+    assertEquals(6, actual.size());
+    assertThat(actual.get(0), hasItems(1,2));
+    assertThat(actual.get(1), hasItems(3,4));
+    assertThat(actual.get(5), hasItems(11));
   }
 
 }

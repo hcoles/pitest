@@ -25,6 +25,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Unchecked;
 
@@ -228,7 +229,17 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
     assertEquals(this.classPath,actual.getClassPathElements());    
   }
+  
+  public void testParsesMutationUnitSize() {
+    ReportOptions actual = parseConfig("<mutationUnitSize>50</mutationUnitSize>");
+    assertEquals(50, actual.getMutationUnitSize());
+  }
 
+  public void testDefaultsMutationUnitSizeToCorrectValue() {
+    final ReportOptions actual = parseConfig("");
+    assertEquals((int)ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class), actual.getMutationUnitSize());
+  }
+  
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);

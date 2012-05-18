@@ -161,6 +161,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    */
   private List<String>          includedTestNGGroups;
+  
+  /**
+   * Maximum number of mutations to include in a single analysis unit.
+   * 
+   * @parameter
+   */
+  private int mutationUnitSize;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -307,6 +314,10 @@ public class PitMojo extends AbstractMojo {
 
   public List<String> getIncludedTestNGGroups() {
     return this.includedTestNGGroups;
+  }
+
+  public int getMutationUnitSize() {
+    return mutationUnitSize;
   }
 
 }

@@ -77,6 +77,8 @@ public class ReportOptions {
 
   private TestGroupConfig                            groupConfig;
 
+  private int                                        mutationUnitSize;
+
   public ReportOptions() {
   }
 
@@ -412,6 +414,14 @@ public class ReportOptions {
 
   public TestGroupConfig getGroupConfig() {
     return this.groupConfig;
+  }
+
+  public int getMutationUnitSize() {
+    return this.mutationUnitSize;
+  }
+
+  public void setMutationUnitSize(final int size) {
+    this.mutationUnitSize = size;
   }
 
 }

@@ -116,6 +116,8 @@ public class MojoToReportOptionsConverter {
     data.addOutputFormats(determineOutputFormats());
 
     setTestType(data);
+    
+    data.setMutationUnitSize(this.mojo.getMutationUnitSize());
 
     return data;
   }

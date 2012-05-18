@@ -33,6 +33,7 @@ import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.commandline.OptionsParser;
+import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.report.OutputFormat;
 
 public class OptionsParserTest {
@@ -60,8 +61,6 @@ public class OptionsParserTest {
     assertTrue(actualPredicate.apply("bar_anything"));
     assertFalse(actualPredicate.apply("notfoobar"));
   }
-
-
 
   @Test
   public void shouldParseCommaSeperatedListOfSourceDirectories() {
@@ -128,7 +127,6 @@ public class OptionsParserTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  
   @Test
   public void shouldUseTargetClassesFilterForTestsWhenNoTargetTestsFilterSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
@@ -250,6 +248,21 @@ public class OptionsParserTest {
         "--includedTestNGGroups", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
+  }
+
+  @Test
+  public void shouldParseMutationUnitSize() {
+    final ReportOptions actual = parseAddingRequiredArgs("--mutationUnitSize",
+        "50");
+    assertEquals(50, actual.getMutationUnitSize());
+  }
+
+  @Test
+  public void shouldDefaultMutationUnitSizeToCorrectValue() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertEquals(
+        (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
+        actual.getMutationUnitSize());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

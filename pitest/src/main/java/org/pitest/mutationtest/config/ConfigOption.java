@@ -116,7 +116,11 @@ public enum ConfigOption {
   /**
    * TestNG groups to exclude
    */
-  EXCLUDED_GROUPS("excludedTestNGGroups");
+  EXCLUDED_GROUPS("excludedTestNGGroups"),
+  /**
+   * Maximum number of mutations to include within a single unit of analysis.
+   */
+  MUTATION_UNIT_SIZE("mutationUnitSize", 0);
 
   private final String text;
   private final Object defaultValue;

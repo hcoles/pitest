@@ -202,15 +202,13 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        limitMutationsPerClass(), this.coverageDatabase.getConfiguration(),
-        this.data, this.coverageDatabase.getJavaAgent(),
+        limitMutationsPerClass(), this.coverageDatabase, this.data,
         new ClassPathByteArraySource(this.data.getClassPath()));
 
     final Set<ClassName> codeClasses = new HashSet<ClassName>();
     FCollection.mapTo(this.coverageDatabase.getCodeClasses(),
         ClassInfo.toClassName(), codeClasses);
-    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
-        this.coverageDatabase.getConfiguration(), this.coverageDatabase);
+    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
     return tus;
   }
 

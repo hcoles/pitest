@@ -2,7 +2,7 @@ package org.pitest.mutationtest.report;
 
 public class MutationTotals {
 
-  private long numberOfFiles           = 0;
+  private long numberOfFiles             = 0;
   private long numberOfLines             = 0;
   private long numberOfLinesCovered      = 0;
   private long numberOfMutations         = 0;
@@ -63,8 +63,7 @@ public class MutationTotals {
     add(data.getNumberOfLines(), data.getNumberOfFiles(), data);
   }
 
-  private void add(final long lines, final long files,
-      final MutationTotals data) {
+  private void add(final long lines, final long files, final MutationTotals data) {
     this.addFiles(files);
     this.addLines(lines);
     this.addLinesCovered(data.getNumberOfLinesCovered());

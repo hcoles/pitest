@@ -198,7 +198,7 @@ public class MutationHtmlReportListener implements TestListener {
 
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
-  
+
     for (final PackageSummaryData psData : this.packageSummaryData.values()) {
       totals.add(psData.getTotals());
       createPackageIndexPage(psData);

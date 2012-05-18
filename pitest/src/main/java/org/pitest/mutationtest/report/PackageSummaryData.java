@@ -15,7 +15,8 @@ public class PackageSummaryData {
   }
 
   public void addSummaryData(final MutationTestSummaryData data) {
-    final MutationTestSummaryData existing = this.fileNameToSummaryData.get(data.getFileName());
+    final MutationTestSummaryData existing = this.fileNameToSummaryData
+        .get(data.getFileName());
     if (existing == null) {
       this.fileNameToSummaryData.put(data.getFileName(), data);
     } else {
@@ -30,12 +31,13 @@ public class PackageSummaryData {
 
   public MutationTotals getTotals() {
     final MutationTotals mt = new MutationTotals();
-    for (final MutationTestSummaryData each : this.fileNameToSummaryData.values()) {
+    for (final MutationTestSummaryData each : this.fileNameToSummaryData
+        .values()) {
       mt.add(each.getTotals());
     }
     return mt;
   }
-  
+
   public String getPackageName() {
     return this.packageName;
   }
@@ -45,6 +47,7 @@ public class PackageSummaryData {
   }
 
   public List<MutationTestSummaryData> getSummaryData() {
-    return new ArrayList<MutationTestSummaryData>(this.fileNameToSummaryData.values());
+    return new ArrayList<MutationTestSummaryData>(
+        this.fileNameToSummaryData.values());
   }
 }

@@ -14,11 +14,12 @@
  */
 package org.pitest.functional;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * @author henry
- * 
+ * Functional programming style operations for plain old Java iterables.
  */
 public abstract class FCollection {
 
@@ -111,6 +112,26 @@ public abstract class FCollection {
       for (final T each : it) {
         list.add(each);
       }
+    }
+    return list;
+  }
+
+  public static <T> FunctionalList<List<T>> splitToLength(
+      final int targetLength, final Iterable<T> ts) {
+    final FunctionalList<List<T>> list = new MutableList<List<T>>();
+    List<T> temp = new ArrayList<T>();
+    int i = 0;
+    for (final T each : ts) {
+      if (i == targetLength) {
+        list.add(temp);
+        temp = new ArrayList<T>();
+        i = 0;
+      }
+      temp.add(each);
+      i++;
+    }
+    if (!temp.isEmpty()) {
+      list.add(temp);
     }
     return list;
   }

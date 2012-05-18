@@ -14,8 +14,9 @@
  */
 package org.pitest.mutationtest.engine;
 
+import java.util.List;
+
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
 
 public interface Mutater {
@@ -24,6 +25,6 @@ public interface Mutater {
 
   public Mutant getMutation(MutationIdentifier id);
 
-  public FunctionalList<MutationDetails> findMutations(ClassName classToMutate);
+  public List<MutationDetails> findMutations(ClassName classToMutate);
 
 }

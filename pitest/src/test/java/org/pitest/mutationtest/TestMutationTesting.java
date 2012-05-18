@@ -351,11 +351,10 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        UnfilteredMutationFilter.factory(), this.config, data, agent,
+        UnfilteredMutationFilter.factory(), coverageDatabase, data,
         new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
-    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses,
-        this.config, coverageDatabase);
+    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
 
     this.pit.run(this.container, tus);
   }

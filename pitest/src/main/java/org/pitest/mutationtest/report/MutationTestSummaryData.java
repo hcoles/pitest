@@ -82,7 +82,6 @@ public class MutationTestSummaryData implements
     return uniqueTests;
   }
 
-
   public String getFileName() {
     return this.fileName;
   }
@@ -102,7 +101,6 @@ public class MutationTestSummaryData implements
   public Collection<ClassInfo> getClasses() {
     return this.classes;
   }
-
 
   private int getNumberOfLines() {
     return FCollection.fold(accumulateCodeLines(), 0, this.classes);
@@ -145,6 +143,5 @@ public class MutationTestSummaryData implements
 
     };
   }
-
 
 }
