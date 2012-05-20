@@ -55,8 +55,8 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.testutil.ConfigurationForTesting;
-import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.simpletest.ConfigurationForTesting;
+import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.util.Functions;
 import org.pitest.util.JavaAgent;
 

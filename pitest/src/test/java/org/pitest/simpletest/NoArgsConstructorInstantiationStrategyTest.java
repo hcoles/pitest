@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension.common;
+package org.pitest.simpletest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.teststeps.NoArgsInstantiateStep;
+import org.pitest.simpletest.steps.NoArgsInstantiateStep;
 
 public class NoArgsConstructorInstantiationStrategyTest {
 

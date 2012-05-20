@@ -12,14 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.teststeps;
+package org.pitest.simpletest.steps;
 
 import java.lang.reflect.Modifier;
 
-import org.pitest.CanNotCreateTestClassException;
 import org.pitest.Description;
-import org.pitest.extension.TestStep;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.simpletest.CanNotCreateTestClassException;
+import org.pitest.simpletest.TestStep;
 
 /**
  * @author henry

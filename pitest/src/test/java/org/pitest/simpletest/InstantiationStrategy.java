@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.extension;
+package org.pitest.simpletest;
 
-public interface Transformation {
+import java.util.List;
 
-  public byte[] transform(String name, byte[] bytes);
+public interface InstantiationStrategy {
+
+  public boolean canInstantiate(Class<?> clazz);
+
+  public List<TestStep> instantiations(Class<?> clazz);
 
 }

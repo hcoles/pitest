@@ -34,8 +34,8 @@ import org.pitest.TestResult;
 import org.pitest.extension.Container;
 import org.pitest.extension.StaticConfiguration;
 import org.pitest.extension.TestListener;
-import org.pitest.testutil.ConfigurationForTesting;
-import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.simpletest.ConfigurationForTesting;
+import org.pitest.simpletest.TestAnnotationForTesting;
 
 @RunWith(Parameterized.class)
 public class TestContainersSendCorrectNotifications {

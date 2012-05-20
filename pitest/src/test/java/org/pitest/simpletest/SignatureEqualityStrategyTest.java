@@ -1,4 +1,4 @@
-package org.pitest.internal;
+package org.pitest.simpletest;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

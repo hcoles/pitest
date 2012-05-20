@@ -12,16 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.testunit;
+package org.pitest.simpletest;
 
 import java.util.Collection;
 
 import org.pitest.Description;
-import org.pitest.TestExecutionException;
 import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestStep;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.testunit.AbstractTestUnit;
 
 /**
  * @author henry

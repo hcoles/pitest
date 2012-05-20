@@ -1,4 +1,4 @@
-package org.pitest.testutil;
+package org.pitest.simpletest;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

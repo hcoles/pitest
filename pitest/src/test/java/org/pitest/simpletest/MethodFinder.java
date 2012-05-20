@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest;
+package org.pitest.simpletest;
 
-public class TestExecutionException extends RuntimeException {
+import java.lang.reflect.Method;
 
-  public TestExecutionException(final Throwable t) {
-    super(t);
-  }
+import org.pitest.TestMethod;
+import org.pitest.functional.F;
+import org.pitest.functional.Option;
 
-  private static final long serialVersionUID = 1L;
+public interface MethodFinder extends F<Method, Option<TestMethod>> {
 
 }

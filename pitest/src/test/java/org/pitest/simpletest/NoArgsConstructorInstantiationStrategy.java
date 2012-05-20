@@ -12,15 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.simpletest;
 
-package org.pitest.extension;
-
+import java.util.Collections;
 import java.util.List;
 
-public interface InstantiationStrategy {
+import org.pitest.simpletest.steps.NoArgsInstantiateStep;
 
-  public boolean canInstantiate(Class<?> clazz);
+public class NoArgsConstructorInstantiationStrategy implements
+    InstantiationStrategy {
 
-  public List<TestStep> instantiations(Class<?> clazz);
+  public List<TestStep> instantiations(final Class<?> clazz) {
+    return Collections.<TestStep> singletonList(NoArgsInstantiateStep
+        .instantiate(clazz));
+  }
+
+  public boolean canInstantiate(final Class<?> clazz) {
+    // unwise premature optimization
+    // don't check if a no-args constructor is present
+    return true;
+  }
 
 }

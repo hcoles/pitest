@@ -1,4 +1,4 @@
-package org.pitest.teststeps;
+package org.pitest.simpletest.steps;
 
 import static org.junit.Assert.assertSame;
 

@@ -12,12 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.internal.classloader;
+package org.pitest.simpletest;
 
-import org.pitest.extension.IsolationStrategy;
-import org.pitest.extension.Transformation;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.internal.classloader.DefaultPITClassloader;
 
 public class TransformingClassLoader extends DefaultPITClassloader {
 

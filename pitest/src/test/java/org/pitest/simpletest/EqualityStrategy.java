@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.simpletest;
 
-package org.pitest.extension;
+public interface EqualityStrategy<T> {
 
-import java.lang.reflect.Method;
-
-import org.pitest.TestMethod;
-import org.pitest.functional.F;
-import org.pitest.functional.Option;
-
-public interface MethodFinder extends F<Method, Option<TestMethod>> {
+  public boolean isEqual(T lhs, T rhs);
 
 }

@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension.common;
+package org.pitest.simpletest;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.pitest.extension.IsolationStrategy;
 
 public class ExcludedPrefixIsolationStrategy implements IsolationStrategy {
 

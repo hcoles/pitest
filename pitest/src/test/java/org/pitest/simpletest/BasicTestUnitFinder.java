@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.extension.common;
+package org.pitest.simpletest;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
@@ -27,20 +27,14 @@ import java.util.Set;
 import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.TestMethod;
-import org.pitest.extension.InstantiationStrategy;
-import org.pitest.extension.MethodFinder;
-import org.pitest.extension.TestStep;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.EqualitySet;
-import org.pitest.internal.SignatureEqualityStrategy;
 import org.pitest.reflection.Reflection;
-import org.pitest.teststeps.CallStep;
-import org.pitest.testunit.SteppedTestUnit;
+import org.pitest.simpletest.steps.CallStep;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 

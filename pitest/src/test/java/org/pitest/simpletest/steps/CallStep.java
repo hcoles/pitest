@@ -12,16 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.teststeps;
+package org.pitest.simpletest.steps;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.pitest.Description;
-import org.pitest.TestExecutionException;
 import org.pitest.TestMethod;
-import org.pitest.extension.TestStep;
 import org.pitest.internal.IsolationUtils;
+import org.pitest.simpletest.TestExecutionException;
+import org.pitest.simpletest.TestStep;
 
 /**
  * @author henry

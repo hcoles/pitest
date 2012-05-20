@@ -30,17 +30,17 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifierClassVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Transformation;
-import org.pitest.extension.common.ExcludedPrefixIsolationStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.TransformingClassLoader;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
+import org.pitest.simpletest.Transformation;
+import org.pitest.simpletest.TransformingClassLoader;
 import org.pitest.util.Unchecked;
 
 public abstract class MutatorTestBase {

@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
 
-import org.pitest.Description;
+package org.pitest.simpletest;
 
-public interface TestStep {
+public class TestExecutionException extends RuntimeException {
 
-  public Object execute(ClassLoader loader, Description testDescription,
-      Object target);
+  public TestExecutionException(final Throwable t) {
+    super(t);
+  }
+
+  private static final long serialVersionUID = 1L;
 
 }

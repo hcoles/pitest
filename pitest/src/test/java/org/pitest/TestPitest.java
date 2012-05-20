@@ -16,8 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestListener;
-import org.pitest.testutil.ConfigurationForTesting;
-import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.simpletest.ConfigurationForTesting;
+import org.pitest.simpletest.TestAnnotationForTesting;
 
 /**
  * @author henry

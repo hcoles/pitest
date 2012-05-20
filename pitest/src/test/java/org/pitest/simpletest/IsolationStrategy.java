@@ -12,10 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.internal;
+package org.pitest.simpletest;
 
-public interface EqualityStrategy<T> {
+/**
+ * @author henry
+ * 
+ */
+public interface IsolationStrategy {
 
-  public boolean isEqual(T lhs, T rhs);
+  public boolean shouldIsolate(String name);
 
 }

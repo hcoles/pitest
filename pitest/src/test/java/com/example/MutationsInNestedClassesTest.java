@@ -2,7 +2,7 @@ package com.example;
 
 import static org.junit.Assert.assertFalse;
 
-import org.pitest.testutil.TestAnnotationForTesting;
+import org.pitest.simpletest.TestAnnotationForTesting;
 
 public class MutationsInNestedClassesTest {
 

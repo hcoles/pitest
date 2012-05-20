@@ -1,4 +1,4 @@
-package org.pitest.testutil;
+package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -10,13 +10,9 @@ import java.util.Set;
 import org.pitest.TestMethod;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.InstantiationStrategy;
-import org.pitest.extension.MethodFinder;
 import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
-import org.pitest.extension.common.BasicTestUnitFinder;
-import org.pitest.extension.common.NoArgsConstructorInstantiationStrategy;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
