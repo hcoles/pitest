@@ -111,18 +111,18 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     mutations.markUncoveredMutations();
 
-    runTestsInSeperateProcess(this.testClasses, mutations);
+    runTestsInSeperateProcess(mutations);
 
-    reportResults(mutations, this.availableMutations, rc);
+    reportResults(mutations, rc);
   }
 
   private void runTestInSeperateProcessForMutationRange(
-      final MutationStatusMap mutations, final Collection<ClassName> tests)
+      final MutationStatusMap mutations)
       throws IOException, InterruptedException {
 
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
-    final MutationTestProcess worker = createWorker(tests, remainingMutations);
+    final MutationTestProcess worker = createWorker(remainingMutations);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(mutations,
@@ -135,10 +135,10 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   }
 
-  private MutationTestProcess createWorker(final Collection<ClassName> tests,
+  private MutationTestProcess createWorker(
       final Collection<MutationDetails> remainingMutations) {
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        tests, this.config, this.timeoutStrategy, Log.isVerbose(),
+        this.testClasses, this.config, this.timeoutStrategy, Log.isVerbose(),
         this.pitConfig);
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
@@ -196,18 +196,17 @@ public class MutationTestUnit extends AbstractTestUnit {
     return this.config.getJVMArgs();
   }
 
-  private void runTestsInSeperateProcess(final Collection<ClassName> tests,
+  private void runTestsInSeperateProcess(
       final MutationStatusMap mutations) throws IOException,
       InterruptedException {
 
     while (mutations.hasUnrunMutations()) {
-      runTestInSeperateProcessForMutationRange(mutations, tests);
+      runTestInSeperateProcessForMutationRange(mutations);
     }
 
   }
 
   private void reportResults(final MutationStatusMap mutationsMap,
-      final Collection<MutationDetails> availableMutations,
       final ResultCollector rc) {
 
     final MetaData md = new MutationMetaData(this.config.getMutatorNames(),

@@ -83,7 +83,7 @@ class GregorMutater implements Mutater {
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();
     final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
-        filterMethods(context), classInfo, this.mutators);
+        filterMethods(), classInfo, this.mutators);
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
@@ -112,7 +112,7 @@ class GregorMutater implements Mutater {
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
-        filterMethods(context), classInfo, FCollection.filter(this.mutators,
+        filterMethods(), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
@@ -123,7 +123,7 @@ class GregorMutater implements Mutater {
 
   }
 
-  private Predicate<MethodMutatorFactory> isMutatorFor(
+  private static Predicate<MethodMutatorFactory> isMutatorFor(
       final MutationIdentifier id) {
     return new Predicate<MethodMutatorFactory>() {
 
@@ -135,12 +135,12 @@ class GregorMutater implements Mutater {
   }
 
   @SuppressWarnings("unchecked")
-  private Predicate<MethodInfo> filterMethods(final Context context) {
+  private Predicate<MethodInfo> filterMethods() {
     return and(this.filter, filterSyntheticMethods(),
         not(isGeneratedEnumMethod()));
   }
 
-  private Predicate<MethodInfo> filterSyntheticMethods() {
+  private static Predicate<MethodInfo> filterSyntheticMethods() {
     return new Predicate<MethodInfo>() {
 
       public Boolean apply(final MethodInfo a) {
@@ -150,7 +150,7 @@ class GregorMutater implements Mutater {
     };
   }
 
-  private Predicate<MethodInfo> isGeneratedEnumMethod() {
+  private static Predicate<MethodInfo> isGeneratedEnumMethod() {
     return new Predicate<MethodInfo>() {
       public Boolean apply(final MethodInfo a) {
         return a.isGeneratedEnumMethod();

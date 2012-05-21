@@ -153,7 +153,7 @@ public class MutationTestBuilder {
             .getClassPath().getLocalClassPath());
   }
 
-  private F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
+  private static F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
     return new F<MutationDetails, Iterable<ClassName>>() {
       public Iterable<ClassName> apply(final MutationDetails a) {
         return FCollection.map(a.getTestsInOrder(),

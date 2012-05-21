@@ -154,14 +154,6 @@ public abstract class Prelude {
     };
   }
 
-  public static <T> F<T, String> asString() {
-    return new F<T, String>() {
-      public String apply(final T t) {
-        return t.toString();
-      }
-
-    };
-  }
 
   public static <T> F<T, Iterable<T>> asList(final Class<T> type) {
     return new F<T, Iterable<T>>() {

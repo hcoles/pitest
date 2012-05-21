@@ -75,7 +75,7 @@ public class MutationStatusMap {
     return this.mutationMap.keySet();
   }
 
-  private F<Entry<MutationDetails, MutationStatusTestPair>, MutationResult> detailsToMutationResults() {
+  private static F<Entry<MutationDetails, MutationStatusTestPair>, MutationResult> detailsToMutationResults() {
     return new F<Entry<MutationDetails, MutationStatusTestPair>, MutationResult>() {
 
       public MutationResult apply(
@@ -86,7 +86,7 @@ public class MutationStatusMap {
     };
   }
 
-  private F<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
+  private static F<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
     return new F<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails>() {
 
       public MutationDetails apply(
@@ -97,7 +97,7 @@ public class MutationStatusMap {
     };
   }
 
-  private Predicate<Entry<MutationDetails, MutationStatusTestPair>> hasStatus(
+  private static Predicate<Entry<MutationDetails, MutationStatusTestPair>> hasStatus(
       final DetectionStatus status) {
     return new Predicate<Entry<MutationDetails, MutationStatusTestPair>>() {
 
@@ -116,7 +116,7 @@ public class MutationStatusMap {
 
   }
 
-  private F<MutationDetails, Boolean> hasNoCovereage() {
+  private static F<MutationDetails, Boolean> hasNoCovereage() {
     return new F<MutationDetails, Boolean>() {
 
       public Boolean apply(final MutationDetails a) {

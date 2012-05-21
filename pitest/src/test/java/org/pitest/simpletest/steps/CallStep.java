@@ -18,9 +18,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.pitest.Description;
-import org.pitest.TestMethod;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.simpletest.TestExecutionException;
+import org.pitest.simpletest.TestMethod;
 import org.pitest.simpletest.TestStep;
 
 /**

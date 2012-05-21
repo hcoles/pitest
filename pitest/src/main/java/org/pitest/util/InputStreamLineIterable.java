@@ -16,8 +16,6 @@ package org.pitest.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,10 +34,6 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   public InputStreamLineIterable(final Reader reader) {
     this.reader = new BufferedReader(reader);
     advance();
-  }
-
-  public InputStreamLineIterable(final InputStream is) {
-    this(new InputStreamReader(is));
   }
 
   private void advance() {
@@ -80,7 +74,6 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
 
   public void forEach(final SideEffect1<String> e) {
     FCollection.forEach(this, e);
-
   }
 
   public <B> FunctionalList<B> map(final F<String, B> f) {

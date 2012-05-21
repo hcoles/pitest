@@ -119,7 +119,7 @@ public class Context {
     return this.mutations.filter(hasId(id));
   }
 
-  private F<MutationDetails, Boolean> hasId(final MutationIdentifier id) {
+  private static F<MutationDetails, Boolean> hasId(final MutationIdentifier id) {
     return new F<MutationDetails, Boolean>() {
       public Boolean apply(final MutationDetails a) {
         return a.getId().equals(id);

@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.TestMethod;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestClassIdentifier;

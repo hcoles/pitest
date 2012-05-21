@@ -39,7 +39,7 @@ public enum VoidMethodCallMutator implements MethodMutatorFactory {
     return name();
   }
 
-  private F2<String, String, Boolean> voidMethods() {
+  private static F2<String, String, Boolean> voidMethods() {
     return new F2<String, String, Boolean>() {
 
       public Boolean apply(final String name, final String desc) {

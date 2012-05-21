@@ -17,7 +17,6 @@ package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 
-import org.pitest.TestMethod;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 

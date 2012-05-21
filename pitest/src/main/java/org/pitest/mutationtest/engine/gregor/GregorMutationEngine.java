@@ -95,7 +95,7 @@ public class GregorMutationEngine implements MutationEngine {
     return FCollection.map(this.mutationOperators, toName());
   }
 
-  private F<MethodMutatorFactory, String> toName() {
+  private static F<MethodMutatorFactory, String> toName() {
     return new F<MethodMutatorFactory, String>() {
 
       public String apply(final MethodMutatorFactory a) {

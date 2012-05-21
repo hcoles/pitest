@@ -44,7 +44,7 @@ public class CompoundConfiguration implements Configuration {
         configs, asTestIdentifier()));
   }
 
-  private F<Configuration, TestClassIdentifier> asTestIdentifier() {
+  private static F<Configuration, TestClassIdentifier> asTestIdentifier() {
 
     return new F<Configuration, TestClassIdentifier>() {
       public TestClassIdentifier apply(final Configuration a) {
@@ -55,7 +55,7 @@ public class CompoundConfiguration implements Configuration {
 
   }
 
-  private F<Configuration, TestSuiteFinder> asSuiteFinders() {
+  private static F<Configuration, TestSuiteFinder> asSuiteFinders() {
     return new F<Configuration, TestSuiteFinder>() {
       public TestSuiteFinder apply(final Configuration a) {
         return a.testSuiteFinder();
@@ -95,7 +95,7 @@ public class CompoundConfiguration implements Configuration {
     return Option.some(verificationResults.iterator().next());
   }
 
-  private F<Configuration, Iterable<PitHelpError>> verify() {
+  private static F<Configuration, Iterable<PitHelpError>> verify() {
     return new F<Configuration, Iterable<PitHelpError>>() {
       public Iterable<PitHelpError> apply(final Configuration a) {
         return a.verifyEnvironment();

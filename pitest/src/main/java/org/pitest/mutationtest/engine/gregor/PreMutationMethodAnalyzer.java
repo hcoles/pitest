@@ -30,7 +30,7 @@ public class PreMutationMethodAnalyzer implements MethodVisitor {
     }
   }
 
-  private F<String, Boolean> matches(final String owner) {
+  private static F<String, Boolean> matches(final String owner) {
     return new F<String, Boolean>() {
       public Boolean apply(final String a) {
         return owner.startsWith(a);

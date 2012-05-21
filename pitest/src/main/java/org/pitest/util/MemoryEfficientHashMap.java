@@ -453,16 +453,6 @@ public class MemoryEfficientHashMap<K, V> implements Map<K, V>, Serializable {
     initTable(INITIAL_TABLE_SIZE);
   }
 
-  public MemoryEfficientHashMap(final Map<? extends K, ? extends V> m) {
-    int newCapacity = INITIAL_TABLE_SIZE;
-    final int expectedSize = m.size();
-    while (newCapacity * 3 < expectedSize * 4) {
-      newCapacity <<= 1;
-    }
-
-    initTable(newCapacity);
-    internalPutAll(m);
-  }
 
   public void clear() {
     initTable(INITIAL_TABLE_SIZE);

@@ -66,7 +66,7 @@ public class MutationHtmlReportListenerTest {
     when(this.classInfo.getName()).thenReturn(new ClassName("foo"));
     when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(Collections.singleton(classInfo));
     
-    this.testee = new MutationHtmlReportListener(this.coverageDb, 0,
+    this.testee = new MutationHtmlReportListener(this.coverageDb, 
         this.outputStrategy, this.sourceLocator);
   }
 

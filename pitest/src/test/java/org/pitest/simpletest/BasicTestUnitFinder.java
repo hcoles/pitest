@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.pitest.Description;
 import org.pitest.PitError;
-import org.pitest.TestMethod;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;

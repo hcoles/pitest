@@ -4,7 +4,7 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.TestMethod;
+import org.pitest.simpletest.TestMethod;
 
 public class CallStepTest {
 

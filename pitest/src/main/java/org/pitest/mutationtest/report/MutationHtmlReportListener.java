@@ -49,7 +49,7 @@ public class MutationHtmlReportListener implements TestListener {
   private final CoverageDatabase          coverage;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
-      final long startTime, final ResultOutputStrategy outputStrategy,
+       final ResultOutputStrategy outputStrategy,
       final SourceLocator... locators) {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;

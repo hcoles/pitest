@@ -47,7 +47,7 @@ public class MutationMetaData implements MetaData {
     return uniqueFilenames;
   }
 
-  private F<MutationResult, String> mutationResultToFileName() {
+  private static F<MutationResult, String> mutationResultToFileName() {
     return new F<MutationResult, String>() {
       public String apply(final MutationResult a) {
         return a.getDetails().getFilename();
@@ -65,7 +65,7 @@ public class MutationMetaData implements MetaData {
     return classes;
   }
 
-  private F<MutationResult, String> mutationsToClass() {
+  private static F<MutationResult, String> mutationsToClass() {
     return new F<MutationResult, String>() {
       public String apply(final MutationResult a) {
         return a.getDetails().getClazz();

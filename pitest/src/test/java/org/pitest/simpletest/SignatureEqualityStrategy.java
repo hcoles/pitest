@@ -17,7 +17,6 @@ package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 
-import org.pitest.TestMethod;
 
 public class SignatureEqualityStrategy implements EqualityStrategy<TestMethod> {
 

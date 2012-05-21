@@ -35,7 +35,7 @@ public enum ConstructorCallMutator implements MethodMutatorFactory {
     return this.getClass().getName();
   }
 
-  private F2<String, String, Boolean> constructors() {
+  private static F2<String, String, Boolean> constructors() {
     return new F2<String, String, Boolean>() {
 
       public Boolean apply(final String name, final String desc) {

@@ -63,7 +63,7 @@ public class DependencyExtractor {
         and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
   }
 
-  private F<String, Boolean> notSuppliedClass(final String clazz) {
+  private static F<String, Boolean> notSuppliedClass(final String clazz) {
     return new F<String, Boolean>() {
 
       public Boolean apply(final String a) {
@@ -73,7 +73,7 @@ public class DependencyExtractor {
     };
   }
 
-  private F<String, Boolean> asJVMNamePredicate(
+  private static F<String, Boolean> asJVMNamePredicate(
       final Predicate<String> predicate) {
     return new F<String, Boolean>() {
 
@@ -148,7 +148,7 @@ public class DependencyExtractor {
     return relevantDependencies;
   }
 
-  private Comparator<DependencyAccess> equalDestinationComparator() {
+  private static Comparator<DependencyAccess> equalDestinationComparator() {
     return new Comparator<DependencyAccess>() {
       public int compare(final DependencyAccess o1, final DependencyAccess o2) {
         return o1.getDest().compareTo(o2.getDest());
@@ -187,7 +187,7 @@ public class DependencyExtractor {
 
   }
 
-  private F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
+  private static F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
 
     return new F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>>() {
       public Map<String, List<DependencyAccess>> apply(
@@ -206,7 +206,7 @@ public class DependencyExtractor {
     };
   }
 
-  private Comparator<DependencyAccess> classNameComparator() {
+  private static Comparator<DependencyAccess> classNameComparator() {
     return new Comparator<DependencyAccess>() {
       public int compare(final DependencyAccess lhs, final DependencyAccess rhs) {
         return lhs.getDest().getOwner().compareTo(rhs.getDest().getOwner());
@@ -222,7 +222,7 @@ public class DependencyExtractor {
     };
   }
 
-  private SideEffect1<DependencyAccess> constructCollectingSideEffectForVisitor(
+  private static SideEffect1<DependencyAccess> constructCollectingSideEffectForVisitor(
       final List<DependencyAccess> dependencies,
       final Predicate<DependencyAccess> predicate) {
     final SideEffect1<DependencyAccess> se = new SideEffect1<DependencyAccess>() {

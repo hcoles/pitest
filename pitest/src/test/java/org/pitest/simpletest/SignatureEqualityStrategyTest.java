@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.TestMethod;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.reflection.Reflection;
 
