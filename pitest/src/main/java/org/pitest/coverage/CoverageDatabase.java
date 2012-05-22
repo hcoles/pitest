@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.coverage;
 
 import java.util.Collection;
 

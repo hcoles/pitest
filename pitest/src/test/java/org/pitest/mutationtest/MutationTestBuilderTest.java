@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;

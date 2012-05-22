@@ -30,6 +30,8 @@ import java.util.Collections;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.DefaultCoverageDatabase;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;

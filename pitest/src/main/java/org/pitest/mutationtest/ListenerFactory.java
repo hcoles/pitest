@@ -15,6 +15,7 @@
 
 package org.pitest.mutationtest;
 
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.TestListener;
 import org.pitest.mutationtest.report.SourceLocator;
 

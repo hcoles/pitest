@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.TestListener;
 import org.pitest.mutationtest.report.SourceLocator;
 

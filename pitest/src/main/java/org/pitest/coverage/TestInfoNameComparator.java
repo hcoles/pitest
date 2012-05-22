@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.mutationtest;
+package org.pitest.coverage;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -24,8 +24,8 @@ class TestInfoNameComparator implements Comparator<TestInfo>, Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public int compare(final TestInfo arg0, final TestInfo arg1) { // NO_UCD
-    return arg0.getName().compareTo(arg1.getName());
+  public int compare(final TestInfo lhs, final TestInfo rhs) { // NO_UCD
+    return lhs.getName().compareTo(rhs.getName());
   }
 
 }

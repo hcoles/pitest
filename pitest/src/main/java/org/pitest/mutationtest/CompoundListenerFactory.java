@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.CompoundTestListener;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.F;

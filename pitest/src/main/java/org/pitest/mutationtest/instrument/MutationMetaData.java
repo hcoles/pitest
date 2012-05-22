@@ -19,9 +19,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.MetaData;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.mutationtest.report.MutationTestSummaryData;
 import org.pitest.mutationtest.results.MutationResult;
 

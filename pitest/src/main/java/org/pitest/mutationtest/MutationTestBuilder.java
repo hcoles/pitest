@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;

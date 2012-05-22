@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.report.SourceLocator;

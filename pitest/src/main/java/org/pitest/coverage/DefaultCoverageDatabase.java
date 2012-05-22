@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.coverage;
 
 import static org.pitest.functional.FCollection.flatMap;
 import static org.pitest.functional.Prelude.and;
@@ -24,7 +24,6 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageProcess;
@@ -40,6 +39,8 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPathByteArraySource;
+import org.pitest.mutationtest.MutationClassPaths;
+import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;

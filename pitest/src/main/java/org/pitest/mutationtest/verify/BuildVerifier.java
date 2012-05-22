@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.verify;
 
-import org.pitest.mutationtest.CoverageDatabase;
+import org.pitest.coverage.CoverageDatabase;
 
 public interface BuildVerifier {
 

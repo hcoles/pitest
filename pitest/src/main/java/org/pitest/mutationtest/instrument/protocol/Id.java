@@ -14,8 +14,7 @@
  */
 package org.pitest.mutationtest.instrument.protocol;
 
-public class Id {
-
+public abstract class Id {
   public final static byte DESCRIBE = 1;
   public final static byte REPORT   = 2;
   public final static byte OUTCOME  = 16;

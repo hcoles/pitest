@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.coverage;
 
 import java.net.ServerSocket;
 import java.util.List;
@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import org.pitest.Description;
 import org.pitest.PitError;
 import org.pitest.boot.CodeCoverageStore;
-import org.pitest.coverage.CoverageStatistics;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.functional.SideEffect1;

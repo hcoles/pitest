@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
@@ -37,7 +38,6 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.mutationtest.CoverageDatabase;
 import org.pitest.util.Unchecked;
 
 public class DefaultBuildVerifierTest {

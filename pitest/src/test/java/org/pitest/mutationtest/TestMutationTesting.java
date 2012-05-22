@@ -38,6 +38,8 @@ import org.pitest.Pitest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.containers.UnContainer;
+import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.DefaultCoverageDatabase;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
@@ -291,7 +293,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(92);
+    verifyLineNumbers(94);
   }
 
 
