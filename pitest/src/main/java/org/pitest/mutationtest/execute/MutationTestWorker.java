@@ -116,7 +116,6 @@ public class MutationTestWorker {
 
     final List<TestUnit> relevantTests = testSource
         .translateTests(mutationDetails.getTestsInOrder());
-    // pickTests(mutatedClass);
 
     r.describe(mutationId);
 

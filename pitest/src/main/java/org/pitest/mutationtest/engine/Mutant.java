@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.engine;
 
-import java.util.Arrays;
-
 import org.pitest.mutationtest.MutationDetails;
 
 public final class Mutant {
@@ -34,46 +32,6 @@ public final class Mutant {
 
   public byte[] getBytes() {
     return this.bytes;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + Arrays.hashCode(this.bytes);
-    result = prime * result
-        + ((this.details == null) ? 0 : this.details.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final Mutant other = (Mutant) obj;
-    if (!Arrays.equals(this.bytes, other.bytes)) {
-      return false;
-    }
-    if (this.details == null) {
-      if (other.details != null) {
-        return false;
-      }
-    } else if (!this.details.equals(other.details)) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public String toString() {
-    return "Mutant [details=" + this.details + "]";
   }
 
 }

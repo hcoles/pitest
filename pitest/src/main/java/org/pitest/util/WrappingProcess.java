@@ -35,8 +35,4 @@ public class WrappingProcess {
     this.process.destroy();
   }
 
-  public int getPort() {
-    return this.port;
-  }
-
 }

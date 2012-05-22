@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 
 import org.pitest.internal.ClassPath;
 
-public class DefaultPITClassloader extends PITClassLoader {
+public class DefaultPITClassloader extends ClassLoader {
 
   private final ClassPath classPath;
 
@@ -85,14 +85,5 @@ public class DefaultPITClassloader extends PITClassLoader {
     };
   }
 
-  @Override
-  public ClassPath getClassPath() {
-    return this.classPath;
-  }
-
-  @Override
-  public String getLocalClassPath() {
-    return getClassPath().getLocalClassPath();
-  }
 
 }
