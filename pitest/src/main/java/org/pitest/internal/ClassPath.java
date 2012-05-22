@@ -118,8 +118,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   public URL findResource(final String name) {
     try {
-      final URL url = findRootForResource(name);
-      return url;
+      return findRootForResource(name);
     } catch (final IOException exception) {
       return null;
     }

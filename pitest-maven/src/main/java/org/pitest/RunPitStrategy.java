@@ -15,6 +15,8 @@
 package org.pitest;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.DefaultCoverageDatabase;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
@@ -23,8 +25,6 @@ import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CompoundListenerFactory;
-import org.pitest.mutationtest.CoverageDatabase;
-import org.pitest.mutationtest.DefaultCoverageDatabase;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.ReportOptions;

@@ -140,7 +140,7 @@ public class ScoreTest {
     return new F<StatusCount, Boolean>() {
 
       public Boolean apply(final StatusCount a) {
-        return a.status.equals(each) && (a.count == count);
+        return a.getStatus().equals(each) && (a.getCount() == count);
       }
 
     };

@@ -37,21 +37,12 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
     this.context = context;
   }
 
-  // disable beteween
-  // mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class",
-  // "desiredAssertionStatus", "()Z");
-  // and
-  // mv.visitFieldInsn(PUTSTATIC,
-  // "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement",
-  // "$assertionsDisabled", "Z");
-  // in <clinit> methods
-
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc) {
 
-    if ((opcode == Opcodes.INVOKEVIRTUAL) && owner.equals("java/lang/Class")
-        && name.equals("desiredAssertionStatus")) {
+    if ((opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/Class".equals(owner)
+        && "desiredAssertionStatus".equals(name)) {
       this.context.disableMutations(DISABLE_REASON);
     }
     super.visitMethodInsn(opcode, owner, name, desc);
@@ -61,7 +52,7 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
   public void visitFieldInsn(final int opcode, final String owner,
       final String name, final String desc) {
 
-    if (name.equals("$assertionsDisabled")) {
+    if ("$assertionsDisabled".equals(name)) {
       if (opcode == Opcodes.GETSTATIC) {
         this.context.disableMutations(DISABLE_REASON);
         this.assertBlockStarted = true;

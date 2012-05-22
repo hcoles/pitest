@@ -17,13 +17,14 @@ package org.pitest.mutationtest.statistics;
 import org.pitest.mutationtest.results.DetectionStatus;
 
 public class StatusCount {
+
+  private final DetectionStatus status;
+  private long                  count;
+  
   StatusCount(final DetectionStatus status, final long count) {
     this.status = status;
     this.count = count;
   }
-
-  final DetectionStatus status;
-  long                  count;
 
   void increment() {
     this.count++;
@@ -33,36 +34,13 @@ public class StatusCount {
   public String toString() {
     return "" + this.status + " " + this.count;
   }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (int) (this.count ^ (this.count >>> 32));
-    result = prime * result
-        + ((this.status == null) ? 0 : this.status.hashCode());
-    return result;
+  
+  public long getCount() {
+    return count;
   }
 
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatusCount other = (StatusCount) obj;
-    if (this.count != other.count) {
-      return false;
-    }
-    if (this.status != other.status) {
-      return false;
-    }
-    return true;
-  }
 
+  public DetectionStatus getStatus() {
+    return status;
+  }
 }
