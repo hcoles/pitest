@@ -17,18 +17,13 @@ package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 
-
 public class SignatureEqualityStrategy implements EqualityStrategy<TestMethod> {
 
   public boolean isEqual(final TestMethod lhs, final TestMethod rhs) {
     final Method m1 = lhs.getMethod();
     final Method m2 = rhs.getMethod();
 
-    if (haveSameSignature(m1, m2)) {
-      return true;
-    } else {
-      return false;
-    }
+    return haveSameSignature(m1, m2);
   }
 
   private boolean haveSameSignature(final Method me, final Method other) {
