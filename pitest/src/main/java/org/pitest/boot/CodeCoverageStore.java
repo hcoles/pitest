@@ -17,6 +17,7 @@
 
 package org.pitest.boot;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,8 +55,8 @@ public final class CodeCoverageStore {
     lineHits = new HashSet<Long>();
   }
 
-  public static Collection<Long> getHits() {
-    return lineHits;
+  public synchronized static Collection<Long> getHits() {
+    return new ArrayList<Long>(lineHits);
   }
 
   public static int registerClass(final String className) {
