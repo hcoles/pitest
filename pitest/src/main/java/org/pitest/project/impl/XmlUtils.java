@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Aidan Morgan
  */
-public class XmlUtils {
+public final class XmlUtils {
   /**
    * Private constructor to prevent this class being instantiated as it is a
    * utility class.
@@ -68,8 +68,7 @@ public class XmlUtils {
       final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
           .newInstance();
       final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-      final Document doc = docBuilder.parse(f);
-      return doc;
+      return docBuilder.parse(f);
     } catch (final ParserConfigurationException e) {
       throw new ProjectConfigurationParserException(e);
     } catch (final SAXException e) {

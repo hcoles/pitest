@@ -56,7 +56,7 @@ public class AnnotatedLineFactory {
 
   private F<String, Line> stringToAnnotatedLine() {
     return new F<String, Line>() {
-      int lineNumber = 1;
+      private int lineNumber = 1;
 
       public Line apply(final String a) {
         final Line l = new Line(this.lineNumber,

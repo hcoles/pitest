@@ -58,7 +58,6 @@ public class MojoToReportOptionsConverter {
 
     } catch (final DependencyResolutionRequiredException e1) {
       this.mojo.getLog().info(e1);
-      e1.printStackTrace();
     }
 
     addOwnDependenciesToClassPath(classPath);

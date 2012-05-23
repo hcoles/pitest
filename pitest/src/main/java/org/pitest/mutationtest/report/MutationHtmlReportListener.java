@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -38,6 +39,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.util.FileUtil;
+import org.pitest.util.Log;
 
 public class MutationHtmlReportListener implements TestListener {
 
@@ -101,7 +103,7 @@ public class MutationHtmlReportListener implements TestListener {
       writer.close();
 
     } catch (final IOException ex) {
-      ex.printStackTrace();
+      Log.getLogger().log(Level.WARNING, "Error while writing report", ex);
     }
   }
 

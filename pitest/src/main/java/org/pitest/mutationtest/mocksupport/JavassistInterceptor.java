@@ -23,14 +23,14 @@ import org.pitest.util.Unchecked;
 
 public class JavassistInterceptor {
 
-  private static Mutant MUTANT;
+  private static Mutant mutant;
 
   public static InputStream openClassfile(final Object classPath, // NO_UCD
       final String name) {
 
     if (isMutatedClass(name)) {
       final ByteArrayInputStream bais = new ByteArrayInputStream(
-          MUTANT.getBytes());
+          mutant.getBytes());
       return bais;
     } else {
       return returnNormalBytes(classPath, name);
@@ -44,16 +44,15 @@ public class JavassistInterceptor {
       return (InputStream) Reflection.publicMethod(classPath.getClass(),
           "openClassfile").invoke(classPath, name);
     } catch (final Exception e) {
-      e.printStackTrace();
       throw Unchecked.translateCheckedException(e);
     }
   }
 
   private static boolean isMutatedClass(final String name) {
-    return (MUTANT != null) && MUTANT.getDetails().getClazz().equals(name);
+    return (mutant != null) && mutant.getDetails().getClazz().equals(name);
   }
 
-  public static void setMutant(final Mutant mutant) {
-    MUTANT = mutant;
+  public static void setMutant(final Mutant newMutant) {
+    mutant = newMutant;
   }
 }

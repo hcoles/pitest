@@ -87,7 +87,6 @@ public class CoverageSlave {
     } catch (final Throwable ex) {
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
-      ex.printStackTrace();
       exitCode = ExitCode.UNKNOWN_ERROR;
     } finally {
       if (invokeQueue != null) {

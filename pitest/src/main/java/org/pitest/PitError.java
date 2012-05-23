@@ -64,7 +64,7 @@ public final class PitError extends RuntimeException {
 
   private static F2<StringBuilder, String, StringBuilder> append() {
     return new F2<StringBuilder, String, StringBuilder>() {
-      int position = 0;
+      private int position = 0;
 
       public StringBuilder apply(final StringBuilder a, final String b) {
         this.position++;

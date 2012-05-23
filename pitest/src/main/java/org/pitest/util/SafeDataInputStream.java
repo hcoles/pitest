@@ -64,7 +64,6 @@ public class SafeDataInputStream {
     try {
       return this.dis.readByte();
     } catch (final IOException e) {
-      e.printStackTrace();
       throw Unchecked.translateCheckedException(e);
     }
   }

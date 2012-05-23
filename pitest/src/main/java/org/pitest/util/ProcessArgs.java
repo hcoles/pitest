@@ -23,7 +23,7 @@ import java.util.List;
 import org.pitest.functional.SideEffect1;
 import org.pitest.internal.ClassPath;
 
-public class ProcessArgs {
+public final class ProcessArgs {
 
   private final String        launchClassPath;
   private SideEffect1<String> stdout  = print(String.class);

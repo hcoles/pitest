@@ -435,19 +435,19 @@ public class MemoryEfficientHashMap<K, V> implements Map<K, V>, Serializable {
    * Backing store for all the keys; transient due to custom serialization.
    * Default access to avoid synthetic accessors from inner classes.
    */
-  transient Object[] keys;
+  private transient Object[] keys;
 
   /**
    * Number of pairs in this set; transient due to custom serialization. Default
    * access to avoid synthetic accessors from inner classes.
    */
-  transient int      size = 0;
+  private transient int      size = 0;
 
   /**
    * Backing store for all the values; transient due to custom serialization.
    * Default access to avoid synthetic accessors from inner classes.
    */
-  transient Object[] values;
+  private transient Object[] values;
 
   public MemoryEfficientHashMap() {
     initTable(INITIAL_TABLE_SIZE);

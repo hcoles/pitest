@@ -19,7 +19,7 @@ import org.pitest.util.SafeDataOutputStream;
 
 public class CoverageCommunicationThread extends CommunicationThread {
 
-  static class SendData implements SideEffect1<SafeDataOutputStream> {
+  final static class SendData implements SideEffect1<SafeDataOutputStream> {
     private final static Logger   LOG = Log.getLogger();
     private final CoverageOptions arguments;
     private final List<String>    testClasses;
@@ -54,7 +54,7 @@ public class CoverageCommunicationThread extends CommunicationThread {
     }
   }
 
-  static class Receive implements ReceiveStrategy {
+  final static class Receive implements ReceiveStrategy {
 
     private final CoverageStatistics          cs = new CoverageStatistics();
     private final SideEffect1<CoverageResult> handler;

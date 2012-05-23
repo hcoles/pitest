@@ -24,7 +24,7 @@ import org.pitest.bytecode.NullVisitor;
 import org.pitest.coverage.codeassist.BridgeMethodFilter;
 import org.pitest.coverage.codeassist.MethodFilteringAdapter;
 
-public class ClassInfoVisitor extends MethodFilteringAdapter {
+public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
   private final ClassInfoBuilder classInfo;
 

@@ -62,7 +62,7 @@ public enum ResultType {
     this.function = f;
   }
 
-  protected final F<TestResult, SideEffect1<TestListener>> function;
+  private final F<TestResult, SideEffect1<TestListener>> function;
 
   public SideEffect1<TestListener> getListenerFunction(final TestResult result) {
     return this.function.apply(result);

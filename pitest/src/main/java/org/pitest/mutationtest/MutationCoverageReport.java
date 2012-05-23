@@ -210,8 +210,7 @@ public class MutationCoverageReport implements Runnable {
     final Set<ClassName> codeClasses = new HashSet<ClassName>();
     FCollection.mapTo(this.coverageDatabase.getCodeClasses(),
         ClassInfo.toClassName(), codeClasses);
-    final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
-    return tus;
+    return builder.createMutationTestUnits(codeClasses);
   }
 
   private void checkMutationsFounds(final List<TestUnit> tus) {

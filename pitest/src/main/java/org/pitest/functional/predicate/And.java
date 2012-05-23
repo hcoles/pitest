@@ -39,7 +39,7 @@ public class And<A> implements Predicate<A> {
         return false;
       }
     }
-    return true && !this.ps.isEmpty();
+    return !this.ps.isEmpty();
   }
 
 }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class WrappingProcess {
 
-  protected final int       port;
+  private final int       port;
   private final ProcessArgs argsBuilder;
   private final Class<?>    slaveClass;
 

@@ -25,8 +25,8 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.util.SocketFinder;
 import org.pitest.util.ProcessArgs;
+import org.pitest.util.SocketFinder;
 
 public class CoverageProcessSystemTest {
 

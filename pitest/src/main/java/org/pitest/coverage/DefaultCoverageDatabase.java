@@ -47,6 +47,7 @@ import org.pitest.util.Log;
 import org.pitest.util.MemoryEfficientHashMap;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.Unchecked;
 
 public class DefaultCoverageDatabase implements CoverageDatabase {
   private final static Logger                              LOG           = Log
@@ -142,14 +143,9 @@ public class DefaultCoverageDatabase implements CoverageDatabase {
 
       LOG.info("Calculated coverage in " + time + " seconds.");
 
-    } catch (final IOException e) {
-      e.printStackTrace();
-    } catch (final InterruptedException e) {
-      e.printStackTrace();
-    } catch (final ExecutionException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    } catch (final Exception e) {
+      throw Unchecked.translateCheckedException(e);
+    } 
   }
 
   private void gatherCoverageData(final Collection<ClassInfo> tests)
