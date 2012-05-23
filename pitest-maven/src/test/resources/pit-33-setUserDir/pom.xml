@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.pitest</groupId>
+	<artifactId>33-setUserDir</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>pit #33 setUserDir</name>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>0.26</version>
+				<configuration>
+					<inScopeClasses><param>org.example*</param></inScopeClasses>
+					<targetClasses><param>org.example*</param></targetClasses>
+					<jvmArgs>
+					   <value>-Xmx512m</value>
+					   <value>-Xms512m</value>
+					</jvmArgs>
+					<failWhenNoMutations>false</failWhenNoMutations>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<properties>
+		<junit.version>4.8.1</junit.version>
+		<forkMode>once</forkMode>
+	</properties>
+	<modules>
+	   <module>pit-33-setUserDir-subModule</module>
+	</modules>
+</project>

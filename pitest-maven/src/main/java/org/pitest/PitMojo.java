@@ -192,8 +192,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Used to look up Artifacts in the remote repository.
    * 
-   * @parameter expression=
-   *            "${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+   * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
    * @required
    * @readonly
    */
