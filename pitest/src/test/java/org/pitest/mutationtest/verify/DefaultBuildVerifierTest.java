@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.classinfo.Repository;
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
@@ -45,7 +45,7 @@ public class DefaultBuildVerifierTest {
   private DefaultBuildVerifier testee;
 
   @Mock
-  private CoverageDatabase     coverageDatabase;
+  private CodeSource     code;
 
   @Before
   public void setUp() {
@@ -60,7 +60,7 @@ public class DefaultBuildVerifierTest {
   @Test
   public void shouldNotThrowErrorForInterfaceCompiledWithDebugInfo() {
     setupClassPath(AnInterface.class);
-    this.testee.verify(this.coverageDatabase);
+    this.testee.verify(this.code);
     // pass
   }
 
@@ -71,20 +71,20 @@ public class DefaultBuildVerifierTest {
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
     setupClassPath(AClass.class);
-    this.testee.verify(this.coverageDatabase);
+    this.testee.verify(this.code);
     // pass
   }
   
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderBytesArraySource(), "FooNoSource");
-    this.testee.verify(this.coverageDatabase);
+    this.testee.verify(this.code);
   }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
     setupClassPath(new ResourceFolderBytesArraySource(), "FooNoLines");
-    this.testee.verify(this.coverageDatabase);
+    this.testee.verify(this.code);
   }
 
   private void setupClassPath(final Class<?> clazz) {
@@ -97,7 +97,7 @@ public class DefaultBuildVerifierTest {
       final String clazz) {
     final Repository repository = new Repository(source);
     final ClassInfo ci = repository.fetchClass(clazz).value();
-    when(this.coverageDatabase.getCodeClasses()).thenReturn(
+    when(this.code.getCode()).thenReturn(
         Collections.singletonList(ci));
   }
 

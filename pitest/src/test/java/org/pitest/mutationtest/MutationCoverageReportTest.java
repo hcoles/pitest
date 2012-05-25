@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.TestListener;
 import org.pitest.help.Help;
@@ -47,6 +48,9 @@ public class MutationCoverageReportTest {
 
   @Mock
   private CoverageDatabase       coverageDb;
+  
+  @Mock
+  private CodeSource code;
 
   @Before
   public void setUp() {
@@ -62,7 +66,7 @@ public class MutationCoverageReportTest {
   }
 
   private void createAndRunTestee() {
-    this.testee = new MutationCoverageReport(this.coverageDb, this.data,
+    this.testee = new MutationCoverageReport(code,this.coverageDb, this.data,
         this.listenerFactory, new Timings(), new DefaultBuildVerifier());
     this.testee.run();
   }

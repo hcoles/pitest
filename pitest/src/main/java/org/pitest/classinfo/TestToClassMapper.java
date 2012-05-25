@@ -39,21 +39,6 @@ public class TestToClassMapper {
       return Option.some(name.withoutPrefixChars(TEST_LENGTH));
     }
 
-    // final String className = getClassNameWithoutPackage(test);
-    // if (className.startsWith("Test")) {
-    // final String nameGuess = className.substring(testLength,
-    // className.length());
-    // final Option<Class<?>> guessed = tryName(test.getPackage().getName()
-    // + "." + nameGuess);
-    // if (guessed.hasNone()) {
-    // if (test.getEnclosingClass() != null) {
-    // return tryName(test.getEnclosingClass().getName() + "$" + nameGuess);
-    // }
-    // } else {
-    // return guessed;
-    // }
-    // }
-
     return Option.none();
   }
 

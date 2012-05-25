@@ -34,7 +34,6 @@ public abstract class TestUnitDecorator implements TestUnit {
     return this.child;
   }
 
-
   public abstract void execute(ClassLoader loader, ResultCollector rc);
 
 }

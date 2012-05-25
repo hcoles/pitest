@@ -20,7 +20,7 @@ public class StatusCount {
 
   private final DetectionStatus status;
   private long                  count;
-  
+
   StatusCount(final DetectionStatus status, final long count) {
     this.status = status;
     this.count = count;
@@ -34,13 +34,12 @@ public class StatusCount {
   public String toString() {
     return "" + this.status + " " + this.count;
   }
-  
+
   public long getCount() {
-    return count;
+    return this.count;
   }
 
-
   public DetectionStatus getStatus() {
-    return status;
+    return this.status;
   }
 }

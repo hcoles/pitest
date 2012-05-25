@@ -37,6 +37,7 @@ import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.DefaultCoverageDatabase;
@@ -339,12 +340,14 @@ public class TestMutationTesting {
         data.createClassesFilter(), pf);
 
     final Timings timings = new Timings();
+    CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
+
     final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-        coverageOptions, launchOptions, cps, timings);
+        coverageOptions, launchOptions, code,timings);
 
     coverageDatabase.initialise();
 
-    final Collection<ClassName> codeClasses = FCollection.map(coverageDatabase.getCodeClasses(), ClassInfo.toClassName());
+    final Collection<ClassName> codeClasses = FCollection.map(code.getCode(), ClassInfo.toClassName());
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),

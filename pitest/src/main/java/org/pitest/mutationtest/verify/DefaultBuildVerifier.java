@@ -18,7 +18,7 @@ package org.pitest.mutationtest.verify;
 import java.util.Collection;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.coverage.CoverageDatabase;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
@@ -26,8 +26,8 @@ import org.pitest.help.PitHelpError;
 
 public class DefaultBuildVerifier implements BuildVerifier {
 
-  public void verify(final CoverageDatabase coverageDatabase) {
-    final Collection<ClassInfo> codeClasses = coverageDatabase.getCodeClasses();
+  public void verify(final CodeSource code) {
+    final Collection<ClassInfo> codeClasses = code.getCode();
     FCollection.forEach(codeClasses, throwErrorIfHasNoLineNumbers());
     FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
   }

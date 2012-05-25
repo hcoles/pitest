@@ -16,8 +16,6 @@ public interface CoverageDatabase {
 
   Collection<ClassInfo> getClassInfo(Collection<String> classesForSourceFile);
 
-  Collection<ClassInfo> getCodeClasses();
-
   int getNumberOfCoveredLines(Collection<String> mutatedClass);
 
   Collection<TestInfo> getTestsForClass(String clazz);

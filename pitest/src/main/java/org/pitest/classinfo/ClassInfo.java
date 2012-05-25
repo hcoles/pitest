@@ -133,7 +133,6 @@ public class ClassInfo {
     };
   }
 
-
   @Override
   public String toString() {
     return this.name.asJavaName();
@@ -152,27 +151,30 @@ public class ClassInfo {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    ClassInfo other = (ClassInfo) obj;
-    if (name == null) {
-      if (other.name != null)
+    }
+    final ClassInfo other = (ClassInfo) obj;
+    if (this.name == null) {
+      if (other.name != null) {
         return false;
-    } else if (!name.equals(other.name))
+      }
+    } else if (!this.name.equals(other.name)) {
       return false;
+    }
     return true;
   }
 
-  
-  
 }

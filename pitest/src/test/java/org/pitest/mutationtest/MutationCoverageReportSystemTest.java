@@ -30,6 +30,7 @@ import java.util.Collections;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.DefaultCoverageDatabase;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -332,9 +333,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final Timings timings = new Timings();
+      CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
+
       final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-          coverageOptions, launchOptions, cps, timings);
-      final MutationCoverageReport testee = new MutationCoverageReport(
+          coverageOptions, launchOptions, code, timings);
+      final MutationCoverageReport testee = new MutationCoverageReport(code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());
 

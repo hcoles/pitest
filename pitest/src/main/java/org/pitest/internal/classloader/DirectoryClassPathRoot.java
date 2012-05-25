@@ -55,7 +55,6 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
     }
   }
 
-
   public Collection<String> classNames() {
     return classNames(this.root);
   }

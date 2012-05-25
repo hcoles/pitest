@@ -32,8 +32,8 @@ public class HtmlReportFactory implements ListenerFactory {
 
   public TestListener getListener(final CoverageDatabase coverage,
       final long startTime, final SourceLocator locator) {
-    return new MutationHtmlReportListener(coverage, 
-        this.outputStrategy, locator);
+    return new MutationHtmlReportListener(coverage, this.outputStrategy,
+        locator);
   }
 
   public static F<ResultOutputStrategy, ListenerFactory> createFactoryFunction() {

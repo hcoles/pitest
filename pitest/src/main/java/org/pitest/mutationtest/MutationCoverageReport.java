@@ -15,16 +15,13 @@
 package org.pitest.mutationtest;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
@@ -67,15 +64,18 @@ public class MutationCoverageReport implements Runnable {
   private final CoverageDatabase coverageDatabase;
   private final Timings          timings;
   private final BuildVerifier    buildVerifier;
+  private final CodeSource       code;
 
-  public MutationCoverageReport(final CoverageDatabase coverageDatabase,
-      final ReportOptions data, final ListenerFactory listenerFactory,
-      final Timings timings, final BuildVerifier buildVerifier) {
+  public MutationCoverageReport(final CodeSource code,
+      final CoverageDatabase coverageDatabase, final ReportOptions data,
+      final ListenerFactory listenerFactory, final Timings timings,
+      final BuildVerifier buildVerifier) {
     this.coverageDatabase = coverageDatabase;
     this.listenerFactory = listenerFactory;
     this.data = data;
     this.timings = timings;
     this.buildVerifier = buildVerifier;
+    this.code = code;
   }
 
   public final void run() {
@@ -118,10 +118,13 @@ public class MutationCoverageReport implements Runnable {
       final MutationClassPaths cps = data.getMutationClassPaths();
       final Timings timings = new Timings();
 
-      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
-          coverageOptions, launchOptions, cps, timings);
+      final CodeSource code = new CodeSource(cps, coverageOptions
+          .getPitConfig().testClassIdentifier());
 
-      final MutationCoverageReport instance = new MutationCoverageReport(
+      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+          coverageOptions, launchOptions, code, timings);
+
+      final MutationCoverageReport instance = new MutationCoverageReport(code,
           coverageDatabase, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
@@ -172,7 +175,7 @@ public class MutationCoverageReport implements Runnable {
   }
 
   private void verifyBuildSuitableForMutationTesting() {
-    this.buildVerifier.verify(this.coverageDatabase);
+    this.buildVerifier.verify(this.code);
   }
 
   private void printStats(final MutationStatisticsListener stats) {
@@ -207,10 +210,7 @@ public class MutationCoverageReport implements Runnable {
         limitMutationsPerClass(), this.coverageDatabase, this.data,
         new ClassPathByteArraySource(this.data.getClassPath()));
 
-    final Set<ClassName> codeClasses = new HashSet<ClassName>();
-    FCollection.mapTo(this.coverageDatabase.getCodeClasses(),
-        ClassInfo.toClassName(), codeClasses);
-    return builder.createMutationTestUnits(codeClasses);
+    return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
 
   private void checkMutationsFounds(final List<TestUnit> tus) {

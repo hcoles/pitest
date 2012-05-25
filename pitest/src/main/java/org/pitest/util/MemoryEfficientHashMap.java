@@ -453,7 +453,6 @@ public class MemoryEfficientHashMap<K, V> implements Map<K, V>, Serializable {
     initTable(INITIAL_TABLE_SIZE);
   }
 
-
   public void clear() {
     initTable(INITIAL_TABLE_SIZE);
     this.size = 0;

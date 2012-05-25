@@ -27,7 +27,6 @@ public class False<A> implements Predicate<A> {
     return (False<A>) INSTANCE;
   }
 
-
   public Boolean apply(final A a) {
     return false;
   }

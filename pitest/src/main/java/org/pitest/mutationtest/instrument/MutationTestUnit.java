@@ -117,8 +117,8 @@ public class MutationTestUnit extends AbstractTestUnit {
   }
 
   private void runTestInSeperateProcessForMutationRange(
-      final MutationStatusMap mutations)
-      throws IOException, InterruptedException {
+      final MutationStatusMap mutations) throws IOException,
+      InterruptedException {
 
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
@@ -196,9 +196,8 @@ public class MutationTestUnit extends AbstractTestUnit {
     return this.config.getJVMArgs();
   }
 
-  private void runTestsInSeperateProcess(
-      final MutationStatusMap mutations) throws IOException,
-      InterruptedException {
+  private void runTestsInSeperateProcess(final MutationStatusMap mutations)
+      throws IOException, InterruptedException {
 
     while (mutations.hasUnrunMutations()) {
       runTestInSeperateProcessForMutationRange(mutations);

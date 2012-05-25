@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.verify;
 
-import org.pitest.coverage.CoverageDatabase;
+import org.pitest.classinfo.CodeSource;
 
 public interface BuildVerifier {
 
-  public void verify(CoverageDatabase coverageDatabase);
+  public void verify(CodeSource coverageDatabase);
 
 }
