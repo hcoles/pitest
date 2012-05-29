@@ -15,12 +15,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
+import org.pitest.util.JavaAgent;
 
 
 public class MutationTestBuilderTest {
@@ -45,6 +47,12 @@ public class MutationTestBuilderTest {
   
   @Mock
   private ClassByteArraySource  source;
+
+  @Mock
+  private JavaAgent javaAgent;
+
+  @Mock
+  private Configuration configuration;
   
   @Before
   public void setUp() {
@@ -53,7 +61,7 @@ public class MutationTestBuilderTest {
     mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
     when(engine.createMutator(mutationConfig,source)).thenReturn(mutater);
     setupFilterFactoryToFilterNothing();
-    testee = new MutationTestBuilder(mutationConfig, filterFactory, coverageDatabase, data, source);
+    testee = new MutationTestBuilder(mutationConfig, filterFactory, coverageDatabase, data, source, configuration, javaAgent);
   }
   
   private void setupFilterFactoryToFilterNothing() {

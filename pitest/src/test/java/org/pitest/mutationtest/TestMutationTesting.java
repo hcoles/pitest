@@ -40,7 +40,8 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.DefaultCoverageDatabase;
+import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
@@ -294,7 +295,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(94);
+    verifyLineNumbers(96);
   }
 
 
@@ -342,10 +343,10 @@ public class TestMutationTesting {
     final Timings timings = new Timings();
     CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
-    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+    final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
         coverageOptions, launchOptions, code,timings);
 
-    coverageDatabase.initialise();
+    CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 
     final Collection<ClassName> codeClasses = FCollection.map(code.getCode(), ClassInfo.toClassName());
 
@@ -356,8 +357,8 @@ public class TestMutationTesting {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        UnfilteredMutationFilter.factory(), coverageDatabase, data,
-        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
+        UnfilteredMutationFilter.factory(), coverageData, data,
+        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()), coverageOptions.getPitConfig(), launchOptions.getJavaAgentFinder());
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
 

@@ -15,8 +15,9 @@
 
 package org.pitest.mutationtest;
 
-import static org.pitest.mutationtest.results.DetectionStatus.*;
+import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.results.DetectionStatus.RUN_ERROR;
 import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
 
@@ -31,8 +32,8 @@ import java.util.Collections;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.classinfo.CodeSource;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.DefaultCoverageDatabase;
+import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.Configuration;
@@ -335,8 +336,9 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final Timings timings = new Timings();
       CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
-      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
           coverageOptions, launchOptions, code, timings);
+      
       final MutationCoverageReport testee = new MutationCoverageReport(code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());

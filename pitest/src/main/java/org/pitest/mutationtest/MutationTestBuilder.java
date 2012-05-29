@@ -26,6 +26,7 @@ import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
+import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -37,6 +38,7 @@ import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 
 public class MutationTestBuilder {
@@ -51,16 +53,21 @@ public class MutationTestBuilder {
   private final CoverageDatabase      coverageDatabase;
   private final MutationFilterFactory filterFactory;
   private final ClassByteArraySource  source;
+  private final Configuration         configuration;
+  private final JavaAgent             javaAgent;
 
   public MutationTestBuilder(final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
       final CoverageDatabase coverageDatabase, final ReportOptions data,
-      final ClassByteArraySource source) {
+      final ClassByteArraySource source, final Configuration configuration,
+      final JavaAgent javaAgent) {
     this.data = data;
     this.mutationConfig = mutationConfig;
     this.coverageDatabase = coverageDatabase;
     this.filterFactory = filterFactory;
     this.source = source;
+    this.configuration = configuration;
+    this.javaAgent = javaAgent;
   }
 
   public List<TestUnit> createMutationTestUnits(
@@ -147,8 +154,7 @@ public class MutationTestBuilder {
         uniqueTestClasses);
 
     return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
-        this.coverageDatabase.getConfiguration(), this.mutationConfig, d,
-        this.coverageDatabase.getJavaAgent(),
+        this.configuration, this.mutationConfig, d, this.javaAgent,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());

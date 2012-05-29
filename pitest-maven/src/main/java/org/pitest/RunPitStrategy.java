@@ -16,8 +16,8 @@ package org.pitest;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.classinfo.CodeSource;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.DefaultCoverageDatabase;
+import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
@@ -64,7 +64,7 @@ public class RunPitStrategy implements GoalStrategy {
     CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
     Timings timings = new Timings();
-    final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         coverageOptions, launchOptions, code, timings);
     final MutationCoverageReport report = new MutationCoverageReport(code,
         coverageDatabase, data, reportFactory, timings, new DefaultBuildVerifier());

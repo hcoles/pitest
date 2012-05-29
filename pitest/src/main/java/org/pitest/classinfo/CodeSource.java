@@ -68,7 +68,7 @@ public class CodeSource {
   public Collection<ClassInfo> getClassInfo(final Collection<String> classes) {
     return FCollection.flatMap(classes, nameToClassInfo());
   }
-  
+
   private F<String, Option<ClassInfo>> nameToClassInfo() {
     return new NameToClassInfo(this.classRepository);
   }

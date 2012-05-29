@@ -108,7 +108,7 @@ public class AnnotatedLineFactory {
   private boolean isLineCovered(final int line) {
     final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
       public Boolean apply(final ClassInfo a) {
-        return !AnnotatedLineFactory.this.statistics.getTestForLineNumber(
+        return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
             new ClassLine(a.getName().asInternalName(), line)).isEmpty();
       }
     };

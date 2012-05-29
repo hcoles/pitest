@@ -25,7 +25,8 @@ import org.pitest.classinfo.CodeSource;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.DefaultCoverageDatabase;
+import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.ClassLoaderFactory;
@@ -58,19 +59,19 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
-  private static final Logger    LOG = Log.getLogger();
-  private final ReportOptions    data;
-  private final ListenerFactory  listenerFactory;
-  private final CoverageDatabase coverageDatabase;
-  private final Timings          timings;
-  private final BuildVerifier    buildVerifier;
-  private final CodeSource       code;
+  private static final Logger     LOG = Log.getLogger();
+  private final ReportOptions     data;
+  private final ListenerFactory   listenerFactory;
+  private final CoverageGenerator coverage;
+  private final Timings           timings;
+  private final BuildVerifier     buildVerifier;
+  private final CodeSource        code;
 
   public MutationCoverageReport(final CodeSource code,
-      final CoverageDatabase coverageDatabase, final ReportOptions data,
+      final CoverageGenerator coverage, final ReportOptions data,
       final ListenerFactory listenerFactory, final Timings timings,
       final BuildVerifier buildVerifier) {
-    this.coverageDatabase = coverageDatabase;
+    this.coverage = coverage;
     this.listenerFactory = listenerFactory;
     this.data = data;
     this.timings = timings;
@@ -121,11 +122,11 @@ public class MutationCoverageReport implements Runnable {
       final CodeSource code = new CodeSource(cps, coverageOptions
           .getPitConfig().testClassIdentifier());
 
-      final CoverageDatabase coverageDatabase = new DefaultCoverageDatabase(
+      final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
           coverageOptions, launchOptions, code, timings);
 
       final MutationCoverageReport instance = new MutationCoverageReport(code,
-          coverageDatabase, data, reportFactory, timings,
+          coverageGenerator, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
       instance.run();
@@ -144,12 +145,12 @@ public class MutationCoverageReport implements Runnable {
 
     verifyBuildSuitableForMutationTesting();
 
-    this.coverageDatabase.initialise();
+    final CoverageDatabase coverageData = this.coverage.calculateCoverage();
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
-        .getListener(this.coverageDatabase, t0, new SmartSourceLocator(
-            this.data.getSourceDirs()));
+        .getListener(coverageData, t0,
+            new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(mutationReportListener);
 
@@ -157,7 +158,7 @@ public class MutationCoverageReport implements Runnable {
     staticConfig.addTestListener(stats);
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final List<TestUnit> tus = buildMutationTests();
+    final List<TestUnit> tus = buildMutationTests(coverageData);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -198,7 +199,7 @@ public class MutationCoverageReport implements Runnable {
     }
   }
 
-  private List<TestUnit> buildMutationTests() {
+  private List<TestUnit> buildMutationTests(final CoverageDatabase coverageData) {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
@@ -206,9 +207,11 @@ public class MutationCoverageReport implements Runnable {
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
+
     final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
-        limitMutationsPerClass(), this.coverageDatabase, this.data,
-        new ClassPathByteArraySource(this.data.getClassPath()));
+        limitMutationsPerClass(), coverageData, this.data,
+        new ClassPathByteArraySource(this.data.getClassPath()),
+        this.coverage.getConfiguration(), this.coverage.getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

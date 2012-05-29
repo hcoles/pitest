@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.CoverageGenerator;
 import org.pitest.extension.TestListener;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -50,6 +51,9 @@ public class MutationCoverageReportTest {
   private CoverageDatabase       coverageDb;
   
   @Mock
+  private CoverageGenerator coverage;
+  
+  @Mock
   private CodeSource code;
 
   @Before
@@ -58,7 +62,8 @@ public class MutationCoverageReportTest {
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     this.data.setMutators(Mutator.DEFAULTS.asCollection());
-    when(this.coverageDb.initialise()).thenReturn(true);
+    when(coverage.calculateCoverage()).thenReturn(coverageDb);
+   // when(this.coverageDb.initialise()).thenReturn(true);
     when(
         this.listenerFactory.getListener(any(CoverageDatabase.class),
             anyLong(), any(SourceLocator.class))).thenReturn(this.listener);
@@ -66,7 +71,7 @@ public class MutationCoverageReportTest {
   }
 
   private void createAndRunTestee() {
-    this.testee = new MutationCoverageReport(code,this.coverageDb, this.data,
+    this.testee = new MutationCoverageReport(code,this.coverage, this.data,
         this.listenerFactory, new Timings(), new DefaultBuildVerifier());
     this.testee.run();
   }
