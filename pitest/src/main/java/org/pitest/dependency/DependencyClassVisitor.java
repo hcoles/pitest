@@ -18,7 +18,6 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.pitest.dependency.DependencyAccess.AccessType;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.SideEffect1;
 
@@ -58,7 +57,7 @@ class DependencyClassVisitor extends ClassAdapter {
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, name, desc,
         signature, exceptions);
 
-    final Member me = new Member(this.className, name, desc);
+    final Member me = new Member(this.className, name);
     return new DependencyAnalysisMethodVisitor(me, methodVisitor,
         this.typeReceiver);
   }
@@ -79,16 +78,16 @@ class DependencyClassVisitor extends ClassAdapter {
     @Override
     public void visitMethodInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      this.typeReceiver.apply(new DependencyAccess(AccessType.METHOD,
-          this.member, new Member(owner, name, desc)));
+      this.typeReceiver.apply(new DependencyAccess(
+          this.member, new Member(owner, name)));
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     }
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      this.typeReceiver.apply(new DependencyAccess(AccessType.FIELD,
-          this.member, new Member(owner, name, desc)));
+      this.typeReceiver.apply(new DependencyAccess(
+          this.member, new Member(owner, name)));
       this.mv.visitFieldInsn(opcode, owner, name, desc);
     }
   }

@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.pitest.dependency.DependencyAccess.AccessType;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -93,10 +92,8 @@ public class DependencyClassVisitorTest {
     examineClassWithTestee(MakesMethodCall.class);
     assertEquals(classesToNames(Arrays.class), this.gatheredDependencies);
     final Member foo = new Member(
-        classToJvmName().apply(MakesMethodCall.class), "foo", "()V");
-    assertTrue(this.gatheredAccess.contains(new DependencyAccess(
-        AccessType.METHOD, foo, new Member("java/util/Arrays", "asList",
-            "([Ljava/lang/Object;)Ljava/util/List;"))));
+        classToJvmName().apply(MakesMethodCall.class), "foo");
+    assertTrue(this.gatheredAccess.contains(new DependencyAccess(foo, new Member("java/util/Arrays", "asList"))));
   }
 
   private void examineClassWithTestee(final Class<?> clazz) throws IOException {

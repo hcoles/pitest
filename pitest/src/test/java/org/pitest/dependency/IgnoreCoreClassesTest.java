@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-import org.pitest.dependency.DependencyAccess.AccessType;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.dependency.DependencyExtractorTest.Foo;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -84,8 +83,8 @@ public class IgnoreCoreClassesTest {
   }
 
   private DependencyAccess makeAccessFor(final Class<?> clazz) {
-    return new DependencyAccess(AccessType.METHOD, new Member("foo", "foo",
-        "()V"), new Member(clazz.getName(), "foo", "()V"));
+    return new DependencyAccess(new Member("foo", 
+        "()V"), new Member(clazz.getName(), "()V"));
   }
 
 }
