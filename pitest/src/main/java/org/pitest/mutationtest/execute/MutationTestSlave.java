@@ -32,7 +32,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.UnGroupedStrategy;
-import org.pitest.functional.F2;
+import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.internal.ClassloaderByteArraySource;
@@ -46,6 +46,7 @@ import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
+import org.pitest.util.Unchecked;
 
 public class MutationTestSlave {
 
@@ -69,10 +70,18 @@ public class MutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final F2<Class<?>, byte[], Boolean> hotswap = new F2<Class<?>, byte[], Boolean>() {
+      final F3<String, ClassLoader,byte[], Boolean> hotswap = new F3<String, ClassLoader, byte[], Boolean>() {
 
-        public Boolean apply(final Class<?> a, final byte[] b) {
-          return HotSwapAgent.hotSwap(a, b);
+        public Boolean apply(final String clazzName, ClassLoader loader, final byte[] b) {
+           Class<?> clazz;
+          try {
+            clazz = Class.forName(clazzName, false,
+                 loader);
+            return HotSwapAgent.hotSwap(clazz, b);
+          } catch (ClassNotFoundException e) {
+            throw Unchecked.translateCheckedException(e);
+          }
+   
         }
 
       };

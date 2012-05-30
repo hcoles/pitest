@@ -31,9 +31,6 @@
 				<configuration>
 					<testNGArtifactName>none:none</testNGArtifactName>
 
-					<!-- for PowerMockAgentTest -->
-					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -Dfoo=foo</argLine>
-
 					<includes>
 						<include>**/Test*.java</include>
 						<include>**/*Test.java</include>
@@ -43,8 +40,8 @@
 						<exclude>**/com/*/**.java</exclude>
 						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
 					</excludes>
+		            <excludedGroups>org.pitest.SystemTest</excludedGroups>
 				</configuration>
-
 				<dependencies>
 					<dependency>
 						<groupId>org.testng</groupId>
@@ -52,6 +49,38 @@
 						<version>${testng.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.12</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.12</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+
+					<!-- for PowerMockAgentTest -->
+					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -Dfoo=foo</argLine>
+				
+					<groups>org.pitest.SystemTest</groups>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>

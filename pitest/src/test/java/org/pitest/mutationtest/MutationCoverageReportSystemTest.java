@@ -31,6 +31,8 @@ import java.util.Collections;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.pitest.SystemTest;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
@@ -58,6 +60,7 @@ import com.example.FullyCoveredTesteeTest;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 
+@Category(SystemTest.class)
 public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   private static final int ONE_MINUTE = 60000;

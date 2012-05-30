@@ -15,6 +15,8 @@
 
 package org.pitest.junit.adapter.foreignclassloader;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -36,6 +38,7 @@ public class ForeignClassLoaderAdaptingRunListenerTest {
 
   private List<String>                          queue;
 
+  @Mock
   private Throwable                             throwable;
 
   private org.pitest.Description                pitDescription;
@@ -58,7 +61,7 @@ public class ForeignClassLoaderAdaptingRunListenerTest {
   public void shouldReportExceptionOnFailure() throws Exception {
     this.testee.testFailure(new Failure(this.junitDesc, this.throwable));
     applyEvents();
-    verify(this.rc).notifyEnd(this.pitDescription, this.throwable);
+    verify(this.rc).notifyEnd(eq(this.pitDescription), any(Throwable.class));
   }
 
   @Test

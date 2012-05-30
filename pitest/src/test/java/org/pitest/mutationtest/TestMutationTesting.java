@@ -32,9 +32,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.SystemTest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
@@ -67,6 +69,7 @@ import org.pitest.util.JavaAgent;
 import com.example.MutationsInNestedClasses;
 import com.example.MutationsInNestedClassesTest;
 
+@Category(SystemTest.class)
 public class TestMutationTesting {
 
   private Pitest              pit;
@@ -295,7 +298,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(96);
+    verifyLineNumbers(99);
   }
 
 
