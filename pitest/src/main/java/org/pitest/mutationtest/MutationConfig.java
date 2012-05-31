@@ -32,9 +32,13 @@ public final class MutationConfig {
   }
 
   public Mutater createMutator(final ClassByteArraySource source) {
-    return this.engine.createMutator(this, source);
+    return this.engine.createMutator(source);
   }
 
+  public MutationEngine getEngine() {
+    return this.engine;
+  }
+  
   public List<String> getJVMArgs() {
     return this.jvmArgs;
   }

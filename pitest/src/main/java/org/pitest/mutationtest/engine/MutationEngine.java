@@ -17,11 +17,10 @@ package org.pitest.mutationtest.engine;
 import java.util.Collection;
 
 import org.pitest.internal.ClassByteArraySource;
-import org.pitest.mutationtest.MutationConfig;
 
 public interface MutationEngine {
 
-  public Mutater createMutator(MutationConfig config,
+  public Mutater createMutator(
       ClassByteArraySource source);
 
   public Collection<String> getMutatorNames();

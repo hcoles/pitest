@@ -138,7 +138,7 @@ public class MutationTestUnit extends AbstractTestUnit {
   private MutationTestProcess createWorker(
       final Collection<MutationDetails> remainingMutations) {
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        this.testClasses, this.config, this.timeoutStrategy, Log.isVerbose(),
+        this.testClasses, this.config.getEngine(), this.timeoutStrategy, Log.isVerbose(),
         this.pitConfig);
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)

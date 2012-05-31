@@ -17,6 +17,7 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 import java.lang.management.MemoryNotificationInfo;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,68 +51,84 @@ import org.pitest.util.Unchecked;
 
 public class MutationTestSlave {
 
-  private final static Logger LOG = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
-  public static void main(final String[] args) {
+  private final SafeDataInputStream        dis;
+  private final Reporter reporter;
 
-    enablePowerMockSupport();
+  public MutationTestSlave(final SafeDataInputStream dis, final Reporter reporter) {
+    this.dis = dis;
+    this.reporter = reporter;
+  }
 
-    Socket s = null;
-    Reporter r = null;
+  public void run() {
     try {
-      final int port = Integer.valueOf(args[0]);
-
-      s = new Socket("localhost", port);
-
-      final SafeDataInputStream dis = new SafeDataInputStream(
-          s.getInputStream());
 
       final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final F3<String, ClassLoader,byte[], Boolean> hotswap = new F3<String, ClassLoader, byte[], Boolean>() {
+      final F3<String, ClassLoader, byte[], Boolean> hotswap = new F3<String, ClassLoader, byte[], Boolean>() {
 
-        public Boolean apply(final String clazzName, ClassLoader loader, final byte[] b) {
-           Class<?> clazz;
+        public Boolean apply(final String clazzName, final ClassLoader loader,
+            final byte[] b) {
+          Class<?> clazz;
           try {
-            clazz = Class.forName(clazzName, false,
-                 loader);
+            clazz = Class.forName(clazzName, false, loader);
             return HotSwapAgent.hotSwap(clazz, b);
-          } catch (ClassNotFoundException e) {
+          } catch (final ClassNotFoundException e) {
             throw Unchecked.translateCheckedException(e);
           }
-   
+
         }
 
       };
 
-      r = new DefaultReporter(s.getOutputStream());
-      addMemoryWatchDog(r);
+
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.config.createMutator(new ClassloaderByteArraySource(
+          paramsFromParent.engine.createMutator(new ClassloaderByteArraySource(
               loader)), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, paramsFromParent.pitConfig);
 
-      worker.run(paramsFromParent.mutations, r, new TimeOutDecoratedTestSource(
-          paramsFromParent.timeoutStrategy, tests, r));
-
-    } catch (final Exception ex) {
+      worker.run(paramsFromParent.mutations, reporter, new TimeOutDecoratedTestSource(
+          paramsFromParent.timeoutStrategy, tests, reporter));
+      reporter.done(ExitCode.OK);
+    } catch (final Throwable ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
-      if (r != null) {
-        r.done(ExitCode.UNKNOWN_ERROR);
-      }
-      safelyCloseSocket(s);
-    } finally {
-      if (r != null) {
-        r.done(ExitCode.OK);
-      }
+      reporter.done(ExitCode.UNKNOWN_ERROR);
+    }
 
-      safelyCloseSocket(s);
+  }
+
+  public static void main(final String[] args) {
+
+    enablePowerMockSupport();
+
+    final int port = Integer.valueOf(args[0]);
+
+    Socket s = null;
+    try {
+      s = new Socket("localhost", port);
+      final SafeDataInputStream dis = new SafeDataInputStream(
+          s.getInputStream());
+      
+      Reporter reporter = new DefaultReporter(s.getOutputStream());
+      addMemoryWatchDog(reporter);
+      
+      final MutationTestSlave instance = new MutationTestSlave(dis, reporter);
+      instance.run();
+    } catch (final UnknownHostException ex) {
+      LOG.log(Level.WARNING, "Error during mutation test", ex);
+    } catch (final IOException ex) {
+      LOG.log(Level.WARNING, "Error during mutation test", ex);
+    } finally {
+      if ( s != null ) {
+        safelyCloseSocket(s);
+      }
     }
 
   }

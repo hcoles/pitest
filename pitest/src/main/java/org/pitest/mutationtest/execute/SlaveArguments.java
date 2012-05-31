@@ -18,26 +18,26 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 
 public class SlaveArguments {
 
   final Collection<MutationDetails> mutations;
   final Collection<ClassName>       testClasses;
-  final MutationConfig              config;
+  final MutationEngine              engine;
   final TimeoutLengthStrategy       timeoutStrategy;
   final boolean                     verbose;
   final Configuration               pitConfig;
 
   public SlaveArguments(final Collection<MutationDetails> mutations,
-      final Collection<ClassName> tests, final MutationConfig config,
+      final Collection<ClassName> tests, final MutationEngine engine,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final Configuration pitConfig) {
     this.mutations = mutations;
     this.testClasses = tests;
-    this.config = config;
+    this.engine = engine;
     this.timeoutStrategy = timeoutStrategy;
     this.verbose = verbose;
     this.pitConfig = pitConfig;

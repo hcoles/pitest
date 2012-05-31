@@ -59,7 +59,7 @@ public class MutationTestBuilderTest {
     MockitoAnnotations.initMocks(this);
     data = new ReportOptions();
     mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
-    when(engine.createMutator(mutationConfig,source)).thenReturn(mutater);
+    when(engine.createMutator(source)).thenReturn(mutater);
     setupFilterFactoryToFilterNothing();
     testee = new MutationTestBuilder(mutationConfig, filterFactory, coverageDatabase, data, source, configuration, javaAgent);
   }

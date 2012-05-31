@@ -22,7 +22,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassByteArraySource;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.config.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -46,7 +45,7 @@ public class GregorMutationEngine implements MutationEngine {
     this.loggingClasses.addAll(config.doNotMutateCallsTo());
   }
 
-  public Mutater createMutator(final MutationConfig config,
+  public Mutater createMutator(
       final ClassByteArraySource byteSource) {
     return new GregorMutater(byteSource, this.methodFilter,
         this.mutationOperators, this.loggingClasses);
