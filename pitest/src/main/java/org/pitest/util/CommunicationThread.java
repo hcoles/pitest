@@ -45,14 +45,14 @@ public class CommunicationThread {
   }
 
   private FutureTask<ExitCode> createFuture() {
-    final FutureTask<ExitCode> future = new FutureTask<ExitCode>(
+    final FutureTask<ExitCode> newFuture = new FutureTask<ExitCode>(
         new SocketReadingCallable(this.socket, this.sendInitialData,
             this.receive));
-    final Thread thread = new Thread(future);
+    final Thread thread = new Thread(newFuture);
     thread.setDaemon(true);
     thread.setName("pit communication");
     thread.start();
-    return future;
+    return newFuture;
   }
 
   public ExitCode waitToFinish() {

@@ -22,6 +22,10 @@ import org.pitest.reflection.Reflection;
 import org.pitest.util.Unchecked;
 
 public class JavassistInterceptor {
+  
+  private JavassistInterceptor() {
+    
+  }
 
   private static Mutant mutant;
 

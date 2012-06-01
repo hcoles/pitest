@@ -112,25 +112,25 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final T           _value;
+    private final T           value;
 
     private Some(final T value) {
-      this._value = value;
+      this.value = value;
     }
 
     @Override
     public T value() {
-      return this._value;
+      return this.value;
     }
 
     public Iterator<T> iterator() {
-      return Collections.singleton(this._value).iterator();
+      return Collections.singleton(this.value).iterator();
 
     }
 
     @Override
     public T getOrElse(final T defaultValue) {
-      return this._value;
+      return this.value;
     }
 
     @Override
@@ -143,7 +143,7 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result
-          + ((this._value == null) ? 0 : this._value.hashCode());
+          + ((this.value == null) ? 0 : this.value.hashCode());
       return result;
     }
 
@@ -160,11 +160,11 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
       }
       @SuppressWarnings("rawtypes")
       final Some other = (Some) obj;
-      if (this._value == null) {
-        if (other._value != null) {
+      if (this.value == null) {
+        if (other.value != null) {
           return false;
         }
-      } else if (!this._value.equals(other._value)) {
+      } else if (!this.value.equals(other.value)) {
         return false;
       }
       return true;
@@ -172,7 +172,7 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
     @Override
     public String toString() {
-      return "Some(" + this._value + ")";
+      return "Some(" + this.value + ")";
     }
 
   }

@@ -59,10 +59,10 @@ public class MutationTestSummaryData implements
   }
 
   public String getPackageName() {
-    final String fileName = getMutatedClasses().iterator().next().getName()
+    final String packageName = getMutatedClasses().iterator().next().getName()
         .asJavaName();
-    final int lastDot = fileName.lastIndexOf('.');
-    return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
+    final int lastDot = packageName.lastIndexOf('.');
+    return lastDot > 0 ? packageName.substring(0, lastDot) : "default";
   }
 
   public void add(final MutationTestSummaryData data) {
