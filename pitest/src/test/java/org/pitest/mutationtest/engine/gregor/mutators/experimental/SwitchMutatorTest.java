@@ -141,9 +141,45 @@ public class SwitchMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceOtherCasesWithDefaultForInt() throws Exception {
     final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithDefault.class);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(-8), mutant, 1);
     assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(0), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(1), mutant, 1);
     assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(2), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(3), mutant, 1);
     assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(4), mutant, 0);
     assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(8), mutant, 1);
+  }
+
+  private static class HasMultipleArmIntSwitchWithoutDefault implements Callable<Integer> {
+
+    private int value;
+
+    private HasMultipleArmIntSwitchWithoutDefault(int value) {
+      this.value = value;
+    }
+
+    public Integer call() throws Exception {
+      switch (value) {
+        case 0:
+          return 1;
+        case 200:
+          return 2;
+        case 40000:
+          return 3;
+      }
+      return 0;
+    }
+  }
+
+  @Test
+  public void shouldReplaceOtherCasesWithoutDefaultForInt() throws Exception {
+    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithoutDefault.class);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(-1), mutant, 1);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(0), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(8), mutant, 1);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(200), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(400), mutant, 1);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(40000), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(45000), mutant, 1);
   }
 }
