@@ -37,17 +37,49 @@ public class SwitchMutator implements MethodMutatorFactory {
         }
 
         @Override
-        public void visitTableSwitchInsn(int i, int i1, Label label, Label[] labels) {
-            super.visitTableSwitchInsn(i, i1, label, labels);
+        public void visitTableSwitchInsn(int i, int i1, Label defaultLabel, Label[] labels) {
+            Label newDefault = firstDifferentLabel(labels, defaultLabel);
+            if (newDefault != null) {
+              Label[] newLabels = swapLabels(labels, defaultLabel, newDefault);
+              super.visitTableSwitchInsn(i, i1, newDefault, newLabels);
+              this.context.registerMutation(SwitchMutator.this, "Switch mutation");
+            } else {
+              super.visitTableSwitchInsn(i, i1, defaultLabel, labels);
+            }
         }
 
         @Override
         public void visitLookupSwitchInsn(Label defaultLabel, int[] ints, Label[] labels) {
-            this.context.registerMutation(SwitchMutator.this, "Switch mutation");
-            Label newDefault = labels[0];
-            Label[] newLabels = new Label[]{defaultLabel};
-            int[] newInts = new int[]{ints[0]};
-            super.visitLookupSwitchInsn(newDefault, newInts, newLabels);
+            Label newDefault = firstDifferentLabel(labels, defaultLabel);
+            if (newDefault != null) {
+              Label[] newLabels = swapLabels(labels, defaultLabel, newDefault);
+              super.visitLookupSwitchInsn(newDefault, ints, newLabels);
+              this.context.registerMutation(SwitchMutator.this, "Switch mutation");
+            } else {
+              super.visitLookupSwitchInsn(defaultLabel, ints, labels);
+            }
+        }
+
+        private Label[] swapLabels(Label[] labels, Label defaultLabel, Label newDefault) {
+            Label[] swapped = new Label[labels.length];
+            for (int i = 0 ; i < labels.length ; i++) {
+                Label candidate = labels[i];
+                if (candidate == defaultLabel) {
+                    swapped[i] = newDefault;
+                } else {
+                    swapped[i] = defaultLabel;
+                }
+            }
+            return swapped;
+        }
+
+        private Label firstDifferentLabel(Label[] labels, Label label) {
+            for (Label candidate : labels) {
+                if (candidate != label) {
+                    return candidate;
+                }
+            }
+            return null;
         }
     }
 

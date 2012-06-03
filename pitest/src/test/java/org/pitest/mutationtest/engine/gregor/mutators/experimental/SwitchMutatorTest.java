@@ -31,6 +31,12 @@ public class SwitchMutatorTest extends MutatorTestBase {
     createTesteeWith(new SwitchMutator());
   }
 
+  @Test
+  public void shouldProvideAMeaningfulName() {
+    assertEquals("EXPERIMENTAL_SWITCH_MUTATOR",
+      new SwitchMutator().getName());
+  }
+
   private static class HasIntSwitchWithDefault implements Callable<Integer> {
 
     private int value;
@@ -38,7 +44,6 @@ public class SwitchMutatorTest extends MutatorTestBase {
       private HasIntSwitchWithDefault(int value) {
           this.value = value;
       }
-
       public Integer call() throws Exception {
       switch (value) {
           case 0:
@@ -47,12 +52,6 @@ public class SwitchMutatorTest extends MutatorTestBase {
               return 0;
       }
     }
-  }
-
-  @Test
-  public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_SWITCH_MUTATOR",
-        new SwitchMutator().getName());
   }
 
   @Test
@@ -117,4 +116,34 @@ public class SwitchMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.SECOND), mutant, 2);
   }
 
+  private static class HasMultipleArmIntSwitchWithDefault implements Callable<Integer> {
+
+    private int value;
+
+    private HasMultipleArmIntSwitchWithDefault(int value) {
+      this.value = value;
+    }
+
+    public Integer call() throws Exception {
+      switch (value) {
+        case 0:
+          return 1;
+        case 2:
+          return 2;
+        case 4:
+          return 3;
+        default:
+          return 0;
+        }
+    }
+  }
+
+  @Test
+  public void shouldReplaceOtherCasesWithDefaultForInt() throws Exception {
+    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithDefault.class);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(0), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(2), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(4), mutant, 0);
+    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(8), mutant, 1);
+  }
 }
