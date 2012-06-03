@@ -56,11 +56,35 @@ public class SwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldSwapFirstCaseWithDefault() throws Exception {
+  public void shouldSwapFirstCaseWithDefaultForInt() throws Exception {
     final Mutant mutant = getFirstMutant(HasIntSwitchWithDefault.class);
       assertMutantCallableReturns(new HasIntSwitchWithDefault(0), mutant, 0);
       assertMutantCallableReturns(new HasIntSwitchWithDefault(1), mutant, 1);
   }
 
+  private static class HasCharSwitchWithDefault implements Callable<Character> {
+
+    private char value;
+
+    private HasCharSwitchWithDefault(char value) {
+      this.value = value;
+    }
+
+    public Character call() throws Exception {
+      switch (value) {
+        case 'a':
+          return 'z';
+        default:
+          return 'a';
+      }
+    }
+  }
+
+  @Test
+  public void shouldSwapFirstCaseWithDefaultForChar() throws Exception {
+    final Mutant mutant = getFirstMutant(HasCharSwitchWithDefault.class);
+    assertMutantCallableReturns(new HasCharSwitchWithDefault('a'), mutant, 'a');
+    assertMutantCallableReturns(new HasCharSwitchWithDefault('z'), mutant, 'z');
+  }
 
 }
