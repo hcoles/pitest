@@ -8,10 +8,9 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 /*
-  We want to mutate switch statements. We get an array of labels to jump to, plus a default label.
-  If the array is empty then we can't mutate. Otherwise we should reorder the labels so that
-  each entry in the new array differs from the equivalent in the original array. Similarly for
-  the default label.
+  Mutate switch statements. We get an array of labels to jump to, plus a default label.
+  We find the first label that differs from the default and use this in place of the
+  default label. All other labels are replaced by the default.
  */
 public class SwitchMutator implements MethodMutatorFactory {
 
