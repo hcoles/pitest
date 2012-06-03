@@ -87,4 +87,34 @@ public class SwitchMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasCharSwitchWithDefault('z'), mutant, 'z');
   }
 
+  private enum SwitchEnum {
+      FIRST,
+      SECOND
+  }
+
+  private static class HasEnumSwitchWithDefault implements Callable<Integer> {
+
+    private SwitchEnum value;
+
+    private HasEnumSwitchWithDefault(SwitchEnum value) {
+      this.value = value;
+    }
+
+    public Integer call() throws Exception {
+      switch (value) {
+        case FIRST:
+          return 2;
+        default:
+          return 1;
+      }
+    }
+  }
+
+  @Test
+  public void shouldSwapFirstCaseWithDefaultForEnum() throws Exception {
+    final Mutant mutant = getFirstMutant(HasEnumSwitchWithDefault.class);
+    assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.FIRST), mutant, 1);
+    assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.SECOND), mutant, 2);
+  }
+
 }
