@@ -40,6 +40,7 @@
         <module>pitest-maven</module>
         <module>pitest</module>
         <module>pitest-ant</module>
+        <module>pitest-maven-verification</module>
     </modules>
 
     <!-- common dependencies used in all subprojects -->

@@ -61,7 +61,7 @@ public class MutationTestBuilderTest {
     mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
     when(engine.createMutator(source)).thenReturn(mutater);
     setupFilterFactoryToFilterNothing();
-    testee = new MutationTestBuilder(mutationConfig, filterFactory, coverageDatabase, data, source, configuration, javaAgent);
+    testee = new MutationTestBuilder(null,mutationConfig, filterFactory, coverageDatabase, data, source, configuration, javaAgent);
   }
   
   private void setupFilterFactoryToFilterNothing() {

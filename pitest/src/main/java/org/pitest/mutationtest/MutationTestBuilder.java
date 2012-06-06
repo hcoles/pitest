@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
@@ -55,8 +55,9 @@ public class MutationTestBuilder {
   private final ClassByteArraySource  source;
   private final Configuration         configuration;
   private final JavaAgent             javaAgent;
+  private final File baseDir;
 
-  public MutationTestBuilder(final MutationConfig mutationConfig,
+  public MutationTestBuilder(final File baseDir, final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
       final CoverageDatabase coverageDatabase, final ReportOptions data,
       final ClassByteArraySource source, final Configuration configuration,
@@ -68,6 +69,7 @@ public class MutationTestBuilder {
     this.source = source;
     this.configuration = configuration;
     this.javaAgent = javaAgent;
+    this.baseDir = baseDir;
   }
 
   public List<TestUnit> createMutationTestUnits(
@@ -147,14 +149,12 @@ public class MutationTestBuilder {
   private TestUnit createMutationTestUnit(
       final Collection<MutationDetails> mutationsForClasses) {
 
-    final Description d = new Description("mutation test", (String) null);
-
     final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
     FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(mutationsForClasses, uniqueTestClasses,
-        this.configuration, this.mutationConfig, d, this.javaAgent,
+    return new MutationTestUnit(baseDir, mutationsForClasses, uniqueTestClasses,
+        this.configuration, this.mutationConfig, this.javaAgent,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());

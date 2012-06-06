@@ -18,6 +18,7 @@ package org.pitest.coverage;
 import static org.pitest.functional.Prelude.noSideEffect;
 import static org.pitest.functional.Prelude.printWith;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Collection;
@@ -52,14 +53,16 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final LaunchOptions   launchOptions;
   private final CodeSource      code;
   private final Timings         timings;
+  private final File workingDir;
 
-  public DefaultCoverageGenerator(final CoverageOptions coverageOptions,
+  public DefaultCoverageGenerator(final File workingDir, final CoverageOptions coverageOptions,
       final LaunchOptions launchOptions, final CodeSource code,
       final Timings timings) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
     this.timings = timings;
+    this.workingDir = workingDir;
   }
 
   public CoverageData calculateCoverage() {
@@ -111,6 +114,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.code.getClassPath())
+        .andBaseDir(workingDir)
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
         .andStderr(printWith("stderr "))

@@ -346,7 +346,7 @@ public class TestMutationTesting {
     final Timings timings = new Timings();
     CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
-    final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
+    final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(null,
         coverageOptions, launchOptions, code,timings);
 
     CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
@@ -359,7 +359,7 @@ public class TestMutationTesting {
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
-    final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
+    final MutationTestBuilder builder = new MutationTestBuilder(null,mutationConfig,
         UnfilteredMutationFilter.factory(), coverageData, data,
         new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()), coverageOptions.getPitConfig(), launchOptions.getJavaAgentFinder());
 

@@ -17,6 +17,7 @@ package org.pitest.util;
 import static org.pitest.functional.Prelude.print;
 import static org.pitest.functional.Prelude.printTo;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public final class ProcessArgs {
   private SideEffect1<String> stdErr  = printTo(String.class, System.err);
   private List<String>        jvmArgs = Collections.emptyList();
   private JavaAgent           javaAgentFinder;
+  private File workingDir = null;
 
   private ProcessArgs(final String launchClassPath) {
     this.launchClassPath = launchClassPath;
@@ -41,6 +43,11 @@ public final class ProcessArgs {
 
   public static ProcessArgs withClassPath(final ClassPath cp) {
     return new ProcessArgs(cp.getLocalClassPath());
+  }
+  
+  public ProcessArgs andBaseDir(final File baseDir) {
+    this.workingDir = baseDir;
+    return this;
   }
 
   public ProcessArgs andStdout(final SideEffect1<String> stdout) {
@@ -97,6 +104,10 @@ public final class ProcessArgs {
 
   public void setJavaAgentFinder(final JavaAgent javaAgentFinder) {
     this.javaAgentFinder = javaAgentFinder;
+  }
+
+  public File getWorkingDir() {
+    return workingDir;
   }
 
 };

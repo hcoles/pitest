@@ -16,6 +16,7 @@ package org.pitest.util;
 
 import static org.pitest.functional.Prelude.or;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -119,7 +120,7 @@ public class JavaProcess {
     };
   }
 
-  public static JavaProcess launch(final SideEffect1<String> systemOutHandler,
+  public static JavaProcess launch(final File workingDirectory, final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String initialClassPath)
@@ -130,6 +131,7 @@ public class JavaProcess {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+    processBuilder.directory(workingDirectory);
     final Map<String, String> env = processBuilder.environment();
 
     env.put("CLASSPATH", initialClassPath);
@@ -138,14 +140,14 @@ public class JavaProcess {
     return new JavaProcess(process, systemOutHandler, sysErrHandler);
   }
 
-  public static JavaProcess launch(final List<String> args,
+  static JavaProcess launch(final File workingDirectory, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent) throws IOException {
     final String classpath = System.getProperty("java.class.path");
-    return launch(args, mainClass, programArgs, javaAgent, classpath);
+    return launch(workingDirectory, args, mainClass, programArgs, javaAgent, classpath);
   }
 
-  public static JavaProcess launch(final List<String> args,
+  private static JavaProcess launch(final File workingDirectory, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String launchClassPath)
       throws IOException {
@@ -162,7 +164,7 @@ public class JavaProcess {
       }
     };
 
-    return launch(soh, seh, args, mainClass, programArgs, javaAgent,
+    return launch(workingDirectory, soh, seh, args, mainClass, programArgs, javaAgent,
         launchClassPath);
   }
 

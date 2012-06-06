@@ -90,7 +90,7 @@ public class CoverageSlave {
       exitCode = ExitCode.UNKNOWN_ERROR;
     } finally {
       if (invokeQueue != null) {
-        invokeQueue.end();
+        invokeQueue.end(exitCode);
       }
 
       try {

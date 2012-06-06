@@ -30,8 +30,12 @@ public class CoverageProcess {
   }
 
   public void waitToDie() throws InterruptedException {
-    this.process.waitToDie();
-    this.crt.waitToFinish();
+    try {
+      this.crt.waitToFinish();
+    } finally {
+      this.process.destroy();
+    }
+
   }
 
 }

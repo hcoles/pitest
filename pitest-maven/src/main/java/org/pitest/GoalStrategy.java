@@ -14,10 +14,12 @@
  */
 package org.pitest;
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.mutationtest.ReportOptions;
 
 public interface GoalStrategy {
 
-  public void execute(ReportOptions options) throws MojoExecutionException;
+  public void execute(File baseDir, ReportOptions options) throws MojoExecutionException;
 }

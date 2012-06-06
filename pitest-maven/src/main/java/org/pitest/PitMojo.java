@@ -199,8 +199,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Used to look up Artifacts in the remote repository.
    * 
-   * @parameter expression=
-   *            "${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+   * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
    * @required
    * @readonly
    */
@@ -217,9 +216,9 @@ public class PitMojo extends AbstractMojo {
   }
 
   public void execute() throws MojoExecutionException {
-
     final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
-    this.goalStrategy.execute(data);
+    
+    this.goalStrategy.execute(project.getExecutionProject().getBasedir(),data);
 
   }
 

@@ -339,10 +339,10 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final Timings timings = new Timings();
       CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
-      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
+      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(null,
           coverageOptions, launchOptions, code, timings);
       
-      final MutationCoverageReport testee = new MutationCoverageReport(code,
+      final MutationCoverageReport testee = new MutationCoverageReport(null,code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());
 

@@ -17,6 +17,7 @@ package org.pitest.mutationtest.instrument;
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -51,18 +52,18 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final Collection<MutationDetails> availableMutations;
   private final boolean                     verbose;
   private final String                      classPath;
-
+  private final File baseDir;
   private final Configuration               pitConfig;
 
   private final Collection<ClassName>       testClasses;
 
-  public MutationTestUnit(final Collection<MutationDetails> availableMutations,
+  public MutationTestUnit(final File baseDir,final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses, final Configuration pitConfig,
-      final MutationConfig mutationConfig, final Description description,
+      final MutationConfig mutationConfig,
       final JavaAgent javaAgentFinder,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final String classPath) {
-    super(description);
+    super(new Description("Mutation test"));
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
     this.pitConfig = pitConfig;
@@ -71,6 +72,7 @@ public class MutationTestUnit extends AbstractTestUnit {
     this.testClasses = testClasses;
     this.verbose = verbose;
     this.classPath = classPath;
+    this.baseDir = baseDir;
 
   }
 
@@ -143,6 +145,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
         .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andBaseDir(baseDir)
         .andStdout(captureStdOutIfVerbose()).andStderr(printWith("stderr "));
 
     final SocketFinder sf = new SocketFinder();

@@ -14,6 +14,8 @@
  */
 package org.pitest;
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageGenerator;
@@ -40,7 +42,7 @@ import org.pitest.util.JavaAgent;
 
 public class RunPitStrategy implements GoalStrategy {
 
-  public void execute(final ReportOptions data) throws MojoExecutionException {
+  public void execute(final File baseDir, final ReportOptions data) throws MojoExecutionException {
 
     System.out.println("Running report with " + data);
     final ClassPath cp = data.getClassPath();
@@ -64,9 +66,9 @@ public class RunPitStrategy implements GoalStrategy {
     CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
     Timings timings = new Timings();
-    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
+    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(baseDir,
         coverageOptions, launchOptions, code, timings);
-    final MutationCoverageReport report = new MutationCoverageReport(code,
+    final MutationCoverageReport report = new MutationCoverageReport(baseDir, code,
         coverageDatabase, data, reportFactory, timings, new DefaultBuildVerifier());
 
     // Create new classloader under boot

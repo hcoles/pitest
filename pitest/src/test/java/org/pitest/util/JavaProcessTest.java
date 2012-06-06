@@ -3,6 +3,7 @@ package org.pitest.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -26,12 +27,11 @@ public class JavaProcessTest {
   @Test
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
       InterruptedException {
-    final JavaProcess jp = JavaProcess.launch(Collections.<String> emptyList(),
+    final JavaProcess jp = JavaProcess.launch(new File(System.getProperty("user.dir")),Collections.<String> emptyList(),
         JavaProcessTest.class, Collections.<String> emptyList(),
         NullJavaAgent.instance());
     assertTrue(jp.isAlive());
     assertEquals(EXIT_CODE, jp.waitToDie());
-    // failing following addition of quotes around classpath
   }
 
 }

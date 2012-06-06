@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -66,8 +67,9 @@ public class MutationCoverageReport implements Runnable {
   private final Timings           timings;
   private final BuildVerifier     buildVerifier;
   private final CodeSource        code;
+  private final File baseDir;
 
-  public MutationCoverageReport(final CodeSource code,
+  public MutationCoverageReport(final File baseDir, final CodeSource code,
       final CoverageGenerator coverage, final ReportOptions data,
       final ListenerFactory listenerFactory, final Timings timings,
       final BuildVerifier buildVerifier) {
@@ -77,6 +79,7 @@ public class MutationCoverageReport implements Runnable {
     this.timings = timings;
     this.buildVerifier = buildVerifier;
     this.code = code;
+    this.baseDir = baseDir;
   }
 
   public final void run() {
@@ -122,10 +125,10 @@ public class MutationCoverageReport implements Runnable {
       final CodeSource code = new CodeSource(cps, coverageOptions
           .getPitConfig().testClassIdentifier());
 
-      final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
+      final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(null,
           coverageOptions, launchOptions, code, timings);
 
-      final MutationCoverageReport instance = new MutationCoverageReport(code,
+      final MutationCoverageReport instance = new MutationCoverageReport(null,code,
           coverageGenerator, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
@@ -208,7 +211,7 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
 
-    final MutationTestBuilder builder = new MutationTestBuilder(mutationConfig,
+    final MutationTestBuilder builder = new MutationTestBuilder(baseDir, mutationConfig,
         limitMutationsPerClass(), coverageData, this.data,
         new ClassPathByteArraySource(this.data.getClassPath()),
         this.coverage.getConfiguration(), this.coverage.getJavaAgent());

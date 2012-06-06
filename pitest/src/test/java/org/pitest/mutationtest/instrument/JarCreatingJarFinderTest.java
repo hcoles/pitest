@@ -56,6 +56,18 @@ public class JarCreatingJarFinderTest {
       this.testee.close();
     }
   }
+  
+  @Test
+  public void shouldConstructWithoutError() {
+    new JarCreatingJarFinder();
+    //pass
+  }
+  
+  @Test
+  public void shouldCloseWithoutErrorWhenNoLocationSet() {
+    this.testee.close();
+    // pass
+  }
 
   @Test
   public void shouldCreateJarFile() {
