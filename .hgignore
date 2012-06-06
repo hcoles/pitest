@@ -20,3 +20,5 @@ release.properties
 
 syntax: regexp
 ^pitest-ant/target$
+syntax: regexp
+^pitest-maven-verification/target$
