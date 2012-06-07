@@ -30,7 +30,7 @@ import org.pitest.mutationtest.MutationCoverageReport;
  *
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
-public class PitMojoIntegrationTest {
+public class PitMojoIT {
 
   private Verifier verifier;
   
