@@ -1,6 +1,5 @@
 package org.pitest.project;
 
-import org.pitest.project.impl.DefaultProjectConfigurationParser;
 
 /**
  * The ProjectConfigurationParserFactory is responsible for creating a
@@ -18,11 +17,6 @@ public class ProjectConfigurationParserFactory {
    */
   public static final String PARSER_PROPERTY = "projectConfigurationParser.impl";
 
-  /**
-   * The name of the default ProjectConfigurationParser instance to use.
-   */
-  public static final String DEFAULT_PARSER  = DefaultProjectConfigurationParser.class
-                                                 .getName();
 
   /**
    * Creates a new ProjectConfigurationParser instance, based on the system
@@ -37,8 +31,12 @@ public class ProjectConfigurationParserFactory {
   public static ProjectConfigurationParser createParser()
       throws ProjectConfigurationParserException {
     try {
-      final String propertyValue = System.getProperty(PARSER_PROPERTY,
-          DEFAULT_PARSER);
+      final String propertyValue = System.getProperty(PARSER_PROPERTY);
+      
+      if (propertyValue == null ) {
+        throw new ProjectConfigurationParserException(
+            "No parser implementation set");
+      }
 
       final Class<?> parserClass = Class.forName(propertyValue);
       final Object instance = parserClass.newInstance();

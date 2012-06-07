@@ -72,14 +72,6 @@ public abstract class Prelude {
     };
   }
 
-  public static <A, B> SideEffect1<A> putToMap(final Map<A, B> map,
-      final F<A, B> f) {
-    return new SideEffect1<A>() {
-      public void apply(final A key) {
-        map.put(key, f.apply(key));
-      }
-    };
-  }
 
   public final static <A> F<A, A> id() {
     return new F<A, A>() {
