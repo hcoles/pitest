@@ -27,6 +27,7 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
+				<version>${pit.version}</version>
 				<configuration>
 					<targetClasses><param>org.example*</param></targetClasses>
 					<failWhenNoMutations>false</failWhenNoMutations>
@@ -35,8 +36,11 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	
 	<properties>
 		<junit.version>4.8.1</junit.version>
+		
 	
 	</properties>
 	<modules>

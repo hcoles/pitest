@@ -21,7 +21,11 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
-						<index>true</index>
+					  <manifest>
+                        <mainClass>org.pitest.mutationtest.MutationCoverageReport</mainClass>
+                          <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                       </manifest>
+					   <index>true</index>
 					</archive>
 				</configuration>
 			</plugin>
@@ -186,7 +190,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 
 		<resources>

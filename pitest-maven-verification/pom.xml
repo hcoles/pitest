@@ -14,6 +14,17 @@
     <description>Pitest Maven Mojo integration tests.</description>
     <url>http://pitest.org</url>
 
+<build>
+  <resources>
+	    <resource>
+	      <directory>src/main/resources</directory>
+	      <filtering>true</filtering>
+	      <includes>
+	        <include>**/*.prop</include>
+	      </includes>
+	    </resource>
+	  </resources>	
+</build>
     <dependencies>
         <dependency>
             <groupId>org.pitest</groupId>

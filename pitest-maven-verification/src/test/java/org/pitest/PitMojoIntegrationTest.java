@@ -22,6 +22,7 @@ import org.apache.maven.it.util.FileUtils;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.mutationtest.MutationCoverageReport;
 
 
 /**
@@ -45,9 +46,12 @@ public class PitMojoIntegrationTest {
 
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void shouldSetUserDirToArtefactWorkingDirectory() throws Exception {
+    String version = MutationCoverageReport.class.getPackage().getImplementationVersion();
     this.verifier.setDebug(true);
+    verifier.getCliOptions().add("-Dpit.version=" + version  );
     this.verifier.executeGoal("test");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");  
   }
