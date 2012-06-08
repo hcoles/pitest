@@ -17,7 +17,8 @@ package org.pitest.coverage;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,15 +35,14 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.Log;
-import org.pitest.util.MemoryEfficientHashMap;
 
 public class CoverageData implements CoverageDatabase {
 
   private final static Logger                              LOG           = Log
                                                                              .getLogger();
 
-  private final Map<Description, Long>                     times         = new MemoryEfficientHashMap<Description, Long>();
-  private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new MemoryEfficientHashMap<String, Map<ClassLine, Set<TestInfo>>>();
+  private final Map<Description, Long>                     times         = new LinkedHashMap<Description, Long>();
+  private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new LinkedHashMap<String, Map<ClassLine, Set<TestInfo>>>();
   private final CodeSource                                 code;
 
   private boolean                                          hasFailedTest = false;
@@ -76,7 +76,7 @@ public class CoverageData implements CoverageDatabase {
   public Collection<TestInfo> getTestsForClass(final String clazz) {
     final Map<ClassLine, Set<TestInfo>> map = getTestsForJVMClassName(clazz);
 
-    final Set<TestInfo> tis = new HashSet<TestInfo>();
+    final Set<TestInfo> tis = new LinkedHashSet<TestInfo>(map.values().size());
     for (final Set<TestInfo> each : map.values()) {
       tis.addAll(each);
     }
@@ -91,12 +91,7 @@ public class CoverageData implements CoverageDatabase {
     this.recordExecutionTime(cr.getTestUnitDescription(), cr.getExecutionTime());
 
     for (final ClassStatistics i : cr.getCoverage()) {
-      Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(i
-          .getClassName());
-      if (map == null) {
-        map = new MemoryEfficientHashMap<ClassLine, Set<TestInfo>>();
-        this.classCoverage.put(i.getClassName(), map);
-      }
+      Map<ClassLine, Set<TestInfo>> map = getCoverageMapForClass(i.getClassName());
       mapTestsToClassLines(cr.getTestUnitDescription(), i, map);
     }
   }
@@ -166,7 +161,7 @@ public class CoverageData implements CoverageDatabase {
 
     Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz);
     if (map == null) {
-      map = new MemoryEfficientHashMap<ClassLine, Set<TestInfo>>();
+      map = new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
     }
     return map;
   }
@@ -178,6 +173,17 @@ public class CoverageData implements CoverageDatabase {
 
   private void recordTestFailure() {
     this.hasFailedTest = true;
+  }
+  
+  
+  private Map<ClassLine, Set<TestInfo>> getCoverageMapForClass(
+      final String className) {
+    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(className);
+    if (map == null) {
+      map = new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
+      this.classCoverage.put(className, map);
+    }
+    return map;
   }
 
 }

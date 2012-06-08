@@ -15,6 +15,7 @@
 
 package org.pitest.mutationtest.instrument;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +27,10 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
 import org.pitest.mutationtest.execute.Reporter;
 import org.pitest.mutationtest.execute.TimeOutSystemExitSideEffect;
-import org.pitest.util.MemoryEfficientHashMap;
 
 public class TimeOutDecoratedTestSource {
 
-  private final Map<String, TestUnit> allTests = new MemoryEfficientHashMap<String, TestUnit>();
+  private final Map<String, TestUnit> allTests = new HashMap<String, TestUnit>();
   private final TimeoutLengthStrategy timeoutStrategy;
   private final Reporter              r;
 

@@ -102,7 +102,7 @@ public class CoverageDataTest {
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 2));
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest2", 0, 2));
-    assertEquals(Arrays.asList("fooTest2","fooTest"),FCollection.map(testee.getTestsForClass("foo"),testInfoToString()));
+    assertEquals(Arrays.asList("fooTest","fooTest2"),FCollection.map(testee.getTestsForClass("foo"),testInfoToString()));
   }
   
   
