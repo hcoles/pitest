@@ -51,38 +51,6 @@ public class GregorMutationEngine implements MutationEngine {
         this.mutationOperators, this.loggingClasses);
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime
-        * result
-        + ((this.mutationOperators == null) ? 0 : this.mutationOperators
-            .hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final GregorMutationEngine other = (GregorMutationEngine) obj;
-    if (this.mutationOperators == null) {
-      if (other.mutationOperators != null) {
-        return false;
-      }
-    } else if (!this.mutationOperators.equals(other.mutationOperators)) {
-      return false;
-    }
-    return true;
-  }
 
   @Override
   public String toString() {
