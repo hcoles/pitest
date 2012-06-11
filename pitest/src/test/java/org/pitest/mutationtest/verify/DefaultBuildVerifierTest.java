@@ -17,11 +17,6 @@ package org.pitest.mutationtest.verify;
 
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -31,14 +26,11 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.classinfo.Repository;
-import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.util.Unchecked;
+import org.pitest.util.ResourceFolderByteArraySource;
 
 public class DefaultBuildVerifierTest {
 
@@ -77,13 +69,13 @@ public class DefaultBuildVerifierTest {
   
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
-    setupClassPath(new ResourceFolderBytesArraySource(), "FooNoSource");
+    setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
     this.testee.verify(this.code);
   }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
-    setupClassPath(new ResourceFolderBytesArraySource(), "FooNoLines");
+    setupClassPath(new ResourceFolderByteArraySource(), "FooNoLines");
     this.testee.verify(this.code);
   }
 
@@ -99,42 +91,6 @@ public class DefaultBuildVerifierTest {
     final ClassInfo ci = repository.fetchClass(clazz).value();
     when(this.code.getCode()).thenReturn(
         Collections.singletonList(ci));
-  }
-
-  static class ResourceFolderBytesArraySource implements ClassByteArraySource {
-
-    public Option<byte[]> apply(final String classname) {
-      final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());
-      try {
-        return Option.some(cp.getClassData(classname));
-      } catch (final IOException ex) {
-        throw Unchecked.translateCheckedException(ex);
-      }
-
-    }
-
-  }
-
-  static class ResourceFolderClassPathroot implements ClassPathRoot {
-
-    public URL getResource(final String name) throws MalformedURLException {
-      return null;
-    }
-
-    public InputStream getData(final String name) throws IOException {
-      final String path = "sampleClasses/" + name.replace(".", "/")
-          + ".class.bin";
-      return IsolationUtils.getContextClassLoader().getResourceAsStream(path);
-    }
-
-    public Collection<String> classNames() {
-      return null;
-    }
-
-    public Option<String> cacheLocation() {
-      return null;
-    }
-
   }
 
 }

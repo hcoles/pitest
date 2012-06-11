@@ -34,6 +34,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
+import org.pitest.internal.ClassByteArraySource;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationDetails;
@@ -51,6 +52,11 @@ public abstract class MutatorTestBase {
       final Class<?> clazz) {
     return this.engine.findMutations(new ClassName(clazz));
   }
+  
+  protected FunctionalList<MutationDetails> findMutationsFor(
+      final String clazz) {
+    return this.engine.findMutations(new ClassName(clazz));
+  }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
@@ -59,10 +65,16 @@ public abstract class MutatorTestBase {
             .getName()));
   }
 
+  protected void createTesteeWith(final ClassByteArraySource source, final Predicate<MethodInfo> filter,
+      final Collection<MethodMutatorFactory> mutators) {
+    this.engine = new GregorMutater(source, filter,
+        mutators, Collections.singletonList(Logger.class.getName()));
+  }
+  
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, Collections.singletonList(Logger.class.getName()));
+    createTesteeWith(new ClassPathByteArraySource(), filter,
+        mutators);
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,

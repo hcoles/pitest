@@ -19,8 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author henry
- * 
+ * Slightly functional style operations for arrays.
  */
 public abstract class FArray {
 
@@ -39,6 +38,18 @@ public abstract class FArray {
     final List<T> dest = new ArrayList<T>();
     filter(xs, predicate, dest);
     return dest;
+  }
+  
+
+  public static <T> boolean contains(final T[] xs,
+      final F<T, Boolean> predicate) {
+    for (final T x : xs) {
+      if (predicate.apply(x)) {
+        return true;
+      }
+    }
+    return false;
+
   }
 
   public static <A, B> void flatMapTo(final A[] as,

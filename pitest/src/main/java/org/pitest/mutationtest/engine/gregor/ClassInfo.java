@@ -1,5 +1,8 @@
 package org.pitest.mutationtest.engine.gregor;
 
+import org.pitest.functional.F;
+import org.pitest.functional.FArray;
+
 public class ClassInfo {
 
   private final int      version;
@@ -21,6 +24,19 @@ public class ClassInfo {
 
   public boolean isEnum() {
     return this.superName.equals("java/lang/Enum");
+  }
+
+  public boolean isGroovyClass() {
+    return FArray.contains(this.interfaces, isAGroovyClass());
+  }
+
+  private static F<String, Boolean> isAGroovyClass() {
+    return new F<String, Boolean>() {
+      public Boolean apply(final String a) {
+        return a.startsWith("groovy/lang/")
+            || a.startsWith("org/codehaus/groovy/runtime");
+      }
+    };
   }
 
   public int getVersion() {

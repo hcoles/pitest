@@ -4,6 +4,8 @@
 package org.pitest.functional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.pitest.PitError;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
@@ -76,6 +79,35 @@ public class FArrayTest {
       }
 
     };
+  }
+  
+  @Test
+  public void containsShouldReturnFalseWhenPredicateNotMet() {
+    final Integer[] xs = {1, 2, 3};
+    assertFalse(FArray.contains(xs, False.instance()));
+  }
+
+  @Test
+  public void containsShouldReturnTrueWhenPredicateMet() {
+    final Integer[] xs = {1, 2, 3};
+    assertTrue(FArray.contains(xs, True.all()));
+  }
+
+  @Test
+  public void containsShouldStopProcessingOnFirstMatch() {
+    final Integer[] xs = {1, 2, 3};
+    final Predicate<Integer> predicate = new Predicate<Integer>() {
+
+      public Boolean apply(final Integer a) {
+        if (a == 2) {
+          throw new PitError("Did not shortcut");
+        }
+        return a == 1;
+      }
+
+    };
+    FArray.contains(xs, predicate);
+    // pass
   }
 
 }

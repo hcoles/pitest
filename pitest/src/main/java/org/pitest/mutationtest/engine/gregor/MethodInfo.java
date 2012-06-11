@@ -89,6 +89,10 @@ public class MethodInfo {
   public boolean takesNoParameters() {
     return this.methodDescriptor.startsWith("()");
   }
+  
+  public boolean isInGroovyClass() {
+    return this.owningClass.isGroovyClass();
+  }
 
   public boolean isGeneratedEnumMethod() {
     return this.owningClass.isEnum()

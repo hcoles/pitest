@@ -19,8 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-
-
 import java.util.Collection;
 
 import org.hamcrest.Description;
@@ -28,12 +26,14 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
+import org.pitest.util.ResourceFolderByteArraySource;
 
 public class TestGregorMutater extends MutatorTestBase {
 
@@ -183,5 +183,19 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatementAndOtherStatements.class);
     assertEquals(1, actualDetails.size());
+  }
+  
+  @Test
+  public void shouldNotMutateGroovyClasses() {
+    createTesteeWith(new ResourceFolderByteArraySource(), True.<MethodInfo> all(),Mutator.ALL.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode");
+    assertTrue(actualDetails.isEmpty());
+  }
+  
+  @Test
+  public void shouldNotMutateGroovyClosures() {
+    createTesteeWith(new ResourceFolderByteArraySource(), True.<MethodInfo> all(),Mutator.ALL.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode$_mapToString_closure2");
+    assertTrue(actualDetails.isEmpty());
   }
 }

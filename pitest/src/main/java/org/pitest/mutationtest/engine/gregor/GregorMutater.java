@@ -137,7 +137,16 @@ class GregorMutater implements Mutater {
   @SuppressWarnings("unchecked")
   private Predicate<MethodInfo> filterMethods() {
     return and(this.filter, filterSyntheticMethods(),
-        not(isGeneratedEnumMethod()));
+        not(isGeneratedEnumMethod()), not(isGroovyClass()));
+  }
+
+  private static F<MethodInfo, Boolean> isGroovyClass() {
+    return new Predicate<MethodInfo>() {
+      public Boolean apply(final MethodInfo a) {
+        return a.isInGroovyClass();
+      }
+
+    };
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {
@@ -158,16 +167,6 @@ class GregorMutater implements Mutater {
     };
   }
 
-  public Set<MethodMutatorFactory> getMutators() {
-    return this.mutators;
-  }
-
-  @Override
-  public String toString() {
-    return "GregorMutater [filter=" + this.filter + ", byteSource="
-        + this.byteSource + ", mutators=" + this.mutators + ", loggingClasses="
-        + this.loggingClasses + "]";
-  }
 
   public byte[] getOriginalClass(final ClassName clazz) {
     return this.byteSource.apply(clazz.asInternalName()).value();
