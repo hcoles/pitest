@@ -92,8 +92,17 @@ public class MutationTestWorker {
 
     r.describe(mutationId);
 
-    MutationStatusTestPair mutationDetected = new MutationStatusTestPair(0,
-        DetectionStatus.SURVIVED);
+    MutationStatusTestPair mutationDetected =  handleMutation(mutationId, mutatedClass, relevantTests);
+
+    r.report(mutationId, mutationDetected);
+
+    LOG.info("Mutation " + mutationId + " detected = " + mutationDetected);
+  }
+
+  private MutationStatusTestPair handleMutation(
+      final MutationIdentifier mutationId, final Mutant mutatedClass,
+      final List<TestUnit> relevantTests) {
+    MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
@@ -104,10 +113,7 @@ public class MutationTestWorker {
           relevantTests);
 
     }
-
-    r.report(mutationId, mutationDetected);
-
-    LOG.info("Mutation " + mutationId + " detected = " + mutationDetected);
+    return mutationDetected;
   }
 
   private MutationStatusTestPair handleCoveredMutation(
