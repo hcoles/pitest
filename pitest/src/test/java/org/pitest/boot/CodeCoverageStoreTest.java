@@ -68,6 +68,13 @@ public class CodeCoverageStoreTest {
     assertEquals(Integer.MIN_VALUE, CodeCoverageStore.decodeClassId(value));
     assertEquals(0, CodeCoverageStore.decodeLineId(value));
   }
+  
+  @Test
+  public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreZero() {
+    long value = CodeCoverageStore.encode(0, 0);
+    assertEquals(0, CodeCoverageStore.decodeClassId(value));
+    assertEquals(0, CodeCoverageStore.decodeLineId(value));
+  }
 
   @Test
   public void shouldBeSafeToAccessAcrossMultipleThreads()

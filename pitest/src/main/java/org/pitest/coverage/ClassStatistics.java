@@ -50,5 +50,4 @@ public class ClassStatistics implements Serializable {
     return "ClassStatistics [className=" + this.className + ", visitedLines="
         + this.visitedLines + "]";
   }
-
 }

@@ -148,11 +148,13 @@ public class CoverageSlave {
   private static List<ClassName> receiveTestClassesFromParent(
       final SafeDataInputStream dis) {
     final int count = dis.readInt();
+    LOG.fine("Expecting " + count + " tests classes from parent");
     final List<ClassName> classes = new ArrayList<ClassName>(count);
     for (int i = 0; i != count; i++) {
       classes.add(new ClassName(dis.readString()));
     }
-    LOG.fine("Receiving " + count + " tests classes from parent");
+    LOG.fine("Tests classes received");
+  
     return classes;
   }
 
