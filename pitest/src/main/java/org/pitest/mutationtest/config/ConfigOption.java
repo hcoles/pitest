@@ -49,6 +49,12 @@ public enum ConfigOption {
    * each mutant)
    */
   MUTATE_STATIC_INITIALIZERS("mutateStaticInits", false),
+  
+  /**
+   * Do/don't create timestamped folders for reports
+   */
+  NO_TIME_STAMPED_REPORTS("noTimestampedReports", false),
+  
   /**
    * Number of threads to use
    */

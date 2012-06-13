@@ -35,7 +35,10 @@ import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.report.DatedDirectoryReportDirCreationStrategy;
+import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.mutationtest.report.UndatedReportDirCreationStrategy;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 
@@ -43,11 +46,11 @@ public class ReportOptions {
 
   private Configuration                              config;
   private Collection<Predicate<String>>              targetClasses;
-  private Collection<Predicate<String>>              excludedMethods          = Collections
-                                                                                  .emptyList();
+  private Collection<Predicate<String>>              excludedMethods                = Collections
+                                                                                        .emptyList();
 
-  private Collection<Predicate<String>>              excludedClasses          = Collections
-                                                                                  .emptyList();
+  private Collection<Predicate<String>>              excludedClasses                = Collections
+                                                                                        .emptyList();
 
   private Collection<String>                         codePaths;
 
@@ -57,27 +60,28 @@ public class ReportOptions {
   private Collection<? extends MethodMutatorFactory> mutators;
 
   private int                                        dependencyAnalysisMaxDistance;
-  private boolean                                    mutateStaticInitializers = true;
+  private boolean                                    mutateStaticInitializers       = true;
 
-  private final List<String>                         jvmArgs                  = new ArrayList<String>();
-  private int                                        numberOfThreads          = 0;
-  private float                                      timeoutFactor            = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
-  private long                                       timeoutConstant          = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
+  private final List<String>                         jvmArgs                        = new ArrayList<String>();
+  private int                                        numberOfThreads                = 0;
+  private float                                      timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
+  private long                                       timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
   private Collection<Predicate<String>>              targetTests;
 
-  private Collection<String>                         loggingClasses           = new ArrayList<String>();
+  private Collection<String>                         loggingClasses                 = new ArrayList<String>();
 
   private int                                        maxMutationsPerClass;
 
-  private boolean                                    verbose                  = false;
-  private boolean                                    failWhenNoMutations      = false;
+  private boolean                                    verbose                        = false;
+  private boolean                                    failWhenNoMutations            = false;
 
-  private final Collection<OutputFormat>             outputs                  = new LinkedHashSet<OutputFormat>();
+  private final Collection<OutputFormat>             outputs                        = new LinkedHashSet<OutputFormat>();
 
   private TestGroupConfig                            groupConfig;
 
   private int                                        mutationUnitSize;
+  private boolean                                    shouldCreateTimestampedReports = true;
 
   public ReportOptions() {
   }
@@ -422,6 +426,28 @@ public class ReportOptions {
 
   public void setMutationUnitSize(final int size) {
     this.mutationUnitSize = size;
+  }
+
+  public DirectoryResultOutputStrategy getReportDirectoryStrategy() {
+    return new DirectoryResultOutputStrategy(getReportDir(),
+        pickDirectoryStrategy());
+  }
+
+  public void setShouldCreateTimestampedReports(
+      boolean shouldCreateTimestampedReports) {
+    this.shouldCreateTimestampedReports = shouldCreateTimestampedReports;
+  }
+
+  private ReportDirCreationStrategy pickDirectoryStrategy() {
+    if (shouldCreateTimestampedReports) {
+      return new DatedDirectoryReportDirCreationStrategy();
+    } else {
+      return new UndatedReportDirCreationStrategy();
+    }
+  }
+
+  public boolean shouldCreateTimeStampedReports() {
+    return shouldCreateTimestampedReports;
   }
 
 }

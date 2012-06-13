@@ -97,6 +97,18 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
     assertTrue(actual.isMutateStaticInitializers());
   }
+  
+  @Test
+  public void shouldCreateTimestampedReportsByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertTrue(actual.shouldCreateTimeStampedReports());
+  }
+  
+  @Test
+  public void shouldDetermineIfSuppressTimestampedReportsFlagIsSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--noTimestampedReports");
+    assertFalse(actual.shouldCreateTimeStampedReports());
+  }
 
   @Test
   public void shouldParseNumberOfThreads() {

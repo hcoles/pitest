@@ -239,6 +239,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig("");
     assertEquals((int)ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class), actual.getMutationUnitSize());
   }
+    
+  public void testParsersTimeStampedReports() {
+    ReportOptions actual = parseConfig("<timestampedReports>false</timestampedReports>");
+    assertEquals(false, actual.shouldCreateTimeStampedReports());
+  }
   
   private ReportOptions parseConfig(final String xml) {
     try {

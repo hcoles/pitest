@@ -37,6 +37,7 @@ import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
+import static org.pitest.mutationtest.config.ConfigOption.*;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
 import java.io.File;
@@ -92,6 +93,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
+  private final OptionSpecBuilder timestampedReportsSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -154,6 +156,8 @@ public class OptionsParser {
         .describedAs("comma seperated list of child JVM args");
 
     this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS);
+    
+    timestampedReportsSpec = parserAccepts(NO_TIME_STAMPED_REPORTS);
 
     this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
         .ofType(Float.class)
@@ -263,6 +267,7 @@ public class OptionsParser {
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
+    data.setShouldCreateTimestampedReports(!userArgs.has(this.timestampedReportsSpec));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));

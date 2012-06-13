@@ -117,6 +117,7 @@ public class MojoToReportOptionsConverter {
     setTestType(data);
     
     data.setMutationUnitSize(this.mojo.getMutationUnitSize());
+    data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
 
     return data;
   }

@@ -47,7 +47,7 @@ import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
+import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
@@ -110,8 +110,8 @@ public class MutationCoverageReport implements Runnable {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
 
-      final DatedDirectoryResultOutputStrategy outputStrategy = new DatedDirectoryResultOutputStrategy(
-          data.getReportDir());
+      final DirectoryResultOutputStrategy outputStrategy = data.getReportDirectoryStrategy();
+      
       final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
           FCollection.map(data.getOutputFormats(),
               OutputFormat.createFactoryForFormat(outputStrategy)));

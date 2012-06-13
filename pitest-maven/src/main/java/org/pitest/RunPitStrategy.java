@@ -34,7 +34,6 @@ import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
-import org.pitest.mutationtest.report.DatedDirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
@@ -53,8 +52,8 @@ public class RunPitStrategy implements GoalStrategy {
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
         jac.getJarLocation().value());
 
-    final ResultOutputStrategy reportOutput = new DatedDirectoryResultOutputStrategy(
-        data.getReportDir());
+    final ResultOutputStrategy reportOutput = data.getReportDirectoryStrategy();
+    
     final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
         FCollection.map(data.getOutputFormats(),
             OutputFormat.createFactoryForFormat(reportOutput)));

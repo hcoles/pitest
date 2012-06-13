@@ -147,6 +147,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="true"
    */
   private boolean               failWhenNoMutations;
+  
+  /**
+   * Create timestamped subdirectory for report
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean timestampedReports;
 
   /**
    * TestNG Groups to exclude
@@ -317,6 +324,14 @@ public class PitMojo extends AbstractMojo {
 
   public int getMutationUnitSize() {
     return mutationUnitSize;
+  }
+
+  public boolean isTimestampedReports() {
+    return timestampedReports;
+  }
+
+  public void setTimestampedReports(boolean timestampedReports) {
+    this.timestampedReports = timestampedReports;
   }
 
 }

@@ -20,19 +20,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.mutationtest.DefaultReportDirCreationStrategy;
 import org.pitest.mutationtest.ReportDirCreationStrategy;
 import org.pitest.util.Unchecked;
 
-public class DatedDirectoryResultOutputStrategy implements ResultOutputStrategy {
+public class DirectoryResultOutputStrategy implements ResultOutputStrategy {
 
   private final File reportDir;
 
-  public DatedDirectoryResultOutputStrategy(final String baseDir) {
-    this(baseDir, new DefaultReportDirCreationStrategy());
-  }
-
-  public DatedDirectoryResultOutputStrategy(final String baseDir,
+  public DirectoryResultOutputStrategy(final String baseDir,
       final ReportDirCreationStrategy dirCreationStrategy) {
     this.reportDir = dirCreationStrategy.createReportDir(baseDir);
   }
