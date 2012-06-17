@@ -107,7 +107,8 @@ public class MutationCoverageReport implements Runnable {
   }
 
   private static void runReport(final ReportOptions data) {
-    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder(new ClassPathByteArraySource(data.getClassPath()));
     try {
 
       final DirectoryResultOutputStrategy outputStrategy = data.getReportDirectoryStrategy();
