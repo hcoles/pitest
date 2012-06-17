@@ -17,7 +17,7 @@ package org.pitest.mutationtest.config;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
-
+  
   /**
    * The directory to write report sot
    */
@@ -37,7 +37,7 @@ public enum ConfigOption {
    */
   MUTATIONS("mutators"),
   /**
-   * Maximum numbe of hops from a mutable class to a test
+   * Maximum number of hops from a mutable class to a test
    */
   DEPENDENCY_DISTANCE("dependencyDistance", -1),
   /**
@@ -53,7 +53,7 @@ public enum ConfigOption {
   /**
    * Do/don't create timestamped folders for reports
    */
-  NO_TIME_STAMPED_REPORTS("noTimestampedReports", false),
+  TIME_STAMPED_REPORTS("timestampedReports", true),
   
   /**
    * Number of threads to use
@@ -130,6 +130,7 @@ public enum ConfigOption {
 
   private final String text;
   private final Object defaultValue;
+  
 
   ConfigOption(final String text) {
     this(text, null);
@@ -144,6 +145,7 @@ public enum ConfigOption {
     return this.text;
   }
 
+  
   @SuppressWarnings("unchecked")
   public <T> T getDefault(final Class<T> type) {
     // so much for type safety

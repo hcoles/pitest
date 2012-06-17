@@ -60,8 +60,8 @@ public class ReportOptions {
   private Collection<? extends MethodMutatorFactory> mutators;
 
   private int                                        dependencyAnalysisMaxDistance;
-  private boolean                                    mutateStaticInitializers       = true;
-
+  private boolean                                    mutateStaticInitializers       = false;
+  
   private final List<String>                         jvmArgs                        = new ArrayList<String>();
   private int                                        numberOfThreads                = 0;
   private float                                      timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;

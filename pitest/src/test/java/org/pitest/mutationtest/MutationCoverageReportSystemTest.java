@@ -128,6 +128,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
+    this.data.setMutateStaticInitializers(true);
     this.data
         .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
     this.data

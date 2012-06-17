@@ -16,6 +16,7 @@
 package org.pitest.ant;
 
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -91,7 +92,6 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--excludedMethods=toString");
   }
 
-
   @Test
   public void shouldPassJvmArgsOptionToJavaTask() {
     this.pitestTask.setJvmArgs("-Da=a");
@@ -111,6 +111,19 @@ public class PitestTaskTest {
     this.pitestTask.setMutateStaticInits("true");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutateStaticInits=true");
+  }
+
+  @Test
+  public void shouldNotPassMutateStaticInitsOptionToJavaTaskWhenNoValueSet() {
+    this.pitestTask.execute(this.java);
+    verify(this.arg, never()).setValue("--mutateStaticInits=true");
+  }
+
+  @Test
+  public void shouldPassMutateStaticInitsOptionToJavaTaskWhenValueIsFalse() {
+    this.pitestTask.setMutateStaticInits("false");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--mutateStaticInits=false");
   }
 
   @Test
@@ -170,10 +183,17 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldPassVerboseOptionToJavaTask() {
+  public void shouldPassVerboseFlagToJavaTaskWhenValueIsTrue() {
     this.pitestTask.setVerbose("true");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--verbose=true");
+  }
+
+  @Test
+  public void shouldPassVerboseFlagToJavaTaskWhenValueIsFalse() {
+    this.pitestTask.setVerbose("false");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--verbose=false");
   }
 
   @Test
@@ -293,6 +313,22 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
 
     verify(this.java).setClasspath(argThat(new PathMatcher(classpath)));
+  }
+
+  @Test
+  public void shouldPassTimestampedDirectoryFlagToJavaTaskWhenValueIsTrue()
+      throws Exception {
+    this.pitestTask.setTimestampedReports("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--timestampedReports=true");
+  }
+
+  @Test
+  public void shouldPassTimestampedDirectoryFlagToJavaTaskWhenValueIsFalse()
+      throws Exception {
+    this.pitestTask.setTimestampedReports("false");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--timestampedReports=false");
   }
 
   @Test

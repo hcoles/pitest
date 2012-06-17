@@ -87,7 +87,6 @@ public class PitestTask extends Task {
     this.setOption(ConfigOption.REPORT_DIR, value);
   }
 
-
   public void setTargetClasses(final String value) {
     this.setOption(ConfigOption.TARGET_CLASSES, value);
   }
@@ -106,6 +105,10 @@ public class PitestTask extends Task {
 
   public void setMutateStaticInits(final String value) {
     this.setOption(ConfigOption.MUTATE_STATIC_INITIALIZERS, value);
+  }
+
+  public void setTimestampedReports(final String value) {
+    this.setOption(ConfigOption.TIME_STAMPED_REPORTS, value);
   }
 
   public void setMutators(final String value) {
@@ -168,7 +171,7 @@ public class PitestTask extends Task {
     this.setOption(ConfigOption.EXCLUDED_GROUPS, value);
   }
 
-  private void setOption(ConfigOption option, String value) {
+  private void setOption(final ConfigOption option, final String value) {
     this.options.put(option.getParamName(), value);
   }
 

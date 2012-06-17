@@ -37,7 +37,7 @@ import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
-import static org.pitest.mutationtest.config.ConfigOption.*;
+import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
 import java.io.File;
@@ -78,12 +78,12 @@ public class OptionsParser {
   private final OptionSpec<File>                     sourceDirSpec;
   private final OptionSpec<Mutator>                  mutators;
   private final OptionSpec<String>                   jvmArgs;
-  private final OptionSpecBuilder                    mutateStatics;
+  private final ArgumentAcceptingOptionSpec<Boolean> mutateStatics;
   private final OptionSpec<Float>                    timeoutFactorSpec;
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
   private final OptionSpec<Integer>                  maxMutationsPerClassSpec;
-  private final OptionSpecBuilder                    verboseSpec;
+  private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
   private final OptionSpec<OutputFormat>             outputFormatSpec;
   private final OptionSpec<String>                   projectFileSpec;
@@ -93,7 +93,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
-  private final OptionSpecBuilder timestampedReportsSpec;
+  private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -155,9 +155,16 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs("comma seperated list of child JVM args");
 
-    this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS);
-    
-    timestampedReportsSpec = parserAccepts(NO_TIME_STAMPED_REPORTS);
+    this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(true)
+        .describedAs(
+            "whether or not to generate mutations in static initializers");
+
+    this.timestampedReportsSpec = parserAccepts(TIME_STAMPED_REPORTS)
+        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
+        .describedAs("whether or not to generated timestamped directories");
 
     this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
         .ofType(Float.class)
@@ -183,14 +190,16 @@ public class OptionsParser {
         .describedAs(
             "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
 
-    this.verboseSpec = parserAccepts(VERBOSE);
+    this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
+        .ofType(Boolean.class).defaultsTo(true)
+        .describedAs("whether or not to generate verbose output");
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
         .ofType(OutputFormat.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of formats in which to write output during the analysis pahse")
+            "comma seperated list of formats in which to write output during the analysis phase")
         .defaultsTo(OutputFormat.HTML);
 
     this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
@@ -198,7 +207,7 @@ public class OptionsParser {
         .describedAs("coma seperated list of additional classpath elements");
 
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
-        .withRequiredArg().ofType(Boolean.class).defaultsTo(true)
+        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether to throw error if no mutations found");
 
     this.codePaths = parserAccepts(CODE_PATHS)
@@ -266,8 +275,12 @@ public class OptionsParser {
     data.setMutators(Mutator.asCollection(this.mutators.values(userArgs)));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
-    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics));
-    data.setShouldCreateTimestampedReports(!userArgs.has(this.timestampedReportsSpec));
+
+    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics)
+        && userArgs.valueOf(this.mutateStatics));
+
+    data.setShouldCreateTimestampedReports(userArgs
+        .valueOf(this.timestampedReportsSpec));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
@@ -277,7 +290,8 @@ public class OptionsParser {
     data.setExcludedClasses(FCollection.map(
         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec.value(userArgs));
-    data.setVerbose(userArgs.has(this.verboseSpec));
+    data.setVerbose(userArgs.has(this.verboseSpec)
+        && userArgs.valueOf(this.verboseSpec));
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
