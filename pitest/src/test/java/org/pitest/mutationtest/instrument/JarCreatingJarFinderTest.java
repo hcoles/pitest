@@ -74,6 +74,13 @@ public class JarCreatingJarFinderTest {
     final Option<String> actual = this.testee.getJarLocation();
     assertTrue(actual.hasSome());
   }
+  
+  @Test
+  public void shouldCreateJarFileInSystemTempDirectory() {
+    String tempDirLocation = System.getProperty("java.io.tmpdir");
+    final Option<String> actual = this.testee.getJarLocation();
+    assertTrue(actual.value().startsWith(tempDirLocation));
+  }
 
   @Test
   public void shouldSetPreMainClassAttribute() throws IOException {

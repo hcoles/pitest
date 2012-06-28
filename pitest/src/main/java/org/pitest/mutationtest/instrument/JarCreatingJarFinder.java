@@ -65,7 +65,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   private Option<String> createJar() {
     try {
 
-      final File randomName = new File(FileUtil.randomFilename() + ".jar");
+      final File randomName = File.createTempFile(FileUtil.randomFilename(), ".jar");
       final FileOutputStream fos = new FileOutputStream(randomName);
       createJarFromClassPathResources(fos, randomName.getAbsolutePath());
       return Option.some(randomName.getAbsolutePath());
