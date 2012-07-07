@@ -21,9 +21,10 @@ import java.util.Set;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.bytecode.blocks.BlockTrackingMethodDecorator;
 import org.pitest.functional.F;
 
-public class MutatingClassVisitor extends ClassAdapter {
+class MutatingClassVisitor extends ClassAdapter {
 
   private final F<MethodInfo, Boolean>    filter;
   private final Context                   context;
@@ -83,12 +84,22 @@ public class MutatingClassVisitor extends ClassAdapter {
       next = each.create(this.context, methodInfo, next);
     }
 
-    return wrapWithLineTracker(wrapWithFilters(next));
+    return wrapWithDecorators(wrapWithFilters(next));
   }
 
+  
+  private MethodVisitor wrapWithDecorators(final MethodVisitor mv) {
+    return wrapWithBlockTracker(wrapWithLineTracker(mv));
+  }
+  
+  private MethodVisitor wrapWithBlockTracker(
+      final MethodVisitor mv) {
+    return new BlockTrackingMethodDecorator(this.context, mv);
+  }
+  
   private MethodVisitor wrapWithLineTracker(
-      final MethodVisitor wrappedMethodVisitor) {
-    return new LineTrackingMethodVisitor(this.context, wrappedMethodVisitor);
+      final MethodVisitor mv) {
+    return new LineTrackingMethodVisitor(this.context, mv);
   }
 
   private MethodVisitor wrapWithFilters(final MethodVisitor wrappedMethodVisitor) {

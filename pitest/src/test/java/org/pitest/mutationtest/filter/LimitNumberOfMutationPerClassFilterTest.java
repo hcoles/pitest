@@ -68,7 +68,7 @@ public class LimitNumberOfMutationPerClassFilterTest {
   }
 
   private MutationDetails makeMutation(final int id) {
-    return new MutationDetails(makeId(id), "", "", "", 0);
+    return new MutationDetails(makeId(id), "", "", "", 0, 0);
   }
 
   private MutationIdentifier makeId(final int id) {

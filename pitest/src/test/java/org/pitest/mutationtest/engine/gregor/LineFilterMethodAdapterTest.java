@@ -7,17 +7,14 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.bytecode.MethodDecoratorTest;
 
-public class LineFilterMethodAdapterTest {
+public class LineFilterMethodAdapterTest extends MethodDecoratorTest {
 
   @Mock
   private Context                 context;
-
-  @Mock
-  private MethodVisitor           child;
 
   @Mock
   private PremutationClassInfo    classInfo;
@@ -29,8 +26,8 @@ public class LineFilterMethodAdapterTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    testee = new LineFilterMethodAdapter(context, classInfo, child);
+    super.setUp();
+    testee = new LineFilterMethodAdapter(context, classInfo, mv);
   }
 
   @Test
@@ -50,7 +47,12 @@ public class LineFilterMethodAdapterTest {
   @Test
   public void shouldForwardVisitLineNumberCallsToChild() {
     this.testee.visitLineNumber(0, label);
-    verify(this.child).visitLineNumber(0, label);
+    verify(this.mv).visitLineNumber(0, label);
+  }
+
+  @Override
+  protected MethodVisitor getTesteeVisitor() {
+    return testee;
   }
 
 }

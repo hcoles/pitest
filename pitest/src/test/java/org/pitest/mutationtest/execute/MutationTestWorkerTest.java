@@ -143,7 +143,7 @@ public class MutationTestWorkerTest {
   
   public MutationDetails makeMutant(final String clazz, final int index) {
     MutationDetails md =  new MutationDetails(new MutationIdentifier(clazz, index, "mutator"),
-        "sourceFile", "desc", "method", 42);
+        "sourceFile", "desc", "method", 42, 0);
     
     when(mutater.getMutation(md.getId())).thenReturn(new Mutant(md, new byte[0]));
     

@@ -77,7 +77,7 @@ public class MutationTestSlaveTest {
   
   @Test
   public void shouldReportErrorWhenOneOccursDuringAnalysis() {
-    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0));
+    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0,0));
     when(mutater.getMutation(any(MutationIdentifier.class))).thenThrow(new PitError("foo"));
     testee.run();
     verify(reporter).done(ExitCode.UNKNOWN_ERROR);

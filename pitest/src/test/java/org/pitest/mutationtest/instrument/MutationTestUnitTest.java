@@ -101,7 +101,7 @@ public class MutationTestUnitTest {
 
 
   private void addMutation() {
-    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0));
+    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0, 0));
   }
   
 }

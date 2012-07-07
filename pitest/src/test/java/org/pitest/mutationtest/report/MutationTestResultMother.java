@@ -33,7 +33,7 @@ public class MutationTestResultMother {
 
   public static MutationDetails createDetails(final String sourceFile) {
     return new MutationDetails(new MutationIdentifier("class", 1, "mutator"),
-        sourceFile, "desc", "method", 42);
+        sourceFile, "desc", "method", 42, 0);
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {

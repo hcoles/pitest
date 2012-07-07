@@ -8,18 +8,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.MethodDecoratorTest;
 
-public class AvoidAssertsMethodAdapterTest {
+public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
 
   @Mock
   private Context                   context;
-
-  @Mock
-  private MethodVisitor             child;
 
   @Mock
   private Label                     label;
@@ -28,8 +25,8 @@ public class AvoidAssertsMethodAdapterTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    testee = new AvoidAssertsMethodAdapter(context, child);
+    super.setUp();
+    testee = new AvoidAssertsMethodAdapter(context, this.mv);
   }
 
   @Test
@@ -83,26 +80,31 @@ public class AvoidAssertsMethodAdapterTest {
   @Test
   public void shouldForwardInterceptedFieldInstructionsToChild() {
     testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    verify(child).visitFieldInsn(Opcodes.GETSTATIC, "foo",
+    verify(mv).visitFieldInsn(Opcodes.GETSTATIC, "foo",
         "$assertionsDisabled", "Z");
   }
 
   @Test
   public void shouldForwardInterceptedVisitLabelInstructionsToChild() {
     testee.visitLabel(label);
-    verify(child).visitLabel(label);
+    verify(mv).visitLabel(label);
   }
 
   @Test
   public void shouldForwardInterceptedVisitJumpInstructionsToChild() {
     testee.visitJumpInsn(Opcodes.IFEQ, label);
-    verify(child).visitJumpInsn(Opcodes.IFEQ, label);
+    verify(mv).visitJumpInsn(Opcodes.IFEQ, label);
   }
 
   @Test
   public void shouldForwardVisitMethodInsnToChild() {
     testee.visitMethodInsn(1, "foo", "bar", "far");
-    verify(child).visitMethodInsn(1, "foo", "bar", "far");
+    verify(mv).visitMethodInsn(1, "foo", "bar", "far");
+  }
+
+  @Override
+  protected MethodVisitor getTesteeVisitor() {
+    return testee;
   }
   
 }

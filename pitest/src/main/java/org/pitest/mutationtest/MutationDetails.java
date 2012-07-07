@@ -28,17 +28,20 @@ public class MutationDetails {
   private final MutationIdentifier id;
   private final String             method;
   private final String             filename;
+  private final int                block;
   private final int                lineNumber;
   private final String             description;
   private final List<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
 
   public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final String method, final int lineNumber) {
+      final String description, final String method, final int lineNumber,
+      final int block) {
     this.id = id;
     this.description = description;
     this.method = method;
     this.filename = filename;
     this.lineNumber = lineNumber;
+    this.block = block;
   }
 
   @Override
@@ -91,69 +94,69 @@ public class MutationDetails {
     this.testsInOrder.addAll(testNames);
   }
 
+  public boolean isInStaticInitializer() {
+    return this.getMethod().trim().startsWith("<clinit>");
+  }
+
+  public int getBlock() {
+    return this.block;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + block;
     result = prime * result
-        + ((this.description == null) ? 0 : this.description.hashCode());
+        + ((description == null) ? 0 : description.hashCode());
+    result = prime * result + ((filename == null) ? 0 : filename.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + lineNumber;
+    result = prime * result + ((method == null) ? 0 : method.hashCode());
     result = prime * result
-        + ((this.filename == null) ? 0 : this.filename.hashCode());
-    result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-    result = prime * result + this.lineNumber;
-    result = prime * result
-        + ((this.method == null) ? 0 : this.method.hashCode());
+        + ((testsInOrder == null) ? 0 : testsInOrder.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
+  public boolean equals(Object obj) {
+    if (this == obj)
       return true;
-    }
-    if (obj == null) {
+    if (obj == null)
       return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (getClass() != obj.getClass())
       return false;
-    }
-    final MutationDetails other = (MutationDetails) obj;
-    if (this.description == null) {
-      if (other.description != null) {
+    MutationDetails other = (MutationDetails) obj;
+    if (block != other.block)
+      return false;
+    if (description == null) {
+      if (other.description != null)
         return false;
-      }
-    } else if (!this.description.equals(other.description)) {
+    } else if (!description.equals(other.description))
       return false;
-    }
-    if (this.filename == null) {
-      if (other.filename != null) {
+    if (filename == null) {
+      if (other.filename != null)
         return false;
-      }
-    } else if (!this.filename.equals(other.filename)) {
+    } else if (!filename.equals(other.filename))
       return false;
-    }
-    if (this.id == null) {
-      if (other.id != null) {
+    if (id == null) {
+      if (other.id != null)
         return false;
-      }
-    } else if (!this.id.equals(other.id)) {
+    } else if (!id.equals(other.id))
       return false;
-    }
-    if (this.lineNumber != other.lineNumber) {
+    if (lineNumber != other.lineNumber)
       return false;
-    }
-    if (this.method == null) {
-      if (other.method != null) {
+    if (method == null) {
+      if (other.method != null)
         return false;
-      }
-    } else if (!this.method.equals(other.method)) {
+    } else if (!method.equals(other.method))
       return false;
-    }
+    if (testsInOrder == null) {
+      if (other.testsInOrder != null)
+        return false;
+    } else if (!testsInOrder.equals(other.testsInOrder))
+      return false;
     return true;
-  }
-
-  public boolean isInStaticInitializer() {
-    return this.getMethod().trim().startsWith("<clinit>");
   }
 
 }

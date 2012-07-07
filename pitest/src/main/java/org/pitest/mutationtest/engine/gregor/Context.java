@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.pitest.bytecode.blocks.BlockCounter;
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
@@ -29,10 +30,11 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public class Context {
+public class Context implements BlockCounter {
 
   private final Map<String, Integer>            mutatorIndexes                 = new HashMap<String, Integer>();
 
+  private int currentBlock = 0;
   private int                                   lastLineNumber;
 
   private ClassInfo                             classInfo;
@@ -105,7 +107,7 @@ public class Context {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
         getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
-        description, this.methodName, this.lastLineNumber);
+        description, this.methodName, this.lastLineNumber, this.currentBlock);
     registerMutation(details);
     return newId;
   }
@@ -150,6 +152,11 @@ public class Context {
 
   public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
+  }
+
+
+  public void registerNewBlock() {
+    this.currentBlock++;    
   }
 
 }

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -153,49 +154,172 @@ public class TestGregorMutater extends MutatorTestBase {
     final Collection<MutationDetails> actualDetails = findMutationsFor(HasFinallyAroundReturnStatement.class);
     assertEquals(2, actualDetails.size());
   }
-  
-  
-  public static class HasAssertStatement { 
+
+  public static class HasAssertStatement {
     public void foo(int i) {
-      assert (i+ 20 > 10);
+      assert (i + 20 > 10);
     }
   }
-  
+
   @Test
   public void shouldNotMutateAssertStatments() {
     createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatement.class);
     assertEquals(0, actualDetails.size());
   }
-  
-  public static class HasAssertStatementAndOtherStatements { 
+
+  public static class HasAssertStatementAndOtherStatements {
     public int state;
+
     public void foo(int i) {
-      assert (i+ 20 > 10);
-      if ( i > 1 ) {
+      assert (i + 20 > 10);
+      if (i > 1) {
         state = 1;
       }
     }
   }
-  
+
   @Test
   public void shouldMutateOtherStatementsWhenAssertIsPresent() {
     createTesteeWith(Mutator.NEGATE_CONDITIONALS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatementAndOtherStatements.class);
     assertEquals(1, actualDetails.size());
   }
-  
+
   @Test
   public void shouldNotMutateGroovyClasses() {
-    createTesteeWith(new ResourceFolderByteArraySource(), True.<MethodInfo> all(),Mutator.ALL.asCollection());
+    createTesteeWith(new ResourceFolderByteArraySource(),
+        True.<MethodInfo> all(), Mutator.ALL.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode");
     assertTrue(actualDetails.isEmpty());
   }
-  
+
   @Test
   public void shouldNotMutateGroovyClosures() {
-    createTesteeWith(new ResourceFolderByteArraySource(), True.<MethodInfo> all(),Mutator.ALL.asCollection());
+    createTesteeWith(new ResourceFolderByteArraySource(),
+        True.<MethodInfo> all(), Mutator.ALL.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode$_mapToString_closure2");
     assertTrue(actualDetails.isEmpty());
   }
+
+  public static class OneStraightThroughMethod {
+    public void straightThrough(int i) {
+      i++;
+      i++;
+    }
+  }
+
+  @Test
+  public void shouldRecordMutationsAsInSameBlockWhenForAStraightThroughMethod() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(OneStraightThroughMethod.class);
+    assertEquals(2, actualDetails.size());
+    int firstMutationBlock = actualDetails.get(0).getBlock();
+    assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+  }
+
+  public static class SimpleBranch {
+    public void straightThrough(int i, boolean b) {
+      if (b) {
+        i++;
+      } else {
+        i++;
+      }
+    }
+  }
+
+  @Test
+  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfIfStatement() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(SimpleBranch.class);
+    assertTwoMutationsInDifferentBlocks(actualDetails);
+  }
+
+  public static class TwoMethods {
+    public void a(int i) {
+      i++;
+    }
+
+    public void b(int i) {
+      i++;
+    }
+  }
+
+  @Test
+  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentMethods() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(TwoMethods.class);
+    assertTwoMutationsInDifferentBlocks(actualDetails);
+  }
+  
+  public static class SwitchStatement {
+    public void a(int i, int b) {
+      switch (b) {
+      case 0:
+        i++;
+        break;
+      case 1:
+        i++;
+        break;
+      default:
+        i++;
+      }
+    }
+
+  }
+
+  @Test
+  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfSwitchStatement() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(SwitchStatement.class);
+    assertEquals(3, actualDetails.size());
+    int firstMutationBlock = actualDetails.get(0).getBlock();
+    assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+    assertEquals(firstMutationBlock + 2, actualDetails.get(2).getBlock());
+  }
+  
+  public static class FallThroughSwitch {
+    public void a(int i, int b) {
+      switch (b) {
+      case 0:
+        i++;
+      case 1:
+        i++;
+      }
+    }
+  }
+  
+  @Test
+  public void shouldRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(FallThroughSwitch.class);
+    assertEquals(2, actualDetails.size());
+    int firstMutationBlock = actualDetails.get(0).getBlock();
+    assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+  }
+  
+  public static class HasFinally {
+    public void a(int i) {
+      try {
+        System.out.println();
+      } finally {
+        i++;
+      }
+    }
+  }
+  
+  @Test
+  public void shouldRecordMutationsInlinedCodeCreatedForFinallyStatementsAsInDifferentBlocks() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasFinally.class);
+    assertTwoMutationsInDifferentBlocks(actualDetails);
+  }
+
+  private void assertTwoMutationsInDifferentBlocks(
+      final List<MutationDetails> actualDetails) {
+    assertEquals(2, actualDetails.size());
+    int firstMutationBlock = actualDetails.get(0).getBlock();
+    assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+  }
+    
 }
