@@ -21,8 +21,6 @@ import org.pitest.mutationtest.MutationDetails;
 
 public interface Mutater {
 
-  public byte[] getOriginalClass(ClassName clazz);
-
   public Mutant getMutation(MutationIdentifier id);
 
   public List<MutationDetails> findMutations(ClassName classToMutate);

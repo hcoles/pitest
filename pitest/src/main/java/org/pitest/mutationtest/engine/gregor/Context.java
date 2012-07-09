@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.pitest.functional.Prelude.isEqualTo;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,7 +122,7 @@ public class Context implements BlockCounter {
   private static F<MutationDetails, Boolean> hasId(final MutationIdentifier id) {
     return new F<MutationDetails, Boolean>() {
       public Boolean apply(final MutationDetails a) {
-        return a.getId().equals(id);
+        return a.matchesId(id);
       }
 
     };
@@ -143,7 +141,15 @@ public class Context implements BlockCounter {
   }
 
   public boolean shouldMutate(final MutationIdentifier newId) {
-    return getTargetMutation().contains(isEqualTo(newId));
+    return getTargetMutation().contains(idMatches(newId));
+  }
+
+  private static F<MutationIdentifier, Boolean> idMatches(final MutationIdentifier newId) {
+    return new F<MutationIdentifier, Boolean> () {
+      public Boolean apply(MutationIdentifier a) {
+        return a.matches(newId);
+      }  
+    };
   }
 
   public void disableMutations(final String reason) {

@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -183,12 +185,41 @@ public class FCollectionTest {
   
   @Test
   public void shouldSplitCollectionIntoManyBucketsWhenListManyTimesGreaterThanBucketSize() {
-    this.is = Arrays.asList(1, 2, 3,4,5,6,7,8,9,10,11);
+    this.is = Arrays.asList(1,2,3,4,5,6,7,8,9,10,11);
     List<List<Integer>> actual =  FCollection.splitToLength(2,is);
     assertEquals(6, actual.size());
     assertThat(actual.get(0), hasItems(1,2));
     assertThat(actual.get(1), hasItems(3,4));
     assertThat(actual.get(5), hasItems(11));
+  }
+  
+  @Test
+  public void shouldSplitIntoSingleBucketWhenAllItemsMeetsCriteria() {
+    this.is = Arrays.asList(1,2,3);
+    Map<Integer,Collection<Integer>> actual = FCollection.bucket(is, fortyTwo());
+    Map<Integer,Collection<Integer>> expected = new HashMap<Integer,Collection<Integer>>();
+    expected.put(42, Arrays.asList(1,2,3));
+    assertEquals(expected,actual);
+  }
+  
+  @Test
+  public void shouldSplitIntoMultipleBuckets() {
+    this.is = Arrays.asList(1,2,3);
+    Map<Integer,Collection<Integer>> actual = FCollection.bucket(is, Prelude.id(Integer.class));
+    Map<Integer,Collection<Integer>> expected = new HashMap<Integer,Collection<Integer>>();
+    expected.put(1, Arrays.asList(1));
+    expected.put(2, Arrays.asList(2));
+    expected.put(3, Arrays.asList(3));
+    assertEquals(expected,actual);
+  }
+
+  private F<Integer,Integer> fortyTwo() {
+    return new  F<Integer,Integer>() {
+      public Integer apply(Integer a) {
+        return 42;
+      }
+      
+    };
   }
 
 }

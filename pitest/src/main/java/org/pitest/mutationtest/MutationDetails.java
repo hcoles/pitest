@@ -44,11 +44,16 @@ public class MutationDetails {
     this.block = block;
   }
 
+
   @Override
   public String toString() {
-    return this.method + " : " + this.lineNumber + " -> " + this.description
-        + " (" + this.id.getIndex() + ")";
+    return "MutationDetails [id=" + id + ", method=" + method + ", filename="
+        + filename + ", block=" + block + ", lineNumber=" + lineNumber
+        + ", description=" + description + ", testsInOrder=" + testsInOrder
+        + "]";
   }
+
+
 
   public String getDescription() {
     return this.description;
@@ -102,6 +107,19 @@ public class MutationDetails {
     return this.block;
   }
 
+  public Boolean matchesId(MutationIdentifier id) {
+    return this.id.matches(id);
+  }
+  
+  public String getMutator() {
+    return id.getMutator();
+  }
+  
+  public int getFirstIndex() {
+    return id.getFirstIndex();
+  }
+
+  
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -158,5 +176,6 @@ public class MutationDetails {
       return false;
     return true;
   }
+
 
 }

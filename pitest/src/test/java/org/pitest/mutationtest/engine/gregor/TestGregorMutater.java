@@ -133,28 +133,6 @@ public class TestGregorMutater extends MutatorTestBase {
     };
   }
 
-  public static class HasFinallyAroundReturnStatement {
-    public int foo(int t) {
-      try {
-        return t;
-      } finally {
-        bar();
-      }
-
-    }
-
-    public void bar() {
-
-    }
-  }
-
-  @Test
-  public void willGenerateMutatationsForBothBranchesOfTryFinallyBlock() {
-    createTesteeWith(Mutator.VOID_METHOD_CALLS.asCollection());
-    final Collection<MutationDetails> actualDetails = findMutationsFor(HasFinallyAroundReturnStatement.class);
-    assertEquals(2, actualDetails.size());
-  }
-
   public static class HasAssertStatement {
     public void foo(int i) {
       assert (i + 20 > 10);
@@ -298,22 +276,6 @@ public class TestGregorMutater extends MutatorTestBase {
     assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
   }
   
-  public static class HasFinally {
-    public void a(int i) {
-      try {
-        System.out.println();
-      } finally {
-        i++;
-      }
-    }
-  }
-  
-  @Test
-  public void shouldRecordMutationsInlinedCodeCreatedForFinallyStatementsAsInDifferentBlocks() {
-    createTesteeWith(Mutator.INCREMENTS.asCollection());
-    final List<MutationDetails> actualDetails = findMutationsFor(HasFinally.class);
-    assertTwoMutationsInDifferentBlocks(actualDetails);
-  }
 
   private void assertTwoMutationsInDifferentBlocks(
       final List<MutationDetails> actualDetails) {

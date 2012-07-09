@@ -355,7 +355,7 @@ public class TestMutationTesting {
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
-        mutators);
+        mutators, true);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());

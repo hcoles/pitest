@@ -16,7 +16,9 @@ package org.pitest.functional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Functional programming style operations for plain old Java iterables.
@@ -134,6 +136,20 @@ public abstract class FCollection {
       list.add(temp);
     }
     return list;
+  }
+  
+  public static <A,B> Map<A,Collection<B>> bucket(Iterable<B> bs, F<B,A> f) {
+    Map<A,Collection<B>> bucketed = new HashMap<A,Collection<B>>();
+    for ( B each : bs ) {
+      A key = f.apply(each);
+      Collection<B> existing = bucketed.get(key);
+      if ( existing == null ) {
+        existing = new ArrayList<B>();
+        bucketed.put(key, existing);
+      }
+      existing.add(each);
+    }
+    return bucketed;
   }
 
 }

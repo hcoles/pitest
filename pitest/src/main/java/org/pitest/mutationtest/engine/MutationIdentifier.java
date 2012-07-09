@@ -14,16 +14,26 @@
  */
 package org.pitest.mutationtest.engine;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 public class MutationIdentifier {
 
   private final String className;
-  private final int    index;
+  private final SortedSet<Integer>    indexes;
   private final String mutator;
 
-  public MutationIdentifier(final String className, final int index,
+  public MutationIdentifier(final String className, int index,
+      final String mutatorUniqueId) {
+    this(className, Collections.singleton(index), mutatorUniqueId);
+  }
+  
+  public MutationIdentifier(final String className, Set<Integer> indexes,
       final String mutatorUniqueId) {
     this.className = className;
-    this.index = index;
+    this.indexes = new TreeSet<Integer>(indexes);
     this.mutator = mutatorUniqueId;
   }
 
@@ -35,58 +45,57 @@ public class MutationIdentifier {
     return this.mutator;
   }
 
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((this.className == null) ? 0 : this.className.hashCode());
-    result = prime * result + this.index;
-    result = prime * result
-        + ((this.mutator == null) ? 0 : this.mutator.hashCode());
+    result = prime * result + ((className == null) ? 0 : className.hashCode());
+    result = prime * result + ((indexes == null) ? 0 : indexes.hashCode());
+    result = prime * result + ((mutator == null) ? 0 : mutator.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
+  public boolean equals(Object obj) {
+    if (this == obj)
       return true;
-    }
-    if (obj == null) {
+    if (obj == null)
       return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (getClass() != obj.getClass())
       return false;
-    }
-    final MutationIdentifier other = (MutationIdentifier) obj;
-    if (this.className == null) {
-      if (other.className != null) {
+    MutationIdentifier other = (MutationIdentifier) obj;
+    if (className == null) {
+      if (other.className != null)
         return false;
-      }
-    } else if (!this.className.equals(other.className)) {
+    } else if (!className.equals(other.className))
       return false;
-    }
-    if (this.index != other.index) {
-      return false;
-    }
-    if (this.mutator == null) {
-      if (other.mutator != null) {
+    if (indexes == null) {
+      if (other.indexes != null)
         return false;
-      }
-    } else if (!this.mutator.equals(other.mutator)) {
+    } else if (!indexes.equals(other.indexes))
       return false;
-    }
+    if (mutator == null) {
+      if (other.mutator != null)
+        return false;
+    } else if (!mutator.equals(other.mutator))
+      return false;
     return true;
   }
 
-  public int getIndex() {
-    return this.index;
+  public int getFirstIndex() {
+    return this.indexes.iterator().next();
   }
 
   @Override
   public String toString() {
-    return "Mutation -> className=" + this.className + ", index=" + this.index
+    return "Mutation -> className=" + this.className 
         + ", mutator=" + this.mutator;
+  }
+
+  public boolean matches(MutationIdentifier newId) {
+    return className.equals(newId.className) && mutator.equals(newId.mutator) && indexes.contains(newId.getFirstIndex());
+    
   }
 
 }

@@ -36,6 +36,7 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 class GregorMutater implements Mutater {
 
@@ -43,16 +44,19 @@ class GregorMutater implements Mutater {
   private final ClassByteArraySource      byteSource;
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
   private final Set<String>               loggingClasses = new HashSet<String>();
+  private final InlinedCodeFilter         inlinedCodeDetector;
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators,
-      final Collection<String> loggingClasses) {
+      final Collection<String> loggingClasses,
+      final InlinedCodeFilter inlinedCodeDetector) {
     this.filter = filter;
     this.mutators.addAll(mutators);
     this.byteSource = byteSource;
     this.loggingClasses.addAll(FCollection.map(loggingClasses,
         classNameToJVMClassName()));
+    this.inlinedCodeDetector = inlinedCodeDetector;
   }
 
   public FunctionalList<MutationDetails> findMutations(
@@ -87,8 +91,7 @@ class GregorMutater implements Mutater {
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    return context.getCollectedMutations();
-
+    return this.inlinedCodeDetector.process(context.getCollectedMutations());
   }
 
   private PremutationClassInfo performPreScan(final byte[] classToMutate) {
@@ -165,11 +168,6 @@ class GregorMutater implements Mutater {
         return a.isGeneratedEnumMethod();
       }
     };
-  }
-
-
-  public byte[] getOriginalClass(final ClassName clazz) {
-    return this.byteSource.apply(clazz.asInternalName()).value();
   }
 
 }

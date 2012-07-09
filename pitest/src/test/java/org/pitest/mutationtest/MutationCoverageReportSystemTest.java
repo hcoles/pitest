@@ -57,6 +57,8 @@ import com.example.CrashesJVMWhenMutated;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
 import com.example.FullyCoveredTesteeTest;
+import com.example.HasMutationInFinallyBlockTest;
+import com.example.HasMutationsInFinallyBlock;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 
@@ -317,6 +319,18 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     verifyResults(RUN_ERROR);
 
+  }
+  
+  @Test
+  public void shouldCombineAndKillInlinedMutationsInFinallyBlocks() {
+    this.data.setMutators(Mutator.INCREMENTS.asCollection());
+    this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
+    this.data
+        .setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
+    this.data.setDetectInlinedCode(true);
+    createAndRun();
+
+    verifyResults(KILLED);
   }
 
   private void createAndRun() {

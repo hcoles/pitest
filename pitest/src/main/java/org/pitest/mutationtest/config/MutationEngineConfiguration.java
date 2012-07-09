@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public interface MutationEngineConfiguration {
 
@@ -27,5 +28,7 @@ public interface MutationEngineConfiguration {
   public Predicate<MethodInfo> methodFilter();
 
   public Collection<String> doNotMutateCallsTo();
+
+  InlinedCodeFilter inlinedCodeDetector();
 
 }

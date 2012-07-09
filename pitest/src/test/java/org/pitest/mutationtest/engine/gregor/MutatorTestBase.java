@@ -22,7 +22,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
@@ -39,6 +38,8 @@ import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
+import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
 import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
@@ -61,14 +62,18 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), Collections.singletonList(Logger.class
-            .getName()));
+        Arrays.asList(mutators), filteredClasses(), filter());
+  }
+
+  private Collection<String> filteredClasses() {
+    return Arrays.asList(Logger.class
+        .getName(), StringBuilder.class.getName());
   }
 
   protected void createTesteeWith(final ClassByteArraySource source, final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(source, filter,
-        mutators, Collections.singletonList(Logger.class.getName()));
+        mutators, filteredClasses(), filter());
   }
   
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -81,9 +86,13 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses);
+        mutators, loggingClasses, filter());
   }
 
+  private final InlinedCodeFilter filter() {
+    return new NoInlinedCodeDetection();
+  }
+  
   protected void createTesteeWith(
       final Collection<MethodMutatorFactory> mutators) {
     createTesteeWith(True.<MethodInfo> all(), mutators);

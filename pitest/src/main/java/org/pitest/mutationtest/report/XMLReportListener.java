@@ -97,8 +97,8 @@ public class XMLReportListener implements TestListener {
         + makeNode(clean(details.getClazz()), mutatedClass)
         + makeNode(clean(details.getMethod()), mutatedMethod)
         + makeNode("" + details.getLineNumber(), lineNumber)
-        + makeNode(clean(details.getId().getMutator()), mutator)
-        + makeNode("" + details.getId().getIndex(), index)
+        + makeNode(clean(details.getMutator()), mutator)
+        + makeNode("" + details.getFirstIndex(), index)
         + makeNode(createKillingTestDesc(mutation.getKillingTest()),
             killingTest);
   }

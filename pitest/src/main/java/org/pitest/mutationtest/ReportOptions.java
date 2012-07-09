@@ -61,7 +61,7 @@ public class ReportOptions {
 
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers       = false;
-  
+
   private final List<String>                         jvmArgs                        = new ArrayList<String>();
   private int                                        numberOfThreads                = 0;
   private float                                      timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
@@ -82,6 +82,7 @@ public class ReportOptions {
 
   private int                                        mutationUnitSize;
   private boolean                                    shouldCreateTimestampedReports = true;
+  private boolean                                    detectInlinedCode;
 
   public ReportOptions() {
   }
@@ -434,12 +435,12 @@ public class ReportOptions {
   }
 
   public void setShouldCreateTimestampedReports(
-      boolean shouldCreateTimestampedReports) {
+      final boolean shouldCreateTimestampedReports) {
     this.shouldCreateTimestampedReports = shouldCreateTimestampedReports;
   }
 
   private ReportDirCreationStrategy pickDirectoryStrategy() {
-    if (shouldCreateTimestampedReports) {
+    if (this.shouldCreateTimestampedReports) {
       return new DatedDirectoryReportDirCreationStrategy();
     } else {
       return new UndatedReportDirCreationStrategy();
@@ -447,7 +448,16 @@ public class ReportOptions {
   }
 
   public boolean shouldCreateTimeStampedReports() {
-    return shouldCreateTimestampedReports;
+    return this.shouldCreateTimestampedReports;
+  }
+
+  public boolean isDetectInlinedCode() {
+    return this.detectInlinedCode;
+  }
+
+  public void setDetectInlinedCode(final boolean b) {
+    this.detectInlinedCode = b;
+
   }
 
 }
