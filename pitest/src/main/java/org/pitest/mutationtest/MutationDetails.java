@@ -32,16 +32,24 @@ public class MutationDetails {
   private final int                lineNumber;
   private final String             description;
   private final List<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
+  private final boolean isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final String method, final int lineNumber,
       final int block) {
+    this(id, filename, description, method, lineNumber, block, false);
+  }
+  
+  public MutationDetails(final MutationIdentifier id, final String filename,
+      final String description, final String method, final int lineNumber,
+      final int block, boolean isInFinallyBlock) {
     this.id = id;
     this.description = description;
     this.method = method;
     this.filename = filename;
     this.lineNumber = lineNumber;
     this.block = block;
+    this.isInFinallyBlock = isInFinallyBlock;
   }
 
 
@@ -117,6 +125,10 @@ public class MutationDetails {
   
   public int getFirstIndex() {
     return id.getFirstIndex();
+  }
+  
+  public boolean isInFinallyBlock() {
+    return this.isInFinallyBlock;
   }
 
   

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,24 +43,35 @@ public class InlinedFinallyBlockDetectorTest {
   
   
   @Test
-  public void shouldCreateSingleMutantWhenSameMutationCreatedOnSameLineInDifferentBlocks() {
+  public void shouldCreateSingleMutantWhenSameMutationCreatedOnSameLineInDifferentBlocksAndOneIsInAHandlerBlock() {
     int line = 100;
     String mutator = "foo";
     int block = 1000;
-    List<MutationDetails> mutations = Arrays.asList(makeMutant(line, block, mutator,0), makeMutant(line, block + 1,mutator,1));
-    assertEquals(Arrays.asList(makeMutant(line,block,mutator, Arrays.asList(0,1))), testee.process(mutations));
+    List<MutationDetails> mutations = Arrays.asList(makeMutantInHandlerBlock(line, block, mutator,0), makeMutant(line, block + 1,mutator,1));
+    assertEquals(Arrays.asList(makeMutantInHandlerBlock(line,block,mutator, Arrays.asList(0,1))), testee.process(mutations));
   }
   
+
   @Test
-  public void shouldNotCombineMutationsWhenSomeOccurInSameBlockButOthersDont() {
+  public void shouldNotCombineMutationsWhenMoreThanOneInAHandlerBlock() {
     int line = 100;
     String mutator = "foo";
     int block = 1000;
-    List<MutationDetails> mutations = Arrays.asList(makeMutant(line, block, mutator,0)
-                                                  , makeMutant(line, block, mutator,2)
+    List<MutationDetails> mutations = Arrays.asList(makeMutantInHandlerBlock(line, block, mutator,0)
+                                                  , makeMutantInHandlerBlock(line, block, mutator,2)
                                                   , makeMutant(line, block + 1,mutator,1));
     Collection<MutationDetails> actual = testee.process(mutations);
     assertEquals(mutations,actual);
+  }
+  
+  private MutationDetails makeMutantInHandlerBlock(int line, int block,
+      String mutator, int index) {
+    return new MutationDetails(makeId(Collections.singleton(index),mutator), "file", "desc", "method", line, block, true);
+  }
+  
+  
+  private MutationDetails makeMutantInHandlerBlock(int line, int block, String mutator, Collection<Integer> indexes) {
+    return new MutationDetails(makeId(new HashSet<Integer>(indexes),mutator), "file", "desc", "method", line, block, true);
   }
   
   private MutationDetails makeMutant(int line, int block, String mutator, Collection<Integer> indexes) {

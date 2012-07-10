@@ -16,6 +16,7 @@ package org.pitest.mutationtest.engine.gregor;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -274,6 +275,75 @@ public class TestGregorMutater extends MutatorTestBase {
     assertEquals(2, actualDetails.size());
     int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+  }
+  
+  
+  public static class HasExceptionBlock {
+    public void foo(int i) {
+      try {
+        i++;
+      } catch(Exception ex) {
+        i++;
+      }
+    }
+  }
+  
+  @Test
+  public void shouldRecordMutationsAsInDifferentBlocksWhenInExceptionHandler() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
+    assertTwoMutationsInDifferentBlocks(actualDetails);
+  }
+  
+  @Test
+  public void shouldNotRecordMutationsAsInFinallyBlockWhenTheyAreNot() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
+    assertFalse(actualDetails.get(0).isInFinallyBlock());
+    assertFalse(actualDetails.get(1).isInFinallyBlock());
+  }
+  
+  public static class HasFinallyBlock {
+    public void foo(int i) {
+      try {
+        System.out.println("foo");
+      } finally {
+        i++;
+      }
+    }
+  }
+  
+  
+  @Test
+  public void shouldMarkMutationsWithinFinallyBlocks() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlock.class);
+    assertEquals(2, actualDetails.size()); // two due to inlining
+    assertTrue(actualDetails.get(0).isInFinallyBlock());
+    assertFalse(actualDetails.get(1).isInFinallyBlock()); // inlined copy is not actually in the finally block
+  }
+  
+  
+  public static class HasFinallyBlockAndExceptionHandler {
+    public void foo(int i) {
+      try {
+        System.out.println("foo");
+      } catch(Exception x) {
+        System.out.println("bar");
+      } finally {
+        i++;
+      }
+    }
+  }
+  
+  @Test
+  public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlosPresent() {
+    createTesteeWith(Mutator.INCREMENTS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
+    assertEquals(3, actualDetails.size());
+    assertFalse(actualDetails.get(0).isInFinallyBlock());
+    assertTrue(actualDetails.get(1).isInFinallyBlock());
+    assertFalse(actualDetails.get(2).isInFinallyBlock());
   }
   
 

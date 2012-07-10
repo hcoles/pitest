@@ -29,11 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.util.Log;
 
 /**
  * Detects mutations on same line, but within different code blocks. This
@@ -44,13 +47,15 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
  */
 public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
 
+  private final static Logger LOG = Log.getLogger();
+
   public Collection<MutationDetails> process(
       final Collection<MutationDetails> mutations) {
     final List<MutationDetails> combined = new ArrayList<MutationDetails>(
         mutations.size());
-    final Map<LineMutatorPair, Collection<MutationDetails>> mutatorLinebuckets = 
-        bucket(mutations, toLineMutatorPair());
-    
+    final Map<LineMutatorPair, Collection<MutationDetails>> mutatorLinebuckets = bucket(
+        mutations, toLineMutatorPair());
+
     for (final Entry<LineMutatorPair, Collection<MutationDetails>> each : mutatorLinebuckets
         .entrySet()) {
       if (each.getValue().size() > 1) {
@@ -59,7 +64,7 @@ public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
         combined.addAll(each.getValue());
       }
     }
- 
+
     /** FIXME tests rely on order of returned mutants **/
     Collections.sort(combined, compareLineNumbers());
     return combined;
@@ -77,14 +82,45 @@ public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
 
   private void checkForInlinedCode(final Collection<MutationDetails> combined,
       final Entry<LineMutatorPair, Collection<MutationDetails>> each) {
-    final int firstBlock = each.getValue().iterator().next().getBlock();
-    FunctionalList<Integer> ids = map(each.getValue(), mutationToBlock());
-    
-    if (ids.contains(not(isEqualTo(firstBlock))) && ids.filter(isEqualTo(firstBlock)).size() == 1) {
+
+    final FunctionalList<MutationDetails> mutationsInHandlerBlock = FCollection
+        .filter(each.getValue(), isInFinallyHandler());
+    if (!isPossibleToCorrectInlining(mutationsInHandlerBlock)) {
+      combined.addAll(each.getValue());
+      return;
+    }
+
+    final MutationDetails baseMutation = mutationsInHandlerBlock.get(0);
+    final int firstBlock = baseMutation.getBlock();
+
+    // check that we have at least on mutation in a different block
+    // to the base one (is this not implied by there being only 1 mutation in
+    // the handler ????)
+    final FunctionalList<Integer> ids = map(each.getValue(), mutationToBlock());
+    if (ids.contains(not(isEqualTo(firstBlock)))) {
       combined.add(makeCombinedMutant(each.getValue()));
     } else {
       combined.addAll(each.getValue());
     }
+  }
+
+  private boolean isPossibleToCorrectInlining(
+      final List<MutationDetails> mutationsInHandlerBlock) {
+    if (mutationsInHandlerBlock.size() > 1) {
+      LOG.warning("Found more than one mutation similar on same line in a finally block. Can't correct for inlining.");
+      return false;
+    }
+
+    return !mutationsInHandlerBlock.isEmpty();
+  }
+
+  private static F<MutationDetails, Boolean> isInFinallyHandler() {
+    return new F<MutationDetails, Boolean>() {
+      public Boolean apply(final MutationDetails a) {
+        return a.isInFinallyBlock();
+      }
+
+    };
   }
 
   private static MutationDetails makeCombinedMutant(
@@ -92,10 +128,10 @@ public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
     final MutationDetails first = value.iterator().next();
     final Set<Integer> indexes = new HashSet<Integer>();
     mapTo(value, mutationToIndex(), indexes);
-    
+
     final MutationIdentifier id = new MutationIdentifier(first.getId()
         .getClazz(), indexes, first.getId().getMutator());
-    
+
     return new MutationDetails(id, first.getFilename(), first.getDescription(),
         first.getMethod(), first.getLineNumber(), first.getBlock());
   }
@@ -116,7 +152,7 @@ public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
     };
   }
 
-  private F<MutationDetails, LineMutatorPair> toLineMutatorPair() {
+  private static F<MutationDetails, LineMutatorPair> toLineMutatorPair() {
     return new F<MutationDetails, LineMutatorPair>() {
       public LineMutatorPair apply(final MutationDetails a) {
         return new LineMutatorPair(a.getLineNumber(), a.getMutator());

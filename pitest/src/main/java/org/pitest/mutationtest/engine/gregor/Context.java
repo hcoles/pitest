@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pitest.bytecode.blocks.BlockCounter;
+import org.pitest.bytecode.blocks.ConcreteBlockCounter;
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
@@ -32,7 +33,8 @@ public class Context implements BlockCounter {
 
   private final Map<String, Integer>            mutatorIndexes                 = new HashMap<String, Integer>();
 
-  private int currentBlock = 0;
+  private ConcreteBlockCounter blockCounter = new ConcreteBlockCounter();
+  
   private int                                   lastLineNumber;
 
   private ClassInfo                             classInfo;
@@ -105,7 +107,7 @@ public class Context implements BlockCounter {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
         getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
-        description, this.methodName, this.lastLineNumber, this.currentBlock);
+        description, this.methodName, this.lastLineNumber, this.blockCounter.getCurrentBlock(), this.blockCounter.isWithinExceptionHandler());
     registerMutation(details);
     return newId;
   }
@@ -162,7 +164,15 @@ public class Context implements BlockCounter {
 
 
   public void registerNewBlock() {
-    this.currentBlock++;    
+    this.blockCounter.registerNewBlock();   
+  }
+
+  public void registerFinallyBlockStart() {
+    this.blockCounter.registerFinallyBlockStart();
+  }
+
+  public void registerFinallyBlockEnd() {
+    this.blockCounter.registerFinallyBlockEnd();
   }
 
 }
