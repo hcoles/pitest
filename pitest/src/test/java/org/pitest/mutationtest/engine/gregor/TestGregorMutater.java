@@ -27,6 +27,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationDetails;
@@ -318,9 +320,7 @@ public class TestGregorMutater extends MutatorTestBase {
   public void shouldMarkMutationsWithinFinallyBlocks() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlock.class);
-    assertEquals(2, actualDetails.size()); // two due to inlining
-    assertTrue(actualDetails.get(0).isInFinallyBlock());
-    assertFalse(actualDetails.get(1).isInFinallyBlock()); // inlined copy is not actually in the finally block
+    assertEquals(1,FCollection.filter(actualDetails, isInFinallyBlock()).size());
   }
   
   
@@ -337,15 +337,21 @@ public class TestGregorMutater extends MutatorTestBase {
   }
   
   @Test
-  public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlosPresent() {
+  public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlsoPresent() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
-    assertEquals(3, actualDetails.size());
-    assertFalse(actualDetails.get(0).isInFinallyBlock());
-    assertTrue(actualDetails.get(1).isInFinallyBlock());
-    assertFalse(actualDetails.get(2).isInFinallyBlock());
+    assertEquals(1,FCollection.filter(actualDetails, isInFinallyBlock()).size());
   }
   
+
+  private static F<MutationDetails, Boolean> isInFinallyBlock() {
+    return new F<MutationDetails, Boolean>() {
+      public Boolean apply(MutationDetails a) {
+        return a.isInFinallyBlock();
+      }
+      
+    };
+  }
 
   private void assertTwoMutationsInDifferentBlocks(
       final List<MutationDetails> actualDetails) {
