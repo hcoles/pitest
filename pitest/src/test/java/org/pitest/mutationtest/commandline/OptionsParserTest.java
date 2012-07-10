@@ -117,6 +117,24 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldNotDetectInlinedCodeByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertFalse(actual.isDetectInlinedCode());
+  }
+  
+  @Test
+  public void shouldDetermineIfInlinedCodeFlagIsSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode");
+    assertTrue(actual.isDetectInlinedCode());
+  }
+  
+  @Test
+  public void shouldDetermineIfInlinedCodeFlagIsSetWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode=false");
+    assertFalse(actual.isDetectInlinedCode());
+  }
+  
+  @Test
   public void shouldCreateTimestampedReportsByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
     assertTrue(actual.shouldCreateTimeStampedReports());

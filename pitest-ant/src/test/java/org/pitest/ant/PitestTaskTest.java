@@ -127,6 +127,26 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassDetectInlinedCodeOptionToJavaTask() {
+    this.pitestTask.setDetectInlinedCode("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--detectInlinedCode=true");
+  }
+  
+  @Test
+  public void shouldNotPassInlinedCodeOptionToJavaTaskWhenNoValueSet() {
+    this.pitestTask.execute(this.java);
+    verify(this.arg, never()).setValue("--detectInlinedCode=true");
+  }
+  
+  @Test
+  public void shouldPassMutateInlinedCodeOptionToJavaTaskWhenValueIsFalse() {
+    this.pitestTask.setDetectInlinedCode("false");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--detectInlinedCode=false");
+  }
+  
+  @Test
   public void shouldPassMutatorsOptionToJavaTask() {
     this.pitestTask.setMutators("a,b");
     this.pitestTask.execute(this.java);

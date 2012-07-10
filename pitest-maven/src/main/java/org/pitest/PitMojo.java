@@ -93,6 +93,13 @@ public class PitMojo extends AbstractMojo {
   private boolean               mutateStaticInitializers;
 
   /**
+   * Detect inlined code
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean               detectInlinedCode;
+  
+  /**
    * Mutation operators to apply
    * 
    * @parameter
@@ -330,6 +337,10 @@ public class PitMojo extends AbstractMojo {
     return timestampedReports;
   }
 
+  public boolean isDetectInlinedCode() {
+    return this.detectInlinedCode;
+  }
+  
   public void setTimestampedReports(boolean timestampedReports) {
     this.timestampedReports = timestampedReports;
   }

@@ -82,7 +82,7 @@ public class ReportOptions {
 
   private int                                        mutationUnitSize;
   private boolean                                    shouldCreateTimestampedReports = true;
-  private boolean                                    detectInlinedCode;
+  private boolean                                    detectInlinedCode = false;
 
   public ReportOptions() {
   }

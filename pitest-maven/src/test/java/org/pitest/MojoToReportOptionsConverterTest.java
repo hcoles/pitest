@@ -188,6 +188,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertTrue(parseConfig("<verbose>true</verbose>").isVerbose());
     assertFalse(parseConfig("<verbose>false</verbose>").isVerbose());
   }
+  
+  public void testParsesDetectInlineCodeFlag() {
+    assertTrue(parseConfig("<detectInlinedCode>true</detectInlinedCode>").isDetectInlinedCode());
+    assertFalse(parseConfig("<detectInlinedCode>false</detectInlinedCode>").isDetectInlinedCode());
+  }
 
   public void testDefaultsToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseConfig("");

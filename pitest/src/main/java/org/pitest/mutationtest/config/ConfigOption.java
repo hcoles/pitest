@@ -126,7 +126,12 @@ public enum ConfigOption {
   /**
    * Maximum number of mutations to include within a single unit of analysis.
    */
-  MUTATION_UNIT_SIZE("mutationUnitSize", 0);
+  MUTATION_UNIT_SIZE("mutationUnitSize", 0),
+  
+  /**
+  * Do/don't attempt to detect inlined code from finally blocks
+  */
+  USE_INLINED_CODE_DETECTION("detectInlinedCode", false);
 
   private final String text;
   private final Object defaultValue;

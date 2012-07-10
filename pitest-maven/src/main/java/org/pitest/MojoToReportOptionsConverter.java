@@ -118,6 +118,7 @@ public class MojoToReportOptionsConverter {
     
     data.setMutationUnitSize(this.mojo.getMutationUnitSize());
     data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
+    data.setDetectInlinedCode(mojo.isDetectInlinedCode());
 
     return data;
   }
