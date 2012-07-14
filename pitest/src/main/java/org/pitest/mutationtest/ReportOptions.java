@@ -246,18 +246,26 @@ public class ReportOptions {
     return this.targetTests;
   }
 
+
   @Override
   public String toString() {
-    return "ReportOptions [isValid=" + ", classesInScope=" + this.targetClasses
-        + ", reportDir=" + this.reportDir + ", sourceDirs=" + this.sourceDirs
-        + ", classPathElements=" + this.classPathElements + ", mutators="
-        + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", showHelp=" + ", jvmArgs="
-        + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
-        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
-        + this.timeoutConstant + ", targetTests=" + this.targetTests
-        + ", loggingClasses=" + this.loggingClasses + "]";
+    return "ReportOptions [config=" + config + ", targetClasses="
+        + targetClasses + ", excludedMethods=" + excludedMethods
+        + ", excludedClasses=" + excludedClasses + ", codePaths=" + codePaths
+        + ", reportDir=" + reportDir + ", sourceDirs=" + sourceDirs
+        + ", classPathElements=" + classPathElements + ", mutators=" + mutators
+        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
+        + ", mutateStaticInitializers=" + mutateStaticInitializers
+        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
+        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
+        + timeoutConstant + ", targetTests=" + targetTests
+        + ", loggingClasses=" + loggingClasses + ", maxMutationsPerClass="
+        + maxMutationsPerClass + ", verbose=" + verbose
+        + ", failWhenNoMutations=" + failWhenNoMutations + ", outputs="
+        + outputs + ", groupConfig=" + groupConfig + ", mutationUnitSize="
+        + mutationUnitSize + ", shouldCreateTimestampedReports="
+        + shouldCreateTimestampedReports + ", detectInlinedCode="
+        + detectInlinedCode + "]";
   }
 
   @SuppressWarnings("unchecked")
