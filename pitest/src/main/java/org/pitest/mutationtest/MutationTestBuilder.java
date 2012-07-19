@@ -79,19 +79,28 @@ public class MutationTestBuilder {
     for (final ClassName clazz : codeClasses) {
 
       final Collection<MutationDetails> mutationsForClasses = createMutations(clazz);
-
-      if (this.data.getMutationUnitSize() > 0) {
-        final FunctionalList<List<MutationDetails>> groupedMutations = FCollection
-            .splitToLength(this.data.getMutationUnitSize(), mutationsForClasses);
-        FCollection.mapTo(groupedMutations, mutationDetailsToTestUnit(), tus);
+      if ( mutationsForClasses.isEmpty() ) {
+        LOG.fine("No mutations found for " + clazz);
       } else {
-        tus.add(createMutationTestUnit(mutationsForClasses));
+        createMutationAnalysisUnits(tus, clazz, mutationsForClasses);
       }
     }
     return tus;
   }
 
-  private F<List<MutationDetails>, TestUnit> mutationDetailsToTestUnit() {
+  private void createMutationAnalysisUnits(final List<TestUnit> tus,
+      final ClassName clazz,
+      final Collection<MutationDetails> mutationsForClasses) {
+    if (this.data.getMutationUnitSize() > 0) {
+      final FunctionalList<List<MutationDetails>> groupedMutations = FCollection
+          .splitToLength(this.data.getMutationUnitSize(), mutationsForClasses);
+      FCollection.mapTo(groupedMutations, mutationDetailsToTestUnit(clazz), tus);
+    } else {
+      tus.add(createMutationTestUnit(mutationsForClasses));
+    }
+  }
+
+  private F<List<MutationDetails>, TestUnit> mutationDetailsToTestUnit(final ClassName clazz) {
     return new F<List<MutationDetails>, TestUnit>() {
       public TestUnit apply(final List<MutationDetails> mutations) {
         return createMutationTestUnit(mutations);

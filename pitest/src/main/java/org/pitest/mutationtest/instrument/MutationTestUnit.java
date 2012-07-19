@@ -78,6 +78,7 @@ public class MutationTestUnit extends AbstractTestUnit {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
+
     try {
       rc.notifyStart(this.getDescription());
       runTests(rc);
@@ -93,8 +94,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       if (!this.availableMutations.isEmpty()) {
         runTestsForMutations(rc);
       } else {
-        LOG.info("Skipping test " + this.getDescription()
-            + " as no mutations found");
+        LOG.info("No mutations to detect");
         rc.notifySkipped(this.getDescription());
       }
     } catch (final Exception ex) {

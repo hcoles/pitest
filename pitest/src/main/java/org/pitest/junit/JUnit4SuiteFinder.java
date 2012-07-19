@@ -32,7 +32,6 @@ public class JUnit4SuiteFinder implements TestSuiteFinder {
         SuiteClasses.class);
 
     if ((annotation != null) && hasSuitableRunnner(a.getClazz())) {
-
       return FCollection.map(Arrays.asList(annotation.value()),
           TestClass.classToTestClass());
     } else {

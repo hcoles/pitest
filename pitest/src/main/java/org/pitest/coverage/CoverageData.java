@@ -85,7 +85,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   void calculateClassCoverage(final CoverageResult cr) {
-
+     
     checkForFailedTest(cr);
 
     this.recordExecutionTime(cr.getTestUnitDescription(), cr.getExecutionTime());

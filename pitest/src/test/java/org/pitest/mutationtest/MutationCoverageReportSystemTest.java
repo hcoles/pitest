@@ -53,6 +53,7 @@ import org.pitest.util.JavaAgent;
 
 import com.example.CoveredByEasyMock;
 import com.example.CoveredByJMockit;
+import com.example.CoveredByJUnitThreeSuite;
 import com.example.CrashesJVMWhenMutated;
 import com.example.FailsTestWhenEnvVariableSetTestee;
 import com.example.FullyCoveredTestee;
@@ -60,6 +61,7 @@ import com.example.FullyCoveredTesteeTest;
 import com.example.HasMutationInFinallyBlockNonTest;
 import com.example.HasMutationInFinallyBlockTest;
 import com.example.HasMutationsInFinallyBlock;
+import com.example.JUnitThreeSuite;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 
@@ -329,6 +331,18 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data
         .setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
     this.data.setDetectInlinedCode(true);
+    createAndRun();
+
+    verifyResults(KILLED);
+  }
+  
+  @Test
+  public void shouldUseTestsDefinedInASuppliedJUnitThreeSuite() {
+    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
+    this.data.setTargetClasses(predicateFor(CoveredByJUnitThreeSuite.class));
+    this.data
+        .setTargetTests(predicateFor(JUnitThreeSuite.class));
+    this.data.setVerbose(true);
     createAndRun();
 
     verifyResults(KILLED);

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.jmock.MockObjectTestCase;
 import org.junit.AfterClass;
@@ -230,6 +231,59 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithAfterClass() {
     final Collection<TestUnit> actual = findWithTestee(HasAfterClassAnnotation.class);
     assertEquals(1, actual.size());
+  }
+  
+  public static class NoPublicConstructor extends TestCase {
+    protected NoPublicConstructor() {
+      
+    }
+    
+    public void testFoo() {
+      
+    }
+  }
+  
+  @Test
+  public void shouldNotFindTestsInClassesExtendingTestCaseWithoutAPublicConstructor() {
+    final Collection<TestUnit> actual = findWithTestee(NoPublicConstructor.class);
+    assertEquals(0, actual.size());
+  }
+  
+  public static class OwnSuiteMethod extends TestCase {
+
+    public static TestSuite suite() {
+      return new TestSuite(OwnSuiteMethod.class);
+    }
+
+    public void testOne() {
+
+    }
+    
+    public void testTwo() {
+
+    }
+
+  }
+  
+  @Test
+  public void shouldFindTestsInClassWithASuiteMethodThatReturnsItself() {
+    final Collection<TestUnit> actual = findWithTestee(OwnSuiteMethod.class);
+    assertEquals(2, actual.size());
+  }
+ 
+  
+  public static class SuiteMethod extends TestCase {
+
+    public static TestSuite suite() {
+      return new TestSuite(JUnit3Test.class);
+    }
+        
+  }
+  
+  @Test
+  public void shouldNotFoundTestsInClassWithASuiteMethodThatReturnsOthersClasses() {
+    final Collection<TestUnit> actual = findWithTestee(SuiteMethod.class);
+    assertEquals(0, actual.size());
   }
 
 }

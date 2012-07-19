@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
@@ -375,8 +376,6 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
-  // static abstract class HideFromJUnit10 {
-
   public static interface Marker {
   }
 
@@ -412,8 +411,6 @@ public class TestJUnitConfiguration {
 
     }
   }
-
-  // }
 
   @Test
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
@@ -494,6 +491,76 @@ public class TestJUnitConfiguration {
     // see http://junit.sourceforge.net/doc/ReleaseNotes4.4.html#assumptions
     run(HasAssumptionFailure.class);
     verify(this.listener).onTestSuccess((any(TestResult.class)));
+  }
+
+  public static class JUnit3Test extends TestCase {
+    public void testSomething() {
+
+    }
+
+    public void testSomethingElse() {
+
+    }
+  }
+
+  public static class JUnit3SuiteMethod extends TestCase {
+    public JUnit3SuiteMethod(String testName) {
+      super(testName);
+    }
+
+    public static junit.framework.Test suite() {
+      TestSuite suite = new TestSuite();
+      suite.addTest(new JUnit3Test());
+      return suite;
+    }
+
+  }
+
+  @Test
+  public void shouldDetectTestInJUnitThreeSuiteMethods() {
+    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
+        this.testee, new UnGroupedStrategy(),
+        Arrays.<Class<?>> asList(JUnit3SuiteMethod.class));
+    assertEquals(2, actual.size());
+  }
+
+  public static class OwnSuiteMethod extends TestCase {
+
+    public static TestSuite suite() {
+      return new TestSuite(OwnSuiteMethod.class);
+    }
+
+    public void testOne() {
+
+    }
+
+  }
+
+  @Test
+  public void shouldFindTestsInClassWithASuiteMethod() {
+    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
+        this.testee, new UnGroupedStrategy(),
+        Arrays.<Class<?>> asList(OwnSuiteMethod.class));
+    assertEquals(1, actual.size());
+  }
+  
+  
+  public static class NoSuitableConstructor extends TestCase {
+    public NoSuitableConstructor(int i, int j, long l) {
+      
+    }
+    
+    public void testSomething() {
+      
+    }
+  }
+  
+  @Test
+  public void shouldNotFindTestsInJUnit3TestsWithoutASuitableConstructor() {
+    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
+        this.testee, new UnGroupedStrategy(),
+        Arrays.<Class<?>> asList(NoSuitableConstructor.class));
+    assertEquals(0, actual.size());
   }
 
   private void run(final Class<?> clazz) {

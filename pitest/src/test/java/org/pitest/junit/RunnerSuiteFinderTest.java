@@ -85,6 +85,29 @@ public class RunnerSuiteFinderTest {
     assertEquals(expected, actual);
   }
 
+
+  public static class JUnit3SuiteMethod extends TestCase {
+    public JUnit3SuiteMethod(String testName) {
+      super(testName);
+    }
+
+    public static junit.framework.Test suite() {
+      TestSuite suite = new TestSuite();
+      suite.addTest(new One());
+      suite.addTest(new Two());
+      return suite;
+    }
+
+  }
+
+  @Test
+  public void shouldFindSuiteClassedInJUnit3SuiteMethod() {
+    final Collection<TestClass> actual = findWithTestee(JUnit3SuiteMethod.class);
+    final Collection<TestClass> expected = Arrays.asList(new TestClass(
+        One.class), new TestClass(Two.class));
+    assertEquals(expected, actual);
+  }
+
   private Collection<TestClass> findWithTestee(final Class<?> clazz) {
     return this.testee.apply(new TestClass(clazz));
   }

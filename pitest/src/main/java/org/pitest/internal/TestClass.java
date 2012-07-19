@@ -16,7 +16,9 @@ package org.pitest.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.pitest.extension.Configuration;
 import org.pitest.extension.GroupingStrategy;
@@ -45,15 +47,28 @@ public final class TestClass {
     return this.clazz;
   }
 
-  private void findTestUnits(final List<TestUnit> tus,
-      final TestClass suiteClass, final Configuration startConfig,
+  public Collection<TestUnit> getTestUnits(final Configuration startConfig,
       final GroupingStrategy groupStrategy) {
 
+    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    final Set<TestClass> visitedClasses = new HashSet<TestClass>();
+    findTestUnits(tus, visitedClasses, this, startConfig, groupStrategy);
+    return tus;
+  }
+  
+  private void findTestUnits(final List<TestUnit> tus,
+      Set<TestClass> visitedClasses, final TestClass suiteClass, final Configuration startConfig,
+      final GroupingStrategy groupStrategy) {
+    visitedClasses.add(suiteClass);
     final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
+
     for (final TestClass tc : tcs) {
-      findTestUnits(tus, tc, startConfig, groupStrategy);
+      if (!visitedClasses.contains(tc)) {
+        findTestUnits(tus, visitedClasses, tc, startConfig, groupStrategy);
+      }
     }
+    
     final Collection<TestUnit> testsInThisClass = suiteClass
         .getTestUnitsWithinClass(startConfig);
     if (!testsInThisClass.isEmpty()) {
@@ -62,12 +77,7 @@ public final class TestClass {
 
   }
 
-  public Collection<TestUnit> getTestUnits(final Configuration startConfig,
-      final GroupingStrategy groupStrategy) {
-    final List<TestUnit> tus = new ArrayList<TestUnit>();
-    findTestUnits(tus, this, startConfig, groupStrategy);
-    return tus;
-  }
+
 
   @Override
   public String toString() {

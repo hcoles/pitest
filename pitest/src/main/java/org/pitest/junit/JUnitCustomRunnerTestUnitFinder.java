@@ -43,9 +43,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
-    if ((runner == null)
-        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
-        || isParameterizedTest(runner)) {
+    if (isNotARunnableTest(runner, clazz.getName())) {
       return Collections.emptyList();
     }
 
@@ -56,6 +54,21 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
     }
+  }
+
+  private boolean isNotARunnableTest(final Runner runner, String className) {
+    return (runner == null)
+        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
+        || isParameterizedTest(runner)
+        || isAJUnitThreeErrorOrWarning(runner)
+        || isJUnitThreeSuiteMethodNotForOwnClass(runner, className);
+  }
+
+
+  private boolean isAJUnitThreeErrorOrWarning(Runner runner) {
+    return !runner.getDescription().getChildren().isEmpty()
+        && runner.getDescription().getChildren().get(0).getClassName()
+            .startsWith("junit.framework.TestSuite");
   }
 
   private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
@@ -71,6 +84,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean isParameterizedTest(final Runner runner) {
     return Parameterized.class.isAssignableFrom(runner.getClass());
+  }
+  
+  private boolean isJUnitThreeSuiteMethodNotForOwnClass(Runner runner, String className) {
+    // use strings in case this hack blows up due to internal junit change
+    return runner.getClass().getName().equals("org.junit.internal.runners.SuiteMethod") && !runner.getDescription().getClassName().equals(className);
   }
 
   private Collection<TestUnit> splitIntoFilteredUnits(
