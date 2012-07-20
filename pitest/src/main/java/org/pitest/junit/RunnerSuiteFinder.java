@@ -15,7 +15,11 @@
 
 package org.pitest.junit;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
@@ -23,7 +27,6 @@ import org.junit.runner.Runner;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
@@ -36,12 +39,27 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   public Collection<TestClass> apply(final TestClass a) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(a.getClazz());
-    
-    FunctionalList<TestClass> classes =  FCollection.filter(runner.getDescription().getChildren(), Prelude.or(isSuiteMethodRunner(runner),isSuite()))
-        .flatMap(descriptionToTestClass());
+
+    List<Description> allChildren = new ArrayList<Description>();
+    flattenChildren(allChildren, runner.getDescription());
+
+    Set<TestClass> classes = new LinkedHashSet<TestClass>(runner.getDescription().getChildren().size());
+
+    Collection<Description> suites = FCollection.filter(allChildren,
+        Prelude.or(isSuiteMethodRunner(runner), isSuite()));
+    FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
+
     classes.remove(a);
     return classes;
 
+  }
+
+  private void flattenChildren(List<Description> allChildren,
+      Description description) {
+    for (Description each : description.getChildren()) {
+      allChildren.add(each);
+      flattenChildren(allChildren, each);
+    }
   }
 
   private static Predicate<Description> isSuiteMethodRunner(final Runner runner) {
@@ -49,7 +67,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       public Boolean apply(Description a) {
         return SuiteMethod.class.isAssignableFrom(runner.getClass());
       }
-      
+
     };
   }
 
@@ -69,7 +87,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   }
 
   private static Predicate<Description> isSuite() {
-    return new  Predicate<Description> () {
+    return new Predicate<Description>() {
       public Boolean apply(final Description a) {
         return a.isSuite();
       }

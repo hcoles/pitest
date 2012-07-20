@@ -1,7 +1,8 @@
 package org.pitest.junit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,8 +64,10 @@ public class RunnerSuiteFinderTest {
     final Collection<TestClass> actual = findWithTestee(CustomSuite.class);
     final Collection<TestClass> expected = Arrays.asList(new TestClass(
         One.class), new TestClass(Two.class));
-    assertEquals(expected, actual);
+    
+    assertContains(expected,actual);
   }
+
 
   public static class JUnit3Suite extends TestCase {
     public static junit.framework.Test suite() {
@@ -82,7 +85,7 @@ public class RunnerSuiteFinderTest {
     final Collection<TestClass> actual = findWithTestee(JUnit3Suite.class);
     final Collection<TestClass> expected = Arrays.asList(new TestClass(
         One.class), new TestClass(Two.class));
-    assertEquals(expected, actual);
+    assertContains(expected, actual);
   }
 
 
@@ -101,15 +104,29 @@ public class RunnerSuiteFinderTest {
   }
 
   @Test
-  public void shouldFindSuiteClassedInJUnit3SuiteMethod() {
+  public void shouldFindSuiteClassesInJUnit3SuiteMethod() {
     final Collection<TestClass> actual = findWithTestee(JUnit3SuiteMethod.class);
     final Collection<TestClass> expected = Arrays.asList(new TestClass(
         One.class), new TestClass(Two.class));
-    assertEquals(expected, actual);
+    assertContains(expected, actual);
+  }
+  
+  @Test
+  public void shouldFindSuiteClasseInNestedJUnit3Suite() {
+    final Collection<TestClass> actual = findWithTestee(com.example.JUnitThreeSuite.class);
+    final Collection<TestClass> expected = Arrays.asList(new TestClass(
+        com.example.JUnitThreeTest.class));
+    assertContains(expected, actual);
   }
 
   private Collection<TestClass> findWithTestee(final Class<?> clazz) {
     return this.testee.apply(new TestClass(clazz));
+  }
+
+  
+  private void assertContains(Collection<TestClass> expected,
+      Collection<TestClass> actual) {
+    assertThat(actual, hasItems(expected.toArray(new TestClass[expected.size()])));
   }
 
 }
