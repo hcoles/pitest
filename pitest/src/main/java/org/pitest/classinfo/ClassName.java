@@ -25,7 +25,7 @@ public final class ClassName implements Serializable {
   private final String      name;
 
   public ClassName(final String name) {
-    this.name = name.replace('.', '/');
+    this.name = name.replace('.', '/').intern();
   }
 
   public ClassName(final Class<?> clazz) {

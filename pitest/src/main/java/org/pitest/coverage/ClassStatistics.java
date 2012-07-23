@@ -26,7 +26,7 @@ public class ClassStatistics implements Serializable {
   private final Set<Integer> visitedLines     = new HashSet<Integer>(0);
 
   public ClassStatistics(final String className) {
-    this.className = className;
+    this.className = className.intern();
   }
 
   public String getClassName() {

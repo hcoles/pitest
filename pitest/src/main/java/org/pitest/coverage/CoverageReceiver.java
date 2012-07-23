@@ -8,6 +8,6 @@ public interface CoverageReceiver extends InvokeReceiver {
   public abstract void newTest();
 
   public abstract void recordTestOutcome(Description description,
-      boolean wasGreen, long executionTime);
+      boolean wasGreen, int executionTime);
 
 }

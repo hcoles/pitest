@@ -27,10 +27,17 @@ public class TestInfo {
 
   public TestInfo(final String definingClass, final String name,
       final int time, final Option<ClassName> testee) {
-    this.definingClass = definingClass;
+    this.definingClass = internIfNotNull(definingClass);
     this.name = name;
     this.time = time;
     this.testee = testee;
+  }
+
+  private String internIfNotNull(String string) {
+    if (string == null ) {
+      return null;
+    }
+    return string.intern();
   }
 
   public String getName() {

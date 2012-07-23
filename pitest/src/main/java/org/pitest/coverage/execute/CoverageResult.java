@@ -11,12 +11,12 @@ public class CoverageResult implements Serializable {
   private static final long                 serialVersionUID = 1L;
 
   private final Description                 testUnitDescription;
-  private final long                        executionTime;
+  private final int                        executionTime;
   private final Collection<ClassStatistics> coverage;
   private final boolean                     greenSuite;
 
   public CoverageResult(final Description testUnitDescription,
-      final long executionTime, final boolean greenSuite,
+      final int executionTime, final boolean greenSuite,
       final Collection<ClassStatistics> coverage) {
     this.testUnitDescription = testUnitDescription;
     this.executionTime = executionTime;
@@ -28,7 +28,7 @@ public class CoverageResult implements Serializable {
     return this.testUnitDescription;
   }
 
-  public long getExecutionTime() {
+  public int getExecutionTime() {
     return this.executionTime;
   }
 

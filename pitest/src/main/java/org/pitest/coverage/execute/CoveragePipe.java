@@ -23,7 +23,7 @@ public class CoveragePipe implements CoverageReceiver {
   }
 
   public synchronized void recordTestOutcome(final Description description,
-      final boolean wasGreen, final long executionTime) {
+      final boolean wasGreen, final int executionTime) {
     final Collection<Long> hits = CodeCoverageStore.getHits();
 
     this.dos.writeByte(Id.OUTCOME);
@@ -33,7 +33,7 @@ public class CoveragePipe implements CoverageReceiver {
       this.dos.writeLong(each);
     }
     this.dos.writeBoolean(wasGreen);
-    this.dos.writeLong(executionTime);
+    this.dos.writeInt(executionTime);
 
   }
 

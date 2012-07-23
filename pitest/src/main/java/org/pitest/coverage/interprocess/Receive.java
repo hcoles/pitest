@@ -64,7 +64,7 @@ final class Receive implements ReceiveStrategy {
   private CoverageResult createCoverageResult(final SafeDataInputStream is,
       final Description d, final Map<Integer, ClassStatistics> hits) {
     final boolean isGreen = is.readBoolean();
-    final long executionTime = is.readLong();
+    final int executionTime = is.readInt();
     final CoverageResult cr = new CoverageResult(d, executionTime, isGreen,
         hits.values());
     return cr;

@@ -20,8 +20,8 @@ import java.io.Serializable;
 public final class Description implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  
   private final String      testClass;
-
   private final String      name;
 
   public Description(final String name) {
@@ -33,8 +33,15 @@ public final class Description implements Serializable {
   }
 
   public Description(final String name, final String testClass) {
-    this.testClass = testClass;
+    this.testClass = internIfNotNull(testClass);
     this.name = name;
+  }
+
+  private String internIfNotNull(String string) {
+    if ( string == null ) {
+      return null;
+    }
+    return string.intern();
   }
 
   public String getFirstTestClass() {

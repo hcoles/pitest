@@ -60,6 +60,8 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
+  private final static int MB =  1024*1024;
+  
   private static final Logger     LOG = Log.getLogger();
   private final ReportOptions     data;
   private final ListenerFactory   listenerFactory;
@@ -143,13 +145,20 @@ public class MutationCoverageReport implements Runnable {
 
     Log.setVerbose(this.data.isVerbose());
 
+    Runtime runtime = Runtime.getRuntime();
+    
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
+    LOG.fine("Maxmium available memory is " + ( runtime.maxMemory() / MB) + " mb");
+
 
     final long t0 = System.currentTimeMillis();
 
     verifyBuildSuitableForMutationTesting();
 
     final CoverageDatabase coverageData = this.coverage.calculateCoverage();
+    
+    LOG.fine("Used memory after coverage calculation " + (runtime.totalMemory() - runtime.freeMemory())/MB + " mb");
+    LOG.fine("Free Memory after coverage calculation " + runtime.freeMemory() / MB + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -166,7 +175,10 @@ public class MutationCoverageReport implements Runnable {
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
-    checkMutationsFounds(tus);
+    checkMutationsFound(tus);
+    
+    LOG.fine("Used memory before analysis start " + (runtime.totalMemory() - runtime.freeMemory())/MB + " mb");
+    LOG.fine("Free Memory before analysis start " + runtime.freeMemory() / MB + " mb");
 
     final Pitest pit = new Pitest(staticConfig);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
@@ -220,7 +232,7 @@ public class MutationCoverageReport implements Runnable {
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
 
-  private void checkMutationsFounds(final List<TestUnit> tus) {
+  private void checkMutationsFound(final List<TestUnit> tus) {
     if (tus.isEmpty()) {
       if (this.data.shouldFailWhenNoMutations()) {
         throw new PitHelpError(Help.NO_MUTATIONS_FOUND);

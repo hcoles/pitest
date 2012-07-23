@@ -79,21 +79,21 @@ public class ReceiveTest {
 
   @Test
   public void shouldReportExectionTime() {
-    long executionTime = 1000;
+    int executionTime = 1000;
     recordTestCoverage(executionTime, 0, 0, true);
     
     assertEquals(executionTime,result.getExecutionTime());
   }
 
 
-  private void recordTestCoverage(long executionTime,
+  private void recordTestCoverage(int executionTime,
       int classId, int lineNumber, boolean testPassed) {
-    when(is.readInt()).thenReturn(classId);
+    when(is.readInt()).thenReturn(classId, executionTime);
     when(is.readString()).thenReturn("foo");
     testee.apply(Id.CLAZZ, is);
     
     when(is.read(Description.class)).thenReturn(description);
-    when(is.readLong()).thenReturn(1l,CodeCoverageStore.encode(classId, lineNumber), executionTime);    
+    when(is.readLong()).thenReturn(1l,CodeCoverageStore.encode(classId, lineNumber));    
     when(is.readBoolean()).thenReturn(testPassed);
     testee.apply(Id.OUTCOME, is);
   }

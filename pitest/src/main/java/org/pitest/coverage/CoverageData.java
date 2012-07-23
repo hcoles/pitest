@@ -41,7 +41,6 @@ public class CoverageData implements CoverageDatabase {
   private final static Logger                              LOG           = Log
                                                                              .getLogger();
 
-  private final Map<Description, Long>                     times         = new LinkedHashMap<Description, Long>();
   private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new LinkedHashMap<String, Map<ClassLine, Set<TestInfo>>>();
   private final CodeSource                                 code;
 
@@ -85,14 +84,15 @@ public class CoverageData implements CoverageDatabase {
   }
 
   void calculateClassCoverage(final CoverageResult cr) {
-     
-    checkForFailedTest(cr);
 
-    this.recordExecutionTime(cr.getTestUnitDescription(), cr.getExecutionTime());
+    checkForFailedTest(cr);
+    final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
+        cr.getExecutionTime());
 
     for (final ClassStatistics i : cr.getCoverage()) {
-      Map<ClassLine, Set<TestInfo>> map = getCoverageMapForClass(i.getClassName());
-      mapTestsToClassLines(cr.getTestUnitDescription(), i, map);
+      final Map<ClassLine, Set<TestInfo>> map = getCoverageMapForClass(i
+          .getClassName());
+      mapTestsToClassLines(ti, i, map);
     }
   }
 
@@ -104,7 +104,7 @@ public class CoverageData implements CoverageDatabase {
     }
   }
 
-  private void mapTestsToClassLines(final Description description,
+  private void mapTestsToClassLines(final TestInfo test,
       final ClassStatistics i, final Map<ClassLine, Set<TestInfo>> map) {
 
     for (final int line : i.getUniqueVisitedLines()) {
@@ -116,20 +116,18 @@ public class CoverageData implements CoverageDatabase {
         // here
         map.put(key, testsForLine);
       }
-      testsForLine.add(this.descriptionToTestInfo(description));
+      testsForLine.add(test);
 
     }
   }
 
-  private TestInfo descriptionToTestInfo(final Description description) {
-    final int time = this.times.get(description).intValue();
 
+  private TestInfo createTestInfo(final Description description,
+      final int executionTime) {
     final Option<ClassName> testee = this.code.findTestee(description
         .getFirstTestClass());
-
     return new TestInfo(description.getFirstTestClass(),
-        description.getQualifiedName(), time, testee);
-
+        description.getQualifiedName(), executionTime, testee);
   }
 
   private F2<Integer, String, Integer> numberCoveredLines() {
@@ -166,16 +164,10 @@ public class CoverageData implements CoverageDatabase {
     return map;
   }
 
-  private void recordExecutionTime(final Description testUnitDescription,
-      final long executionTime) {
-    this.times.put(testUnitDescription, executionTime);
-  }
-
   private void recordTestFailure() {
     this.hasFailedTest = true;
   }
-  
-  
+
   private Map<ClassLine, Set<TestInfo>> getCoverageMapForClass(
       final String className) {
     Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(className);

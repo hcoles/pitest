@@ -43,7 +43,7 @@ public class CoverageDecorator extends TestUnitDecorator {
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
         rc);
     this.child().execute(loader, wrappedCollector);
-    final long executionTime = System.currentTimeMillis() - t0;
+    final int executionTime = (int) (System.currentTimeMillis() - t0);
     this.invokeQueue.recordTestOutcome(child().getDescription(),
         !wrappedCollector.shouldExit(), executionTime);
 
