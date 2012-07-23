@@ -14,15 +14,15 @@
  */
 package org.pitest.mutationtest.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class MutationIdentifier {
 
   private final String className;
-  private final SortedSet<Integer>    indexes;
+  private final Collection<Integer>    indexes;
   private final String mutator;
 
   public MutationIdentifier(final String className, int index,
@@ -32,8 +32,8 @@ public class MutationIdentifier {
   
   public MutationIdentifier(final String className, Set<Integer> indexes,
       final String mutatorUniqueId) {
-    this.className = className;
-    this.indexes = new TreeSet<Integer>(indexes);
+    this.className = className.intern();
+    this.indexes = new ArrayList<Integer>(indexes);
     this.mutator = mutatorUniqueId;
   }
 

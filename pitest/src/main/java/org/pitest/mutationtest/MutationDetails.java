@@ -31,7 +31,7 @@ public class MutationDetails {
   private final int                block;
   private final int                lineNumber;
   private final String             description;
-  private final List<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
+  private final ArrayList<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
   private final boolean isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
@@ -105,6 +105,7 @@ public class MutationDetails {
 
   public void addTestsInOrder(final Collection<TestInfo> testNames) {
     this.testsInOrder.addAll(testNames);
+    this.testsInOrder.trimToSize();
   }
 
   public boolean isInStaticInitializer() {

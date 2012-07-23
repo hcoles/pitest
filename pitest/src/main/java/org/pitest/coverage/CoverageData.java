@@ -105,10 +105,10 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private void mapTestsToClassLines(final TestInfo test,
-      final ClassStatistics i, final Map<ClassLine, Set<TestInfo>> map) {
+      final ClassStatistics stats, final Map<ClassLine, Set<TestInfo>> map) {
 
-    for (final int line : i.getUniqueVisitedLines()) {
-      final ClassLine key = new ClassLine(i.getClassName(), line);
+    for (final int line : stats.getUniqueVisitedLines()) {
+      final ClassLine key = new ClassLine(stats.getClassName(), line);
       Set<TestInfo> testsForLine = map.get(key);
       if (testsForLine == null) {
         testsForLine = new TreeSet<TestInfo>(new TestInfoNameComparator()); // inject
