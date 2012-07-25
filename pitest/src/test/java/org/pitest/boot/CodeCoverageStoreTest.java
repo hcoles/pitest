@@ -79,6 +79,10 @@ public class CodeCoverageStoreTest {
   @Test
   public void shouldBeSafeToAccessAcrossMultipleThreads()
       throws InterruptedException, ExecutionException {
+
+    CodeCoverageStore.registerClass("foo");
+    CodeCoverageStore.endClass(0, 999);
+    
     Callable<ConcurrentModificationException> read = makeReader();
 
     ExecutorService pool = Executors.newFixedThreadPool(13);

@@ -29,13 +29,15 @@ import org.pitest.boot.CodeCoverageStore;
 public class CoverageMethodVisitor extends MethodAdapter {
   private final MethodVisitor methodVisitor;
   private final int           classId;
+  private final CoverageClassVisitor cv;
 
-  public CoverageMethodVisitor(final int classId, final MethodVisitor writer,
+  public CoverageMethodVisitor(CoverageClassVisitor cv,final int classId, final MethodVisitor writer,
       final String name, final String methodDesc) {
     super(writer);
 
     this.methodVisitor = writer;
     this.classId = classId;
+    this.cv= cv;
   }
 
   @Override
@@ -45,6 +47,7 @@ public class CoverageMethodVisitor extends MethodAdapter {
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
+    cv.registerLine(line);
     this.methodVisitor.visitLdcInsn(CodeCoverageStore
         .encode(this.classId, line));
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
@@ -53,4 +56,5 @@ public class CoverageMethodVisitor extends MethodAdapter {
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC);
     this.methodVisitor.visitLineNumber(line, start);
   }
+  
 }

@@ -19,27 +19,35 @@ package org.pitest.boot;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author ivanalx
+ * Store for line visit information.
+ *  
+ * Requires roughly 1 byte of memory for each line of source 
+ * (including comments and other non code lines).
  */
 public final class CodeCoverageStore {
 
-  public static final String    CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
-                                                                              .getName()
-                                                                              .replace(
-                                                                                  '.',
-                                                                                  '/');
-  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
-  public static final String    CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
+                                                                                             .getName()
+                                                                                             .replace(
+                                                                                                 '.',
+                                                                                                 '/');
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
 
-  private static InvokeReceiver invokeQueue;
-  private static int            classId                                   = 0;
+  private static InvokeReceiver                invokeQueue;
+  private static int                           classId                                   = 0;
 
-  private static Set<Long>      lineHits                                  = new HashSet<Long>();
+  // ugly but >100% performance improvement compared to hashset of encoded line hits.
+  // first boolean indicates if class has been hit. Remaining booleans act as sparse array of line hits.
+  // hopefully memory footprint will not be a problem
+  private final static Map<Integer, boolean[]> classHits                                  = new ConcurrentHashMap<Integer, boolean[]>();
 
+  
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
   }
@@ -47,19 +55,38 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public synchronized static void visitLine(final long lineId) { // NO_UCD
-    lineHits.add(lineId);
+  public static void visitLine(final long lineId) { // NO_UCD
+    int line = decodeLineId(lineId);
+    int clazz = decodeClassId(lineId);
+    boolean[] bs = classHits.get(clazz);
+    bs[0] = true;
+    bs[line] = true;
   }
 
   public synchronized static void reset() {
-    lineHits = new HashSet<Long>();
+    for (Entry<Integer, boolean[]> each : classHits.entrySet()) {
+      classHits.put(each.getKey(), new boolean[each.getValue().length]);
+    }
   }
 
   public synchronized static Collection<Long> getHits() {
-    return new ArrayList<Long>(lineHits);
+    Collection<Long> ls = new ArrayList<Long>();
+    for (Entry<Integer, boolean[]> each : classHits.entrySet()) {
+      boolean[] bs = each.getValue();
+      // first entry tracks if class has been visited at all
+      if ( !bs[0] ) {
+        continue;
+      }
+      for (int j = 1; j != bs.length; j++) {
+        if (bs[j]) {
+          ls.add(encode(each.getKey(), j));
+        }
+      }
+    }
+    return ls;
   }
 
-  public static int registerClass(final String className) {
+  public synchronized static int registerClass(final String className) {
     final int id = nextId();
     invokeQueue.registerClass(id, className);
     return id;
@@ -79,6 +106,10 @@ public final class CodeCoverageStore {
 
   public static long encode(final int classId, final int line) {
     return ((long) classId << 32) | line;
+  }
+
+  public static void endClass(int classId, int line) {
+    classHits.put(classId, new boolean[line + 1]);
   }
 
 }

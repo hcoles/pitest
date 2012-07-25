@@ -19,16 +19,22 @@ package org.pitest.coverage.codeassist;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.boot.CodeCoverageStore;
 
 /**
  * @author ivanalx
  */
 public class CoverageClassVisitor extends MethodFilteringAdapter {
   private final int classId;
+  private int line;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
     this.classId = classId;
+  }
+  
+  public void registerLine(int line) {
+    this.line = Math.max(this.line, line);
   }
 
   @Override
@@ -36,8 +42,14 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
 
-    return new CoverageMethodVisitor(this.classId, methodVisitor, name, desc);
+    return new CoverageMethodVisitor(this,this.classId, methodVisitor, name, desc);
 
   }
+  
+  @Override
+  public void visitEnd() {
+    CodeCoverageStore.endClass(classId,line);
+  }
+  
 
 }
