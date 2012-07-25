@@ -17,24 +17,29 @@
 
 package org.pitest.coverage.codeassist;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.boot.CodeCoverageStore;
 
 /**
- * @author ivanalx
+ * Instruments a class with probes on each line
  */
 public class CoverageClassVisitor extends MethodFilteringAdapter {
-  private final int classId;
-  private int line;
+  private final int           classId;
+  private final List<Integer> probesToLines = new ArrayList<Integer>();
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
     this.classId = classId;
   }
-  
-  public void registerLine(int line) {
-    this.line = Math.max(this.line, line);
+
+  int registerLine(int line) {
+    probesToLines.add(line);
+    return probesToLines.size() - 1;
   }
 
   @Override
@@ -42,14 +47,22 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
 
-    return new CoverageMethodVisitor(this,this.classId, methodVisitor, name, desc);
+    return new CoverageMethodVisitor(this, this.classId, methodVisitor);
 
   }
-  
+
   @Override
   public void visitEnd() {
-    CodeCoverageStore.endClass(classId,line);
+    CodeCoverageStore.registerClassProbes(classId, convertToPrimitiveArray(probesToLines));
   }
-  
+
+  public static int[] convertToPrimitiveArray(List<Integer> integers) {
+    int[] ret = new int[integers.size()];
+    Iterator<Integer> iterator = integers.iterator();
+    for (int i = 0; i < ret.length; i++) {
+      ret[i] = iterator.next().intValue();
+    }
+    return ret;
+  }
 
 }

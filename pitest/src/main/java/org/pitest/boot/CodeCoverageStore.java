@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Store for line visit information.
  *  
- * Requires roughly 1 byte of memory for each line of source 
- * (including comments and other non code lines).
+ * Requires roughly 5 bytes of memory for each line of code.
+ *  
  */
 public final class CodeCoverageStore {
 
@@ -43,10 +43,11 @@ public final class CodeCoverageStore {
   private static int                           classId                                   = 0;
 
   // ugly but >100% performance improvement compared to hashset of encoded line hits.
-  // first boolean indicates if class has been hit. Remaining booleans act as sparse array of line hits.
-  // hopefully memory footprint will not be a problem
+  // first boolean indicates if class has been hit. Remaining booleans track
+  // whether the probe at the matching index has been hit
   private final static Map<Integer, boolean[]> classHits                                  = new ConcurrentHashMap<Integer, boolean[]>();
-
+  
+  private final static Map<Integer,int[]> classProbeToLineMapping = new ConcurrentHashMap<Integer, int[]>(); 
   
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
@@ -60,7 +61,7 @@ public final class CodeCoverageStore {
     int clazz = decodeClassId(lineId);
     boolean[] bs = classHits.get(clazz);
     bs[0] = true;
-    bs[line] = true;
+    bs[line+1] = true;
   }
 
   public synchronized static void reset() {
@@ -70,20 +71,22 @@ public final class CodeCoverageStore {
   }
 
   public synchronized static Collection<Long> getHits() {
-    Collection<Long> ls = new ArrayList<Long>();
+    Collection<Long> lineHits = new ArrayList<Long>();
     for (Entry<Integer, boolean[]> each : classHits.entrySet()) {
       boolean[] bs = each.getValue();
       // first entry tracks if class has been visited at all
       if ( !bs[0] ) {
         continue;
       }
-      for (int j = 1; j != bs.length; j++) {
-        if (bs[j]) {
-          ls.add(encode(each.getKey(), j));
+      int classId = each.getKey();
+      int[] mapping = classProbeToLineMapping.get(classId);
+      for (int probeId = 1; probeId != bs.length; probeId++) {
+        if (bs[probeId]) {
+          lineHits.add(encode(classId, mapping[probeId-1]));
         }
       }
     }
-    return ls;
+    return lineHits;
   }
 
   public synchronized static int registerClass(final String className) {
@@ -103,13 +106,15 @@ public final class CodeCoverageStore {
   public static int decodeLineId(final long value) {
     return (int) (value & 0xFFFFFFFF);
   }
+  
 
   public static long encode(final int classId, final int line) {
     return ((long) classId << 32) | line;
   }
 
-  public static void endClass(int classId, int line) {
-    classHits.put(classId, new boolean[line + 1]);
+  public static void registerClassProbes(int classId, int[] probeToLines) {
+    classHits.put(classId, new boolean[probeToLines.length + 1]);  
+    classProbeToLineMapping.put(classId, probeToLines);
   }
 
 }

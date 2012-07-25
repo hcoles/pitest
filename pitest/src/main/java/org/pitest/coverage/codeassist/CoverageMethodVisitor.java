@@ -24,15 +24,14 @@ import org.objectweb.asm.Opcodes;
 import org.pitest.boot.CodeCoverageStore;
 
 /**
- * @author ivanalx
+ * Adds probes to each line of a method
  */
 public class CoverageMethodVisitor extends MethodAdapter {
   private final MethodVisitor methodVisitor;
   private final int           classId;
   private final CoverageClassVisitor cv;
-
-  public CoverageMethodVisitor(CoverageClassVisitor cv,final int classId, final MethodVisitor writer,
-      final String name, final String methodDesc) {
+  
+  public CoverageMethodVisitor(CoverageClassVisitor cv,final int classId, final MethodVisitor writer) {
     super(writer);
 
     this.methodVisitor = writer;
@@ -40,16 +39,11 @@ public class CoverageMethodVisitor extends MethodAdapter {
     this.cv= cv;
   }
 
-  @Override
-  public void visitCode() {
-    this.methodVisitor.visitCode();
-  }
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
-    cv.registerLine(line);
-    this.methodVisitor.visitLdcInsn(CodeCoverageStore
-        .encode(this.classId, line));
+    int probeId = cv.registerLine(line);
+    this.methodVisitor.visitLdcInsn(CodeCoverageStore.encode(this.classId, probeId));
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME,
