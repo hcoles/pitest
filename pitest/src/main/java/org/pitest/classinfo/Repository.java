@@ -15,7 +15,9 @@
 package org.pitest.classinfo;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassByteArraySource;
@@ -23,6 +25,7 @@ import org.pitest.internal.ClassByteArraySource;
 public class Repository {
 
   private final Map<ClassName, ClassInfo> knownClasses = new HashMap<ClassName, ClassInfo>();
+  private final Set<ClassName> unknownClasses = new HashSet<ClassName>();
   private final ClassByteArraySource      source;
 
   public Repository(final ClassByteArraySource source) {
@@ -31,7 +34,7 @@ public class Repository {
 
   public boolean hasClass(final ClassName name) {
     return this.knownClasses.containsKey(name)
-        || this.source.apply(name.asJavaName()).hasSome();
+        || querySource(name).hasSome();
   }
 
   public Option<ClassInfo> fetchClass(final Class<?> clazz) {
@@ -56,7 +59,7 @@ public class Repository {
   }
 
   private Option<ClassInfo> nameToClassInfo(final ClassName name) {
-    final Option<byte[]> bytes = this.source.apply(name.asJavaName());
+    final Option<byte[]> bytes = querySource(name);
     if (bytes.hasSome()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
           bytes.value());
@@ -64,6 +67,19 @@ public class Repository {
     } else {
       return Option.none();
     }
+  }
+  
+  private Option<byte[]> querySource(ClassName name) {
+    if (this.unknownClasses.contains(name)) {
+      return Option.none();
+    }
+    Option<byte[]> option = this.source.apply(name.asJavaName());
+    if ( option.hasSome() ) {
+      return option;
+    }
+  
+    unknownClasses.add(name);
+    return option;
   }
 
   private Option<ClassInfo> contructClassInfo(final ClassInfoBuilder classData) {

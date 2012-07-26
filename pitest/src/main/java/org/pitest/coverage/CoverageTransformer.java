@@ -37,9 +37,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   }
 
   private boolean shouldInclude(final String className) {
-
     return this.filter.apply(className);
-
   }
 
 }
