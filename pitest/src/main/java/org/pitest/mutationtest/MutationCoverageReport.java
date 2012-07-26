@@ -16,6 +16,7 @@ package org.pitest.mutationtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -60,8 +61,8 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverageReport implements Runnable {
 
-  private final static int MB =  1024*1024;
-  
+  private final static int        MB  = 1024 * 1024;
+
   private static final Logger     LOG = Log.getLogger();
   private final ReportOptions     data;
   private final ListenerFactory   listenerFactory;
@@ -69,7 +70,7 @@ public class MutationCoverageReport implements Runnable {
   private final Timings           timings;
   private final BuildVerifier     buildVerifier;
   private final CodeSource        code;
-  private final File baseDir;
+  private final File              baseDir;
 
   public MutationCoverageReport(final File baseDir, final CodeSource code,
       final CoverageGenerator coverage, final ReportOptions data,
@@ -110,11 +111,13 @@ public class MutationCoverageReport implements Runnable {
 
   private static void runReport(final ReportOptions data) {
 
-    final JarCreatingJarFinder agent = new JarCreatingJarFinder(new ClassPathByteArraySource(data.getClassPath()));
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder(
+        new ClassPathByteArraySource(data.getClassPath()));
     try {
 
-      final DirectoryResultOutputStrategy outputStrategy = data.getReportDirectoryStrategy();
-      
+      final DirectoryResultOutputStrategy outputStrategy = data
+          .getReportDirectoryStrategy();
+
       final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
           FCollection.map(data.getOutputFormats(),
               OutputFormat.createFactoryForFormat(outputStrategy)));
@@ -128,11 +131,11 @@ public class MutationCoverageReport implements Runnable {
       final CodeSource code = new CodeSource(cps, coverageOptions
           .getPitConfig().testClassIdentifier());
 
-      final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(null,
-          coverageOptions, launchOptions, code, timings);
+      final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
+          null, coverageOptions, launchOptions, code, timings);
 
-      final MutationCoverageReport instance = new MutationCoverageReport(null,code,
-          coverageGenerator, data, reportFactory, timings,
+      final MutationCoverageReport instance = new MutationCoverageReport(null,
+          code, coverageGenerator, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
       instance.run();
@@ -145,20 +148,22 @@ public class MutationCoverageReport implements Runnable {
 
     Log.setVerbose(this.data.isVerbose());
 
-    Runtime runtime = Runtime.getRuntime();
-    
-    LOG.fine("System class path is " + System.getProperty("java.class.path"));
-    LOG.fine("Maxmium available memory is " + ( runtime.maxMemory() / MB) + " mb");
+    final Runtime runtime = Runtime.getRuntime();
 
+    LOG.fine("System class path is " + System.getProperty("java.class.path"));
+    LOG.fine("Maxmium available memory is " + (runtime.maxMemory() / MB)
+        + " mb");
 
     final long t0 = System.currentTimeMillis();
 
     verifyBuildSuitableForMutationTesting();
 
     final CoverageDatabase coverageData = this.coverage.calculateCoverage();
-    
-    LOG.fine("Used memory after coverage calculation " + (runtime.totalMemory() - runtime.freeMemory())/MB + " mb");
-    LOG.fine("Free Memory after coverage calculation " + runtime.freeMemory() / MB + " mb");
+
+    LOG.fine("Used memory after coverage calculation "
+        + (runtime.totalMemory() - runtime.freeMemory()) / MB + " mb");
+    LOG.fine("Free Memory after coverage calculation " + runtime.freeMemory()
+        / MB + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -176,9 +181,11 @@ public class MutationCoverageReport implements Runnable {
 
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFound(tus);
-    
-    LOG.fine("Used memory before analysis start " + (runtime.totalMemory() - runtime.freeMemory())/MB + " mb");
-    LOG.fine("Free Memory before analysis start " + runtime.freeMemory() / MB + " mb");
+
+    LOG.fine("Used memory before analysis start "
+        + (runtime.totalMemory() - runtime.freeMemory()) / MB + " mb");
+    LOG.fine("Free Memory before analysis start " + runtime.freeMemory() / MB
+        + " mb");
 
     final Pitest pit = new Pitest(staticConfig);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
@@ -196,22 +203,23 @@ public class MutationCoverageReport implements Runnable {
   }
 
   private void printStats(final MutationStatisticsListener stats) {
-    System.out.println(StringUtil.seperatorLine('='));
-    System.out.println("- Timings");
-    System.out.println(StringUtil.seperatorLine('='));
-    this.timings.report(System.out);
+    final PrintStream ps = System.out;
+    ps.println(StringUtil.seperatorLine('='));
+    ps.println("- Timings");
+    ps.println(StringUtil.seperatorLine('='));
+    this.timings.report(ps);
 
-    System.out.println(StringUtil.seperatorLine('='));
-    System.out.println("- Statistics");
-    System.out.println(StringUtil.seperatorLine('='));
-    stats.getStatistics().report(System.out);
+    ps.println(StringUtil.seperatorLine('='));
+    ps.println("- Statistics");
+    ps.println(StringUtil.seperatorLine('='));
+    stats.getStatistics().report(ps);
 
-    System.out.println(StringUtil.seperatorLine('='));
-    System.out.println("- Mutators");
-    System.out.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.seperatorLine('='));
+    ps.println("- Mutators");
+    ps.println(StringUtil.seperatorLine('='));
     for (final Score each : stats.getStatistics().getScores()) {
-      each.report(System.out);
-      System.out.println(StringUtil.seperatorLine());
+      each.report(ps);
+      ps.println(StringUtil.seperatorLine());
     }
   }
 
@@ -219,13 +227,14 @@ public class MutationCoverageReport implements Runnable {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
-        this.data.getLoggingClasses(), this.data.getMutators(), this.data.isDetectInlinedCode());
+        this.data.getLoggingClasses(), this.data.getMutators(),
+        this.data.isDetectInlinedCode());
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
 
-    final MutationTestBuilder builder = new MutationTestBuilder(baseDir, mutationConfig,
-        limitMutationsPerClass(), coverageData, this.data,
+    final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
+        mutationConfig, limitMutationsPerClass(), coverageData, this.data,
         new ClassPathByteArraySource(this.data.getClassPath()),
         this.coverage.getConfiguration(), this.coverage.getJavaAgent());
 

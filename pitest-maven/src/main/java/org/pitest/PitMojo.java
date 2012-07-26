@@ -231,9 +231,17 @@ public class PitMojo extends AbstractMojo {
 
   public void execute() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
-    
-    this.goalStrategy.execute(project.getExecutionProject().getBasedir(),data);
+    this.goalStrategy.execute( detectBaseDir() ,data);
+  }
 
+  private File detectBaseDir() {
+    // execution project doesn't seem to always be available.
+    // possbily a maven 2 vs maven 3 issue?
+    MavenProject executionProject = project.getExecutionProject();
+    if ( executionProject == null ) {
+      return null;
+    }
+    return executionProject.getBasedir();
   }
 
   public List<String> getTargetClasses() {
