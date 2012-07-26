@@ -28,6 +28,7 @@ public class CoverageClassVisitorTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     CodeCoverageStore.init(invokeQueue);
+    CodeCoverageStore.reset();
     classId = CodeCoverageStore.registerClass("foo");
     testee = new CoverageClassVisitor(classId, w);
   }
