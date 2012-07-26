@@ -11,7 +11,7 @@ public class CoverageResult implements Serializable {
   private static final long                 serialVersionUID = 1L;
 
   private final Description                 testUnitDescription;
-  private final int                        executionTime;
+  private final int                         executionTime;
   private final Collection<ClassStatistics> coverage;
   private final boolean                     greenSuite;
 
@@ -53,8 +53,7 @@ public class CoverageResult implements Serializable {
     int result = 1;
     result = prime * result
         + ((this.coverage == null) ? 0 : this.coverage.hashCode());
-    result = prime * result
-        + (int) (this.executionTime ^ (this.executionTime >>> 32));
+    result = prime * result + this.executionTime;
     result = prime * result + (this.greenSuite ? 1231 : 1237);
     result = prime
         * result
