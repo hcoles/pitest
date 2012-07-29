@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -43,7 +44,11 @@ public class CodeCoverageStoreTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     CodeCoverageStore.init(this.receiver);
-    CodeCoverageStore.reset();
+  }
+  
+  @After
+  public void cleanUp() {
+    CodeCoverageStore.resetAllStaticState();
   }
 
   @Test
