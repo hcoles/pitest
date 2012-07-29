@@ -27,26 +27,19 @@ import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.dependency.DependencyExtractorTest.Foo;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
-//import sun.security.util.ManifestEntryVerifier;
-
 public class IgnoreCoreClassesTest {
 
   private IgnoreCoreClasses testee;
 
   @Before
   public void setUp() {
-    this.testee = IgnoreCoreClasses.INSTANCE;
+    this.testee = new IgnoreCoreClasses();
   }
 
   @Test
   public void shouldIgnoreJavaLangClasses() {
     assertIgnored(Integer.class);
   }
-
-  // @Test
-  // public void shouldIgnoreSunClasses() {
-  // assertIgnored(ManifestEntryVerifier.class);
-  // }
 
   @Test
   public void shouldIgnoreLegecyJUnitClasses() {

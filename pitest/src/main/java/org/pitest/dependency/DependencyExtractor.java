@@ -58,7 +58,7 @@ public class DependencyExtractor {
       final String clazz, final Predicate<String> targetPackages)
       throws IOException {
     final Set<String> allDependencies = extractCallDependencies(clazz,
-        IgnoreCoreClasses.INSTANCE);
+        new IgnoreCoreClasses());
     return FCollection.filter(allDependencies,
         and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
   }

@@ -21,9 +21,7 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Glob;
 
-public enum IgnoreCoreClasses implements Predicate<DependencyAccess> {
-
-  INSTANCE;
+public class IgnoreCoreClasses implements Predicate<DependencyAccess> {
 
   private final Predicate<String>  impl;
   private final Collection<String> filtered = Arrays.asList("java.*", "sun.*",
