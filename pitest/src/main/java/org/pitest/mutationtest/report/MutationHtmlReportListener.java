@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -201,13 +202,15 @@ public class MutationHtmlReportListener implements TestListener {
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
 
-    for (final PackageSummaryData psData : this.packageSummaryData.values()) {
+    List<PackageSummaryData> psd = new ArrayList<PackageSummaryData>(this.packageSummaryData.values());
+    Collections.sort(psd);
+    for (final PackageSummaryData psData : psd) {
       totals.add(psData.getTotals());
       createPackageIndexPage(psData);
     }
 
     st.setAttribute("totals", totals);
-    st.setAttribute("packageSummaries", this.packageSummaryData.values());
+    st.setAttribute("packageSummaries", psd);
     try {
       writer.write(st.toString());
       writer.close();
@@ -224,7 +227,6 @@ public class MutationHtmlReportListener implements TestListener {
 
     final Writer writer = this.outputStrategy.createWriterForFile(psData
         .getPackageDirectory() + File.separator + "index.html");
-    Collections.sort(psData.getSummaryData());
     st.setAttribute("packageData", psData);
     try {
       writer.write(st.toString());

@@ -27,8 +27,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.results.MutationResult;
 
-public class MutationTestSummaryData implements
-    Comparable<MutationTestSummaryData> {
+public class MutationTestSummaryData {
 
   private final String                     fileName;
   private final Set<String>                mutators  = new HashSet<String>();
@@ -128,10 +127,6 @@ public class MutationTestSummaryData implements
       }
     }
     return count;
-  }
-
-  public int compareTo(final MutationTestSummaryData other) {
-    return this.getFileName().compareTo(other.getFileName());
   }
 
   private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {

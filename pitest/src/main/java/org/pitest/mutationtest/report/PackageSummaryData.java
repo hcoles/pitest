@@ -1,11 +1,12 @@
 package org.pitest.mutationtest.report;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PackageSummaryData {
+public class PackageSummaryData implements Comparable<PackageSummaryData> {
 
   private final String                               packageName;
   private final Map<String, MutationTestSummaryData> fileNameToSummaryData = new HashMap<String, MutationTestSummaryData>();
@@ -47,7 +48,41 @@ public class PackageSummaryData {
   }
 
   public List<MutationTestSummaryData> getSummaryData() {
-    return new ArrayList<MutationTestSummaryData>(
+    ArrayList<MutationTestSummaryData> values = new ArrayList<MutationTestSummaryData>(
         this.fileNameToSummaryData.values());
+    Collections.sort(values, new MutationTestSummaryDataFileNameComparator());
+    return values;
+  }
+
+  
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((packageName == null) ? 0 : packageName.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PackageSummaryData other = (PackageSummaryData) obj;
+    if (packageName == null) {
+      if (other.packageName != null)
+        return false;
+    } else if (!packageName.equals(other.packageName))
+      return false;
+    return true;
+  }
+
+  public int compareTo(PackageSummaryData arg0) {
+    return this.packageName.compareTo(arg0.packageName);
   }
 }

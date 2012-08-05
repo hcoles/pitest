@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.Mutator;
@@ -341,6 +342,15 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
     assertEquals(1,FCollection.filter(actualDetails, isInFinallyBlock()).size());
+  }
+  
+  @Test
+  public void shouldMarkMutationsAsWithinFinallyBlockWhenWithinTryWithResourcesBlock() {
+    createTesteeWith(new ResourceFolderByteArraySource(),
+        True.<MethodInfo> all(), Mutator.VOID_METHOD_CALLS.asCollection());
+    final Collection<MutationDetails> actualDetails = findMutationsFor("Java7TryWithResources");
+    FCollection.forEach(actualDetails, Prelude.print());
+    assertEquals(2,FCollection.filter(actualDetails, isInFinallyBlock()).size());
   }
   
 
