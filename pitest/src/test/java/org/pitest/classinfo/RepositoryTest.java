@@ -38,12 +38,15 @@ public class RepositoryTest {
   
   @Mock
   private ClassByteArraySource source;
+  
+  @Mock
+  private HashFunction hashFunction;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.testee = new Repository(new ClassloaderByteArraySource(
-        IsolationUtils.getContextClassLoader()));
+        IsolationUtils.getContextClassLoader()),hashFunction);
   }
 
   @Test
@@ -284,6 +287,12 @@ public class RepositoryTest {
   public void shouldRecordSourceFile() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
     assertEquals("String.java", aClass.value().getSourceFileName());
+  }
+  
+  @Test
+  public void shouldCalculateHashForSuppledClass() {
+    this.testee.fetchClass(String.class);
+    verify(this.hashFunction).hash(any(byte[].class));
   }
 
   private String getOuterClassNameFor(final Class<?> clazz) {

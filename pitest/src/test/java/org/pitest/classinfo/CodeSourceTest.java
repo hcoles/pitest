@@ -101,7 +101,7 @@ public class CodeSourceTest {
   
   private ClassInfo makeClassInfo(String name) {
     ClassInfoBuilder data = new ClassInfoBuilder();
-    data.name = new ClassName(name);
+    data.id = new ClassIdentifier(1,new ClassName(name));
     ClassInfo ci = new ClassInfo(null,null,data);
     when(repository.fetchClass(name)).thenReturn(Option.some(ci));
     return ci;

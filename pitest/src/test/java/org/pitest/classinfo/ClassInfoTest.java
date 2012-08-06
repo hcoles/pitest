@@ -32,7 +32,7 @@ public class ClassInfoTest {
   @Before
   public void setUp() {
     this.data = new ClassInfoBuilder();
-    this.data.name = new ClassName("foo");
+    this.data.id = new ClassIdentifier(1,new ClassName("foo"));
   }
 
   @Test

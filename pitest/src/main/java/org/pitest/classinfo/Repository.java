@@ -24,12 +24,18 @@ import org.pitest.internal.ClassByteArraySource;
 
 public class Repository {
 
+  private final HashFunction hashFunction;
   private final Map<ClassName, ClassInfo> knownClasses = new HashMap<ClassName, ClassInfo>();
   private final Set<ClassName> unknownClasses = new HashSet<ClassName>();
   private final ClassByteArraySource      source;
 
   public Repository(final ClassByteArraySource source) {
+    this(source, new AddlerHash());
+  }
+  
+  Repository(final ClassByteArraySource source, final HashFunction hashFunction) {
     this.source = source;
+    this.hashFunction = hashFunction;
   }
 
   public boolean hasClass(final ClassName name) {
@@ -62,7 +68,7 @@ public class Repository {
     final Option<byte[]> bytes = querySource(name);
     if (bytes.hasSome()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
-          bytes.value());
+          bytes.value(), hashFunction.hash(bytes.value()));
       return contructClassInfo(classData);
     } else {
       return Option.none();

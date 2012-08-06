@@ -25,8 +25,9 @@ import org.pitest.functional.Option;
 
 public class ClassInfo {
 
+  private final ClassIdentifier id;
+  
   private final int                   access;
-  private final ClassName             name;
   private final Set<Integer>          codeLines;
   private final ClassPointer          outerClass;
   private final ClassPointer          superClass;
@@ -37,7 +38,7 @@ public class ClassInfo {
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
     this.superClass = superClass;
     this.outerClass = outerClass;
-    this.name = builder.name;
+    this.id = builder.id;
     this.access = builder.access;
     this.codeLines = builder.codeLines;
     this.annotations = FCollection.map(builder.annotations,
@@ -54,7 +55,7 @@ public class ClassInfo {
   }
 
   public ClassName getName() {
-    return this.name;
+    return this.id.getName();
   }
 
   public boolean isInterface() {
@@ -135,7 +136,7 @@ public class ClassInfo {
 
   @Override
   public String toString() {
-    return this.name.asJavaName();
+    return this.id.getName().asJavaName();
   }
 
   public static F<ClassInfo, ClassName> toClassName() {
@@ -147,34 +148,6 @@ public class ClassInfo {
     };
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-    return result;
-  }
 
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ClassInfo other = (ClassInfo) obj;
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    return true;
-  }
 
 }

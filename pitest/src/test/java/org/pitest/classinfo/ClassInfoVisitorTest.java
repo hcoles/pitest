@@ -29,7 +29,7 @@ public class ClassInfoVisitorTest {
   @Test
   public void shouldDetectStandardCodeLines() throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
 
     assertTrue(actual.codeLines.contains(25));
@@ -39,7 +39,7 @@ public class ClassInfoVisitorTest {
   public void shouldDetectCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor()
       throws Exception {
     final String sampleName = HasDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertTrue(
         "first line of class with default constructor should be a code line",
@@ -52,7 +52,7 @@ public class ClassInfoVisitorTest {
   public void shouldNotDetectCodeLineAtClassDeclarationsWhenClassHasNoDefaultConstructor()
       throws Exception {
     final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertFalse(
         "first line of class without default constructor should not be a code line",
@@ -63,7 +63,7 @@ public class ClassInfoVisitorTest {
   public void shouldNotRecordLineNumbersFromSyntheticBridgeMethods()
       throws Exception {
     final String sampleName = HasBridgeMethod.class.getName();
-    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertFalse(actual.codeLines.contains(1));
   }
@@ -71,9 +71,16 @@ public class ClassInfoVisitorTest {
   @Test
   public void shouldRecordSourceFile() throws ClassNotFoundException {
     final String sampleName = String.class.getName();
-    final ClassInfoBuilder actual = ClassInfoVisitor.getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
     assertEquals("String.java", actual.sourceFile);
   }
+  
+  
+  private ClassInfoBuilder getClassInfo(final String name,
+      final byte[] bytes) {
+    return ClassInfoVisitor.getClassInfo(new ClassName(name), bytes, 0);
+  }
+
 
 }

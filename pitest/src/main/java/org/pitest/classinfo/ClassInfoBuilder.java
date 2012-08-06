@@ -20,7 +20,7 @@ import java.util.Set;
 class ClassInfoBuilder {
 
   int                access;
-  ClassName          name;
+  ClassIdentifier    id;
   String             outerClass;
   String             superClass;
   String             sourceFile;

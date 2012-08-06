@@ -34,18 +34,13 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     this.classInfo = classInfo;
   }
 
-  public final static ClassInfoBuilder getClassInfo(final String name,
-      final byte[] bytes) {
-    return getClassInfo(new ClassName(name), bytes);
-  }
-
   public final static ClassInfoBuilder getClassInfo(final ClassName name,
-      final byte[] bytes) {
+      final byte[] bytes, final long hash) {
     final ClassReader reader = new ClassReader(bytes);
     final ClassVisitor writer = new NullVisitor();
 
     final ClassInfoBuilder info = new ClassInfoBuilder();
-    info.name = name;
+    info.id = new ClassIdentifier(hash,name);
     reader.accept(new ClassInfoVisitor(info, writer), 0);
     return info;
   }
@@ -75,7 +70,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
   public void visitInnerClass(final String name, final String outerName,
       final String innerName, final int access) {
     super.visitInnerClass(name, outerName, innerName, access);
-    if ((outerName != null) && this.classInfo.name.equals(new ClassName(name))) {
+    if ((outerName != null) && this.classInfo.id.getName().equals(new ClassName(name))) {
       this.classInfo.outerClass = outerName;
     }
   }
