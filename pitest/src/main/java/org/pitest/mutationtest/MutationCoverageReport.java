@@ -233,9 +233,10 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
 
+    final MutationSource source = new MutationSource(mutationConfig, limitMutationsPerClass(), coverageData,   new ClassPathByteArraySource(this.data.getClassPath()));
+    
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
-        mutationConfig, limitMutationsPerClass(), coverageData, this.data,
-        new ClassPathByteArraySource(this.data.getClassPath()),
+        mutationConfig, source, this.data,
         this.coverage.getConfiguration(), this.coverage.getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());

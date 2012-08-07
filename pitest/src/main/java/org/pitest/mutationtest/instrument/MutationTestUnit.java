@@ -73,7 +73,6 @@ public class MutationTestUnit extends AbstractTestUnit {
     this.verbose = verbose;
     this.classPath = classPath;
     this.baseDir = baseDir;
-
   }
 
   @Override

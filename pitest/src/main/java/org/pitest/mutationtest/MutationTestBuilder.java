@@ -16,15 +16,15 @@ package org.pitest.mutationtest;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.pitest.MultipleTestGroup;
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestUnit;
@@ -32,41 +32,40 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Prelude;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.filter.MutationFilter;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
+import org.pitest.mutationtest.instrument.KnownStatusMutationTestUnit;
 import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
 
 public class MutationTestBuilder {
 
-  private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
-
   private final static Logger         LOG                                  = Log
                                                                                .getLogger();
 
+  private final MutationSource mutationSource;
+  private final MutationAnalyser analyser;
   private final ReportOptions         data;
   private final MutationConfig        mutationConfig;
-  private final CoverageDatabase      coverageDatabase;
-  private final MutationFilterFactory filterFactory;
-  private final ClassByteArraySource  source;
   private final Configuration         configuration;
   private final JavaAgent             javaAgent;
   private final File baseDir;
+  
+  public MutationTestBuilder(final File baseDir, final MutationConfig mutationConfig, 
+      final MutationSource mutationSource, final ReportOptions data, final Configuration configuration,
+      final JavaAgent javaAgent) {
+    this(baseDir, mutationConfig, new NullAnalyser(), mutationSource, data, configuration, javaAgent);
+  }
 
-  public MutationTestBuilder(final File baseDir, final MutationConfig mutationConfig,
-      final MutationFilterFactory filterFactory,
-      final CoverageDatabase coverageDatabase, final ReportOptions data,
-      final ClassByteArraySource source, final Configuration configuration,
+  public MutationTestBuilder(final File baseDir, final MutationConfig mutationConfig, final MutationAnalyser analyser,
+      final MutationSource mutationSource, final ReportOptions data, final Configuration configuration,
       final JavaAgent javaAgent) {
     this.data = data;
     this.mutationConfig = mutationConfig;
-    this.coverageDatabase = coverageDatabase;
-    this.filterFactory = filterFactory;
-    this.source = source;
+    this.mutationSource = mutationSource;
+    this.analyser = analyser;
     this.configuration = configuration;
     this.javaAgent = javaAgent;
     this.baseDir = baseDir;
@@ -77,8 +76,7 @@ public class MutationTestBuilder {
     final List<TestUnit> tus = new ArrayList<TestUnit>();
 
     for (final ClassName clazz : codeClasses) {
-
-      final Collection<MutationDetails> mutationsForClasses = createMutations(clazz);
+      final Collection<MutationDetails> mutationsForClasses = mutationSource.createMutations(clazz);
       if ( mutationsForClasses.isEmpty() ) {
         LOG.fine("No mutations found for " + clazz);
       } else {
@@ -108,65 +106,56 @@ public class MutationTestBuilder {
     };
   }
 
-  private Collection<MutationDetails> createMutations(final ClassName clazz) {
-
-    final MutationFilter filter = this.filterFactory.createFilter();
-    final Mutater m = this.mutationConfig.createMutator(this.source);
-
-    final Collection<MutationDetails> availableMutations = filter.filter(m
-        .findMutations(clazz));
-
-    assignTestsToMutations(availableMutations);
-
-    return availableMutations;
-
-  }
-
-  private void assignTestsToMutations(
-      final Collection<MutationDetails> availableMutations) {
-    for (final MutationDetails mutation : availableMutations) {
-      final Collection<TestInfo> testDetails = prioritizeTests(mutation);
-
-      if (testDetails.isEmpty()) {
-        LOG.fine("According to coverage no tests hit the mutation " + mutation);
-      }
-
-      mutation.addTestsInOrder(testDetails);
-    }
-  }
-
-  private Collection<TestInfo> prioritizeTests(final MutationDetails mutation) {
-    final Collection<TestInfo> testsForMutant = getTestsForMutant(mutation);
-    final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
-        Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis, new TestInfoPriorisationComparator(
-        new ClassName(mutation.getClazz()),
-        TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
-    return sortedTis;
-  }
-
-  private Collection<TestInfo> getTestsForMutant(final MutationDetails mutation) {
-    if (!mutation.isInStaticInitializer()) {
-      return this.coverageDatabase
-          .getTestsForClassLine(mutation.getClassLine());
-    } else {
-      LOG.warning("Using untargetted tests");
-      return this.coverageDatabase.getTestsForClass(mutation.getJVMClassName());
-    }
-  }
-
   private TestUnit createMutationTestUnit(
       final Collection<MutationDetails> mutationsForClasses) {
 
+    Collection<MutationResult> analysedMutations = this.analyser.analyse(mutationsForClasses);
+    
+    Collection<MutationDetails> needAnalysis = FCollection.filter(analysedMutations, statusNotKnown()).map(resultToDetails());
+    Collection<MutationResult> analysed = FCollection.filter(analysedMutations, Prelude.not(statusNotKnown()));
+    
+    if ( needAnalysis.isEmpty() ) {
+      return makePreAnalysedUnit(analysed);
+    }
+    
+    if ( analysed.isEmpty() ) {
+      return makeUnanalysedUnit(needAnalysis);
+    }
+    
+    return new MultipleTestGroup(Arrays.asList(makePreAnalysedUnit(analysed), makeUnanalysedUnit(needAnalysis)));
+
+  }
+
+  private TestUnit makePreAnalysedUnit(Collection<MutationResult> analysed) {
+    return new KnownStatusMutationTestUnit(mutationConfig.getMutatorNames(), analysed);
+  }
+
+  private TestUnit makeUnanalysedUnit(Collection<MutationDetails> needAnalysis) {
     final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
-    FCollection.flatMapTo(mutationsForClasses, mutationDetailsToTestClass(),
+    FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(baseDir, mutationsForClasses, uniqueTestClasses,
+    return new MutationTestUnit(baseDir, needAnalysis, uniqueTestClasses,
         this.configuration, this.mutationConfig, this.javaAgent,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
+  }
+
+  private static F<MutationResult, MutationDetails> resultToDetails() {
+    return new F<MutationResult, MutationDetails>() {
+      public MutationDetails apply(MutationResult a) {
+        return a.getDetails();
+      }     
+    };
+  }
+
+  private static F<MutationResult, Boolean> statusNotKnown() {
+    return new F<MutationResult, Boolean>() {
+      public Boolean apply(MutationResult a) {
+        return a.getStatus() == DetectionStatus.NOT_STARTED;
+      }
+    };
   }
 
   private static F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {

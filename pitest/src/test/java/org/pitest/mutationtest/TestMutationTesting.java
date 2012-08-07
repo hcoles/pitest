@@ -292,15 +292,13 @@ public class TestMutationTesting {
         Mutator.RETURN_VALS.asCollection());
     verifyResults(SURVIVED, SURVIVED);
   }
-  
-  
+
   @Test
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
     verifyLineNumbers(99);
   }
-
 
   private void run(final Class<?> clazz, final Class<?> test,
       final Collection<? extends MethodMutatorFactory> mutators) {
@@ -344,14 +342,16 @@ public class TestMutationTesting {
         data.createClassesFilter(), pf);
 
     final Timings timings = new Timings();
-    CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
+    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
+        .testClassIdentifier());
 
-    final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(null,
-        coverageOptions, launchOptions, code,timings);
+    final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
+        null, coverageOptions, launchOptions, code, timings);
 
-    CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
+    final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 
-    final Collection<ClassName> codeClasses = FCollection.map(code.getCode(), ClassInfo.toClassName());
+    final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
+        ClassInfo.toClassName());
 
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         false, False.<String> instance(), Collections.<String> emptyList(),
@@ -359,9 +359,14 @@ public class TestMutationTesting {
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
-    final MutationTestBuilder builder = new MutationTestBuilder(null,mutationConfig,
-        UnfilteredMutationFilter.factory(), coverageData, data,
-        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()), coverageOptions.getPitConfig(), launchOptions.getJavaAgentFinder());
+
+    final MutationSource source = new MutationSource(mutationConfig,
+        UnfilteredMutationFilter.factory(), coverageData,
+        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
+
+    final MutationTestBuilder builder = new MutationTestBuilder(null,
+        mutationConfig, source, data, coverageOptions.getPitConfig(),
+        launchOptions.getJavaAgentFinder());
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
 
@@ -381,8 +386,7 @@ public class TestMutationTesting {
 
   protected void verifyLineNumbers(final Integer... lineNumbers) {
     final List<Integer> expected = Arrays.asList(lineNumbers);
-    final List<Integer> actual = this.metaDataExtractor
-        .getLineNumbers();
+    final List<Integer> actual = this.metaDataExtractor.getLineNumbers();
 
     Collections.sort(expected);
     Collections.sort(actual);
