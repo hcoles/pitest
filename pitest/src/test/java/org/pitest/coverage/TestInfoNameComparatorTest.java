@@ -18,8 +18,8 @@ public class TestInfoNameComparatorTest {
   @Before
   public void setUp() {
     testee = new TestInfoNameComparator();
-    lhs = new TestInfo("foo", "0name", 0, Option.<ClassName>none());
-    rhs = new TestInfo("foo", "1name", 0, Option.<ClassName>none());
+    lhs = new TestInfo("foo", "0name", 0, Option.<ClassName>none(),0);
+    rhs = new TestInfo("foo", "1name", 0, Option.<ClassName>none(),0);
   }
   
   @Test
@@ -30,7 +30,7 @@ public class TestInfoNameComparatorTest {
   
   @Test
   public void shouldTreatIdenticallyNamesTestsAsEqual() {
-    TestInfo sameName = new TestInfo("bar", "0name", 1000, Option.<ClassName>none());
+    TestInfo sameName = new TestInfo("bar", "0name", 1000, Option.<ClassName>none(),0);
     assertEquals(0,testee.compare(lhs, sameName));
   }
 

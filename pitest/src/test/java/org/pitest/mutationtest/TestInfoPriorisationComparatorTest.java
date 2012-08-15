@@ -14,7 +14,8 @@
  */
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,9 +47,8 @@ public class TestInfoPriorisationComparatorTest {
     final TestInfo slow = testInfo(2, TARGET);
     final TestInfo fast = testInfo(1, TARGET);
     final List<TestInfo> actual = sortWithTestee(slow, reallySlow, fast);
-
-    assertEquals(Arrays.asList(fast, slow, reallySlow), actual);
-
+    
+    assertThat(actual, is(Arrays.asList(fast, slow, reallySlow)));  
   }
 
   @Test
@@ -62,9 +62,20 @@ public class TestInfoPriorisationComparatorTest {
     final List<TestInfo> actual = sortWithTestee(verySlowButClose,
         slowButClose, fastButDistant);
 
-    assertEquals(Arrays.asList(slowButClose, fastButDistant, verySlowButClose),
-        actual);
-
+    assertThat(actual, is(Arrays.asList(slowButClose, fastButDistant, verySlowButClose))); 
+  }
+  
+  @Test
+  public void shouldFavourTestsThatCoverFewerLinesInTheSameAmountOfTime() {
+    final TestInfo fastButWide = testInfo(1,TARGET,100);
+    final TestInfo fastAndTargetted = testInfo(1,TARGET,1);
+    final TestInfo fastAndSlightlyTargetted = testInfo(1,TARGET,50);
+    
+    final List<TestInfo> actual = sortWithTestee(fastButWide,fastAndSlightlyTargetted,
+        fastAndTargetted);
+    
+    assertThat(actual, is(Arrays.asList(fastAndTargetted, fastAndSlightlyTargetted, fastButWide))); 
+        
   }
 
   private List<TestInfo> sortWithTestee(final TestInfo... testInfos) {
@@ -72,10 +83,15 @@ public class TestInfoPriorisationComparatorTest {
     Collections.sort(list, this.testee);
     return list;
   }
+  
 
   private TestInfo testInfo(final int time, final String target) {
-    return new TestInfo("", target + time, time, Option.some(new ClassName(
-        target)));
+    return testInfo(time, target, 0);
   }
 
+  private TestInfo testInfo(final int time, final String target, final int linesCovered) {
+    return new TestInfo("", time + target+linesCovered, time, Option.some(new ClassName(
+        target)),linesCovered);
+  }
+  
 }

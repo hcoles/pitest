@@ -106,7 +106,7 @@ public class MutationSourceTest {
   private F<Integer,TestInfo> timeToTestInfo() {
     return new F<Integer,TestInfo>() {
       public TestInfo apply(Integer a) {
-        return new TestInfo("foo","bar",a, Option.<ClassName>none());
+        return new TestInfo("foo","bar",a, Option.<ClassName>none(),0);
       }
       
     };

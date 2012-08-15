@@ -87,7 +87,7 @@ public class CoverageData implements CoverageDatabase {
 
     checkForFailedTest(cr);
     final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
-        cr.getExecutionTime());
+        cr.getExecutionTime(), cr.getNumberOfCoveredLines());
 
     for (final ClassStatistics i : cr.getCoverage()) {
       final Map<ClassLine, Set<TestInfo>> map = getCoverageMapForClass(i
@@ -123,11 +123,11 @@ public class CoverageData implements CoverageDatabase {
 
 
   private TestInfo createTestInfo(final Description description,
-      final int executionTime) {
+      final int executionTime, int linesCovered) {
     final Option<ClassName> testee = this.code.findTestee(description
         .getFirstTestClass());
     return new TestInfo(description.getFirstTestClass(),
-        description.getQualifiedName(), executionTime, testee);
+        description.getQualifiedName(), executionTime, testee, linesCovered);
   }
 
   private F2<Integer, String, Integer> numberCoveredLines() {
