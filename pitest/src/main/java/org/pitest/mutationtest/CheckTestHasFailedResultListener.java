@@ -22,8 +22,6 @@ import org.pitest.mutationtest.results.DetectionStatus;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private static final long   serialVersionUID = 1L;
-
   private Option<Description> lastFailingTest  = Option.none();
   private int                 testsRun         = 0;
 

@@ -23,8 +23,6 @@ import org.pitest.testunit.AbstractTestUnit;
 
 public class MultipleTestGroup extends AbstractTestUnit {
 
-  private static final long          serialVersionUID = 1L;
-
   private final Collection<TestUnit> children;
 
   public MultipleTestGroup(final Collection<TestUnit> children) {

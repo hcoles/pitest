@@ -29,8 +29,6 @@ import org.pitest.util.Unchecked;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
-  private static final long           serialVersionUID = 1L;
-
   private final TimeoutLengthStrategy timeOutStrategy;
   private final SideEffect            timeOutSideEffect;
   private final long                  executionTime;

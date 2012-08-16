@@ -22,8 +22,6 @@ import org.pitest.testunit.TestUnitState;
 
 public class ExtendedTestResult extends TestResult {
 
-  private static final long                            serialVersionUID = 1L;
-
   private final Map<Class<? extends MetaData>, Object> values           = new HashMap<Class<? extends MetaData>, Object>(
                                                                             1);
 

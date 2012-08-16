@@ -120,6 +120,7 @@ public class JarCreatingJarFinderTest {
     final Manifest m = jis.getManifest();
     final Attributes a = m.getMainAttributes();
     final String am = a.getValue(key);
+    jis.close();
     return am;
   }
 }
