@@ -46,13 +46,11 @@ public class AdaptedJUnitTestUnitTest {
 
     public static class JUnit4Test {
 
-      @SuppressWarnings("unused")
       @Test
       public void pass() {
 
       }
 
-      @SuppressWarnings("unused")
       @Test
       public void fail() {
         org.junit.Assert.fail();

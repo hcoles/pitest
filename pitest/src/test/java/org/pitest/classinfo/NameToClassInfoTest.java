@@ -11,8 +11,8 @@ public class NameToClassInfoTest {
   public void shouldFetchClassWhenApplied() {
     Repository repository = mock(Repository.class);
     NameToClassInfo testee = new NameToClassInfo(repository);
-    testee.apply("foo");
-    verify(repository).fetchClass("foo");
+    testee.apply(ClassName.fromString("foo"));
+    verify(repository).fetchClass(ClassName.fromString("foo"));
   }
   
 }

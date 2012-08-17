@@ -17,6 +17,7 @@ package org.pitest.mutationtest.config;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.common.CompoundConfiguration;
@@ -42,11 +43,11 @@ public class ConfigurationFactory {
     final Collection<Configuration> configs = new ArrayList<Configuration>();
     final Repository classRepository = new Repository(this.source);
 
-    if (classRepository.fetchClass("org.junit.runner.Runner").hasSome()) {
+    if (classRepository.fetchClass(ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
       configs.add(new JUnitCompatibleConfiguration());
     }
 
-    if (classRepository.fetchClass("org.testng.TestNG").hasSome()) {
+    if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG")).hasSome()) {
       configs.add(new TestNGConfiguration(this.config));
     }
 

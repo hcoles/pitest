@@ -47,11 +47,11 @@ public class Repository {
     return fetchClass(clazz.getName());
   }
 
-  public Option<ClassInfo> fetchClass(final String name) {
+  private Option<ClassInfo> fetchClass(final String name) {
     return fetchClass(new ClassName(name));
   }
 
-  private Option<ClassInfo> fetchClass(final ClassName name) {
+  public Option<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
       return Option.some(info);
@@ -97,12 +97,12 @@ public class Repository {
     if (clazz == null) {
       return new DefaultClassPointer(null);
     } else {
-      final ClassInfo alreadyResolved = this.knownClasses.get(new ClassName(
+      final ClassInfo alreadyResolved = this.knownClasses.get(ClassName.fromString(
           clazz));
       if (alreadyResolved != null) {
         return new DefaultClassPointer(alreadyResolved);
       } else {
-        return new DeferredClassPointer(this, clazz);
+        return new DeferredClassPointer(this, ClassName.fromString(clazz));
       }
     }
   }

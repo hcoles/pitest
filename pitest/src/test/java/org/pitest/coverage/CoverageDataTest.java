@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
+import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageResult;
@@ -82,14 +83,14 @@ public class CoverageDataTest {
   
   @Test
   public void shouldReportNumberOfCoveredLinesWhenNoneCovered() {
-    assertEquals(0,testee.getNumberOfCoveredLines(Collections.singletonList("foo")));
+    assertEquals(0,testee.getNumberOfCoveredLines(Collections.singletonList(ClassName.fromString("foo"))));
   }
   
   @Test
   public void shouldReportNumberOfCoveredLinesWhenSomeCovered() {
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 2));
-    assertEquals(2,testee.getNumberOfCoveredLines(Collections.singletonList("foo")));
+    assertEquals(2,testee.getNumberOfCoveredLines(Collections.singletonList(ClassName.fromString("foo"))));
   }
   
   @Test
@@ -120,7 +121,7 @@ public class CoverageDataTest {
   
   @Test
   public void shouldProvideAccessToClassData() {
-    Collection<String> classes = Arrays.asList("foo");
+    Collection<ClassName> classes = Arrays.asList(ClassName.fromString("foo"));
     testee.getClassInfo(classes);
     verify(this.code).getClassInfo(classes);
   }

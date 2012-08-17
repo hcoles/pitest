@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.MetaData;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -59,24 +60,24 @@ public class MutationMetaData implements MetaData {
     return this.mutations;
   }
 
-  public Collection<String> getMutatedClass() {
-    final Set<String> classes = new HashSet<String>(1);
+  public Collection<ClassName> getMutatedClass() {
+    final Set<ClassName> classes = new HashSet<ClassName>(1);
     FCollection.mapTo(this.mutations, mutationsToClass(), classes);
     return classes;
   }
 
-  private static F<MutationResult, String> mutationsToClass() {
-    return new F<MutationResult, String>() {
-      public String apply(final MutationResult a) {
-        return a.getDetails().getClazz();
+  private static F<MutationResult, ClassName> mutationsToClass() {
+    return new F<MutationResult, ClassName>() {
+      public ClassName apply(final MutationResult a) {
+        return ClassName.fromString(a.getDetails().getClazz());
       }
     };
   }
 
   public String getPackageName() {
-    final String fileName = getMutatedClass().iterator().next();
-    final int lastDot = fileName.lastIndexOf('.');
-    return lastDot > 0 ? fileName.substring(0, lastDot) : "default";
+    final ClassName fileName = getMutatedClass().iterator().next();
+    final int lastDot = fileName.asJavaName().lastIndexOf('.');
+    return lastDot > 0 ? fileName.asJavaName().substring(0, lastDot) : "default";
   }
 
   public MutationTestSummaryData createSummaryData(

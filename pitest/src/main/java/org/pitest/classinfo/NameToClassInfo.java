@@ -3,7 +3,7 @@ package org.pitest.classinfo;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 
-public class NameToClassInfo implements F<String, Option<ClassInfo>> {
+public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
 
   private final Repository repository;
 
@@ -11,8 +11,11 @@ public class NameToClassInfo implements F<String, Option<ClassInfo>> {
     this.repository = repository;
   }
 
-  public Option<ClassInfo> apply(final String a) {
-    return this.repository.fetchClass(a);
+  public Option<ClassInfo> apply(final ClassName a) {
+    System.out.println(a);
+    Option<ClassInfo> o = this.repository.fetchClass(a);
+    System.out.println(o);
+    return o;
   }
 
 }

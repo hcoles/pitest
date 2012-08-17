@@ -66,7 +66,6 @@ public class JUnitTestClassIdentifierTest {
   }
 
   private static class HasTestAnnotation {
-    @SuppressWarnings("unused")
     @Test
     public void aTest() {
 

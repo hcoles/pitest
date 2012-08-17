@@ -65,11 +65,11 @@ public class CodeSource {
     return mapper.findTestee(className);
   }
 
-  public Collection<ClassInfo> getClassInfo(final Collection<String> classes) {
+  public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
     return FCollection.flatMap(classes, nameToClassInfo());
   }
-
-  private F<String, Option<ClassInfo>> nameToClassInfo() {
+  
+  private F<ClassName, Option<ClassInfo>> nameToClassInfo() {
     return new NameToClassInfo(this.classRepository);
   }
 
@@ -77,6 +77,7 @@ public class CodeSource {
     return new F<ClassInfo, Boolean>() {
 
       public Boolean apply(final ClassInfo a) {
+        System.out.println(a);
         return CodeSource.this.testIdentifier.isATestClass(a);
       }
 

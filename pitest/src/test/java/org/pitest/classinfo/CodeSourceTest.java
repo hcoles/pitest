@@ -42,14 +42,14 @@ public class CodeSourceTest {
   
   @Test
   public void shouldIdentifyAllNonTestCodeOnClassPathWhenNoTestsPresent() {
-    when(classPath.code()).thenReturn(Arrays.asList(foo.getName().asJavaName(), bar.getName().asJavaName()));
+    when(classPath.code()).thenReturn(Arrays.asList(foo.getName(), bar.getName()));
     assertEquals(Arrays.asList(foo,bar) , testee.getCode());
   }
   
   @Test
   public void shouldIdentifyAllNonTestCodeOnClassPathWhenTestsPresentOnCodePath() {
     when(testIdentifer.isATestClass(foo)).thenReturn(true);
-    when(classPath.code()).thenReturn(Arrays.asList(foo.getName().asJavaName(), bar.getName().asJavaName()));
+    when(classPath.code()).thenReturn(Arrays.asList(foo.getName(), bar.getName()));
 
     assertEquals(Arrays.asList(bar) , testee.getCode());
   }
@@ -57,7 +57,7 @@ public class CodeSourceTest {
   @Test
   public void shouldIdentifyAllTestCodeOnTestPath() {
     when(testIdentifer.isATestClass(foo)).thenReturn(true);
-    when(classPath.test()).thenReturn(Arrays.asList(foo.getName().asJavaName(), bar.getName().asJavaName()));
+    when(classPath.test()).thenReturn(Arrays.asList(foo.getName(), bar.getName()));
 
     assertEquals(Arrays.asList(foo) , testee.getTests());
   }
@@ -67,7 +67,7 @@ public class CodeSourceTest {
     ClassInfo foo = makeClassInfo("Foo");
     ClassInfo bar = makeClassInfo("Bar");
     when(testIdentifer.isATestClass(foo)).thenReturn(true);
-    when(classPath.code()).thenReturn(Arrays.asList(foo.getName().asJavaName(), bar.getName().asJavaName()));
+    when(classPath.code()).thenReturn(Arrays.asList(foo.getName(), bar.getName()));
 
     assertEquals(new HashSet<ClassName>(Arrays.asList(new ClassName("Bar"))) , testee.getCodeUnderTestNames());
   }
@@ -94,16 +94,16 @@ public class CodeSourceTest {
   
   @Test
   public void shouldProvideDetailsOfRequestedClasses() {
-    when(this.repository.fetchClass("Foo")).thenReturn(Option.some(foo));
-    when(this.repository.fetchClass("Unknown")).thenReturn(Option.<ClassInfo>none());
-    assertEquals(Arrays.asList(foo), this.testee.getClassInfo(Arrays.asList("Foo","Unknown")));
+    when(this.repository.fetchClass(ClassName.fromString("Foo"))).thenReturn(Option.some(foo));
+    when(this.repository.fetchClass(ClassName.fromString("Unknown"))).thenReturn(Option.<ClassInfo>none());
+    assertEquals(Arrays.asList(foo), this.testee.getClassInfo(Arrays.asList(ClassName.fromString("Foo"),ClassName.fromString("Unknown"))));
   }
   
   private ClassInfo makeClassInfo(String name) {
     ClassInfoBuilder data = new ClassInfoBuilder();
     data.id = new ClassIdentifier(1,new ClassName(name));
     ClassInfo ci = new ClassInfo(null,null,data);
-    when(repository.fetchClass(name)).thenReturn(Option.some(ci));
+    when(repository.fetchClass(ClassName.fromString(name))).thenReturn(Option.some(ci));
     return ci;
   }
 

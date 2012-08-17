@@ -64,11 +64,11 @@ public class CoverageData implements CoverageDatabase {
     return !this.hasFailedTest;
   }
 
-  public Collection<ClassInfo> getClassInfo(final Collection<String> classes) {
+  public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
     return this.code.getClassInfo(classes);
   }
 
-  public int getNumberOfCoveredLines(final Collection<String> mutatedClass) {
+  public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
     return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
   }
 
@@ -130,19 +130,18 @@ public class CoverageData implements CoverageDatabase {
         description.getQualifiedName(), executionTime, testee, linesCovered);
   }
 
-  private F2<Integer, String, Integer> numberCoveredLines() {
-    return new F2<Integer, String, Integer>() {
+  private F2<Integer, ClassName, Integer> numberCoveredLines() {
+    return new F2<Integer, ClassName, Integer>() {
 
-      public Integer apply(final Integer a, final String clazz) {
+      public Integer apply(final Integer a, final ClassName clazz) {
         return a + getNumberOfCoveredLines(clazz);
       }
 
     };
   }
 
-  private int getNumberOfCoveredLines(final String clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
-        .replace(".", "/"));
+  private int getNumberOfCoveredLines(final ClassName clazz) {
+    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz.asInternalName());
     if (map != null) {
       return map.size();
     } else {

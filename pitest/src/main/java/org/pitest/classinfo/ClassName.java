@@ -32,6 +32,10 @@ public final class ClassName implements Serializable {
     this(clazz.getName());
   }
 
+  public static ClassName fromString(String clazz) {
+    return new ClassName(clazz);
+  }
+  
   public String asJavaName() {
     return this.name.replace('/', '.');
   }
@@ -77,7 +81,7 @@ public final class ClassName implements Serializable {
     return new F<String, ClassName>() {
 
       public ClassName apply(final String clazz) {
-        return new ClassName(clazz);
+        return ClassName.fromString(clazz);
       }
 
     };

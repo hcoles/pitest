@@ -161,9 +161,9 @@ public class MutationCoverageReport implements Runnable {
     final CoverageDatabase coverageData = this.coverage.calculateCoverage();
 
     LOG.fine("Used memory after coverage calculation "
-        + (runtime.totalMemory() - runtime.freeMemory()) / MB + " mb");
-    LOG.fine("Free Memory after coverage calculation " + runtime.freeMemory()
-        / MB + " mb");
+        + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
+    LOG.fine("Free Memory after coverage calculation "
+        + (runtime.freeMemory() / MB) + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
     final TestListener mutationReportListener = this.listenerFactory
@@ -182,9 +182,11 @@ public class MutationCoverageReport implements Runnable {
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFound(tus);
 
+   // recordClassPath(coverageData);
+
     LOG.fine("Used memory before analysis start "
-        + (runtime.totalMemory() - runtime.freeMemory()) / MB + " mb");
-    LOG.fine("Free Memory before analysis start " + runtime.freeMemory() / MB
+        + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
+    LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB)
         + " mb");
 
     final Pitest pit = new Pitest(staticConfig);
@@ -197,6 +199,26 @@ public class MutationCoverageReport implements Runnable {
     printStats(stats);
 
   }
+
+//  private void recordClassPath(final CoverageDatabase coverageData) {
+//
+//    Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
+//    //FCollection.map(allClassNames, nameToClassId());    
+//
+//  }
+//
+//
+//  private Set<ClassName> getAllClassesAndTests(final CoverageDatabase coverageData) {
+//    Set<ClassName> names = new HashSet<ClassName>();
+//    for ( ClassName each : code.getCodeUnderTestNames() ) {
+//      names.add(each);
+//      FCollection.mapTo(coverageData.getTestsForClass(each.asJavaName()), TestInfo.toDefiningClassName(), names);
+//    }
+//    return names;
+//  }
+
+
+
 
   private void verifyBuildSuitableForMutationTesting() {
     this.buildVerifier.verify(this.code);
@@ -233,11 +255,13 @@ public class MutationCoverageReport implements Runnable {
     final MutationConfig mutationConfig = new MutationConfig(engine,
         this.data.getJvmArgs());
 
-    final MutationSource source = new MutationSource(mutationConfig, limitMutationsPerClass(), coverageData,   new ClassPathByteArraySource(this.data.getClassPath()));
-    
+    final MutationSource source = new MutationSource(mutationConfig,
+        limitMutationsPerClass(), coverageData, new ClassPathByteArraySource(
+            this.data.getClassPath()));
+
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
-        mutationConfig, source, this.data,
-        this.coverage.getConfiguration(), this.coverage.getJavaAgent());
+        mutationConfig, source, this.data, this.coverage.getConfiguration(),
+        this.coverage.getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

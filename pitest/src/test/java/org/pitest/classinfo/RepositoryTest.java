@@ -71,7 +71,7 @@ public class RepositoryTest {
   
   @Test
   public void shouldReturnNoneWhenAskedForUnknownClass() {
-    assertEquals(Option.none(), this.testee.fetchClass("never.heard.of.you"));
+    assertEquals(Option.none(), this.testee.fetchClass(ClassName.fromString("never.heard.of.you")));
   }
 
   
@@ -79,8 +79,8 @@ public class RepositoryTest {
   public void shouldOnlyLookForUnknownClassesOnce() {
     testee = new Repository(source);
     when(source.apply(anyString())).thenReturn(Option.<byte[]>none());
-    testee.fetchClass("foo");
-    testee.fetchClass("foo");
+    testee.fetchClass(ClassName.fromString("foo"));
+    testee.fetchClass(ClassName.fromString("foo"));
     verify(source, times(1)).apply("foo");
   }
   
@@ -89,7 +89,7 @@ public class RepositoryTest {
     testee = new Repository(source);
     when(source.apply(anyString())).thenReturn(Option.<byte[]>none());
     testee.hasClass(new ClassName("foo"));
-    testee.fetchClass("foo");
+    testee.fetchClass(ClassName.fromString("foo"));
     verify(source, times(1)).apply("foo");
   }
   
@@ -103,8 +103,8 @@ public class RepositoryTest {
   public void shouldOnlyLookForKnownClassOnce() throws ClassNotFoundException {
     testee = new Repository(source);
     when(source.apply(anyString())).thenReturn(Option.some(ClassUtils.classAsBytes(String.class)));
-    testee.fetchClass("foo");
-    testee.fetchClass("foo");
+    testee.fetchClass(ClassName.fromString("foo"));
+    testee.fetchClass(ClassName.fromString("foo"));
     verify(source, times(1)).apply("foo");
   }
 

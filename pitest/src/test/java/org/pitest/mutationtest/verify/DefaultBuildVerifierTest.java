@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.classinfo.Repository;
 import org.pitest.help.PitHelpError;
@@ -88,7 +89,7 @@ public class DefaultBuildVerifierTest {
   private void setupClassPath(final ClassByteArraySource source,
       final String clazz) {
     final Repository repository = new Repository(source);
-    final ClassInfo ci = repository.fetchClass(clazz).value();
+    final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz)).value();
     when(this.code.getCode()).thenReturn(
         Collections.singletonList(ci));
   }

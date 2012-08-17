@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
 
@@ -30,18 +31,18 @@ public class MutationClassPaths {
     this.pathFilter = pathFilter;
   }
 
-  public Iterable<String> code() {
+  public Iterable<ClassName> code() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getCodeFilter())
             .findClasses(this.classFilter.getCode()), this.classFilter
-            .getCode());
+            .getCode()).map(ClassName.stringToClassName());
   }
 
-  public Iterable<String> test() {
+  public Iterable<ClassName> test() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getTestFilter())
             .findClasses(this.classFilter.getTest()), this.classFilter
-            .getTest());
+            .getTest()).map(ClassName.stringToClassName());
   }
 
   public ClassPath getClassPath() {
