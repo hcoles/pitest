@@ -17,15 +17,11 @@ package org.pitest.mutationtest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
-public class MetaDataExtractor implements TestListener {
+public class MetaDataExtractor implements MutationResultListener {
 
   private final List<MutationResult> data = new ArrayList<MutationResult>();
 
@@ -37,40 +33,6 @@ public class MetaDataExtractor implements TestListener {
     return dss;
   }
 
-  private void accumulateMetaData(final TestResult tr) {
-    final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
-    if (d.hasSome()) {
-      this.data.addAll(d.value().getMutations());
-    }
-  }
-
-  public void onTestError(final TestResult tr) {
-    accumulateMetaData(tr);
-  }
-
-  public void onTestFailure(final TestResult tr) {
-    accumulateMetaData(tr);
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-    accumulateMetaData(tr);
-  }
-
-  public void onTestStart(final Description d) {
-
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    accumulateMetaData(tr);
-  }
-
-  public void onRunEnd() {
-    // TODO Auto-generated method stub
-  }
-
-  public void onRunStart() {
-    // TODO Auto-generated method stub
-  }
 
   public List<Integer> getLineNumbers() {
     final List<Integer> dss = new ArrayList<Integer>();
@@ -78,6 +40,20 @@ public class MetaDataExtractor implements TestListener {
       dss.add(each.getDetails().getLineNumber());
     }
     return dss;
+  }
+
+  public void runStart() {
+    
+  }
+
+  public void handleMutationResult(MutationMetaData metaData) {
+    this.data.addAll(metaData.getMutations());
+  }
+
+
+  public void runEnd() {
+    // TODO Auto-generated method stub
+    
   }
 
 }

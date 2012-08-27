@@ -75,7 +75,8 @@ public class MutationStatistics {
       return 0;
     }
 
-    return Math.round(100f / getTotalMutations() * getTotalDetectedMutations());
+    return Math.round((100f / getTotalMutations())
+        * getTotalDetectedMutations());
   }
 
   private static F2<Long, Score, Long> addDetectedTotals() {

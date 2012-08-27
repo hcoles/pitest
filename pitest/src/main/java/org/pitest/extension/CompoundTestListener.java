@@ -14,57 +14,35 @@
  */
 package org.pitest.extension;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.instrument.MutationMetaData;
 
-public class CompoundTestListener implements TestListener {
+public class CompoundTestListener implements MutationResultListener {
 
-  private final Iterable<TestListener> children;
+  private final Iterable<MutationResultListener> children;
 
-  public CompoundTestListener(final Iterable<TestListener> children) {
+  public CompoundTestListener(final Iterable<MutationResultListener> children) {
     this.children = children;
   }
 
-  public void onRunStart() {
-    for (final TestListener each : this.children) {
-      each.onRunStart();
+  public void runStart() {
+    for (final MutationResultListener each : this.children) {
+      each.runStart();
+    }
+
+  }
+
+  public void handleMutationResult(final MutationMetaData metaData) {
+    for (final MutationResultListener each : this.children) {
+      each.handleMutationResult(metaData);
     }
   }
 
-  public void onTestStart(final Description d) {
-    for (final TestListener each : this.children) {
-      each.onTestStart(d);
+  public void runEnd() {
+    for (final MutationResultListener each : this.children) {
+      each.runEnd();
     }
-  }
 
-  public void onTestFailure(final TestResult tr) {
-    for (final TestListener each : this.children) {
-      each.onTestFailure(tr);
-    }
-  }
-
-  public void onTestError(final TestResult tr) {
-    for (final TestListener each : this.children) {
-      each.onTestError(tr);
-    }
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-    for (final TestListener each : this.children) {
-      each.onTestSkipped(tr);
-    }
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    for (final TestListener each : this.children) {
-      each.onTestSuccess(tr);
-    }
-  }
-
-  public void onRunEnd() {
-    for (final TestListener each : this.children) {
-      each.onRunEnd();
-    }
   }
 
 }

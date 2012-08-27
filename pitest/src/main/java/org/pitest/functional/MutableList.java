@@ -157,7 +157,8 @@ public class MutableList<A> implements FunctionalList<A> {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((this.impl == null) ? 0 : this.impl.hashCode());
+    result = (prime * result)
+        + ((this.impl == null) ? 0 : this.impl.hashCode());
     return result;
   }
 

@@ -39,10 +39,8 @@ public abstract class FArray {
     filter(xs, predicate, dest);
     return dest;
   }
-  
 
-  public static <T> boolean contains(final T[] xs,
-      final F<T, Boolean> predicate) {
+  public static <T> boolean contains(final T[] xs, final F<T, Boolean> predicate) {
     for (final T x : xs) {
       if (predicate.apply(x)) {
         return true;

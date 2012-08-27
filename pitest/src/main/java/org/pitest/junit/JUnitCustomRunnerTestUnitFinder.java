@@ -56,16 +56,14 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private boolean isNotARunnableTest(final Runner runner, String className) {
+  private boolean isNotARunnableTest(final Runner runner, final String className) {
     return (runner == null)
         || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
-        || isParameterizedTest(runner)
-        || isAJUnitThreeErrorOrWarning(runner)
+        || isParameterizedTest(runner) || isAJUnitThreeErrorOrWarning(runner)
         || isJUnitThreeSuiteMethodNotForOwnClass(runner, className);
   }
 
-
-  private boolean isAJUnitThreeErrorOrWarning(Runner runner) {
+  private boolean isAJUnitThreeErrorOrWarning(final Runner runner) {
     return !runner.getDescription().getChildren().isEmpty()
         && runner.getDescription().getChildren().get(0).getClassName()
             .startsWith("junit.framework.TestSuite");
@@ -85,10 +83,13 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean isParameterizedTest(final Runner runner) {
     return Parameterized.class.isAssignableFrom(runner.getClass());
   }
-  
-  private boolean isJUnitThreeSuiteMethodNotForOwnClass(Runner runner, String className) {
+
+  private boolean isJUnitThreeSuiteMethodNotForOwnClass(final Runner runner,
+      final String className) {
     // use strings in case this hack blows up due to internal junit change
-    return runner.getClass().getName().equals("org.junit.internal.runners.SuiteMethod") && !runner.getDescription().getClassName().equals(className);
+    return runner.getClass().getName()
+        .equals("org.junit.internal.runners.SuiteMethod")
+        && !runner.getDescription().getClassName().equals(className);
   }
 
   private Collection<TestUnit> splitIntoFilteredUnits(

@@ -15,7 +15,7 @@ import org.pitest.util.SafeDataInputStream;
 
 final class Receive implements ReceiveStrategy {
 
-  private final Map<Integer, String> classIdToName = new ConcurrentHashMap<Integer, String>();
+  private final Map<Integer, String>        classIdToName = new ConcurrentHashMap<Integer, String>();
   private final SideEffect1<CoverageResult> handler;
 
   Receive(final SideEffect1<CoverageResult> handler) {
@@ -27,7 +27,7 @@ final class Receive implements ReceiveStrategy {
     case Id.CLAZZ:
       final int id = is.readInt();
       final String name = is.readString();
-      classIdToName.put(id,name);
+      this.classIdToName.put(id, name);
       break;
     case Id.OUTCOME:
       handleTestEnd(is);
@@ -40,9 +40,9 @@ final class Receive implements ReceiveStrategy {
   private void handleTestEnd(final SafeDataInputStream is) {
     final Description d = is.read(Description.class);
     final long numberOfResults = is.readLong();
-    
-    final Map<Integer,ClassStatistics> hits = new HashMap<Integer,ClassStatistics>();
-    
+
+    final Map<Integer, ClassStatistics> hits = new HashMap<Integer, ClassStatistics>();
+
     for (int i = 0; i != numberOfResults; i++) {
       readLineHit(is, hits);
     }
@@ -55,12 +55,12 @@ final class Receive implements ReceiveStrategy {
     final long encoded = is.readLong();
     final int classId = CodeCoverageStore.decodeClassId(encoded);
     final int lineNumber = CodeCoverageStore.decodeLineId(encoded);
-    
-    ClassStatistics stats = getStatisticsForClass(hits, classId);
-    
+
+    final ClassStatistics stats = getStatisticsForClass(hits, classId);
+
     stats.registerLineVisit(lineNumber);
   }
-  
+
   private CoverageResult createCoverageResult(final SafeDataInputStream is,
       final Description d, final Map<Integer, ClassStatistics> hits) {
     final boolean isGreen = is.readBoolean();
@@ -70,12 +70,10 @@ final class Receive implements ReceiveStrategy {
     return cr;
   }
 
-
-
   private ClassStatistics getStatisticsForClass(
       final Map<Integer, ClassStatistics> hits, final int classId) {
     ClassStatistics stats = hits.get(classId);
-    if ( stats == null  ) {
+    if (stats == null) {
       stats = new ClassStatistics(this.classIdToName.get(classId));
       hits.put(classId, stats);
     }

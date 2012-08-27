@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -34,7 +33,7 @@ public abstract class ReportTestBase {
   protected ListenerFactory listenerFactory() {
     return new ListenerFactory() {
 
-      public TestListener getListener(final CoverageDatabase coverage,
+      public MutationResultListener getListener(final CoverageDatabase coverage,
           final long startTime, final SourceLocator locator) {
         return ReportTestBase.this.metaDataExtractor;
       }

@@ -68,7 +68,8 @@ public class Score {
       return 0;
     }
 
-    return Math.round(100f / getTotalMutations() * getTotalDetectedMutations());
+    return Math.round((100f / getTotalMutations())
+        * getTotalDetectedMutations());
   }
 
   private static F<StatusCount, Boolean> isDetected() {
@@ -101,7 +102,7 @@ public class Score {
     for (final StatusCount each : this.counts.values()) {
       sb.append(each + " ");
       i++;
-      if (i % 4 == 0) {
+      if ((i % 4) == 0) {
         out.println("> " + sb.toString());
         sb = new StringBuffer();
       }

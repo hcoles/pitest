@@ -43,7 +43,7 @@ public class SwitchMutator implements MethodMutatorFactory {
     public void visitTableSwitchInsn(final int i, final int i1,
         final Label defaultLabel, final Label[] labels) {
       final Label newDefault = firstDifferentLabel(labels, defaultLabel);
-      if (newDefault != null && shouldMutate()) {
+      if ((newDefault != null) && shouldMutate()) {
         final Label[] newLabels = swapLabels(labels, defaultLabel, newDefault);
         super.visitTableSwitchInsn(i, i1, newDefault, newLabels);
       } else {
@@ -55,7 +55,7 @@ public class SwitchMutator implements MethodMutatorFactory {
     public void visitLookupSwitchInsn(final Label defaultLabel,
         final int[] ints, final Label[] labels) {
       final Label newDefault = firstDifferentLabel(labels, defaultLabel);
-      if (newDefault != null && shouldMutate()) {
+      if ((newDefault != null) && shouldMutate()) {
         final Label[] newLabels = swapLabels(labels, defaultLabel, newDefault);
         super.visitLookupSwitchInsn(newDefault, ints, newLabels);
       } else {

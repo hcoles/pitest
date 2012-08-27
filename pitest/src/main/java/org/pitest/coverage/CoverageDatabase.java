@@ -13,7 +13,7 @@ public interface CoverageDatabase {
 
   int getNumberOfCoveredLines(Collection<ClassName> mutatedClass);
 
-  Collection<TestInfo> getTestsForClass(String clazz);
+  Collection<TestInfo> getTestsForClass(ClassName clazz);
 
   Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
 

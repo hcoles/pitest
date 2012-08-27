@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.ClassLine;
@@ -25,24 +26,24 @@ import org.pitest.util.StringUtil;
 
 public class MutationDetails {
 
-  private final MutationIdentifier id;
-  private final String             method;
-  private final String             filename;
-  private final int                block;
-  private final int                lineNumber;
-  private final String             description;
-  private final ArrayList<TestInfo>     testsInOrder = new ArrayList<TestInfo>();
-  private final boolean isInFinallyBlock;
+  private final MutationIdentifier  id;
+  private final String              method;
+  private final String              filename;
+  private final int                 block;
+  private final int                 lineNumber;
+  private final String              description;
+  private final ArrayList<TestInfo> testsInOrder = new ArrayList<TestInfo>();
+  private final boolean             isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final String method, final int lineNumber,
       final int block) {
     this(id, filename, description, method, lineNumber, block, false);
   }
-  
+
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final String method, final int lineNumber,
-      final int block, boolean isInFinallyBlock) {
+      final int block, final boolean isInFinallyBlock) {
     this.id = id;
     this.description = description;
     this.method = method;
@@ -52,16 +53,13 @@ public class MutationDetails {
     this.isInFinallyBlock = isInFinallyBlock;
   }
 
-
   @Override
   public String toString() {
-    return "MutationDetails [id=" + id + ", method=" + method + ", filename="
-        + filename + ", block=" + block + ", lineNumber=" + lineNumber
-        + ", description=" + description + ", testsInOrder=" + testsInOrder
-        + "]";
+    return "MutationDetails [id=" + this.id + ", method=" + this.method
+        + ", filename=" + this.filename + ", block=" + this.block
+        + ", lineNumber=" + this.lineNumber + ", description="
+        + this.description + ", testsInOrder=" + this.testsInOrder + "]";
   }
-
-
 
   public String getDescription() {
     return this.description;
@@ -75,8 +73,8 @@ public class MutationDetails {
     return this.id.getClazz();
   }
 
-  public String getJVMClassName() {
-    return this.id.getClazz().replace(".", "/");
+  public ClassName getClassName() {
+    return this.id.getClassName();
   }
 
   public String getMethod() {
@@ -116,79 +114,94 @@ public class MutationDetails {
     return this.block;
   }
 
-  public Boolean matchesId(MutationIdentifier id) {
+  public Boolean matchesId(final MutationIdentifier id) {
     return this.id.matches(id);
   }
-  
+
   public String getMutator() {
-    return id.getMutator();
+    return this.id.getMutator();
   }
-  
+
   public int getFirstIndex() {
-    return id.getFirstIndex();
+    return this.id.getFirstIndex();
   }
-  
+
   public boolean isInFinallyBlock() {
     return this.isInFinallyBlock;
   }
 
-  
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + block;
-    result = prime * result
-        + ((description == null) ? 0 : description.hashCode());
-    result = prime * result + ((filename == null) ? 0 : filename.hashCode());
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + lineNumber;
-    result = prime * result + ((method == null) ? 0 : method.hashCode());
-    result = prime * result
-        + ((testsInOrder == null) ? 0 : testsInOrder.hashCode());
+    result = (prime * result) + this.block;
+    result = (prime * result)
+        + ((this.description == null) ? 0 : this.description.hashCode());
+    result = (prime * result)
+        + ((this.filename == null) ? 0 : this.filename.hashCode());
+    result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
+    result = (prime * result) + this.lineNumber;
+    result = (prime * result)
+        + ((this.method == null) ? 0 : this.method.hashCode());
+    result = (prime * result)
+        + ((this.testsInOrder == null) ? 0 : this.testsInOrder.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    MutationDetails other = (MutationDetails) obj;
-    if (block != other.block)
+    }
+    final MutationDetails other = (MutationDetails) obj;
+    if (this.block != other.block) {
       return false;
-    if (description == null) {
-      if (other.description != null)
+    }
+    if (this.description == null) {
+      if (other.description != null) {
         return false;
-    } else if (!description.equals(other.description))
+      }
+    } else if (!this.description.equals(other.description)) {
       return false;
-    if (filename == null) {
-      if (other.filename != null)
+    }
+    if (this.filename == null) {
+      if (other.filename != null) {
         return false;
-    } else if (!filename.equals(other.filename))
+      }
+    } else if (!this.filename.equals(other.filename)) {
       return false;
-    if (id == null) {
-      if (other.id != null)
+    }
+    if (this.id == null) {
+      if (other.id != null) {
         return false;
-    } else if (!id.equals(other.id))
+      }
+    } else if (!this.id.equals(other.id)) {
       return false;
-    if (lineNumber != other.lineNumber)
+    }
+    if (this.lineNumber != other.lineNumber) {
       return false;
-    if (method == null) {
-      if (other.method != null)
+    }
+    if (this.method == null) {
+      if (other.method != null) {
         return false;
-    } else if (!method.equals(other.method))
+      }
+    } else if (!this.method.equals(other.method)) {
       return false;
-    if (testsInOrder == null) {
-      if (other.testsInOrder != null)
+    }
+    if (this.testsInOrder == null) {
+      if (other.testsInOrder != null) {
         return false;
-    } else if (!testsInOrder.equals(other.testsInOrder))
+      }
+    } else if (!this.testsInOrder.equals(other.testsInOrder)) {
       return false;
+    }
     return true;
   }
-
 
 }

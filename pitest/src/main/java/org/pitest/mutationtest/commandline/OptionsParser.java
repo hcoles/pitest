@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import static org.pitest.mutationtest.config.ConfigOption.*;
+import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
@@ -38,6 +38,7 @@ import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
 import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
+import static org.pitest.mutationtest.config.ConfigOption.USE_INLINED_CODE_DETECTION;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
 import java.io.File;
@@ -162,14 +163,13 @@ public class OptionsParser {
         .defaultsTo(true)
         .describedAs(
             "whether or not to generate mutations in static initializers");
-    
-    
-    detectInlinedCode = parserAccepts(USE_INLINED_CODE_DETECTION)
-    .withOptionalArg()
-    .ofType(Boolean.class)
-    .defaultsTo(true)
-    .describedAs(
-        "whether or not to try and detect code inlined from finally blocks");
+
+    this.detectInlinedCode = parserAccepts(USE_INLINED_CODE_DETECTION)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(true)
+        .describedAs(
+            "whether or not to try and detect code inlined from finally blocks");
 
     this.timestampedReportsSpec = parserAccepts(TIME_STAMPED_REPORTS)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
@@ -287,7 +287,7 @@ public class OptionsParser {
 
     data.setMutateStaticInitializers(userArgs.has(this.mutateStatics)
         && userArgs.valueOf(this.mutateStatics));
-    
+
     data.setDetectInlinedCode(userArgs.has(this.detectInlinedCode)
         && userArgs.valueOf(this.detectInlinedCode));
 

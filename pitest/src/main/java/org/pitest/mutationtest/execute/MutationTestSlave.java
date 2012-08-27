@@ -51,12 +51,13 @@ import org.pitest.util.Unchecked;
 
 public class MutationTestSlave {
 
-  private static final Logger LOG = Log.getLogger();
+  private static final Logger       LOG = Log.getLogger();
 
-  private final SafeDataInputStream        dis;
-  private final Reporter reporter;
+  private final SafeDataInputStream dis;
+  private final Reporter            reporter;
 
-  public MutationTestSlave(final SafeDataInputStream dis, final Reporter reporter) {
+  public MutationTestSlave(final SafeDataInputStream dis,
+      final Reporter reporter) {
     this.dis = dis;
     this.reporter = reporter;
   }
@@ -64,7 +65,8 @@ public class MutationTestSlave {
   public void run() {
     try {
 
-      final SlaveArguments paramsFromParent = dis.read(SlaveArguments.class);
+      final SlaveArguments paramsFromParent = this.dis
+          .read(SlaveArguments.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
@@ -84,8 +86,6 @@ public class MutationTestSlave {
 
       };
 
-
-
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           paramsFromParent.engine.createMutator(new ClassloaderByteArraySource(
@@ -94,12 +94,13 @@ public class MutationTestSlave {
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, paramsFromParent.pitConfig);
 
-      worker.run(paramsFromParent.mutations, reporter, new TimeOutDecoratedTestSource(
-          paramsFromParent.timeoutStrategy, tests, reporter));
-      reporter.done(ExitCode.OK);
+      worker.run(paramsFromParent.mutations, this.reporter,
+          new TimeOutDecoratedTestSource(paramsFromParent.timeoutStrategy,
+              tests, this.reporter));
+      this.reporter.done(ExitCode.OK);
     } catch (final Throwable ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
-      reporter.done(ExitCode.UNKNOWN_ERROR);
+      this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
 
   }
@@ -115,10 +116,10 @@ public class MutationTestSlave {
       s = new Socket("localhost", port);
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
-      
-      Reporter reporter = new DefaultReporter(s.getOutputStream());
+
+      final Reporter reporter = new DefaultReporter(s.getOutputStream());
       addMemoryWatchDog(reporter);
-      
+
       final MutationTestSlave instance = new MutationTestSlave(dis, reporter);
       instance.run();
     } catch (final UnknownHostException ex) {
@@ -126,7 +127,7 @@ public class MutationTestSlave {
     } catch (final IOException ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
     } finally {
-      if ( s != null ) {
+      if (s != null) {
         safelyCloseSocket(s);
       }
     }

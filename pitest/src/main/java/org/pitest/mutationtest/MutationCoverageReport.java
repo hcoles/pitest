@@ -17,23 +17,29 @@ package org.pitest.mutationtest;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassIdentifier;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
+import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.extension.ClassLoaderFactory;
 import org.pitest.extension.Container;
-import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
@@ -47,6 +53,9 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
+import org.pitest.mutationtest.incremental.HistoryListener;
+import org.pitest.mutationtest.incremental.HistoryStore;
+import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -70,12 +79,14 @@ public class MutationCoverageReport implements Runnable {
   private final Timings           timings;
   private final BuildVerifier     buildVerifier;
   private final CodeSource        code;
+  private final HistoryStore      historyStore;
   private final File              baseDir;
 
-  public MutationCoverageReport(final File baseDir, final CodeSource code,
-      final CoverageGenerator coverage, final ReportOptions data,
-      final ListenerFactory listenerFactory, final Timings timings,
-      final BuildVerifier buildVerifier) {
+  public MutationCoverageReport(final File baseDir, final HistoryStore history,
+      final CodeSource code, final CoverageGenerator coverage,
+      final ReportOptions data, final ListenerFactory listenerFactory,
+      final Timings timings, final BuildVerifier buildVerifier) {
+    this.historyStore = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
     this.data = data;
@@ -134,8 +145,10 @@ public class MutationCoverageReport implements Runnable {
       final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code, timings);
 
+      final HistoryStore history = new NullHistoryStore();
+
       final MutationCoverageReport instance = new MutationCoverageReport(null,
-          code, coverageGenerator, data, reportFactory, timings,
+          history, code, coverageGenerator, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
       instance.run();
@@ -166,11 +179,14 @@ public class MutationCoverageReport implements Runnable {
         + (runtime.freeMemory() / MB) + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    final TestListener mutationReportListener = this.listenerFactory
+    final MutationResultListener mutationReportListener = this.listenerFactory
         .getListener(coverageData, t0,
             new SmartSourceLocator(this.data.getSourceDirs()));
 
-    staticConfig.addTestListener(mutationReportListener);
+    staticConfig.addTestListener(MutationResultAdapter
+        .adapt(mutationReportListener));
+    staticConfig.addTestListener(MutationResultAdapter
+        .adapt(new HistoryListener(this.historyStore)));
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(stats);
@@ -182,7 +198,7 @@ public class MutationCoverageReport implements Runnable {
     LOG.info("Created  " + tus.size() + " mutation test units");
     checkMutationsFound(tus);
 
-   // recordClassPath(coverageData);
+    recordClassPath(coverageData);
 
     LOG.fine("Used memory before analysis start "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
@@ -200,25 +216,23 @@ public class MutationCoverageReport implements Runnable {
 
   }
 
-//  private void recordClassPath(final CoverageDatabase coverageData) {
-//
-//    Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
-//    //FCollection.map(allClassNames, nameToClassId());    
-//
-//  }
-//
-//
-//  private Set<ClassName> getAllClassesAndTests(final CoverageDatabase coverageData) {
-//    Set<ClassName> names = new HashSet<ClassName>();
-//    for ( ClassName each : code.getCodeUnderTestNames() ) {
-//      names.add(each);
-//      FCollection.mapTo(coverageData.getTestsForClass(each.asJavaName()), TestInfo.toDefiningClassName(), names);
-//    }
-//    return names;
-//  }
+  private void recordClassPath(final CoverageDatabase coverageData) {
+    final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
+    final Collection<ClassIdentifier> ids = FCollection.map(
+        this.code.getClassInfo(allClassNames), ClassInfo.toClassId());
+    this.historyStore.recordClassPath(ids);
+  }
 
-
-
+  private Set<ClassName> getAllClassesAndTests(
+      final CoverageDatabase coverageData) {
+    final Set<ClassName> names = new HashSet<ClassName>();
+    for (final ClassName each : this.code.getCodeUnderTestNames()) {
+      names.add(each);
+      FCollection.mapTo(coverageData.getTestsForClass(each),
+          TestInfo.toDefiningClassName(), names);
+    }
+    return names;
+  }
 
   private void verifyBuildSuitableForMutationTesting() {
     this.buildVerifier.verify(this.code);

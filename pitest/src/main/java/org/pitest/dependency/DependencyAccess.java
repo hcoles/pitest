@@ -33,35 +33,43 @@ class DependencyAccess {
       return this.name;
     }
 
-
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+      result = (prime * result)
+          + ((this.name == null) ? 0 : this.name.hashCode());
+      result = (prime * result)
+          + ((this.owner == null) ? 0 : this.owner.hashCode());
       return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
+    public boolean equals(final Object obj) {
+      if (this == obj) {
         return true;
-      if (obj == null)
+      }
+      if (obj == null) {
         return false;
-      if (getClass() != obj.getClass())
+      }
+      if (getClass() != obj.getClass()) {
         return false;
-      Member other = (Member) obj;
-      if (name == null) {
-        if (other.name != null)
+      }
+      final Member other = (Member) obj;
+      if (this.name == null) {
+        if (other.name != null) {
           return false;
-      } else if (!name.equals(other.name))
+        }
+      } else if (!this.name.equals(other.name)) {
         return false;
-      if (owner == null) {
-        if (other.owner != null)
+      }
+      if (this.owner == null) {
+        if (other.owner != null) {
           return false;
-      } else if (!owner.equals(other.owner))
+        }
+      } else if (!this.owner.equals(other.owner)) {
         return false;
+      }
       return true;
     }
 
@@ -72,15 +80,13 @@ class DependencyAccess {
 
   }
 
-  private final Member     source;
-  private final Member     dest;
+  private final Member source;
+  private final Member dest;
 
-  protected DependencyAccess(final Member source,
-      final Member dest) {
+  protected DependencyAccess(final Member source, final Member dest) {
     this.source = source;
     this.dest = dest;
   }
-
 
   public Member getSource() {
     return this.source;
@@ -90,39 +96,44 @@ class DependencyAccess {
     return this.dest;
   }
 
-
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((dest == null) ? 0 : dest.hashCode());
-    result = prime * result + ((source == null) ? 0 : source.hashCode());
+    result = (prime * result)
+        + ((this.dest == null) ? 0 : this.dest.hashCode());
+    result = (prime * result)
+        + ((this.source == null) ? 0 : this.source.hashCode());
     return result;
   }
 
-
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    DependencyAccess other = (DependencyAccess) obj;
-    if (dest == null) {
-      if (other.dest != null)
+    }
+    final DependencyAccess other = (DependencyAccess) obj;
+    if (this.dest == null) {
+      if (other.dest != null) {
         return false;
-    } else if (!dest.equals(other.dest))
+      }
+    } else if (!this.dest.equals(other.dest)) {
       return false;
-    if (source == null) {
-      if (other.source != null)
+    }
+    if (this.source == null) {
+      if (other.source != null) {
         return false;
-    } else if (!source.equals(other.source))
+      }
+    } else if (!this.source.equals(other.source)) {
       return false;
+    }
     return true;
   }
-
-  
 
 }

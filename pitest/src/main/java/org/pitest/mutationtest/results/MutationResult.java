@@ -44,6 +44,10 @@ public class MutationResult {
   public int getNumberOfTestsRun() {
     return this.status.getNumberOfTestsRun();
   }
+  
+  public MutationStatusTestPair getStatusTestPair() {
+    return this.status;
+  }
 
   public String getStatusDescription() {
     for (final String test : getKillingTest()) {
@@ -56,9 +60,9 @@ public class MutationResult {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.details == null) ? 0 : this.details.hashCode());
-    result = prime * result
+    result = (prime * result)
         + ((this.status == null) ? 0 : this.status.hashCode());
     return result;
   }

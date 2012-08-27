@@ -16,12 +16,11 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.mutationtest.report.SourceLocator;
 
 public interface ListenerFactory {
 
-  public TestListener getListener(final CoverageDatabase coverage,
+  public MutationResultListener getListener(final CoverageDatabase coverage,
       final long startTime, SourceLocator locator);
 
 }

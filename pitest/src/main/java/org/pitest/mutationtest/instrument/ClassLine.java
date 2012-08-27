@@ -15,21 +15,19 @@
 
 package org.pitest.mutationtest.instrument;
 
+import org.pitest.classinfo.ClassName;
+
 public final class ClassLine {
-  private final String clazz;
-  private final int    lineNumber;
+  private final ClassName clazz;
+  private final int       lineNumber;
 
   public ClassLine(final String clazz, final int lineNumber) {
-    this.clazz = clazz.replace("/", ".");
+    this.clazz = ClassName.fromString(clazz);
     this.lineNumber = lineNumber;
   }
 
-  public String getClazz() {
+  public ClassName getClassName() {
     return this.clazz;
-  }
-
-  public String getJVMClassName() {
-    return getClazz().replace(".", "/");
   }
 
   public int getLineNumber() {
@@ -40,9 +38,9 @@ public final class ClassLine {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.clazz == null) ? 0 : this.clazz.hashCode());
-    result = prime * result + this.lineNumber;
+    result = (prime * result) + this.lineNumber;
     return result;
   }
 
@@ -74,10 +72,6 @@ public final class ClassLine {
   @Override
   public String toString() {
     return "ClassLine [" + this.clazz + ":" + this.lineNumber + "]";
-  }
-
-  public String getClassName() {
-    return this.getClazz().replace("/", ".");
   }
 
 }

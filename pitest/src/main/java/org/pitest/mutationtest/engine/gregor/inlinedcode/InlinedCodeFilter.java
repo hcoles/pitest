@@ -5,7 +5,8 @@ import java.util.Collection;
 import org.pitest.mutationtest.MutationDetails;
 
 public interface InlinedCodeFilter {
-  
-  public Collection<MutationDetails> process(Collection<MutationDetails> mutations);
+
+  public Collection<MutationDetails> process(
+      Collection<MutationDetails> mutations);
 
 }

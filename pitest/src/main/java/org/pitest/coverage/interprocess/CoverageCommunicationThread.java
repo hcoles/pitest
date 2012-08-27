@@ -9,7 +9,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.util.CommunicationThread;
 
 public class CoverageCommunicationThread extends CommunicationThread {
-  
+
   public CoverageCommunicationThread(final ServerSocket socket,
       final CoverageOptions arguments, final List<String> tus,
       final SideEffect1<CoverageResult> handler) {

@@ -120,7 +120,8 @@ public class JavaProcess {
     };
   }
 
-  public static JavaProcess launch(final File workingDirectory, final SideEffect1<String> systemOutHandler,
+  public static JavaProcess launch(final File workingDirectory,
+      final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String initialClassPath)
@@ -140,17 +141,19 @@ public class JavaProcess {
     return new JavaProcess(process, systemOutHandler, sysErrHandler);
   }
 
-  static JavaProcess launch(final File workingDirectory, final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs,
-      final JavaAgent javaAgent) throws IOException {
+  static JavaProcess launch(final File workingDirectory,
+      final List<String> args, final Class<?> mainClass,
+      final List<String> programArgs, final JavaAgent javaAgent)
+      throws IOException {
     final String classpath = System.getProperty("java.class.path");
-    return launch(workingDirectory, args, mainClass, programArgs, javaAgent, classpath);
+    return launch(workingDirectory, args, mainClass, programArgs, javaAgent,
+        classpath);
   }
 
-  private static JavaProcess launch(final File workingDirectory, final List<String> args,
-      final Class<?> mainClass, final List<String> programArgs,
-      final JavaAgent javaAgent, final String launchClassPath)
-      throws IOException {
+  private static JavaProcess launch(final File workingDirectory,
+      final List<String> args, final Class<?> mainClass,
+      final List<String> programArgs, final JavaAgent javaAgent,
+      final String launchClassPath) throws IOException {
 
     final SideEffect1<String> soh = new SideEffect1<String>() {
       public void apply(final String a) {
@@ -164,8 +167,8 @@ public class JavaProcess {
       }
     };
 
-    return launch(workingDirectory, soh, seh, args, mainClass, programArgs, javaAgent,
-        launchClassPath);
+    return launch(workingDirectory, soh, seh, args, mainClass, programArgs,
+        javaAgent, launchClassPath);
   }
 
 }

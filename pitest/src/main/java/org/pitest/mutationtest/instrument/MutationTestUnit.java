@@ -52,15 +52,15 @@ public class MutationTestUnit extends AbstractTestUnit {
   private final Collection<MutationDetails> availableMutations;
   private final boolean                     verbose;
   private final String                      classPath;
-  private final File baseDir;
+  private final File                        baseDir;
   private final Configuration               pitConfig;
 
   private final Collection<ClassName>       testClasses;
 
-  public MutationTestUnit(final File baseDir,final Collection<MutationDetails> availableMutations,
+  public MutationTestUnit(final File baseDir,
+      final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses, final Configuration pitConfig,
-      final MutationConfig mutationConfig,
-      final JavaAgent javaAgentFinder,
+      final MutationConfig mutationConfig, final JavaAgent javaAgentFinder,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final String classPath) {
     super(new Description("Mutation test"));
@@ -139,13 +139,13 @@ public class MutationTestUnit extends AbstractTestUnit {
   private MutationTestProcess createWorker(
       final Collection<MutationDetails> remainingMutations) {
     final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        this.testClasses, this.config.getEngine(), this.timeoutStrategy, Log.isVerbose(),
-        this.pitConfig);
+        this.testClasses, this.config.getEngine(), this.timeoutStrategy,
+        Log.isVerbose(), this.pitConfig);
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
         .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
-        .andBaseDir(baseDir)
-        .andStdout(captureStdOutIfVerbose()).andStderr(printWith("stderr "));
+        .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
+        .andStderr(printWith("stderr "));
 
     final SocketFinder sf = new SocketFinder();
     final MutationTestProcess worker = new MutationTestProcess(

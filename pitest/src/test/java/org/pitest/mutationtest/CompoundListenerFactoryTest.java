@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.mutationtest.report.SourceLocator;
 
 public class CompoundListenerFactoryTest {
@@ -50,17 +49,17 @@ public class CompoundListenerFactoryTest {
 
   @Test
   public void shouldCreateACombinedListenerForAllChildFactories() {
-    final TestListener listenerOne = mock(TestListener.class);
-    final TestListener listenerTwo = mock(TestListener.class);
+    final MutationResultListener listenerOne = mock(MutationResultListener.class);
+    final MutationResultListener listenerTwo = mock(MutationResultListener.class);
     when(
         this.firstChild.getListener(any(CoverageDatabase.class), anyLong(),
             any(SourceLocator.class))).thenReturn(listenerOne);
     when(
         this.secondChild.getListener(any(CoverageDatabase.class), anyLong(),
             any(SourceLocator.class))).thenReturn(listenerTwo);
-    this.testee.getListener(null, 0, null).onRunStart();
-    verify(listenerOne, times(1)).onRunStart();
-    verify(listenerTwo, times(1)).onRunStart();
+    this.testee.getListener(null, 0, null).runStart();
+    verify(listenerOne, times(1)).runStart();
+    verify(listenerTwo, times(1)).runStart();
   }
 
 }

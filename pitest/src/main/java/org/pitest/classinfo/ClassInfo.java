@@ -25,8 +25,8 @@ import org.pitest.functional.Option;
 
 public class ClassInfo {
 
-  private final ClassIdentifier id;
-  
+  private final ClassIdentifier       id;
+
   private final int                   access;
   private final Set<Integer>          codeLines;
   private final ClassPointer          outerClass;
@@ -52,6 +52,10 @@ public class ClassInfo {
 
   public boolean isCodeLine(final int line) {
     return this.codeLines.contains(line);
+  }
+
+  public ClassIdentifier getId() {
+    return this.id;
   }
 
   public ClassName getName() {
@@ -148,6 +152,13 @@ public class ClassInfo {
     };
   }
 
+  public static F<ClassInfo, ClassIdentifier> toClassId() {
+    return new F<ClassInfo, ClassIdentifier>() {
+      public ClassIdentifier apply(final ClassInfo a) {
+        return a.getId();
+      }
 
+    };
+  }
 
 }

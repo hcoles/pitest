@@ -86,7 +86,7 @@ public class TestMutationTesting {
     this.metaDataExtractor = new MetaDataExtractor();
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
-    this.staticConfig.addTestListener(this.metaDataExtractor);
+    this.staticConfig.addTestListener(MutationResultAdapter.adapt(this.metaDataExtractor));
     this.pit = new Pitest(this.staticConfig);
   }
 

@@ -51,8 +51,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-    final Collection<TestInfo> result = getTestsForJVMClassName(
-        classLine.getJVMClassName()).get(classLine);
+    final Collection<TestInfo> result = getTestsForClassName(
+        classLine.getClassName()).get(classLine);
     if (result == null) {
       return Collections.emptyList();
     } else {
@@ -72,8 +72,8 @@ public class CoverageData implements CoverageDatabase {
     return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
   }
 
-  public Collection<TestInfo> getTestsForClass(final String clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = getTestsForJVMClassName(clazz);
+  public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
+    final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
 
     final Set<TestInfo> tis = new LinkedHashSet<TestInfo>(map.values().size());
     for (final Set<TestInfo> each : map.values()) {
@@ -121,9 +121,8 @@ public class CoverageData implements CoverageDatabase {
     }
   }
 
-
   private TestInfo createTestInfo(final Description description,
-      final int executionTime, int linesCovered) {
+      final int executionTime, final int linesCovered) {
     final Option<ClassName> testee = this.code.findTestee(description
         .getFirstTestClass());
     return new TestInfo(description.getFirstTestClass(),
@@ -141,7 +140,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int getNumberOfCoveredLines(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz.asInternalName());
+    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
+        .asInternalName());
     if (map != null) {
       return map.size();
     } else {
@@ -150,13 +150,14 @@ public class CoverageData implements CoverageDatabase {
 
   }
 
-  private Map<ClassLine, Set<TestInfo>> getTestsForJVMClassName(
-      final String clazz) {
+  private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
+      final ClassName clazz) {
     // Use any test that provided some coverage of the class
     // This fails to consider tests that only accessed a static variable
     // of the class in question as this does not register as coverage.
 
-    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz);
+    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
+        .asInternalName());
     if (map == null) {
       map = new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
     }

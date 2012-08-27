@@ -22,25 +22,24 @@ import java.util.Set;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassByteArraySource;
 
-public class Repository {
+public class Repository implements ClassInfoSource {
 
-  private final HashFunction hashFunction;
-  private final Map<ClassName, ClassInfo> knownClasses = new HashMap<ClassName, ClassInfo>();
-  private final Set<ClassName> unknownClasses = new HashSet<ClassName>();
+  private final HashFunction              hashFunction;
+  private final Map<ClassName, ClassInfo> knownClasses   = new HashMap<ClassName, ClassInfo>();
+  private final Set<ClassName>            unknownClasses = new HashSet<ClassName>();
   private final ClassByteArraySource      source;
 
   public Repository(final ClassByteArraySource source) {
     this(source, new AddlerHash());
   }
-  
+
   Repository(final ClassByteArraySource source, final HashFunction hashFunction) {
     this.source = source;
     this.hashFunction = hashFunction;
   }
 
   public boolean hasClass(final ClassName name) {
-    return this.knownClasses.containsKey(name)
-        || querySource(name).hasSome();
+    return this.knownClasses.containsKey(name) || querySource(name).hasSome();
   }
 
   public Option<ClassInfo> fetchClass(final Class<?> clazz) {
@@ -68,23 +67,23 @@ public class Repository {
     final Option<byte[]> bytes = querySource(name);
     if (bytes.hasSome()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
-          bytes.value(), hashFunction.hash(bytes.value()));
+          bytes.value(), this.hashFunction.hash(bytes.value()));
       return contructClassInfo(classData);
     } else {
       return Option.none();
     }
   }
-  
-  private Option<byte[]> querySource(ClassName name) {
+
+  private Option<byte[]> querySource(final ClassName name) {
     if (this.unknownClasses.contains(name)) {
       return Option.none();
     }
-    Option<byte[]> option = this.source.apply(name.asJavaName());
-    if ( option.hasSome() ) {
+    final Option<byte[]> option = this.source.apply(name.asJavaName());
+    if (option.hasSome()) {
       return option;
     }
-  
-    unknownClasses.add(name);
+
+    this.unknownClasses.add(name);
     return option;
   }
 
@@ -97,8 +96,8 @@ public class Repository {
     if (clazz == null) {
       return new DefaultClassPointer(null);
     } else {
-      final ClassInfo alreadyResolved = this.knownClasses.get(ClassName.fromString(
-          clazz));
+      final ClassInfo alreadyResolved = this.knownClasses.get(ClassName
+          .fromString(clazz));
       if (alreadyResolved != null) {
         return new DefaultClassPointer(alreadyResolved);
       } else {

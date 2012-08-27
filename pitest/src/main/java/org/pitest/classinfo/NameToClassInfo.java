@@ -5,15 +5,15 @@ import org.pitest.functional.Option;
 
 public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
 
-  private final Repository repository;
+  private final ClassInfoSource repository;
 
-  public NameToClassInfo(final Repository repository) {
+  public NameToClassInfo(final ClassInfoSource repository) {
     this.repository = repository;
   }
 
   public Option<ClassInfo> apply(final ClassName a) {
     System.out.println(a);
-    Option<ClassInfo> o = this.repository.fetchClass(a);
+    final Option<ClassInfo> o = this.repository.fetchClass(a);
     System.out.println(o);
     return o;
   }

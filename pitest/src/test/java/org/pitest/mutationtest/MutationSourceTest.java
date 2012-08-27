@@ -49,6 +49,8 @@ public class MutationSourceTest {
   @Mock
   private MutationEngine engine;
   
+  private ClassName foo = ClassName.fromString("foo");
+  
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -64,7 +66,7 @@ public class MutationSourceTest {
   
   @Test
   public void shouldReturnNoMuationsWhenNoneFound() {
-    assertEquals(Collections.emptyList(),testee.createMutations(new ClassName("foo")));
+    assertEquals(Collections.emptyList(),testee.createMutations(foo));
   }
   
   @Test
@@ -74,7 +76,7 @@ public class MutationSourceTest {
     when(coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(expected);
 
     when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(new ClassName("foo")).iterator().next();
+    MutationDetails actual = testee.createMutations(foo).iterator().next();
     assertEquals(expected,actual.getTestsInOrder());
   }
 
@@ -82,9 +84,9 @@ public class MutationSourceTest {
   public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
     List<TestInfo> expected = makeTestInfos(0);
     List<MutationDetails> mutations = makeMutations("<clinit>");
-    when(coverage.getTestsForClass("foo")).thenReturn(expected);
+    when(coverage.getTestsForClass(foo)).thenReturn(expected);
     when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(new ClassName("foo")).iterator().next();
+    MutationDetails actual = testee.createMutations(foo).iterator().next();
     assertEquals(expected,actual.getTestsInOrder());
   }
   
@@ -94,7 +96,7 @@ public class MutationSourceTest {
     List<MutationDetails> mutations = makeMutations("foo");
     when(coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(unorderedTests);
     when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(new ClassName("foo")).iterator().next();
+    MutationDetails actual = testee.createMutations(foo).iterator().next();
     assertEquals(makeTestInfos(1,100,1000),actual.getTestsInOrder());
   }
   

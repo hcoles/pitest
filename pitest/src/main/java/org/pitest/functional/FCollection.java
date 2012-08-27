@@ -137,13 +137,14 @@ public abstract class FCollection {
     }
     return list;
   }
-  
-  public static <A,B> Map<A,Collection<B>> bucket(Iterable<B> bs, F<B,A> f) {
-    Map<A,Collection<B>> bucketed = new HashMap<A,Collection<B>>();
-    for ( B each : bs ) {
-      A key = f.apply(each);
+
+  public static <A, B> Map<A, Collection<B>> bucket(final Iterable<B> bs,
+      final F<B, A> f) {
+    final Map<A, Collection<B>> bucketed = new HashMap<A, Collection<B>>();
+    for (final B each : bs) {
+      final A key = f.apply(each);
       Collection<B> existing = bucketed.get(key);
-      if ( existing == null ) {
+      if (existing == null) {
         existing = new ArrayList<B>();
         bucketed.put(key, existing);
       }

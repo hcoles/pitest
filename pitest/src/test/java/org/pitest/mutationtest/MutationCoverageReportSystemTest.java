@@ -44,6 +44,8 @@ import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.incremental.HistoryStore;
+import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.testng.TestGroupConfig;
@@ -385,7 +387,10 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(null,
           coverageOptions, launchOptions, code, timings);
       
-      final MutationCoverageReport testee = new MutationCoverageReport(null,code,
+      
+      final HistoryStore history = new NullHistoryStore();
+      
+      final MutationCoverageReport testee = new MutationCoverageReport(null,history, code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());
 

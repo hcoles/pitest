@@ -78,16 +78,16 @@ class DependencyClassVisitor extends ClassAdapter {
     @Override
     public void visitMethodInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      this.typeReceiver.apply(new DependencyAccess(
-          this.member, new Member(owner, name)));
+      this.typeReceiver.apply(new DependencyAccess(this.member, new Member(
+          owner, name)));
       this.mv.visitMethodInsn(opcode, owner, name, desc);
     }
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      this.typeReceiver.apply(new DependencyAccess(
-          this.member, new Member(owner, name)));
+      this.typeReceiver.apply(new DependencyAccess(this.member, new Member(
+          owner, name)));
       this.mv.visitFieldInsn(opcode, owner, name, desc);
     }
   }

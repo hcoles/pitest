@@ -26,11 +26,9 @@ import static org.pitest.mutationtest.report.Tag.sourceFile;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.StringUtil;
@@ -40,7 +38,7 @@ enum Tag {
   mutation, sourceFile, mutatedClass, mutatedMethod, lineNumber, mutator, index, killingTest;
 }
 
-public class XMLReportListener implements TestListener {
+public class XMLReportListener implements MutationResultListener {
 
   private final Writer out;
 
@@ -52,32 +50,9 @@ public class XMLReportListener implements TestListener {
     this.out = out;
   }
 
-  public void onRunStart() {
-    write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    write("<mutations>\n");
-  }
-
-  public void onTestFailure(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  public void onTestError(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  private void writeResult(final TestResult tr) {
-
-    for (final MutationMetaData metaData : extractMetaData(tr)) {
-      for (final MutationResult mutation : metaData.getMutations()) {
-        writeMutationResultXML(mutation);
-      }
+  private void writeResult(final MutationMetaData metaData) {
+    for (final MutationResult mutation : metaData.getMutations()) {
+      writeMutationResultXML(mutation);
     }
   }
 
@@ -133,11 +108,6 @@ public class XMLReportListener implements TestListener {
     }
   }
 
-  private Option<MutationMetaData> extractMetaData(final TestResult tr) {
-    return tr.getValue(MutationMetaData.class);
-
-  }
-
   private void write(final String value) {
     try {
       this.out.write(value);
@@ -146,16 +116,22 @@ public class XMLReportListener implements TestListener {
     }
   }
 
-  public void onRunEnd() {
+  public void runStart() {
+    write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    write("<mutations>\n");
+  }
+
+  public void handleMutationResult(final MutationMetaData metaData) {
+    writeResult(metaData);
+  }
+
+  public void runEnd() {
     try {
       write("</mutations>\n");
       this.out.close();
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
-  }
-
-  public void onTestStart(final Description d) {
   }
 
 }

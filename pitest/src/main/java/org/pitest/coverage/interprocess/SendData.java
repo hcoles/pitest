@@ -13,8 +13,7 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
   private final CoverageOptions arguments;
   private final List<String>    testClasses;
 
-  SendData(final CoverageOptions arguments,
-      final List<String> testClasses) {
+  SendData(final CoverageOptions arguments, final List<String> testClasses) {
     this.arguments = arguments;
     this.testClasses = testClasses;
   }
@@ -43,4 +42,3 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
 
   }
 }
-

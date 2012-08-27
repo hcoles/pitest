@@ -65,7 +65,8 @@ public class JarCreatingJarFinder implements JavaAgent {
   private Option<String> createJar() {
     try {
 
-      final File randomName = File.createTempFile(FileUtil.randomFilename(), ".jar");
+      final File randomName = File.createTempFile(FileUtil.randomFilename(),
+          ".jar");
       final FileOutputStream fos = new FileOutputStream(randomName);
       createJarFromClassPathResources(fos, randomName.getAbsolutePath());
       return Option.some(randomName.getAbsolutePath());
@@ -100,7 +101,6 @@ public class JarCreatingJarFinder implements JavaAgent {
   private String getBoothClassPath(final File mylocation) {
     return mylocation.getAbsolutePath().replace('\\', '/');
   }
-
 
   private void addClass(final Class<?> clazz, final JarOutputStream jos)
       throws IOException {

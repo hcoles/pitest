@@ -43,7 +43,7 @@ public class CoverageWorker implements Runnable {
 
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
           this.pipe);
-      
+
       final Container c = new UnContainer();
 
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();

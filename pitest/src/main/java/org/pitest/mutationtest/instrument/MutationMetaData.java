@@ -77,7 +77,8 @@ public class MutationMetaData implements MetaData {
   public String getPackageName() {
     final ClassName fileName = getMutatedClass().iterator().next();
     final int lastDot = fileName.asJavaName().lastIndexOf('.');
-    return lastDot > 0 ? fileName.asJavaName().substring(0, lastDot) : "default";
+    return lastDot > 0 ? fileName.asJavaName().substring(0, lastDot)
+        : "default";
   }
 
   public MutationTestSummaryData createSummaryData(
@@ -92,34 +93,40 @@ public class MutationMetaData implements MetaData {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((mutations == null) ? 0 : mutations.hashCode());
-    result = prime * result
-        + ((mutatorNames == null) ? 0 : mutatorNames.hashCode());
+    result = (prime * result)
+        + ((this.mutations == null) ? 0 : this.mutations.hashCode());
+    result = (prime * result)
+        + ((this.mutatorNames == null) ? 0 : this.mutatorNames.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    MutationMetaData other = (MutationMetaData) obj;
-    if (mutations == null) {
-      if (other.mutations != null)
+    }
+    final MutationMetaData other = (MutationMetaData) obj;
+    if (this.mutations == null) {
+      if (other.mutations != null) {
         return false;
-    } else if (!mutations.equals(other.mutations))
+      }
+    } else if (!this.mutations.equals(other.mutations)) {
       return false;
-    if (mutatorNames == null) {
-      if (other.mutatorNames != null)
+    }
+    if (this.mutatorNames == null) {
+      if (other.mutatorNames != null) {
         return false;
-    } else if (!mutatorNames.equals(other.mutatorNames))
+      }
+    } else if (!this.mutatorNames.equals(other.mutatorNames)) {
       return false;
+    }
     return true;
   }
 
-  
-  
 }

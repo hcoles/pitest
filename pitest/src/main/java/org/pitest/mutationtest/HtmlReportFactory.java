@@ -16,7 +16,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
@@ -30,7 +29,7 @@ public class HtmlReportFactory implements ListenerFactory {
     this.outputStrategy = outputStrategy;
   }
 
-  public TestListener getListener(final CoverageDatabase coverage,
+  public MutationResultListener getListener(final CoverageDatabase coverage,
       final long startTime, final SourceLocator locator) {
     return new MutationHtmlReportListener(coverage, this.outputStrategy,
         locator);

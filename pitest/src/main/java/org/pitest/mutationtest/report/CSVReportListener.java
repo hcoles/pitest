@@ -17,15 +17,13 @@ package org.pitest.mutationtest.report;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.Unchecked;
 
-public class CSVReportListener implements TestListener {
+public class CSVReportListener implements MutationResultListener {
 
   private final Writer out;
 
@@ -35,52 +33,6 @@ public class CSVReportListener implements TestListener {
 
   public CSVReportListener(final Writer out) {
     this.out = out;
-  }
-
-  public void onRunStart() {
-
-  }
-
-  public void onTestStart(final Description d) {
-  }
-
-  public void onTestFailure(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  public void onTestError(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    writeResult(tr);
-  }
-
-  public void onRunEnd() {
-    try {
-      this.out.close();
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
-  }
-
-  private void writeResult(final TestResult tr) {
-    try {
-      for (final MutationMetaData metaData : extractMetaData(tr)) {
-        for (final MutationResult mutation : metaData.getMutations()) {
-          this.out.write(makeCsv(mutation.getDetails().getFilename(), mutation
-              .getDetails().getClazz(), mutation.getDetails().getMethod(),
-              mutation.getDetails().getLineNumber(), mutation.getStatus(),
-              createKillingTestDesc(mutation.getKillingTest()))
-              + System.getProperty("line.separator"));
-        }
-      }
-    } catch (final IOException ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
   }
 
   private String createKillingTestDesc(final Option<String> killingTest) {
@@ -95,15 +47,40 @@ public class CSVReportListener implements TestListener {
     final StringBuffer sb = new StringBuffer();
     for (int i = 0; i != os.length; i++) {
       sb.append(os[i].toString());
-      if (i != os.length - 1) {
+      if (i != (os.length - 1)) {
         sb.append(",");
       }
     }
     return sb.toString();
   }
 
-  private Option<MutationMetaData> extractMetaData(final TestResult tr) {
-    return tr.getValue(MutationMetaData.class);
+  public void runStart() {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void runEnd() {
+    try {
+      this.out.close();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public void handleMutationResult(final MutationMetaData metaData) {
+    try {
+
+      for (final MutationResult mutation : metaData.getMutations()) {
+        this.out.write(makeCsv(mutation.getDetails().getFilename(), mutation
+            .getDetails().getClazz(), mutation.getDetails().getMethod(),
+            mutation.getDetails().getLineNumber(), mutation.getStatus(),
+            createKillingTestDesc(mutation.getKillingTest()))
+            + System.getProperty("line.separator"));
+      }
+
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
 
   }
 

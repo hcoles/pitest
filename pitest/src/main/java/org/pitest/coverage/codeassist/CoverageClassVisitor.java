@@ -37,9 +37,9 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     this.classId = classId;
   }
 
-  int registerLine(int line) {
-    probesToLines.add(line);
-    return probesToLines.size() - 1;
+  int registerLine(final int line) {
+    this.probesToLines.add(line);
+    return this.probesToLines.size() - 1;
   }
 
   @Override
@@ -53,12 +53,13 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
 
   @Override
   public void visitEnd() {
-    CodeCoverageStore.registerClassProbes(classId, convertToPrimitiveArray(probesToLines));
+    CodeCoverageStore.registerClassProbes(this.classId,
+        convertToPrimitiveArray(this.probesToLines));
   }
 
-  public static int[] convertToPrimitiveArray(List<Integer> integers) {
-    int[] ret = new int[integers.size()];
-    Iterator<Integer> iterator = integers.iterator();
+  public static int[] convertToPrimitiveArray(final List<Integer> integers) {
+    final int[] ret = new int[integers.size()];
+    final Iterator<Integer> iterator = integers.iterator();
     for (int i = 0; i < ret.length; i++) {
       ret[i] = iterator.next().intValue();
     }

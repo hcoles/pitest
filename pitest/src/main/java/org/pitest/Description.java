@@ -20,7 +20,7 @@ import java.io.Serializable;
 public final class Description implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final String      testClass;
   private final String      name;
 
@@ -37,8 +37,8 @@ public final class Description implements Serializable {
     this.name = name;
   }
 
-  private String internIfNotNull(String string) {
-    if ( string == null ) {
+  private String internIfNotNull(final String string) {
+    if (string == null) {
       return null;
     }
     return string.intern();
@@ -64,8 +64,9 @@ public final class Description implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-    result = prime * result
+    result = (prime * result)
+        + ((this.name == null) ? 0 : this.name.hashCode());
+    result = (prime * result)
         + ((this.testClass == null) ? 0 : this.testClass.hashCode());
     return result;
   }

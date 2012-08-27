@@ -27,7 +27,7 @@ public class DefaultMutationEngineConfiguration implements
   private final Predicate<MethodInfo>                      methodFilter;
   private final Collection<String>                         doNotMutate;
   private final Collection<? extends MethodMutatorFactory> mutators;
-  private final InlinedCodeFilter inlinedCodeDetector;
+  private final InlinedCodeFilter                          inlinedCodeDetector;
 
   public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
       final Collection<String> loggingClasses,
@@ -52,7 +52,7 @@ public class DefaultMutationEngineConfiguration implements
   }
 
   public InlinedCodeFilter inlinedCodeDetector() {
-    return inlinedCodeDetector;
+    return this.inlinedCodeDetector;
   }
 
 }

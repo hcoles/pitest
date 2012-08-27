@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.TestResult;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
@@ -48,8 +47,7 @@ public class CSVReportListenerTest {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.KILLED, "foo"));
-    final TestResult tr = createResult(mr);
-    this.testee.onTestSuccess(tr);
+    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
     final String expected = "file,class,method,42,KILLED,foo" + NEW_LINE;
     verify(this.out).write(expected);
   }
@@ -59,16 +57,12 @@ public class CSVReportListenerTest {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.SURVIVED));
-    final TestResult tr = createResult(mr);
-    this.testee.onTestSuccess(tr);
+    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
     final String expected = "file,class,method,42,SURVIVED,none" + NEW_LINE;
-    ;
+    
     verify(this.out).write(expected);
   }
 
-  private TestResult createResult(final MutationResult... mrs) {
-    return MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mrs));
-  }
+
 
 }

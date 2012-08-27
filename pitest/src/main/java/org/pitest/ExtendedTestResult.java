@@ -22,8 +22,8 @@ import org.pitest.testunit.TestUnitState;
 
 public class ExtendedTestResult extends TestResult {
 
-  private final Map<Class<? extends MetaData>, Object> values           = new HashMap<Class<? extends MetaData>, Object>(
-                                                                            1);
+  private final Map<Class<? extends MetaData>, Object> values = new HashMap<Class<? extends MetaData>, Object>(
+                                                                  1);
 
   public ExtendedTestResult(final Description description, final Throwable t,
       final MetaData... value) {
@@ -43,7 +43,7 @@ public class ExtendedTestResult extends TestResult {
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result
+    result = (prime * result)
         + ((this.values == null) ? 0 : this.values.hashCode());
     return result;
   }

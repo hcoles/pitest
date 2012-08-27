@@ -1,28 +1,28 @@
 package org.pitest.bytecode.blocks;
 
 public class ConcreteBlockCounter implements BlockCounter {
-  
-  private int currentBlock = 0;
+
+  private int     currentBlock = 0;
   private boolean isWithinExceptionHandler;
 
   public void registerNewBlock() {
-    this.currentBlock++; 
+    this.currentBlock++;
   }
 
   public void registerFinallyBlockStart() {
-    isWithinExceptionHandler = true; 
+    this.isWithinExceptionHandler = true;
   }
-  
+
   public void registerFinallyBlockEnd() {
-    isWithinExceptionHandler = false; 
+    this.isWithinExceptionHandler = false;
   }
-  
+
   public int getCurrentBlock() {
-    return currentBlock;
+    return this.currentBlock;
   }
-  
+
   public boolean isWithinExceptionHandler() {
-    return isWithinExceptionHandler;
+    return this.isWithinExceptionHandler;
   }
 
 }

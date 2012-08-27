@@ -154,7 +154,7 @@ public class CoverageSlave {
       classes.add(new ClassName(dis.readString()));
     }
     LOG.fine("Tests classes received");
-  
+
     return classes;
   }
 

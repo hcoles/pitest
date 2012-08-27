@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.TestResult;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
@@ -85,13 +84,9 @@ public class MutationHtmlReportListenerTest {
         new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
         .thenReturn(Option.<Reader> none());
-    this.testee.onTestSuccess(createResult(mr));
+    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
     verify(this.sourceLocator).locate(any(Collection.class), eq(fileName));
   }
 
-  private TestResult createResult(final MutationResult... mrs) {
-    return MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mrs));
-  }
 
 }

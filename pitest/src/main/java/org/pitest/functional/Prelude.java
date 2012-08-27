@@ -72,7 +72,6 @@ public abstract class Prelude {
     };
   }
 
-
   public final static <A> F<A, A> id() {
     return new F<A, A>() {
       public A apply(final A a) {

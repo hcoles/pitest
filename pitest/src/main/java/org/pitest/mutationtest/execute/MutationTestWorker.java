@@ -46,12 +46,13 @@ import org.pitest.util.Log;
 
 public class MutationTestWorker {
 
-  private static final Logger                 LOG = Log.getLogger();
-  private final Mutater                       mutater;
-  private final ClassLoader                   loader;
-  private final F3<String, ClassLoader,byte[], Boolean> hotswap;
+  private static final Logger                            LOG = Log.getLogger();
+  private final Mutater                                  mutater;
+  private final ClassLoader                              loader;
+  private final F3<String, ClassLoader, byte[], Boolean> hotswap;
 
-  public MutationTestWorker(final F3<String, ClassLoader, byte[], Boolean> hotswap,
+  public MutationTestWorker(
+      final F3<String, ClassLoader, byte[], Boolean> hotswap,
       final Mutater mutater, final ClassLoader loader) {
     this.loader = loader;
     this.mutater = mutater;
@@ -59,8 +60,7 @@ public class MutationTestWorker {
   }
 
   protected void run(final Collection<MutationDetails> range, final Reporter r,
-      final TimeOutDecoratedTestSource testSource) throws IOException
-       {
+      final TimeOutDecoratedTestSource testSource) throws IOException {
 
     for (final MutationDetails mutation : range) {
       LOG.info("Running mutation " + mutation);
@@ -71,7 +71,6 @@ public class MutationTestWorker {
     }
 
   }
-
 
   private void processMutation(final Reporter r,
       final TimeOutDecoratedTestSource testSource,
@@ -92,7 +91,8 @@ public class MutationTestWorker {
 
     r.describe(mutationId);
 
-    MutationStatusTestPair mutationDetected =  handleMutation(mutationId, mutatedClass, relevantTests);
+    final MutationStatusTestPair mutationDetected = handleMutation(mutationId,
+        mutatedClass, relevantTests);
 
     r.report(mutationId, mutationDetected);
 
@@ -126,7 +126,8 @@ public class MutationTestWorker {
     final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
     final Container c = createNewContainer(activeloader);
     final long t0 = System.currentTimeMillis();
-    if (this.hotswap.apply(mutationId.getClazz(), activeloader, mutatedClass.getBytes())) {
+    if (this.hotswap.apply(mutationId.getClazz(), activeloader,
+        mutatedClass.getBytes())) {
       LOG.fine("replaced class with mutant in "
           + (System.currentTimeMillis() - t0) + " ms");
       mutationDetected = doTestsDetectMutation(c, relevantTests);
@@ -177,7 +178,7 @@ public class MutationTestWorker {
 
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
       staticConfig.addTestListener(listener);
-    
+
       final Pitest pit = new Pitest(staticConfig);
       pit.run(c, createEarlyExitTestGroup(tests));
 

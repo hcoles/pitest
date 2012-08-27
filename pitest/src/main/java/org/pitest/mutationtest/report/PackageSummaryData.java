@@ -48,41 +48,44 @@ public class PackageSummaryData implements Comparable<PackageSummaryData> {
   }
 
   public List<MutationTestSummaryData> getSummaryData() {
-    ArrayList<MutationTestSummaryData> values = new ArrayList<MutationTestSummaryData>(
+    final ArrayList<MutationTestSummaryData> values = new ArrayList<MutationTestSummaryData>(
         this.fileNameToSummaryData.values());
     Collections.sort(values, new MutationTestSummaryDataFileNameComparator());
     return values;
   }
 
-  
-  
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((packageName == null) ? 0 : packageName.hashCode());
+    result = (prime * result)
+        + ((this.packageName == null) ? 0 : this.packageName.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    PackageSummaryData other = (PackageSummaryData) obj;
-    if (packageName == null) {
-      if (other.packageName != null)
+    }
+    final PackageSummaryData other = (PackageSummaryData) obj;
+    if (this.packageName == null) {
+      if (other.packageName != null) {
         return false;
-    } else if (!packageName.equals(other.packageName))
+      }
+    } else if (!this.packageName.equals(other.packageName)) {
       return false;
+    }
     return true;
   }
 
-  public int compareTo(PackageSummaryData arg0) {
+  public int compareTo(final PackageSummaryData arg0) {
     return this.packageName.compareTo(arg0.packageName);
   }
 }

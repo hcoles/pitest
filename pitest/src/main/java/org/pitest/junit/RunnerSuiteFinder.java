@@ -40,12 +40,13 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(a.getClazz());
 
-    List<Description> allChildren = new ArrayList<Description>();
+    final List<Description> allChildren = new ArrayList<Description>();
     flattenChildren(allChildren, runner.getDescription());
 
-    Set<TestClass> classes = new LinkedHashSet<TestClass>(runner.getDescription().getChildren().size());
+    final Set<TestClass> classes = new LinkedHashSet<TestClass>(runner
+        .getDescription().getChildren().size());
 
-    Collection<Description> suites = FCollection.filter(allChildren,
+    final Collection<Description> suites = FCollection.filter(allChildren,
         Prelude.or(isSuiteMethodRunner(runner), isSuite()));
     FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
 
@@ -54,9 +55,9 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
 
   }
 
-  private void flattenChildren(List<Description> allChildren,
-      Description description) {
-    for (Description each : description.getChildren()) {
+  private void flattenChildren(final List<Description> allChildren,
+      final Description description) {
+    for (final Description each : description.getChildren()) {
       allChildren.add(each);
       flattenChildren(allChildren, each);
     }
@@ -64,7 +65,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
 
   private static Predicate<Description> isSuiteMethodRunner(final Runner runner) {
     return new Predicate<Description>() {
-      public Boolean apply(Description a) {
+      public Boolean apply(final Description a) {
         return SuiteMethod.class.isAssignableFrom(runner.getClass());
       }
 

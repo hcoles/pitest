@@ -52,7 +52,8 @@ public final class DefaultMutationConfigFactory {
     return new GregorMutationEngine(config);
   }
 
-  private static InlinedCodeFilter inlinedCodeDetector(boolean detectInlinedCode) {
+  private static InlinedCodeFilter inlinedCodeDetector(
+      final boolean detectInlinedCode) {
     if (detectInlinedCode) {
       return new InlinedFinallyBlockDetector();
     } else {

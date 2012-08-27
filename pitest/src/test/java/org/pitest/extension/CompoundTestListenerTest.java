@@ -18,27 +18,26 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
-import org.pitest.DescriptionMother;
-import org.pitest.TestResult;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.instrument.MutationMetaData;
+import org.pitest.mutationtest.results.MutationResult;
 
 public class CompoundTestListenerTest {
 
   private CompoundTestListener testee;
 
   @Mock
-  private TestListener         firstChild;
+  private MutationResultListener         firstChild;
 
   @Mock
-  private TestListener         secondChild;
+  private MutationResultListener         secondChild;
 
-  @Mock
-  private TestResult           result;
 
   @Before
   public void setUp() {
@@ -49,53 +48,24 @@ public class CompoundTestListenerTest {
 
   @Test
   public void shouldCallOnRunStartForAllChildren() {
-    this.testee.onRunStart();
-    verify(this.firstChild, times(1)).onRunStart();
-    verify(this.secondChild, times(1)).onRunStart();
+    this.testee.runStart();
+    verify(this.firstChild, times(1)).runStart();
+    verify(this.secondChild, times(1)).runStart();
   }
 
   @Test
   public void shouldCallOnRunEndForAllChildren() {
-    this.testee.onRunEnd();
-    verify(this.firstChild, times(1)).onRunEnd();
-    verify(this.secondChild, times(1)).onRunEnd();
+    this.testee.runEnd();
+    verify(this.firstChild, times(1)).runEnd();
+    verify(this.secondChild, times(1)).runEnd();
   }
 
   @Test
   public void shouldCallOnTestErrorForAllChildren() {
-    this.testee.onTestError(this.result);
-    verify(this.firstChild, times(1)).onTestError(this.result);
-    verify(this.secondChild, times(1)).onTestError(this.result);
-  }
-
-  @Test
-  public void shouldCallOnTestFailureForAllChildren() {
-    this.testee.onTestFailure(this.result);
-    verify(this.firstChild, times(1)).onTestFailure(this.result);
-    verify(this.secondChild, times(1)).onTestFailure(this.result);
-  }
-
-  @Test
-  public void shouldCallOnTestSkippedForAllChildren() {
-    this.testee.onTestSkipped(this.result);
-    verify(this.firstChild, times(1)).onTestSkipped(this.result);
-    verify(this.secondChild, times(1)).onTestSkipped(this.result);
-  }
-
-  @Test
-  public void shouldCallOnTestSuccessForAllChildren() {
-    this.testee.onTestSuccess(this.result);
-    verify(this.firstChild, times(1)).onTestSuccess(this.result);
-    verify(this.secondChild, times(1)).onTestSuccess(this.result);
-  }
-
-  @Test
-  public void shouldCallOnTestStartForAllChildren() {
-    final Description description = DescriptionMother
-        .createEmptyDescription("foo");
-    this.testee.onTestStart(description);
-    verify(this.firstChild, times(1)).onTestStart(description);
-    verify(this.secondChild, times(1)).onTestStart(description);
+    MutationMetaData metaData = new MutationMetaData(Collections.<String>emptyList(), Collections.<MutationResult>emptyList());
+    this.testee.handleMutationResult(metaData);
+    verify(this.firstChild, times(1)).handleMutationResult(metaData);
+    verify(this.secondChild, times(1)).handleMutationResult(metaData);
   }
 
 }

@@ -28,21 +28,19 @@ import java.util.logging.Level;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.pitest.Description;
-import org.pitest.TestResult;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationResultList;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.util.FileUtil;
 import org.pitest.util.Log;
 
-public class MutationHtmlReportListener implements TestListener {
+public class MutationHtmlReportListener implements MutationResultListener {
 
   private final ResultOutputStrategy      outputStrategy;
 
@@ -57,20 +55,6 @@ public class MutationHtmlReportListener implements TestListener {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
     this.sourceRoots.addAll(Arrays.asList(locators));
-  }
-
-  private void processMetaData(final TestResult tr) {
-    final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
-    if (d.hasSome()) {
-      processMetaData(d.value());
-    }
-  }
-
-  private void processMetaData(final MutationMetaData mutationMetaData) {
-    final PackageSummaryData packageData = collectPackageSummaries(mutationMetaData);
-
-    generateAnnotatedSourceFile(packageData.getForSourceFile(mutationMetaData
-        .getFirstFileName()));
   }
 
   private void generateAnnotatedSourceFile(
@@ -169,26 +153,6 @@ public class MutationHtmlReportListener implements TestListener {
     return Option.none();
   }
 
-  public void onTestError(final TestResult tr) {
-    processMetaData(tr);
-  }
-
-  public void onTestFailure(final TestResult tr) {
-    processMetaData(tr);
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-    processMetaData(tr);
-  }
-
-  public void onTestStart(final Description d) {
-
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    processMetaData(tr);
-  }
-
   public void onRunEnd() {
     createIndexPages();
   }
@@ -202,7 +166,8 @@ public class MutationHtmlReportListener implements TestListener {
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
 
-    List<PackageSummaryData> psd = new ArrayList<PackageSummaryData>(this.packageSummaryData.values());
+    final List<PackageSummaryData> psd = new ArrayList<PackageSummaryData>(
+        this.packageSummaryData.values());
     Collections.sort(psd);
     for (final PackageSummaryData psData : psd) {
       totals.add(psData.getTotals());
@@ -237,7 +202,20 @@ public class MutationHtmlReportListener implements TestListener {
 
   }
 
-  public void onRunStart() {
+  public void runStart() {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void runEnd() {
+    createIndexPages();
+  }
+
+  public void handleMutationResult(final MutationMetaData metaData) {
+    final PackageSummaryData packageData = collectPackageSummaries(metaData);
+
+    generateAnnotatedSourceFile(packageData.getForSourceFile(metaData
+        .getFirstFileName()));
 
   }
 

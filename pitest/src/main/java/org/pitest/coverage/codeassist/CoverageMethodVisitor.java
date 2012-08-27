@@ -27,28 +27,29 @@ import org.pitest.boot.CodeCoverageStore;
  * Adds probes to each line of a method
  */
 public class CoverageMethodVisitor extends MethodAdapter {
-  private final MethodVisitor methodVisitor;
-  private final int           classId;
+  private final MethodVisitor        methodVisitor;
+  private final int                  classId;
   private final CoverageClassVisitor cv;
-  
-  public CoverageMethodVisitor(CoverageClassVisitor cv,final int classId, final MethodVisitor writer) {
+
+  public CoverageMethodVisitor(final CoverageClassVisitor cv,
+      final int classId, final MethodVisitor writer) {
     super(writer);
 
     this.methodVisitor = writer;
     this.classId = classId;
-    this.cv= cv;
+    this.cv = cv;
   }
-
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
-    int probeId = cv.registerLine(line);
-    this.methodVisitor.visitLdcInsn(CodeCoverageStore.encode(this.classId, probeId));
+    final int probeId = this.cv.registerLine(line);
+    this.methodVisitor.visitLdcInsn(CodeCoverageStore.encode(this.classId,
+        probeId));
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC);
     this.methodVisitor.visitLineNumber(line, start);
   }
-  
+
 }

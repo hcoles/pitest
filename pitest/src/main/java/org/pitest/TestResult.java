@@ -59,11 +59,11 @@ public class TestResult {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.description == null) ? 0 : this.description.hashCode());
-    result = prime * result
+    result = (prime * result)
         + ((this.state == null) ? 0 : this.state.hashCode());
-    result = prime * result
+    result = (prime * result)
         + ((this.throwable == null) ? 0 : this.throwable.hashCode());
     return result;
   }

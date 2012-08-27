@@ -20,7 +20,7 @@ import org.pitest.mutationtest.MutationClassPaths;
 /**
  * Provides access to code and tests on the classpath
  */
-public class CodeSource {
+public class CodeSource implements ClassInfoSource {
 
   private final MutationClassPaths  classPath;
   private final Repository          classRepository;
@@ -68,7 +68,11 @@ public class CodeSource {
   public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
     return FCollection.flatMap(classes, nameToClassInfo());
   }
-  
+
+  public Option<ClassInfo> fetchClass(final ClassName clazz) {
+    return this.classRepository.fetchClass(clazz);
+  }
+
   private F<ClassName, Option<ClassInfo>> nameToClassInfo() {
     return new NameToClassInfo(this.classRepository);
   }

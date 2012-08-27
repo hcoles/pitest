@@ -32,9 +32,10 @@ import org.objectweb.asm.MethodVisitor;
 public class BlockTrackingMethodDecorator extends MethodAdapter {
 
   private final BlockCounter blockCounter;
-  private final Set<Label> handlers = new HashSet<Label>();
+  private final Set<Label>   handlers = new HashSet<Label>();
 
-  public BlockTrackingMethodDecorator(final BlockCounter blockCounter, final MethodVisitor mv) {
+  public BlockTrackingMethodDecorator(final BlockCounter blockCounter,
+      final MethodVisitor mv) {
     super(mv);
     this.blockCounter = blockCounter;
   }
@@ -53,23 +54,24 @@ public class BlockTrackingMethodDecorator extends MethodAdapter {
     this.mv.visitJumpInsn(arg0, arg1);
     this.blockCounter.registerNewBlock();
   }
-  
+
   @Override
-  public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
+  public void visitTryCatchBlock(final Label start, final Label end,
+      final Label handler, final String type) {
     super.visitTryCatchBlock(start, end, handler, type);
-    if ( type == null ) {
-      handlers.add(handler);
+    if (type == null) {
+      this.handlers.add(handler);
     }
   }
-  
+
   @Override
-  public void visitLabel(Label label) {
+  public void visitLabel(final Label label) {
     super.visitLabel(label);
-    if ( handlers.contains(label) ) {
-      blockCounter.registerFinallyBlockStart();
+    if (this.handlers.contains(label)) {
+      this.blockCounter.registerFinallyBlockStart();
     }
   }
-  
+
   private boolean endsBlock(final int opcode) {
     switch (opcode) {
     case RETURN:

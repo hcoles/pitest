@@ -43,15 +43,15 @@ public class CoverageResult implements Serializable {
   }
 
   public int getNumberOfCoveredLines() {
-    return FCollection.fold(classStatisticsToLineCount(), 0, coverage);
+    return FCollection.fold(classStatisticsToLineCount(), 0, this.coverage);
   }
-  
+
   private static F2<Integer, ClassStatistics, Integer> classStatisticsToLineCount() {
     return new F2<Integer, ClassStatistics, Integer>() {
-      public Integer apply(Integer a, ClassStatistics b) {
+      public Integer apply(final Integer a, final ClassStatistics b) {
         return a + b.getUniqueVisitedLines().size();
       }
-      
+
     };
   }
 
@@ -61,7 +61,5 @@ public class CoverageResult implements Serializable {
         + ", executionTime=" + this.executionTime + ", coverage="
         + this.coverage + ", greenSuite=" + this.greenSuite + "]";
   }
-
-
 
 }

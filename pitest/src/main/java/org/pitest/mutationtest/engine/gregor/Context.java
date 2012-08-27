@@ -33,8 +33,8 @@ public class Context implements BlockCounter {
 
   private final Map<String, Integer>            mutatorIndexes                 = new HashMap<String, Integer>();
 
-  private ConcreteBlockCounter blockCounter = new ConcreteBlockCounter();
-  
+  private final ConcreteBlockCounter            blockCounter                   = new ConcreteBlockCounter();
+
   private int                                   lastLineNumber;
 
   private ClassInfo                             classInfo;
@@ -107,7 +107,9 @@ public class Context implements BlockCounter {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
         getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
-        description, this.methodName, this.lastLineNumber, this.blockCounter.getCurrentBlock(), this.blockCounter.isWithinExceptionHandler());
+        description, this.methodName, this.lastLineNumber,
+        this.blockCounter.getCurrentBlock(),
+        this.blockCounter.isWithinExceptionHandler());
     registerMutation(details);
     return newId;
   }
@@ -146,11 +148,12 @@ public class Context implements BlockCounter {
     return getTargetMutation().contains(idMatches(newId));
   }
 
-  private static F<MutationIdentifier, Boolean> idMatches(final MutationIdentifier newId) {
-    return new F<MutationIdentifier, Boolean> () {
-      public Boolean apply(MutationIdentifier a) {
+  private static F<MutationIdentifier, Boolean> idMatches(
+      final MutationIdentifier newId) {
+    return new F<MutationIdentifier, Boolean>() {
+      public Boolean apply(final MutationIdentifier a) {
         return a.matches(newId);
-      }  
+      }
     };
   }
 
@@ -162,9 +165,8 @@ public class Context implements BlockCounter {
     this.mutationFindingDisabledReasons.remove(reason);
   }
 
-
   public void registerNewBlock() {
-    this.blockCounter.registerNewBlock();   
+    this.blockCounter.registerNewBlock();
   }
 
   public void registerFinallyBlockStart() {

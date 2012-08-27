@@ -43,11 +43,13 @@ public class ConfigurationFactory {
     final Collection<Configuration> configs = new ArrayList<Configuration>();
     final Repository classRepository = new Repository(this.source);
 
-    if (classRepository.fetchClass(ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
+    if (classRepository.fetchClass(
+        ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
       configs.add(new JUnitCompatibleConfiguration());
     }
 
-    if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG")).hasSome()) {
+    if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG"))
+        .hasSome()) {
       configs.add(new TestNGConfiguration(this.config));
     }
 

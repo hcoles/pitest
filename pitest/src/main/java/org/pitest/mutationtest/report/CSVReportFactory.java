@@ -15,9 +15,9 @@
 package org.pitest.mutationtest.report;
 
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListener;
 
 public class CSVReportFactory implements ListenerFactory {
 
@@ -27,7 +27,7 @@ public class CSVReportFactory implements ListenerFactory {
     this.outputStrategy = outputStrategy;
   }
 
-  public TestListener getListener(final CoverageDatabase coverage,
+  public MutationResultListener getListener(final CoverageDatabase coverage,
       final long startTime, final SourceLocator locator) {
     return new CSVReportListener(this.outputStrategy);
   }

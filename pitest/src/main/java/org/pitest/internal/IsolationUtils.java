@@ -159,7 +159,6 @@ public abstract class IsolationUtils {
     XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
 
     return writer.toString();
-    // return XSTREAM_INSTANCE.toXML(o);
   }
 
   public static String toTransportString(final Object o) {

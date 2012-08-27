@@ -1,11 +1,11 @@
 package org.pitest.mutationtest.engine.gregor.inlinedcode;
 
 public class LineMutatorPair {
-  
-  private final int lineNumber;
+
+  private final int    lineNumber;
   private final String mutator;
-  
-  public LineMutatorPair(int lineNumber, String mutator) {
+
+  public LineMutatorPair(final int lineNumber, final String mutator) {
     this.lineNumber = lineNumber;
     this.mutator = mutator;
   }
@@ -14,30 +14,35 @@ public class LineMutatorPair {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + lineNumber;
-    result = prime * result + ((mutator == null) ? 0 : mutator.hashCode());
+    result = (prime * result) + this.lineNumber;
+    result = (prime * result)
+        + ((this.mutator == null) ? 0 : this.mutator.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    LineMutatorPair other = (LineMutatorPair) obj;
-    if (lineNumber != other.lineNumber)
+    }
+    final LineMutatorPair other = (LineMutatorPair) obj;
+    if (this.lineNumber != other.lineNumber) {
       return false;
-    if (mutator == null) {
-      if (other.mutator != null)
+    }
+    if (this.mutator == null) {
+      if (other.mutator != null) {
         return false;
-    } else if (!mutator.equals(other.mutator))
+      }
+    } else if (!this.mutator.equals(other.mutator)) {
       return false;
+    }
     return true;
   }
-  
-  
 
 }

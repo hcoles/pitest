@@ -22,8 +22,8 @@ import org.pitest.mutationtest.results.DetectionStatus;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private Option<Description> lastFailingTest  = Option.none();
-  private int                 testsRun         = 0;
+  private Option<Description> lastFailingTest = Option.none();
+  private int                 testsRun        = 0;
 
   public void onTestError(final TestResult tr) {
     recordFailingTest(tr);

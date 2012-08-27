@@ -43,11 +43,11 @@ public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
   private int distanceWeighting(final TestInfo arg0, final TestInfo arg1) {
     return weightFor(arg0) - weightFor(arg1);
   }
-  
+
   private int weightFor(final TestInfo ti) {
     return weightForDirectHit(ti) - (ti.getNumberOfLinesCovered() / 10);
   }
-  
+
   private int weightForDirectHit(final TestInfo arg0) {
     return arg0.directlyHits(this.targetClass) ? this.distanceTimeWeighting : 0;
   }

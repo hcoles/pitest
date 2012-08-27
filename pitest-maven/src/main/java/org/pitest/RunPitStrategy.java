@@ -32,6 +32,8 @@ import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.Timings;
+import org.pitest.mutationtest.incremental.HistoryStore;
+import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -41,34 +43,41 @@ import org.pitest.util.JavaAgent;
 
 public class RunPitStrategy implements GoalStrategy {
 
-  public void execute(final File baseDir, final ReportOptions data) throws MojoExecutionException {
+  public void execute(final File baseDir, final ReportOptions data)
+      throws MojoExecutionException {
 
     System.out.println("Running report with " + data);
     final ClassPath cp = data.getClassPath();
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
-    final JavaAgent jac = new JarCreatingJarFinder(new ClassPathByteArraySource(cp));
+    final JavaAgent jac = new JarCreatingJarFinder(
+        new ClassPathByteArraySource(cp));
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
         jac.getJarLocation().value());
 
     final ResultOutputStrategy reportOutput = data.getReportDirectoryStrategy();
-    
+
     final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
         FCollection.map(data.getOutputFormats(),
             OutputFormat.createFactoryForFormat(reportOutput)));
 
-    CoverageOptions coverageOptions = data.createCoverageOptions();
-    LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
-    MutationClassPaths cps = data.getMutationClassPaths();
-    
-    CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
+    final CoverageOptions coverageOptions = data.createCoverageOptions();
+    final LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
+    final MutationClassPaths cps = data.getMutationClassPaths();
 
-    Timings timings = new Timings();
-    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(baseDir,
-        coverageOptions, launchOptions, code, timings);
-    final MutationCoverageReport report = new MutationCoverageReport(baseDir, code,
-        coverageDatabase, data, reportFactory, timings, new DefaultBuildVerifier());
+    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
+        .testClassIdentifier());
+
+    final Timings timings = new Timings();
+    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
+        baseDir, coverageOptions, launchOptions, code, timings);
+
+    final HistoryStore history = new NullHistoryStore();
+
+    final MutationCoverageReport report = new MutationCoverageReport(baseDir,
+        history, code, coverageDatabase, data, reportFactory, timings,
+        new DefaultBuildVerifier());
 
     // Create new classloader under boot
     final ClassLoader loader = new DefaultPITClassloader(cp,

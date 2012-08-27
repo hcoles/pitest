@@ -37,7 +37,7 @@ public class CoveragePipe implements CoverageReceiver {
 
   }
 
-  public synchronized void end(ExitCode exitCode) {
+  public synchronized void end(final ExitCode exitCode) {
     this.dos.writeByte(Id.DONE);
     this.dos.writeInt(exitCode.getCode());
     this.dos.flush();

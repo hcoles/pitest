@@ -104,9 +104,8 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
   EXPERIMENTAL_MEMBER_VARIABLE(
       new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator()),
 
-
   EXPERIMENTAL_SWITCH(
-          new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator()),
+      new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator()),
   /**
    * Default mutators
    */
@@ -117,7 +116,8 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * All the mutators
    */
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
-      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE, EXPERIMENTAL_SWITCH);
+      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE,
+      EXPERIMENTAL_SWITCH);
 
   Mutator(final Mutator... groups) {
     this.impls = asCollection(groups);

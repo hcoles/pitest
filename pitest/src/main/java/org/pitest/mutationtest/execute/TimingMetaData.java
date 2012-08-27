@@ -32,7 +32,7 @@ public class TimingMetaData implements MetaData {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + (int) (this.expectedTime ^ (this.expectedTime >>> 32));
     return result;
   }

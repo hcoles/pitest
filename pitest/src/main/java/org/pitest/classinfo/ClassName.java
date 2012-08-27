@@ -32,10 +32,10 @@ public final class ClassName implements Serializable {
     this(clazz.getName());
   }
 
-  public static ClassName fromString(String clazz) {
+  public static ClassName fromString(final String clazz) {
     return new ClassName(clazz);
   }
-  
+
   public String asJavaName() {
     return this.name.replace('/', '.');
   }
@@ -91,7 +91,8 @@ public final class ClassName implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+    result = (prime * result)
+        + ((this.name == null) ? 0 : this.name.hashCode());
     return result;
   }
 

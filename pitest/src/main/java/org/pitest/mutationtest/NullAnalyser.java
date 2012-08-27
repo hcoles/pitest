@@ -8,20 +8,25 @@ import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
+/**
+ * Always selects the start status for a mutation
+ * 
+ */
 public class NullAnalyser implements MutationAnalyser {
 
   public Collection<MutationResult> analyse(
-      Collection<MutationDetails> mutationsForClasses) {
+      final Collection<MutationDetails> mutationsForClasses) {
     return FCollection.map(mutationsForClasses, mutationToResult());
   }
 
   private F<MutationDetails, MutationResult> mutationToResult() {
     return new F<MutationDetails, MutationResult>() {
 
-      public MutationResult apply(MutationDetails a) {
-        return new MutationResult(a, new MutationStatusTestPair(0,DetectionStatus.NOT_STARTED));
+      public MutationResult apply(final MutationDetails a) {
+        return new MutationResult(a, new MutationStatusTestPair(0,
+            DetectionStatus.NOT_STARTED));
       }
-      
+
     };
   }
 

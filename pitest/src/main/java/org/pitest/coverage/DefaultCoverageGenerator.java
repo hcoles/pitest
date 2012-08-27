@@ -53,11 +53,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final LaunchOptions   launchOptions;
   private final CodeSource      code;
   private final Timings         timings;
-  private final File workingDir;
+  private final File            workingDir;
 
-  public DefaultCoverageGenerator(final File workingDir, final CoverageOptions coverageOptions,
-      final LaunchOptions launchOptions, final CodeSource code,
-      final Timings timings) {
+  public DefaultCoverageGenerator(final File workingDir,
+      final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
+      final CodeSource code, final Timings timings) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
@@ -113,8 +113,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     final ServerSocket socket = sf.getNextAvailableServerSocket();
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(this.code.getClassPath())
-        .andBaseDir(workingDir)
+        .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
         .andStderr(printWith("stderr "))

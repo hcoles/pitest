@@ -17,7 +17,7 @@ package org.pitest.mutationtest.config;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
-  
+
   /**
    * The directory to write report sot
    */
@@ -49,12 +49,12 @@ public enum ConfigOption {
    * each mutant)
    */
   MUTATE_STATIC_INITIALIZERS("mutateStaticInits", false),
-  
+
   /**
    * Do/don't create timestamped folders for reports
    */
   TIME_STAMPED_REPORTS("timestampedReports", true),
-  
+
   /**
    * Number of threads to use
    */
@@ -127,15 +127,14 @@ public enum ConfigOption {
    * Maximum number of mutations to include within a single unit of analysis.
    */
   MUTATION_UNIT_SIZE("mutationUnitSize", 0),
-  
+
   /**
-  * Do/don't attempt to detect inlined code from finally blocks
-  */
+   * Do/don't attempt to detect inlined code from finally blocks
+   */
   USE_INLINED_CODE_DETECTION("detectInlinedCode", false);
 
   private final String text;
   private final Object defaultValue;
-  
 
   ConfigOption(final String text) {
     this(text, null);
@@ -150,7 +149,6 @@ public enum ConfigOption {
     return this.text;
   }
 
-  
   @SuppressWarnings("unchecked")
   public <T> T getDefault(final Class<T> type) {
     // so much for type safety

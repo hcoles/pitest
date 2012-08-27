@@ -115,7 +115,7 @@ public class DependencyExtractor {
     dependencies.removeAll(visited);
     visited.addAll(dependencies);
 
-    if ((currentDepth < this.depth - 1) || (this.depth == 0)) {
+    if ((currentDepth < (this.depth - 1)) || (this.depth == 0)) {
 
       dependencies.addAll(examineChildDependencies(currentDepth, dependencies,
           visited, filter));

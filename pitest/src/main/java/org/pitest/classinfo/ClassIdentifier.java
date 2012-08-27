@@ -2,50 +2,55 @@ package org.pitest.classinfo;
 
 public class ClassIdentifier {
 
-  private final long hash;
+  private final long      hash;
   private final ClassName name;
-  
-  public ClassIdentifier(long hash, ClassName name) {
+
+  public ClassIdentifier(final long hash, final ClassName name) {
     this.hash = hash;
     this.name = name;
   }
 
   public long getHash() {
-    return hash;
+    return this.hash;
   }
 
   public ClassName getName() {
-    return name;
+    return this.name;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + (int) (hash ^ (hash >>> 32));
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = (prime * result) + (int) (this.hash ^ (this.hash >>> 32));
+    result = (prime * result)
+        + ((this.name == null) ? 0 : this.name.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    ClassIdentifier other = (ClassIdentifier) obj;
-    if (hash != other.hash)
+    }
+    final ClassIdentifier other = (ClassIdentifier) obj;
+    if (this.hash != other.hash) {
       return false;
-    if (name == null) {
-      if (other.name != null)
+    }
+    if (this.name == null) {
+      if (other.name != null) {
         return false;
-    } else if (!name.equals(other.name))
+      }
+    } else if (!this.name.equals(other.name)) {
       return false;
+    }
     return true;
   }
-  
-  
-  
+
 }

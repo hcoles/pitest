@@ -45,7 +45,7 @@ public class MultipleTestGroup extends AbstractTestUnit {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.children == null) ? 0 : this.children.hashCode());
     return result;
   }

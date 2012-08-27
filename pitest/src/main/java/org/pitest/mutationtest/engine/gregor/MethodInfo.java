@@ -89,7 +89,7 @@ public class MethodInfo {
   public boolean takesNoParameters() {
     return this.methodDescriptor.startsWith("()");
   }
-  
+
   public boolean isInGroovyClass() {
     return this.owningClass.isGroovyClass();
   }

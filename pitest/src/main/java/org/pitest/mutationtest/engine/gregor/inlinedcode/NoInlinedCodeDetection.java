@@ -7,7 +7,7 @@ import org.pitest.mutationtest.MutationDetails;
 public class NoInlinedCodeDetection implements InlinedCodeFilter {
 
   public Collection<MutationDetails> process(
-      Collection<MutationDetails> mutations) {
+      final Collection<MutationDetails> mutations) {
     return mutations;
   }
 

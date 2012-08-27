@@ -1,6 +1,5 @@
 package org.pitest.project;
 
-
 /**
  * The ProjectConfigurationParserFactory is responsible for creating a
  * ProjectConfigurationParser instance based on a system property.
@@ -17,7 +16,6 @@ public class ProjectConfigurationParserFactory {
    */
   public static final String PARSER_PROPERTY = "projectConfigurationParser.impl";
 
-
   /**
    * Creates a new ProjectConfigurationParser instance, based on the system
    * property. If no system property is specified then the default
@@ -32,8 +30,8 @@ public class ProjectConfigurationParserFactory {
       throws ProjectConfigurationParserException {
     try {
       final String propertyValue = System.getProperty(PARSER_PROPERTY);
-      
-      if (propertyValue == null ) {
+
+      if (propertyValue == null) {
         throw new ProjectConfigurationParserException(
             "No parser implementation set");
       }

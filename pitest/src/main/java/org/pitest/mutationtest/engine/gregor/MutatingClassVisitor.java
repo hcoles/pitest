@@ -87,18 +87,15 @@ class MutatingClassVisitor extends ClassAdapter {
     return wrapWithDecorators(wrapWithFilters(next));
   }
 
-  
   private MethodVisitor wrapWithDecorators(final MethodVisitor mv) {
     return wrapWithBlockTracker(wrapWithLineTracker(mv));
   }
-  
-  private MethodVisitor wrapWithBlockTracker(
-      final MethodVisitor mv) {
+
+  private MethodVisitor wrapWithBlockTracker(final MethodVisitor mv) {
     return new BlockTrackingMethodDecorator(this.context, mv);
   }
-  
-  private MethodVisitor wrapWithLineTracker(
-      final MethodVisitor mv) {
+
+  private MethodVisitor wrapWithLineTracker(final MethodVisitor mv) {
     return new LineTrackingMethodVisitor(this.context, mv);
   }
 

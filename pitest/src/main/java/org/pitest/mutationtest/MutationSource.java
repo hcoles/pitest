@@ -44,8 +44,7 @@ public class MutationSource {
 
   public MutationSource(final MutationConfig mutationConfig,
       final MutationFilterFactory filterFactory,
-      final CoverageDatabase coverageDatabase,
-      final ClassByteArraySource source) {
+      final CoverageDatabase coverageDatabase, final ClassByteArraySource source) {
     this.mutationConfig = mutationConfig;
     this.coverageDatabase = coverageDatabase;
     this.filterFactory = filterFactory;
@@ -95,7 +94,7 @@ public class MutationSource {
           .getTestsForClassLine(mutation.getClassLine());
     } else {
       LOG.warning("Using untargetted tests");
-      return this.coverageDatabase.getTestsForClass(mutation.getJVMClassName());
+      return this.coverageDatabase.getTestsForClass(mutation.getClassName());
     }
   }
 

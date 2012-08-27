@@ -55,10 +55,10 @@ public final class TestClass {
     findTestUnits(tus, visitedClasses, this, startConfig, groupStrategy);
     return tus;
   }
-  
+
   private void findTestUnits(final List<TestUnit> tus,
-      Set<TestClass> visitedClasses, final TestClass suiteClass, final Configuration startConfig,
-      final GroupingStrategy groupStrategy) {
+      final Set<TestClass> visitedClasses, final TestClass suiteClass,
+      final Configuration startConfig, final GroupingStrategy groupStrategy) {
     visitedClasses.add(suiteClass);
     final Collection<TestClass> tcs = startConfig.testSuiteFinder().apply(
         suiteClass);
@@ -68,7 +68,7 @@ public final class TestClass {
         findTestUnits(tus, visitedClasses, tc, startConfig, groupStrategy);
       }
     }
-    
+
     final Collection<TestUnit> testsInThisClass = suiteClass
         .getTestUnitsWithinClass(startConfig);
     if (!testsInThisClass.isEmpty()) {
@@ -76,8 +76,6 @@ public final class TestClass {
     }
 
   }
-
-
 
   @Override
   public String toString() {
@@ -88,7 +86,7 @@ public final class TestClass {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.clazz == null) ? 0 : this.clazz.hashCode());
     return result;
   }

@@ -45,6 +45,8 @@ public class CoverageDataTest {
   @Mock
   private CodeSource code;
   
+  private ClassName foo = ClassName.fromString("foo");
+  
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -95,7 +97,7 @@ public class CoverageDataTest {
   
   @Test
   public void shouldReturnNotTestsWhenNoTestsCoverClass() {
-    assertTrue(testee.getTestsForClass("foo").isEmpty());
+    assertTrue(testee.getTestsForClass(foo).isEmpty());
   }
   
   @Test
@@ -103,7 +105,7 @@ public class CoverageDataTest {
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 2));
     testee.calculateClassCoverage(makeCoverageResult("foo","fooTest2", 0, 2));
-    assertEquals(Arrays.asList("fooTest","fooTest2"),FCollection.map(testee.getTestsForClass("foo"),testInfoToString()));
+    assertEquals(Arrays.asList("fooTest","fooTest2"),FCollection.map(testee.getTestsForClass(foo),testInfoToString()));
   }
   
   

@@ -34,15 +34,15 @@ public class MutationClassPaths {
   public Iterable<ClassName> code() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getCodeFilter())
-            .findClasses(this.classFilter.getCode()), this.classFilter
-            .getCode()).map(ClassName.stringToClassName());
+            .findClasses(this.classFilter.getCode()),
+        this.classFilter.getCode()).map(ClassName.stringToClassName());
   }
 
   public Iterable<ClassName> test() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getTestFilter())
-            .findClasses(this.classFilter.getTest()), this.classFilter
-            .getTest()).map(ClassName.stringToClassName());
+            .findClasses(this.classFilter.getTest()),
+        this.classFilter.getTest()).map(ClassName.stringToClassName());
   }
 
   public ClassPath getClassPath() {

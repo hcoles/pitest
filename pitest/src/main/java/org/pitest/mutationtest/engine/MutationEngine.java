@@ -20,8 +20,7 @@ import org.pitest.internal.ClassByteArraySource;
 
 public interface MutationEngine {
 
-  public Mutater createMutator(
-      ClassByteArraySource source);
+  public Mutater createMutator(ClassByteArraySource source);
 
   public Collection<String> getMutatorNames();
 

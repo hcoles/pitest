@@ -45,7 +45,6 @@ public class CoverageOptions {
   public Configuration getPitConfig() {
     return this.pitConfig;
   }
-  
 
   public int getDependencyAnalysisMaxDistance() {
     return this.maxDependencyDistance;
