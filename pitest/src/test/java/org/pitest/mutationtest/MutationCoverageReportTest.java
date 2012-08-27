@@ -45,7 +45,7 @@ import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 public class MutationCoverageReportTest {
 
-  private MutationCoverageReport testee;
+  private MutationCoverage testee;
 
   private ReportOptions          data;
 
@@ -82,7 +82,7 @@ public class MutationCoverageReportTest {
   }
 
   private void createAndRunTestee() {
-    this.testee = new MutationCoverageReport(null, this.history, this.code,
+    this.testee = new MutationCoverage(null, this.history, this.code,
         this.coverage, this.data, this.listenerFactory, new Timings(),
         new DefaultBuildVerifier());
     this.testee.run();

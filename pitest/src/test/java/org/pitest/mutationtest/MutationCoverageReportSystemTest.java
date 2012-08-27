@@ -390,7 +390,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       
       final HistoryStore history = new NullHistoryStore();
       
-      final MutationCoverageReport testee = new MutationCoverageReport(null,history, code,
+      final MutationCoverage testee = new MutationCoverage(null,history, code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());
 

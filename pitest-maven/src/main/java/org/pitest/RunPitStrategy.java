@@ -29,7 +29,7 @@ import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
-import org.pitest.mutationtest.MutationCoverageReport;
+import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.incremental.HistoryStore;
@@ -75,7 +75,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     final HistoryStore history = new NullHistoryStore();
 
-    final MutationCoverageReport report = new MutationCoverageReport(baseDir,
+    final MutationCoverage report = new MutationCoverage(baseDir,
         history, code, coverageDatabase, data, reportFactory, timings,
         new DefaultBuildVerifier());
 
