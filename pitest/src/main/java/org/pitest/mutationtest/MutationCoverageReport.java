@@ -14,20 +14,24 @@
  */
 package org.pitest.mutationtest;
 
+import java.io.Reader;
+
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.commandline.OptionsParser;
 import org.pitest.mutationtest.commandline.ParseResult;
 import org.pitest.mutationtest.incremental.HistoryStore;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.WriterFactory;
+import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 /**
@@ -54,10 +58,14 @@ public class MutationCoverageReport {
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder(
         new ClassPathByteArraySource(data.getClassPath()));
-    try {
 
-      final DirectoryResultOutputStrategy outputStrategy = data
-          .getReportDirectoryStrategy();
+    final ResultOutputStrategy outputStrategy = data
+        .getReportDirectoryStrategy();
+
+    final Option<Reader> reader = data.createHistoryReader();
+    final WriterFactory historyWriter = data.createHistoryWriter();
+
+    try {
 
       final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
           FCollection.map(data.getOutputFormats(),
@@ -75,15 +83,17 @@ public class MutationCoverageReport {
       final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code, timings);
 
-      final HistoryStore history = new NullHistoryStore();
+      final HistoryStore history = new XStreamHistoryStore(historyWriter,
+          reader);
 
-      final MutationCoverage instance = new MutationCoverage(null,
-          history, code, coverageGenerator, data, reportFactory, timings,
+      final MutationCoverage instance = new MutationCoverage(null, history,
+          code, coverageGenerator, data, reportFactory, timings,
           new DefaultBuildVerifier());
 
       instance.run();
     } finally {
       agent.close();
+      historyWriter.close();
     }
   }
 

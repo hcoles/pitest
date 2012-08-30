@@ -44,7 +44,7 @@ public class MutationResult {
   public int getNumberOfTestsRun() {
     return this.status.getNumberOfTestsRun();
   }
-  
+
   public MutationStatusTestPair getStatusTestPair() {
     return this.status;
   }

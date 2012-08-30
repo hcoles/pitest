@@ -40,6 +40,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   private MutationResult analyseFromHistory(final MutationDetails each,
       final MutationStatusTestPair mutationStatusTestPair) {
+
     if (!this.history.hasClassChanged(each.getClassName())
         && (mutationStatusTestPair.getStatus() == DetectionStatus.TIMED_OUT)) {
       return makeResult(each, DetectionStatus.TIMED_OUT);

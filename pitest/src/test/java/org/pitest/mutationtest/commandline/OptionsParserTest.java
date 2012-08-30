@@ -16,6 +16,7 @@ package org.pitest.mutationtest.commandline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -317,6 +318,27 @@ public class OptionsParserTest {
     assertEquals(
         (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
         actual.getMutationUnitSize());
+  }
+  
+  @Test
+  public void shouldDefaultToNoHistory() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertNull(actual.getHistoryInputLocation());
+    assertNull(actual.getHistoryOutputLocation());
+  }
+  
+  @Test
+  public void shouldParseHistoryInputLocation() {
+    final ReportOptions actual = parseAddingRequiredArgs("--historyInputLocation","foo");
+    assertEquals(new File("foo"),
+        actual.getHistoryInputLocation());
+  }
+  
+  @Test
+  public void shouldParseHistoryOutputLocation() {
+    final ReportOptions actual = parseAddingRequiredArgs("--historyOutputLocation","foo");
+    assertEquals(new File("foo"),
+        actual.getHistoryOutputLocation());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

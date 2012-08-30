@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.incremental;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.pitest.classinfo.ClassIdentifier;
@@ -12,30 +13,23 @@ import org.pitest.mutationtest.results.MutationResult;
 public class NullHistoryStore implements HistoryStore {
 
   public void initialize() {
-    // TODO Auto-generated method stub
-    
+
   }
 
-  public void recordClassPath(Collection<ClassIdentifier> ids) {
-    // TODO Auto-generated method stub
-    
+  public void recordClassPath(final Collection<ClassIdentifier> ids) {
+
   }
 
-  public void recordResult(MutationResult result) {
-    // TODO Auto-generated method stub
-    
+  public void recordResult(final MutationResult result) {
+
   }
 
   public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
-    // TODO Auto-generated method stub
-    return null;
+    return Collections.emptyMap();
   }
 
   public Map<ClassName, ClassIdentifier> getHistoricClassPath() {
-    // TODO Auto-generated method stub
-    return null;
+    return Collections.emptyMap();
   }
-
-
 
 }

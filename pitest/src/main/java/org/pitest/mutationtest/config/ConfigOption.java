@@ -131,7 +131,17 @@ public enum ConfigOption {
   /**
    * Do/don't attempt to detect inlined code from finally blocks
    */
-  USE_INLINED_CODE_DETECTION("detectInlinedCode", false);
+  USE_INLINED_CODE_DETECTION("detectInlinedCode", false),
+
+  /**
+   * Location to read history from for incremental analysis
+   */
+  HISTORY_INPUT_LOCATION("historyInputLocation"),
+
+  /**
+   * Location to write history to for incremental analysis
+   */
+  HISTORY_OUTPUT_LOCATION("historyOutputLocation");
 
   private final String text;
   private final Object defaultValue;

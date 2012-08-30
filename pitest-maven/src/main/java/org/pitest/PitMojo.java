@@ -69,6 +69,21 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="${project.build.directory}/pit-reports"
    */
   private File                  reportsDirectory;
+  
+  /**
+   * File to write history information to for incremental analysis
+   * 
+   * @parameter
+   */
+  private File                  historyOutputFile;
+  
+  
+  /**
+   * File to read history from for incremental analysis (can be same as output file)
+   * 
+   * @parameter
+   */
+  private File                  historyInputFile;
 
   /**
    * Maximum distance to look from test to class. Relevant when mutating static
@@ -352,5 +367,23 @@ public class PitMojo extends AbstractMojo {
   public void setTimestampedReports(boolean timestampedReports) {
     this.timestampedReports = timestampedReports;
   }
+
+  public File getHistoryOutputFile() {
+    return historyOutputFile;
+  }
+
+  public void setHistoryOutputFile(File historyOutputFile) {
+    this.historyOutputFile = historyOutputFile;
+  }
+
+  public File getHistoryInputFile() {
+    return historyInputFile;
+  }
+
+  public void setHistoryInputFile(File historyInputFile) {
+    this.historyInputFile = historyInputFile;
+  }
+  
+  
 
 }

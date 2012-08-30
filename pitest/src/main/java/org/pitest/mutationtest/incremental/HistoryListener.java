@@ -5,7 +5,7 @@ import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
 
 public class HistoryListener implements MutationResultListener {
-  
+
   private final HistoryStore historyStore;
 
   public HistoryListener(final HistoryStore historyStore) {
@@ -17,8 +17,8 @@ public class HistoryListener implements MutationResultListener {
   }
 
   public void handleMutationResult(final MutationMetaData metaData) {
-    for ( MutationResult each : metaData.getMutations() ) {
-      historyStore.recordResult(each);
+    for (final MutationResult each : metaData.getMutations()) {
+      this.historyStore.recordResult(each);
     }
 
   }

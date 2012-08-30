@@ -6,6 +6,7 @@ import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.CodeSource;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -15,6 +16,12 @@ public class DefaultCodeHistory implements CodeHistory {
   private final ClassInfoSource                                 code;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults;
   private final Map<ClassName, ClassIdentifier>                 previousClassPath;
+
+  public DefaultCodeHistory(final CodeSource code,
+      final HistoryStore historyStore) {
+    this(code, historyStore.getHistoricResults(), historyStore
+        .getHistoricClassPath());
+  }
 
   public DefaultCodeHistory(final ClassInfoSource code,
       final Map<MutationIdentifier, MutationStatusTestPair> previousResults,

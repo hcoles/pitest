@@ -23,6 +23,8 @@ import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
+import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
@@ -77,6 +79,8 @@ public class OptionsParser {
   private final OptionSpec<Integer>                  depth;
   private final OptionSpec<Integer>                  threadsSpec;
   private final OptionSpec<File>                     sourceDirSpec;
+  private final OptionSpec<File>                     historyOutputSpec;
+  private final OptionSpec<File>                     historyInputSpec;
   private final OptionSpec<Mutator>                  mutators;
   private final OptionSpec<String>                   jvmArgs;
   private final ArgumentAcceptingOptionSpec<Boolean> mutateStatics;
@@ -240,6 +244,15 @@ public class OptionsParser {
         .describedAs(
             "Maximum number of mutations to include within a single unit of analysis")
         .defaultsTo(MUTATION_UNIT_SIZE.getDefault(Integer.class));
+
+    this.historyInputSpec = parserAccepts(HISTORY_INPUT_LOCATION)
+        .withRequiredArg().ofType(File.class)
+        .describedAs("File to read history from for incremental analysis");
+
+    this.historyOutputSpec = parserAccepts(HISTORY_OUTPUT_LOCATION)
+        .withRequiredArg().ofType(File.class)
+        .describedAs("File to write history to for incremental analysis");
+
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -309,6 +322,9 @@ public class OptionsParser {
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
     data.setCodePaths(this.codePaths.values(userArgs));
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
+
+    data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
+    data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);

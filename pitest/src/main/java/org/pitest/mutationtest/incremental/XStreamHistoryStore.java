@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,22 +13,41 @@ import java.util.Map;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.util.PitXmlDriver;
 import org.pitest.util.Unchecked;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public class XStreamHistoryStore implements HistoryStore {
 
-  private final PrintWriter                                     output;
+  private final static XStream                                  XSTREAM_INSTANCE  = configureXStream();
+
+  private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<MutationIdentifier, MutationStatusTestPair>();
   private final Map<ClassName, ClassIdentifier>                 previousClassPath = new HashMap<ClassName, ClassIdentifier>();
 
-  public XStreamHistoryStore(final Writer output, final Option<Reader> input) {
-    this.output = new PrintWriter(output);
+  public XStreamHistoryStore(final WriterFactory output,
+      final Option<Reader> input) {
+    this.outputFactory = output;
     this.input = createReader(input);
+  }
+
+  private static XStream configureXStream() {
+    final XStream xstream = new XStream(new PitXmlDriver());
+    xstream.alias("classId", ClassIdentifier.class);
+    xstream.alias("name", ClassName.class);
+    xstream.alias("result", IdResult.class);
+    xstream.alias("statusTestPair", MutationStatusTestPair.class);
+    xstream.alias("status", DetectionStatus.class);
+    xstream.useAttributeFor(ClassIdentifier.class, "name");
+    xstream.useAttributeFor(ClassIdentifier.class, "hash");
+    return xstream;
   }
 
   private BufferedReader createReader(final Option<Reader> input) {
@@ -38,16 +58,20 @@ public class XStreamHistoryStore implements HistoryStore {
   }
 
   public void recordClassPath(final Collection<ClassIdentifier> ids) {
-    this.output.println(ids.size());
+    final PrintWriter output = this.outputFactory.create();
+    output.println(ids.size());
     for (final ClassIdentifier each : ids) {
-      this.output.println(IsolationUtils.toXml(each).replaceAll("\n", ""));
+      output.println(toXml(each));
     }
-    this.output.flush();
+    output.flush();
 
   }
 
   public void recordResult(final MutationResult result) {
-    this.output.println(IsolationUtils.toXml(result).replaceAll("\n", ""));
+    final PrintWriter output = this.outputFactory.create();
+    output.println(toXml(new IdResult(result.getDetails().getId(), result
+        .getStatusTestPair())));
+    output.flush();
   }
 
   public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
@@ -62,6 +86,11 @@ public class XStreamHistoryStore implements HistoryStore {
     if (this.input != null) {
       restoreClassPath();
       restoreResults();
+      try {
+        this.input.close();
+      } catch (final IOException e) {
+        throw Unchecked.translateCheckedException(e);
+      }
     }
   }
 
@@ -70,9 +99,8 @@ public class XStreamHistoryStore implements HistoryStore {
     try {
       line = this.input.readLine();
       while (line != null) {
-        final MutationResult mr = (MutationResult) IsolationUtils.fromXml(line);
-        this.previousResults.put(mr.getDetails().getId(),
-            mr.getStatusTestPair());
+        final IdResult result = (IdResult) fromXml(line);
+        this.previousResults.put(result.id, result.status);
         line = this.input.readLine();
       }
     } catch (final IOException e) {
@@ -85,13 +113,34 @@ public class XStreamHistoryStore implements HistoryStore {
     try {
       final long classPathSize = Long.valueOf(this.input.readLine());
       for (int i = 0; i != classPathSize; i++) {
-        final ClassIdentifier ci = (ClassIdentifier) IsolationUtils
-            .fromXml(this.input.readLine());
+        final ClassIdentifier ci = (ClassIdentifier) fromXml(this.input
+            .readLine());
         this.previousClassPath.put(ci.getName(), ci);
       }
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
+  }
+
+  private static Object fromXml(final String xml) {
+    return XSTREAM_INSTANCE.fromXML(xml);
+  }
+
+  private static String toXml(final Object o) {
+    final Writer writer = new StringWriter();
+    XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
+    return writer.toString().replaceAll("\n", "");
+  }
+
+  private static class IdResult {
+    final MutationIdentifier     id;
+    final MutationStatusTestPair status;
+
+    IdResult(final MutationIdentifier id, final MutationStatusTestPair status) {
+      this.id = id;
+      this.status = status;
+    }
+
   }
 
 }

@@ -46,7 +46,7 @@ public class MutationTestBuilderTest {
     MockitoAnnotations.initMocks(this);
     data = new ReportOptions();
     mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
-    testee = new MutationTestBuilder(null,mutationConfig,  source, data, configuration, javaAgent);
+    testee = new MutationTestBuilder(null,mutationConfig,   new NullAnalyser(), source, data, configuration, javaAgent);
   }
   
 

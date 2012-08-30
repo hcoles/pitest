@@ -15,6 +15,7 @@
 package org.pitest;
 
 import java.io.File;
+import java.io.Reader;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.classinfo.CodeSource;
@@ -23,6 +24,7 @@ import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.internal.IsolationUtils;
@@ -33,7 +35,8 @@ import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.incremental.HistoryStore;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.WriterFactory;
+import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.OutputFormat;
@@ -48,7 +51,10 @@ public class RunPitStrategy implements GoalStrategy {
 
     System.out.println("Running report with " + data);
     final ClassPath cp = data.getClassPath();
-
+    
+    Option<Reader> reader = data.createHistoryReader();
+    WriterFactory historyWriter = data.createHistoryWriter();
+    
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
     final JavaAgent jac = new JarCreatingJarFinder(
@@ -73,7 +79,7 @@ public class RunPitStrategy implements GoalStrategy {
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code, timings);
 
-    final HistoryStore history = new NullHistoryStore();
+    final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
     final MutationCoverage report = new MutationCoverage(baseDir,
         history, code, coverageDatabase, data, reportFactory, timings,
@@ -98,7 +104,7 @@ public class RunPitStrategy implements GoalStrategy {
       IsolationUtils.setContextClassLoader(original);
       jac.close();
       ja.close();
-
+      historyWriter.close();
     }
   }
 

@@ -48,8 +48,10 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
+import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.HistoryStore;
+import org.pitest.mutationtest.incremental.IncrementalAnalyser;
 import org.pitest.mutationtest.report.SmartSourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
@@ -128,6 +130,8 @@ public class MutationCoverage implements Runnable {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(stats);
+
+    this.historyStore.initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<TestUnit> tus = buildMutationTests(coverageData);
@@ -211,9 +215,12 @@ public class MutationCoverage implements Runnable {
         limitMutationsPerClass(), coverageData, new ClassPathByteArraySource(
             this.data.getClassPath()));
 
+    final MutationAnalyser analyser = new IncrementalAnalyser(
+        new DefaultCodeHistory(this.code, this.historyStore));
+
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
-        mutationConfig, source, this.data, this.coverage.getConfiguration(),
-        this.coverage.getJavaAgent());
+        mutationConfig, analyser, source, this.data,
+        this.coverage.getConfiguration(), this.coverage.getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

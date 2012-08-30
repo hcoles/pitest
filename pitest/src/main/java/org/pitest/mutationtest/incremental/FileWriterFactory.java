@@ -1,0 +1,38 @@
+package org.pitest.mutationtest.incremental;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.pitest.util.Unchecked;
+
+public class FileWriterFactory implements WriterFactory {
+
+  private final File  file;
+  private PrintWriter writer;
+
+  public FileWriterFactory(final File file) {
+    this.file = file;
+  }
+
+  public PrintWriter create() {
+    try {
+      if (this.writer == null) {
+        this.writer = new PrintWriter(new FileWriter(this.file));
+      }
+
+      return this.writer;
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+  public void close() {
+    if (this.writer != null) {
+      this.writer.close();
+    }
+
+  }
+
+}

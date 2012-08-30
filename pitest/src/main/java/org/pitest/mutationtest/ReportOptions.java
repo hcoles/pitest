@@ -18,6 +18,9 @@ import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,19 +31,25 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.incremental.FileWriterFactory;
+import org.pitest.mutationtest.incremental.NullWriterFactory;
+import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.DatedDirectoryReportDirCreationStrategy;
 import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.UndatedReportDirCreationStrategy;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
+import org.pitest.util.Unchecked;
 
 public class ReportOptions {
 
@@ -55,6 +64,10 @@ public class ReportOptions {
   private Collection<String>                         codePaths;
 
   private String                                     reportDir;
+
+  private File                                       historyInputLocation;
+  private File                                       historyOutputLocation;
+
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
   private Collection<? extends MethodMutatorFactory> mutators;
@@ -438,7 +451,7 @@ public class ReportOptions {
     this.mutationUnitSize = size;
   }
 
-  public DirectoryResultOutputStrategy getReportDirectoryStrategy() {
+  public ResultOutputStrategy getReportDirectoryStrategy() {
     return new DirectoryResultOutputStrategy(getReportDir(),
         pickDirectoryStrategy());
   }
@@ -466,7 +479,50 @@ public class ReportOptions {
 
   public void setDetectInlinedCode(final boolean b) {
     this.detectInlinedCode = b;
+  }
 
+  public WriterFactory createHistoryWriter() {
+    if (this.historyOutputLocation == null) {
+      return new NullWriterFactory();
+    }
+
+    // File historyFile = new File(data.getReportDir() + File.separator +
+    // "history.txt");
+
+    // new File(data.getReportDir()).mkdirs();
+    return new FileWriterFactory(this.historyOutputLocation);
+  }
+
+  public Option<Reader> createHistoryReader() {
+    if (this.historyInputLocation == null) {
+      return Option.none();
+    }
+
+    try {
+      if (this.historyInputLocation.exists()
+          && (this.historyInputLocation.length() > 0)) {
+        return Option.<Reader> some(new FileReader(this.historyInputLocation));
+      }
+      return Option.none();
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+  }
+
+  public void setHistoryInputLocation(final File historyInputLocation) {
+    this.historyInputLocation = historyInputLocation;
+  }
+
+  public void setHistoryOutputLocation(final File historyOutputLocation) {
+    this.historyOutputLocation = historyOutputLocation;
+  }
+
+  public File getHistoryInputLocation() {
+    return this.historyInputLocation;
+  }
+
+  public File getHistoryOutputLocation() {
+    return this.historyOutputLocation;
   }
 
 }

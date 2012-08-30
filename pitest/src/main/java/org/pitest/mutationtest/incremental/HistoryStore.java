@@ -12,13 +12,13 @@ import org.pitest.mutationtest.results.MutationResult;
 public interface HistoryStore {
 
   void initialize();
-  
+
   void recordClassPath(final Collection<ClassIdentifier> ids);
 
   void recordResult(final MutationResult result);
-  
+
   Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults();
-  
+
   Map<ClassName, ClassIdentifier> getHistoricClassPath();
 
 }

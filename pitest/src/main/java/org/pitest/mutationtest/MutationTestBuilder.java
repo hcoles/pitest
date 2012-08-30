@@ -53,14 +53,6 @@ public class MutationTestBuilder {
   private final File             baseDir;
 
   public MutationTestBuilder(final File baseDir,
-      final MutationConfig mutationConfig, final MutationSource mutationSource,
-      final ReportOptions data, final Configuration configuration,
-      final JavaAgent javaAgent) {
-    this(baseDir, mutationConfig, new NullAnalyser(), mutationSource, data,
-        configuration, javaAgent);
-  }
-
-  public MutationTestBuilder(final File baseDir,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
       final MutationSource mutationSource, final ReportOptions data,
       final Configuration configuration, final JavaAgent javaAgent) {

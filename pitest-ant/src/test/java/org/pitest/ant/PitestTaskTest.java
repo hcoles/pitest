@@ -364,6 +364,20 @@ public class PitestTaskTest {
         argThat(new PathMatcher(reference.toString())));
   }
 
+  @Test
+  public void shouldPassHistoryInputLocationToJavaTask() {
+    this.pitestTask.setHistoryInputLocation("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--historyInputLocation=foo");
+  }
+  
+  @Test
+  public void shouldPassHistoryOutputLocationToJavaTask() {
+    this.pitestTask.setHistoryOutputLocation("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--historyOutputLocation=foo");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

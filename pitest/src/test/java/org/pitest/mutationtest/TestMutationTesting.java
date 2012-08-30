@@ -365,7 +365,7 @@ public class TestMutationTesting {
         new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
     final MutationTestBuilder builder = new MutationTestBuilder(null,
-        mutationConfig, source, data, coverageOptions.getPitConfig(),
+        mutationConfig,  new NullAnalyser(), source, data, coverageOptions.getPitConfig(),
         launchOptions.getJavaAgentFinder());
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);

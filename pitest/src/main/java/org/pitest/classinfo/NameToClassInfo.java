@@ -12,10 +12,7 @@ public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
   }
 
   public Option<ClassInfo> apply(final ClassName a) {
-    System.out.println(a);
-    final Option<ClassInfo> o = this.repository.fetchClass(a);
-    System.out.println(o);
-    return o;
+    return this.repository.fetchClass(a);
   }
 
 }

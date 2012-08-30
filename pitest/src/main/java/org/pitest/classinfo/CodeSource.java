@@ -81,7 +81,6 @@ public class CodeSource implements ClassInfoSource {
     return new F<ClassInfo, Boolean>() {
 
       public Boolean apply(final ClassInfo a) {
-        System.out.println(a);
         return CodeSource.this.testIdentifier.isATestClass(a);
       }
 
