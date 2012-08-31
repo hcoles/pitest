@@ -2,21 +2,45 @@ package org.pitest.mutationtest.incremental;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.domain.TestInfo;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.util.Log;
 
 public class IncrementalAnalyser implements MutationAnalyser {
 
-  private final CodeHistory history;
+  private final static Logger              LOG         = Log.getLogger();
 
-  public IncrementalAnalyser(final CodeHistory history) {
+  private final CodeHistory                history;
+  private final CoverageDatabase           coverage;
+  private final Map<DetectionStatus, Long> preAnalysed = createStatusMap();
+
+  public IncrementalAnalyser(final CodeHistory history,
+      final CoverageDatabase coverage) {
     this.history = history;
+    this.coverage = coverage;
+  }
+
+  private static Map<DetectionStatus, Long> createStatusMap() {
+    HashMap<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
+    for (DetectionStatus each : DetectionStatus.values()) {
+      map.put(each, 0l);
+    }
+    return map;
   }
 
   public Collection<MutationResult> analyse(
@@ -34,27 +58,87 @@ public class IncrementalAnalyser implements MutationAnalyser {
       }
     }
 
+    logTotals();
+
     return mrs;
+
+  }
+
+  private void logTotals() {
+    for (Entry<DetectionStatus, Long> each : preAnalysed.entrySet()) {
+      if (each.getValue() != 0) {
+        LOG.info("Incremental analysis set " + each.getValue()
+            + " mutations to a status of " + each.getKey());
+      }
+    }
 
   }
 
   private MutationResult analyseFromHistory(final MutationDetails each,
       final MutationStatusTestPair mutationStatusTestPair) {
 
-    if (!this.history.hasClassChanged(each.getClassName())
-        && (mutationStatusTestPair.getStatus() == DetectionStatus.TIMED_OUT)) {
+    if (this.history.hasClassChanged(each.getClassName())) {
+      return analyseFromScratch(each);
+    }
+
+    if (mutationStatusTestPair.getStatus() == DetectionStatus.TIMED_OUT) {
       return makeResult(each, DetectionStatus.TIMED_OUT);
     }
+
+    if ((mutationStatusTestPair.getStatus() == DetectionStatus.KILLED)
+        && killingTestHasNotChanged(each, mutationStatusTestPair)) {
+      return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair.getKillingTest().value());
+    }
+
     return analyseFromScratch(each);
+  }
+
+  private boolean killingTestHasNotChanged(final MutationDetails each,
+      final MutationStatusTestPair mutationStatusTestPair) {
+    final Collection<TestInfo> allTests = this.coverage.getTestsForClass(each
+        .getClassName());
+
+    final List<ClassName> testClasses = FCollection.filter(allTests,
+        testIsCalled(mutationStatusTestPair.getKillingTest().value())).map(
+        TestInfo.toDefiningClassName());
+
+    if (testClasses.isEmpty()) {
+      return false;
+    }
+
+    return !this.history.hasClassChanged(testClasses.get(0));
+
+  }
+
+  private static F<TestInfo, Boolean> testIsCalled(final String testName) {
+    return new F<TestInfo, Boolean>() {
+      public Boolean apply(final TestInfo a) {
+        return a.getName().equals(testName);
+      }
+
+    };
   }
 
   private MutationResult analyseFromScratch(final MutationDetails mutation) {
     return makeResult(mutation, DetectionStatus.NOT_STARTED);
   }
-
+  
   private MutationResult makeResult(final MutationDetails each,
       final DetectionStatus status) {
-    return new MutationResult(each, new MutationStatusTestPair(0, status));
+    return makeResult(each, status, null);
+  }
+
+  private MutationResult makeResult(final MutationDetails each,
+      final DetectionStatus status, String killingTest) {
+    updatePreanalysedTotal(status);
+    return new MutationResult(each, new MutationStatusTestPair(0, status,killingTest));
+  }
+
+  private void updatePreanalysedTotal(final DetectionStatus status) {
+    if (status != DetectionStatus.NOT_STARTED) {
+      long count = preAnalysed.get(status);
+      preAnalysed.put(status, count + 1);
+    }
   }
 
 }

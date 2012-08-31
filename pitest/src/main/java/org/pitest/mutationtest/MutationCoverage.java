@@ -216,7 +216,7 @@ public class MutationCoverage implements Runnable {
             this.data.getClassPath()));
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
-        new DefaultCodeHistory(this.code, this.historyStore));
+        new DefaultCodeHistory(this.code, this.historyStore), coverageData);
 
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
         mutationConfig, analyser, source, this.data,
