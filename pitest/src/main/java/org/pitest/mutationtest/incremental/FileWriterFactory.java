@@ -1,8 +1,9 @@
 package org.pitest.mutationtest.incremental;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import org.pitest.util.Unchecked;
@@ -19,7 +20,7 @@ public class FileWriterFactory implements WriterFactory {
   public PrintWriter create() {
     try {
       if (this.writer == null) {
-        this.writer = new PrintWriter(new FileWriter(this.file));
+        this.writer = new PrintWriter( new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
       }
 
       return this.writer;

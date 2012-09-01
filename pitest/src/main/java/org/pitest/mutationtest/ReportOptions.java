@@ -18,8 +18,9 @@ import static org.pitest.functional.Prelude.not;
 import static org.pitest.functional.Prelude.or;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -486,10 +487,6 @@ public class ReportOptions {
       return new NullWriterFactory();
     }
 
-    // File historyFile = new File(data.getReportDir() + File.separator +
-    // "history.txt");
-
-    // new File(data.getReportDir()).mkdirs();
     return new FileWriterFactory(this.historyOutputLocation);
   }
 
@@ -501,7 +498,8 @@ public class ReportOptions {
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Option.<Reader> some(new FileReader(this.historyInputLocation));
+        return Option.<Reader> some(new InputStreamReader(new FileInputStream(
+            this.historyInputLocation), "UTF-8"));
       }
       return Option.none();
     } catch (final IOException ex) {
