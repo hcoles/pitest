@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -30,7 +31,7 @@ public class XStreamHistoryStore implements HistoryStore {
   private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<MutationIdentifier, MutationStatusTestPair>();
-  private final Map<ClassName, ClassIdentifier>                 previousClassPath = new HashMap<ClassName, ClassIdentifier>();
+  private final Map<ClassName, HierarchicalClassId>                 previousClassPath = new HashMap<ClassName, HierarchicalClassId>();
 
   public XStreamHistoryStore(final WriterFactory output,
       final Option<Reader> input) {
@@ -40,6 +41,7 @@ public class XStreamHistoryStore implements HistoryStore {
 
   private static XStream configureXStream() {
     final XStream xstream = new XStream(new PitXmlDriver());
+    xstream.alias("fullClassId", HierarchicalClassId.class);
     xstream.alias("classId", ClassIdentifier.class);
     xstream.alias("name", ClassName.class);
     xstream.alias("result", IdResult.class);
@@ -57,10 +59,10 @@ public class XStreamHistoryStore implements HistoryStore {
     return null;
   }
 
-  public void recordClassPath(final Collection<ClassIdentifier> ids) {
+  public void recordClassPath(final Collection<HierarchicalClassId> ids) {
     final PrintWriter output = this.outputFactory.create();
     output.println(ids.size());
-    for (final ClassIdentifier each : ids) {
+    for (final HierarchicalClassId each : ids) {
       output.println(toXml(each));
     }
     output.flush();
@@ -78,7 +80,7 @@ public class XStreamHistoryStore implements HistoryStore {
     return this.previousResults;
   }
 
-  public Map<ClassName, ClassIdentifier> getHistoricClassPath() {
+  public Map<ClassName, HierarchicalClassId> getHistoricClassPath() {
     return this.previousClassPath;
   }
 
@@ -113,7 +115,7 @@ public class XStreamHistoryStore implements HistoryStore {
     try {
       final long classPathSize = Long.valueOf(this.input.readLine());
       for (int i = 0; i != classPathSize; i++) {
-        final ClassIdentifier ci = (ClassIdentifier) fromXml(this.input
+        final HierarchicalClassId ci = (HierarchicalClassId) fromXml(this.input
             .readLine());
         this.previousClassPath.put(ci.getName(), ci);
       }

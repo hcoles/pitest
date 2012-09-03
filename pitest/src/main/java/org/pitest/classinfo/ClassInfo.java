@@ -15,6 +15,7 @@
 package org.pitest.classinfo;
 
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ public class ClassInfo {
   }
 
   public Option<ClassInfo> getSuperClass() {
-    return this.superClass.fetch();
+    return getParent();
   }
 
   public String getSourceFileName() {
@@ -96,6 +97,31 @@ public class ClassInfo {
 
   public boolean descendsFrom(final Class<?> clazz) {
     return descendsFrom(new ClassName(clazz.getName()));
+  }
+  
+  public HierarchicalClassId getHierarchicalId() {
+    return new HierarchicalClassId(this.id, getHierarchicalHash());
+  }
+
+  private String getHierarchicalHash() {
+    BigInteger hash = getHash();
+    Option<ClassInfo> parent = getParent();
+    if ( parent.hasSome() ) {
+      hash = hash.add(parent.value().getHash());
+    }
+    return hash.toString(16);
+  }
+  
+  
+  public BigInteger getHash() {
+    return BigInteger.valueOf(this.id.getHash());
+  }
+
+  private Option<ClassInfo> getParent() {
+    if ( superClass == null ) {
+      return Option.none();
+    }
+    return this.superClass.fetch();
   }
 
   private boolean descendsFrom(final ClassName clazz) {
@@ -147,6 +173,17 @@ public class ClassInfo {
     return new F<ClassInfo, ClassName>() {
       public ClassName apply(final ClassInfo a) {
         return a.getName();
+      }
+
+    };
+  }
+  
+  
+  
+  public static F<ClassInfo, HierarchicalClassId> toFullClassId() {
+    return new F<ClassInfo, HierarchicalClassId>() {
+      public HierarchicalClassId apply(final ClassInfo a) {
+        return a.getHierarchicalId();
       }
 
     };

@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
+import org.pitest.functional.Option;
 
 public class ClassInfoTest {
 
@@ -32,11 +33,39 @@ public class ClassInfoTest {
   @Before
   public void setUp() {
     this.data = new ClassInfoBuilder();
-    this.data.id = new ClassIdentifier(1,new ClassName("foo"));
+    this.data.id = new ClassIdentifier(1, new ClassName("foo"));
   }
 
   @Test
-  public void testIsCodeLineReturnsTrueForCodeLines() {
+  public void shouldCreateDifferentHierarchicalHashWhenPatentClassChanges() {
+    final ClassInfo parent = new ClassInfo(emptyClassPointer(), null, this.data);
+    final ClassInfo classA = new ClassInfo(emptyClassPointer(), null, this.data);
+    final ClassInfo classB = new ClassInfo(pointerTo(parent), null, this.data);
+
+    assertFalse(classA.getHierarchicalId().getHirearchialHash()
+        .equals(classB.getHierarchicalId().getHirearchialHash()));
+  }
+
+  private ClassPointer emptyClassPointer() {
+    return new ClassPointer() {
+      public Option<ClassInfo> fetch() {
+        return Option.none();
+      }
+
+    };
+  }
+
+  private ClassPointer pointerTo(final ClassInfo ci) {
+    return new ClassPointer() {
+      public Option<ClassInfo> fetch() {
+        return Option.some(ci);
+      }
+
+    };
+  }
+
+  @Test
+  public void isCodeLineReturnShouldTrueForCodeLines() {
     final List<Integer> codeLines = Arrays.asList(1, 2, 3, 4, 5, 6, 10);
     addCodeLines(codeLines);
     makeTestee();
@@ -46,7 +75,7 @@ public class ClassInfoTest {
   }
 
   @Test
-  public void testIsCodeLineReturnsFalseForNonCodeLines() {
+  public void isCodeLineShouldReturnFalseForNonCodeLines() {
     final List<Integer> codeLines = Arrays.asList(1);
     addCodeLines(codeLines);
     makeTestee();

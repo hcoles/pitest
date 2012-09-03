@@ -35,6 +35,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
+import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.help.Help;
@@ -112,8 +113,8 @@ public class MutationCoverageReportTest {
   @Test
   public void shouldRecordClassPath() {
 
-    ClassIdentifier fooId = new ClassIdentifier(0,ClassName.fromString("foo"));
-    ClassInfo foo = ClassInfoMother.make(fooId);
+    HierarchicalClassId fooId = new HierarchicalClassId(new ClassIdentifier(0,ClassName.fromString("foo")),"0");
+    ClassInfo foo = ClassInfoMother.make(fooId.getId());
     
     when(this.code.getCodeUnderTestNames()).thenReturn(Collections.singleton(ClassName.fromString("foo")));
     when(this.code.getClassInfo(any(List.class))).thenReturn(Collections.singletonList(foo));

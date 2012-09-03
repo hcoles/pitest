@@ -25,7 +25,7 @@ import org.apache.tools.ant.types.Path;
 import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.mutationtest.config.ConfigOption;
 
-public class PitestTask extends Task {
+public class PitestTask extends Task { // NO_UCD (test only)
 
   private static final String[]     REQUIRED_OPTIONS = {
       ConfigOption.TARGET_CLASSES.getParamName(),

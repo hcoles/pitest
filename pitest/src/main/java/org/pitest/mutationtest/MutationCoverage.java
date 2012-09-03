@@ -26,10 +26,10 @@ import java.util.logging.Logger;
 
 import org.pitest.DefaultStaticConfig;
 import org.pitest.Pitest;
-import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
+import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.containers.BaseThreadPoolContainer;
 import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageDatabase;
@@ -160,8 +160,8 @@ public class MutationCoverage implements Runnable {
 
   private void recordClassPath(final CoverageDatabase coverageData) {
     final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
-    final Collection<ClassIdentifier> ids = FCollection.map(
-        this.code.getClassInfo(allClassNames), ClassInfo.toClassId());
+    final Collection<HierarchicalClassId> ids = FCollection.map(
+        this.code.getClassInfo(allClassNames), ClassInfo.toFullClassId());
     this.historyStore.recordClassPath(ids);
   }
 

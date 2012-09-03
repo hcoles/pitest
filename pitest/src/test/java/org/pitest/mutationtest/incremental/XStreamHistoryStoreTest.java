@@ -16,6 +16,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -43,17 +44,17 @@ public class XStreamHistoryStoreTest {
   
   @Test
   public void shouldRecordAndRetrieveClassPath() {
-    final ClassIdentifier foo = new ClassIdentifier(0,
-        ClassName.fromString("foo"));
-    final ClassIdentifier bar = new ClassIdentifier(0,
-        ClassName.fromString("bar"));
+    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("foo")),"");
+    final HierarchicalClassId bar = new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("bar")),"");
     recordClassPathWithTestee(foo, bar);
 
     final Reader reader = new StringReader(this.output.toString());
     this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
     this.testee.initialize();
 
-    final Map<ClassName, ClassIdentifier> expected = new HashMap<ClassName, ClassIdentifier>();
+    final Map<ClassName, HierarchicalClassId> expected = new HashMap<ClassName, HierarchicalClassId>();
     expected.put(foo.getName(), foo);
     expected.put(bar.getName(), bar);
     assertEquals(expected, this.testee.getHistoricClassPath());
@@ -61,8 +62,8 @@ public class XStreamHistoryStoreTest {
 
   @Test
   public void shouldRecordAndRetrieveResults() {
-    final ClassIdentifier foo = new ClassIdentifier(0,
-        ClassName.fromString("foo"));
+    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("foo")),"");
     recordClassPathWithTestee(foo);
 
     final MutationResult mr = new MutationResult(
@@ -90,9 +91,9 @@ public class XStreamHistoryStoreTest {
   }
   
   private void recordClassPathWithTestee(
-      final ClassIdentifier... classIdentifiers) {
+      final HierarchicalClassId... classIdentifiers) {
     this.testee = new XStreamHistoryStore(writerFactory, Option.<Reader> none());
-    final Collection<ClassIdentifier> ids = Arrays.asList(classIdentifiers);
+    final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
     this.testee.recordClassPath(ids);
   }
 

@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.MutationResult;
@@ -16,7 +16,7 @@ public class NullHistoryStore implements HistoryStore {
 
   }
 
-  public void recordClassPath(final Collection<ClassIdentifier> ids) {
+  public void recordClassPath(final Collection<HierarchicalClassId> ids) {
 
   }
 
@@ -28,7 +28,7 @@ public class NullHistoryStore implements HistoryStore {
     return Collections.emptyMap();
   }
 
-  public Map<ClassName, ClassIdentifier> getHistoricClassPath() {
+  public Map<ClassName, HierarchicalClassId> getHistoricClassPath() {
     return Collections.emptyMap();
   }
 
