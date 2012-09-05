@@ -96,7 +96,7 @@ public abstract class IsolationUtils {
   private static boolean fromDifferentLoader(final Class<?> clazz,
       final ClassLoader loader) {
     try {
-      return clazz != loader.loadClass(clazz.getName());
+      return clazz != Class.forName(clazz.getName(), false, loader);
     } catch (final ClassNotFoundException ex) {
       throw translateCheckedException(ex);
     }
