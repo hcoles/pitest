@@ -2,21 +2,27 @@ package org.pitest.mutationtest.incremental;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -26,7 +32,12 @@ import org.pitest.mutationtest.results.MutationResult;
 
 public class XStreamHistoryStoreTest {
 
+  private final static String COV = BigInteger.TEN.toString(16);
+  
   private XStreamHistoryStore testee;
+  
+  @Mock
+  private CoverageDatabase coverage;
 
   private final Writer        output = new StringWriter();
 
@@ -42,19 +53,25 @@ public class XStreamHistoryStoreTest {
     
   };
   
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    when(coverage.getCoverageIdForClass(any(ClassName.class))).thenReturn( BigInteger.TEN);
+  }
+  
   @Test
   public void shouldRecordAndRetrieveClassPath() {
-    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("foo")),"");
-    final HierarchicalClassId bar = new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("bar")),"");
-    recordClassPathWithTestee(foo, bar);
+    final ClassHistory foo = new ClassHistory(new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("foo")),""), COV);
+    final ClassHistory bar = new ClassHistory(new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("bar")),""), COV);
+    recordClassPathWithTestee(foo.getId(), bar.getId());
 
     final Reader reader = new StringReader(this.output.toString());
     this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
     this.testee.initialize();
 
-    final Map<ClassName, HierarchicalClassId> expected = new HashMap<ClassName, HierarchicalClassId>();
+    final Map<ClassName, ClassHistory> expected = new HashMap<ClassName, ClassHistory>();
     expected.put(foo.getName(), foo);
     expected.put(bar.getName(), bar);
     assertEquals(expected, this.testee.getHistoricClassPath());
@@ -94,7 +111,7 @@ public class XStreamHistoryStoreTest {
       final HierarchicalClassId... classIdentifiers) {
     this.testee = new XStreamHistoryStore(writerFactory, Option.<Reader> none());
     final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
-    this.testee.recordClassPath(ids);
+    this.testee.recordClassPath(ids, coverage);
   }
 
 }

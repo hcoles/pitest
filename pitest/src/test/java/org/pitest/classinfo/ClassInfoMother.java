@@ -17,6 +17,10 @@ public class ClassInfoMother {
     return ci;
   }
   
+  public static ClassInfo make(ClassName name) {
+    return make(new ClassIdentifier(1, name));
+  }
+  
   public static ClassInfo make(String name) {
     return make(new ClassIdentifier(1, new ClassName(name)));
   }

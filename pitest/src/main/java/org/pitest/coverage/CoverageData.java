@@ -15,8 +15,10 @@
 
 package org.pitest.coverage;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -30,6 +32,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -38,13 +41,13 @@ import org.pitest.util.Log;
 
 public class CoverageData implements CoverageDatabase {
 
-  private final static Logger                              LOG           = Log
-                                                                             .getLogger();
+  private final static Logger                                 LOG           = Log
+                                                                                .getLogger();
 
-  private final Map<String, Map<ClassLine, Set<TestInfo>>> classCoverage = new LinkedHashMap<String, Map<ClassLine, Set<TestInfo>>>();
-  private final CodeSource                                 code;
+  private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> classCoverage = new LinkedHashMap<ClassName, Map<ClassLine, Set<TestInfo>>>();
+  private final CodeSource                                    code;
 
-  private boolean                                          hasFailedTest = false;
+  private boolean                                             hasFailedTest = false;
 
   CoverageData(final CodeSource code) {
     this.code = code;
@@ -140,8 +143,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int getNumberOfCoveredLines(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
-        .asInternalName());
+    final Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz);
     if (map != null) {
       return map.size();
     } else {
@@ -156,8 +158,7 @@ public class CoverageData implements CoverageDatabase {
     // This fails to consider tests that only accessed a static variable
     // of the class in question as this does not register as coverage.
 
-    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz
-        .asInternalName());
+    Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(clazz);
     if (map == null) {
       map = new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
     }
@@ -169,13 +170,44 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private Map<ClassLine, Set<TestInfo>> getCoverageMapForClass(
-      final String className) {
+      final ClassName className) {
     Map<ClassLine, Set<TestInfo>> map = this.classCoverage.get(className);
     if (map == null) {
       map = new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
       this.classCoverage.put(className, map);
     }
     return map;
+  }
+
+  public BigInteger getCoverageIdForClass(final ClassName clazz) {
+    final Map<ClassLine, Set<TestInfo>> coverage = this.classCoverage
+        .get(clazz);
+    if (coverage == null) {
+      return BigInteger.ZERO;
+    }
+
+    return generateCoverageNumber(coverage);
+  }
+
+  private BigInteger generateCoverageNumber(
+      final Map<ClassLine, Set<TestInfo>> coverage) {
+    BigInteger coverageNumber = BigInteger.ZERO;
+    final Set<ClassName> testClasses = new HashSet<ClassName>();
+    FCollection.flatMapTo(coverage.values(), testsToClassName(), testClasses);
+
+    for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
+      coverageNumber = coverageNumber.add(each.getDeepHash());
+    }
+
+    return coverageNumber;
+  }
+
+  private F<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
+    return new F<Set<TestInfo>, Iterable<ClassName>>() {
+      public Iterable<ClassName> apply(final Set<TestInfo> a) {
+        return FCollection.map(a, TestInfo.toDefiningClassName());
+      }
+    };
   }
 
 }

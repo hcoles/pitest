@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -180,7 +181,7 @@ public class CoverageProcessSystemTest {
 
           public Boolean apply(final ClassStatistics a) {
 
-            return a.getClassName().equals(class1.getName().replace(".", "/"))
+            return a.getClassName().equals(ClassName.fromClass(class1))
                 && a.wasVisited();
           }
 

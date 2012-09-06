@@ -93,7 +93,7 @@ public class MutationTestUnit extends AbstractTestUnit {
       if (!this.availableMutations.isEmpty()) {
         runTestsForMutations(rc);
       } else {
-        LOG.info("No mutations to detect");
+        LOG.fine("No mutations to detect");
         rc.notifySkipped(this.getDescription());
       }
     } catch (final Exception ex) {

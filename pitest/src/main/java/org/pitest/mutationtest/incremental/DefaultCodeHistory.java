@@ -1,12 +1,12 @@
 package org.pitest.mutationtest.incremental;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
-import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -15,7 +15,7 @@ public class DefaultCodeHistory implements CodeHistory {
 
   private final ClassInfoSource                                 code;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults;
-  private final Map<ClassName, HierarchicalClassId>                 previousClassPath;
+  private final Map<ClassName, ClassHistory>                    previousClassPath;
 
   public DefaultCodeHistory(final CodeSource code,
       final HistoryStore historyStore) {
@@ -25,7 +25,7 @@ public class DefaultCodeHistory implements CodeHistory {
 
   public DefaultCodeHistory(final ClassInfoSource code,
       final Map<MutationIdentifier, MutationStatusTestPair> previousResults,
-      final Map<ClassName, HierarchicalClassId> previousClassPath) {
+      final Map<ClassName, ClassHistory> previousClassPath) {
     this.code = code;
     this.previousResults = previousResults;
     this.previousClassPath = previousClassPath;
@@ -37,17 +37,19 @@ public class DefaultCodeHistory implements CodeHistory {
   }
 
   public boolean hasClassChanged(final ClassName className) {
-    final HierarchicalClassId historic = this.previousClassPath.get(className);
+    final ClassHistory historic = this.previousClassPath.get(className);
     if (historic == null) {
       return true;
     }
 
     final Option<ClassInfo> current = this.code.fetchClass(className);
-    if (!current.value().getHierarchicalId().equals(historic)) {
-      return true;
-    }
+    return !current.value().getHierarchicalId().equals(historic.getId());
 
-    return false;
+  }
+
+  public boolean hasCoverageChanged(ClassName className,
+      BigInteger currentCoverage) {
+    return !previousClassPath.get(className).getCoverageId().equals(currentCoverage.toString(16));
   }
 
 }

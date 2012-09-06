@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -51,13 +52,24 @@ public class IncrementalAnalyserTest {
   }
 
   @Test
-  public void shouldStartPreviousSurvivedMutationsAtAStatusOfNotStarted() {
+  public void shouldStartPreviousSurvivedMutationsAtAStatusOfNotStartedWhenCoverageHasChanged() {
     final MutationDetails md = makeMutation("foo");
     setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
+    when(this.history.hasCoverageChanged(any(ClassName.class), any(BigInteger.class))).thenReturn(true);
     final Collection<MutationResult> actual = this.testee.analyse(Collections
         .singletonList(md));
-
     assertEquals(DetectionStatus.NOT_STARTED, actual.iterator().next()
+        .getStatus());
+  }
+  
+  @Test
+  public void shouldStartPreviousSurvivedMutationsAtAStatusOfSurvivedWhenCoverageHasNotChanged() {
+    final MutationDetails md = makeMutation("foo");
+    setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
+    when(this.history.hasCoverageChanged(any(ClassName.class), any(BigInteger.class))).thenReturn(false);
+    final Collection<MutationResult> actual = this.testee.analyse(Collections
+        .singletonList(md));
+    assertEquals(DetectionStatus.SURVIVED, actual.iterator().next()
         .getStatus());
   }
 

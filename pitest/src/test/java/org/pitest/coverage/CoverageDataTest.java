@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
@@ -117,7 +119,7 @@ public class CoverageDataTest {
   
   @Test
   public void shouldNotReportAGreenSuiteWhenATestHasFailed() {
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 42, 1, false));
+    testee.calculateClassCoverage(makeCoverageResult("foo",new Description("fooTest"), 42, 1, false));
     assertFalse(testee.allTestsGreen());
   }
   
@@ -126,6 +128,20 @@ public class CoverageDataTest {
     Collection<ClassName> classes = Arrays.asList(ClassName.fromString("foo"));
     testee.getClassInfo(classes);
     verify(this.code).getClassInfo(classes);
+  }
+  
+  @Test
+  public void shouldReturnCoverageIdOf0WhenNoTestsCoverClass() {
+    assertEquals(0,testee.getCoverageIdForClass(ClassName.fromString("unknown")).longValue());
+  }
+  
+  @Test
+  public void shouldReturnNonZeroCoverageIdWhenTestsCoverClass() {
+    ClassName fooTest = ClassName.fromString("FooTest");
+    ClassInfo ci = ClassInfoMother.make(fooTest);
+    when(this.code.getClassInfo(Collections.singleton(fooTest))).thenReturn(Collections.singletonList(ci));
+    testee.calculateClassCoverage(makeCoverageResult("foo", new Description("fooTest",fooTest.asJavaName()), 0, 1, true));
+    assertFalse(testee.getCoverageIdForClass(ClassName.fromString("foo")).longValue() == 0);
   }
   
   private static F<TestInfo, Integer> testInfoToExecutionTime() {
@@ -143,13 +159,13 @@ public class CoverageDataTest {
       }
     };
   }
-
-  private CoverageResult makeCoverageResult(String clazz, String testName, int time, int lineNumber) {
-    return  makeCoverageResult(clazz,testName,time,lineNumber,true);
-  }
   
-  private CoverageResult makeCoverageResult(String clazz, String testName, int time, int lineNumber, boolean testPassed) {
-    return new CoverageResult(new Description(testName), time,testPassed, makeCoverage(clazz, lineNumber));
+  private CoverageResult makeCoverageResult(String clazz, String testName, int time, int lineNumber) {
+    return  makeCoverageResult(clazz,new Description(testName),time,lineNumber,true);
+  }
+
+  private CoverageResult makeCoverageResult(String clazz, Description desc, int time, int lineNumber, boolean testPassed) {
+    return new CoverageResult(desc, time,testPassed, makeCoverage(clazz, lineNumber));
   }
 
   private Collection<ClassStatistics> makeCoverage(String clazz, int lineNumber) {

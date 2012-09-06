@@ -46,9 +46,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
     try {
       final String version = junit.runner.Version.id();
 
-      final String[] parts = (version.contains("SNAPSHOT")) ?
-          version.split("-SNAPSHOT")[0].split("\\.") :
-          version.split("\\.");
+      final String[] parts = (version.contains("SNAPSHOT")) ? version
+          .split("-SNAPSHOT")[0].split("\\.") : version.split("\\.");
 
       final int major = Integer.parseInt(parts[0]);
       final int minor = Integer.parseInt(parts[1]);

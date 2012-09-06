@@ -18,18 +18,24 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.pitest.classinfo.ClassName;
+
 public class ClassStatistics implements Serializable {
 
   private static final long  serialVersionUID = 1L;
 
-  private final String       className;
+  private final ClassName    className;
   private final Set<Integer> visitedLines     = new HashSet<Integer>(0);
 
   public ClassStatistics(final String className) {
-    this.className = className.intern();
+    this(ClassName.fromString(className));
   }
 
-  public String getClassName() {
+  public ClassStatistics(final ClassName className) {
+    this.className = className;
+  }
+
+  public ClassName getClassName() {
     return this.className;
   }
 
