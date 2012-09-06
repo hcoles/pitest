@@ -15,6 +15,8 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.pitest.CompoundTestSuiteFinder;
 import org.pitest.extension.Configuration;
@@ -26,6 +28,9 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 
 public class JUnitCompatibleConfiguration implements Configuration {
+
+  private static final Pattern VERSION_PATTERN = Pattern
+                                                   .compile("(\\d+)\\.(\\d+).*");
 
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
@@ -45,14 +50,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public Option<PitHelpError> verifyEnvironment() {
     try {
       final String version = junit.runner.Version.id();
-
-      final String[] parts = (version.contains("SNAPSHOT")) ?
-          version.split("-SNAPSHOT")[0].split("\\.") :
-          version.split("\\.");
-
-      final int major = Integer.parseInt(parts[0]);
-      final int minor = Integer.parseInt(parts[1]);
-      if ((major < 4) || ((major == 4) && (minor < 6))) {
+      if (isInvalidVersion(version)) {
         return Option.some(new PitHelpError(Help.WRONG_JUNIT_VERSION, version));
       }
     } catch (final NoClassDefFoundError er) {
@@ -60,6 +58,19 @@ public class JUnitCompatibleConfiguration implements Configuration {
     }
 
     return Option.none();
+  }
+
+  boolean isInvalidVersion(final String version) {
+    final Matcher matcher = VERSION_PATTERN.matcher(version);
+
+    if (!matcher.matches()) {
+      return true;
+    }
+
+    final int major = Integer.parseInt(matcher.group(1));
+    final int minor = Integer.parseInt(matcher.group(2));
+
+    return (major < 4) || ((major == 4) && (minor < 6));
   }
 
 }
