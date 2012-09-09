@@ -21,7 +21,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -32,6 +34,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.export.LineCoverage;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
@@ -187,6 +190,27 @@ public class CoverageData implements CoverageDatabase {
     }
 
     return generateCoverageNumber(coverage);
+  }
+  
+  public List<LineCoverage> createLineCoverage() {
+    return FCollection.flatMap(classCoverage.values(), toLineCoverage());
+  }
+
+  private F<Map<ClassLine, Set<TestInfo>>, Collection<LineCoverage>> toLineCoverage() {
+    return new F<Map<ClassLine, Set<TestInfo>>, Collection<LineCoverage>>  () {
+      public Collection<LineCoverage> apply(Map<ClassLine, Set<TestInfo>> a) {
+        return FCollection.map(a.entrySet(), entryToLineCoverage());
+      }      
+    };
+  }
+  
+  private F<Entry<ClassLine, Set<TestInfo>>, LineCoverage> entryToLineCoverage() {
+    return new F<Entry<ClassLine, Set<TestInfo>>, LineCoverage>() {
+      public LineCoverage apply(Entry<ClassLine, Set<TestInfo>> a) {
+        return new LineCoverage(a.getKey(), FCollection.map(a.getValue(), TestInfo.toName()));
+      }
+      
+    };
   }
 
   private BigInteger generateCoverageNumber(

@@ -107,7 +107,7 @@ public class MutationTestWorker {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
       mutationDetected = new MutationStatusTestPair(0,
-          DetectionStatus.NO_COVERAGE);
+          DetectionStatus.RUN_ERROR);
     } else {
       mutationDetected = handleCoveredMutation(mutationId, mutatedClass,
           relevantTests);

@@ -17,8 +17,11 @@ package org.pitest.coverage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +38,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.export.LineCoverage;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.instrument.ClassLine;
@@ -142,6 +146,21 @@ public class CoverageDataTest {
     when(this.code.getClassInfo(Collections.singleton(fooTest))).thenReturn(Collections.singletonList(ci));
     testee.calculateClassCoverage(makeCoverageResult("foo", new Description("fooTest",fooTest.asJavaName()), 0, 1, true));
     assertFalse(testee.getCoverageIdForClass(ClassName.fromString("foo")).longValue() == 0);
+  }
+  
+  @Test
+  public void shouldProvideEmptyLineCoverageListWhenNoCoverage() {
+    assertEquals(Collections.emptyList(),testee.createLineCoverage());
+  }
+  
+  @Test
+  public void shouldProvideLineCoverageListWhenCoverageRecorded() {
+    ClassLine fooLine1 = new ClassLine("foo",1);
+    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
+    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest2", 0, 1));
+    LineCoverage actual = testee.createLineCoverage().get(0);
+    assertEquals(fooLine1,actual.getClassLine());
+    assertThat(actual.getTests(), hasItems("fooTest","fooTest2"));
   }
   
   private static F<TestInfo, Integer> testInfoToExecutionTime() {
