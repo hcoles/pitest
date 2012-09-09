@@ -38,6 +38,7 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
@@ -385,7 +386,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(null,
-          coverageOptions, launchOptions, code, timings);
+          coverageOptions, launchOptions, code, new NullCoverageExporter(),timings);
       
       
       final HistoryStore history = new NullHistoryStore();

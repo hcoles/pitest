@@ -98,27 +98,26 @@ public class ClassInfo {
   public boolean descendsFrom(final Class<?> clazz) {
     return descendsFrom(new ClassName(clazz.getName()));
   }
-  
+
   public HierarchicalClassId getHierarchicalId() {
-    return new HierarchicalClassId(this.id, getHierarchicalHash());
+    return new HierarchicalClassId(this.id, getDeepHash());
   }
 
-  private String getHierarchicalHash() {
+  public BigInteger getDeepHash() {
     BigInteger hash = getHash();
-    Option<ClassInfo> parent = getParent();
-    if ( parent.hasSome() ) {
+    final Option<ClassInfo> parent = getParent();
+    if (parent.hasSome()) {
       hash = hash.add(parent.value().getHash());
     }
-    return hash.toString(16);
+    return hash;
   }
-  
-  
+
   public BigInteger getHash() {
     return BigInteger.valueOf(this.id.getHash());
   }
 
   private Option<ClassInfo> getParent() {
-    if ( superClass == null ) {
+    if (this.superClass == null) {
       return Option.none();
     }
     return this.superClass.fetch();
@@ -177,9 +176,7 @@ public class ClassInfo {
 
     };
   }
-  
-  
-  
+
   public static F<ClassInfo, HierarchicalClassId> toFullClassId() {
     return new F<ClassInfo, HierarchicalClassId>() {
       public HierarchicalClassId apply(final ClassInfo a) {

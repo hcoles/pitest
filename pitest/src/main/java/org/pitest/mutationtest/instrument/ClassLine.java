@@ -22,7 +22,11 @@ public final class ClassLine {
   private final int       lineNumber;
 
   public ClassLine(final String clazz, final int lineNumber) {
-    this.clazz = ClassName.fromString(clazz);
+    this(ClassName.fromString(clazz), lineNumber);
+  }
+
+  public ClassLine(final ClassName clazz, final int lineNumber) {
+    this.clazz = clazz;
     this.lineNumber = lineNumber;
   }
 

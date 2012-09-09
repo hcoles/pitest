@@ -32,6 +32,7 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageProcess;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.coverage.export.CoverageExporter;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -54,15 +55,17 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final CodeSource      code;
   private final Timings         timings;
   private final File            workingDir;
+  private final CoverageExporter exporter;
 
   public DefaultCoverageGenerator(final File workingDir,
       final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
-      final CodeSource code, final Timings timings) {
+      final CodeSource code, CoverageExporter exporter, final Timings timings) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
     this.timings = timings;
     this.workingDir = workingDir;
+    this.exporter = exporter;
   }
 
   public CoverageData calculateCoverage() {
@@ -85,6 +88,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
       verifyBuildSuitableForMutationTesting(coverage);
 
+      exporter.recordCoverage(coverage.createLineCoverage());
+      
       return coverage;
 
     } catch (final PitHelpError phe) {

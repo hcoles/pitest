@@ -20,7 +20,8 @@ public class FileWriterFactory implements WriterFactory {
   public PrintWriter create() {
     try {
       if (this.writer == null) {
-        this.writer = new PrintWriter( new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
+        this.writer = new PrintWriter(new OutputStreamWriter(
+            new FileOutputStream(this.file), "UTF-8"));
       }
 
       return this.writer;

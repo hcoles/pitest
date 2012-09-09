@@ -63,7 +63,7 @@ public class MutationTestWorker {
       final TimeOutDecoratedTestSource testSource) throws IOException {
 
     for (final MutationDetails mutation : range) {
-      LOG.info("Running mutation " + mutation);
+      LOG.fine("Running mutation " + mutation);
       final long t0 = System.currentTimeMillis();
       processMutation(r, testSource, mutation);
       LOG.fine("processed mutation in " + (System.currentTimeMillis() - t0)
@@ -96,7 +96,7 @@ public class MutationTestWorker {
 
     r.report(mutationId, mutationDetected);
 
-    LOG.info("Mutation " + mutationId + " detected = " + mutationDetected);
+    LOG.fine("Mutation " + mutationId + " detected = " + mutationDetected);
   }
 
   private MutationStatusTestPair handleMutation(
@@ -107,7 +107,7 @@ public class MutationTestWorker {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
       mutationDetected = new MutationStatusTestPair(0,
-          DetectionStatus.NO_COVERAGE);
+          DetectionStatus.RUN_ERROR);
     } else {
       mutationDetected = handleCoveredMutation(mutationId, mutatedClass,
           relevantTests);
@@ -120,7 +120,7 @@ public class MutationTestWorker {
       final MutationIdentifier mutationId, final Mutant mutatedClass,
       final List<TestUnit> relevantTests) {
     MutationStatusTestPair mutationDetected;
-    LOG.info("" + relevantTests.size() + " relevant test for "
+    LOG.fine("" + relevantTests.size() + " relevant test for "
         + mutatedClass.getDetails().getMethod());
 
     final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);

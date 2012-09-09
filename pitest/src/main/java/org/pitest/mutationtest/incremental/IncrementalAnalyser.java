@@ -36,8 +36,8 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private static Map<DetectionStatus, Long> createStatusMap() {
-    HashMap<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
-    for (DetectionStatus each : DetectionStatus.values()) {
+    final HashMap<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
+    for (final DetectionStatus each : DetectionStatus.values()) {
       map.put(each, 0l);
     }
     return map;
@@ -65,7 +65,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private void logTotals() {
-    for (Entry<DetectionStatus, Long> each : preAnalysed.entrySet()) {
+    for (final Entry<DetectionStatus, Long> each : this.preAnalysed.entrySet()) {
       if (each.getValue() != 0) {
         LOG.info("Incremental analysis set " + each.getValue()
             + " mutations to a status of " + each.getKey());
@@ -77,7 +77,9 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private MutationResult analyseFromHistory(final MutationDetails each,
       final MutationStatusTestPair mutationStatusTestPair) {
 
-    if (this.history.hasClassChanged(each.getClassName())) {
+    ClassName clazz = each.getClassName();
+    
+    if (this.history.hasClassChanged(clazz)) {
       return analyseFromScratch(each);
     }
 
@@ -87,9 +89,15 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.KILLED)
         && killingTestHasNotChanged(each, mutationStatusTestPair)) {
-      return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair.getKillingTest().value());
+      return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair
+          .getKillingTest().value());
     }
-
+    
+    if ((mutationStatusTestPair.getStatus() == DetectionStatus.SURVIVED)
+        && !history.hasCoverageChanged(clazz, coverage.getCoverageIdForClass(clazz))) {
+      return makeResult(each, DetectionStatus.SURVIVED);
+    }
+    
     return analyseFromScratch(each);
   }
 
@@ -101,7 +109,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
     final List<ClassName> testClasses = FCollection.filter(allTests,
         testIsCalled(mutationStatusTestPair.getKillingTest().value())).map(
         TestInfo.toDefiningClassName());
-
+    
     if (testClasses.isEmpty()) {
       return false;
     }
@@ -122,22 +130,23 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private MutationResult analyseFromScratch(final MutationDetails mutation) {
     return makeResult(mutation, DetectionStatus.NOT_STARTED);
   }
-  
+
   private MutationResult makeResult(final MutationDetails each,
       final DetectionStatus status) {
     return makeResult(each, status, null);
   }
 
   private MutationResult makeResult(final MutationDetails each,
-      final DetectionStatus status, String killingTest) {
+      final DetectionStatus status, final String killingTest) {
     updatePreanalysedTotal(status);
-    return new MutationResult(each, new MutationStatusTestPair(0, status,killingTest));
+    return new MutationResult(each, new MutationStatusTestPair(0, status,
+        killingTest));
   }
 
   private void updatePreanalysedTotal(final DetectionStatus status) {
     if (status != DetectionStatus.NOT_STARTED) {
-      long count = preAnalysed.get(status);
-      preAnalysed.put(status, count + 1);
+      final long count = this.preAnalysed.get(status);
+      this.preAnalysed.put(status, count + 1);
     }
   }
 

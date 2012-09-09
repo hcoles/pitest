@@ -46,6 +46,7 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
@@ -297,7 +298,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(99);
+    verifyLineNumbers(100);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
@@ -346,7 +347,7 @@ public class TestMutationTesting {
         .testClassIdentifier());
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-        null, coverageOptions, launchOptions, code, timings);
+        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),timings);
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 

@@ -23,6 +23,7 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
+import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
@@ -77,7 +78,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-        baseDir, coverageOptions, launchOptions, code, timings);
+        baseDir, coverageOptions, launchOptions, code, new DefaultCoverageExporter(reportOutput), timings);
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 

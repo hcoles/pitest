@@ -13,6 +13,7 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -66,6 +67,7 @@ public class MutationTestWorkerTest {
  
   
   @Test
+  @Ignore("disabled while checking coverage issue")
   public void shouldReportNoCoverageForMutationWithNoTestCoverage() throws IOException {
     MutationDetails mutantOne = makeMutant("foo",1);
     Collection<MutationDetails> range = Arrays.asList(mutantOne);

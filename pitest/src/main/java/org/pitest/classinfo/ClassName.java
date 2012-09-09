@@ -36,6 +36,10 @@ public final class ClassName implements Serializable {
     return new ClassName(clazz);
   }
 
+  public static ClassName fromClass(final Class<?> clazz) {
+    return new ClassName(clazz);
+  }
+
   public String asJavaName() {
     return this.name.replace('/', '.');
   }

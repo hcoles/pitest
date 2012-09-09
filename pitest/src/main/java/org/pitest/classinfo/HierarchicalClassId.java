@@ -1,73 +1,84 @@
 package org.pitest.classinfo;
 
+import java.math.BigInteger;
+
 public class HierarchicalClassId {
-  
+
   private final ClassIdentifier classId;
-  private final String hierarchicalHash;
-  
-  public HierarchicalClassId(ClassIdentifier classId, String hierarchicalHash) {
+  private final String          hierarchicalHash;
+
+  public HierarchicalClassId(final ClassIdentifier classId,
+      final String hierarchicalHash) {
     this.classId = classId;
     this.hierarchicalHash = hierarchicalHash;
   }
-  
-  public HierarchicalClassId(final long hash, final ClassName name, String hierarchicalHash) {
-    this(new ClassIdentifier(hash,name), hierarchicalHash);
+
+  public HierarchicalClassId(final ClassIdentifier id, final BigInteger deepHash) {
+    this(id, deepHash.toString(16));
+  }
+
+  public HierarchicalClassId(final long hash, final ClassName name,
+      final String hierarchicalHash) {
+    this(new ClassIdentifier(hash, name), hierarchicalHash);
   }
 
   public String getHirearchialHash() {
-    return hierarchicalHash;
+    return this.hierarchicalHash;
   }
 
   public ClassName getName() {
-    return classId.getName();
+    return this.classId.getName();
   }
-  
+
   public ClassIdentifier getId() {
-    return classId;
+    return this.classId;
   }
-  
-  
 
   @Override
   public String toString() {
-    return "HierarchicalClassId [classId=" + classId + ", hierarchicalHash="
-        + hierarchicalHash + "]";
+    return "HierarchicalClassId [classId=" + this.classId
+        + ", hierarchicalHash=" + this.hierarchicalHash + "]";
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((classId == null) ? 0 : classId.hashCode());
-    result = prime * result
-        + ((hierarchicalHash == null) ? 0 : hierarchicalHash.hashCode());
+    result = (prime * result)
+        + ((this.classId == null) ? 0 : this.classId.hashCode());
+    result = (prime * result)
+        + ((this.hierarchicalHash == null) ? 0 : this.hierarchicalHash
+            .hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    HierarchicalClassId other = (HierarchicalClassId) obj;
-    if (classId == null) {
-      if (other.classId != null)
+    }
+    final HierarchicalClassId other = (HierarchicalClassId) obj;
+    if (this.classId == null) {
+      if (other.classId != null) {
         return false;
-    } else if (!classId.equals(other.classId))
+      }
+    } else if (!this.classId.equals(other.classId)) {
       return false;
-    if (hierarchicalHash == null) {
-      if (other.hierarchicalHash != null)
+    }
+    if (this.hierarchicalHash == null) {
+      if (other.hierarchicalHash != null) {
         return false;
-    } else if (!hierarchicalHash.equals(other.hierarchicalHash))
+      }
+    } else if (!this.hierarchicalHash.equals(other.hierarchicalHash)) {
       return false;
+    }
     return true;
   }
-
-
-  
-  
 
 }
