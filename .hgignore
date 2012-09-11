@@ -22,3 +22,5 @@ syntax: regexp
 ^pitest-ant/target$
 syntax: regexp
 ^pitest-maven-verification/target$
+syntax: glob
+*/target/*

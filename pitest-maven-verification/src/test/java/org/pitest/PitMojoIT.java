@@ -15,46 +15,80 @@
  */
 package org.pitest;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.FileUtils;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.MutationCoverageReport;
-
+import org.pitest.util.FileUtil;
 
 /**
- *
- *
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class PitMojoIT {
 
-  private Verifier verifier;
-  
-  @Before
-  public void setup() throws Exception {
-    String tempDirPath = System.getProperty( "maven.test.tmpdir", System.getProperty( "java.io.tmpdir" ) );
-    File tempDir = new File( tempDirPath, getClass().getSimpleName() );
-    File testDir = new File( tempDir, "/pit-33-setUserDir" );
-    FileUtils.deleteDirectory( testDir );
-    String path = ResourceExtractor.extractResourcePath( getClass(), "/pit-33-setUserDir", tempDir, true ).getAbsolutePath();
-    this.verifier = new Verifier(path);
-    this.verifier.setAutoclean(false);
+  private final String version = MutationCoverageReport.class.getPackage()
+                                   .getImplementationVersion();
 
-  }
-  
-  @SuppressWarnings("unchecked")
+  private Verifier     verifier;
+
   @Test
   public void shouldSetUserDirToArtefactWorkingDirectory() throws Exception {
-    String version = MutationCoverageReport.class.getPackage().getImplementationVersion();
-    this.verifier.setDebug(true);
-    verifier.getCliOptions().add("-Dpit.version=" + version  );
+    prepare("/pit-33-setUserDir");
     this.verifier.executeGoal("test");
-    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");  
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
   }
-  
-  
+
+  @Test
+  public void shouldProduceConsistantCoverageData() throws Exception {
+    final File testDir = prepare("/pit-deterministic-coverage");
+    // this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String firstRun = readCoverage(testDir);
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String secondRun = readCoverage(testDir);
+    assertEquals(firstRun, secondRun);
+  }
+
+  private String readCoverage(final File testDir) throws IOException,
+      FileNotFoundException {
+    final String actual = FileUtil.readToString(new FileInputStream(testDir
+        .getAbsoluteFile()
+        + File.separator
+        + "target"
+        + File.separator
+        + "pit-reports"
+        + File.separator
+        + "linecoverage.xml"));
+    return actual;
+  }
+
+  @SuppressWarnings("unchecked")
+  private File prepare(final String testPath) throws IOException,
+      VerificationException {
+    final String tempDirPath = System.getProperty("maven.test.tmpdir",
+        System.getProperty("java.io.tmpdir"));
+    final File tempDir = new File(tempDirPath, getClass().getSimpleName());
+    final File testDir = new File(tempDir, testPath);
+    FileUtils.deleteDirectory(testDir);
+
+    final String path = ResourceExtractor.extractResourcePath(getClass(),
+        testPath, tempDir, true).getAbsolutePath();
+
+    this.verifier = new Verifier(path);
+    this.verifier.setAutoclean(false);
+    this.verifier.setDebug(true);
+    this.verifier.getCliOptions().add("-Dpit.version=" + this.version);
+
+    return testDir;
+  }
+
 }
