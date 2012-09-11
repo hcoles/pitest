@@ -31,7 +31,7 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
-				<version>0.28-SNAPSHOT</version>
+				<version>${pit.version}</version>
 			</plugin>
 		</plugins>
 	</build>

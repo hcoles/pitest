@@ -12,16 +12,27 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 
 public class DefaultCoverageExporterTest {
 
   private DefaultCoverageExporter testee;
-
+  
   private final Writer            out = new StringWriter();
 
   @Before
   public void setup() {
-    this.testee = new DefaultCoverageExporter(this.out);
+    this.testee = new DefaultCoverageExporter(createOutputStrategy());
+  }
+
+  private ResultOutputStrategy createOutputStrategy() {
+    return new ResultOutputStrategy() {
+
+      public Writer createWriterForFile(String sourceFile) {
+        return out;
+      }
+      
+    };
   }
 
   @Test
