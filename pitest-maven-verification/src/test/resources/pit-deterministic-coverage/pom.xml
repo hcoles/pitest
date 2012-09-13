@@ -29,6 +29,7 @@
 				<artifactId>pitest-maven</artifactId>
 				<version>${pit.version}</version>
 				<configuration>
+				    <maxMutationsPerClass>1</maxMutationsPerClass>
 				    <timestampedReports>false</timestampedReports>
 					<targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>

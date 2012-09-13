@@ -60,14 +60,15 @@ public class PitMojoIT {
 
   private String readCoverage(final File testDir) throws IOException,
       FileNotFoundException {
-    final String actual = FileUtil.readToString(new FileInputStream(testDir
+    File coverage = new File(testDir
         .getAbsoluteFile()
         + File.separator
         + "target"
         + File.separator
         + "pit-reports"
         + File.separator
-        + "linecoverage.xml"));
+        + "linecoverage.xml");
+    final String actual = FileUtil.readToString(new FileInputStream(coverage));
     return actual;
   }
 
