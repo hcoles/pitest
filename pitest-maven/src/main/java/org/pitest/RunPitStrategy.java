@@ -23,7 +23,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
-import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
@@ -34,6 +33,7 @@ import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.SettingsFactory;
 import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
@@ -51,6 +51,10 @@ public class RunPitStrategy implements GoalStrategy {
       throws MojoExecutionException {
 
     System.out.println("Running report with " + data);
+
+    SettingsFactory settings = new SettingsFactory(data);
+    
+    
     final ClassPath cp = data.getClassPath();
     
     Option<Reader> reader = data.createHistoryReader();
@@ -63,7 +67,7 @@ public class RunPitStrategy implements GoalStrategy {
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
         jac.getJarLocation().value());
 
-    final ResultOutputStrategy reportOutput = data.getReportDirectoryStrategy();
+    final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 
     final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
         FCollection.map(data.getOutputFormats(),
@@ -78,7 +82,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-        baseDir, coverageOptions, launchOptions, code, new DefaultCoverageExporter(reportOutput), timings);
+        baseDir, coverageOptions, launchOptions, code, settings.createCoverageExporter(), timings);
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 

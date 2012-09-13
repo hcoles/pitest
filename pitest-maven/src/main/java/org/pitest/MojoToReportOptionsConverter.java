@@ -122,6 +122,7 @@ public class MojoToReportOptionsConverter {
     
     data.setHistoryInputLocation(mojo.getHistoryInputFile());
     data.setHistoryOutputLocation(mojo.getHistoryOutputFile());
+    data.setExportLineCoverage(mojo.isExportLineCoverage());
 
     return data;
   }

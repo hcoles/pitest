@@ -39,5 +39,10 @@ public class ReportOptionsTest {
     assertFalse(actual.getFilter().apply("java/Integer"));
 
   }
+  
+  @Test
+  public void shouldDefaultToNoLineCoverageExport() {
+    assertFalse(testee.shouldExportLineCoverage());
+  }
 
 }

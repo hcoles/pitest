@@ -21,7 +21,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
-import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPathByteArraySource;
@@ -57,11 +56,13 @@ public class MutationCoverageReport {
 
   private static void runReport(final ReportOptions data) {
 
+    SettingsFactory settings = new SettingsFactory(data);
+    
     final JarCreatingJarFinder agent = new JarCreatingJarFinder(
         new ClassPathByteArraySource(data.getClassPath()));
 
-    final ResultOutputStrategy outputStrategy = data
-        .getReportDirectoryStrategy();
+    final ResultOutputStrategy outputStrategy = settings.getOutputStrategy();
+
 
     final Option<Reader> reader = data.createHistoryReader();
     final WriterFactory historyWriter = data.createHistoryWriter();
@@ -82,7 +83,7 @@ public class MutationCoverageReport {
           .getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-          null, coverageOptions, launchOptions, code, new DefaultCoverageExporter(outputStrategy),timings);
+          null, coverageOptions, launchOptions, code, settings.createCoverageExporter(),timings);
 
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);
