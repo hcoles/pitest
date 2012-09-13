@@ -42,7 +42,8 @@ public class Repository implements ClassInfoSource {
     return this.knownClasses.containsKey(name) || querySource(name).hasSome();
   }
 
-  public Option<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test only)
+  public Option<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
+                                                              // only)
     return fetchClass(clazz.getName());
   }
 

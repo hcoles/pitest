@@ -30,7 +30,7 @@ public class DefaultCodeHistoryTest {
   @Mock
   private ClassInfoSource                                       classInfoSource;
 
-  private final Map<ClassName, HierarchicalClassId>             historicClassPath = new HashMap<ClassName, HierarchicalClassId>();
+  private final Map<ClassName, ClassHistory>                    historicClassPath = new HashMap<ClassName, ClassHistory>();
 
   private final Map<MutationIdentifier, MutationStatusTestPair> results           = new HashMap<MutationIdentifier, MutationStatusTestPair>();
 
@@ -70,11 +70,10 @@ public class DefaultCodeHistoryTest {
   public void shouldTreatClassesWithDifferentHashesAsChanged() {
     final long currentHash = 42;
     final ClassName foo = ClassName.fromString("foo");
-    final ClassIdentifier currentId = new ClassIdentifier(currentHash,
-        foo);
+    final ClassIdentifier currentId = new ClassIdentifier(currentHash, foo);
     setCurrentClassPath(ClassInfoMother.make(currentId));
-    this.historicClassPath.put(foo, new HierarchicalClassId(currentHash + 1,
-        foo, "0"));
+    this.historicClassPath.put(foo, makeHistory(new HierarchicalClassId(
+        currentHash + 1, foo, "0")));
     assertTrue(this.testee.hasClassChanged(ClassName.fromString("foo")));
   }
 
@@ -94,7 +93,7 @@ public class DefaultCodeHistoryTest {
 
     setCurrentClassPath(currentFoo);
 
-    this.historicClassPath.put(foo, modifiedFoo.getHierarchicalId());
+    this.historicClassPath.put(foo, makeHistory(modifiedFoo));
 
     assertTrue(this.testee.hasClassChanged(foo));
   }
@@ -104,10 +103,11 @@ public class DefaultCodeHistoryTest {
     final ClassName foo = ClassName.fromString("foo");
     final HierarchicalClassId currentId = new HierarchicalClassId(0, foo, "0");
     setCurrentClassPath(currentId);
-    this.historicClassPath.put(foo, currentId);
+    this.historicClassPath.put(foo, makeHistory(currentId));
     assertFalse(this.testee.hasClassChanged(ClassName.fromString("foo")));
   }
 
+  
   private void setCurrentClassPath(final HierarchicalClassId currentId) {
     final ClassInfo currentClass = ClassInfoMother.make(currentId.getId());
     when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
@@ -117,6 +117,14 @@ public class DefaultCodeHistoryTest {
   private void setCurrentClassPath(final ClassInfo info) {
     when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
         .thenReturn(Option.some(info));
+  }
+
+  private ClassHistory makeHistory(final HierarchicalClassId id) {
+    return new ClassHistory(id, "");
+  }
+
+  private ClassHistory makeHistory(final ClassInfo ci) {
+    return makeHistory(ci.getHierarchicalId());
   }
 
 }

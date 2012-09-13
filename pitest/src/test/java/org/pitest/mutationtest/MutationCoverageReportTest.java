@@ -121,7 +121,7 @@ public class MutationCoverageReportTest {
 
     createAndRunTestee();
     
-    verify(this.history).recordClassPath(Arrays.asList(fooId));
+    verify(this.history).recordClassPath(Arrays.asList(fooId), coverageDb);
   }
   
 

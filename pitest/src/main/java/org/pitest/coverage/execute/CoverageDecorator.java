@@ -14,6 +14,8 @@
  */
 package org.pitest.coverage.execute;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageReceiver;
@@ -25,9 +27,10 @@ import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
 
-  private final static Logger    LOG = Log.getLogger();
+  private final static Logger    LOG     = Log.getLogger();
 
   private final CoverageReceiver invokeQueue;
+  private final ThreadMXBean     threads = ManagementFactory.getThreadMXBean();
 
   protected CoverageDecorator(final CoverageReceiver queue, final TestUnit child) {
     super(child);
@@ -39,11 +42,22 @@ public class CoverageDecorator extends TestUnitDecorator {
     LOG.fine("Gathering coverage for test " + child().getDescription());
     this.invokeQueue.newTest();
 
+    final int threadsBeforeTest = this.threads.getThreadCount();
+
     final long t0 = System.currentTimeMillis();
     final ExitingResultCollector wrappedCollector = new ExitingResultCollector(
         rc);
     this.child().execute(loader, wrappedCollector);
+
     final int executionTime = (int) (System.currentTimeMillis() - t0);
+
+    final int threadsAfterTest = this.threads.getThreadCount();
+    if (threadsAfterTest > threadsBeforeTest) {
+      LOG.warning("More threads at end of test (" + threadsAfterTest + ") "
+          + child().getDescription().getName() + " than start. ("
+          + threadsBeforeTest + ")");
+    }
+
     this.invokeQueue.recordTestOutcome(child().getDescription(),
         !wrappedCollector.shouldExit(), executionTime);
 

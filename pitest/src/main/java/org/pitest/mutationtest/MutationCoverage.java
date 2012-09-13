@@ -162,7 +162,7 @@ public class MutationCoverage implements Runnable {
     final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
     final Collection<HierarchicalClassId> ids = FCollection.map(
         this.code.getClassInfo(allClassNames), ClassInfo.toFullClassId());
-    this.historyStore.recordClassPath(ids);
+    this.historyStore.recordClassPath(ids, coverageData);
   }
 
   private Set<ClassName> getAllClassesAndTests(

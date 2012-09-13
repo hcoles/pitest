@@ -197,6 +197,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    */
   private int mutationUnitSize;
+  
+  /**
+   * Export line coverage data
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean exportLineCoverage;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -382,6 +389,14 @@ public class PitMojo extends AbstractMojo {
 
   public void setHistoryInputFile(File historyInputFile) {
     this.historyInputFile = historyInputFile;
+  }
+
+  public boolean isExportLineCoverage() {
+    return exportLineCoverage;
+  }
+
+  public void setExportLineCoverage(boolean exportLineCoverage) {
+    this.exportLineCoverage = exportLineCoverage;
   }
   
   

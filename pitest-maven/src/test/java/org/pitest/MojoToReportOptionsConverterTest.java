@@ -260,6 +260,16 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(new File("foo"),actual.getHistoryOutputLocation());
   }
   
+  public void testParsesLineCoverageExportFlagWhenSet() {
+    ReportOptions actual = parseConfig("<exportLineCoverage>true</exportLineCoverage>");
+    assertTrue(actual.shouldExportLineCoverage());
+  }
+  
+  public void testParsesLineCoverageExportFlagWhenNotSet() {
+    ReportOptions actual = parseConfig("<exportLineCoverage>false</exportLineCoverage>");
+    assertFalse(actual.shouldExportLineCoverage());
+  }
+  
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);

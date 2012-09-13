@@ -56,11 +56,13 @@ public class MutationCoverageReport {
 
   private static void runReport(final ReportOptions data) {
 
+    SettingsFactory settings = new SettingsFactory(data);
+    
     final JarCreatingJarFinder agent = new JarCreatingJarFinder(
         new ClassPathByteArraySource(data.getClassPath()));
 
-    final ResultOutputStrategy outputStrategy = data
-        .getReportDirectoryStrategy();
+    final ResultOutputStrategy outputStrategy = settings.getOutputStrategy();
+
 
     final Option<Reader> reader = data.createHistoryReader();
     final WriterFactory historyWriter = data.createHistoryWriter();
@@ -81,7 +83,7 @@ public class MutationCoverageReport {
           .getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-          null, coverageOptions, launchOptions, code, timings);
+          null, coverageOptions, launchOptions, code, settings.createCoverageExporter(),timings);
 
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);

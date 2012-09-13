@@ -58,6 +58,15 @@ public class TestInfo {
   public String toString() {
     return this.name;
   }
+  
+  public static F<TestInfo,String> toName() {
+    return new F<TestInfo, String>() {
+      public String apply(final TestInfo a) {
+        return a.getName();
+      }
+
+    };
+  }
 
   public static F<TestInfo, ClassName> toDefiningClassName() {
     return new F<TestInfo, ClassName>() {
