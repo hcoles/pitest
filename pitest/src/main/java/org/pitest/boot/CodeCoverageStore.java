@@ -22,33 +22,34 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Store for line visit information.
- * 
- * Requires roughly 5 bytes of memory for each line of code.
- * 
  */
 public final class CodeCoverageStore {
 
-  public static final String                   CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
-                                                                                             .getName()
-                                                                                             .replace(
-                                                                                                 '.',
-                                                                                                 '/');
-  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
-  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
+  private final static int                        CLASS_HIT_INDEX                           = 0;
 
-  private static InvokeReceiver                invokeQueue;
-  private static int                           classId                                   = 0;
+  public static final String                      CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
+                                                                                                .getName()
+                                                                                                .replace(
+                                                                                                    '.',
+                                                                                                    '/');
+  public static final String                      CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
+  public static final String                      CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
+
+  private static InvokeReceiver                   invokeQueue;
+  private static final AtomicInteger              classId                                   = new AtomicInteger();
 
   // ugly but >100% performance improvement compared to hashset of encoded line
   // hits.
-  // first boolean indicates if class has been hit. Remaining booleans track
-  // whether the probe at the matching index has been hit
-  private final static Map<Integer, boolean[]> classHits                                 = new ConcurrentHashMap<Integer, boolean[]>();
+  // first bit indicates if class has been hit. Remaining bits track
+  // whether the probe at the matching index has been hit. FIXME range
+  // unlikely to exceed size of int - could use a more optimised BitSet
+  private final static Map<Integer, AtomicBitSet> classHits                                 = new ConcurrentHashMap<Integer, AtomicBitSet>();
 
-  private final static Map<Integer, int[]>     classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
+  private final static Map<Integer, int[]>        classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
 
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
@@ -60,29 +61,29 @@ public final class CodeCoverageStore {
   public static void visitLine(final long lineId) { // NO_UCD
     final int line = decodeLineId(lineId);
     final int clazz = decodeClassId(lineId);
-    final boolean[] bs = classHits.get(clazz);
-    bs[0] = true;
-    bs[line + 1] = true;
+    final AtomicBitSet bs = classHits.get(clazz);
+    bs.set(CLASS_HIT_INDEX);
+    bs.set(line + 1);
   }
 
   public synchronized static void reset() {
-    for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
-      classHits.put(each.getKey(), new boolean[each.getValue().length]);
+    for (final Entry<Integer, AtomicBitSet> each : classHits.entrySet()) {
+      classHits.put(each.getKey(), new AtomicBitSet(each.getValue().length()));
     }
   }
 
   public synchronized static Collection<Long> getHits() {
     final Collection<Long> lineHits = new ArrayList<Long>();
-    for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
-      final boolean[] bs = each.getValue();
+    for (final Entry<Integer, AtomicBitSet> each : classHits.entrySet()) {
+      final AtomicBitSet bs = each.getValue();
       // first entry tracks if class has been visited at all
-      if (!bs[0]) {
+      if (!bs.get(CLASS_HIT_INDEX)) {
         continue;
       }
       final int classId = each.getKey();
       final int[] mapping = classProbeToLineMapping.get(classId);
-      for (int probeId = 1; probeId != bs.length; probeId++) {
-        if (bs[probeId]) {
+      for (int probeId = 1; probeId != bs.length(); probeId++) {
+        if (bs.get(probeId)) {
           lineHits.add(encode(classId, mapping[probeId - 1]));
         }
       }
@@ -90,14 +91,14 @@ public final class CodeCoverageStore {
     return lineHits;
   }
 
-  public synchronized static int registerClass(final String className) {
+  public static int registerClass(final String className) {
     final int id = nextId();
     invokeQueue.registerClass(id, className);
     return id;
   }
 
-  private static synchronized int nextId() {
-    return classId++;
+  private static int nextId() {
+    return classId.incrementAndGet();
   }
 
   public static int decodeClassId(final long value) {
@@ -114,7 +115,7 @@ public final class CodeCoverageStore {
 
   public static void registerClassProbes(final int classId,
       final int[] probeToLines) {
-    classHits.put(classId, new boolean[probeToLines.length + 1]);
+    classHits.put(classId, new AtomicBitSet(probeToLines.length + 1));
     classProbeToLineMapping.put(classId, probeToLines);
   }
 
