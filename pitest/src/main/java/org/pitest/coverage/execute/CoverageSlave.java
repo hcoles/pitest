@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,6 +121,7 @@ public class CoverageSlave {
       final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
       throws IOException {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
+    Collections.sort(classes); // ensure classes loaded in a consistent order
 
     final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
 

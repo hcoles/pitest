@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 import org.pitest.functional.F;
 
-public final class ClassName implements Serializable {
+public final class ClassName implements Serializable, Comparable<ClassName> {
 
   private static final long serialVersionUID = 1L;
 
@@ -125,6 +125,10 @@ public final class ClassName implements Serializable {
   @Override
   public String toString() {
     return asJavaName();
+  }
+
+  public int compareTo(ClassName o) {
+    return this.asJavaName().compareTo(o.asJavaName());
   }
 
 }

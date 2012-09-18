@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Store for line visit information.
@@ -40,14 +39,13 @@ public final class CodeCoverageStore {
   public static final String                      CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
 
   private static InvokeReceiver                   invokeQueue;
-  private static final AtomicInteger              classId                                   = new AtomicInteger();
+  private static  int              classId                                   =  0;
 
-  // ugly but >100% performance improvement compared to hashset of encoded line
-  // hits.
-  // first bit indicates if class has been hit. Remaining bits track
-  // whether the probe at the matching index has been hit. FIXME range
-  // unlikely to exceed size of int - could use a more optimised BitSet
-  private final static Map<Integer, AtomicBitSet> classHits                                 = new ConcurrentHashMap<Integer, AtomicBitSet>();
+  // array of probe hits, first slot indicates any hits to the class.
+  // testing suggests boolean array with synchronization to ensure happens before relationship significantly outperforms
+  // both AtomicInteger array with bit per flag and integer per flag. 
+  // optimisation with other methods of ensuring a happens before not yet investigated
+  private final static Map<Integer,  boolean[]> classHits                                 = new ConcurrentHashMap<Integer, boolean[]>();
 
   private final static Map<Integer, int[]>        classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
 
@@ -61,29 +59,29 @@ public final class CodeCoverageStore {
   public static void visitLine(final long lineId) { // NO_UCD
     final int line = decodeLineId(lineId);
     final int clazz = decodeClassId(lineId);
-    final AtomicBitSet bs = classHits.get(clazz);
-    bs.set(CLASS_HIT_INDEX);
-    bs.set(line + 1);
+    final boolean[] bs = classHits.get(clazz);
+    bs[CLASS_HIT_INDEX] = true;
+    bs[line + 1] = true;
   }
 
   public synchronized static void reset() {
-    for (final Entry<Integer, AtomicBitSet> each : classHits.entrySet()) {
-      classHits.put(each.getKey(), new AtomicBitSet(each.getValue().length()));
+    for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
+      classHits.put(each.getKey(), new boolean[each.getValue().length]);
     }
   }
 
   public synchronized static Collection<Long> getHits() {
     final Collection<Long> lineHits = new ArrayList<Long>();
-    for (final Entry<Integer, AtomicBitSet> each : classHits.entrySet()) {
-      final AtomicBitSet bs = each.getValue();
+    for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
+      final boolean[] bs = each.getValue();
       // first entry tracks if class has been visited at all
-      if (!bs.get(CLASS_HIT_INDEX)) {
+      if (!bs[CLASS_HIT_INDEX]) {
         continue;
       }
       final int classId = each.getKey();
       final int[] mapping = classProbeToLineMapping.get(classId);
-      for (int probeId = 1; probeId != bs.length(); probeId++) {
-        if (bs.get(probeId)) {
+      for (int probeId = 1; probeId != bs.length; probeId++) {
+        if (bs[probeId]) {
           lineHits.add(encode(classId, mapping[probeId - 1]));
         }
       }
@@ -97,8 +95,8 @@ public final class CodeCoverageStore {
     return id;
   }
 
-  private static int nextId() {
-    return classId.incrementAndGet();
+  private synchronized static int nextId() {
+    return classId++;
   }
 
   public static int decodeClassId(final long value) {
@@ -115,7 +113,7 @@ public final class CodeCoverageStore {
 
   public static void registerClassProbes(final int classId,
       final int[] probeToLines) {
-    classHits.put(classId, new AtomicBitSet(probeToLines.length + 1));
+    classHits.put(classId, new boolean[probeToLines.length + 1]);
     classProbeToLineMapping.put(classId, probeToLines);
   }
 

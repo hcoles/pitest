@@ -22,7 +22,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import org.pitest.boot.AtomicBitSet;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.boot.InvokeReceiver;
@@ -96,7 +95,6 @@ public class JarCreatingJarFinder implements JavaAgent {
     addClass(HotSwapAgent.class, jos);
     addClass(CodeCoverageStore.class, jos);
     addClass(InvokeReceiver.class, jos);
-    addClass(AtomicBitSet.class, jos);
     jos.close();
   }
 

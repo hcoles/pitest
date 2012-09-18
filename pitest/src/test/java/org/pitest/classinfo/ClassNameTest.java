@@ -15,7 +15,12 @@
 package org.pitest.classinfo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -90,5 +95,46 @@ public class ClassNameTest {
   public void withoutPrefeixCharsShouldReturnPacakgeAndClassWithoutPrefixChars() {
     assertEquals(new ClassName("com.example.Foo"), new ClassName(
         "com.example.TestFoo").withoutPrefixChars(4));
+  }
+
+  @Test
+  public void shouldSortByName() {
+    final ClassName a = ClassName.fromString("a.a.c");
+    final ClassName b = ClassName.fromString("a.b.c");
+    final ClassName c = ClassName.fromString("b.a.c");
+
+    final List<ClassName> actual = Arrays.asList(b, c, a);
+    Collections.sort(actual);
+    assertEquals(Arrays.asList(a, b, c), actual);
+  }
+
+  @Test
+  public void shouldConvertStringToClassName() {
+    assertEquals(ClassName.fromString("foo"), ClassName.stringToClassName()
+        .apply("foo"));
+  }
+
+  @Test
+  public void shouldProduceSameHashCodeForSameClass() {
+    assertEquals(ClassName.fromString("org/example/Foo").hashCode(), ClassName
+        .fromString("org.example.Foo").hashCode());
+  }
+  
+  @Test
+  public void shouldProduceDifferentHashCodeForDifferentClasses() {
+    assertFalse(ClassName.fromString("org/example/Foo").hashCode() == ClassName
+        .fromString("org.example.Bar").hashCode());
+  }
+  
+  @Test
+  public void shouldTreatSameClassAsEqual() {
+    assertEquals(ClassName.fromString("org/example/Foo"), ClassName
+        .fromString("org.example.Foo"));
+  }
+  
+  @Test
+  public void shouldTreatDifferentClassesAsNotEqual() {
+    assertFalse(ClassName.fromString("org/example/Foo").equals(ClassName
+        .fromString("org.example.Bar")));
   }
 }

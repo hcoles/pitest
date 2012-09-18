@@ -17,6 +17,8 @@ package org.pitest.coverage.execute;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.DefaultStaticConfig;
@@ -43,6 +45,8 @@ public class CoverageWorker implements Runnable {
 
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
           this.pipe);
+      
+      Collections.sort(decoratedTests, testComparator());
 
       final Container c = new UnContainer();
 
@@ -59,6 +63,15 @@ public class CoverageWorker implements Runnable {
       throw translateCheckedException(ex);
     }
 
+  }
+
+  private Comparator<TestUnit> testComparator() {
+    return new Comparator<TestUnit> () {
+      public int compare(TestUnit o1, TestUnit o2) {
+        return o1.getDescription().getQualifiedName().compareTo(o2.getDescription().getQualifiedName());
+      }
+      
+    };
   }
 
   private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
