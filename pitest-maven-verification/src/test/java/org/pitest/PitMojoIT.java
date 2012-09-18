@@ -50,7 +50,7 @@ public class PitMojoIT {
   @Test
   public void shouldProduceConsistantCoverageData() throws Exception {
     final File testDir = prepare("/pit-deterministic-coverage");
-    // this.verifier.executeGoal("test");
+    this.verifier.executeGoal("compile");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
     final String firstRun = readCoverage(testDir);
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
