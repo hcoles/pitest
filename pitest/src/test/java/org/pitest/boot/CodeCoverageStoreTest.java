@@ -17,9 +17,10 @@ package org.pitest.boot;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -96,7 +97,7 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.visitLine(line42);
     
     Collection<Long> actual = CodeCoverageStore.getHits();
-    assertEquals(Arrays.asList(CodeCoverageStore.encode(classId,10), CodeCoverageStore.encode(classId,42)), actual);
+    assertThat(actual, hasItems(CodeCoverageStore.encode(classId,10), CodeCoverageStore.encode(classId,42)));
   }
   
   @Test
@@ -112,7 +113,7 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.visitLine(line0);
     
     Collection<Long> actual = CodeCoverageStore.getHits();
-    assertEquals(Arrays.asList(CodeCoverageStore.encode(barId,11),CodeCoverageStore.encode(fooId,20)), actual);
+    assertThat(actual, hasItems(CodeCoverageStore.encode(barId,11), CodeCoverageStore.encode(fooId,20)));
   }
   
   @Test
