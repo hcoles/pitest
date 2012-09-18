@@ -109,6 +109,10 @@ public class ClassInfo {
     if (parent.hasSome()) {
       hash = hash.add(parent.value().getHash());
     }
+    final Option<ClassInfo> outer = getOuterClass();
+    if (outer.hasSome()) {
+      hash = hash.add(outer.value().getHash());
+    }
     return hash;
   }
 

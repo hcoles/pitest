@@ -37,10 +37,26 @@ public class ClassInfoTest {
   }
 
   @Test
-  public void shouldCreateDifferentHierarchicalHashWhenPatentClassChanges() {
-    final ClassInfo parent = new ClassInfo(emptyClassPointer(), null, this.data);
-    final ClassInfo classA = new ClassInfo(emptyClassPointer(), null, this.data);
-    final ClassInfo classB = new ClassInfo(pointerTo(parent), null, this.data);
+  public void shouldCreateDifferentHierarchicalHashWhenParentClassChanges() {
+    final ClassInfo parent = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    final ClassInfo classA = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    final ClassInfo classB = new ClassInfo(pointerTo(parent),
+        emptyClassPointer(), this.data);
+
+    assertFalse(classA.getHierarchicalId().getHirearchialHash()
+        .equals(classB.getHierarchicalId().getHirearchialHash()));
+  }
+
+  @Test
+  public void shouldCreateDifferentHierarchicalHashWhenOuterClassChanges() {
+    final ClassInfo outer = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    final ClassInfo classA = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    final ClassInfo classB = new ClassInfo(emptyClassPointer(),
+        pointerTo(outer), this.data);
 
     assertFalse(classA.getHierarchicalId().getHirearchialHash()
         .equals(classB.getHierarchicalId().getHirearchialHash()));
