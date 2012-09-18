@@ -42,7 +42,6 @@
 	
 	<properties>
 		<junit.version>4.8.1</junit.version>	
-		<pit.version>0.29-SNAPSHOT</pit.version>
 	</properties>
 
 </project>
