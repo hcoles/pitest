@@ -14,8 +14,8 @@
  */
 package org.pitest.extension.common;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.pitest.MultipleTestGroup;
 import org.pitest.extension.GroupingStrategy;
@@ -24,9 +24,9 @@ import org.pitest.internal.TestClass;
 
 public class GroupPerClassStrategy implements GroupingStrategy {
 
-  public Collection<? extends TestUnit> group(final TestClass c,
-      final Collection<TestUnit> testUnitsFromClass) {
-    return Collections.singleton(new MultipleTestGroup(testUnitsFromClass));
+  public List<? extends TestUnit> group(final TestClass c,
+      final List<TestUnit> testUnitsFromClass) {
+    return Collections.singletonList(new MultipleTestGroup(testUnitsFromClass));
   }
 
 }

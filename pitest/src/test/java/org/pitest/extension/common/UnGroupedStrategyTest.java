@@ -17,7 +17,7 @@ package org.pitest.extension.common;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class UnGroupedStrategyTest {
   @Test
   public void shouldReturnSuppliedCollection() {
     final UnGroupedStrategy testee = new UnGroupedStrategy();
-    final Collection<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
-    final Collection<? extends TestUnit> actual = testee.group(null, tus);
+    final List<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
+    final List<? extends TestUnit> actual = testee.group(null, tus);
     assertSame(tus, actual);
   }
 }

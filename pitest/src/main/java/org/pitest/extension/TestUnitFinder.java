@@ -15,10 +15,10 @@
 
 package org.pitest.extension;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final Class<?> clazz);
+  public List<TestUnit> findTestUnits(final Class<?> clazz);
 
 }

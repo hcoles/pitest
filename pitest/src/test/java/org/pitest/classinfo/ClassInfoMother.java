@@ -3,7 +3,7 @@ package org.pitest.classinfo;
 public class ClassInfoMother {
 
   public static ClassInfo make(ClassIdentifier id) {
-    return make(id,(ClassPointer)null);
+    return make(id,new DefaultClassPointer(null));
   }
 
   public static ClassInfo make(ClassIdentifier id, ClassInfo parent) {
@@ -13,7 +13,7 @@ public class ClassInfoMother {
   public static ClassInfo make(ClassIdentifier id, ClassPointer parent) {
     ClassInfoBuilder data = new ClassInfoBuilder();
     data.id = id;
-    ClassInfo ci = new ClassInfo(parent,null,data);
+    ClassInfo ci = new ClassInfo(parent,new DefaultClassPointer(null),data);
     return ci;
   }
   

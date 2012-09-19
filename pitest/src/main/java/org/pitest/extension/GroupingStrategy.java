@@ -14,13 +14,13 @@
  */
 package org.pitest.extension;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.pitest.internal.TestClass;
 
 public interface GroupingStrategy {
 
-  public Collection<? extends TestUnit> group(TestClass c,
-      Collection<TestUnit> testUnitsFromClass);
+  public List<? extends TestUnit> group(TestClass c,
+      List<TestUnit> testUnitsFromClass);
 
 }

@@ -47,7 +47,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.testMethodFinders.addAll(testMethodFinders);
   }
 
-  public Collection<TestUnit> findTestUnits(final Class<?> testClass) {
+  public List<TestUnit> findTestUnits(final Class<?> testClass) {
     try {
 
       final List<TestUnit> units = new ArrayList<TestUnit>();

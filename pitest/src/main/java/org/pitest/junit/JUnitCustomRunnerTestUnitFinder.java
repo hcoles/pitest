@@ -16,8 +16,8 @@ package org.pitest.junit;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -40,7 +40,7 @@ import org.pitest.reflection.Reflection;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
+  public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if (isNotARunnableTest(runner, clazz.getName())) {
@@ -92,7 +92,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         && !runner.getDescription().getClassName().equals(className);
   }
 
-  private Collection<TestUnit> splitIntoFilteredUnits(
+  private List<TestUnit> splitIntoFilteredUnits(
       final Description description) {
     return FCollection.filter(description.getChildren(), isTest()).map(
         descriptionToTestUnit());

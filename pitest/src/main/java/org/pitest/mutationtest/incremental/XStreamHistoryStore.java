@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
@@ -19,13 +20,18 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.util.Log;
 import org.pitest.util.PitXmlDriver;
 import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public class XStreamHistoryStore implements HistoryStore {
+
+  private static final Logger                                   LOG               = Log
+                                                                                      .getLogger();
 
   private final static XStream                                  XSTREAM_INSTANCE  = configureXStream();
 
@@ -42,14 +48,20 @@ public class XStreamHistoryStore implements HistoryStore {
 
   private static XStream configureXStream() {
     final XStream xstream = new XStream(new PitXmlDriver());
+    xstream.alias("classHistory", ClassHistory.class);
     xstream.alias("fullClassId", HierarchicalClassId.class);
     xstream.alias("classId", ClassIdentifier.class);
     xstream.alias("name", ClassName.class);
     xstream.alias("result", IdResult.class);
     xstream.alias("statusTestPair", MutationStatusTestPair.class);
     xstream.alias("status", DetectionStatus.class);
+    xstream.useAttributeFor(MutationStatusTestPair.class,"numberOfTestsRun");
+    xstream.useAttributeFor(MutationStatusTestPair.class,"status");
+    xstream.useAttributeFor(MutationStatusTestPair.class,"killingTest");
     xstream.useAttributeFor(ClassIdentifier.class, "name");
     xstream.useAttributeFor(ClassIdentifier.class, "hash");
+    xstream.useAttributeFor(HierarchicalClassId.class, "hierarchicalHash");
+    xstream.useAttributeFor(HierarchicalClassId.class, "classId");
     return xstream;
   }
 
@@ -109,7 +121,9 @@ public class XStreamHistoryStore implements HistoryStore {
         line = this.input.readLine();
       }
     } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
+      LOG.warning("Could not read previous results");
+    } catch (final StreamException e) {
+      LOG.warning("Could not read previous results");
     }
 
   }
@@ -123,7 +137,9 @@ public class XStreamHistoryStore implements HistoryStore {
         this.previousClassPath.put(coverage.getName(), coverage);
       }
     } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
+      LOG.warning("Could not read previous classpath");
+    } catch (final StreamException e) {
+      LOG.warning("Could not read previous classpath");
     }
   }
 

@@ -15,8 +15,8 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -27,7 +27,7 @@ import org.pitest.internal.TestClass;
 
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 
-  public Collection<TestClass> apply(final TestClass a) {
+  public List<TestClass> apply(final TestClass a) {
     final SuiteClasses annotation = a.getClazz().getAnnotation(
         SuiteClasses.class);
 

@@ -16,7 +16,6 @@
 package org.pitest.junit;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +35,7 @@ import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 public class RunnerSuiteFinder implements TestSuiteFinder {
 
   @SuppressWarnings("unchecked")
-  public Collection<TestClass> apply(final TestClass a) {
+  public List<TestClass> apply(final TestClass a) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(a.getClazz());
 
@@ -46,12 +45,12 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
     final Set<TestClass> classes = new LinkedHashSet<TestClass>(runner
         .getDescription().getChildren().size());
 
-    final Collection<Description> suites = FCollection.filter(allChildren,
+    final List<Description> suites = FCollection.filter(allChildren,
         Prelude.or(isSuiteMethodRunner(runner), isSuite()));
     FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
 
     classes.remove(a);
-    return classes;
+    return new ArrayList<TestClass>(classes);
 
   }
 

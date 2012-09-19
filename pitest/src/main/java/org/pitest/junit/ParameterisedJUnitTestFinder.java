@@ -15,8 +15,8 @@
 package org.pitest.junit;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
@@ -31,7 +31,7 @@ import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 
 public class ParameterisedJUnitTestFinder implements TestUnitFinder {
-  public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
+  public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
@@ -47,9 +47,9 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
 
   }
 
-  private Collection<TestUnit> handleParameterizedTest(final Class<?> clazz,
+  private List<TestUnit> handleParameterizedTest(final Class<?> clazz,
       final Description description) {
-    final Collection<TestUnit> result = new ArrayList<TestUnit>();
+    final List<TestUnit> result = new ArrayList<TestUnit>();
     for (final Description each : description.getChildren()) {
       FCollection.mapTo(each.getChildren(), parameterizedToTestUnit(clazz),
           result);

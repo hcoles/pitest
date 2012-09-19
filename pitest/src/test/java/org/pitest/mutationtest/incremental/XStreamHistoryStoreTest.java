@@ -1,9 +1,12 @@
 package org.pitest.mutationtest.incremental;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -105,6 +108,26 @@ public class XStreamHistoryStoreTest {
     } catch (final Exception ex) {
       fail(ex.getMessage());
     }
+  }
+  
+  @Test
+  public void shouldReadCorruptFiles() throws IOException {
+    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
+        ClassName.fromString("foo")),"");
+    recordClassPathWithTestee(foo);
+
+    final MutationResult mr = new MutationResult(
+        MutationTestResultMother.createDetails("foo"),
+        new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
+
+    this.testee.recordResult(mr);
+    output.append("rubbish");
+
+    final Reader reader = new StringReader(this.output.toString());
+    this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
+    this.testee.initialize();
+    
+    assertFalse(this.testee.getHistoricResults().isEmpty());
   }
   
   private void recordClassPathWithTestee(

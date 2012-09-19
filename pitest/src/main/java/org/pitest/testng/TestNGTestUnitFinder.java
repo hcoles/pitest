@@ -14,8 +14,8 @@
  */
 package org.pitest.testng;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.pitest.extension.TestUnit;
 import org.pitest.extension.TestUnitFinder;
@@ -31,7 +31,7 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
     this.config = config;
   }
 
-  public Collection<TestUnit> findTestUnits(final Class<?> clazz) {
+  public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     if (hasClassAnnotation(clazz) || hasMethodAnnotation(clazz)) {
       return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz,

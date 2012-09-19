@@ -14,7 +14,7 @@
  */
 package org.pitest.extension.common;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.pitest.extension.GroupingStrategy;
 import org.pitest.extension.TestUnit;
@@ -22,8 +22,8 @@ import org.pitest.internal.TestClass;
 
 public class UnGroupedStrategy implements GroupingStrategy {
 
-  public Collection<? extends TestUnit> group(final TestClass c,
-      final Collection<TestUnit> testUnitsFromClass) {
+  public List<? extends TestUnit> group(final TestClass c,
+      final List<TestUnit> testUnitsFromClass) {
     return testUnitsFromClass;
   }
 

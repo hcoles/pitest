@@ -37,7 +37,7 @@ public final class TestClass {
     this.clazz = clazz;
   }
 
-  private Collection<TestUnit> getTestUnitsWithinClass(
+  private List<TestUnit> getTestUnitsWithinClass(
       final Configuration classConfig) {
     return classConfig.testUnitFinder()
         .findTestUnits(TestClass.this.getClazz());
@@ -69,7 +69,7 @@ public final class TestClass {
       }
     }
 
-    final Collection<TestUnit> testsInThisClass = suiteClass
+    final List<TestUnit> testsInThisClass = suiteClass
         .getTestUnitsWithinClass(startConfig);
     if (!testsInThisClass.isEmpty()) {
       tus.addAll(groupStrategy.group(suiteClass, testsInThisClass));

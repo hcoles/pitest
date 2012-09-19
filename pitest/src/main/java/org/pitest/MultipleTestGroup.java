@@ -15,7 +15,7 @@
 
 package org.pitest;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
@@ -23,9 +23,9 @@ import org.pitest.testunit.AbstractTestUnit;
 
 public class MultipleTestGroup extends AbstractTestUnit {
 
-  private final Collection<TestUnit> children;
+  private final List<TestUnit> children;
 
-  public MultipleTestGroup(final Collection<TestUnit> children) {
+  public MultipleTestGroup(final List<TestUnit> children) {
     super(new Description("MultipleTestGroup"));
     this.children = children;
   }

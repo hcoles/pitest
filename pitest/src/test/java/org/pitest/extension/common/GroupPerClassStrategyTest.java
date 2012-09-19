@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +51,10 @@ public class GroupPerClassStrategyTest {
   public void shouldReturnsSingleGroupContainingAllTests() {
     final GroupPerClassStrategy testee = new GroupPerClassStrategy();
 
-    final Collection<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
-    final Collection<? extends TestUnit> actual = testee.group(null, tus);
-    final Collection<? extends TestUnit> expected = Collections
-        .singleton(new MultipleTestGroup(tus));
+    final List<TestUnit> tus = Arrays.asList(this.tu1, this.tu2);
+    final List<? extends TestUnit> actual = testee.group(null, tus);
+    final List<? extends TestUnit> expected = Collections
+        .singletonList(new MultipleTestGroup(tus));
     assertEquals(expected, actual);
   }
 
