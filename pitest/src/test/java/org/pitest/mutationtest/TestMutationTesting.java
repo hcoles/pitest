@@ -347,7 +347,7 @@ public class TestMutationTesting {
         .testClassIdentifier());
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),timings);
+        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),timings, false);
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 

@@ -132,7 +132,7 @@ public class MutationTestWorker {
           + (System.currentTimeMillis() - t0) + " ms");
       mutationDetected = doTestsDetectMutation(c, relevantTests);
     } else {
-      LOG.info("Mutation " + mutationId + " was not viable ");
+      LOG.warning("Mutation " + mutationId + " was not viable ");
       mutationDetected = new MutationStatusTestPair(0,
           DetectionStatus.NON_VIABLE);
     }
@@ -153,7 +153,7 @@ public class MutationTestWorker {
 
   private ClassLoader pickClassLoaderForMutant(final Mutant mutant) {
     if (hasMutationInStaticInitializer(mutant)) {
-      LOG.info("Creating new classloader for static initializer");
+      LOG.fine("Creating new classloader for static initializer");
       return new DefaultPITClassloader(new ClassPath(),
           IsolationUtils.bootClassLoader());
     } else {

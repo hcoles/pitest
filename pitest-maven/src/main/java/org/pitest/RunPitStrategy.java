@@ -50,11 +50,8 @@ public class RunPitStrategy implements GoalStrategy {
   public void execute(final File baseDir, final ReportOptions data)
       throws MojoExecutionException {
 
-    System.out.println("Running report with " + data);
-
     SettingsFactory settings = new SettingsFactory(data);
-    
-    
+        
     final ClassPath cp = data.getClassPath();
     
     Option<Reader> reader = data.createHistoryReader();
@@ -82,7 +79,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-        baseDir, coverageOptions, launchOptions, code, settings.createCoverageExporter(), timings);
+        baseDir, coverageOptions, launchOptions, code, settings.createCoverageExporter(), timings, !data.isVerbose());
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 

@@ -103,6 +103,12 @@ public class MutationCoverage implements Runnable {
 
     final Runtime runtime = Runtime.getRuntime();
 
+    if ( !data.isVerbose() ) {
+      LOG.info("Verbose logging is disabled. If you encounter an problem please enable it before reporting an issue.");
+    }
+    
+    LOG.fine("Running report with " + data);
+    
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
     LOG.fine("Maxmium available memory is " + (runtime.maxMemory() / MB)
         + " mb");
@@ -127,6 +133,10 @@ public class MutationCoverage implements Runnable {
         .adapt(mutationReportListener));
     staticConfig.addTestListener(MutationResultAdapter
         .adapt(new HistoryListener(this.historyStore)));
+    
+    if ( !data.isVerbose() ) {
+      staticConfig.addTestListener(MutationResultAdapter.adapt(new SpinnerListener(System.out)));
+    }
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(stats);
@@ -153,7 +163,7 @@ public class MutationCoverage implements Runnable {
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(t0));
-
+  
     printStats(stats);
 
   }

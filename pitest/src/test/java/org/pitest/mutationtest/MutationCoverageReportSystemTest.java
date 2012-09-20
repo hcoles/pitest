@@ -386,7 +386,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(null,
-          coverageOptions, launchOptions, code, new NullCoverageExporter(),timings);
+          coverageOptions, launchOptions, code, new NullCoverageExporter(),timings, false);
       
       
       final HistoryStore history = new NullHistoryStore();

@@ -83,7 +83,7 @@ public class MutationCoverageReport {
           .getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-          null, coverageOptions, launchOptions, code, settings.createCoverageExporter(),timings);
+          null, coverageOptions, launchOptions, code, settings.createCoverageExporter(),timings, !data.isVerbose());
 
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);

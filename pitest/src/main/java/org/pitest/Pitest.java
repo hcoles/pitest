@@ -68,7 +68,7 @@ public class Pitest {
       final StaticConfiguration staticConfig,
       final List<? extends TestUnit> testUnits) {
 
-    LOG.info("Running " + testUnits.size() + " units");
+    LOG.fine("Running " + testUnits.size() + " units");
 
     signalRunStartToAllListeners(staticConfig);
 
@@ -127,7 +127,7 @@ public class Pitest {
 
     signalRunEndToAllListeners(staticConfig);
 
-    LOG.info("Finished");
+    LOG.fine("Finished");
 
   }
 

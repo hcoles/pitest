@@ -15,9 +15,6 @@
 
 package org.pitest.coverage;
 
-import static org.pitest.functional.Prelude.noSideEffect;
-import static org.pitest.functional.Prelude.printWith;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -36,6 +33,7 @@ import org.pitest.coverage.export.CoverageExporter;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -56,16 +54,18 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final Timings         timings;
   private final File            workingDir;
   private final CoverageExporter exporter;
+  private final boolean showProgress;
 
   public DefaultCoverageGenerator(final File workingDir,
       final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
-      final CodeSource code, CoverageExporter exporter, final Timings timings) {
+      final CodeSource code, CoverageExporter exporter, final Timings timings, final boolean showProgress) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
     this.timings = timings;
     this.workingDir = workingDir;
     this.exporter = exporter;
+    this.showProgress = showProgress;
   }
 
   public CoverageData calculateCoverage() {
@@ -121,7 +121,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
         .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
-        .andStderr(printWith("stderr "))
+        .andStderr(logInfo())
         .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
         socket, filteredTests, handler);
 
@@ -140,23 +140,44 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private SideEffect1<String> captureStandardOutIfVerbose() {
     if (this.coverageOptions.isVerbose()) {
-      return printWith("stdout ");
+      return log();
     } else {
-      return noSideEffect(String.class);
+      return Prelude.noSideEffect(String.class);
     }
+  }
+    
+  private SideEffect1<String> logInfo() {
+    return new SideEffect1<String>() {
+      public void apply(String a) {
+        LOG.info("SLAVE : " + a);
+      } 
+    };
+  }
+
+  private SideEffect1<String> log() {
+    return new SideEffect1<String>() {
+      public void apply(String a) {
+        LOG.fine("SLAVE : " + a);
+      } 
+    };
   }
 
   private SideEffect1<CoverageResult> resultProcessor(
       final CoverageData coverage) {
     return new SideEffect1<CoverageResult>() {
-
+      private final String[] spinner = new String[] {"\u0008/", "\u0008-", "\u0008\\", "\u0008|" };
+      int i = 0;
       public void apply(final CoverageResult cr) {
         coverage.calculateClassCoverage(cr);
+        if (showProgress ) {
+          System.out.printf("%s", spinner[i % spinner.length]);
+        }
+        i++;
       }
 
     };
   }
-
+  
   public Configuration getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }
