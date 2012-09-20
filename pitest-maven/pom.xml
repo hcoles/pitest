@@ -6,9 +6,7 @@
         <groupId>org.pitest</groupId>
         <version>0.29-SNAPSHOT</version>
     </parent>
-    <groupId>org.pitest</groupId>
     <artifactId>pitest-maven</artifactId>
-    <version>0.29-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>pitest-maven</name>
     <description>Pitest Maven Mojo.</description>
