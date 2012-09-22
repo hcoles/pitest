@@ -110,7 +110,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Detect inlined code
    * 
-   * @parameter default-value="false"
+   * @parameter default-value="true"
    */
   private boolean               detectInlinedCode;
   

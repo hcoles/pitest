@@ -131,7 +131,7 @@ public enum ConfigOption {
   /**
    * Do/don't attempt to detect inlined code from finally blocks
    */
-  USE_INLINED_CODE_DETECTION("detectInlinedCode", false),
+  USE_INLINED_CODE_DETECTION("detectInlinedCode", true),
 
   /**
    * Location to read history from for incremental analysis
