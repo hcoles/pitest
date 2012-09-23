@@ -53,7 +53,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     classPath = new ArrayList<String>(
       FCollection.map(ClassPath.getClassPathElementsAsFiles(),
           fileToString()));
-    when(this.project.getCompileClasspathElements())
+    when(this.project.getTestClasspathElements())
         .thenReturn(classPath);
   }
 

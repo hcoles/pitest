@@ -52,10 +52,6 @@ public class MojoToReportOptionsConverter {
 
     try {
       classPath.addAll(this.mojo.getProject().getTestClasspathElements());
-      classPath.addAll(this.mojo.getProject().getCompileClasspathElements());
-      classPath.addAll(this.mojo.getProject().getRuntimeClasspathElements());
-      classPath.addAll(this.mojo.getProject().getSystemClasspathElements());
-
     } catch (final DependencyResolutionRequiredException e1) {
       this.mojo.getLog().info(e1);
     }
