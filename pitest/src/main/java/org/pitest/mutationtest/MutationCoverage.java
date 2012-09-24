@@ -60,7 +60,7 @@ import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
-public class MutationCoverage implements Runnable {
+public class MutationCoverage {
 
   private final static int        MB  = 1024 * 1024;
 
@@ -97,7 +97,7 @@ public class MutationCoverage implements Runnable {
     }
   }
 
-  private void runReport() throws IOException {
+  public void runReport() throws IOException {
 
     Log.setVerbose(this.data.isVerbose());
 

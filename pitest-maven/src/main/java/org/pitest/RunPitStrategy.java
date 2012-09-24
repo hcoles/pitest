@@ -15,6 +15,7 @@
 package org.pitest;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,8 +28,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.DefaultPITClassloader;
 import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;
@@ -50,13 +49,13 @@ public class RunPitStrategy implements GoalStrategy {
   public void execute(final File baseDir, final ReportOptions data)
       throws MojoExecutionException {
 
-    SettingsFactory settings = new SettingsFactory(data);
-        
+    final SettingsFactory settings = new SettingsFactory(data);
+
     final ClassPath cp = data.getClassPath();
-    
-    Option<Reader> reader = data.createHistoryReader();
-    WriterFactory historyWriter = data.createHistoryWriter();
-    
+
+    final Option<Reader> reader = data.createHistoryReader();
+    final WriterFactory historyWriter = data.createHistoryWriter();
+
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
     final JavaAgent jac = new JarCreatingJarFinder(
@@ -79,31 +78,20 @@ public class RunPitStrategy implements GoalStrategy {
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-        baseDir, coverageOptions, launchOptions, code, settings.createCoverageExporter(), timings, !data.isVerbose());
+        baseDir, coverageOptions, launchOptions, code,
+        settings.createCoverageExporter(), timings, !data.isVerbose());
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
-    final MutationCoverage report = new MutationCoverage(baseDir,
-        history, code, coverageDatabase, data, reportFactory, timings,
+    final MutationCoverage report = new MutationCoverage(baseDir, history,
+        code, coverageDatabase, data, reportFactory, timings,
         new DefaultBuildVerifier());
 
-    // Create new classloader under boot
-    final ClassLoader loader = new DefaultPITClassloader(cp,
-        IsolationUtils.bootClassLoader());
-    final ClassLoader original = IsolationUtils.getContextClassLoader();
-
     try {
-      IsolationUtils.setContextClassLoader(loader);
-
-      final Runnable run = (Runnable) IsolationUtils.cloneForLoader(report,
-          loader);
-
-      run.run();
-
-    } catch (final Exception e) {
+      report.runReport();
+    } catch (final IOException e) {
       throw new MojoExecutionException("fail", e);
     } finally {
-      IsolationUtils.setContextClassLoader(original);
       jac.close();
       ja.close();
       historyWriter.close();
