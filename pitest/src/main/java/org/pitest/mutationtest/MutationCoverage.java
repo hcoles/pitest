@@ -125,6 +125,11 @@ public class MutationCoverage {
         + (runtime.freeMemory() / MB) + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    
+    final MutationStatisticsListener stats = new MutationStatisticsListener();
+    staticConfig.addTestListener(MutationResultAdapter
+        .adapt(stats));
+    
     final MutationResultListener mutationReportListener = this.listenerFactory
         .getListener(coverageData, t0,
             new SmartSourceLocator(this.data.getSourceDirs()));
@@ -137,9 +142,6 @@ public class MutationCoverage {
     if ( !data.isVerbose() ) {
       staticConfig.addTestListener(MutationResultAdapter.adapt(new SpinnerListener(System.out)));
     }
-
-    final MutationStatisticsListener stats = new MutationStatisticsListener();
-    staticConfig.addTestListener(stats);
 
     this.historyStore.initialize();
 

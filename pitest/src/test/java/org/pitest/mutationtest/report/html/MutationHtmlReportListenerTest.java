@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.html;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -33,6 +33,9 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.report.MutationTestResultMother;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 

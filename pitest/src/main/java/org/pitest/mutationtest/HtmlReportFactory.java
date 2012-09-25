@@ -17,8 +17,8 @@ package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
-import org.pitest.mutationtest.report.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.SourceLocator;
 
 public class HtmlReportFactory implements ListenerFactory {

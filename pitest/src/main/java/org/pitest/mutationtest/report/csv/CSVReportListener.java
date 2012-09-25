@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.csv;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -20,6 +20,7 @@ import java.io.Writer;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.Unchecked;
 

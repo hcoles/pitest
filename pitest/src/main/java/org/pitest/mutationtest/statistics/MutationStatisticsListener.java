@@ -14,55 +14,30 @@
  */
 package org.pitest.mutationtest.statistics;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
-import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 
-public class MutationStatisticsListener implements TestListener {
+public class MutationStatisticsListener implements MutationResultListener,MutationStatisticsSource {
 
   private final MutationStatistics mutatorScores = new MutationStatistics();
-
-  public void onTestError(final TestResult tr) {
-    extractMetaData(tr);
-  }
-
-  public void onTestFailure(final TestResult tr) {
-    extractMetaData(tr);
-  }
-
-  public void onTestSkipped(final TestResult tr) {
-    extractMetaData(tr);
-  }
-
-  public void onTestStart(final Description d) {
-
-  }
-
-  public void onTestSuccess(final TestResult tr) {
-    extractMetaData(tr);
-  }
-
-  private void extractMetaData(final TestResult tr) {
-    final Option<MutationMetaData> d = tr.getValue(MutationMetaData.class);
-    if (d.hasSome()) {
-      processMetaData(d.value());
-    }
-  }
-
-  private void processMetaData(final MutationMetaData value) {
-    this.mutatorScores.registerResults(value.getMutations());
-  }
-
-  public void onRunStart() {
-  }
-
-  public void onRunEnd() {
-  }
 
   public MutationStatistics getStatistics() {
     return this.mutatorScores;
   }
 
+  public void runStart() {
+    
+  }
+
+  public void handleMutationResult(MutationMetaData metaData) {
+    processMetaData(metaData);
+  }
+
+  public void runEnd() {
+    
+  }
+
+  private void processMetaData(final MutationMetaData value) {
+    this.mutatorScores.registerResults(value.getMutations());
+  }
 }

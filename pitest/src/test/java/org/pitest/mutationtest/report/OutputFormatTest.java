@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.mutationtest.HtmlReportFactory;
+import org.pitest.mutationtest.report.csv.CSVReportFactory;
+import org.pitest.mutationtest.report.xml.XMLReportFactory;
 
 public class OutputFormatTest {
 

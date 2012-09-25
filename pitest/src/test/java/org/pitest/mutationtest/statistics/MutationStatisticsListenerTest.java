@@ -18,10 +18,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.TestResult;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
@@ -36,32 +36,12 @@ public class MutationStatisticsListenerTest {
   }
 
   @Test
-  public void shouldGatherStatisticsWhenTestSucceeds() {
+  public void shouldGatherStatistics() {
     final MutationResult mr = makeResult();
-    this.testee.onTestSuccess(createResult(mr));
+    this.testee.handleMutationResult(createMetaData(mr));
     assertTrue(hasResultFor(mr.getDetails().getId().getMutator()));
   }
 
-  @Test
-  public void shouldGatherStatisticsWhenTestErrors() {
-    final MutationResult mr = makeResult();
-    this.testee.onTestError(createResult(mr));
-    assertTrue(hasResultFor(mr.getDetails().getId().getMutator()));
-  }
-
-  @Test
-  public void shouldGatherStatisticsWhenTestFails() {
-    final MutationResult mr = makeResult();
-    this.testee.onTestError(createResult(mr));
-    assertTrue(hasResultFor(mr.getDetails().getId().getMutator()));
-  }
-
-  @Test
-  public void shouldGatherStatisticsWhenTestSkipped() {
-    final MutationResult mr = makeResult();
-    this.testee.onTestError(createResult(mr));
-    assertTrue(hasResultFor(mr.getDetails().getId().getMutator()));
-  }
 
   private MutationResult makeResult() {
     final MutationResult mr = new MutationResult(
@@ -84,9 +64,9 @@ public class MutationStatisticsListenerTest {
     };
   }
 
-  private TestResult createResult(final MutationResult... mrs) {
-    return MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mrs));
+  private MutationMetaData createMetaData(final MutationResult... mrs) {
+    return MutationTestResultMother
+        .createMetaData(mrs);
   }
 
 }

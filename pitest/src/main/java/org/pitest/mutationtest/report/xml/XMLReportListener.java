@@ -12,16 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.xml;
 
-import static org.pitest.mutationtest.report.Tag.index;
-import static org.pitest.mutationtest.report.Tag.killingTest;
-import static org.pitest.mutationtest.report.Tag.lineNumber;
-import static org.pitest.mutationtest.report.Tag.mutatedClass;
-import static org.pitest.mutationtest.report.Tag.mutatedMethod;
-import static org.pitest.mutationtest.report.Tag.mutation;
-import static org.pitest.mutationtest.report.Tag.mutator;
-import static org.pitest.mutationtest.report.Tag.sourceFile;
+import static org.pitest.mutationtest.report.xml.Tag.index;
+import static org.pitest.mutationtest.report.xml.Tag.killingTest;
+import static org.pitest.mutationtest.report.xml.Tag.lineNumber;
+import static org.pitest.mutationtest.report.xml.Tag.mutatedClass;
+import static org.pitest.mutationtest.report.xml.Tag.mutatedMethod;
+import static org.pitest.mutationtest.report.xml.Tag.mutation;
+import static org.pitest.mutationtest.report.xml.Tag.mutator;
+import static org.pitest.mutationtest.report.xml.Tag.sourceFile;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -30,6 +30,7 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;

@@ -1,6 +1,8 @@
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.html;
 
 import java.util.Comparator;
+
+import org.pitest.mutationtest.report.MutationTestSummaryData;
 
 public class MutationTestSummaryDataFileNameComparator implements
     Comparator<MutationTestSummaryData> {

@@ -12,31 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.csv;
 
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.mutationtest.report.SourceLocator;
 
-public class XMLReportFactory implements ListenerFactory {
+public class CSVReportFactory implements ListenerFactory {
 
   private final ResultOutputStrategy outputStrategy;
 
-  public XMLReportFactory(final ResultOutputStrategy outputStrategy) {
+  public CSVReportFactory(final ResultOutputStrategy outputStrategy) {
     this.outputStrategy = outputStrategy;
   }
 
   public MutationResultListener getListener(final CoverageDatabase coverage,
       final long startTime, final SourceLocator locator) {
-    return new XMLReportListener(this.outputStrategy);
+    return new CSVReportListener(this.outputStrategy);
   }
 
   public static F<ResultOutputStrategy, ListenerFactory> createFactoryFunction() {
     return new F<ResultOutputStrategy, ListenerFactory>() {
 
       public ListenerFactory apply(final ResultOutputStrategy outputStrategy) {
-        return new XMLReportFactory(outputStrategy);
+        return new CSVReportFactory(outputStrategy);
       }
 
     };
