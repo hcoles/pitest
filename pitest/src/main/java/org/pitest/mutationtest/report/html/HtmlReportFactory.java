@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.report.html;
 
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
+import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
 import org.pitest.mutationtest.report.SourceLocator;
 
 public class HtmlReportFactory implements ListenerFactory {

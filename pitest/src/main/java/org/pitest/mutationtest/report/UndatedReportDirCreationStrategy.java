@@ -2,7 +2,6 @@ package org.pitest.mutationtest.report;
 
 import java.io.File;
 
-import org.pitest.mutationtest.ReportDirCreationStrategy;
 
 public class UndatedReportDirCreationStrategy implements
     ReportDirCreationStrategy {

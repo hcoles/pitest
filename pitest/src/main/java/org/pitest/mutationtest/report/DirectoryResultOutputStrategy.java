@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.mutationtest.ReportDirCreationStrategy;
 import org.pitest.util.Unchecked;
 
 public class DirectoryResultOutputStrategy implements ResultOutputStrategy {

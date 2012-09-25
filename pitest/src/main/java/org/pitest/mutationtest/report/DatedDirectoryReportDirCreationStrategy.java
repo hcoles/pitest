@@ -18,7 +18,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.pitest.mutationtest.ReportDirCreationStrategy;
 
 public class DatedDirectoryReportDirCreationStrategy implements
     ReportDirCreationStrategy {

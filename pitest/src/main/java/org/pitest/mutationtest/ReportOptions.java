@@ -46,6 +46,7 @@ import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.DatedDirectoryReportDirCreationStrategy;
 import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.OutputFormat;
+import org.pitest.mutationtest.report.ReportDirCreationStrategy;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.UndatedReportDirCreationStrategy;
 import org.pitest.testng.TestGroupConfig;

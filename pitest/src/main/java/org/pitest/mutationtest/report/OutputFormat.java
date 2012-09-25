@@ -15,9 +15,9 @@
 package org.pitest.mutationtest.report;
 
 import org.pitest.functional.F;
-import org.pitest.mutationtest.HtmlReportFactory;
 import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.report.csv.CSVReportFactory;
+import org.pitest.mutationtest.report.html.HtmlReportFactory;
 import org.pitest.mutationtest.report.xml.XMLReportFactory;
 
 /**
