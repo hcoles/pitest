@@ -16,11 +16,11 @@ package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Map;
 
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public abstract class AbstractInsnMutator extends MethodAdapter {
+public abstract class AbstractInsnMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
   private final Context              context;
@@ -29,7 +29,7 @@ public abstract class AbstractInsnMutator extends MethodAdapter {
   public AbstractInsnMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final Context context,
       final MethodVisitor delegateMethodVisitor) {
-    super(delegateMethodVisitor);
+    super(Opcodes.ASM4, delegateMethodVisitor);
     this.factory = factory;
     this.methodInfo = methodInfo;
     this.context = context;

@@ -46,19 +46,20 @@ import org.pitest.util.Unchecked;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
-  private final static Logger   LOG = Log.getLogger();
+  private final static Logger    LOG = Log.getLogger();
 
-  private final CoverageOptions coverageOptions;
-  private final LaunchOptions   launchOptions;
-  private final CodeSource      code;
-  private final Timings         timings;
-  private final File            workingDir;
+  private final CoverageOptions  coverageOptions;
+  private final LaunchOptions    launchOptions;
+  private final CodeSource       code;
+  private final Timings          timings;
+  private final File             workingDir;
   private final CoverageExporter exporter;
-  private final boolean showProgress;
+  private final boolean          showProgress;
 
   public DefaultCoverageGenerator(final File workingDir,
       final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
-      final CodeSource code, CoverageExporter exporter, final Timings timings, final boolean showProgress) {
+      final CodeSource code, final CoverageExporter exporter,
+      final Timings timings, final boolean showProgress) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
@@ -88,8 +89,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
       verifyBuildSuitableForMutationTesting(coverage);
 
-      exporter.recordCoverage(coverage.createLineCoverage());
-      
+      this.exporter.recordCoverage(coverage.createLineCoverage());
+
       return coverage;
 
     } catch (final PitHelpError phe) {
@@ -121,9 +122,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
         .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
         .andJVMArgs(this.launchOptions.getChildJVMArgs())
         .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
-        .andStderr(logInfo())
-        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
-        socket, filteredTests, handler);
+        .andStderr(logInfo()).andStdout(captureStandardOutIfVerbose()),
+        this.coverageOptions, socket, filteredTests, handler);
 
     process.start();
     process.waitToDie();
@@ -145,39 +145,41 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       return Prelude.noSideEffect(String.class);
     }
   }
-    
+
   private SideEffect1<String> logInfo() {
     return new SideEffect1<String>() {
-      public void apply(String a) {
+      public void apply(final String a) {
         LOG.info("SLAVE : " + a);
-      } 
+      }
     };
   }
 
   private SideEffect1<String> log() {
     return new SideEffect1<String>() {
-      public void apply(String a) {
+      public void apply(final String a) {
         LOG.fine("SLAVE : " + a);
-      } 
+      }
     };
   }
 
   private SideEffect1<CoverageResult> resultProcessor(
       final CoverageData coverage) {
     return new SideEffect1<CoverageResult>() {
-      private final String[] spinner = new String[] {"\u0008/", "\u0008-", "\u0008\\", "\u0008|" };
-      int i = 0;
+      private final String[] spinner = new String[] { "\u0008/", "\u0008-",
+                                         "\u0008\\", "\u0008|" };
+      int                    i       = 0;
+
       public void apply(final CoverageResult cr) {
         coverage.calculateClassCoverage(cr);
-        if (showProgress ) {
-          System.out.printf("%s", spinner[i % spinner.length]);
+        if (DefaultCoverageGenerator.this.showProgress) {
+          System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
         }
-        i++;
+        this.i++;
       }
 
     };
   }
-  
+
   public Configuration getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }

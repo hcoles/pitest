@@ -199,24 +199,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED, KILLED, TIMED_OUT);
   }
 
-  @Test
-  public void shouldWorkWithPowerMock() {
-    this.data.setTargetClasses(predicateFor("com.example.PowerMockCallFoo"));
-    this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
-    this.data.setVerbose(true);
-    createAndRun();
-    verifyResults(KILLED);
-  }
 
-  @Test
-  public void shouldWorkWhenPowerMockReplacesCallsWithinMutee() {
-    this.data
-        .setTargetClasses(predicateFor("com.example.PowerMockCallsOwnMethod"));
-    this.data.setTargetTests(predicateFor(com.example.PowerMockTest.class));
-    this.data.setVerbose(true);
-    createAndRun();
-    verifyResults(KILLED);
-  }
 
   @Test
   public void shouldWorkWithMockitoJUnitRunner() {
@@ -227,16 +210,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
-  @Test
-  public void shouldWorkWithPowerMockJavaAgent() {
-    this.data
-        .setTargetClasses(predicateFor("com.example.PowerMockAgentCallFoo"));
-    this.data
-        .setTargetTests(predicateFor(com.example.PowerMockAgentTest.class));
-    this.data.setVerbose(true);
-    createAndRun();
-    verifyResults(KILLED);
-  }
 
   @Test(expected = PitHelpError.class)
   public void shouldReportHelpfulErrorIfNoMutationsFounds() {

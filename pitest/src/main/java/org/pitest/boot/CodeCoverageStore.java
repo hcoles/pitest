@@ -28,26 +28,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CodeCoverageStore {
 
-  private final static int                        CLASS_HIT_INDEX                           = 0;
+  private final static int                     CLASS_HIT_INDEX                           = 0;
 
-  public static final String                      CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
-                                                                                                .getName()
-                                                                                                .replace(
-                                                                                                    '.',
-                                                                                                    '/');
-  public static final String                      CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
-  public static final String                      CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CLASS_NAME       = CodeCoverageStore.class
+                                                                                             .getName()
+                                                                                             .replace(
+                                                                                                 '.',
+                                                                                                 '/');
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
 
-  private static InvokeReceiver                   invokeQueue;
-  private static  int              classId                                   =  0;
+  private static InvokeReceiver                invokeQueue;
+  private static int                           classId                                   = 0;
 
   // array of probe hits, first slot indicates any hits to the class.
-  // testing suggests boolean array with synchronization to ensure happens before relationship significantly outperforms
-  // both AtomicInteger array with bit per flag and integer per flag. 
-  // optimisation with other methods of ensuring a happens before not yet investigated
-  private final static Map<Integer,  boolean[]> classHits                                 = new ConcurrentHashMap<Integer, boolean[]>();
+  // testing suggests boolean array with synchronization to ensure happens
+  // before relationship significantly outperforms
+  // both AtomicInteger array with bit per flag and integer per flag.
+  // optimisation with other methods of ensuring a happens before not yet
+  // investigated
+  private final static Map<Integer, boolean[]> classHits                                 = new ConcurrentHashMap<Integer, boolean[]>();
 
-  private final static Map<Integer, int[]>        classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
+  private final static Map<Integer, int[]>     classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
 
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;

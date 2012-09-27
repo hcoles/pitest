@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -39,14 +39,14 @@ public enum IncrementsMutator implements MethodMutatorFactory {
   }
 }
 
-class IncrementsMethodVisitor extends MethodAdapter {
+class IncrementsMethodVisitor extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
   private final Context              context;
 
   public IncrementsMethodVisitor(final MethodMutatorFactory factory,
       final Context context, final MethodVisitor delegateMethodVisitor) {
-    super(delegateMethodVisitor);
+    super(Opcodes.ASM4, delegateMethodVisitor);
     this.factory = factory;
     this.context = context;
   }

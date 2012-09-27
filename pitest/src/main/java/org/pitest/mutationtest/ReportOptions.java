@@ -55,7 +55,7 @@ import org.pitest.util.Unchecked;
 
 /**
  * FIXME move all logic to SettingsFactory and turn into simple bean
- *
+ * 
  */
 public class ReportOptions {
 
@@ -102,7 +102,7 @@ public class ReportOptions {
   private int                                        mutationUnitSize;
   private boolean                                    shouldCreateTimestampedReports = true;
   private boolean                                    detectInlinedCode              = false;
-  private boolean                                    exportLineCoverage = false;
+  private boolean                                    exportLineCoverage             = false;
 
   public ReportOptions() {
   }
@@ -528,11 +528,11 @@ public class ReportOptions {
   public File getHistoryOutputLocation() {
     return this.historyOutputLocation;
   }
-  
-  public void setExportLineCoverage(boolean value) {
+
+  public void setExportLineCoverage(final boolean value) {
     this.exportLineCoverage = value;
   }
-  
+
   public boolean shouldExportLineCoverage() {
     return this.exportLineCoverage;
   }

@@ -58,8 +58,8 @@ public class TestInfo {
   public String toString() {
     return this.name;
   }
-  
-  public static F<TestInfo,String> toName() {
+
+  public static F<TestInfo, String> toName() {
     return new F<TestInfo, String>() {
       public String apply(final TestInfo a) {
         return a.getName();

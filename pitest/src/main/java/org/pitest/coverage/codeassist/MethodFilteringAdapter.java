@@ -14,18 +14,18 @@
  */
 package org.pitest.coverage.codeassist;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.functional.F5;
 
-public abstract class MethodFilteringAdapter extends ClassAdapter {
+public abstract class MethodFilteringAdapter extends ClassVisitor {
 
   private final F5<Integer, String, String, String, String[], Boolean> filter;
 
   public MethodFilteringAdapter(final ClassVisitor writer,
       final F5<Integer, String, String, String, String[], Boolean> filter) {
-    super(writer);
+    super(Opcodes.ASM4, writer);
     this.filter = filter;
   }
 

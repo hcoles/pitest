@@ -127,7 +127,7 @@ public final class ClassName implements Serializable, Comparable<ClassName> {
     return asJavaName();
   }
 
-  public int compareTo(ClassName o) {
+  public int compareTo(final ClassName o) {
     return this.asJavaName().compareTo(o.asJavaName());
   }
 

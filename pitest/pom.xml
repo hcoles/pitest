@@ -65,8 +65,8 @@
 				</dependencies>
 				<configuration>
 
-					<!-- for PowerMockAgentTest -->
-					<argLine>-javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -Dfoo=foo</argLine>
+					<!-- for PowerMockAgentTest -javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -->
+					<argLine>-Dfoo=foo</argLine>
 				
 					<groups>org.pitest.SystemTest</groups>
 				</configuration>
@@ -100,7 +100,7 @@
 								<includes>
 									<include>xmlpull:xmlpull</include>
 									<include>com.thoughtworks.xstream:*</include>
-									<include>asm:*</include>
+									<include>org.ow2.asm:*</include>
 									<include>xpp3:*</include>
 									<include>org.antlr:*</include>
 									<include>antlr:*</include>
@@ -209,15 +209,15 @@
 			<artifactId>stringtemplate</artifactId>
 			<version>3.2.1</version>
 		</dependency>
+<dependency>
+	<groupId>org.ow2.asm</groupId>
+	<artifactId>asm</artifactId>
+	<version>4.0</version>
+</dependency>
 		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>3.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>asm</groupId>
+		<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-commons</artifactId>
-			<version>3.3.1</version>
+			<version>4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -231,15 +231,15 @@
             <scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>asm</groupId>
+			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-util</artifactId>
-			<version>3.3</version>
+			<version>4.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>asm</groupId>
+			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-analysis</artifactId>
-			<version>3.3</version>
+			<version>4.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -252,24 +252,6 @@
 			<groupId>jmock</groupId>
 			<artifactId>jmock</artifactId>
 			<version>1.2.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4-rule-agent</artifactId>
-			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

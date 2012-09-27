@@ -15,16 +15,16 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-public class LineTrackingMethodVisitor extends MethodAdapter {
+public class LineTrackingMethodVisitor extends MethodVisitor {
 
   private final Context context;
 
   public LineTrackingMethodVisitor(final Context context,
       final MethodVisitor delegateMethodVisitor) {
-    super(delegateMethodVisitor);
+    super(Opcodes.ASM4, delegateMethodVisitor);
     this.context = context;
   }
 

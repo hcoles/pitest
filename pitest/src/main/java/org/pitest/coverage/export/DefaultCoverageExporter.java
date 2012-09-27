@@ -14,51 +14,53 @@ import org.pitest.util.Unchecked;
  * Quick and dirty export of coverage data into XML
  */
 public class DefaultCoverageExporter implements CoverageExporter {
-  
+
   private final ResultOutputStrategy outputStrategy;
-  
+
   public DefaultCoverageExporter(final ResultOutputStrategy outputStrategy) {
     this.outputStrategy = outputStrategy;
   }
 
-  
-  public void recordCoverage(Collection<LineCoverage> coverage) {
-    Writer out = outputStrategy.createWriterForFile("linecoverage.xml");
+  public void recordCoverage(final Collection<LineCoverage> coverage) {
+    final Writer out = this.outputStrategy
+        .createWriterForFile("linecoverage.xml");
     writeHeader(out);
-    for ( LineCoverage each : coverage ) {
+    for (final LineCoverage each : coverage) {
       writeLineCoverage(each, out);
     }
 
     writeFooterAndClose(out);
   }
 
-  private void writeHeader(Writer out) {
+  private void writeHeader(final Writer out) {
     write(out, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    write(out,"<coverage>\n");
+    write(out, "<coverage>\n");
   }
 
-  private void writeLineCoverage(LineCoverage each, Writer out) {
-    write(out, "<line classname='" + each.getClassLine().getClassName().asJavaName() + "'" + " number='" + each.getClassLine().getLineNumber() +"'>");
+  private void writeLineCoverage(final LineCoverage each, final Writer out) {
+    write(out, "<line classname='"
+        + each.getClassLine().getClassName().asJavaName() + "'" + " number='"
+        + each.getClassLine().getLineNumber() + "'>");
     write(out, "<tests>\n");
-    List<String> ts = new ArrayList<String>(each.getTests());
+    final List<String> ts = new ArrayList<String>(each.getTests());
     Collections.sort(ts);
-    for ( String test : ts) {
+    for (final String test : ts) {
       write(out, "<test name='" + test + "'/>\n");
     }
     write(out, "</tests>\n");
     write(out, "</line>\n");
   }
-  
-  private void writeFooterAndClose(Writer out) {
+
+  private void writeFooterAndClose(final Writer out) {
     try {
-      write(out,"</coverage>\n");
+      write(out, "</coverage>\n");
       out.close();
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
-  private void write(Writer out, final String value) {
+
+  private void write(final Writer out, final String value) {
     try {
       out.write(value);
     } catch (final IOException e) {

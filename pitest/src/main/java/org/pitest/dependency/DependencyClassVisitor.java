@@ -14,21 +14,20 @@
  */
 package org.pitest.dependency;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.SideEffect1;
 
-class DependencyClassVisitor extends ClassAdapter {
+class DependencyClassVisitor extends ClassVisitor {
 
   private final SideEffect1<DependencyAccess> typeReceiver;
   private String                              className;
 
   protected DependencyClassVisitor(final ClassVisitor visitor,
       final SideEffect1<DependencyAccess> typeReceiver) {
-    super(visitor);
+    super(Opcodes.ASM4, visitor);
     this.typeReceiver = filterOutJavaLangObject(typeReceiver);
   }
 
@@ -62,7 +61,7 @@ class DependencyClassVisitor extends ClassAdapter {
         this.typeReceiver);
   }
 
-  private static class DependencyAnalysisMethodVisitor extends MethodAdapter {
+  private static class DependencyAnalysisMethodVisitor extends MethodVisitor {
 
     private final Member                        member;
     private final SideEffect1<DependencyAccess> typeReceiver;
@@ -70,7 +69,7 @@ class DependencyClassVisitor extends ClassAdapter {
     public DependencyAnalysisMethodVisitor(final Member member,
         final MethodVisitor methodVisitor,
         final SideEffect1<DependencyAccess> typeReceiver) {
-      super(methodVisitor);
+      super(Opcodes.ASM4, methodVisitor);
       this.typeReceiver = typeReceiver;
       this.member = member;
     }

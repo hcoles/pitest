@@ -103,12 +103,12 @@ public class MutationCoverage {
 
     final Runtime runtime = Runtime.getRuntime();
 
-    if ( !data.isVerbose() ) {
+    if (!this.data.isVerbose()) {
       LOG.info("Verbose logging is disabled. If you encounter an problem please enable it before reporting an issue.");
     }
-    
-    LOG.fine("Running report with " + data);
-    
+
+    LOG.fine("Running report with " + this.data);
+
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
     LOG.fine("Maxmium available memory is " + (runtime.maxMemory() / MB)
         + " mb");
@@ -125,11 +125,10 @@ public class MutationCoverage {
         + (runtime.freeMemory() / MB) + " mb");
 
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-    
+
     final MutationStatisticsListener stats = new MutationStatisticsListener();
-    staticConfig.addTestListener(MutationResultAdapter
-        .adapt(stats));
-    
+    staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
+
     final MutationResultListener mutationReportListener = this.listenerFactory
         .getListener(coverageData, t0,
             new SmartSourceLocator(this.data.getSourceDirs()));
@@ -138,9 +137,10 @@ public class MutationCoverage {
         .adapt(mutationReportListener));
     staticConfig.addTestListener(MutationResultAdapter
         .adapt(new HistoryListener(this.historyStore)));
-    
-    if ( !data.isVerbose() ) {
-      staticConfig.addTestListener(MutationResultAdapter.adapt(new SpinnerListener(System.out)));
+
+    if (!this.data.isVerbose()) {
+      staticConfig.addTestListener(MutationResultAdapter
+          .adapt(new SpinnerListener(System.out)));
     }
 
     this.historyStore.initialize();
@@ -165,7 +165,7 @@ public class MutationCoverage {
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(t0));
-  
+
     printStats(stats);
 
   }

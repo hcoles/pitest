@@ -1,8 +1,8 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -29,19 +29,19 @@ public class SwitchMutator implements MethodMutatorFactory {
     return "EXPERIMENTAL_SWITCH_MUTATOR";
   }
 
-  private final class SwitchMethodVisitor extends MethodAdapter {
+  private final class SwitchMethodVisitor extends MethodVisitor {
 
     private final Context context;
 
     public SwitchMethodVisitor(final Context context,
         final MethodVisitor methodVisitor) {
-      super(methodVisitor);
+      super(Opcodes.ASM4, methodVisitor);
       this.context = context;
     }
 
     @Override
     public void visitTableSwitchInsn(final int i, final int i1,
-        final Label defaultLabel, final Label[] labels) {
+        final Label defaultLabel, final Label... labels) {
       final Label newDefault = firstDifferentLabel(labels, defaultLabel);
       if ((newDefault != null) && shouldMutate()) {
         final Label[] newLabels = swapLabels(labels, defaultLabel, newDefault);

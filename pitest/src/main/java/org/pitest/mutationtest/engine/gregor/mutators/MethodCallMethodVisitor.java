@@ -25,7 +25,6 @@ import static org.objectweb.asm.Opcodes.POP2;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -35,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
-class MethodCallMethodVisitor extends MethodAdapter {
+class MethodCallMethodVisitor extends MethodVisitor {
 
   private final static Map<Type, Integer>   RETURN_TYPE_MAP = new HashMap<Type, Integer>();
 
@@ -59,7 +58,7 @@ class MethodCallMethodVisitor extends MethodAdapter {
       final Context context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
-    super(writer);
+    super(Opcodes.ASM4, writer);
     this.factory = factory;
     this.filter = filter;
     this.context = context;

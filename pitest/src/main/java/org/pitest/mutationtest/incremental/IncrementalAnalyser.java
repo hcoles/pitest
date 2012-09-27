@@ -77,8 +77,8 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private MutationResult analyseFromHistory(final MutationDetails each,
       final MutationStatusTestPair mutationStatusTestPair) {
 
-    ClassName clazz = each.getClassName();
-    
+    final ClassName clazz = each.getClassName();
+
     if (this.history.hasClassChanged(clazz)) {
       return analyseFromScratch(each);
     }
@@ -92,12 +92,13 @@ public class IncrementalAnalyser implements MutationAnalyser {
       return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair
           .getKillingTest().value());
     }
-    
+
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.SURVIVED)
-        && !history.hasCoverageChanged(clazz, coverage.getCoverageIdForClass(clazz))) {
+        && !this.history.hasCoverageChanged(clazz,
+            this.coverage.getCoverageIdForClass(clazz))) {
       return makeResult(each, DetectionStatus.SURVIVED);
     }
-    
+
     return analyseFromScratch(each);
   }
 
@@ -109,7 +110,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
     final List<ClassName> testClasses = FCollection.filter(allTests,
         testIsCalled(mutationStatusTestPair.getKillingTest().value())).map(
         TestInfo.toDefiningClassName());
-    
+
     if (testClasses.isEmpty()) {
       return false;
     }

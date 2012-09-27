@@ -38,16 +38,3 @@ public class PowerMockAgentTest {
   }
 
 }
-
-class PowerMockAgentCallFoo {
-
-  public void call() {
-    PowerMockAgentFoo.foo();
-  }
-}
-
-class PowerMockAgentFoo {
-  public static void foo() {
-    System.out.println("static method called");
-  }
-}

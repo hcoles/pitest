@@ -18,8 +18,8 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.coverage.codeassist.BridgeMethodFilter;
 import org.pitest.coverage.codeassist.MethodFilteringAdapter;
@@ -95,12 +95,12 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
 }
 
-class InfoMethodVisitor extends MethodAdapter {
+class InfoMethodVisitor extends MethodVisitor {
   private final ClassInfoBuilder classInfo;
 
   public InfoMethodVisitor(final ClassInfoBuilder classInfo,
       final MethodVisitor writer, final String name, final String methodDesc) {
-    super(writer);
+    super(Opcodes.ASM4, writer);
     this.classInfo = classInfo;
   }
 

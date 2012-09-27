@@ -191,25 +191,27 @@ public class CoverageData implements CoverageDatabase {
 
     return generateCoverageNumber(coverage);
   }
-  
+
   public List<LineCoverage> createLineCoverage() {
-    return FCollection.flatMap(classCoverage.values(), toLineCoverage());
+    return FCollection.flatMap(this.classCoverage.values(), toLineCoverage());
   }
 
   private F<Map<ClassLine, Set<TestInfo>>, Collection<LineCoverage>> toLineCoverage() {
-    return new F<Map<ClassLine, Set<TestInfo>>, Collection<LineCoverage>>  () {
-      public Collection<LineCoverage> apply(Map<ClassLine, Set<TestInfo>> a) {
+    return new F<Map<ClassLine, Set<TestInfo>>, Collection<LineCoverage>>() {
+      public Collection<LineCoverage> apply(
+          final Map<ClassLine, Set<TestInfo>> a) {
         return FCollection.map(a.entrySet(), entryToLineCoverage());
-      }      
+      }
     };
   }
-  
+
   private F<Entry<ClassLine, Set<TestInfo>>, LineCoverage> entryToLineCoverage() {
     return new F<Entry<ClassLine, Set<TestInfo>>, LineCoverage>() {
-      public LineCoverage apply(Entry<ClassLine, Set<TestInfo>> a) {
-        return new LineCoverage(a.getKey(), FCollection.map(a.getValue(), TestInfo.toName()));
+      public LineCoverage apply(final Entry<ClassLine, Set<TestInfo>> a) {
+        return new LineCoverage(a.getKey(), FCollection.map(a.getValue(),
+            TestInfo.toName()));
       }
-      
+
     };
   }
 

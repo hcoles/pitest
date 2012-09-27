@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -23,7 +22,7 @@ import org.objectweb.asm.Opcodes;
  * Disables mutations within java assertions
  * 
  */
-public class AvoidAssertsMethodAdapter extends MethodAdapter {
+public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
   private final static String DISABLE_REASON = "ASSERTS";
 
@@ -33,7 +32,7 @@ public class AvoidAssertsMethodAdapter extends MethodAdapter {
 
   public AvoidAssertsMethodAdapter(final Context context,
       final MethodVisitor delegateMethodVisitor) {
-    super(delegateMethodVisitor);
+    super(Opcodes.ASM4, delegateMethodVisitor);
     this.context = context;
   }
 

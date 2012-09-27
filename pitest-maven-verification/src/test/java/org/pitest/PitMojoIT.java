@@ -15,7 +15,10 @@
  */
 package org.pitest;
 
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,6 +60,30 @@ public class PitMojoIT {
     final String secondRun = readCoverage(testDir);
     assertEquals(firstRun, secondRun);
   }
+  
+  @Test
+  public void shouldWorkWithPowerMock()  throws Exception  {
+    final File testDir = prepare("/pit-powermock");
+    this.verifier.executeGoal("compile");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>")); 
+    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>")); 
+    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>")); 
+    assertThat(actual, not(containsString("status='RUN_ERROR'")));
+  }
+
+  private String readResults(File testDir) throws FileNotFoundException, IOException {
+    File coverage = new File(testDir
+        .getAbsoluteFile()
+        + File.separator
+        + "target"
+        + File.separator
+        + "pit-reports"
+        + File.separator
+        + "mutations.xml");
+    return FileUtil.readToString(new FileInputStream(coverage));
+  }
 
   private String readCoverage(final File testDir) throws IOException,
       FileNotFoundException {
@@ -68,8 +95,7 @@ public class PitMojoIT {
         + "pit-reports"
         + File.separator
         + "linecoverage.xml");
-    final String actual = FileUtil.readToString(new FileInputStream(coverage));
-    return actual;
+    return FileUtil.readToString(new FileInputStream(coverage));
   }
 
   @SuppressWarnings("unchecked")

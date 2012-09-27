@@ -55,9 +55,9 @@ public class XStreamHistoryStore implements HistoryStore {
     xstream.alias("result", IdResult.class);
     xstream.alias("statusTestPair", MutationStatusTestPair.class);
     xstream.alias("status", DetectionStatus.class);
-    xstream.useAttributeFor(MutationStatusTestPair.class,"numberOfTestsRun");
-    xstream.useAttributeFor(MutationStatusTestPair.class,"status");
-    xstream.useAttributeFor(MutationStatusTestPair.class,"killingTest");
+    xstream.useAttributeFor(MutationStatusTestPair.class, "numberOfTestsRun");
+    xstream.useAttributeFor(MutationStatusTestPair.class, "status");
+    xstream.useAttributeFor(MutationStatusTestPair.class, "killingTest");
     xstream.useAttributeFor(ClassIdentifier.class, "name");
     xstream.useAttributeFor(ClassIdentifier.class, "hash");
     xstream.useAttributeFor(HierarchicalClassId.class, "hierarchicalHash");

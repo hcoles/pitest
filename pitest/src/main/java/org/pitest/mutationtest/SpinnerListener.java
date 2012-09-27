@@ -6,14 +6,14 @@ import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public class SpinnerListener implements MutationResultListener {
 
-  private final static String[] SPINNER_CHARS = new String[] { "\u0008/", "\u0008-",
-      "\u0008\\", "\u0008|"            };
-  
-  private final PrintStream out;
-  
-  private int position      = 0;
+  private final static String[] SPINNER_CHARS = new String[] { "\u0008/",
+      "\u0008-", "\u0008\\", "\u0008|"       };
 
-  public SpinnerListener(PrintStream out) {
+  private final PrintStream     out;
+
+  private int                   position      = 0;
+
+  public SpinnerListener(final PrintStream out) {
     this.out = out;
   }
 
@@ -22,7 +22,7 @@ public class SpinnerListener implements MutationResultListener {
   }
 
   public void handleMutationResult(final MutationMetaData metaData) {
-    out.printf("%s", SPINNER_CHARS[this.position % SPINNER_CHARS.length]);
+    this.out.printf("%s", SPINNER_CHARS[this.position % SPINNER_CHARS.length]);
     this.position++;
   }
 

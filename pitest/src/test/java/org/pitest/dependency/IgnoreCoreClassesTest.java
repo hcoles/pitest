@@ -25,7 +25,6 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.dependency.DependencyExtractorTest.Foo;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 public class IgnoreCoreClassesTest {
 
@@ -58,11 +57,15 @@ public class IgnoreCoreClassesTest {
 
   @Test
   public void shouldIgnorePowerMock() {
-    assertIgnored(PowerMockIgnore.class);
+    assertIgnored("org.powermock.PowerMockIgnore");
   }
 
-  private void assertIgnored(final Class<?> clazz) {
+  private void assertIgnored(final String clazz) {
     assertFalse(this.testee.apply(makeAccessFor(clazz)));
+  }
+  
+  private void assertIgnored(final Class<?> clazz) {
+    assertIgnored(clazz.getName());
   }
 
   @Test
@@ -76,8 +79,12 @@ public class IgnoreCoreClassesTest {
   }
 
   private DependencyAccess makeAccessFor(final Class<?> clazz) {
+    return makeAccessFor(clazz.getName());
+  }
+  
+  private DependencyAccess makeAccessFor(final String clazz) {
     return new DependencyAccess(new Member("foo", 
-        "()V"), new Member(clazz.getName(), "()V"));
+        "()V"), new Member(clazz, "()V"));
   }
 
 }

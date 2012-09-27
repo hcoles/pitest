@@ -16,7 +16,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -128,7 +127,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
   }
 
-  private final class ReturnValuesMethodVisitor extends MethodAdapter {
+  private final class ReturnValuesMethodVisitor extends MethodVisitor {
 
     private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
 
@@ -137,7 +136,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
     private ReturnValuesMethodVisitor(final Context context,
         final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
-      super(delegateVisitor);
+      super(Opcodes.ASM4, delegateVisitor);
       this.context = context;
       this.methodInfo = methodInfo;
     }

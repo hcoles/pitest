@@ -1,10 +1,10 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-class LineFilterMethodAdapter extends MethodAdapter {
+class LineFilterMethodAdapter extends MethodVisitor {
 
   private final static String        DISABLE_REASON = "AVOIDED_METHOD";
 
@@ -14,7 +14,7 @@ class LineFilterMethodAdapter extends MethodAdapter {
   public LineFilterMethodAdapter(final Context context,
       final PremutationClassInfo classInfo,
       final MethodVisitor delegateMethodVisitor) {
-    super(delegateMethodVisitor);
+    super(Opcodes.ASM4, delegateMethodVisitor);
     this.context = context;
     this.classInfo = classInfo;
   }

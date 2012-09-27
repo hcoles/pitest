@@ -92,8 +92,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         && !runner.getDescription().getClassName().equals(className);
   }
 
-  private List<TestUnit> splitIntoFilteredUnits(
-      final Description description) {
+  private List<TestUnit> splitIntoFilteredUnits(final Description description) {
     return FCollection.filter(description.getChildren(), isTest()).map(
         descriptionToTestUnit());
 

@@ -22,7 +22,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.report.SourceLocator;
 
 public class SmartSourceLocator implements SourceLocator {
 

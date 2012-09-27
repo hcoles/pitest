@@ -26,17 +26,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-public class BlockTrackingMethodDecorator extends MethodAdapter {
+public class BlockTrackingMethodDecorator extends MethodVisitor {
 
   private final BlockCounter blockCounter;
   private final Set<Label>   handlers = new HashSet<Label>();
 
   public BlockTrackingMethodDecorator(final BlockCounter blockCounter,
       final MethodVisitor mv) {
-    super(mv);
+    super(Opcodes.ASM4, mv);
     this.blockCounter = blockCounter;
   }
 

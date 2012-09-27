@@ -18,7 +18,6 @@
 package org.pitest.coverage.codeassist;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.boot.CodeCoverageStore;
@@ -26,14 +25,14 @@ import org.pitest.boot.CodeCoverageStore;
 /**
  * Adds probes to each line of a method
  */
-public class CoverageMethodVisitor extends MethodAdapter {
+public class CoverageMethodVisitor extends MethodVisitor {
   private final MethodVisitor        methodVisitor;
   private final int                  classId;
   private final CoverageClassVisitor cv;
 
   public CoverageMethodVisitor(final CoverageClassVisitor cv,
       final int classId, final MethodVisitor writer) {
-    super(writer);
+    super(Opcodes.ASM4, writer);
 
     this.methodVisitor = writer;
     this.classId = classId;

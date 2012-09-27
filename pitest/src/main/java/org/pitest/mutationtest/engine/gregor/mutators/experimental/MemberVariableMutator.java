@@ -15,7 +15,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -32,13 +31,13 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class MemberVariableMutator implements MethodMutatorFactory {
 
-  private final class MemberVariableVisitor extends MethodAdapter {
+  private final class MemberVariableVisitor extends MethodVisitor {
 
     private final Context context;
 
     public MemberVariableVisitor(final Context context,
         final MethodVisitor delegateVisitor) {
-      super(delegateVisitor);
+      super(Opcodes.ASM4, delegateVisitor);
       this.context = context;
     }
 

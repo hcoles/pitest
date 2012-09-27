@@ -17,11 +17,11 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Map;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public abstract class AbstractJumpMutator extends MethodAdapter {
+public abstract class AbstractJumpMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
   private final Context              context;
@@ -38,7 +38,7 @@ public abstract class AbstractJumpMutator extends MethodAdapter {
 
   public AbstractJumpMutator(final MethodMutatorFactory factory,
       final Context context, final MethodVisitor writer) {
-    super(writer);
+    super(Opcodes.ASM4, writer);
     this.factory = factory;
     this.context = context;
   }

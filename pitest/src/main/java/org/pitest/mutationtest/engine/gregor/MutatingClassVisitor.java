@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.blocks.BlockTrackingMethodDecorator;
 import org.pitest.functional.F;
 
-class MutatingClassVisitor extends ClassAdapter {
+class MutatingClassVisitor extends ClassVisitor {
 
   private final F<MethodInfo, Boolean>    filter;
   private final Context                   context;
@@ -35,7 +35,7 @@ class MutatingClassVisitor extends ClassAdapter {
       final Context context, final F<MethodInfo, Boolean> filter,
       final PremutationClassInfo classInfo,
       final Collection<MethodMutatorFactory> mutators) {
-    super(delegateClassVisitor);
+    super(Opcodes.ASM4, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
     this.methodMutators.addAll(mutators);

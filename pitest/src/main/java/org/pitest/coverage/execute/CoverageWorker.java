@@ -45,7 +45,7 @@ public class CoverageWorker implements Runnable {
 
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
           this.pipe);
-      
+
       Collections.sort(decoratedTests, testComparator());
 
       final Container c = new UnContainer();
@@ -66,11 +66,12 @@ public class CoverageWorker implements Runnable {
   }
 
   private Comparator<TestUnit> testComparator() {
-    return new Comparator<TestUnit> () {
-      public int compare(TestUnit o1, TestUnit o2) {
-        return o1.getDescription().getQualifiedName().compareTo(o2.getDescription().getQualifiedName());
+    return new Comparator<TestUnit>() {
+      public int compare(final TestUnit o1, final TestUnit o2) {
+        return o1.getDescription().getQualifiedName()
+            .compareTo(o2.getDescription().getQualifiedName());
       }
-      
+
     };
   }
 

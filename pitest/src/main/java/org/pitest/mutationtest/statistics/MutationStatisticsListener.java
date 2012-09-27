@@ -17,7 +17,8 @@ package org.pitest.mutationtest.statistics;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 
-public class MutationStatisticsListener implements MutationResultListener,MutationStatisticsSource {
+public class MutationStatisticsListener implements MutationResultListener,
+    MutationStatisticsSource {
 
   private final MutationStatistics mutatorScores = new MutationStatistics();
 
@@ -26,15 +27,15 @@ public class MutationStatisticsListener implements MutationResultListener,Mutati
   }
 
   public void runStart() {
-    
+
   }
 
-  public void handleMutationResult(MutationMetaData metaData) {
+  public void handleMutationResult(final MutationMetaData metaData) {
     processMetaData(metaData);
   }
 
   public void runEnd() {
-    
+
   }
 
   private void processMetaData(final MutationMetaData value) {

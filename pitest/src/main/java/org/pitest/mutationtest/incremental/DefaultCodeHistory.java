@@ -47,9 +47,10 @@ public class DefaultCodeHistory implements CodeHistory {
 
   }
 
-  public boolean hasCoverageChanged(ClassName className,
-      BigInteger currentCoverage) {
-    return !previousClassPath.get(className).getCoverageId().equals(currentCoverage.toString(16));
+  public boolean hasCoverageChanged(final ClassName className,
+      final BigInteger currentCoverage) {
+    return !this.previousClassPath.get(className).getCoverageId()
+        .equals(currentCoverage.toString(16));
   }
 
 }

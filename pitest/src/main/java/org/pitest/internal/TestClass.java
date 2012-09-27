@@ -37,8 +37,7 @@ public final class TestClass {
     this.clazz = clazz;
   }
 
-  private List<TestUnit> getTestUnitsWithinClass(
-      final Configuration classConfig) {
+  private List<TestUnit> getTestUnitsWithinClass(final Configuration classConfig) {
     return classConfig.testUnitFinder()
         .findTestUnits(TestClass.this.getClazz());
   }

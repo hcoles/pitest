@@ -14,16 +14,14 @@
  */
 package org.pitest.mutationtest.mocksupport;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class JavassistInputStreamInterceptorAdapater extends ClassAdapter {
+public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
 
   public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0) {
-    super(arg0);
+    super(Opcodes.ASM4, arg0);
   }
 
   @Override
@@ -35,12 +33,12 @@ public class JavassistInputStreamInterceptorAdapater extends ClassAdapter {
 
 }
 
-class JavassistInputStreamInterceptorMethodVisitor extends MethodAdapter {
+class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
 
   private final static String INTERCEPTOR_CLASS = classToName(JavassistInterceptor.class);
 
   public JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv) {
-    super(mv);
+    super(Opcodes.ASM4, mv);
   }
 
   @Override

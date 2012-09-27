@@ -50,25 +50,7 @@ public class PowerMockTest {
 
 }
 
-class PowerMockCallFoo {
 
-  public void call() {
-    PowerMockFoo.foo();
-  }
-}
 
-class PowerMockFoo {
-  public static void foo() {
-    System.out.println("static method called");
-  }
-}
 
-class PowerMockCallsOwnMethod {
-  public void call() {
-    foo();
-  }
 
-  public static void foo() {
-
-  }
-}
