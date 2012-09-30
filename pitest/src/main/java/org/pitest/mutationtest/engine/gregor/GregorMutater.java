@@ -113,7 +113,7 @@ class GregorMutater implements Mutater {
     final PremutationClassInfo classInfo = performPreScan(bytes.value());
 
     final ClassReader reader = new ClassReader(bytes.value());
-    final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
