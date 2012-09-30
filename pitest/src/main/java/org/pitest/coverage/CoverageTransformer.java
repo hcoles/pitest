@@ -25,7 +25,7 @@ public class CoverageTransformer implements ClassFileTransformer {
     final boolean include = shouldInclude(className);
     if (include) {
       final ClassReader reader = new ClassReader(classfileBuffer);
-      final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+      final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
       final int id = CodeCoverageStore.registerClass(className);
       reader.accept(new CoverageClassVisitor(id, writer),
