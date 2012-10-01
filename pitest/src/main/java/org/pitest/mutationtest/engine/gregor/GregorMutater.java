@@ -37,6 +37,7 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
+import org.pitest.util.ComputeClassWriter;
 
 class GregorMutater implements Mutater {
 
@@ -113,7 +114,7 @@ class GregorMutater implements Mutater {
     final PremutationClassInfo classInfo = performPreScan(bytes.value());
 
     final ClassReader reader = new ClassReader(bytes.value());
-    final ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+    final ClassWriter w = new ComputeClassWriter(byteSource,ClassWriter.COMPUTE_FRAMES);
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));

@@ -9,6 +9,8 @@ import org.objectweb.asm.ClassWriter;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.codeassist.CoverageClassVisitor;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.util.ComputeClassWriter;
 
 public class CoverageTransformer implements ClassFileTransformer {
 
@@ -25,7 +27,7 @@ public class CoverageTransformer implements ClassFileTransformer {
     final boolean include = shouldInclude(className);
     if (include) {
       final ClassReader reader = new ClassReader(classfileBuffer);
-      final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+      final ClassWriter writer = new ComputeClassWriter(new ClassloaderByteArraySource(loader),ClassWriter.COMPUTE_FRAMES);
 
       final int id = CodeCoverageStore.registerClass(className);
       reader.accept(new CoverageClassVisitor(id, writer),
