@@ -19,7 +19,9 @@ import static org.pitest.functional.Prelude.not;
 import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
@@ -41,6 +43,7 @@ import org.pitest.util.ComputeClassWriter;
 
 class GregorMutater implements Mutater {
 
+  private final Map<String,String> computeCache = new HashMap<String,String>();
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
@@ -114,7 +117,7 @@ class GregorMutater implements Mutater {
     final PremutationClassInfo classInfo = performPreScan(bytes.value());
 
     final ClassReader reader = new ClassReader(bytes.value());
-    final ClassWriter w = new ComputeClassWriter(byteSource,ClassWriter.COMPUTE_FRAMES);
+    final ClassWriter w = new ComputeClassWriter(byteSource,computeCache, ClassWriter.COMPUTE_FRAMES);
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
