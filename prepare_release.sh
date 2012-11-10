@@ -1,1 +1,1 @@
-mvn -DpreparationGoals=clean,test release:prepare
+mvn -e -DpreparationGoals=clean,test release:prepare
