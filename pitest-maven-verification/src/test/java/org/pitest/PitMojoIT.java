@@ -53,7 +53,7 @@ public class PitMojoIT {
   @Test
   public void shouldProduceConsistantCoverageData() throws Exception {
     final File testDir = prepare("/pit-deterministic-coverage");
-    this.verifier.executeGoal("compile");
+    this.verifier.executeGoal("test");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
     final String firstRun = readCoverage(testDir);
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
@@ -64,7 +64,7 @@ public class PitMojoIT {
   @Test
   public void shouldWorkWithPowerMock()  throws Exception  {
     final File testDir = prepare("/pit-powermock");
-    this.verifier.executeGoal("compile");
+    this.verifier.executeGoal("test");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
     final String actual = readResults(testDir);
     assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>")); 
