@@ -16,8 +16,8 @@ import org.pitest.util.ComputeClassWriter;
 
 public class CoverageTransformer implements ClassFileTransformer {
 
-  private final Predicate<String> filter;
-  private final Map<String,String> computeCache = new ConcurrentHashMap<String,String>();
+  private final Predicate<String>   filter;
+  private final Map<String, String> computeCache = new ConcurrentHashMap<String, String>();
 
   public CoverageTransformer(final Predicate<String> filter) {
     this.filter = filter;
@@ -30,7 +30,9 @@ public class CoverageTransformer implements ClassFileTransformer {
     final boolean include = shouldInclude(className);
     if (include) {
       final ClassReader reader = new ClassReader(classfileBuffer);
-      final ClassWriter writer = new ComputeClassWriter(new ClassloaderByteArraySource(loader),computeCache, ClassWriter.COMPUTE_FRAMES);
+      final ClassWriter writer = new ComputeClassWriter(
+          new ClassloaderByteArraySource(loader), this.computeCache,
+          ClassWriter.COMPUTE_FRAMES);
 
       final int id = CodeCoverageStore.registerClass(className);
       reader.accept(new CoverageClassVisitor(id, writer),

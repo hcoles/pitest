@@ -37,7 +37,8 @@ public class MutationTestResultMother {
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {
-    return new MutationMetaData(Collections.<String>emptyList(), Arrays.asList(mrs));
+    return new MutationMetaData(Collections.<String> emptyList(),
+        Arrays.asList(mrs));
   }
 
   public static TestResult createResult(final MutationMetaData md) {

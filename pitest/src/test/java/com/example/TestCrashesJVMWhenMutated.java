@@ -8,5 +8,5 @@ public class TestCrashesJVMWhenMutated {
   public void runCrashMethodButDontHitCrashCode() {
     CrashesJVMWhenMutated.crashJVM(42);
   }
-  
+
 }

@@ -37,13 +37,13 @@ public class GregorMutationEngineTest {
     final Collection<MethodMutatorFactory> mutators = Mutator.asCollection(
         Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH);
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        True.<MethodInfo> all(), Collections.<String> emptyList(), mutators, new NoInlinedCodeDetection());
+        True.<MethodInfo> all(), Collections.<String> emptyList(), mutators,
+        new NoInlinedCodeDetection());
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),
         MathMutator.MATH_MUTATOR.getName()), this.testee.getMutatorNames());
 
   }
-
 
 }

@@ -122,19 +122,19 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("");
     assertFalse(actual.isDetectInlinedCode());
   }
-  
+
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode");
     assertTrue(actual.isDetectInlinedCode());
   }
-  
+
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSetWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode=false");
     assertFalse(actual.isDetectInlinedCode());
   }
-  
+
   @Test
   public void shouldCreateTimestampedReportsByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
@@ -319,26 +319,26 @@ public class OptionsParserTest {
         (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
         actual.getMutationUnitSize());
   }
-  
+
   @Test
   public void shouldDefaultToNoHistory() {
     final ReportOptions actual = parseAddingRequiredArgs("");
     assertNull(actual.getHistoryInputLocation());
     assertNull(actual.getHistoryOutputLocation());
   }
-  
+
   @Test
   public void shouldParseHistoryInputLocation() {
-    final ReportOptions actual = parseAddingRequiredArgs("--historyInputLocation","foo");
-    assertEquals(new File("foo"),
-        actual.getHistoryInputLocation());
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--historyInputLocation", "foo");
+    assertEquals(new File("foo"), actual.getHistoryInputLocation());
   }
-  
+
   @Test
   public void shouldParseHistoryOutputLocation() {
-    final ReportOptions actual = parseAddingRequiredArgs("--historyOutputLocation","foo");
-    assertEquals(new File("foo"),
-        actual.getHistoryOutputLocation());
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--historyOutputLocation", "foo");
+    assertEquals(new File("foo"), actual.getHistoryOutputLocation());
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

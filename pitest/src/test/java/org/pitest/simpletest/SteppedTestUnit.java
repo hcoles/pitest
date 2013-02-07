@@ -92,9 +92,9 @@ public class SteppedTestUnit extends AbstractTestUnit {
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result
+    result = (prime * result)
         + ((this.expected == null) ? 0 : this.expected.hashCode());
-    result = prime * result
+    result = (prime * result)
         + ((this.steps == null) ? 0 : this.steps.hashCode());
     return result;
   }

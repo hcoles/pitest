@@ -39,15 +39,16 @@ import org.pitest.internal.ClassByteArraySource;
 public class JarCreatingJarFinderTest {
 
   private JarCreatingJarFinder testee;
-  
+
   @Mock
   private ClassByteArraySource byteSource;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(byteSource.apply(anyString())).thenReturn(Option.some(new byte[1]));
-    this.testee = new JarCreatingJarFinder(byteSource);
+    when(this.byteSource.apply(anyString())).thenReturn(
+        Option.some(new byte[1]));
+    this.testee = new JarCreatingJarFinder(this.byteSource);
   }
 
   @After
@@ -56,13 +57,13 @@ public class JarCreatingJarFinderTest {
       this.testee.close();
     }
   }
-  
+
   @Test
   public void shouldConstructWithoutError() {
     new JarCreatingJarFinder();
-    //pass
+    // pass
   }
-  
+
   @Test
   public void shouldCloseWithoutErrorWhenNoLocationSet() {
     this.testee.close();
@@ -74,10 +75,10 @@ public class JarCreatingJarFinderTest {
     final Option<String> actual = this.testee.getJarLocation();
     assertTrue(actual.hasSome());
   }
-  
+
   @Test
   public void shouldCreateJarFileInSystemTempDirectory() {
-    String tempDirLocation = System.getProperty("java.io.tmpdir");
+    final String tempDirLocation = System.getProperty("java.io.tmpdir");
     final Option<String> actual = this.testee.getJarLocation();
     assertTrue(actual.value().startsWith(tempDirLocation));
   }

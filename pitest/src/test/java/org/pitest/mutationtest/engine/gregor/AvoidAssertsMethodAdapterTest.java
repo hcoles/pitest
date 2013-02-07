@@ -23,88 +23,100 @@ public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
 
   private AvoidAssertsMethodAdapter testee;
 
+  @Override
   @Before
   public void setUp() {
     super.setUp();
-    testee = new AvoidAssertsMethodAdapter(context, this.mv);
+    this.testee = new AvoidAssertsMethodAdapter(this.context, this.mv);
   }
 
   @Test
   public void shouldDisableMutationsWhenAssertionDisabledFlagIsChecked() {
-    testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    verify(context).disableMutations(anyString());
+    this.testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled",
+        "Z");
+    verify(this.context).disableMutations(anyString());
   }
 
   @Test
   public void shouldEnableMutationsWhenReachLabelOfFirstIFNEAfterCheckingAssertionDisabledFlag() {
-    testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    testee.visitJumpInsn(Opcodes.IFNE, label);
-    testee.visitLabel(label);
-    verify(context).enableMutatations(anyString());
+    this.testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled",
+        "Z");
+    this.testee.visitJumpInsn(Opcodes.IFNE, this.label);
+    this.testee.visitLabel(this.label);
+    verify(this.context).enableMutatations(anyString());
   }
 
   @Test
   public void shouldNotEnableMutationsWhenNonAssertionCheckLabelReached() {
-    Label anotherLabel = Mockito.mock(Label.class);
-    testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    testee.visitJumpInsn(Opcodes.IFNE, label);
-    testee.visitLabel(anotherLabel);
-    verify(context, never()).enableMutatations(anyString());
+    final Label anotherLabel = Mockito.mock(Label.class);
+    this.testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled",
+        "Z");
+    this.testee.visitJumpInsn(Opcodes.IFNE, this.label);
+    this.testee.visitLabel(anotherLabel);
+    verify(this.context, never()).enableMutatations(anyString());
   }
 
   @Test
   public void shouldNotTryToEnableMutationsWhenIFNEInstructionEncounteredWithoutCheckingAssertionDisabledFlag() {
-    testee.visitJumpInsn(Opcodes.IFNE, label);
-    testee.visitLabel(label);
-    verify(context, never()).enableMutatations(anyString());
+    this.testee.visitJumpInsn(Opcodes.IFNE, this.label);
+    this.testee.visitLabel(this.label);
+    verify(this.context, never()).enableMutatations(anyString());
   }
 
   @Test
   public void shouldOnlyCaptureFirstIFNEEncountered() {
-    Label anotherLabel = Mockito.mock(Label.class);
-    testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    testee.visitJumpInsn(Opcodes.IFNE, label);
-    testee.visitJumpInsn(Opcodes.IFNE, anotherLabel);
-    testee.visitLabel(label);
-    verify(context).enableMutatations(anyString());
+    final Label anotherLabel = Mockito.mock(Label.class);
+    this.testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled",
+        "Z");
+    this.testee.visitJumpInsn(Opcodes.IFNE, this.label);
+    this.testee.visitJumpInsn(Opcodes.IFNE, anotherLabel);
+    this.testee.visitLabel(this.label);
+    verify(this.context).enableMutatations(anyString());
   }
-  
+
   @Test
   public void shouldDisableMutationsForCodeSettingWhenAssertionDisabledFlagIsSetInStaticInitializer() {
-    testee.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "desiredAssertionStatus", "()Z");
-    verify(context).disableMutations(anyString());
-    testee.visitFieldInsn(Opcodes.PUTSTATIC, "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement", "$assertionsDisabled", "Z");
-    verify(context).enableMutatations(anyString());
+    this.testee.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class",
+        "desiredAssertionStatus", "()Z");
+    verify(this.context).disableMutations(anyString());
+    this.testee
+        .visitFieldInsn(
+            Opcodes.PUTSTATIC,
+            "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement",
+            "$assertionsDisabled", "Z");
+    verify(this.context).enableMutatations(anyString());
   }
 
   @Test
   public void shouldForwardInterceptedFieldInstructionsToChild() {
-    testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled", "Z");
-    verify(mv).visitFieldInsn(Opcodes.GETSTATIC, "foo",
+    this.testee.visitFieldInsn(Opcodes.GETSTATIC, "foo", "$assertionsDisabled",
+        "Z");
+    verify(this.mv).visitFieldInsn(Opcodes.GETSTATIC, "foo",
         "$assertionsDisabled", "Z");
   }
 
   @Test
   public void shouldForwardInterceptedVisitLabelInstructionsToChild() {
-    testee.visitLabel(label);
-    verify(mv).visitLabel(label);
+    this.testee.visitLabel(this.label);
+    verify(this.mv).visitLabel(this.label);
   }
 
   @Test
   public void shouldForwardInterceptedVisitJumpInstructionsToChild() {
-    testee.visitJumpInsn(Opcodes.IFEQ, label);
-    verify(mv).visitJumpInsn(Opcodes.IFEQ, label);
+    this.testee.visitJumpInsn(Opcodes.IFEQ, this.label);
+    verify(this.mv).visitJumpInsn(Opcodes.IFEQ, this.label);
   }
 
+  @Override
   @Test
   public void shouldForwardVisitMethodInsnToChild() {
-    testee.visitMethodInsn(1, "foo", "bar", "far");
-    verify(mv).visitMethodInsn(1, "foo", "bar", "far");
+    this.testee.visitMethodInsn(1, "foo", "bar", "far");
+    verify(this.mv).visitMethodInsn(1, "foo", "bar", "far");
   }
 
   @Override
   protected MethodVisitor getTesteeVisitor() {
-    return testee;
+    return this.testee;
   }
-  
+
 }

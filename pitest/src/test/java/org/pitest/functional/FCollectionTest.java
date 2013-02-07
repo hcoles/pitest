@@ -165,60 +165,62 @@ public class FCollectionTest {
         FCollection.flatten(is));
 
   }
-  
+
   @Test
   public void shouldSplitCollectionIntoOneBucketWhenListSizeEqualToBucketSize() {
     this.is = Arrays.asList(1, 2, 3);
-    List<List<Integer>> actual =  FCollection.splitToLength(3,is);
+    final List<List<Integer>> actual = FCollection.splitToLength(3, this.is);
     assertEquals(1, actual.size());
-    assertThat(actual.get(0), hasItems(1,2,3));
+    assertThat(actual.get(0), hasItems(1, 2, 3));
   }
-  
+
   @Test
   public void shouldSplitCollectionIntoTwoBucketsWhenListSizeOneGreaterThanBucketSize() {
     this.is = Arrays.asList(1, 2, 3);
-    List<List<Integer>> actual =  FCollection.splitToLength(2,is);
+    final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
     assertEquals(2, actual.size());
-    assertThat(actual.get(0), hasItems(1,2));
+    assertThat(actual.get(0), hasItems(1, 2));
     assertThat(actual.get(1), hasItems(3));
   }
-  
+
   @Test
   public void shouldSplitCollectionIntoManyBucketsWhenListManyTimesGreaterThanBucketSize() {
-    this.is = Arrays.asList(1,2,3,4,5,6,7,8,9,10,11);
-    List<List<Integer>> actual =  FCollection.splitToLength(2,is);
+    this.is = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+    final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
     assertEquals(6, actual.size());
-    assertThat(actual.get(0), hasItems(1,2));
-    assertThat(actual.get(1), hasItems(3,4));
+    assertThat(actual.get(0), hasItems(1, 2));
+    assertThat(actual.get(1), hasItems(3, 4));
     assertThat(actual.get(5), hasItems(11));
   }
-  
+
   @Test
   public void shouldSplitIntoSingleBucketWhenAllItemsMeetsCriteria() {
-    this.is = Arrays.asList(1,2,3);
-    Map<Integer,Collection<Integer>> actual = FCollection.bucket(is, fortyTwo());
-    Map<Integer,Collection<Integer>> expected = new HashMap<Integer,Collection<Integer>>();
-    expected.put(42, Arrays.asList(1,2,3));
-    assertEquals(expected,actual);
+    this.is = Arrays.asList(1, 2, 3);
+    final Map<Integer, Collection<Integer>> actual = FCollection.bucket(
+        this.is, fortyTwo());
+    final Map<Integer, Collection<Integer>> expected = new HashMap<Integer, Collection<Integer>>();
+    expected.put(42, Arrays.asList(1, 2, 3));
+    assertEquals(expected, actual);
   }
-  
+
   @Test
   public void shouldSplitIntoMultipleBuckets() {
-    this.is = Arrays.asList(1,2,3);
-    Map<Integer,Collection<Integer>> actual = FCollection.bucket(is, Prelude.id(Integer.class));
-    Map<Integer,Collection<Integer>> expected = new HashMap<Integer,Collection<Integer>>();
+    this.is = Arrays.asList(1, 2, 3);
+    final Map<Integer, Collection<Integer>> actual = FCollection.bucket(
+        this.is, Prelude.id(Integer.class));
+    final Map<Integer, Collection<Integer>> expected = new HashMap<Integer, Collection<Integer>>();
     expected.put(1, Arrays.asList(1));
     expected.put(2, Arrays.asList(2));
     expected.put(3, Arrays.asList(3));
-    assertEquals(expected,actual);
+    assertEquals(expected, actual);
   }
 
-  private F<Integer,Integer> fortyTwo() {
-    return new  F<Integer,Integer>() {
-      public Integer apply(Integer a) {
+  private F<Integer, Integer> fortyTwo() {
+    return new F<Integer, Integer>() {
+      public Integer apply(final Integer a) {
         return 42;
       }
-      
+
     };
   }
 

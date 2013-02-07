@@ -62,7 +62,6 @@ public class ConfigurationFactoryTest {
         .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
   }
 
-
   @Test
   public void shouldNotCreateAConfigurationThatFindsTestNGTestsWhenTestNGNotOnClassPath() {
     putJUnitOnClasspath();
@@ -76,7 +75,6 @@ public class ConfigurationFactoryTest {
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(ConfigurationFactoryTest.class).isEmpty());
   }
-
 
   @Test
   public void shouldNotCreateAConfigurationThatFindsJUnitTestsWhenJUnitNotOnClassPath() {
@@ -94,17 +92,17 @@ public class ConfigurationFactoryTest {
     assertFalse(this.testee.createConfiguration().testUnitFinder()
         .findTestUnits(FullyCoveredByTestNGTesteeTest.class).isEmpty());
   }
-  
-  @Test(expected=PitHelpError.class)
+
+  @Test(expected = PitHelpError.class)
   public void shouldThrowAnErrorIfNeitherTestNGOrJUnitOnClassPath() {
     this.testee.createConfiguration();
   }
-  
+
   private void putTestNGOnClasspath() {
     when(this.source.apply("org.testng.TestNG")).thenReturn(
         this.realSource.apply("org.testng.TestNG"));
   }
-  
+
   private void putJUnitOnClasspath() {
     when(this.source.apply("org.junit.runner.Runner")).thenReturn(
         this.realSource.apply("org.junit.runner.Runner"));

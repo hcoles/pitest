@@ -1,35 +1,36 @@
 package org.pitest.bytecode.blocks;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class ConcreteBlockCounterTest {
-  
+
   private ConcreteBlockCounter testee;
-  
+
   @Before
   public void setUp() {
-    testee = new ConcreteBlockCounter();
+    this.testee = new ConcreteBlockCounter();
   }
-  
+
   @Test
   public void shouldTrackBlocks() {
-    testee.registerNewBlock();
-    assertEquals(1,testee.getCurrentBlock());
-    testee.registerNewBlock();
-    assertEquals(2,testee.getCurrentBlock());
+    this.testee.registerNewBlock();
+    assertEquals(1, this.testee.getCurrentBlock());
+    this.testee.registerNewBlock();
+    assertEquals(2, this.testee.getCurrentBlock());
   }
-  
+
   @Test
   public void shouldTrackWhenCodeIsWithinFinallyBlocks() {
-    assertFalse(testee.isWithinExceptionHandler());
-    testee.registerFinallyBlockStart();
-    assertTrue(testee.isWithinExceptionHandler());
-    testee.registerFinallyBlockEnd();
-    assertFalse(testee.isWithinExceptionHandler());
+    assertFalse(this.testee.isWithinExceptionHandler());
+    this.testee.registerFinallyBlockStart();
+    assertTrue(this.testee.isWithinExceptionHandler());
+    this.testee.registerFinallyBlockEnd();
+    assertFalse(this.testee.isWithinExceptionHandler());
   }
 
 }

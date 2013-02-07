@@ -160,8 +160,9 @@ public class CoverageProcessSystemTest {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final SocketFinder sf = new SocketFinder();
     final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(new ClassPath()).andJavaAgentFinder(agent), sa, sf.getNextAvailableServerSocket(),
-        Arrays.asList(test.getName()), handler);
+        .withClassPath(new ClassPath()).andJavaAgentFinder(agent), sa,
+        sf.getNextAvailableServerSocket(), Arrays.asList(test.getName()),
+        handler);
     process.start();
     process.waitToDie();
     agent.close();

@@ -8,14 +8,13 @@ import org.mockito.Mock;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.MethodDecoratorTest;
 
-
 public class CoverageMethodVisitorTest extends MethodDecoratorTest {
-  
-  private  CoverageMethodVisitor testee;
-  
+
+  private CoverageMethodVisitor testee;
+
   @Mock
-  private CoverageClassVisitor cv;
-  
+  private CoverageClassVisitor  cv;
+
   @Override
   @Before
   public void setUp() {
@@ -25,13 +24,13 @@ public class CoverageMethodVisitorTest extends MethodDecoratorTest {
 
   @Override
   protected MethodVisitor getTesteeVisitor() {
-    return testee;
+    return this.testee;
   }
-  
+
   @Test
   public void shouldRegisterLinesWithCoverageClassVisitor() {
-    testee.visitLineNumber(42, null);
-    verify(cv).registerLine(42);
+    this.testee.visitLineNumber(42, null);
+    verify(this.cv).registerLine(42);
   }
 
 }

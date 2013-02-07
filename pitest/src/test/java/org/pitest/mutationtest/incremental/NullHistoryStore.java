@@ -17,7 +17,6 @@ public class NullHistoryStore implements HistoryStore {
 
   }
 
-
   public void recordResult(final MutationResult result) {
 
   }
@@ -30,9 +29,9 @@ public class NullHistoryStore implements HistoryStore {
     return Collections.emptyMap();
   }
 
-  public void recordClassPath(Collection<HierarchicalClassId> ids,
-      CoverageDatabase coverageInfo) {
-    
+  public void recordClassPath(final Collection<HierarchicalClassId> ids,
+      final CoverageDatabase coverageInfo) {
+
   }
 
 }

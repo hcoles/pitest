@@ -13,59 +13,58 @@ import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationResultAdapterTest {
-  
-  private MutationResultAdapter testee;
-  
+
+  private MutationResultAdapter  testee;
+
   @Mock
   private MutationResultListener child;
-
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new MutationResultAdapter(child);
+    this.testee = new MutationResultAdapter(this.child);
   }
-  
+
   @Test
   public void shouldAdaptRunStart() {
-    testee.onRunStart();
-    verify(child).runStart();
+    this.testee.onRunStart();
+    verify(this.child).runStart();
   }
-  
+
   @Test
   public void shouldAdaptRunEnd() {
-    testee.onRunEnd();
-    verify(child).runEnd();
+    this.testee.onRunEnd();
+    verify(this.child).runEnd();
   }
-  
+
   @Test
   public void shouldExtractMetaDataWhenTestSuccess() {
     final MutationResult mr = makeResult();
-    MutationMetaData metaData = MutationTestResultMother
+    final MutationMetaData metaData = MutationTestResultMother
         .createMetaData(mr);
-    testee.onTestSuccess(MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mr)));
-    verify(child).handleMutationResult(metaData);
+    this.testee.onTestSuccess(MutationTestResultMother
+        .createResult(MutationTestResultMother.createMetaData(mr)));
+    verify(this.child).handleMutationResult(metaData);
   }
-  
+
   @Test
   public void shouldExtractMetaDataWhenTestError() {
     final MutationResult mr = makeResult();
-    MutationMetaData metaData = MutationTestResultMother
+    final MutationMetaData metaData = MutationTestResultMother
         .createMetaData(mr);
-    testee.onTestError(MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mr)));
-    verify(child).handleMutationResult(metaData);
+    this.testee.onTestError(MutationTestResultMother
+        .createResult(MutationTestResultMother.createMetaData(mr)));
+    verify(this.child).handleMutationResult(metaData);
   }
-  
+
   @Test
   public void shouldExtractMetaDataWhenTestFailure() {
     final MutationResult mr = makeResult();
-    MutationMetaData metaData = MutationTestResultMother
+    final MutationMetaData metaData = MutationTestResultMother
         .createMetaData(mr);
-    testee.onTestFailure(MutationTestResultMother.createResult(MutationTestResultMother
-        .createMetaData(mr)));
-    verify(child).handleMutationResult(metaData);
+    this.testee.onTestFailure(MutationTestResultMother
+        .createResult(MutationTestResultMother.createMetaData(mr)));
+    verify(this.child).handleMutationResult(metaData);
   }
 
   private MutationResult makeResult() {
@@ -75,5 +74,4 @@ public class MutationResultAdapterTest {
     return mr;
   }
 
-  
 }

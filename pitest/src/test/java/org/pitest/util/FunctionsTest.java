@@ -52,7 +52,6 @@ public class FunctionsTest {
     assertFalse(Functions.startsWith("foo").apply("barfoo"));
   }
 
-
   static enum Foo {
     A, B, C, Bar;
   };
@@ -72,6 +71,5 @@ public class FunctionsTest {
   public void jvmClassToClassNameShouldConvertSlashesToDots() {
     assertEquals("a.b.c", Functions.jvmClassToClassName().apply("a/b/c"));
   }
-
 
 }

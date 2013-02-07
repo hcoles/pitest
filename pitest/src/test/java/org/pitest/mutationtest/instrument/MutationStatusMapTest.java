@@ -18,89 +18,105 @@ import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
-
 public class MutationStatusMapTest {
-  
+
   private MutationStatusMap testee;
-  
+
   @Mock
-  private MutationDetails details;
-  
+  private MutationDetails   details;
+
   @Mock
-  private MutationDetails detailsTwo;
-  
+  private MutationDetails   detailsTwo;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new MutationStatusMap();
+    this.testee = new MutationStatusMap();
   }
-  
+
   @Test
   public void shouldDetectWhenHasUnrunMutations() {
-    testee.setStatusForMutation(details, DetectionStatus.NOT_STARTED);
-    assertTrue(testee.hasUnrunMutations());
+    this.testee.setStatusForMutation(this.details, DetectionStatus.NOT_STARTED);
+    assertTrue(this.testee.hasUnrunMutations());
   }
-  
+
   @Test
   public void shouldDetectWhenDoesNotHaveUnrunMutations() {
-    testee.setStatusForMutation(details, DetectionStatus.KILLED);
-    assertFalse(testee.hasUnrunMutations());
+    this.testee.setStatusForMutation(this.details, DetectionStatus.KILLED);
+    assertFalse(this.testee.hasUnrunMutations());
   }
-  
+
   @Test
   public void shouldReturnUnRunMutationsWhenSomePresent() {
-    testee.setStatusForMutations(Arrays.asList(details,detailsTwo), DetectionStatus.NOT_STARTED);
-    assertThat(testee.getUnrunMutations(), hasItems(details, detailsTwo));
+    this.testee.setStatusForMutations(
+        Arrays.asList(this.details, this.detailsTwo),
+        DetectionStatus.NOT_STARTED);
+    assertThat(this.testee.getUnrunMutations(),
+        hasItems(this.details, this.detailsTwo));
   }
-  
+
   @Test
   public void shouldReturnEmptyListMutationsWhenNoUnrunMutationsPresent() {
-    testee.setStatusForMutations(Arrays.asList(details,detailsTwo), DetectionStatus.STARTED);
-    assertEquals(Collections.emptyList(),testee.getUnrunMutations());
+    this.testee.setStatusForMutations(
+        Arrays.asList(this.details, this.detailsTwo), DetectionStatus.STARTED);
+    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
   }
-  
+
   @Test
   public void shouldReturnUnfinishedMutationsWhenSomePresent() {
-    testee.setStatusForMutations(Arrays.asList(details,detailsTwo), DetectionStatus.STARTED);
-    assertThat(testee.getUnfinishedRuns(), hasItems(details, detailsTwo));
+    this.testee.setStatusForMutations(
+        Arrays.asList(this.details, this.detailsTwo), DetectionStatus.STARTED);
+    assertThat(this.testee.getUnfinishedRuns(),
+        hasItems(this.details, this.detailsTwo));
   }
-  
+
   @Test
   public void shouldReturnEmptyListMutationsWhenNoUnfinishedMutationsPresent() {
-    testee.setStatusForMutations(Arrays.asList(details,detailsTwo), DetectionStatus.KILLED);
-    assertEquals(Collections.emptyList(),testee.getUnrunMutations());
+    this.testee.setStatusForMutations(
+        Arrays.asList(this.details, this.detailsTwo), DetectionStatus.KILLED);
+    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
   }
-  
+
   @Test
   public void shouldCreateResultsForAllMutations() {
-    MutationStatusTestPair statusPairOne= new MutationStatusTestPair(42,DetectionStatus.KILLED,"foo");
-    MutationResult resultOne = new MutationResult(details, statusPairOne);
-    testee.setStatusForMutation(details, statusPairOne );
-    
-    MutationStatusTestPair statusPairTwo = new MutationStatusTestPair(42,DetectionStatus.RUN_ERROR,"bar");
-    MutationResult resultTwo = new MutationResult(detailsTwo, statusPairTwo);
-    testee.setStatusForMutation(detailsTwo, statusPairTwo );
+    final MutationStatusTestPair statusPairOne = new MutationStatusTestPair(42,
+        DetectionStatus.KILLED, "foo");
+    final MutationResult resultOne = new MutationResult(this.details,
+        statusPairOne);
+    this.testee.setStatusForMutation(this.details, statusPairOne);
 
-    assertThat(testee.createMutationResults(), hasItems(resultOne, resultTwo));
+    final MutationStatusTestPair statusPairTwo = new MutationStatusTestPair(42,
+        DetectionStatus.RUN_ERROR, "bar");
+    final MutationResult resultTwo = new MutationResult(this.detailsTwo,
+        statusPairTwo);
+    this.testee.setStatusForMutation(this.detailsTwo, statusPairTwo);
+
+    assertThat(this.testee.createMutationResults(),
+        hasItems(resultOne, resultTwo));
   }
-  
+
   @Test
   public void shouldSetStatusToUncoveredWhenMutationHasNoTests() {
-    testee.setStatusForMutations(Arrays.asList(details,detailsTwo),
+    this.testee.setStatusForMutations(
+        Arrays.asList(this.details, this.detailsTwo),
         DetectionStatus.NOT_STARTED);
-    testee.markUncoveredMutations();
-    assertEquals(Collections.emptyList(),testee.getUnrunMutations());
-    
-    MutationStatusTestPair statusPairOne= new MutationStatusTestPair(42,DetectionStatus.NO_COVERAGE,"foo");
-    MutationResult resultOne = new MutationResult(details, statusPairOne);
-    testee.setStatusForMutation(details, statusPairOne );
-    
-    MutationStatusTestPair statusPairTwo = new MutationStatusTestPair(42,DetectionStatus.NO_COVERAGE,"bar");
-    MutationResult resultTwo = new MutationResult(detailsTwo, statusPairTwo);
-    testee.setStatusForMutation(detailsTwo, statusPairTwo );
+    this.testee.markUncoveredMutations();
+    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
 
+    final MutationStatusTestPair statusPairOne = new MutationStatusTestPair(42,
+        DetectionStatus.NO_COVERAGE, "foo");
+    final MutationResult resultOne = new MutationResult(this.details,
+        statusPairOne);
+    this.testee.setStatusForMutation(this.details, statusPairOne);
 
-    assertThat(testee.createMutationResults(), hasItems(resultOne, resultTwo));
+    final MutationStatusTestPair statusPairTwo = new MutationStatusTestPair(42,
+        DetectionStatus.NO_COVERAGE, "bar");
+    final MutationResult resultTwo = new MutationResult(this.detailsTwo,
+        statusPairTwo);
+    this.testee.setStatusForMutation(this.detailsTwo, statusPairTwo);
+
+    assertThat(this.testee.createMutationResults(),
+        hasItems(resultOne, resultTwo));
   }
 
 }

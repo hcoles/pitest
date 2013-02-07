@@ -8,8 +8,8 @@ public class HasMutationInFinallyBlockTest {
 
   @Test
   public void testIncrementsI() {
-    HasMutationsInFinallyBlock testee = new HasMutationsInFinallyBlock();
-    assertEquals(2,testee.foo(1));
+    final HasMutationsInFinallyBlock testee = new HasMutationsInFinallyBlock();
+    assertEquals(2, testee.foo(1));
   }
-  
+
 }

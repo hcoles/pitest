@@ -27,101 +27,111 @@ import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.ClassLine;
 
-
 public class MutationSourceTest {
 
-  private MutationSource testee;
-  
-  private MutationConfig config;
-  
+  private MutationSource        testee;
+
+  private MutationConfig        config;
+
   @Mock
   private MutationFilterFactory filter;
-  
+
   @Mock
-  private CoverageDatabase coverage;
-  
+  private CoverageDatabase      coverage;
+
   @Mock
-  private ClassByteArraySource source;
-  
+  private ClassByteArraySource  source;
+
   @Mock
-  private Mutater mutater;
-  
+  private Mutater               mutater;
+
   @Mock
-  private MutationEngine engine;
-  
-  private ClassName foo = ClassName.fromString("foo");
-  
+  private MutationEngine        engine;
+
+  private final ClassName       foo = ClassName.fromString("foo");
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(engine.createMutator(source)).thenReturn(mutater);
-    config =  new MutationConfig(engine, Collections.<String>emptyList());
+    when(this.engine.createMutator(this.source)).thenReturn(this.mutater);
+    this.config = new MutationConfig(this.engine,
+        Collections.<String> emptyList());
     setupFilterFactoryToFilterNothing();
-    testee = new MutationSource(config, filter, coverage, source);
+    this.testee = new MutationSource(this.config, this.filter, this.coverage,
+        this.source);
   }
-  
+
   private void setupFilterFactoryToFilterNothing() {
-    when(filter.createFilter()).thenReturn(UnfilteredMutationFilter.INSTANCE);
+    when(this.filter.createFilter()).thenReturn(
+        UnfilteredMutationFilter.INSTANCE);
   }
-  
+
   @Test
   public void shouldReturnNoMuationsWhenNoneFound() {
-    assertEquals(Collections.emptyList(),testee.createMutations(foo));
+    assertEquals(Collections.emptyList(), this.testee.createMutations(this.foo));
   }
-  
+
   @Test
   public void shouldAssignTestsForRelevantLineToGeneratedMutations() {
-    List<TestInfo> expected = makeTestInfos(0);
-    List<MutationDetails> mutations = makeMutations("foo");
-    when(coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(expected);
+    final List<TestInfo> expected = makeTestInfos(0);
+    final List<MutationDetails> mutations = makeMutations("foo");
+    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
+        expected);
 
-    when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(foo).iterator().next();
-    assertEquals(expected,actual.getTestsInOrder());
+    when(this.mutater.findMutations(any(ClassName.class)))
+        .thenReturn(mutations);
+    final MutationDetails actual = this.testee.createMutations(this.foo)
+        .iterator().next();
+    assertEquals(expected, actual.getTestsInOrder());
   }
 
   @Test
   public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
-    List<TestInfo> expected = makeTestInfos(0);
-    List<MutationDetails> mutations = makeMutations("<clinit>");
-    when(coverage.getTestsForClass(foo)).thenReturn(expected);
-    when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(foo).iterator().next();
-    assertEquals(expected,actual.getTestsInOrder());
+    final List<TestInfo> expected = makeTestInfos(0);
+    final List<MutationDetails> mutations = makeMutations("<clinit>");
+    when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
+    when(this.mutater.findMutations(any(ClassName.class)))
+        .thenReturn(mutations);
+    final MutationDetails actual = this.testee.createMutations(this.foo)
+        .iterator().next();
+    assertEquals(expected, actual.getTestsInOrder());
   }
-  
+
   @Test
   public void shouldPrioritiseTestsByExecutionTime() {
-    List<TestInfo> unorderedTests = makeTestInfos(100,1000,1);
-    List<MutationDetails> mutations = makeMutations("foo");
-    when(coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(unorderedTests);
-    when(mutater.findMutations(any(ClassName.class))).thenReturn(mutations);
-    MutationDetails actual = testee.createMutations(foo).iterator().next();
-    assertEquals(makeTestInfos(1,100,1000),actual.getTestsInOrder());
+    final List<TestInfo> unorderedTests = makeTestInfos(100, 1000, 1);
+    final List<MutationDetails> mutations = makeMutations("foo");
+    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
+        unorderedTests);
+    when(this.mutater.findMutations(any(ClassName.class)))
+        .thenReturn(mutations);
+    final MutationDetails actual = this.testee.createMutations(this.foo)
+        .iterator().next();
+    assertEquals(makeTestInfos(1, 100, 1000), actual.getTestsInOrder());
   }
-  
-  private List<TestInfo> makeTestInfos(Integer ... times ) {
-    return new ArrayList<TestInfo>(FCollection.map(Arrays.asList(times), timeToTestInfo()));
+
+  private List<TestInfo> makeTestInfos(final Integer... times) {
+    return new ArrayList<TestInfo>(FCollection.map(Arrays.asList(times),
+        timeToTestInfo()));
   }
-  
-  
-  private F<Integer,TestInfo> timeToTestInfo() {
-    return new F<Integer,TestInfo>() {
-      public TestInfo apply(Integer a) {
-        return new TestInfo("foo","bar",a, Option.<ClassName>none(),0);
+
+  private F<Integer, TestInfo> timeToTestInfo() {
+    return new F<Integer, TestInfo>() {
+      public TestInfo apply(final Integer a) {
+        return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
       }
-      
+
     };
   }
 
-  private List<MutationDetails> makeMutations(String method) {
-    List<MutationDetails> mutations = Arrays.asList(makeMutation(method));
+  private List<MutationDetails> makeMutations(final String method) {
+    final List<MutationDetails> mutations = Arrays.asList(makeMutation(method));
     return mutations;
   }
 
-  private MutationDetails makeMutation(String method) {
+  private MutationDetails makeMutation(final String method) {
     final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
-    return new MutationDetails(id, "file", "desc", method, 1,2);
+    return new MutationDetails(id, "file", "desc", method, 1, 2);
   }
-  
+
 }

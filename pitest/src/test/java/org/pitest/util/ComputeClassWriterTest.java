@@ -15,7 +15,7 @@ public class ComputeClassWriterTest {
                                               new ClassloaderByteArraySource(
                                                   IsolationUtils
                                                       .getContextClassLoader()),
-                                              new HashMap<String,String>(), 0);
+                                              new HashMap<String, String>(), 0);
 
   @Test
   public void shouldResolveObjectAsSuperClassWhenNoCommonParentExists() {

@@ -54,9 +54,9 @@ public class MutationHtmlReportListenerTest {
 
   @Mock
   private Writer                     writer;
-  
+
   @Mock
-  private ClassInfo classInfo;
+  private ClassInfo                  classInfo;
 
   @SuppressWarnings("unchecked")
   @Before
@@ -66,9 +66,10 @@ public class MutationHtmlReportListenerTest {
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
     when(this.classInfo.getName()).thenReturn(new ClassName("foo"));
-    when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(Collections.singleton(classInfo));
-    
-    this.testee = new MutationHtmlReportListener(this.coverageDb, 
+    when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(
+        Collections.singleton(this.classInfo));
+
+    this.testee = new MutationHtmlReportListener(this.coverageDb,
         this.outputStrategy, this.sourceLocator);
   }
 
@@ -87,9 +88,9 @@ public class MutationHtmlReportListenerTest {
         new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
         .thenReturn(Option.<Reader> none());
-    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
+    this.testee.handleMutationResult(MutationTestResultMother
+        .createMetaData(mr));
     verify(this.sourceLocator).locate(any(Collection.class), eq(fileName));
   }
-
 
 }

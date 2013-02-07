@@ -24,35 +24,37 @@ public class LineFilterMethodAdapterTest extends MethodDecoratorTest {
 
   private LineFilterMethodAdapter testee;
 
+  @Override
   @Before
   public void setUp() {
     super.setUp();
-    testee = new LineFilterMethodAdapter(context, classInfo, mv);
+    this.testee = new LineFilterMethodAdapter(this.context, this.classInfo,
+        this.mv);
   }
 
   @Test
   public void shouldDisableMutationsWhenEncountersExcludedLine() {
-    when(classInfo.isLoggingLine(1)).thenReturn(true);
-    this.testee.visitLineNumber(1, label);
+    when(this.classInfo.isLoggingLine(1)).thenReturn(true);
+    this.testee.visitLineNumber(1, this.label);
     verify(this.context).disableMutations(anyString());
   }
 
   @Test
   public void shouldenableMutationsWhenEncountersANonExcludedLine() {
-    when(classInfo.isLoggingLine(1)).thenReturn(false);
-    this.testee.visitLineNumber(1, label);
+    when(this.classInfo.isLoggingLine(1)).thenReturn(false);
+    this.testee.visitLineNumber(1, this.label);
     verify(this.context).enableMutatations(anyString());
   }
 
   @Test
   public void shouldForwardVisitLineNumberCallsToChild() {
-    this.testee.visitLineNumber(0, label);
-    verify(this.mv).visitLineNumber(0, label);
+    this.testee.visitLineNumber(0, this.label);
+    verify(this.mv).visitLineNumber(0, this.label);
   }
 
   @Override
   protected MethodVisitor getTesteeVisitor() {
-    return testee;
+    return this.testee;
   }
 
 }

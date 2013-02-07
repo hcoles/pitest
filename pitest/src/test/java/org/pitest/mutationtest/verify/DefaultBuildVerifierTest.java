@@ -38,7 +38,7 @@ public class DefaultBuildVerifierTest {
   private DefaultBuildVerifier testee;
 
   @Mock
-  private CodeSource     code;
+  private CodeSource           code;
 
   @Before
   public void setUp() {
@@ -67,7 +67,7 @@ public class DefaultBuildVerifierTest {
     this.testee.verify(this.code);
     // pass
   }
-  
+
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
@@ -89,9 +89,9 @@ public class DefaultBuildVerifierTest {
   private void setupClassPath(final ClassByteArraySource source,
       final String clazz) {
     final Repository repository = new Repository(source);
-    final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz)).value();
-    when(this.code.getCode()).thenReturn(
-        Collections.singletonList(ci));
+    final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz))
+        .value();
+    when(this.code.getCode()).thenReturn(Collections.singletonList(ci));
   }
 
 }

@@ -42,7 +42,6 @@ public class MutationStatisticsListenerTest {
     assertTrue(hasResultFor(mr.getDetails().getId().getMutator()));
   }
 
-
   private MutationResult makeResult() {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
@@ -65,8 +64,7 @@ public class MutationStatisticsListenerTest {
   }
 
   private MutationMetaData createMetaData(final MutationResult... mrs) {
-    return MutationTestResultMother
-        .createMetaData(mrs);
+    return MutationTestResultMother.createMetaData(mrs);
   }
 
 }

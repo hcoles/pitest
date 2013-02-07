@@ -119,22 +119,22 @@ public class ClassNameTest {
     assertEquals(ClassName.fromString("org/example/Foo").hashCode(), ClassName
         .fromString("org.example.Foo").hashCode());
   }
-  
+
   @Test
   public void shouldProduceDifferentHashCodeForDifferentClasses() {
     assertFalse(ClassName.fromString("org/example/Foo").hashCode() == ClassName
         .fromString("org.example.Bar").hashCode());
   }
-  
+
   @Test
   public void shouldTreatSameClassAsEqual() {
-    assertEquals(ClassName.fromString("org/example/Foo"), ClassName
-        .fromString("org.example.Foo"));
+    assertEquals(ClassName.fromString("org/example/Foo"),
+        ClassName.fromString("org.example.Foo"));
   }
-  
+
   @Test
   public void shouldTreatDifferentClassesAsNotEqual() {
-    assertFalse(ClassName.fromString("org/example/Foo").equals(ClassName
-        .fromString("org.example.Bar")));
+    assertFalse(ClassName.fromString("org/example/Foo").equals(
+        ClassName.fromString("org.example.Bar")));
   }
 }

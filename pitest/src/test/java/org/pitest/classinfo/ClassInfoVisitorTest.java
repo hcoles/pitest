@@ -75,12 +75,9 @@ public class ClassInfoVisitorTest {
         ClassUtils.classAsBytes(sampleName));
     assertEquals("String.java", actual.sourceFile);
   }
-  
-  
-  private ClassInfoBuilder getClassInfo(final String name,
-      final byte[] bytes) {
+
+  private ClassInfoBuilder getClassInfo(final String name, final byte[] bytes) {
     return ClassInfoVisitor.getClassInfo(new ClassName(name), bytes, 0);
   }
-
 
 }

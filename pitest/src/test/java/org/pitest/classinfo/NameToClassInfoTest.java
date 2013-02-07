@@ -6,13 +6,13 @@ import static org.mockito.Mockito.verify;
 import org.junit.Test;
 
 public class NameToClassInfoTest {
-  
+
   @Test
   public void shouldFetchClassWhenApplied() {
-    Repository repository = mock(Repository.class);
-    NameToClassInfo testee = new NameToClassInfo(repository);
+    final Repository repository = mock(Repository.class);
+    final NameToClassInfo testee = new NameToClassInfo(repository);
     testee.apply(ClassName.fromString("foo"));
     verify(repository).fetchClass(ClassName.fromString("foo"));
   }
-  
+
 }

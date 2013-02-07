@@ -17,7 +17,11 @@ package org.pitest.classinfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
 
@@ -34,19 +38,19 @@ import org.pitest.internal.IsolationUtils;
 
 public class RepositoryTest {
 
-  private Repository testee;
-  
+  private Repository           testee;
+
   @Mock
   private ClassByteArraySource source;
-  
+
   @Mock
-  private HashFunction hashFunction;
+  private HashFunction         hashFunction;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.testee = new Repository(new ClassloaderByteArraySource(
-        IsolationUtils.getContextClassLoader()),hashFunction);
+        IsolationUtils.getContextClassLoader()), this.hashFunction);
   }
 
   @Test
@@ -61,51 +65,50 @@ public class RepositoryTest {
 
   @Test
   public void shouldOnlyCheckSourceForUnknownClassesOnce() {
-    testee = new Repository(source);
-    when(source.apply(anyString())).thenReturn(Option.<byte[]>none());
-    testee.hasClass(new ClassName("foo"));
-    testee.hasClass(new ClassName("foo"));
-    verify(source, times(1)).apply("foo");
-  }
-  
-  
-  @Test
-  public void shouldReturnNoneWhenAskedForUnknownClass() {
-    assertEquals(Option.none(), this.testee.fetchClass(ClassName.fromString("never.heard.of.you")));
+    this.testee = new Repository(this.source);
+    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    this.testee.hasClass(new ClassName("foo"));
+    this.testee.hasClass(new ClassName("foo"));
+    verify(this.source, times(1)).apply("foo");
   }
 
-  
+  @Test
+  public void shouldReturnNoneWhenAskedForUnknownClass() {
+    assertEquals(Option.none(),
+        this.testee.fetchClass(ClassName.fromString("never.heard.of.you")));
+  }
+
   @Test
   public void shouldOnlyLookForUnknownClassesOnce() {
-    testee = new Repository(source);
-    when(source.apply(anyString())).thenReturn(Option.<byte[]>none());
-    testee.fetchClass(ClassName.fromString("foo"));
-    testee.fetchClass(ClassName.fromString("foo"));
-    verify(source, times(1)).apply("foo");
+    this.testee = new Repository(this.source);
+    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    this.testee.fetchClass(ClassName.fromString("foo"));
+    this.testee.fetchClass(ClassName.fromString("foo"));
+    verify(this.source, times(1)).apply("foo");
   }
-  
+
   @Test
   public void shouldOnlyQuerySourceForAnUnknownClassOnce() {
-    testee = new Repository(source);
-    when(source.apply(anyString())).thenReturn(Option.<byte[]>none());
-    testee.hasClass(new ClassName("foo"));
-    testee.fetchClass(ClassName.fromString("foo"));
-    verify(source, times(1)).apply("foo");
+    this.testee = new Repository(this.source);
+    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    this.testee.hasClass(new ClassName("foo"));
+    this.testee.fetchClass(ClassName.fromString("foo"));
+    verify(this.source, times(1)).apply("foo");
   }
-  
-  
+
   @Test
   public void shouldReturnInfoForClassOnClassPath() {
     assertTrue(this.testee.fetchClass(Integer.class).hasSome());
   }
-  
+
   @Test
   public void shouldOnlyLookForKnownClassOnce() throws ClassNotFoundException {
-    testee = new Repository(source);
-    when(source.apply(anyString())).thenReturn(Option.some(ClassUtils.classAsBytes(String.class)));
-    testee.fetchClass(ClassName.fromString("foo"));
-    testee.fetchClass(ClassName.fromString("foo"));
-    verify(source, times(1)).apply("foo");
+    this.testee = new Repository(this.source);
+    when(this.source.apply(anyString())).thenReturn(
+        Option.some(ClassUtils.classAsBytes(String.class)));
+    this.testee.fetchClass(ClassName.fromString("foo"));
+    this.testee.fetchClass(ClassName.fromString("foo"));
+    verify(this.source, times(1)).apply("foo");
   }
 
   @Test
@@ -288,7 +291,7 @@ public class RepositoryTest {
     final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
     assertEquals("String.java", aClass.value().getSourceFileName());
   }
-  
+
   @Test
   public void shouldCalculateHashForSuppledClass() {
     this.testee.fetchClass(String.class);

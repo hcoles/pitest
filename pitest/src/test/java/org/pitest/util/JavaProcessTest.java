@@ -29,19 +29,21 @@ public class JavaProcessTest {
   @Test
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
       InterruptedException {
-    final JavaProcess jp = JavaProcess.launch(new File(System.getProperty("user.dir")),nullHandler(), nullHandler(), Collections.<String> emptyList(),
-        JavaProcessTest.class, Collections.<String> emptyList(),
-        NullJavaAgent.instance(), new ClassPath().getLocalClassPath());
+    final JavaProcess jp = JavaProcess.launch(
+        new File(System.getProperty("user.dir")), nullHandler(), nullHandler(),
+        Collections.<String> emptyList(), JavaProcessTest.class,
+        Collections.<String> emptyList(), NullJavaAgent.instance(),
+        new ClassPath().getLocalClassPath());
     assertTrue(jp.isAlive());
     assertEquals(EXIT_CODE, jp.waitToDie());
   }
 
   private SideEffect1<String> nullHandler() {
     return new SideEffect1<String>() {
-      public void apply(String a) {
+      public void apply(final String a) {
 
       }
-      
+
     };
   }
 

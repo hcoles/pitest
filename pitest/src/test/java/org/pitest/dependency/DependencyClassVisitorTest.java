@@ -93,7 +93,8 @@ public class DependencyClassVisitorTest {
     assertEquals(classesToNames(Arrays.class), this.gatheredDependencies);
     final Member foo = new Member(
         classToJvmName().apply(MakesMethodCall.class), "foo");
-    assertTrue(this.gatheredAccess.contains(new DependencyAccess(foo, new Member("java/util/Arrays", "asList"))));
+    assertTrue(this.gatheredAccess.contains(new DependencyAccess(foo,
+        new Member("java/util/Arrays", "asList"))));
   }
 
   private void examineClassWithTestee(final Class<?> clazz) throws IOException {

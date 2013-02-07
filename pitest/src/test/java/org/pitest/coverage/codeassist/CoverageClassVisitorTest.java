@@ -19,29 +19,28 @@ public class CoverageClassVisitorTest {
 
   @Mock
   private ClassWriter          w;
-  
+
   @Mock
-  private InvokeReceiver invokeQueue;
-  
+  private InvokeReceiver       invokeQueue;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    CodeCoverageStore.init(invokeQueue);
+    CodeCoverageStore.init(this.invokeQueue);
     CodeCoverageStore.reset();
-    classId = CodeCoverageStore.registerClass("foo");
-    testee = new CoverageClassVisitor(classId, w);
+    this.classId = CodeCoverageStore.registerClass("foo");
+    this.testee = new CoverageClassVisitor(this.classId, this.w);
   }
 
   @Test
   public void shouldRegisterProbesWithCodeCoverageStore() {
-    testee.registerLine(2);
-    testee.registerLine(12);
-    testee.visitEnd();
+    this.testee.registerLine(2);
+    this.testee.registerLine(12);
+    this.testee.visitEnd();
 
-    CodeCoverageStore.visitLine(CodeCoverageStore.encode(classId, 1));
+    CodeCoverageStore.visitLine(CodeCoverageStore.encode(this.classId, 1));
 
-    assertEquals(Arrays.asList(CodeCoverageStore.encode(classId, 12)),
+    assertEquals(Arrays.asList(CodeCoverageStore.encode(this.classId, 12)),
         CodeCoverageStore.getHits());
 
   }

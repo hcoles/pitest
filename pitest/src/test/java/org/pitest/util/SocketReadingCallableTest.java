@@ -1,7 +1,12 @@
 package org.pitest.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyByte;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,55 +42,56 @@ public class SocketReadingCallableTest {
   @Before
   public void setUp() throws IOException {
     MockitoAnnotations.initMocks(this);
-    testee = new SocketReadingCallable(socket, sendDataSideEffect,
-        receiveStrategy);
+    this.testee = new SocketReadingCallable(this.socket,
+        this.sendDataSideEffect, this.receiveStrategy);
 
-    when(socket.accept()).thenReturn(clientSocket);
+    when(this.socket.accept()).thenReturn(this.clientSocket);
 
-    o = new ByteArrayOutputStream();
+    this.o = new ByteArrayOutputStream();
   }
 
   @Test
   public void shouldReportTheExitCodeSentByTheSlaveProcess() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    assertEquals(ExitCode.TIMEOUT, testee.call());
+    assertEquals(ExitCode.TIMEOUT, this.testee.call());
   }
 
   @Test
   public void shouldSendInitialDataToSlave() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    testee.call();
+    this.testee.call();
     verify(this.sendDataSideEffect).apply(any(SafeDataOutputStream.class));
   }
 
   @Test
   public void shouldPassNotPassDoneCommandToReceiver() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    testee.call();
+    this.testee.call();
     verify(this.receiveStrategy, never()).apply(anyByte(),
         any(SafeDataInputStream.class));
   }
 
   @Test
   public void shouldPassCommandsToReceiver() throws Exception {
-    final SafeDataOutputStream dos = new SafeDataOutputStream(o);
+    final SafeDataOutputStream dos = new SafeDataOutputStream(this.o);
     dos.writeByte(Id.DESCRIBE);
     dos.writeByte(Id.DONE);
     dos.writeInt(ExitCode.OK.getCode());
     mockClientSocketInputStream();
-    testee.call();
+    this.testee.call();
     verify(this.receiveStrategy, times(1)).apply(anyByte(),
         any(SafeDataInputStream.class));
   }
 
   private void mockClientSocketInputStream() throws IOException {
-    final ByteArrayInputStream bis = new ByteArrayInputStream(o.toByteArray());
-    when(clientSocket.getInputStream()).thenReturn(bis);
+    final ByteArrayInputStream bis = new ByteArrayInputStream(
+        this.o.toByteArray());
+    when(this.clientSocket.getInputStream()).thenReturn(bis);
   }
 
-  private void mockClientSocketToSendExitCode(ExitCode timeout)
+  private void mockClientSocketToSendExitCode(final ExitCode timeout)
       throws IOException {
-    final SafeDataOutputStream dos = new SafeDataOutputStream(o);
+    final SafeDataOutputStream dos = new SafeDataOutputStream(this.o);
     dos.writeByte(Id.DONE);
     dos.writeInt(timeout.getCode());
     mockClientSocketInputStream();

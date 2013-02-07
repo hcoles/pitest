@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.execute;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,51 +14,50 @@ import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataInputStream;
 
-
 public class DefaultReporterTest {
 
-  private DefaultReporter testee;
-  
+  private DefaultReporter       testee;
 
   private ByteArrayOutputStream os;
-  
+
   @Before
   public void setUp() {
-    os = new ByteArrayOutputStream();
-    testee = new DefaultReporter(os);
+    this.os = new ByteArrayOutputStream();
+    this.testee = new DefaultReporter(this.os);
   }
-  
+
   @Test
   public void shouldSendMutationIdentifierToOutputStream() throws IOException {
-    MutationIdentifier mi = new MutationIdentifier("foo",0, "foo");
-    testee.describe(mi);
-    SafeDataInputStream is = resultToStream();
-    assertEquals(Id.DESCRIBE,is.readByte());
+    final MutationIdentifier mi = new MutationIdentifier("foo", 0, "foo");
+    this.testee.describe(mi);
+    final SafeDataInputStream is = resultToStream();
+    assertEquals(Id.DESCRIBE, is.readByte());
     assertEquals(is.read(MutationIdentifier.class), mi);
   }
-  
-  
+
   @Test
   public void shouldSendDetectionStatus() throws IOException {
-    MutationIdentifier mi = new MutationIdentifier("foo",0, "foo");
-    MutationStatusTestPair ms = new MutationStatusTestPair(2, DetectionStatus.KILLED, "foo");
-    testee.report(mi, ms);
-    SafeDataInputStream is = resultToStream();
-    assertEquals(Id.REPORT,is.readByte());
+    final MutationIdentifier mi = new MutationIdentifier("foo", 0, "foo");
+    final MutationStatusTestPair ms = new MutationStatusTestPair(2,
+        DetectionStatus.KILLED, "foo");
+    this.testee.report(mi, ms);
+    final SafeDataInputStream is = resultToStream();
+    assertEquals(Id.REPORT, is.readByte());
     assertEquals(is.read(MutationIdentifier.class), mi);
     assertEquals(is.read(MutationStatusTestPair.class), ms);
   }
 
   private SafeDataInputStream resultToStream() {
-    SafeDataInputStream is = new SafeDataInputStream(new ByteArrayInputStream(os.toByteArray()));
+    final SafeDataInputStream is = new SafeDataInputStream(
+        new ByteArrayInputStream(this.os.toByteArray()));
     return is;
   }
-  
+
   @Test
   public void shouldSendExitCode() {
-    testee.done(ExitCode.TIMEOUT);
-    SafeDataInputStream is = resultToStream();
-    assertEquals(Id.DONE,is.readByte());
+    this.testee.done(ExitCode.TIMEOUT);
+    final SafeDataInputStream is = resultToStream();
+    assertEquals(Id.DONE, is.readByte());
     assertEquals(is.readInt(), ExitCode.TIMEOUT.getCode());
   }
 }

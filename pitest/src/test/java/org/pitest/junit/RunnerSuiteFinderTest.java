@@ -64,10 +64,9 @@ public class RunnerSuiteFinderTest {
     final Collection<TestClass> actual = findWithTestee(CustomSuite.class);
     final Collection<TestClass> expected = Arrays.asList(new TestClass(
         One.class), new TestClass(Two.class));
-    
-    assertContains(expected,actual);
-  }
 
+    assertContains(expected, actual);
+  }
 
   public static class JUnit3Suite extends TestCase {
     public static junit.framework.Test suite() {
@@ -88,14 +87,13 @@ public class RunnerSuiteFinderTest {
     assertContains(expected, actual);
   }
 
-
   public static class JUnit3SuiteMethod extends TestCase {
-    public JUnit3SuiteMethod(String testName) {
+    public JUnit3SuiteMethod(final String testName) {
       super(testName);
     }
 
     public static junit.framework.Test suite() {
-      TestSuite suite = new TestSuite();
+      final TestSuite suite = new TestSuite();
       suite.addTest(new One());
       suite.addTest(new Two());
       return suite;
@@ -110,7 +108,7 @@ public class RunnerSuiteFinderTest {
         One.class), new TestClass(Two.class));
     assertContains(expected, actual);
   }
-  
+
   @Test
   public void shouldFindSuiteClasseInNestedJUnit3Suite() {
     final Collection<TestClass> actual = findWithTestee(com.example.JUnitThreeSuite.class);
@@ -123,10 +121,10 @@ public class RunnerSuiteFinderTest {
     return this.testee.apply(new TestClass(clazz));
   }
 
-  
-  private void assertContains(Collection<TestClass> expected,
-      Collection<TestClass> actual) {
-    assertThat(actual, hasItems(expected.toArray(new TestClass[expected.size()])));
+  private void assertContains(final Collection<TestClass> expected,
+      final Collection<TestClass> actual) {
+    assertThat(actual,
+        hasItems(expected.toArray(new TestClass[expected.size()])));
   }
 
 }

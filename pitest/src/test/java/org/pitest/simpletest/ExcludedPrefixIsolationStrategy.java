@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
 public class ExcludedPrefixIsolationStrategy implements IsolationStrategy {
 
   private final Set<String> excludedPackagePrefixes = new LinkedHashSet<String>();

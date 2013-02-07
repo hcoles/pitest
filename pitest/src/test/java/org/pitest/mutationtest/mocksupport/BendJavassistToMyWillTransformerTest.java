@@ -1,5 +1,10 @@
 package org.pitest.mutationtest.mocksupport;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import java.lang.instrument.IllegalClassFormatException;
 
 import org.junit.Before;
@@ -10,37 +15,36 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 public class BendJavassistToMyWillTransformerTest {
 
   private BendJavassistToMyWillTransformer testee;
-  
+
   @Mock
-  private Predicate<String> filter;
+  private Predicate<String>                filter;
 
-  private byte[] bytes;
+  private byte[]                           bytes;
 
-
-  
   @Before
-  public void setUp () {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new BendJavassistToMyWillTransformer(filter);
-    ClassloaderByteArraySource source = new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
-    bytes = source.apply("java.lang.String").value();
+    this.testee = new BendJavassistToMyWillTransformer(this.filter);
+    final ClassloaderByteArraySource source = new ClassloaderByteArraySource(
+        IsolationUtils.getContextClassLoader());
+    this.bytes = source.apply("java.lang.String").value();
   }
-  
+
   @Test
-  public void shouldNotTransformClassesNotMatchingFilter() throws IllegalClassFormatException {
-    when(filter.apply(any(String.class))).thenReturn(false);
-    assertNull(testee.transform(null, "foo", null, null, bytes));
+  public void shouldNotTransformClassesNotMatchingFilter()
+      throws IllegalClassFormatException {
+    when(this.filter.apply(any(String.class))).thenReturn(false);
+    assertNull(this.testee.transform(null, "foo", null, null, this.bytes));
   }
-  
+
   @Test
-  public void shouldTransformClassesMatchingFilter() throws IllegalClassFormatException {
-    when(filter.apply(any(String.class))).thenReturn(true);
-    assertFalse(null == testee.transform(null, "foo", null, null, bytes));
+  public void shouldTransformClassesMatchingFilter()
+      throws IllegalClassFormatException {
+    when(this.filter.apply(any(String.class))).thenReturn(true);
+    assertFalse(null == this.testee.transform(null, "foo", null, null,
+        this.bytes));
   }
 }

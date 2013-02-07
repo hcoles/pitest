@@ -107,7 +107,6 @@ public class DefaultCodeHistoryTest {
     assertFalse(this.testee.hasClassChanged(ClassName.fromString("foo")));
   }
 
-  
   private void setCurrentClassPath(final HierarchicalClassId currentId) {
     final ClassInfo currentClass = ClassInfoMother.make(currentId.getId());
     when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))

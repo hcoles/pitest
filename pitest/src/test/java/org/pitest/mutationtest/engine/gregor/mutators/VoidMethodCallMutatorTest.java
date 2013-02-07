@@ -94,7 +94,7 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasVoidMethodCallWithFinallyBlock(),
         mutant, "0");
   }
-  
+
   private static class HasVoidStaticMethodCall implements Callable<String> {
 
     private static int i = 0;

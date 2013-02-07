@@ -3,8 +3,8 @@ package com.example;
 import junit.framework.TestCase;
 
 public class JUnitThreeTest extends TestCase {
-  
-  public JUnitThreeTest(String name) {
+
+  public JUnitThreeTest(final String name) {
     super(name);
   }
 

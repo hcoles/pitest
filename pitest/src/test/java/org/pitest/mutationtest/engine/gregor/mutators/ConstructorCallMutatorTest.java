@@ -31,7 +31,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTe
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutatorTest.HasVoidMethodCall;
 
 public class ConstructorCallMutatorTest extends MutatorTestBase {
-  
+
   static class HasConstructorCall implements Callable<String> {
     public String call() throws Exception {
       final Integer i = new Integer(12);
@@ -62,7 +62,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
     assertFalse(findMutationsFor(HasIntMethodCall.class).contains(
         descriptionContaining("set")));
   }
- 
+
   @Test
   public void shouldNotRemoveCallsToSuper() throws Exception {
     createTesteeWith(True.<MethodInfo> all(),
@@ -71,7 +71,6 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
         descriptionContaining("java/lang/Object::<init>")));
   }
 
-  
   private static class HasDelegateConstructorCall implements Callable<String> {
 
     private final int i;
@@ -117,5 +116,5 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasArrayListConstructor.class);
     assertMutantCallableReturns(new HasArrayListConstructor(), mutant, "null");
   }
-  
+
 }

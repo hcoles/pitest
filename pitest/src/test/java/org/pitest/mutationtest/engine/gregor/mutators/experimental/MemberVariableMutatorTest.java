@@ -28,8 +28,8 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 /**
- *
- *
+ * 
+ * 
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class MemberVariableMutatorTest extends MutatorTestBase {
@@ -52,8 +52,8 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
     private Object member;
 
     public Object call() throws Exception {
-      member = TEST_OBJECT;
-      return member;
+      this.member = TEST_OBJECT;
+      return this.member;
     }
 
   }
@@ -69,7 +69,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
     private final Integer member2 = 5;
 
     public Integer call() throws Exception {
-      return member2;
+      return this.member2;
     }
   }
 
@@ -84,12 +84,12 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
     private final int member2;
 
-    public HasFinalPrimitiveMemberVariable(int i) {
+    public HasFinalPrimitiveMemberVariable(final int i) {
       this.member2 = i;
     }
 
     public Integer call() throws Exception {
-      return member2;
+      return this.member2;
     }
   }
 
@@ -111,8 +111,9 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
   static class NoInit implements Callable<Integer> {
     private int x;
+
     public Integer call() throws Exception {
-      return x;
+      return this.x;
     }
   }
 
@@ -123,14 +124,16 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
     assertTrue("Expected no mutant created/available.", mutations.isEmpty());
   }
 
-  static class HasConstantFinalPrimitiveMemberVariable implements Callable<String> {
+  static class HasConstantFinalPrimitiveMemberVariable implements
+      Callable<String> {
 
     public final int member2 = 42;
 
     public String call() throws Exception {
-      Class<?> c = getClass();
-      Integer i = (Integer)c.getField("member2").get(this);
-      return "" + member2 + "-" + i; // will be optimized by compiler to "42-" + i;
+      final Class<?> c = getClass();
+      final Integer i = (Integer) c.getField("member2").get(this);
+      return "" + this.member2 + "-" + i; // will be optimized by compiler to
+                                          // "42-" + i;
     }
   }
 
@@ -145,7 +148,8 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
         HasConstantFinalPrimitiveMemberVariable.class), mutant, "42-0");
   }
 
-  static class AssignmentAfterSomeValuesOnStack_SingleWord implements Callable<String> {
+  static class AssignmentAfterSomeValuesOnStack_SingleWord implements
+      Callable<String> {
 
     private int member = 1;
 
@@ -154,24 +158,27 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
       // aload_0
       // iconst_2
       // dup_x1
-      //      -> stack: 100, 2, this, 2
+      // -> stack: 100, 2, this, 2
       // putfield
-      //      -> stack: 100, 2
+      // -> stack: 100, 2
       // iadd
       // istore_1
-      int i = 100 + (member = 2);
-      return "" + member + " " + i;
+      final int i = 100 + (this.member = 2);
+      return "" + this.member + " " + i;
     }
   }
 
   @Test
-  public void consumesFromStackTheSameValuesAsPutfieldWouldConsume_SingleWord() throws Exception {
+  public void consumesFromStackTheSameValuesAsPutfieldWouldConsume_SingleWord()
+      throws Exception {
     createTesteeWith(mutateOnlyCallMethod(), new MemberVariableMutator());
     final Mutant mutant = getFirstMutant(AssignmentAfterSomeValuesOnStack_SingleWord.class);
-    assertMutantCallableReturns(new AssignmentAfterSomeValuesOnStack_SingleWord(), mutant, "1 102");
+    assertMutantCallableReturns(
+        new AssignmentAfterSomeValuesOnStack_SingleWord(), mutant, "1 102");
   }
 
-  static class AssignmentAfterSomeValuesOnStack_TwoWord implements Callable<String> {
+  static class AssignmentAfterSomeValuesOnStack_TwoWord implements
+      Callable<String> {
 
     private long member = 1;
 
@@ -180,20 +187,22 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
       // aload_0
       // ldc2_w 2
       // dup2_x1
-      //      -> stack: 0 100, 0 2, this, 0 2
+      // -> stack: 0 100, 0 2, this, 0 2
       // putfield
-      //      -> stack: 0 100, 0 2
+      // -> stack: 0 100, 0 2
       // ladd
       // lstore_1
-      long i = 100 + (member = 2);
-      return "" + member + " " + i;
+      final long i = 100 + (this.member = 2);
+      return "" + this.member + " " + i;
     }
   }
 
   @Test
-  public void consumesFromStackTheSameValuesAsPutfieldWouldConsume_TwoWord() throws Exception {
+  public void consumesFromStackTheSameValuesAsPutfieldWouldConsume_TwoWord()
+      throws Exception {
     createTesteeWith(mutateOnlyCallMethod(), new MemberVariableMutator());
     final Mutant mutant = getFirstMutant(AssignmentAfterSomeValuesOnStack_TwoWord.class);
-    assertMutantCallableReturns(new AssignmentAfterSomeValuesOnStack_TwoWord(), mutant, "1 102");
+    assertMutantCallableReturns(new AssignmentAfterSomeValuesOnStack_TwoWord(),
+        mutant, "1 102");
   }
 }

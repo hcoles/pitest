@@ -16,41 +16,40 @@ import org.pitest.mutationtest.report.MutationTestResultMother;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 
-
 public class KnownStatusMutationTestUnitTest {
-  
+
   private KnownStatusMutationTestUnit testee;
-  
 
   @Mock
-  private ResultCollector              rc;
+  private ResultCollector             rc;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
 
   }
-  
+
   @Test
   public void shouldCallNotifyStart() {
-    testee = new KnownStatusMutationTestUnit(Collections.<String>emptyList(),Collections.<MutationResult>emptyList());
-    testee.execute(null, rc);
+    this.testee = new KnownStatusMutationTestUnit(
+        Collections.<String> emptyList(),
+        Collections.<MutationResult> emptyList());
+    this.testee.execute(null, this.rc);
     verify(this.rc).notifyStart(this.testee.getDescription());
   }
-    
+
   @Test
   public void shouldCreateMutationMetaDataForSuppliedResults() {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.KILLED, "foo"));
-    List<String> mutators = Arrays.asList("foo","bar");
-    List<MutationResult> mutations = Arrays.asList(mr);
-    testee = new KnownStatusMutationTestUnit(mutators,mutations);
-    testee.execute(null, rc);
+    final List<String> mutators = Arrays.asList("foo", "bar");
+    final List<MutationResult> mutations = Arrays.asList(mr);
+    this.testee = new KnownStatusMutationTestUnit(mutators, mutations);
+    this.testee.execute(null, this.rc);
 
-    MutationMetaData expected = new MutationMetaData(mutators,mutations);
+    final MutationMetaData expected = new MutationMetaData(mutators, mutations);
     verify(this.rc).notifyEnd(this.testee.getDescription(), expected);
   }
-  
 
 }

@@ -126,20 +126,20 @@ public class TestGregorMutater extends MutatorTestBase {
   private static Matcher<Collection<?>> aNonEmptyCollection() {
     return new TypeSafeMatcher<Collection<?>>() {
 
-      public void describeTo(Description description) {
+      public void describeTo(final Description description) {
         description.appendText("a non empty collection");
       }
 
       @Override
-      public boolean matchesSafely(Collection<?> item) {
+      public boolean matchesSafely(final Collection<?> item) {
         return !item.isEmpty();
       }
     };
   }
 
   public static class HasAssertStatement {
-    public void foo(int i) {
-      assert (i + 20 > 10);
+    public void foo(final int i) {
+      assert ((i + 20) > 10);
     }
   }
 
@@ -153,10 +153,10 @@ public class TestGregorMutater extends MutatorTestBase {
   public static class HasAssertStatementAndOtherStatements {
     public int state;
 
-    public void foo(int i) {
-      assert (i + 20 > 10);
+    public void foo(final int i) {
+      assert ((i + 20) > 10);
       if (i > 1) {
-        state = 1;
+        this.state = 1;
       }
     }
   }
@@ -196,12 +196,12 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(OneStraightThroughMethod.class);
     assertEquals(2, actualDetails.size());
-    int firstMutationBlock = actualDetails.get(0).getBlock();
+    final int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
   }
 
   public static class SimpleBranch {
-    public void straightThrough(int i, boolean b) {
+    public void straightThrough(int i, final boolean b) {
       if (b) {
         i++;
       } else {
@@ -233,9 +233,9 @@ public class TestGregorMutater extends MutatorTestBase {
     final List<MutationDetails> actualDetails = findMutationsFor(TwoMethods.class);
     assertTwoMutationsInDifferentBlocks(actualDetails);
   }
-  
+
   public static class SwitchStatement {
-    public void a(int i, int b) {
+    public void a(int i, final int b) {
       switch (b) {
       case 0:
         i++;
@@ -255,13 +255,13 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(SwitchStatement.class);
     assertEquals(3, actualDetails.size());
-    int firstMutationBlock = actualDetails.get(0).getBlock();
+    final int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
     assertEquals(firstMutationBlock + 2, actualDetails.get(2).getBlock());
   }
-  
+
   public static class FallThroughSwitch {
-    public void a(int i, int b) {
+    public void a(int i, final int b) {
       switch (b) {
       case 0:
         i++;
@@ -270,34 +270,33 @@ public class TestGregorMutater extends MutatorTestBase {
       }
     }
   }
-  
+
   @Test
   public void shouldRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(FallThroughSwitch.class);
     assertEquals(2, actualDetails.size());
-    int firstMutationBlock = actualDetails.get(0).getBlock();
+    final int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
   }
-  
-  
+
   public static class HasExceptionBlock {
     public void foo(int i) {
       try {
         i++;
-      } catch(Exception ex) {
+      } catch (final Exception ex) {
         i++;
       }
     }
   }
-  
+
   @Test
   public void shouldRecordMutationsAsInDifferentBlocksWhenInExceptionHandler() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
     assertTwoMutationsInDifferentBlocks(actualDetails);
   }
-  
+
   @Test
   public void shouldNotRecordMutationsAsInFinallyBlockWhenTheyAreNot() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
@@ -305,7 +304,7 @@ public class TestGregorMutater extends MutatorTestBase {
     assertFalse(actualDetails.get(0).isInFinallyBlock());
     assertFalse(actualDetails.get(1).isInFinallyBlock());
   }
-  
+
   public static class HasFinallyBlock {
     public void foo(int i) {
       try {
@@ -315,59 +314,59 @@ public class TestGregorMutater extends MutatorTestBase {
       }
     }
   }
-  
-  
+
   @Test
   public void shouldMarkMutationsWithinFinallyBlocks() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlock.class);
-    assertEquals(1,FCollection.filter(actualDetails, isInFinallyBlock()).size());
+    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
+        .size());
   }
-  
-  
+
   public static class HasFinallyBlockAndExceptionHandler {
     public void foo(int i) {
       try {
         System.out.println("foo");
-      } catch(Exception x) {
+      } catch (final Exception x) {
         System.out.println("bar");
       } finally {
         i++;
       }
     }
   }
-  
+
   @Test
   public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlsoPresent() {
     createTesteeWith(Mutator.INCREMENTS.asCollection());
     final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
-    assertEquals(1,FCollection.filter(actualDetails, isInFinallyBlock()).size());
+    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
+        .size());
   }
-  
+
   @Test
   public void shouldMarkMutationsAsWithinFinallyBlockWhenWithinTryWithResourcesBlock() {
     createTesteeWith(new ResourceFolderByteArraySource(),
         True.<MethodInfo> all(), Mutator.VOID_METHOD_CALLS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor("Java7TryWithResources");
     FCollection.forEach(actualDetails, Prelude.print());
-    assertEquals(2,FCollection.filter(actualDetails, isInFinallyBlock()).size());
+    assertEquals(2, FCollection.filter(actualDetails, isInFinallyBlock())
+        .size());
   }
-  
 
   private static F<MutationDetails, Boolean> isInFinallyBlock() {
     return new F<MutationDetails, Boolean>() {
-      public Boolean apply(MutationDetails a) {
+      public Boolean apply(final MutationDetails a) {
         return a.isInFinallyBlock();
       }
-      
+
     };
   }
 
   private void assertTwoMutationsInDifferentBlocks(
       final List<MutationDetails> actualDetails) {
     assertEquals(2, actualDetails.size());
-    int firstMutationBlock = actualDetails.get(0).getBlock();
+    final int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
   }
-    
+
 }

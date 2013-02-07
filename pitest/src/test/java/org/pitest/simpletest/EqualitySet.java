@@ -68,5 +68,4 @@ public class EqualitySet<T> implements Iterable<T> {
     return this.members;
   }
 
-
 }

@@ -17,7 +17,7 @@ import org.pitest.mutationtest.report.ResultOutputStrategy;
 public class DefaultCoverageExporterTest {
 
   private DefaultCoverageExporter testee;
-  
+
   private final Writer            out = new StringWriter();
 
   @Before
@@ -28,10 +28,10 @@ public class DefaultCoverageExporterTest {
   private ResultOutputStrategy createOutputStrategy() {
     return new ResultOutputStrategy() {
 
-      public Writer createWriterForFile(String sourceFile) {
-        return out;
+      public Writer createWriterForFile(final String sourceFile) {
+        return DefaultCoverageExporterTest.this.out;
       }
-      
+
     };
   }
 
@@ -43,7 +43,6 @@ public class DefaultCoverageExporterTest {
     assertThat(this.out.toString(), containsString("<coverage>"));
     assertThat(this.out.toString(), containsString("</coverage>"));
   }
-  
 
   @Test
   public void shouldExportSuppliedCoverage() {
@@ -54,10 +53,16 @@ public class DefaultCoverageExporterTest {
             "Test4")));
     this.testee.recordCoverage(coverage);
 
-    assertThat(this.out.toString(), containsString("<line classname='Foo' number='1'>"));
-    assertThat(this.out.toString(), containsString("<line classname='Bar' number='2'>"));
-    assertThat(this.out.toString(), containsString("<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>"));
-    assertThat(this.out.toString(), containsString("<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>"));
+    assertThat(this.out.toString(),
+        containsString("<line classname='Foo' number='1'>"));
+    assertThat(this.out.toString(),
+        containsString("<line classname='Bar' number='2'>"));
+    assertThat(
+        this.out.toString(),
+        containsString("<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>"));
+    assertThat(
+        this.out.toString(),
+        containsString("<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>"));
   }
 
 }

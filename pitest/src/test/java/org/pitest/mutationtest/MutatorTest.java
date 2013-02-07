@@ -31,10 +31,9 @@ public class MutatorTest {
   @SuppressWarnings("unchecked")
   @Test
   public void shouldFlattenToGroupingsToCollectionsOfMethodMutatorFactories() {
-    assertEquals(
-        Arrays.asList(MathMutator.MATH_MUTATOR,
-            InlineConstantMutator.INLINE_CONSTANT_MUTATOR),
-        Mutator.asCollection(Mutator.MATH, Mutator.INLINE_CONSTS));
+    assertEquals(Arrays.asList(MathMutator.MATH_MUTATOR,
+        InlineConstantMutator.INLINE_CONSTANT_MUTATOR), Mutator.asCollection(
+        Mutator.MATH, Mutator.INLINE_CONSTS));
   }
 
   @Test

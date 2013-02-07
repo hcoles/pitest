@@ -12,7 +12,7 @@ import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 
-public  class ResourceFolderByteArraySource implements ClassByteArraySource {
+public class ResourceFolderByteArraySource implements ClassByteArraySource {
 
   public Option<byte[]> apply(final String classname) {
     final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());

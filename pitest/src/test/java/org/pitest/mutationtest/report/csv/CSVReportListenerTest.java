@@ -48,8 +48,10 @@ public class CSVReportListenerTest {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.KILLED, "foo"));
-    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
-    final String expected = "file,class,mutator,method,42,KILLED,foo" + NEW_LINE;
+    this.testee.handleMutationResult(MutationTestResultMother
+        .createMetaData(mr));
+    final String expected = "file,class,mutator,method,42,KILLED,foo"
+        + NEW_LINE;
     verify(this.out).write(expected);
   }
 
@@ -58,12 +60,12 @@ public class CSVReportListenerTest {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
             DetectionStatus.SURVIVED));
-    this.testee.handleMutationResult(MutationTestResultMother.createMetaData(mr));
-    final String expected = "file,class,mutator,method,42,SURVIVED,none" + NEW_LINE;
-    
+    this.testee.handleMutationResult(MutationTestResultMother
+        .createMetaData(mr));
+    final String expected = "file,class,mutator,method,42,SURVIVED,none"
+        + NEW_LINE;
+
     verify(this.out).write(expected);
   }
-
-
 
 }

@@ -55,22 +55,25 @@ public class IncrementalAnalyserTest {
   public void shouldStartPreviousSurvivedMutationsAtAStatusOfNotStartedWhenCoverageHasChanged() {
     final MutationDetails md = makeMutation("foo");
     setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
-    when(this.history.hasCoverageChanged(any(ClassName.class), any(BigInteger.class))).thenReturn(true);
+    when(
+        this.history.hasCoverageChanged(any(ClassName.class),
+            any(BigInteger.class))).thenReturn(true);
     final Collection<MutationResult> actual = this.testee.analyse(Collections
         .singletonList(md));
     assertEquals(DetectionStatus.NOT_STARTED, actual.iterator().next()
         .getStatus());
   }
-  
+
   @Test
   public void shouldStartPreviousSurvivedMutationsAtAStatusOfSurvivedWhenCoverageHasNotChanged() {
     final MutationDetails md = makeMutation("foo");
     setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
-    when(this.history.hasCoverageChanged(any(ClassName.class), any(BigInteger.class))).thenReturn(false);
+    when(
+        this.history.hasCoverageChanged(any(ClassName.class),
+            any(BigInteger.class))).thenReturn(false);
     final Collection<MutationResult> actual = this.testee.analyse(Collections
         .singletonList(md));
-    assertEquals(DetectionStatus.SURVIVED, actual.iterator().next()
-        .getStatus());
+    assertEquals(DetectionStatus.SURVIVED, actual.iterator().next().getStatus());
   }
 
   @Test
@@ -108,8 +111,8 @@ public class IncrementalAnalyserTest {
     when(this.coverage.getTestsForClass(any(ClassName.class)))
         .thenReturn(tests);
     when(this.history.hasClassChanged(any(ClassName.class))).thenReturn(false);
-    final MutationResult actual = this.testee.analyse(Collections
-        .singletonList(md)).iterator().next();
+    final MutationResult actual = this.testee
+        .analyse(Collections.singletonList(md)).iterator().next();
 
     assertEquals(DetectionStatus.KILLED, actual.getStatus());
     assertEquals(Option.some(killingTest), actual.getKillingTest());
@@ -129,11 +132,10 @@ public class IncrementalAnalyserTest {
         false);
     when(this.history.hasClassChanged(ClassName.fromString("TEST_CLASS")))
         .thenReturn(true);
-    final MutationResult actual = this.testee.analyse(Collections
-        .singletonList(md)).iterator().next();
+    final MutationResult actual = this.testee
+        .analyse(Collections.singletonList(md)).iterator().next();
 
-    assertEquals(DetectionStatus.NOT_STARTED, actual
-        .getStatus());
+    assertEquals(DetectionStatus.NOT_STARTED, actual.getStatus());
   }
 
   private MutationDetails makeMutation(final String method) {

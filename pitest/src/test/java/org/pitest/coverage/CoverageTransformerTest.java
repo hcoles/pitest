@@ -25,44 +25,52 @@ import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 public class CoverageTransformerTest {
-  
-  private ClassByteArraySource bytes = new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
-  
+
+  private final ClassByteArraySource bytes = new ClassloaderByteArraySource(
+                                               IsolationUtils
+                                                   .getContextClassLoader());
+
   @Mock
-  private InvokeReceiver invokeQueue;
+  private InvokeReceiver             invokeQueue;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    CodeCoverageStore.init(invokeQueue);
+    CodeCoverageStore.init(this.invokeQueue);
   }
-  
+
   @After
   public void tearDown() {
     CodeCoverageStore.resetAllStaticState();
   }
-  
+
   @Test
-  public void shouldNotTransformClassesNotMatchingPredicate() throws IllegalClassFormatException {
-    CoverageTransformer testee = new CoverageTransformer(False.<String>instance());
+  public void shouldNotTransformClassesNotMatchingPredicate()
+      throws IllegalClassFormatException {
+    final CoverageTransformer testee = new CoverageTransformer(
+        False.<String> instance());
     assertNull(testee.transform(null, "anything", null, null, null));
   }
-  
+
   @Test
-  public void shouldTransformClasseMatchingPredicate() throws IllegalClassFormatException {
-    CoverageTransformer testee = new CoverageTransformer(True.<String>all());
-    byte[] bs = bytes.apply(String.class.getName()).value();
-    assertFalse(Arrays.equals(bs,testee.transform(null, "anything", null, null, bs)));
+  public void shouldTransformClasseMatchingPredicate()
+      throws IllegalClassFormatException {
+    final CoverageTransformer testee = new CoverageTransformer(
+        True.<String> all());
+    final byte[] bs = this.bytes.apply(String.class.getName()).value();
+    assertFalse(Arrays.equals(bs,
+        testee.transform(null, "anything", null, null, bs)));
   }
-  
+
   @Test
   public void shouldGenerateValidClasses() throws IllegalClassFormatException {
     final StringWriter sw = new StringWriter();
-    CoverageTransformer testee = new CoverageTransformer(True.<String>all());
-    byte[] bs = testee.transform(null, String.class.getName(), null, null, bytes.apply(String.class.getName()).value());
+    final CoverageTransformer testee = new CoverageTransformer(
+        True.<String> all());
+    final byte[] bs = testee.transform(null, String.class.getName(), null,
+        null, this.bytes.apply(String.class.getName()).value());
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);
   }
- 
 
 }

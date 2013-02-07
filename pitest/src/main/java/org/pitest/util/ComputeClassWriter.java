@@ -44,15 +44,16 @@ import org.pitest.internal.ClassByteArraySource;
  * 
  * @author Eric Bruneton
  * 
- * Modified to match behaviour of default ClassWriter and cache
- * already calculated values
+ *         Modified to match behaviour of default ClassWriter and cache already
+ *         calculated values
  */
 public class ComputeClassWriter extends ClassWriter {
 
   private final ClassByteArraySource bytes;
-  private final Map<String,String> cache;
+  private final Map<String, String>  cache;
 
-  public ComputeClassWriter(final ClassByteArraySource bytes, Map<String,String> cache, final int flags) {
+  public ComputeClassWriter(final ClassByteArraySource bytes,
+      final Map<String, String> cache, final int flags) {
     super(flags);
     this.bytes = bytes;
     this.cache = cache;
@@ -60,23 +61,23 @@ public class ComputeClassWriter extends ClassWriter {
 
   @Override
   protected String getCommonSuperClass(final String type1, final String type2) {
-      final String key = type1 + "!_!" + type2;
-      String previous = cache.get(key);
-      if ( previous != null ) {
-        return previous;
-      }
-      
-      ClassReader info1 = typeInfo(type1);
-      ClassReader info2 = typeInfo(type2);
-      
-      String result = getCommonSuperClass(type1, info1, type2, info2);
-      this.cache.put(key, result);
-      return result;
-     
+    final String key = type1 + "!_!" + type2;
+    final String previous = this.cache.get(key);
+    if (previous != null) {
+      return previous;
+    }
+
+    final ClassReader info1 = typeInfo(type1);
+    final ClassReader info2 = typeInfo(type2);
+
+    final String result = getCommonSuperClass(type1, info1, type2, info2);
+    this.cache.put(key, result);
+    return result;
+
   }
 
-  private String getCommonSuperClass(String type1, ClassReader info1,
-      String type2, ClassReader info2) {
+  private String getCommonSuperClass(final String type1,
+      final ClassReader info1, final String type2, final ClassReader info2) {
     if (isInterface(info1)) {
       if (typeImplements(type2, info2, type1)) {
         return type1;
@@ -91,17 +92,18 @@ public class ComputeClassWriter extends ClassWriter {
       }
     }
 
-    StringBuilder b1 = typeAncestors(type1, info1);
-    StringBuilder b2 = typeAncestors(type2, info2);
+    final StringBuilder b1 = typeAncestors(type1, info1);
+    final StringBuilder b2 = typeAncestors(type2, info2);
     String result = "java/lang/Object";
     int end1 = b1.length();
     int end2 = b2.length();
     while (true) {
-      int start1 = b1.lastIndexOf(";", end1 - 1);
-      int start2 = b2.lastIndexOf(";", end2 - 1);
-      if (start1 != -1 && start2 != -1 && end1 - start1 == end2 - start2) {
-        String p1 = b1.substring(start1 + 1, end1);
-        String p2 = b2.substring(start2 + 1, end2);
+      final int start1 = b1.lastIndexOf(";", end1 - 1);
+      final int start2 = b2.lastIndexOf(";", end2 - 1);
+      if ((start1 != -1) && (start2 != -1)
+          && ((end1 - start1) == (end2 - start2))) {
+        final String p1 = b1.substring(start1 + 1, end1);
+        final String p2 = b2.substring(start2 + 1, end2);
         if (p1.equals(p2)) {
           result = p1;
           end1 = start1;
@@ -116,7 +118,7 @@ public class ComputeClassWriter extends ClassWriter {
 
   }
 
-  private boolean isInterface(ClassReader info1) {
+  private boolean isInterface(final ClassReader info1) {
     return (info1.getAccess() & Opcodes.ACC_INTERFACE) != 0;
   }
 
@@ -134,7 +136,7 @@ public class ComputeClassWriter extends ClassWriter {
    *         is empty.
    */
   private StringBuilder typeAncestors(String type, ClassReader info) {
-    StringBuilder b = new StringBuilder();
+    final StringBuilder b = new StringBuilder();
     while (!"java/lang/Object".equals(type)) {
       b.append(';').append(type);
       type = info.getSuperName();
@@ -154,17 +156,17 @@ public class ComputeClassWriter extends ClassWriter {
    *          the internal name of a interface.
    * @return true if 'type' implements directly or indirectly 'itf'
    */
-  private boolean typeImplements(String type, ClassReader info, String itf) {
+  private boolean typeImplements(String type, ClassReader info, final String itf) {
     final String cleanItf = itf.replace(".", "/");
     while (!"java/lang/Object".equals(type)) {
-      String[] itfs = info.getInterfaces();
-      for (int i = 0; i < itfs.length; ++i) {
-        if (itfs[i].equals(cleanItf)) {
+      final String[] itfs = info.getInterfaces();
+      for (final String itf2 : itfs) {
+        if (itf2.equals(cleanItf)) {
           return true;
         }
       }
-      for (int i = 0; i < itfs.length; ++i) {
-        if (typeImplements(itfs[i], typeInfo(itfs[i]), cleanItf)) {
+      for (final String itf2 : itfs) {
+        if (typeImplements(itf2, typeInfo(itf2), cleanItf)) {
           return true;
         }
       }

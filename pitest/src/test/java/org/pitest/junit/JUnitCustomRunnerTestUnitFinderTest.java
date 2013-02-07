@@ -39,6 +39,7 @@ import org.junit.runners.model.RunnerBuilder;
 import org.mockito.MockitoAnnotations;
 import org.pitest.extension.TestUnit;
 
+import com.example.JUnitParamsTest;
 import com.example.TheoryTest;
 
 public class JUnitCustomRunnerTestUnitFinderTest {
@@ -232,23 +233,23 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     final Collection<TestUnit> actual = findWithTestee(HasAfterClassAnnotation.class);
     assertEquals(1, actual.size());
   }
-  
+
   public static class NoPublicConstructor extends TestCase {
     protected NoPublicConstructor() {
-      
+
     }
-    
+
     public void testFoo() {
-      
+
     }
   }
-  
+
   @Test
   public void shouldNotFindTestsInClassesExtendingTestCaseWithoutAPublicConstructor() {
     final Collection<TestUnit> actual = findWithTestee(NoPublicConstructor.class);
     assertEquals(0, actual.size());
   }
-  
+
   public static class OwnSuiteMethod extends TestCase {
 
     public static TestSuite suite() {
@@ -258,32 +259,37 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     public void testOne() {
 
     }
-    
+
     public void testTwo() {
 
     }
 
   }
-  
+
   @Test
   public void shouldFindTestsInClassWithASuiteMethodThatReturnsItself() {
     final Collection<TestUnit> actual = findWithTestee(OwnSuiteMethod.class);
     assertEquals(2, actual.size());
   }
- 
-  
+
   public static class SuiteMethod extends TestCase {
 
     public static TestSuite suite() {
       return new TestSuite(JUnit3Test.class);
     }
-        
+
   }
-  
+
   @Test
-  public void shouldNotFoundTestsInClassWithASuiteMethodThatReturnsOthersClasses() {
+  public void shouldNotFindTestsInClassWithASuiteMethodThatReturnsOthersClasses() {
     final Collection<TestUnit> actual = findWithTestee(SuiteMethod.class);
     assertEquals(0, actual.size());
+  }
+
+  @Test
+  public void willFindSingleTestUnitInJUnitParamsTest() {
+    final Collection<TestUnit> actual = findWithTestee(JUnitParamsTest.class);
+    assertEquals(1, actual.size());
   }
 
 }

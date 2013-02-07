@@ -46,7 +46,7 @@ public class CodeCoverageStoreTest {
     MockitoAnnotations.initMocks(this);
     CodeCoverageStore.init(this.receiver);
   }
-  
+
   @After
   public void cleanUp() {
     CodeCoverageStore.resetAllStaticState();
@@ -67,82 +67,90 @@ public class CodeCoverageStoreTest {
 
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMaximum() {
-    long value = CodeCoverageStore.encode(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    final long value = CodeCoverageStore.encode(Integer.MAX_VALUE,
+        Integer.MAX_VALUE);
     assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeClassId(value));
     assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeLineId(value));
   }
-  
+
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMinimum() {
-    long value = CodeCoverageStore.encode(Integer.MIN_VALUE, 0);
+    final long value = CodeCoverageStore.encode(Integer.MIN_VALUE, 0);
     assertEquals(Integer.MIN_VALUE, CodeCoverageStore.decodeClassId(value));
     assertEquals(0, CodeCoverageStore.decodeLineId(value));
   }
-  
+
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreZero() {
-    long value = CodeCoverageStore.encode(0, 0);
+    final long value = CodeCoverageStore.encode(0, 0);
     assertEquals(0, CodeCoverageStore.decodeClassId(value));
     assertEquals(0, CodeCoverageStore.decodeLineId(value));
   }
 
   @Test
   public void shouldReturnRegisteredHitsWhenSingleClassCovered() {
-    int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(classId, new int[]{10,20,30,42});
-    long line10 = CodeCoverageStore.encode(classId, 0);
-    long line42 = CodeCoverageStore.encode(classId, 3);
-    
+    final int classId = CodeCoverageStore.registerClass("foo");
+    CodeCoverageStore
+        .registerClassProbes(classId, new int[] { 10, 20, 30, 42 });
+    final long line10 = CodeCoverageStore.encode(classId, 0);
+    final long line42 = CodeCoverageStore.encode(classId, 3);
+
     CodeCoverageStore.visitLine(line10);
     CodeCoverageStore.visitLine(line42);
-    
-    Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(actual, hasItems(CodeCoverageStore.encode(classId,10), CodeCoverageStore.encode(classId,42)));
+
+    final Collection<Long> actual = CodeCoverageStore.getHits();
+    assertThat(
+        actual,
+        hasItems(CodeCoverageStore.encode(classId, 10),
+            CodeCoverageStore.encode(classId, 42)));
   }
-  
+
   @Test
   public void shouldReturnRegisteredHitsWhenMultipleClassesCovered() {
-    int fooId = CodeCoverageStore.registerClass("foo");
-    int barId = CodeCoverageStore.registerClass("bar");
-    CodeCoverageStore.registerClassProbes(fooId, new int[]{13,20,30,42});
-    CodeCoverageStore.registerClassProbes(barId, new int[]{11});
-    long line20 = CodeCoverageStore.encode(fooId, 1);
-    long line0 = CodeCoverageStore.encode(barId, 0);
-    
+    final int fooId = CodeCoverageStore.registerClass("foo");
+    final int barId = CodeCoverageStore.registerClass("bar");
+    CodeCoverageStore.registerClassProbes(fooId, new int[] { 13, 20, 30, 42 });
+    CodeCoverageStore.registerClassProbes(barId, new int[] { 11 });
+    final long line20 = CodeCoverageStore.encode(fooId, 1);
+    final long line0 = CodeCoverageStore.encode(barId, 0);
+
     CodeCoverageStore.visitLine(line20);
     CodeCoverageStore.visitLine(line0);
-    
-    Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(actual, hasItems(CodeCoverageStore.encode(barId,11), CodeCoverageStore.encode(fooId,20)));
+
+    final Collection<Long> actual = CodeCoverageStore.getHits();
+    assertThat(
+        actual,
+        hasItems(CodeCoverageStore.encode(barId, 11),
+            CodeCoverageStore.encode(fooId, 20)));
   }
-  
+
   @Test
   public void shouldClearHitCountersWhenReset() {
-    int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(classId, new int[]{10});
-    long line10 = CodeCoverageStore.encode(classId, 0);
-    
+    final int classId = CodeCoverageStore.registerClass("foo");
+    CodeCoverageStore.registerClassProbes(classId, new int[] { 10 });
+    final long line10 = CodeCoverageStore.encode(classId, 0);
+
     CodeCoverageStore.visitLine(line10);
     CodeCoverageStore.reset();
-    
-    Collection<Long> actual = CodeCoverageStore.getHits();
+
+    final Collection<Long> actual = CodeCoverageStore.getHits();
     assertEquals(Collections.emptyList(), actual);
   }
-  
+
   @Test
   public void shouldBeSafeToAccessAcrossMultipleThreads()
       throws InterruptedException, ExecutionException {
 
     CodeCoverageStore.registerClass("foo");
     CodeCoverageStore.registerClassProbes(0, new int[1000]);
-    
-    Callable<ConcurrentModificationException> read = makeReader();
 
-    ExecutorService pool = Executors.newFixedThreadPool(13);
-    for ( int i = 1; i != 13; i++ ) {
-      pool.submit( makeWriter(i));
+    final Callable<ConcurrentModificationException> read = makeReader();
+
+    final ExecutorService pool = Executors.newFixedThreadPool(13);
+    for (int i = 1; i != 13; i++) {
+      pool.submit(makeWriter(i));
     }
-    Future<ConcurrentModificationException> future = pool.submit(read);
+    final Future<ConcurrentModificationException> future = pool.submit(read);
     pool.shutdown();
 
     assertNull(future.get());
@@ -150,14 +158,14 @@ public class CodeCoverageStoreTest {
   }
 
   private Callable<ConcurrentModificationException> makeReader() {
-    Callable<ConcurrentModificationException> read = new Callable<ConcurrentModificationException>() {
+    final Callable<ConcurrentModificationException> read = new Callable<ConcurrentModificationException>() {
       public ConcurrentModificationException call() throws Exception {
         ConcurrentModificationException error = null;
         try {
           pointlesslyIterateCollection();
           pointlesslyIterateCollection();
           pointlesslyIterateCollection();
-        } catch (ConcurrentModificationException ex) {
+        } catch (final ConcurrentModificationException ex) {
           error = ex;
         }
         return error;
@@ -165,12 +173,12 @@ public class CodeCoverageStoreTest {
 
       private long pointlesslyIterateCollection() {
         long total = 0;
-        for (Long i : CodeCoverageStore.getHits()) {
+        for (final Long i : CodeCoverageStore.getHits()) {
           total += i;
           try {
             Thread.sleep(5);
-          } catch (InterruptedException e) {
- 
+          } catch (final InterruptedException e) {
+
           }
         }
         return total;
@@ -180,13 +188,13 @@ public class CodeCoverageStoreTest {
   }
 
   private static Runnable makeWriter(final int sleepPeriod) {
-    Runnable write = new Runnable() {
+    final Runnable write = new Runnable() {
 
       public void run() {
         for (int i = 0; i != 1000; i++) {
           try {
             Thread.sleep(sleepPeriod);
-          } catch (InterruptedException e) {
+          } catch (final InterruptedException e) {
           }
           CodeCoverageStore.visitLine(i);
         }

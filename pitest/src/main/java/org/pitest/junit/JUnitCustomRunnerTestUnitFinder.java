@@ -48,7 +48,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     }
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
-        && !shouldTreatAsOneUnit(clazz)) {
+        && !shouldTreatAsOneUnit(clazz, runner)) {
       return splitIntoFilteredUnits(runner.getDescription());
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
@@ -69,9 +69,10 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
             .startsWith("junit.framework.TestSuite");
   }
 
-  private boolean shouldTreatAsOneUnit(final Class<?> clazz) {
+  private boolean shouldTreatAsOneUnit(final Class<?> clazz, final Runner runner) {
     final Set<Method> methods = Reflection.allMethods(clazz);
-    return hasAnnotation(methods, BeforeClass.class)
+    return runnerCannotBeSplit(runner)
+        || hasAnnotation(methods, BeforeClass.class)
         || hasAnnotation(methods, AfterClass.class);
   }
 
@@ -82,6 +83,10 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean isParameterizedTest(final Runner runner) {
     return Parameterized.class.isAssignableFrom(runner.getClass());
+  }
+
+  private boolean runnerCannotBeSplit(final Runner runner) {
+    return runner.getClass().getName().equals("junitparams.JUnitParamsRunner");
   }
 
   private boolean isJUnitThreeSuiteMethodNotForOwnClass(final Runner runner,

@@ -199,8 +199,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED, KILLED, TIMED_OUT);
   }
 
-
-
   @Test
   public void shouldWorkWithMockitoJUnitRunner() {
     this.data.setTargetClasses(predicateFor("com.example.MockitoCallFoo"));
@@ -209,7 +207,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
     verifyResults(KILLED);
   }
-
 
   @Test(expected = PitHelpError.class)
   public void shouldReportHelpfulErrorIfNoMutationsFounds() {
@@ -299,31 +296,29 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(RUN_ERROR);
 
   }
-  
+
   @Test
   public void shouldCombineAndKillInlinedMutationsInFinallyBlocks() {
     this.data.setMutators(Mutator.INCREMENTS.asCollection());
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
-    this.data
-        .setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
+    this.data.setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
     this.data.setDetectInlinedCode(true);
     createAndRun();
 
     verifyResults(KILLED);
   }
-  
+
   @Test
   public void shouldUseTestsDefinedInASuppliedJUnitThreeSuite() {
     this.data.setMutators(Mutator.RETURN_VALS.asCollection());
     this.data.setTargetClasses(predicateFor(CoveredByJUnitThreeSuite.class));
-    this.data
-        .setTargetTests(predicateFor(JUnitThreeSuite.class));
+    this.data.setTargetTests(predicateFor(JUnitThreeSuite.class));
     this.data.setVerbose(true);
     createAndRun();
 
     verifyResults(KILLED);
   }
-  
+
   @Test
   public void shouldReportCombinedCoveredButNotTestedMutationsInFinallyBlocksAsSurvived() {
     this.data.setMutators(Mutator.INCREMENTS.asCollection());
@@ -335,7 +330,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     verifyResults(SURVIVED);
   }
-
 
   private void createAndRun() {
     createAndRun(new JUnitCompatibleConfiguration());
@@ -356,15 +350,16 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final Timings timings = new Timings();
-      CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig().testClassIdentifier());
+      final CodeSource code = new CodeSource(cps, coverageOptions
+          .getPitConfig().testClassIdentifier());
 
-      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(null,
-          coverageOptions, launchOptions, code, new NullCoverageExporter(),timings, false);
-      
-      
+      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
+          null, coverageOptions, launchOptions, code,
+          new NullCoverageExporter(), timings, false);
+
       final HistoryStore history = new NullHistoryStore();
-      
-      final MutationCoverage testee = new MutationCoverage(null,history, code,
+
+      final MutationCoverage testee = new MutationCoverage(null, history, code,
           coverageDatabase, this.data, listenerFactory(), timings,
           new DefaultBuildVerifier());
 

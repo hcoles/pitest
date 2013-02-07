@@ -52,9 +52,8 @@ public abstract class MutatorTestBase {
       final Class<?> clazz) {
     return this.engine.findMutations(new ClassName(clazz));
   }
-  
-  protected FunctionalList<MutationDetails> findMutationsFor(
-      final String clazz) {
+
+  protected FunctionalList<MutationDetails> findMutationsFor(final String clazz) {
     return this.engine.findMutations(new ClassName(clazz));
   }
 
@@ -65,20 +64,19 @@ public abstract class MutatorTestBase {
   }
 
   private Collection<String> filteredClasses() {
-    return Arrays.asList(Logger.class
-        .getName(), StringBuilder.class.getName());
+    return Arrays.asList(Logger.class.getName(), StringBuilder.class.getName());
   }
 
-  protected void createTesteeWith(final ClassByteArraySource source, final Predicate<MethodInfo> filter,
+  protected void createTesteeWith(final ClassByteArraySource source,
+      final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    this.engine = new GregorMutater(source, filter,
-        mutators, filteredClasses(), filter());
+    this.engine = new GregorMutater(source, filter, mutators,
+        filteredClasses(), filter());
   }
-  
+
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    createTesteeWith(new ClassPathByteArraySource(), filter,
-        mutators);
+    createTesteeWith(new ClassPathByteArraySource(), filter, mutators);
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -91,7 +89,7 @@ public abstract class MutatorTestBase {
   private final InlinedCodeFilter filter() {
     return new NoInlinedCodeDetection();
   }
-  
+
   protected void createTesteeWith(
       final Collection<MethodMutatorFactory> mutators) {
     createTesteeWith(True.<MethodInfo> all(), mutators);
@@ -185,10 +183,11 @@ public abstract class MutatorTestBase {
   }
 
   protected void printMutant(final Mutant mutant) {
-  //  final ASMifierClassVisitor asm = new ASMifierClassVisitor(new PrintWriter(
-  //      System.out));
-   // final ClassReader r = new ClassReader(mutant.getBytes());
-    //r.accept(asm, ClassReader.SKIP_FRAMES);
+    // final ASMifierClassVisitor asm = new ASMifierClassVisitor(new
+    // PrintWriter(
+    // System.out));
+    // final ClassReader r = new ClassReader(mutant.getBytes());
+    // r.accept(asm, ClassReader.SKIP_FRAMES);
   }
 
   protected void assertMutantsReturn(final Callable<String> mutee,

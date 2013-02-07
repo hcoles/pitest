@@ -42,22 +42,23 @@ public class DependencyFilterTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
 
-    aTestUnit = makeTestUnit(new Description("foo", String.class));
-    anotherTestUnit = makeTestUnit(new Description("bar", Integer.class));
+    this.aTestUnit = makeTestUnit(new Description("foo", String.class));
+    this.anotherTestUnit = makeTestUnit(new Description("bar", Integer.class));
 
-    testee = new DependencyFilter(extractor, null);
-    tus = Arrays.asList(aTestUnit, anotherTestUnit);
+    this.testee = new DependencyFilter(this.extractor, null);
+    this.tus = Arrays.asList(this.aTestUnit, this.anotherTestUnit);
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void shouldNotPerformAnalysisWhenDependencyDistanceIsLessThan0()
       throws IOException {
-    when(extractor.getMaxDistance()).thenReturn(-1);
-    List<TestUnit> actual = testee.filterTestsByDependencyAnalysis(tus);
-    assertSame(tus, actual);
-    verify(extractor, never()).extractCallDependenciesForPackages(anyString(),
-        any(Predicate.class));
+    when(this.extractor.getMaxDistance()).thenReturn(-1);
+    final List<TestUnit> actual = this.testee
+        .filterTestsByDependencyAnalysis(this.tus);
+    assertSame(this.tus, actual);
+    verify(this.extractor, never()).extractCallDependenciesForPackages(
+        anyString(), any(Predicate.class));
   }
 
   @SuppressWarnings("unchecked")
@@ -65,16 +66,16 @@ public class DependencyFilterTest {
   public void shouldReturnOnlyTestUnitsForClassesWithinReach()
       throws IOException {
     when(
-        this.extractor.extractCallDependenciesForPackages(eq(aTestUnit
+        this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
             .getDescription().getFirstTestClass()), any(Predicate.class)))
         .thenReturn(Arrays.asList("foo"));
     when(
-        this.extractor.extractCallDependenciesForPackages(eq(anotherTestUnit
-            .getDescription().getFirstTestClass()), any(Predicate.class)))
-        .thenReturn(Collections.<String> emptyList());
+        this.extractor.extractCallDependenciesForPackages(
+            eq(this.anotherTestUnit.getDescription().getFirstTestClass()),
+            any(Predicate.class))).thenReturn(Collections.<String> emptyList());
 
-    assertEquals(Arrays.asList(aTestUnit),
-        testee.filterTestsByDependencyAnalysis(tus));
+    assertEquals(Arrays.asList(this.aTestUnit),
+        this.testee.filterTestsByDependencyAnalysis(this.tus));
 
   }
 
@@ -84,22 +85,22 @@ public class DependencyFilterTest {
       throws IOException {
 
     when(
-        this.extractor.extractCallDependenciesForPackages(eq(aTestUnit
+        this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
             .getDescription().getFirstTestClass()), any(Predicate.class)))
         .thenReturn(Arrays.asList("foo"));
 
-    tus = Arrays.asList(aTestUnit, aTestUnit);
+    this.tus = Arrays.asList(this.aTestUnit, this.aTestUnit);
 
-    testee.filterTestsByDependencyAnalysis(tus);
-    verify(extractor, times(1)).extractCallDependenciesForPackages(
-        eq(aTestUnit.getDescription().getFirstTestClass()),
+    this.testee.filterTestsByDependencyAnalysis(this.tus);
+    verify(this.extractor, times(1)).extractCallDependenciesForPackages(
+        eq(this.aTestUnit.getDescription().getFirstTestClass()),
         any(Predicate.class));
   }
 
   private TestUnit makeTestUnit(final Description d) {
     return new TestUnit() {
 
-      public void execute(ClassLoader loader, ResultCollector rc) {
+      public void execute(final ClassLoader loader, final ResultCollector rc) {
 
       }
 

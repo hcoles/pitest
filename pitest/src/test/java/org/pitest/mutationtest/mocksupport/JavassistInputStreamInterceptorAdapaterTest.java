@@ -1,13 +1,13 @@
 package org.pitest.mutationtest.mocksupport;
 
+import static org.mockito.Mockito.verify;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import static org.mockito.Mockito.*;
 
 public class JavassistInputStreamInterceptorAdapaterTest {
 
@@ -19,33 +19,35 @@ public class JavassistInputStreamInterceptorAdapaterTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new JavassistInputStreamInterceptorMethodVisitor(mv);
+    this.testee = new JavassistInputStreamInterceptorMethodVisitor(this.mv);
   }
 
   @Test
   public void shouldNotInterceptNormalInvokeInterfaceCalls() {
-    testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far");
-    verify(mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far");
+    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far");
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar",
+        "far");
   }
-  
+
   @Test
   public void shouldNotInterceptNormalInvokeStaticCalls() {
-    testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
-    verify(mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
+    this.testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
   }
-  
+
   @Test
   public void shouldNotInterceptCallsToMethodsCalledOpenClassFileNotInJavaAssist() {
-    testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo",
+    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo",
         "openClassfile", "far");
-    verify(mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "openClassfile", "far");
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo",
+        "openClassfile", "far");
   }
 
   @Test
   public void shouldInterceptCallsToOpenClassFileInJavaAssist() {
-    testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "javassist/ClassPath",
+    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "javassist/ClassPath",
         "openClassfile", "far");
-    verify(mv).visitMethodInsn(Opcodes.INVOKESTATIC,
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC,
         "org/pitest/mutationtest/mocksupport/JavassistInterceptor",
         "openClassfile",
         "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;");

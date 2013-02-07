@@ -21,67 +21,74 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.util.JavaAgent;
 
 public class MutationTestBuilderTest {
-  
+
   private MutationTestBuilder testee;
-  
-  private ReportOptions         data;
-  
-  private MutationConfig        mutationConfig;
-  
-  @Mock
-  private MutationEngine engine;
-  
+
+  private ReportOptions       data;
+
+  private MutationConfig      mutationConfig;
 
   @Mock
-  private MutationSource source;
-  
-  @Mock
-  private JavaAgent javaAgent;
+  private MutationEngine      engine;
 
   @Mock
-  private Configuration configuration;
-  
+  private MutationSource      source;
+
+  @Mock
+  private JavaAgent           javaAgent;
+
+  @Mock
+  private Configuration       configuration;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    data = new ReportOptions();
-    mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
-    testee = new MutationTestBuilder(null,mutationConfig,   new NullAnalyser(), source, data, configuration, javaAgent);
+    this.data = new ReportOptions();
+    this.mutationConfig = new MutationConfig(this.engine,
+        Collections.<String> emptyList());
+    this.testee = new MutationTestBuilder(null, this.mutationConfig,
+        new NullAnalyser(), this.source, this.data, this.configuration,
+        this.javaAgent);
   }
-  
 
   @Test
   public void shouldCreateSingleUnitPerClassWhenUnitSizeIsZero() {
-    data.setMutationUnitSize(0);
+    this.data.setMutationUnitSize(0);
     assertCreatesOneTestUnitForTwoMutations();
   }
-  
+
   @Test
   public void shouldCreateSingleUnitPerClassWhenUnitSizeIsLessThanZero() {
-    data.setMutationUnitSize(-1);
+    this.data.setMutationUnitSize(-1);
     assertCreatesOneTestUnitForTwoMutations();
   }
 
   @Test
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
-    data.setMutationUnitSize(1);
-    when(source.createMutations(any(ClassName.class))).thenReturn(Arrays.asList(createDetails(),createDetails(),createDetails()));
-    List<TestUnit> actual = testee.createMutationTestUnits(Arrays.asList(new ClassName("foo")));
-    assertEquals(3,actual.size());
+    this.data.setMutationUnitSize(1);
+    when(this.source.createMutations(any(ClassName.class))).thenReturn(
+        Arrays.asList(createDetails(), createDetails(), createDetails()));
+    final List<TestUnit> actual = this.testee.createMutationTestUnits(Arrays
+        .asList(new ClassName("foo")));
+    assertEquals(3, actual.size());
   }
-  
+
   @Test
   public void shouldCreateNoUnitsWhenNoMutationsFound() {
-    when(source.createMutations(any(ClassName.class))).thenReturn(Collections.<MutationDetails>emptyList());
-    assertTrue(testee.createMutationTestUnits(Arrays.asList(new ClassName("foo"))).isEmpty());
+    when(this.source.createMutations(any(ClassName.class))).thenReturn(
+        Collections.<MutationDetails> emptyList());
+    assertTrue(this.testee.createMutationTestUnits(
+        Arrays.asList(new ClassName("foo"))).isEmpty());
   }
-  
+
   private void assertCreatesOneTestUnitForTwoMutations() {
-    MutationDetails mutation1 = createDetails();
-    MutationDetails mutation2 = createDetails();
-    when(source.createMutations(any(ClassName.class))).thenReturn(Arrays.asList(mutation1,mutation2));
-    List<TestUnit> actual = testee.createMutationTestUnits(Arrays.asList(new ClassName("foo")));
-    assertEquals(1,actual.size());
+    final MutationDetails mutation1 = createDetails();
+    final MutationDetails mutation2 = createDetails();
+    when(this.source.createMutations(any(ClassName.class))).thenReturn(
+        Arrays.asList(mutation1, mutation2));
+    final List<TestUnit> actual = this.testee.createMutationTestUnits(Arrays
+        .asList(new ClassName("foo")));
+    assertEquals(1, actual.size());
   }
-  
+
 }

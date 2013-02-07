@@ -42,6 +42,8 @@ import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
+import com.example.JUnitParamsTest;
+
 public class TestJUnitConfiguration {
 
   private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
@@ -504,12 +506,12 @@ public class TestJUnitConfiguration {
   }
 
   public static class JUnit3SuiteMethod extends TestCase {
-    public JUnit3SuiteMethod(String testName) {
+    public JUnit3SuiteMethod(final String testName) {
       super(testName);
     }
 
     public static junit.framework.Test suite() {
-      TestSuite suite = new TestSuite();
+      final TestSuite suite = new TestSuite();
       suite.addTest(new JUnit3Test());
       return suite;
     }
@@ -543,24 +545,30 @@ public class TestJUnitConfiguration {
         Arrays.<Class<?>> asList(OwnSuiteMethod.class));
     assertEquals(1, actual.size());
   }
-  
-  
+
   public static class NoSuitableConstructor extends TestCase {
-    public NoSuitableConstructor(int i, int j, long l) {
-      
+    public NoSuitableConstructor(final int i, final int j, final long l) {
+
     }
-    
+
     public void testSomething() {
-      
+
     }
   }
-  
+
   @Test
   public void shouldNotFindTestsInJUnit3TestsWithoutASuitableConstructor() {
     final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
         this.testee, new UnGroupedStrategy(),
         Arrays.<Class<?>> asList(NoSuitableConstructor.class));
     assertEquals(0, actual.size());
+  }
+
+  @Test
+  // see http://code.google.com/p/junitparams/
+  public void shouldFindTestInJUnitParamsTest() {
+    run(JUnitParamsTest.class);
+    verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
   private void run(final Class<?> clazz) {

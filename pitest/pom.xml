@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>pitest-parent</artifactId>
@@ -19,11 +20,11 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
-					  <manifest>
-                        <mainClass>org.pitest.mutationtest.MutationCoverageReport</mainClass>
-                          <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                       </manifest>
-					   <index>true</index>
+						<manifest>
+							<mainClass>org.pitest.mutationtest.MutationCoverageReport</mainClass>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<index>true</index>
 					</archive>
 				</configuration>
 			</plugin>
@@ -42,7 +43,7 @@
 						<exclude>**/com/*/**.java</exclude>
 						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
 					</excludes>
-		            <excludedGroups>org.pitest.SystemTest</excludedGroups>
+					<excludedGroups>org.pitest.SystemTest</excludedGroups>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -52,7 +53,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.12</version>
@@ -67,14 +68,14 @@
 
 					<!-- for PowerMockAgentTest -javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -->
 					<argLine>-Dfoo=foo</argLine>
-				
+
 					<groups>org.pitest.SystemTest</groups>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
 						</goals>
 						<configuration>
 							<includes>
@@ -109,7 +110,8 @@
 							</artifactSet>
 
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 							</transformers>
 
 							<relocations>
@@ -182,7 +184,8 @@
 									issue with maven-shade-plugin There appears to be some stale state from previous 
 									executions of the Shade plugin, which manifest themselves as "We have a duplicate" 
 									warnings on build and also as some classes not being updated on build. -->
-								<delete file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
+								<delete
+									file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
 							</target>
 						</configuration>
 					</execution>
@@ -209,13 +212,13 @@
 			<artifactId>stringtemplate</artifactId>
 			<version>3.2.1</version>
 		</dependency>
-<dependency>
-	<groupId>org.ow2.asm</groupId>
-	<artifactId>asm</artifactId>
-	<version>4.0</version>
-</dependency>
 		<dependency>
-		<groupId>org.ow2.asm</groupId>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-commons</artifactId>
 			<version>4.0</version>
 		</dependency>
@@ -228,7 +231,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-            <scope>compile</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
@@ -269,22 +272,28 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+			<version>${testng.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>pl.pragmatists</groupId>
+			<artifactId>JUnitParams</artifactId>
+			<version>0.9.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

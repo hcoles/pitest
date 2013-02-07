@@ -11,12 +11,12 @@ public class SpinnerListenerTest {
 
   @Test
   public void shouldPrintSpinnerSequence() {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    PrintStream out = new PrintStream(bos);
-    SpinnerListener testee = new SpinnerListener(out);
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    final PrintStream out = new PrintStream(bos);
+    final SpinnerListener testee = new SpinnerListener(out);
     testee.handleMutationResult(null);
     testee.handleMutationResult(null);
-    assertEquals("\u0008/\u0008-",  new String(bos.toByteArray()));
+    assertEquals("\u0008/\u0008-", new String(bos.toByteArray()));
   }
 
 }

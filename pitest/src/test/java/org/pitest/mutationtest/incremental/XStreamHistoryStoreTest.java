@@ -35,43 +35,46 @@ import org.pitest.mutationtest.results.MutationResult;
 
 public class XStreamHistoryStoreTest {
 
-  private final static String COV = BigInteger.TEN.toString(16);
-  
-  private XStreamHistoryStore testee;
-  
-  @Mock
-  private CoverageDatabase coverage;
+  private final static String COV           = BigInteger.TEN.toString(16);
 
-  private final Writer        output = new StringWriter();
+  private XStreamHistoryStore testee;
+
+  @Mock
+  private CoverageDatabase    coverage;
+
+  private final Writer        output        = new StringWriter();
 
   private final WriterFactory writerFactory = new WriterFactory() {
 
-    public PrintWriter create() {
-      return new PrintWriter(output);
-    }
+                                              public PrintWriter create() {
+                                                return new PrintWriter(
+                                                    XStreamHistoryStoreTest.this.output);
+                                              }
 
-    public void close() {
-      
-    }
-    
-  };
-  
+                                              public void close() {
+
+                                              }
+
+                                            };
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(coverage.getCoverageIdForClass(any(ClassName.class))).thenReturn( BigInteger.TEN);
+    when(this.coverage.getCoverageIdForClass(any(ClassName.class))).thenReturn(
+        BigInteger.TEN);
   }
-  
+
   @Test
   public void shouldRecordAndRetrieveClassPath() {
-    final ClassHistory foo = new ClassHistory(new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("foo")),""), COV);
-    final ClassHistory bar = new ClassHistory(new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("bar")),""), COV);
+    final ClassHistory foo = new ClassHistory(new HierarchicalClassId(
+        new ClassIdentifier(0, ClassName.fromString("foo")), ""), COV);
+    final ClassHistory bar = new ClassHistory(new HierarchicalClassId(
+        new ClassIdentifier(0, ClassName.fromString("bar")), ""), COV);
     recordClassPathWithTestee(foo.getId(), bar.getId());
 
     final Reader reader = new StringReader(this.output.toString());
-    this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
+    this.testee = new XStreamHistoryStore(this.writerFactory,
+        Option.some(reader));
     this.testee.initialize();
 
     final Map<ClassName, ClassHistory> expected = new HashMap<ClassName, ClassHistory>();
@@ -82,8 +85,8 @@ public class XStreamHistoryStoreTest {
 
   @Test
   public void shouldRecordAndRetrieveResults() {
-    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("foo")),"");
+    final HierarchicalClassId foo = new HierarchicalClassId(
+        new ClassIdentifier(0, ClassName.fromString("foo")), "");
     recordClassPathWithTestee(foo);
 
     final MutationResult mr = new MutationResult(
@@ -93,7 +96,8 @@ public class XStreamHistoryStoreTest {
     this.testee.recordResult(mr);
 
     final Reader reader = new StringReader(this.output.toString());
-    this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
+    this.testee = new XStreamHistoryStore(this.writerFactory,
+        Option.some(reader));
     this.testee.initialize();
     final Map<MutationIdentifier, MutationStatusTestPair> expected = new HashMap<MutationIdentifier, MutationStatusTestPair>();
     expected.put(mr.getDetails().getId(), mr.getStatusTestPair());
@@ -103,17 +107,18 @@ public class XStreamHistoryStoreTest {
   @Test
   public void shouldNotAttemptToWriteToFileWhenNoneSupplied() {
     try {
-      this.testee = new XStreamHistoryStore(writerFactory, Option.<Reader> none());
+      this.testee = new XStreamHistoryStore(this.writerFactory,
+          Option.<Reader> none());
       this.testee.initialize();
     } catch (final Exception ex) {
       fail(ex.getMessage());
     }
   }
-  
+
   @Test
   public void shouldReadCorruptFiles() throws IOException {
-    final HierarchicalClassId foo = new HierarchicalClassId(new ClassIdentifier(0,
-        ClassName.fromString("foo")),"");
+    final HierarchicalClassId foo = new HierarchicalClassId(
+        new ClassIdentifier(0, ClassName.fromString("foo")), "");
     recordClassPathWithTestee(foo);
 
     final MutationResult mr = new MutationResult(
@@ -121,20 +126,22 @@ public class XStreamHistoryStoreTest {
         new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
 
     this.testee.recordResult(mr);
-    output.append("rubbish");
+    this.output.append("rubbish");
 
     final Reader reader = new StringReader(this.output.toString());
-    this.testee = new XStreamHistoryStore(writerFactory, Option.some(reader));
+    this.testee = new XStreamHistoryStore(this.writerFactory,
+        Option.some(reader));
     this.testee.initialize();
-    
+
     assertFalse(this.testee.getHistoricResults().isEmpty());
   }
-  
+
   private void recordClassPathWithTestee(
       final HierarchicalClassId... classIdentifiers) {
-    this.testee = new XStreamHistoryStore(writerFactory, Option.<Reader> none());
+    this.testee = new XStreamHistoryStore(this.writerFactory,
+        Option.<Reader> none());
     final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
-    this.testee.recordClassPath(ids, coverage);
+    this.testee.recordClassPath(ids, this.coverage);
   }
 
 }

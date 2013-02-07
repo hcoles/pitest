@@ -58,7 +58,7 @@ public final class NoArgsInstantiateStep implements TestStep {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
+    result = (prime * result)
         + ((this.clazz == null) ? 0 : this.clazz.hashCode());
     return result;
   }

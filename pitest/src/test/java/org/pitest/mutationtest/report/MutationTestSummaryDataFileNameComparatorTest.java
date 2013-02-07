@@ -15,17 +15,17 @@ public class MutationTestSummaryDataFileNameComparatorTest {
 
   @Test
   public void shouldSortDataByFileName() {
-    MutationTestSummaryDataFileNameComparator testee = new MutationTestSummaryDataFileNameComparator();
-    MutationTestSummaryData ab = makeSummaryData("ab");
-    MutationTestSummaryData aa = makeSummaryData("aa");
-    MutationTestSummaryData z = makeSummaryData("z");
-    List<MutationTestSummaryData> list = Arrays.asList(z, aa, ab);
+    final MutationTestSummaryDataFileNameComparator testee = new MutationTestSummaryDataFileNameComparator();
+    final MutationTestSummaryData ab = makeSummaryData("ab");
+    final MutationTestSummaryData aa = makeSummaryData("aa");
+    final MutationTestSummaryData z = makeSummaryData("z");
+    final List<MutationTestSummaryData> list = Arrays.asList(z, aa, ab);
     Collections.sort(list, testee);
-    List<MutationTestSummaryData> expected = Arrays.asList(aa, ab, z);
-    assertEquals(expected,list);
+    final List<MutationTestSummaryData> expected = Arrays.asList(aa, ab, z);
+    assertEquals(expected, list);
   }
 
-  private MutationTestSummaryData makeSummaryData(String fileName) {
+  private MutationTestSummaryData makeSummaryData(final String fileName) {
     return new MutationTestSummaryData(fileName,
         Collections.<MutationResult> emptyList(),
         Collections.<String> emptyList(), Collections.<ClassInfo> emptyList(),

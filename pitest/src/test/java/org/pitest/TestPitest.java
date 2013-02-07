@@ -183,7 +183,6 @@ public class TestPitest {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-
   private void run(final Class<?> clazz) {
     this.testee.run(this.container, new ConfigurationForTesting(), clazz);
   }

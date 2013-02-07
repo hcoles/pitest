@@ -33,7 +33,6 @@ public class MetaDataExtractor implements MutationResultListener {
     return dss;
   }
 
-
   public List<Integer> getLineNumbers() {
     final List<Integer> dss = new ArrayList<Integer>();
     for (final MutationResult each : this.data) {
@@ -43,17 +42,16 @@ public class MetaDataExtractor implements MutationResultListener {
   }
 
   public void runStart() {
-    
+
   }
 
-  public void handleMutationResult(MutationMetaData metaData) {
+  public void handleMutationResult(final MutationMetaData metaData) {
     this.data.addAll(metaData.getMutations());
   }
 
-
   public void runEnd() {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

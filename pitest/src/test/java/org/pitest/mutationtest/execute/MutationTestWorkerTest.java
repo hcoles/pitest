@@ -28,94 +28,109 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.results.DetectionStatus;
 
-
 public class MutationTestWorkerTest {
 
-  private MutationTestWorker testee;
-  
-  @Mock
-  private ClassLoader loader;
-  
-  @Mock
-  private Mutater mutater;
-  
-  @Mock
-  private F3<String, ClassLoader,byte[], Boolean> hotswapper;
+  private MutationTestWorker                       testee;
 
   @Mock
-  private TimeOutDecoratedTestSource testSource;
-
+  private ClassLoader                              loader;
 
   @Mock
-  private Reporter reporter;
-  
+  private Mutater                                  mutater;
+
+  @Mock
+  private F3<String, ClassLoader, byte[], Boolean> hotswapper;
+
+  @Mock
+  private TimeOutDecoratedTestSource               testSource;
+
+  @Mock
+  private Reporter                                 reporter;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new MutationTestWorker(hotswapper, mutater, loader);
+    this.testee = new MutationTestWorker(this.hotswapper, this.mutater,
+        this.loader);
   }
-  
+
   @Test
   public void shouldDescribeEachExaminedMutation() throws IOException {
-    MutationDetails mutantOne = makeMutant("foo",1);
-    MutationDetails mutantTwo = makeMutant("foo",2);
-    Collection<MutationDetails> range = Arrays.asList(mutantOne, mutantTwo);
-    testee.run(range, reporter, testSource);
-    verify(reporter).describe(mutantOne.getId());
-    verify(reporter).describe(mutantTwo.getId());
+    final MutationDetails mutantOne = makeMutant("foo", 1);
+    final MutationDetails mutantTwo = makeMutant("foo", 2);
+    final Collection<MutationDetails> range = Arrays.asList(mutantOne,
+        mutantTwo);
+    this.testee.run(range, this.reporter, this.testSource);
+    verify(this.reporter).describe(mutantOne.getId());
+    verify(this.reporter).describe(mutantTwo.getId());
   }
- 
-  
+
   @Test
   @Ignore("disabled while checking coverage issue")
-  public void shouldReportNoCoverageForMutationWithNoTestCoverage() throws IOException {
-    MutationDetails mutantOne = makeMutant("foo",1);
-    Collection<MutationDetails> range = Arrays.asList(mutantOne);
-    testee.run(range, reporter, testSource);
-    verify(reporter).report(mutantOne.getId(),new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
+  public void shouldReportNoCoverageForMutationWithNoTestCoverage()
+      throws IOException {
+    final MutationDetails mutantOne = makeMutant("foo", 1);
+    final Collection<MutationDetails> range = Arrays.asList(mutantOne);
+    this.testee.run(range, this.reporter, this.testSource);
+    verify(this.reporter).report(mutantOne.getId(),
+        new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationNotDetected() throws IOException {
-    MutationDetails mutantOne = makeMutant("foo",1);
-    Collection<MutationDetails> range = Arrays.asList(mutantOne);
-    TestUnit tu = makePassingTest();
-    when(this.testSource.translateTests(any(List.class))).thenReturn(Collections.singletonList(tu));
-    when(this.hotswapper.apply(any(String.class), any(ClassLoader.class), any(byte[].class))).thenReturn(true);
-    testee.run(range, reporter, testSource);
-    verify(reporter).report(mutantOne.getId(),new MutationStatusTestPair(1, DetectionStatus.SURVIVED));
+    final MutationDetails mutantOne = makeMutant("foo", 1);
+    final Collection<MutationDetails> range = Arrays.asList(mutantOne);
+    final TestUnit tu = makePassingTest();
+    when(this.testSource.translateTests(any(List.class))).thenReturn(
+        Collections.singletonList(tu));
+    when(
+        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+            any(byte[].class))).thenReturn(true);
+    this.testee.run(range, this.reporter, this.testSource);
+    verify(this.reporter).report(mutantOne.getId(),
+        new MutationStatusTestPair(1, DetectionStatus.SURVIVED));
 
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationNotViable() throws IOException {
-    MutationDetails mutantOne = makeMutant("foo",1);
-    Collection<MutationDetails> range = Arrays.asList(mutantOne);
-    TestUnit tu = makePassingTest();
-    when(this.testSource.translateTests(any(List.class))).thenReturn(Collections.singletonList(tu));
-    when(this.hotswapper.apply(any(String.class), any(ClassLoader.class), any(byte[].class))).thenReturn(false);
-    testee.run(range, reporter, testSource);
-    verify(reporter).report(mutantOne.getId(),new MutationStatusTestPair(0, DetectionStatus.NON_VIABLE));
+    final MutationDetails mutantOne = makeMutant("foo", 1);
+    final Collection<MutationDetails> range = Arrays.asList(mutantOne);
+    final TestUnit tu = makePassingTest();
+    when(this.testSource.translateTests(any(List.class))).thenReturn(
+        Collections.singletonList(tu));
+    when(
+        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+            any(byte[].class))).thenReturn(false);
+    this.testee.run(range, this.reporter, this.testSource);
+    verify(this.reporter).report(mutantOne.getId(),
+        new MutationStatusTestPair(0, DetectionStatus.NON_VIABLE));
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationKilledByTest() throws IOException {
-    MutationDetails mutantOne = makeMutant("foo",1);
-    Collection<MutationDetails> range = Arrays.asList(mutantOne);
-    TestUnit tu = makeFailingTest();
-    when(this.testSource.translateTests(any(List.class))).thenReturn(Collections.singletonList(tu));
-    when(this.hotswapper.apply(any(String.class), any(ClassLoader.class), any(byte[].class))).thenReturn(true);
-    testee.run(range, reporter, testSource);
-    verify(reporter).report(mutantOne.getId(),new MutationStatusTestPair(1, DetectionStatus.KILLED, tu.getDescription().getName()));
+    final MutationDetails mutantOne = makeMutant("foo", 1);
+    final Collection<MutationDetails> range = Arrays.asList(mutantOne);
+    final TestUnit tu = makeFailingTest();
+    when(this.testSource.translateTests(any(List.class))).thenReturn(
+        Collections.singletonList(tu));
+    when(
+        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+            any(byte[].class))).thenReturn(true);
+    this.testee.run(range, this.reporter, this.testSource);
+    verify(this.reporter).report(
+        mutantOne.getId(),
+        new MutationStatusTestPair(1, DetectionStatus.KILLED, tu
+            .getDescription().getName()));
   }
-  
+
   private TestUnit makeFailingTest() {
     return new TestUnit() {
 
-      public void execute(ClassLoader loader, ResultCollector rc) {
+      public void execute(final ClassLoader loader, final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription(), new AssertionFailedError());
       }
@@ -123,14 +138,14 @@ public class MutationTestWorkerTest {
       public Description getDescription() {
         return new Description("atest");
       }
-      
+
     };
   }
 
   private TestUnit makePassingTest() {
     return new TestUnit() {
 
-      public void execute(ClassLoader loader, ResultCollector rc) {
+      public void execute(final ClassLoader loader, final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription());
       }
@@ -138,18 +153,18 @@ public class MutationTestWorkerTest {
       public Description getDescription() {
         return new Description("atest");
       }
-      
+
     };
   }
-  
-  
+
   public MutationDetails makeMutant(final String clazz, final int index) {
-    MutationDetails md =  new MutationDetails(new MutationIdentifier(clazz, index, "mutator"),
-        "sourceFile", "desc", "method", 42, 0);
-    
-    when(mutater.getMutation(md.getId())).thenReturn(new Mutant(md, new byte[0]));
-    
+    final MutationDetails md = new MutationDetails(new MutationIdentifier(
+        clazz, index, "mutator"), "sourceFile", "desc", "method", 42, 0);
+
+    when(this.mutater.getMutation(md.getId())).thenReturn(
+        new Mutant(md, new byte[0]));
+
     return md;
   }
-  
+
 }

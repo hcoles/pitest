@@ -43,155 +43,188 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.instrument.ClassLine;
 
-
 public class CoverageDataTest {
-  
-  private CoverageData testee;
-  
+
+  private CoverageData    testee;
+
   @Mock
-  private CodeSource code;
-  
-  private ClassName foo = ClassName.fromString("foo");
-  
+  private CodeSource      code;
+
+  private final ClassName foo = ClassName.fromString("foo");
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testee = new CoverageData(code);
+    this.testee = new CoverageData(this.code);
   }
 
   @Test
   public void shouldReturnNoTestsWhenNoTestsCoverALine() {
-    ClassLine line = new ClassLine("foo",1);
-    assertEquals(Collections.emptyList(),testee.getTestsForClassLine(line));
+    final ClassLine line = new ClassLine("foo", 1);
+    assertEquals(Collections.emptyList(),
+        this.testee.getTestsForClassLine(line));
   }
-  
+
   @Test
   public void shouldReturnOnlyTestsThatCoverGivenLine() {
-    int lineNumber = 1;
-    int executionTime = 100;
-    
-    ClassLine line = new ClassLine("foo",lineNumber);
+    final int lineNumber = 1;
+    final int executionTime = 100;
 
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", executionTime, lineNumber));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTestToo", executionTime, lineNumber));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTestMiss", executionTime, lineNumber+1));
-    testee.calculateClassCoverage(makeCoverageResult("bar","BarTest", executionTime, lineNumber));
-    
-    assertEquals(Arrays.asList("fooTest","fooTestToo"), FCollection.map(testee.getTestsForClassLine(line), testInfoToString()));
+    final ClassLine line = new ClassLine("foo", lineNumber);
+
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest",
+        executionTime, lineNumber));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTestToo",
+        executionTime, lineNumber));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTestMiss",
+        executionTime, lineNumber + 1));
+    this.testee.calculateClassCoverage(makeCoverageResult("bar", "BarTest",
+        executionTime, lineNumber));
+
+    assertEquals(Arrays.asList("fooTest", "fooTestToo"), FCollection.map(
+        this.testee.getTestsForClassLine(line), testInfoToString()));
   }
-  
+
   @Test
-  public void shouldStoreExecutionTimesOfTests() { 
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 42, 1));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTestToo", 43, 2));
+  public void shouldStoreExecutionTimesOfTests() {
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 42,
+        1));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTestToo",
+        43, 2));
 
-    assertEquals(Arrays.asList(42), FCollection.map(testee.getTestsForClassLine(new ClassLine("foo",1)), testInfoToExecutionTime()));
-    assertEquals(Arrays.asList(43), FCollection.map(testee.getTestsForClassLine(new ClassLine("foo",2)), testInfoToExecutionTime()));
+    assertEquals(Arrays.asList(42), FCollection.map(
+        this.testee.getTestsForClassLine(new ClassLine("foo", 1)),
+        testInfoToExecutionTime()));
+    assertEquals(Arrays.asList(43), FCollection.map(
+        this.testee.getTestsForClassLine(new ClassLine("foo", 2)),
+        testInfoToExecutionTime()));
   }
-  
+
   @Test
   public void shouldReportNumberOfCoveredLinesWhenNoneCovered() {
-    assertEquals(0,testee.getNumberOfCoveredLines(Collections.singletonList(ClassName.fromString("foo"))));
+    assertEquals(0, this.testee.getNumberOfCoveredLines(Collections
+        .singletonList(ClassName.fromString("foo"))));
   }
-  
+
   @Test
   public void shouldReportNumberOfCoveredLinesWhenSomeCovered() {
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 2));
-    assertEquals(2,testee.getNumberOfCoveredLines(Collections.singletonList(ClassName.fromString("foo"))));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        1));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        2));
+    assertEquals(2, this.testee.getNumberOfCoveredLines(Collections
+        .singletonList(ClassName.fromString("foo"))));
   }
-  
+
   @Test
   public void shouldReturnNotTestsWhenNoTestsCoverClass() {
-    assertTrue(testee.getTestsForClass(foo).isEmpty());
+    assertTrue(this.testee.getTestsForClass(this.foo).isEmpty());
   }
-  
+
   @Test
   public void shouldReturnUniqueTestsForClassWhenSomeTestsCoverClass() {
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 2));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest2", 0, 2));
-    assertEquals(Arrays.asList("fooTest","fooTest2"),FCollection.map(testee.getTestsForClass(foo),testInfoToString()));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        1));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        2));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest2", 0,
+        2));
+    assertEquals(Arrays.asList("fooTest", "fooTest2"), FCollection.map(
+        this.testee.getTestsForClass(this.foo), testInfoToString()));
   }
-  
-  
+
   @Test
   public void shouldReportAGreenSuiteWhenNoTestHasFailed() {
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 42, 1));
-    assertTrue(testee.allTestsGreen());
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 42,
+        1));
+    assertTrue(this.testee.allTestsGreen());
   }
-  
+
   @Test
   public void shouldNotReportAGreenSuiteWhenATestHasFailed() {
-    testee.calculateClassCoverage(makeCoverageResult("foo",new Description("fooTest"), 42, 1, false));
-    assertFalse(testee.allTestsGreen());
+    this.testee.calculateClassCoverage(makeCoverageResult("foo",
+        new Description("fooTest"), 42, 1, false));
+    assertFalse(this.testee.allTestsGreen());
   }
-  
+
   @Test
   public void shouldProvideAccessToClassData() {
-    Collection<ClassName> classes = Arrays.asList(ClassName.fromString("foo"));
-    testee.getClassInfo(classes);
+    final Collection<ClassName> classes = Arrays.asList(ClassName
+        .fromString("foo"));
+    this.testee.getClassInfo(classes);
     verify(this.code).getClassInfo(classes);
   }
-  
+
   @Test
   public void shouldReturnCoverageIdOf0WhenNoTestsCoverClass() {
-    assertEquals(0,testee.getCoverageIdForClass(ClassName.fromString("unknown")).longValue());
+    assertEquals(0,
+        this.testee.getCoverageIdForClass(ClassName.fromString("unknown"))
+            .longValue());
   }
-  
+
   @Test
   public void shouldReturnNonZeroCoverageIdWhenTestsCoverClass() {
-    ClassName fooTest = ClassName.fromString("FooTest");
-    ClassInfo ci = ClassInfoMother.make(fooTest);
-    when(this.code.getClassInfo(Collections.singleton(fooTest))).thenReturn(Collections.singletonList(ci));
-    testee.calculateClassCoverage(makeCoverageResult("foo", new Description("fooTest",fooTest.asJavaName()), 0, 1, true));
-    assertFalse(testee.getCoverageIdForClass(ClassName.fromString("foo")).longValue() == 0);
+    final ClassName fooTest = ClassName.fromString("FooTest");
+    final ClassInfo ci = ClassInfoMother.make(fooTest);
+    when(this.code.getClassInfo(Collections.singleton(fooTest))).thenReturn(
+        Collections.singletonList(ci));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo",
+        new Description("fooTest", fooTest.asJavaName()), 0, 1, true));
+    assertFalse(this.testee.getCoverageIdForClass(ClassName.fromString("foo"))
+        .longValue() == 0);
   }
-  
+
   @Test
   public void shouldProvideEmptyLineCoverageListWhenNoCoverage() {
-    assertEquals(Collections.emptyList(),testee.createLineCoverage());
+    assertEquals(Collections.emptyList(), this.testee.createLineCoverage());
   }
-  
+
   @Test
   public void shouldProvideLineCoverageListWhenCoverageRecorded() {
-    ClassLine fooLine1 = new ClassLine("foo",1);
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest", 0, 1));
-    testee.calculateClassCoverage(makeCoverageResult("foo","fooTest2", 0, 1));
-    LineCoverage actual = testee.createLineCoverage().get(0);
-    assertEquals(fooLine1,actual.getClassLine());
-    assertThat(actual.getTests(), hasItems("fooTest","fooTest2"));
+    final ClassLine fooLine1 = new ClassLine("foo", 1);
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        1));
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest2", 0,
+        1));
+    final LineCoverage actual = this.testee.createLineCoverage().get(0);
+    assertEquals(fooLine1, actual.getClassLine());
+    assertThat(actual.getTests(), hasItems("fooTest", "fooTest2"));
   }
-  
+
   private static F<TestInfo, Integer> testInfoToExecutionTime() {
-    return new F<TestInfo, Integer> () {
-      public Integer apply(TestInfo a) {
+    return new F<TestInfo, Integer>() {
+      public Integer apply(final TestInfo a) {
         return a.getTime();
       }
     };
   }
 
   private static F<TestInfo, String> testInfoToString() {
-    return new F<TestInfo, String> () {
-      public String apply(TestInfo a) {
+    return new F<TestInfo, String>() {
+      public String apply(final TestInfo a) {
         return a.getName();
       }
     };
   }
-  
-  private CoverageResult makeCoverageResult(String clazz, String testName, int time, int lineNumber) {
-    return  makeCoverageResult(clazz,new Description(testName),time,lineNumber,true);
+
+  private CoverageResult makeCoverageResult(final String clazz,
+      final String testName, final int time, final int lineNumber) {
+    return makeCoverageResult(clazz, new Description(testName), time,
+        lineNumber, true);
   }
 
-  private CoverageResult makeCoverageResult(String clazz, Description desc, int time, int lineNumber, boolean testPassed) {
-    return new CoverageResult(desc, time,testPassed, makeCoverage(clazz, lineNumber));
+  private CoverageResult makeCoverageResult(final String clazz,
+      final Description desc, final int time, final int lineNumber,
+      final boolean testPassed) {
+    return new CoverageResult(desc, time, testPassed, makeCoverage(clazz,
+        lineNumber));
   }
 
-  private Collection<ClassStatistics> makeCoverage(String clazz, int lineNumber) {
-    ClassStatistics cs = new ClassStatistics(clazz);
+  private Collection<ClassStatistics> makeCoverage(final String clazz,
+      final int lineNumber) {
+    final ClassStatistics cs = new ClassStatistics(clazz);
     cs.registerLineVisit(lineNumber);
     return Collections.singleton(cs);
   }
-
 
 }

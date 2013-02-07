@@ -46,7 +46,7 @@ import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 public class MutationCoverageReportTest {
 
-  private MutationCoverage testee;
+  private MutationCoverage       testee;
 
   private ReportOptions          data;
 
@@ -54,7 +54,7 @@ public class MutationCoverageReportTest {
   private ListenerFactory        listenerFactory;
 
   @Mock
-  private MutationResultListener           listener;
+  private MutationResultListener listener;
 
   @Mock
   private CoverageDatabase       coverageDb;
@@ -66,7 +66,7 @@ public class MutationCoverageReportTest {
   private CodeSource             code;
 
   @Mock
-  private HistoryStore            history;
+  private HistoryStore           history;
 
   @Before
   public void setUp() {
@@ -108,21 +108,23 @@ public class MutationCoverageReportTest {
       fail();
     }
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test
   public void shouldRecordClassPath() {
 
-    HierarchicalClassId fooId = new HierarchicalClassId(new ClassIdentifier(0,ClassName.fromString("foo")),"0");
-    ClassInfo foo = ClassInfoMother.make(fooId.getId());
-    
-    when(this.code.getCodeUnderTestNames()).thenReturn(Collections.singleton(ClassName.fromString("foo")));
-    when(this.code.getClassInfo(any(List.class))).thenReturn(Collections.singletonList(foo));
+    final HierarchicalClassId fooId = new HierarchicalClassId(
+        new ClassIdentifier(0, ClassName.fromString("foo")), "0");
+    final ClassInfo foo = ClassInfoMother.make(fooId.getId());
+
+    when(this.code.getCodeUnderTestNames()).thenReturn(
+        Collections.singleton(ClassName.fromString("foo")));
+    when(this.code.getClassInfo(any(List.class))).thenReturn(
+        Collections.singletonList(foo));
 
     createAndRunTestee();
-    
-    verify(this.history).recordClassPath(Arrays.asList(fooId), coverageDb);
+
+    verify(this.history).recordClassPath(Arrays.asList(fooId), this.coverageDb);
   }
-  
 
 }

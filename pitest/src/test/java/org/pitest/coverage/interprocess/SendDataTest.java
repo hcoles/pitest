@@ -12,41 +12,39 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.util.SafeDataOutputStream;
 
-
 public class SendDataTest {
-  
-  private SendData testee;
-  
-  
-  private  List<String>    testClasses;
-  
+
+  private SendData             testee;
+
+  private List<String>         testClasses;
+
   @Mock
-  private  CoverageOptions arguments;
-  
+  private CoverageOptions      arguments;
+
   @Mock
   private SafeDataOutputStream os;
-  
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    testClasses = new ArrayList<String>();
-    testee = new SendData(arguments, testClasses);
+    this.testClasses = new ArrayList<String>();
+    this.testee = new SendData(this.arguments, this.testClasses);
   }
-  
+
   @Test
   public void shouldSendArgumentsToSlave() {
-    testee.apply(os);
-    verify(this.os).write(arguments);
+    this.testee.apply(this.os);
+    verify(this.os).write(this.arguments);
   }
-  
+
   @Test
   public void shouldSendTestClassesToSlave() {
-    testClasses.add("foo");
-    testClasses.add("bar");
-    testee.apply(os);
-    verify(this.os).writeInt(testClasses.size());
+    this.testClasses.add("foo");
+    this.testClasses.add("bar");
+    this.testee.apply(this.os);
+    verify(this.os).writeInt(this.testClasses.size());
     verify(this.os).writeString("foo");
-    verify(this.os).writeString("bar"); 
+    verify(this.os).writeString("bar");
   }
 
 }

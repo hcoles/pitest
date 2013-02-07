@@ -55,8 +55,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final List<TestStep> instantiations = instantiationStrategy
           .instantiations(testClass);
       for (int instantiation = 0; instantiation != instantiations.size(); instantiation++) {
-        for (final TestMethod m : findTestMethods(
-            testClass)) {
+        for (final TestMethod m : findTestMethods(testClass)) {
           final TestStep step = instantiations.get(instantiation);
           units
               .add(createTestUnitForInstantiation(step,
@@ -115,7 +114,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     };
   }
 
-  private Collection<TestMethod> findTestMethods( final Class<?> clazz) {
+  private Collection<TestMethod> findTestMethods(final Class<?> clazz) {
 
     final EqualitySet<TestMethod> set = new EqualitySet<TestMethod>(
         new SignatureEqualityStrategy());

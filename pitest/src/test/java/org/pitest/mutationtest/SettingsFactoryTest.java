@@ -8,19 +8,19 @@ import org.pitest.coverage.export.NullCoverageExporter;
 
 public class SettingsFactoryTest {
 
-  private ReportOptions options = new ReportOptions();
-  
-  private SettingsFactory testee;
-  
+  private final ReportOptions options = new ReportOptions();
+
+  private SettingsFactory     testee;
+
   @Before
   public void setUp() {
-    testee =  new SettingsFactory(options);
+    this.testee = new SettingsFactory(this.options);
   }
-  
+
   @Test
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
-    options.setExportLineCoverage(false);
-    assertTrue(testee.createCoverageExporter() instanceof NullCoverageExporter); 
+    this.options.setExportLineCoverage(false);
+    assertTrue(this.testee.createCoverageExporter() instanceof NullCoverageExporter);
   }
 
 }

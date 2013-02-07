@@ -13,49 +13,57 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.StreamUtil;
 
-
 public class JavassistInterceptorTest {
-  
+
   public class AClassWithAOpenClassFileMethod {
-    public InputStream openClassfile(String name) {
+    public InputStream openClassfile(final String name) {
       return new ByteArrayInputStream("original".getBytes());
     }
   }
 
   private AClassWithAOpenClassFileMethod interceptedClass;
-  private Mutant mutant;
-  
+  private Mutant                         mutant;
+
   @Before
   public void setUp() {
-    interceptedClass = new AClassWithAOpenClassFileMethod();
-    byte[] bytes = "replaced".getBytes();
-    mutant = new Mutant(new MutationDetails(new MutationIdentifier("match", 0, "foo"), "foo", "foo", "foo", 0, 0), bytes);
+    this.interceptedClass = new AClassWithAOpenClassFileMethod();
+    final byte[] bytes = "replaced".getBytes();
+    this.mutant = new Mutant(new MutationDetails(new MutationIdentifier(
+        "match", 0, "foo"), "foo", "foo", "foo", 0, 0), bytes);
   }
 
   @Test
-  public void shouldNotReplaceRequestedClassWithMutantWhenClassNameIsDifferent() throws IOException {
-    JavassistInterceptor.setMutant(mutant);
-    InputStream actual = JavassistInterceptor.openClassfile(interceptedClass, "nomatch");
-    assertEquals(streamToString(actual), streamToString(interceptedClass.openClassfile("")));
+  public void shouldNotReplaceRequestedClassWithMutantWhenClassNameIsDifferent()
+      throws IOException {
+    JavassistInterceptor.setMutant(this.mutant);
+    final InputStream actual = JavassistInterceptor.openClassfile(
+        this.interceptedClass, "nomatch");
+    assertEquals(streamToString(actual),
+        streamToString(this.interceptedClass.openClassfile("")));
   }
-  
+
   @Test
-  public void shouldNotReplaceRequestedClassWithMutantWhenNoMutantIsSet() throws IOException {
+  public void shouldNotReplaceRequestedClassWithMutantWhenNoMutantIsSet()
+      throws IOException {
     JavassistInterceptor.setMutant(null);
-    InputStream actual = JavassistInterceptor.openClassfile(interceptedClass, "nomatch");
-    assertEquals(streamToString(actual), streamToString(interceptedClass.openClassfile("")));
+    final InputStream actual = JavassistInterceptor.openClassfile(
+        this.interceptedClass, "nomatch");
+    assertEquals(streamToString(actual),
+        streamToString(this.interceptedClass.openClassfile("")));
   }
-  
+
   @Test
-  public void shouldReplaceRequestedClassWithMutantWhenClassNameMatches() throws IOException {
-    JavassistInterceptor.setMutant(mutant);
-    InputStream actual = JavassistInterceptor.openClassfile(interceptedClass, "match");
-    
+  public void shouldReplaceRequestedClassWithMutantWhenClassNameMatches()
+      throws IOException {
+    JavassistInterceptor.setMutant(this.mutant);
+    final InputStream actual = JavassistInterceptor.openClassfile(
+        this.interceptedClass, "match");
+
     assertEquals(streamToString(actual), "replaced");
   }
-  
-  private String streamToString(InputStream is) throws IOException {
+
+  private String streamToString(final InputStream is) throws IOException {
     return new String(StreamUtil.streamToByteArray(is));
   }
-  
+
 }

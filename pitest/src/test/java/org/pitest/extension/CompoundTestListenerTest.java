@@ -30,14 +30,13 @@ import org.pitest.mutationtest.results.MutationResult;
 
 public class CompoundTestListenerTest {
 
-  private CompoundTestListener testee;
+  private CompoundTestListener   testee;
 
   @Mock
-  private MutationResultListener         firstChild;
+  private MutationResultListener firstChild;
 
   @Mock
-  private MutationResultListener         secondChild;
-
+  private MutationResultListener secondChild;
 
   @Before
   public void setUp() {
@@ -62,7 +61,9 @@ public class CompoundTestListenerTest {
 
   @Test
   public void shouldCallOnTestErrorForAllChildren() {
-    MutationMetaData metaData = new MutationMetaData(Collections.<String>emptyList(), Collections.<MutationResult>emptyList());
+    final MutationMetaData metaData = new MutationMetaData(
+        Collections.<String> emptyList(),
+        Collections.<MutationResult> emptyList());
     this.testee.handleMutationResult(metaData);
     verify(this.firstChild, times(1)).handleMutationResult(metaData);
     verify(this.secondChild, times(1)).handleMutationResult(metaData);

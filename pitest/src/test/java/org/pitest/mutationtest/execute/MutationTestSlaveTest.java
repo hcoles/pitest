@@ -23,65 +23,64 @@ import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataInputStream;
 
-
 public class MutationTestSlaveTest {
-  
-  private MutationTestSlave testee;
-  
-  @Mock
-  private Reporter reporter;
+
+  private MutationTestSlave           testee;
 
   @Mock
-  private SafeDataInputStream is;
-  
+  private Reporter                    reporter;
+
   @Mock
-  private MutationEngine engine;
-  
+  private SafeDataInputStream         is;
+
   @Mock
-  private TimeoutLengthStrategy timeoutStrategy;
-  
+  private MutationEngine              engine;
+
   @Mock
-  private Configuration testConfig;
-  
+  private TimeoutLengthStrategy       timeoutStrategy;
+
   @Mock
-  private Mutater mutater;
-  
-  private SlaveArguments args;
-  
+  private Configuration               testConfig;
+
+  @Mock
+  private Mutater                     mutater;
+
+  private SlaveArguments              args;
+
   private Collection<MutationDetails> mutations;
-  
-  private Collection<ClassName> tests;
 
+  private Collection<ClassName>       tests;
 
-
-    
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    mutations = new ArrayList<MutationDetails>();
-    tests = new ArrayList<ClassName>();
-    
-    args = new SlaveArguments(mutations, tests, engine, timeoutStrategy, false, testConfig);
-    
-    when(is.read(SlaveArguments.class)).thenReturn(args);
-    when(engine.createMutator(any(ClassByteArraySource.class))).thenReturn(mutater);
-    
-    testee = new MutationTestSlave(is, reporter);
-  }
-  
-  @Test
-  public void shouldReportNoErrorWhenNoMutationsSupplied() {
-    testee.run();
-    verify(reporter).done(ExitCode.OK);
-  }
-  
-  @Test
-  public void shouldReportErrorWhenOneOccursDuringAnalysis() {
-    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0,0));
-    when(mutater.getMutation(any(MutationIdentifier.class))).thenThrow(new PitError("foo"));
-    testee.run();
-    verify(reporter).done(ExitCode.UNKNOWN_ERROR);
+    this.mutations = new ArrayList<MutationDetails>();
+    this.tests = new ArrayList<ClassName>();
+
+    this.args = new SlaveArguments(this.mutations, this.tests, this.engine,
+        this.timeoutStrategy, false, this.testConfig);
+
+    when(this.is.read(SlaveArguments.class)).thenReturn(this.args);
+    when(this.engine.createMutator(any(ClassByteArraySource.class)))
+        .thenReturn(this.mutater);
+
+    this.testee = new MutationTestSlave(this.is, this.reporter);
   }
 
+  @Test
+  public void shouldReportNoErrorWhenNoMutationsSupplied() {
+    this.testee.run();
+    verify(this.reporter).done(ExitCode.OK);
+  }
+
+  @Test
+  public void shouldReportErrorWhenOneOccursDuringAnalysis() {
+    this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,
+        "foo"), null, null, null, 0, 0));
+    when(this.mutater.getMutation(any(MutationIdentifier.class))).thenThrow(
+        new PitError("foo"));
+    this.testee.run();
+    verify(this.reporter).done(ExitCode.UNKNOWN_ERROR);
+  }
 
 }

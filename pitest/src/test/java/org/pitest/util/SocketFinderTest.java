@@ -33,11 +33,9 @@ public class SocketFinderTest {
 
   @Test
   public void shouldFindAvailableSockets() throws IOException {
-    ServerSocket socket = testee.getNextAvailableServerSocket();
+    final ServerSocket socket = this.testee.getNextAvailableServerSocket();
     assertTrue(socket != null);
     socket.close();
   }
-
-
 
 }

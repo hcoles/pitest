@@ -32,7 +32,6 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
 
-
 public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
 
   @Before
@@ -223,8 +222,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(actual);
     mutateAndCall(new UsesReturnValueOfMethodCall(), mutant);
   }
-  
-  
+
   private static class HasLogger implements Callable<String> {
     @SuppressWarnings("unused")
     private static Logger log = Logger.getLogger(HasLogger.class.getName());
@@ -242,7 +240,6 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
 
   }
 
-  
   static class HasIntMethodCall implements Callable<String> {
 
     private static int i = 0;
@@ -270,7 +267,5 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(HasIntMethodCall.class);
     assertMutantCallableReturns(new HasIntMethodCall(), mutant, "0");
   }
-  
-  
-  
+
 }

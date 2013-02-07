@@ -87,7 +87,8 @@ public class TestMutationTesting {
     this.metaDataExtractor = new MetaDataExtractor();
     this.container = new UnContainer();
     this.staticConfig = new DefaultStaticConfig();
-    this.staticConfig.addTestListener(MutationResultAdapter.adapt(this.metaDataExtractor));
+    this.staticConfig.addTestListener(MutationResultAdapter
+        .adapt(this.metaDataExtractor));
     this.pit = new Pitest(this.staticConfig);
   }
 
@@ -298,7 +299,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(100);
+    verifyLineNumbers(101);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
@@ -347,7 +348,8 @@ public class TestMutationTesting {
         .testClassIdentifier());
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),timings, false);
+        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),
+        timings, false);
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 
@@ -366,8 +368,8 @@ public class TestMutationTesting {
         new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
     final MutationTestBuilder builder = new MutationTestBuilder(null,
-        mutationConfig,  new NullAnalyser(), source, data, coverageOptions.getPitConfig(),
-        launchOptions.getJavaAgentFinder());
+        mutationConfig, new NullAnalyser(), source, data,
+        coverageOptions.getPitConfig(), launchOptions.getJavaAgentFinder());
 
     final List<TestUnit> tus = builder.createMutationTestUnits(codeClasses);
 

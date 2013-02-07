@@ -80,22 +80,22 @@ public class FArrayTest {
 
     };
   }
-  
+
   @Test
   public void containsShouldReturnFalseWhenPredicateNotMet() {
-    final Integer[] xs = {1, 2, 3};
+    final Integer[] xs = { 1, 2, 3 };
     assertFalse(FArray.contains(xs, False.instance()));
   }
 
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
-    final Integer[] xs = {1, 2, 3};
+    final Integer[] xs = { 1, 2, 3 };
     assertTrue(FArray.contains(xs, True.all()));
   }
 
   @Test
   public void containsShouldStopProcessingOnFirstMatch() {
-    final Integer[] xs = {1, 2, 3};
+    final Integer[] xs = { 1, 2, 3 };
     final Predicate<Integer> predicate = new Predicate<Integer>() {
 
       public Boolean apply(final Integer a) {

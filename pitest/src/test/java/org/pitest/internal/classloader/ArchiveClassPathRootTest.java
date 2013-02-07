@@ -58,14 +58,14 @@ public class ArchiveClassPathRootTest {
   public void getDataShouldReturnInputStreamForAKnownClass() throws Exception {
     assertNotNull(this.testee.getData("injar.p1.P1Test"));
   }
-  
+
   @Test
-  public void shouldReturnAReadableInputStream()  {
-    byte b[] = new byte[100];
+  public void shouldReturnAReadableInputStream() {
+    final byte b[] = new byte[100];
     try {
-      InputStream actual = this.testee.getData("injar.p1.P1Test");
+      final InputStream actual = this.testee.getData("injar.p1.P1Test");
       actual.read(b);
-    } catch (IOException ex ) {
+    } catch (final IOException ex) {
       fail();
     }
   }

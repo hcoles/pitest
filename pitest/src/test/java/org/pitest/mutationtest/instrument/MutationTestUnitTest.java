@@ -29,79 +29,78 @@ import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.JavaAgent;
 
-
 public class MutationTestUnitTest {
-  
-  private MutationTestUnit testee;
+
+  private MutationTestUnit      testee;
   private List<MutationDetails> mutations;
   private Collection<ClassName> tests;
-  
-  private String classPath;
-  private File baseDir;
-  
+
+  private String                classPath;
+  private File                  baseDir;
+
   @Mock
-  private Configuration config;
-  
-  private MutationConfig mutationConfig;
-  
+  private Configuration         config;
+
+  private MutationConfig        mutationConfig;
+
   @Mock
   private TimeoutLengthStrategy timeout;
-  
+
   @Mock
-  private JavaAgent javaAgent;
-  
+  private JavaAgent             javaAgent;
+
   @Mock
-  private ClassLoader loader;
-  
+  private ClassLoader           loader;
+
   @Mock
-  private ResultCollector rc;
-  
+  private ResultCollector       rc;
+
   @Mock
-  private MutationEngine engine;
-  
+  private MutationEngine        engine;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    mutationConfig = new MutationConfig(engine, Collections.<String>emptyList());
-    mutations = new ArrayList<MutationDetails>();
-    tests = new ArrayList<ClassName>();
-    testee = new MutationTestUnit(baseDir, mutations, tests, config, mutationConfig, javaAgent, timeout, false, classPath);
+    this.mutationConfig = new MutationConfig(this.engine,
+        Collections.<String> emptyList());
+    this.mutations = new ArrayList<MutationDetails>();
+    this.tests = new ArrayList<ClassName>();
+    this.testee = new MutationTestUnit(this.baseDir, this.mutations,
+        this.tests, this.config, this.mutationConfig, this.javaAgent,
+        this.timeout, false, this.classPath);
   }
 
-  
   @Test
   public void shouldNotRunWhenNoMutationsAvailable() {
-    testee.execute(loader, rc);
-    verify(rc).notifySkipped(any(Description.class));
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc).notifySkipped(any(Description.class));
   }
-  
-  
+
   @Test
   public void shouldReportWhenMutationsNotCoveredByAnyTest() {
     addMutation();
-    tests.add(new ClassName("foo"));
-    testee.execute(loader, rc);
-    MutationMetaData metaData = makeMetaData(mutations.get(0), new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
-    verify(rc).notifyEnd(any(Description.class), eq(metaData));
-  }
-  
-  
-
-
-  private MutationMetaData makeMetaData(MutationDetails details,MutationStatusTestPair status ) {
-    return new MutationMetaData(mutationConfig.getMutatorNames(), Collections.singletonList(new MutationResult(details,status)));
+    this.tests.add(new ClassName("foo"));
+    this.testee.execute(this.loader, this.rc);
+    final MutationMetaData metaData = makeMetaData(this.mutations.get(0),
+        new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
+    verify(this.rc).notifyEnd(any(Description.class), eq(metaData));
   }
 
+  private MutationMetaData makeMetaData(final MutationDetails details,
+      final MutationStatusTestPair status) {
+    return new MutationMetaData(this.mutationConfig.getMutatorNames(),
+        Collections.singletonList(new MutationResult(details, status)));
+  }
 
   @Test
   public void shouldReportErrorWhenCannotLaunchChildProcess() {
-    when(javaAgent.getJarLocation()).thenThrow(new PitError("oops"));
+    when(this.javaAgent.getJarLocation()).thenThrow(new PitError("oops"));
 
   }
-
 
   private void addMutation() {
-    mutations.add(new MutationDetails(new MutationIdentifier("foo",1, "foo"),null,null,null,0, 0));
+    this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,
+        "foo"), null, null, null, 0, 0));
   }
-  
+
 }

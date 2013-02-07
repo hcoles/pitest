@@ -8,28 +8,28 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-
 public class StreamUtilTest {
 
   @Test
   public void shouldCopyStreamsToByteArrays() throws IOException {
-    byte[] expected = createByteArray();
-    ByteArrayInputStream bis = new ByteArrayInputStream(expected);
-    byte[] actual = StreamUtil.streamToByteArray(bis);
-    assertArrayEquals(expected,actual);
+    final byte[] expected = createByteArray();
+    final ByteArrayInputStream bis = new ByteArrayInputStream(expected);
+    final byte[] actual = StreamUtil.streamToByteArray(bis);
+    assertArrayEquals(expected, actual);
   }
 
   private byte[] createByteArray() {
-    byte[] expected = {1,2,3,4,5,6,7,8,9,10,0xA};
+    final byte[] expected = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0xA };
     return expected;
   }
- 
+
   @Test
   public void shouldCopyContentsOfOneInputStreamToAnother() throws IOException {
-    byte[] expected = createByteArray();
-    InputStream actualStream = StreamUtil.copyStream(new ByteArrayInputStream(createByteArray()));
-    byte[] actualContents = StreamUtil.streamToByteArray(actualStream);
+    final byte[] expected = createByteArray();
+    final InputStream actualStream = StreamUtil
+        .copyStream(new ByteArrayInputStream(createByteArray()));
+    final byte[] actualContents = StreamUtil.streamToByteArray(actualStream);
     assertArrayEquals(expected, actualContents);
   }
-  
+
 }

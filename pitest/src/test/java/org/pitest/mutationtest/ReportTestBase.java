@@ -33,8 +33,9 @@ public abstract class ReportTestBase {
   protected ListenerFactory listenerFactory() {
     return new ListenerFactory() {
 
-      public MutationResultListener getListener(final CoverageDatabase coverage,
-          final long startTime, final SourceLocator locator) {
+      public MutationResultListener getListener(
+          final CoverageDatabase coverage, final long startTime,
+          final SourceLocator locator) {
         return ReportTestBase.this.metaDataExtractor;
       }
 
