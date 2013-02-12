@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class MutatorTest {
@@ -32,8 +32,8 @@ public class MutatorTest {
   @Test
   public void shouldFlattenToGroupingsToCollectionsOfMethodMutatorFactories() {
     assertEquals(Arrays.asList(MathMutator.MATH_MUTATOR,
-        InlineConstantMutator.INLINE_CONSTANT_MUTATOR), Mutator.asCollection(
-        Mutator.MATH, Mutator.INLINE_CONSTS));
+        InvertNegsMutator.INVERT_NEGS_MUTATOR), Mutator.asCollection(
+        Mutator.MATH, Mutator.INVERT_NEGS));
   }
 
   @Test

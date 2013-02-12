@@ -50,7 +50,7 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
   /**
    * Optional mutator that mutates integer and floating point inline constants.
    */
-  INLINE_CONSTS(InlineConstantMutator.INLINE_CONSTANT_MUTATOR),
+  INLINE_CONSTS(new InlineConstantMutator()),
 
   /**
    * Default mutator that mutates binary arithmetic operations.
@@ -91,12 +91,6 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    */
   CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
 
-  /**
-   * Experimental mutator that mutates integer and floating point inline
-   * constants.
-   */
-  EXPERIMENTAL_INLINE_CONSTS(
-      new org.pitest.mutationtest.engine.gregor.mutators.experimental.InlineConstantMutator()),
 
   /**
    * Experimental mutator that removed assignments to member variables.
@@ -116,7 +110,7 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * All the mutators
    */
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
-      EXPERIMENTAL_INLINE_CONSTS, INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE,
+       INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE,
       EXPERIMENTAL_SWITCH);
 
   Mutator(final Mutator... groups) {
