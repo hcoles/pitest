@@ -41,6 +41,7 @@
         <module>pitest</module>
         <module>pitest-ant</module>
         <module>pitest-maven-verification</module>
+        <module>pitest-groovy-verification</module>
     </modules>
 
     <!-- common dependencies used in all subprojects -->
