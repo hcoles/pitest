@@ -57,6 +57,7 @@
 				    <timestampedReports>false</timestampedReports>
 					<targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>
+					<timeoutConstant>4000</timeoutConstant>
 				</configuration>
 			</plugin>
 		</plugins>
