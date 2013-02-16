@@ -29,7 +29,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    * 
    */
-  private List<String>          targetClasses;
+  protected List<String>          targetClasses;
 
   /**
    * Tests to run
@@ -37,7 +37,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter
    * 
    */
-  private List<String>          targetTests;
+  protected List<String>          targetTests;
 
   /**
    * Methods not to mutate
@@ -212,7 +212,7 @@ public class PitMojo extends AbstractMojo {
    * @required
    * @readonly
    */
-  private MavenProject          project;
+  protected MavenProject          project;
 
   /**
    * <i>Internal</i>: Map of plugin artifacts.
@@ -241,7 +241,7 @@ public class PitMojo extends AbstractMojo {
    */
   protected ArtifactFactory     factory;
 
-  private final GoalStrategy    goalStrategy;
+  protected final GoalStrategy    goalStrategy;
 
   public PitMojo() {
     this(new RunPitStrategy());
@@ -256,7 +256,7 @@ public class PitMojo extends AbstractMojo {
     this.goalStrategy.execute( detectBaseDir() ,data);
   }
 
-  private File detectBaseDir() {
+  protected File detectBaseDir() {
     // execution project doesn't seem to always be available.
     // possbily a maven 2 vs maven 3 issue?
     MavenProject executionProject = project.getExecutionProject();

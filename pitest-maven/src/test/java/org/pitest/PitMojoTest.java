@@ -15,14 +15,10 @@ public class PitMojoTest extends BasePitMojoTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-
   }
   
-  public void testGG() {
-    
-  }
 
-  public void XXtestRunsAMutationReportWhenMutationCoverageGoalTrigered()
+  public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     Build build = new Build();

@@ -82,13 +82,19 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         "</project>";
     return pom;
   }
-
+  
   protected PitMojo createPITMojo(final String config) throws Exception {
+   
+    final PitMojo pitMojo = new PitMojo(this.executionStrategy);
+    configurePitMojo(pitMojo, config);
+    return pitMojo;
+  }
+
+  protected void configurePitMojo(final PitMojo pitMojo, final String config) throws Exception  {
     final Xpp3Dom xpp3dom = Xpp3DomBuilder.build(new StringReader(config));
     final PlexusConfiguration pluginConfiguration = extractPluginConfiguration(
         "pitest-maven", xpp3dom);
 
-    final PitMojo pitMojo = new PitMojo(this.executionStrategy);
 
     // default the report dir to something
     setVariableValueToObject(pitMojo, "reportsDirectory", new File("."));
@@ -103,6 +109,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
     setVariableValueToObject(pitMojo, "project", this.project);
 
-    return pitMojo;
   }
+  
+
 }
