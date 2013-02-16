@@ -7,7 +7,7 @@ import org.pitest.functional.F;
 
 /**
  * Converts paths to java class names globs if they are within the supplied
- * source root.
+ * source root. Globs include wildcards to catch any inner classes.
  * 
  * This conversion will not pick up non public, non inner classes defined in a
  * source file not matching the class name. To cover this corner case would need
@@ -27,7 +27,7 @@ class PathToJavaClassConverter implements F<String, Iterable<String>> {
     final File f = new File(a);
     final String modifiedFilePath = f.getAbsolutePath();
 
-    if (modifiedFilePath.startsWith(this.sourceRoot)) {
+    if (modifiedFilePath.startsWith(this.sourceRoot) && modifiedFilePath.indexOf('.') != -1 ) {
       return createClassGlobFromFilePath(this.sourceRoot, modifiedFilePath);
     }
     return Collections.emptyList();
@@ -38,8 +38,10 @@ class PathToJavaClassConverter implements F<String, Iterable<String>> {
       final String modifiedFilePath) {
     final String rootedPath = modifiedFilePath.substring(
         sourceRoot.length() + 1, modifiedFilePath.length());
+    // some scms report paths in portable format, some in os specific format (i think)
+    // replace both possibilities regardless of host os
     return Collections.singleton(stripFileExtension(rootedPath).replace('/',
-        '.'));
+        '.').replace('\\', '.') + "*");
   }
 
   private String stripFileExtension(final String rootedPath) {
