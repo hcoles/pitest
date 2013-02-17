@@ -44,8 +44,6 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     
-    System.out.println("RUnner is " + runner);
-    
     if (isNotARunnableTest(runner, clazz.getName())) {
       return Collections.emptyList();
     }

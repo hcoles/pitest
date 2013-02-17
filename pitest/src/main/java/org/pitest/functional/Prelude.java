@@ -100,7 +100,7 @@ public abstract class Prelude {
   public final static <T> SideEffect1<T> printTo(final PrintStream stream) {
     return new SideEffect1<T>() {
       public void apply(final T a) {
-        stream.println(a);
+        stream.print(a);
       }
     };
   }
@@ -108,7 +108,7 @@ public abstract class Prelude {
   public static <T> SideEffect1<T> printWith(final T t) {
     return new SideEffect1<T>() {
       public void apply(final T a) {
-        System.out.println(t + " : " + a);
+        System.out.print(t + " : " + a);
       }
     };
   }

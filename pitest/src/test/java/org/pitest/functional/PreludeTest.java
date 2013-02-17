@@ -16,28 +16,41 @@ package org.pitest.functional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.io.PrintStream;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class PreludeTest {
 
   @Test
-  public void testIsNullReturnsTrueWhenNull() {
+  public void isNullShouldReturnsTrueWhenNull() {
     assertTrue(Prelude.isNull().apply(null));
   }
 
   @Test
-  public void testIsNullReturnsFalseWhenNotNull() {
+  public void isNullShouldReturnFalseWhenNotNull() {
     assertFalse(Prelude.isNull().apply(1));
   }
 
   @Test
-  public void testIsNotNullReturnsFalseWhenNull() {
+  public void isNotNullShouldReturnFalseWhenNull() {
     assertFalse(Prelude.isNotNull().apply(null));
   }
 
   @Test
-  public void testIsNotNullReturnsTrueWhenNotNull() {
+  public void isNotNullShouldReturnTrueWhenNotNull() {
     assertTrue(Prelude.isNotNull().apply(1));
   }
+  
+  @Test
+  public void printToShouldPrintValueToStream() {
+    Integer i = Integer.valueOf(42);
+    PrintStream stream = Mockito.mock(PrintStream.class);
+    Prelude.printTo(stream).apply(i);
+    verify(stream).print(i);
+  }
+  
 }
