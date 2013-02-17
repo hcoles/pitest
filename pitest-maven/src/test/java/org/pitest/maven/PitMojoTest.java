@@ -1,4 +1,4 @@
-package org.pitest;
+package org.pitest.maven;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import java.io.File;
 
 import org.apache.maven.model.Build;
+import org.pitest.maven.PitMojo;
 import org.pitest.mutationtest.ReportOptions;
 
 public class PitMojoTest extends BasePitMojoTest {

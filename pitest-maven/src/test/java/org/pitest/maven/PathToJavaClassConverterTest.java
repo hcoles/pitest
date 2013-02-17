@@ -1,4 +1,4 @@
-package org.pitest;
+package org.pitest.maven;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.junit.Test;
+import org.pitest.maven.PathToJavaClassConverter;
 
 public class PathToJavaClassConverterTest {
   

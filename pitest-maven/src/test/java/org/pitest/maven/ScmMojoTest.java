@@ -1,4 +1,4 @@
-package org.pitest;
+package org.pitest.maven;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
@@ -20,6 +20,7 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.mockito.Mock;
+import org.pitest.maven.ScmMojo;
 import org.pitest.mutationtest.ReportOptions;
 
 public class ScmMojoTest extends BasePitMojoTest {

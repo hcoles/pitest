@@ -1,4 +1,4 @@
-package org.pitest;
+package org.pitest.maven;
 
 import java.io.File;
 import java.util.List;
