@@ -55,7 +55,7 @@ public class ScmMojo extends PitMojo {
    * Base of scm root. For a multi module project this is probably the parent
    * project.
    * 
-   * @parameter expression="${project.parent.basedir}"
+   * @parameter default="${project.parent.basedir}" expression="${scmRootDir}"
    */
   private File       scmRootDir;
 
