@@ -55,7 +55,7 @@ public class ScmMojo extends PitMojo {
    * Base of scm root. For a multi module project this is probably the parent
    * project.
    * 
-   * @parameter default="${project.parent.basedir}" expression="${scmRootDir}"
+   * @parameter expression="${project.parent.basedir}"
    */
   private File       scmRootDir;
 
@@ -117,8 +117,10 @@ public class ScmMojo extends PitMojo {
       final List<String> modifiedPaths = new ArrayList<String>();
       final ScmRepository repository = this.manager
           .makeScmRepository(getSCMConnection());
+      final File scmRoot = scmRoot();
+      this.getLog().info("Scm root dir is " + scmRoot);
       final StatusScmResult status = this.manager.status(repository,
-          new ScmFileSet(scmRoot()));
+          new ScmFileSet(scmRoot));
 
       for (final ScmFile file : status.getChangedFiles()) {
         if (file.getStatus().equals(ScmFileStatus.ADDED)

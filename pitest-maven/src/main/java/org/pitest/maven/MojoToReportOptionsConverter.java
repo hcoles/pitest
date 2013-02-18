@@ -98,7 +98,7 @@ public class MojoToReportOptionsConverter {
     data.setMutators(determineMutators());
     data.setTimeoutConstant(this.mojo.getTimeoutConstant());
     data.setTimeoutFactor(this.mojo.getTimeoutFactor());
-    if (this.mojo.getAvoidCallsTo() != null) {
+    if (hasValue(this.mojo.getAvoidCallsTo())) {
       data.setLoggingClasses(this.mojo.getAvoidCallsTo());
     }
 
@@ -163,7 +163,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<MethodMutatorFactory> determineMutators() {
-    if (this.mojo.getMutators() != null) {
+    if (hasValue(this.mojo.getMutators())) {
       return FCollection.flatMap(this.mojo.getMutators(), stringToMutators());
     } else {
       return Mutator.DEFAULTS.asCollection();
@@ -185,7 +185,7 @@ public class MojoToReportOptionsConverter {
 
   private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
       final Collection<String> filters) {
-    if (filters == null) {
+    if (!hasValue(filters)) {
       return Collections.<Predicate<String>> singleton(new Glob(this.mojo
           .getProject().getGroupId() + "*"));
     } else {
@@ -207,12 +207,16 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<OutputFormat> determineOutputFormats() {
-    if (this.mojo.getOutputFormats() != null) {
+    if (hasValue(this.mojo.getOutputFormats())) {
       return FCollection.map(this.mojo.getOutputFormats(),
           Functions.stringToEnum(OutputFormat.class));
     } else {
       return Arrays.asList(OutputFormat.HTML);
     }
+  }
+  
+  private boolean hasValue(Collection<?> collection) {
+    return collection != null && !collection.isEmpty();
   }
 
 }

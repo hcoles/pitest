@@ -254,6 +254,9 @@ public class PitMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
     this.goalStrategy.execute( detectBaseDir() ,data);
+    for ( Object each : this.project.getCollectedProjects() ) {
+      System.out.println("Project " + each);
+    }
   }
 
   protected File detectBaseDir() {
