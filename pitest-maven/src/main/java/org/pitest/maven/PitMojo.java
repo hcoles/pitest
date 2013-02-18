@@ -26,7 +26,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Classes to include in mutation test
    * 
-   * @parameter
+   * @parameter expression="${targetClasses}"
    * 
    */
   protected List<String>          targetClasses;
@@ -34,7 +34,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Tests to run
    * 
-   * @parameter
+   * @parameter expression="${targetTests}"
    * 
    */
   protected List<String>          targetTests;
@@ -42,7 +42,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Methods not to mutate
    * 
-   * @parameter
+   * @parameter expression="${excludedMethods}"
    * 
    */
   private List<String>          excludedMethods;
@@ -50,14 +50,14 @@ public class PitMojo extends AbstractMojo {
   /**
    * Classes not to mutate or run tests from
    * 
-   * @parameter
+   * @parameter expression="${excludedClasses}"
    * 
    */
   private List<String>          excludedClasses;
 
   /**
    * 
-   * @parameter
+   * @parameter expression="${avoidCallsTo}"
    * 
    */
   private List<String>          avoidCallsTo;
@@ -66,14 +66,14 @@ public class PitMojo extends AbstractMojo {
   /**
    * Base directory where all reports are written to.
    * 
-   * @parameter default-value="${project.build.directory}/pit-reports"
+   * @parameter default-value="${project.build.directory}/pit-reports" expression="${reportsDirectory}"
    */
   private File                  reportsDirectory;
   
   /**
    * File to write history information to for incremental analysis
    * 
-   * @parameter
+   * @parameter expression="${historyOutputFile}"
    */
   private File                  historyOutputFile;
   
@@ -81,7 +81,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * File to read history from for incremental analysis (can be same as output file)
    * 
-   * @parameter
+   * @parameter expression="${historyInputFile}"
    */
   private File                  historyInputFile;
 
@@ -89,56 +89,56 @@ public class PitMojo extends AbstractMojo {
    * Maximum distance to look from test to class. Relevant when mutating static
    * initializers
    * 
-   * @parameter default-value="-1"
+   * @parameter default-value="-1" expression="${maxDependencyDistance}"
    */
   private int                   maxDependencyDistance;
 
   /**
    * Number of threads to use
    * 
-   * @parameter default-value="1"
+   * @parameter default-value="1" expression="${threads}"
    */
   private int                   threads;
 
   /**
    * Mutate static initializers
    * 
-   * @parameter default-value="false"
+   * @parameter default-value="false" expression="${mutateStaticInitializers}"
    */
   private boolean               mutateStaticInitializers;
 
   /**
    * Detect inlined code
    * 
-   * @parameter default-value="true"
+   * @parameter default-value="true" expression="${detectInlinedCode}"
    */
   private boolean               detectInlinedCode;
   
   /**
    * Mutation operators to apply
    * 
-   * @parameter
+   * @parameter  expression="${mutators}"
    */
   private List<String>          mutators;
 
   /**
    * Weighting to allow for timeouts
    * 
-   * @parameter default-value="1.25"
+   * @parameter default-value="1.25"  expression="${timeoutFactor}"
    */
   private float                 timeoutFactor;
 
   /**
    * Constant factor to allow for timeouts
    * 
-   * @parameter default-value="3000"
+   * @parameter default-value="3000"  expression="${timeoutConstant}"
    */
   private long                  timeoutConstant;
 
   /**
    * Maximum number of mutations to allow per class
    * 
-   * @parameter default-value="-1"
+   * @parameter default-value="-1" expression="${maxMutationsPerClass}"
    */
   private int                   maxMutationsPerClass;
 
@@ -152,56 +152,56 @@ public class PitMojo extends AbstractMojo {
   /**
    * Formats to output during analysis phase
    * 
-   * @parameter
+   * @parameter  expression="${outputFormats}"
    */
   private List<String>          outputFormats;
 
   /**
    * Output verbose logging
    * 
-   * @parameter default-value="false"
+   * @parameter default-value="false" expression="${verbose}"
    */
   private boolean               verbose;
 
   /**
    * Throw error if no mutations found
    * 
-   * @parameter default-value="true"
+   * @parameter default-value="true"  expression="${failWhenNoMutations}"
    */
   private boolean               failWhenNoMutations;
   
   /**
    * Create timestamped subdirectory for report
    * 
-   * @parameter default-value="true"
+   * @parameter default-value="true" expression="${timestampedReports}"
    */
   private boolean timestampedReports;
 
   /**
    * TestNG Groups to exclude
    * 
-   * @parameter
+   * @parameter expression="${excludedTestNGGroups}"
    */
   private List<String>          excludedTestNGGroups;
 
   /**
    * TestNG Groups to include
    * 
-   * @parameter
+   * @parameter expression="${includedTestNGGroups}"
    */
   private List<String>          includedTestNGGroups;
   
   /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
-   * @parameter
+   * @parameter expression="${mutationUnitSize}"
    */
   private int mutationUnitSize;
   
   /**
    * Export line coverage data
    * 
-   * @parameter default-value="false"
+   * @parameter default-value="false" expression="${exportLineCoverage}"
    */
   private boolean exportLineCoverage;
 

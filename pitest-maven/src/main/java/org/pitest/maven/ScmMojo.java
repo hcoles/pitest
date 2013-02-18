@@ -39,7 +39,7 @@ public class ScmMojo extends PitMojo {
    * Connection type to use when querying scm for changed files. Can either be
    * "connection" or "developerConnection".
    * 
-   * @parameter default-value="connection"
+   * @parameter default-value="connection" expression="${connectionType}"
    */
   private String     connectionType;
 
