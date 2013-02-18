@@ -378,6 +378,13 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--historyOutputLocation=foo");
   }
   
+  @Test
+  public void shouldIgnoreEmptyListOfExcludedClasses() {
+    this.pitestTask.setExcludedClasses("");
+    this.pitestTask.execute(this.java);
+    verify(this.arg, never()).setValue("--excludedClasses=");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

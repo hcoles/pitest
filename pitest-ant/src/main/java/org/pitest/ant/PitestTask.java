@@ -106,7 +106,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setMutateStaticInits(final String value) {
     this.setOption(ConfigOption.MUTATE_STATIC_INITIALIZERS, value);
   }
-  
+
   public void setDetectInlinedCode(final String value) {
     this.setOption(ConfigOption.USE_INLINED_CODE_DETECTION, value);
   }
@@ -178,13 +178,15 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setHistoryInputLocation(final String value) {
     this.setOption(ConfigOption.HISTORY_INPUT_LOCATION, value);
   }
-  
+
   public void setHistoryOutputLocation(final String value) {
     this.setOption(ConfigOption.HISTORY_OUTPUT_LOCATION, value);
   }
-  
+
   private void setOption(final ConfigOption option, final String value) {
-    this.options.put(option.getParamName(), value);
+    if (!"".equals(value)) {
+      this.options.put(option.getParamName(), value);
+    }
   }
 
 }
