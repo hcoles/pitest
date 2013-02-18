@@ -76,11 +76,11 @@ public class MojoToReportOptionsConverter {
 
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
-    data.setFailWhenNoMutations(this.mojo.isFailWhenNoMutations());
+    data.setFailWhenNoMutations(shouldFailWhenNoMutations());
 
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
-   
+
     data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
     data.setExcludedMethods(globStringsToPredicates(this.mojo
         .getExcludedMethods()));
@@ -111,23 +111,29 @@ public class MojoToReportOptionsConverter {
     data.addOutputFormats(determineOutputFormats());
 
     setTestType(data);
-    
+
     data.setMutationUnitSize(this.mojo.getMutationUnitSize());
     data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
-    data.setDetectInlinedCode(mojo.isDetectInlinedCode());
-    
-    data.setHistoryInputLocation(mojo.getHistoryInputFile());
-    data.setHistoryOutputLocation(mojo.getHistoryOutputFile());
-    data.setExportLineCoverage(mojo.isExportLineCoverage());
+    data.setDetectInlinedCode(this.mojo.isDetectInlinedCode());
+
+    data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
+    data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+    data.setExportLineCoverage(this.mojo.isExportLineCoverage());
 
     return data;
   }
 
-  private void setTestType(ReportOptions data) {
-    TestGroupConfig conf = new TestGroupConfig(
+  private boolean shouldFailWhenNoMutations() {
+    return this.mojo.isFailWhenNoMutations()
+        && !this.mojo.getProject().getModel().getPackaging()
+            .equalsIgnoreCase("pom");
+  }
+
+  private void setTestType(final ReportOptions data) {
+    final TestGroupConfig conf = new TestGroupConfig(
         this.mojo.getExcludedTestNGGroups(),
         this.mojo.getIncludedTestNGGroups());
-    ConfigurationFactory configFactory = new ConfigurationFactory(conf,
+    final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
         new ClassPathByteArraySource(data.getClassPath()));
 
     data.setGroupConfig(conf);
@@ -172,7 +178,6 @@ public class MojoToReportOptionsConverter {
 
     };
   }
-
 
   private Collection<Predicate<String>> determineTargetClasses() {
     return returnOrDefaultToClassesLikeGroupName(this.mojo.getTargetClasses());

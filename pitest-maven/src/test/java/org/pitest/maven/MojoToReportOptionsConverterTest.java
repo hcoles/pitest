@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.apache.maven.model.Model;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.maven.MojoToReportOptionsConverter;
@@ -213,10 +214,19 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
             OutputFormat.CSV)), actual.getOutputFormats());
   }
 
-  public void testParsesFailWhenNotMutations() {
+  public void testObeysFailWhenNoMutationsFlagWhenPackagingTypeIsNotPOM() {
+    when(this.project.getModel()).thenReturn(new Model());
     assertTrue(parseConfig("<failWhenNoMutations>true</failWhenNoMutations>")
         .shouldFailWhenNoMutations());
     assertFalse(parseConfig("<failWhenNoMutations>false</failWhenNoMutations>")
+        .shouldFailWhenNoMutations());
+  }
+  
+  public void testSetsFailWhenNoMutationsToFalseWhenPackagingTypeIsPom() {
+    Model model = new Model();
+    model.setPackaging("pom");
+    when(this.project.getModel()).thenReturn(model);
+    assertFalse(parseConfig("<failWhenNoMutations>true</failWhenNoMutations>")
         .shouldFailWhenNoMutations());
   }
 
