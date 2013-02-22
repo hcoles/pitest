@@ -1,6 +1,6 @@
 package org.pitest.coverage.execute;
 
-import java.io.DataOutputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 
 import org.pitest.Description;
@@ -14,7 +14,7 @@ public class CoveragePipe implements CoverageReceiver {
 
   private final SafeDataOutputStream dos;
 
-  public CoveragePipe(final DataOutputStream dos) {
+  public CoveragePipe(final OutputStream dos) {
     this.dos = new SafeDataOutputStream(dos);
   }
 

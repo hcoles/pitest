@@ -17,7 +17,6 @@ package org.pitest.coverage.execute;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -67,10 +66,7 @@ public class CoverageSlave {
         throw paramsFromParent.getPitConfig().verifyEnvironment().value();
       }
 
-      final DataOutputStream dos = new DataOutputStream(
-          new BufferedOutputStream(s.getOutputStream()));
-
-      invokeQueue = new CoveragePipe(dos);
+      invokeQueue = new CoveragePipe(new BufferedOutputStream(s.getOutputStream()));
 
       CodeCoverageStore.init(invokeQueue);
 
