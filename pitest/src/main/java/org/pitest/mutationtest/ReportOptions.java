@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.pitest.Pitest;
+import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
@@ -35,6 +37,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
@@ -218,7 +222,15 @@ public class ReportOptions {
 
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
-    return Prelude.and(or(this.targetClasses), not(isBlackListed()));
+    Predicate<String>  filter = Prelude.and(or(this.targetClasses), not(isBlackListed()));
+    checkNotTryingToMutateSelf(filter);
+    return filter;
+  }
+
+  private void checkNotTryingToMutateSelf(Predicate<String> filter) {
+    if (filter.apply(Pitest.class.getName())) {
+      throw new PitHelpError(Help.BAD_FILTER);
+    }
   }
 
   public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
@@ -396,10 +408,12 @@ public class ReportOptions {
 
   private static F<String, Boolean> commonClasses() {
     return new F<String, Boolean>() {
-
       public Boolean apply(final String name) {
         return name.startsWith("java") || name.startsWith("sun/")
-            || name.startsWith("org/junit") || name.startsWith("junit");
+            || name.startsWith("org/junit") || name.startsWith("junit")
+            || name.startsWith("org/pitest/coverage")
+            || name.startsWith("org/pitest/reloc")
+            || name.startsWith("org/pitest/boot");
       }
 
     };

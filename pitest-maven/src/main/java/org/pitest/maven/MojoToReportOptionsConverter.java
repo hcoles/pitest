@@ -186,8 +186,10 @@ public class MojoToReportOptionsConverter {
   private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
       final Collection<String> filters) {
     if (!hasValue(filters)) {
-      return Collections.<Predicate<String>> singleton(new Glob(this.mojo
-          .getProject().getGroupId() + "*"));
+      String groupId = this.mojo
+          .getProject().getGroupId() + "*";
+      this.mojo.getLog().info("Defaulting to group id (" + groupId + ")");
+      return Collections.<Predicate<String>> singleton(new Glob(groupId));
     } else {
       return FCollection.map(filters, Glob.toGlobPredicate());
     }

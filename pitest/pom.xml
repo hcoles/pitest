@@ -117,27 +117,27 @@
 							<relocations>
 								<relocation>
 									<pattern>org.xmlpull</pattern>
-									<shadedPattern>org.pitest.xmlpull</shadedPattern>
+									<shadedPattern>org.pitest.reloc.xmlpull</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.objectweb.asm</pattern>
-									<shadedPattern>org.pitest.asm</shadedPattern>
+									<shadedPattern>org.pitest.reloc.asm</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>com.thoughtworks.xstream</pattern>
-									<shadedPattern>org.pitest.xstream</shadedPattern>
+									<shadedPattern>org.pitest.reloc.xstream</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>org.antlr</pattern>
-									<shadedPattern>org.pitest.antlr</shadedPattern>
+									<shadedPattern>org.pitest.reloc.antlr</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>antlr</pattern>
-									<shadedPattern>org.pitest.antlr.common</shadedPattern>
+									<shadedPattern>org.pitest.reloc.antlr.common</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>joptsimple</pattern>
-									<shadedPattern>org.pitest.joptsimple</shadedPattern>
+									<shadedPattern>org.pitest.reloc.joptsimple</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
