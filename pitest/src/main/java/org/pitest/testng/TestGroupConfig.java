@@ -38,4 +38,12 @@ public class TestGroupConfig {
     return this.includedGroups;
   }
 
+  @Override
+  public String toString() {
+    return "TestGroupConfig [excludedGroups=" + excludedGroups
+        + ", includedGroups=" + includedGroups + "]";
+  }
+  
+  
+
 }

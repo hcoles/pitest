@@ -29,7 +29,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.pitest.Pitest;
-import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
@@ -278,27 +277,29 @@ public class ReportOptions {
     return this.targetTests;
   }
 
+
   @Override
   public String toString() {
-    return "ReportOptions [config=" + this.config + ", targetClasses="
-        + this.targetClasses + ", excludedMethods=" + this.excludedMethods
-        + ", excludedClasses=" + this.excludedClasses + ", codePaths="
-        + this.codePaths + ", reportDir=" + this.reportDir + ", sourceDirs="
-        + this.sourceDirs + ", classPathElements=" + this.classPathElements
-        + ", mutators=" + this.mutators + ", dependencyAnalysisMaxDistance="
-        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + this.mutateStaticInitializers + ", jvmArgs=" + this.jvmArgs
-        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
-        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
-        + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + ", maxMutationsPerClass="
-        + this.maxMutationsPerClass + ", verbose=" + this.verbose
-        + ", failWhenNoMutations=" + this.failWhenNoMutations + ", outputs="
-        + this.outputs + ", groupConfig=" + this.groupConfig
-        + ", mutationUnitSize=" + this.mutationUnitSize
-        + ", shouldCreateTimestampedReports="
-        + this.shouldCreateTimestampedReports + ", detectInlinedCode="
-        + this.detectInlinedCode + "]";
+    return "ReportOptions [config=" + config + ", targetClasses="
+        + targetClasses + ", excludedMethods=" + excludedMethods
+        + ", excludedClasses=" + excludedClasses + ", codePaths=" + codePaths
+        + ", reportDir=" + reportDir + ", historyInputLocation="
+        + historyInputLocation + ", historyOutputLocation="
+        + historyOutputLocation + ", sourceDirs=" + sourceDirs
+        + ", classPathElements=" + classPathElements + ", mutators=" + mutators
+        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
+        + ", mutateStaticInitializers=" + mutateStaticInitializers
+        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
+        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
+        + timeoutConstant + ", targetTests=" + targetTests
+        + ", loggingClasses=" + loggingClasses + ", maxMutationsPerClass="
+        + maxMutationsPerClass + ", verbose=" + verbose
+        + ", failWhenNoMutations=" + failWhenNoMutations + ", outputs="
+        + outputs + ", groupConfig=" + groupConfig + ", mutationUnitSize="
+        + mutationUnitSize + ", shouldCreateTimestampedReports="
+        + shouldCreateTimestampedReports + ", detectInlinedCode="
+        + detectInlinedCode + ", exportLineCoverage=" + exportLineCoverage
+        + "]";
   }
 
   @SuppressWarnings("unchecked")
