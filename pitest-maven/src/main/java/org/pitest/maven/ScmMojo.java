@@ -2,8 +2,11 @@ package org.pitest.maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.scm.ScmException;
@@ -14,6 +17,7 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
+import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ReportOptions;
 
@@ -33,7 +37,18 @@ public class ScmMojo extends PitMojo {
   /**
    * @component
    */
-  private ScmManager manager;
+  private ScmManager  manager;
+
+  /**
+   * List of scm status to include. Names match those defined
+   * by the maven scm plugin.
+   * 
+   * Common values include ADDED,MODIFIED (the defaults)
+   * & UNKNOWN. 
+   * 
+   * @parameter expression="${include}"
+   */
+  private Set<String> include;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
@@ -41,7 +56,7 @@ public class ScmMojo extends PitMojo {
    * 
    * @parameter default-value="connection" expression="${connectionType}"
    */
-  private String     connectionType;
+  private String      connectionType;
 
   /**
    * Project basedir
@@ -49,7 +64,7 @@ public class ScmMojo extends PitMojo {
    * @parameter expression="${basedir}"
    * @required
    */
-  private File       basedir;
+  private File        basedir;
 
   /**
    * Base of scm root. For a multi module project this is probably the parent
@@ -57,7 +72,7 @@ public class ScmMojo extends PitMojo {
    * 
    * @parameter expression="${project.parent.basedir}"
    */
-  private File       scmRootDir;
+  private File        scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
       final ScmManager manager) {
@@ -114,6 +129,7 @@ public class ScmMojo extends PitMojo {
 
   private List<String> findModifiedPaths() throws MojoExecutionException {
     try {
+      final Set<ScmFileStatus> statusToInclude = makeStatusSet();
       final List<String> modifiedPaths = new ArrayList<String>();
       final ScmRepository repository = this.manager
           .makeScmRepository(getSCMConnection());
@@ -123,8 +139,7 @@ public class ScmMojo extends PitMojo {
           new ScmFileSet(scmRoot));
 
       for (final ScmFile file : status.getChangedFiles()) {
-        if (file.getStatus().equals(ScmFileStatus.ADDED)
-            || file.getStatus().equals(ScmFileStatus.MODIFIED)) {
+        if (statusToInclude.contains(file.getStatus())) {
           modifiedPaths.add(file.getPath());
         }
       }
@@ -133,6 +148,25 @@ public class ScmMojo extends PitMojo {
       throw new MojoExecutionException("Error while querying scm", e);
     }
 
+  }
+
+  private Set<ScmFileStatus> makeStatusSet() {
+    if ((this.include == null) || this.include.isEmpty()) {
+      return new HashSet<ScmFileStatus>(Arrays.asList(ScmStatus.ADDED.getStatus(),
+          ScmStatus.MODIFIED.getStatus()));
+    }
+    final Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
+    FCollection.mapTo(this.include, stringToMavenScmStatus(), s);
+    return s;
+  }
+
+  private static F<String, ScmFileStatus> stringToMavenScmStatus() {
+    return new F<String, ScmFileStatus>() {
+      public ScmFileStatus apply(final String a) {
+        return ScmStatus.valueOf(a.toUpperCase()).getStatus();
+      }
+
+    };
   }
 
   private File scmRoot() {

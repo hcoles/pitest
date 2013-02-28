@@ -2,6 +2,7 @@ package org.pitest.maven;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +21,6 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.mockito.Mock;
-import org.pitest.maven.ScmMojo;
 import org.pitest.mutationtest.ReportOptions;
 
 public class ScmMojoTest extends BasePitMojoTest {
@@ -87,16 +87,19 @@ public class ScmMojoTest extends BasePitMojoTest {
   
   public void testClassesAddedToScmAreMutationTested() throws Exception {
     setupConnection();
-    when(this.manager.status(any(ScmRepository.class), any(ScmFileSet.class)))
-    .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",ScmFileStatus.ADDED))));
+    setFileWithStatus(ScmFileStatus.ADDED);
     this.testee.execute(); 
     verify(this.executionStrategy).execute(any(File.class), any(ReportOptions.class));
   }
 
+  private void setFileWithStatus( ScmFileStatus status) throws ScmException {
+    when(this.manager.status(any(ScmRepository.class), any(ScmFileSet.class)))
+    .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",status))));
+  }
+
   public void testModifiedClassesAreMutationTested() throws Exception {
     setupConnection();
-    when(this.manager.status(any(ScmRepository.class), any(ScmFileSet.class)))
-    .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",ScmFileStatus.MODIFIED))));
+    setFileWithStatus(ScmFileStatus.MODIFIED);
     this.testee.execute(); 
     verify(this.executionStrategy).execute(any(File.class), any(ReportOptions.class));
   }
@@ -107,6 +110,14 @@ public class ScmMojoTest extends BasePitMojoTest {
     .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",ScmFileStatus.DELETED), new ScmFile("foo/bar/Bar.java",ScmFileStatus.UNKNOWN))));
     this.testee.execute(); 
     verify(this.executionStrategy, never()).execute(any(File.class), any(ReportOptions.class));
+  }
+  
+  public void testCanOverrideInspectedStatus() throws Exception {
+    setupConnection();
+    setFileWithStatus(ScmFileStatus.UNKNOWN);
+    configurePitMojo(this.testee, createPomWithConfiguration("<include><value>DELETED</value><value>UNKNOWN</value></include>"));
+    this.testee.execute(); 
+    verify(this.executionStrategy, times(1)).execute(any(File.class), any(ReportOptions.class));
   }
   
   private void setupConnection() {
