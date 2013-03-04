@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -223,23 +221,6 @@ public class PitMojo extends AbstractMojo {
    */
   private Map<String, Artifact> pluginArtifactMap;
 
-  /**
-   * Location of the local repository.
-   * 
-   * @parameter expression="${localRepository}"
-   * @readonly
-   * @required
-   */
-  protected ArtifactRepository  localRepository;
-
-  /**
-   * Used to look up Artifacts in the remote repository.
-   * 
-   * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-   * @required
-   * @readonly
-   */
-  protected ArtifactFactory     factory;
 
   protected final GoalStrategy    goalStrategy;
 
@@ -337,14 +318,6 @@ public class PitMojo extends AbstractMojo {
 
   public Map<String, Artifact> getPluginArtifactMap() {
     return this.pluginArtifactMap;
-  }
-
-  public ArtifactRepository getLocalRepository() {
-    return this.localRepository;
-  }
-
-  public ArtifactFactory getFactory() {
-    return this.factory;
   }
 
   public boolean isFailWhenNoMutations() {

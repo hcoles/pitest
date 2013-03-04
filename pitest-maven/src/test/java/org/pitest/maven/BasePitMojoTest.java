@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -35,8 +34,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPath;
-import org.pitest.maven.PitMojo;
-import org.pitest.maven.RunPitStrategy;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
@@ -103,8 +100,6 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
     configureMojo(pitMojo, pluginConfiguration);
 
-    setVariableValueToObject(pitMojo, "localRepository",
-        new StubArtifactRepository("repo"));
 
     final Map<String, Artifact> pluginArtifacts = new HashMap<String, Artifact>();
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
