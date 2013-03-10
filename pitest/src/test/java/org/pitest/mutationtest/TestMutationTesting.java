@@ -301,6 +301,7 @@ public class TestMutationTesting {
         Mutator.RETURN_VALS.asCollection());
     verifyLineNumbers(101);
   }
+  
 
   private void run(final Class<?> clazz, final Class<?> test,
       final Collection<? extends MethodMutatorFactory> mutators) {

@@ -18,7 +18,7 @@ import org.pitest.util.Glob;
 
 public abstract class ReportTestBase {
 
-  private MetaDataExtractor metaDataExtractor;
+  protected MetaDataExtractor metaDataExtractor;
   protected ReportOptions   data;
 
   @Before

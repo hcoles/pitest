@@ -3,6 +3,7 @@ package org.pitest.junit.adapter;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.StoppedByUserException;
 import org.pitest.extension.ResultCollector;
 
 class AdaptingRunListener extends RunListener {
@@ -38,6 +39,13 @@ class AdaptingRunListener extends RunListener {
 
   @Override
   public void testStarted(final Description description) throws Exception {
+    if ( this.finished ) {
+      // If the JUnit test has been annotated with @BeforeClass or @AfterClass
+      // need to force the exit after the first failure as tests will be run as a block
+      // rather than individually.
+      // This is apparently the junit way.
+      throw new StoppedByUserException();
+    }
     this.rc.notifyStart(this.description);
   }
 

@@ -15,6 +15,7 @@
 
 package org.pitest.mutationtest;
 
+import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.results.DetectionStatus.RUN_ERROR;
@@ -54,6 +55,8 @@ import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
 
+import com.example.BeforeAfterClassTest;
+import com.example.CoveredByABeforeAfterClassTest;
 import com.example.CoveredByEasyMock;
 import com.example.CoveredByJMockit;
 import com.example.CoveredByJUnitThreeSuite;
@@ -329,6 +332,19 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
 
     verifyResults(SURVIVED);
+  }
+  
+  @Test
+  public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
+    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
+    this.data.setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
+    this.data
+        .setTargetTests(predicateFor(BeforeAfterClassTest.class));
+
+    createAndRun();
+
+    verifyResults(KILLED);
+    assertEquals(1,this.metaDataExtractor.getNumberOfTestsRun());
   }
 
   private void createAndRun() {

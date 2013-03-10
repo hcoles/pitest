@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.StoppedByUserException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DescriptionMother;
@@ -89,5 +90,12 @@ public class AdaptingRunListenerTest {
     this.testee.testStarted(this.junitDesc);
     verify(this.rc).notifyStart(this.pitDescription);
   }
+  
+  @Test(expected=StoppedByUserException.class)
+  public void shouldRunStoppedByUserExceptionIfMoreTestsRunAfterAFailure() throws Exception {
+    this.testee.testFailure(new Failure(this.junitDesc, this.throwable));
+    this.testee.testStarted(this.junitDesc);
+  }
+  
 
 }

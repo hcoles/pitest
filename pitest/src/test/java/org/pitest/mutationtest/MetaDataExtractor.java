@@ -17,6 +17,8 @@ package org.pitest.mutationtest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pitest.functional.F2;
+import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
@@ -41,6 +43,17 @@ public class MetaDataExtractor implements MutationResultListener {
     return dss;
   }
 
+  
+  public int getNumberOfTestsRun() {
+    F2<Integer, MutationResult, Integer> sum = new   F2<Integer, MutationResult, Integer> () {
+      public Integer apply(Integer a, MutationResult b) {
+        return a + b.getNumberOfTestsRun();
+      }
+      
+    };
+    return FCollection.fold(sum, 0, data);
+  }
+  
   public void runStart() {
 
   }
