@@ -124,9 +124,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private boolean shouldFailWhenNoMutations() {
-    return this.mojo.isFailWhenNoMutations()
-        && !this.mojo.getProject().getModel().getPackaging()
-            .equalsIgnoreCase("pom");
+    return this.mojo.isFailWhenNoMutations();
   }
 
   private void setTestType(final ReportOptions data) {

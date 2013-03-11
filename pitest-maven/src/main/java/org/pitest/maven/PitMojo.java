@@ -27,7 +27,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetClasses}"
    * 
    */
-  protected List<String>          targetClasses;
+  protected List<String>        targetClasses;
 
   /**
    * Tests to run
@@ -35,7 +35,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetTests}"
    * 
    */
-  protected List<String>          targetTests;
+  protected List<String>        targetTests;
 
   /**
    * Methods not to mutate
@@ -60,24 +60,24 @@ public class PitMojo extends AbstractMojo {
    */
   private List<String>          avoidCallsTo;
 
-
   /**
    * Base directory where all reports are written to.
    * 
-   * @parameter default-value="${project.build.directory}/pit-reports" expression="${reportsDirectory}"
+   * @parameter default-value="${project.build.directory}/pit-reports"
+   *            expression="${reportsDirectory}"
    */
   private File                  reportsDirectory;
-  
+
   /**
    * File to write history information to for incremental analysis
    * 
    * @parameter expression="${historyOutputFile}"
    */
   private File                  historyOutputFile;
-  
-  
+
   /**
-   * File to read history from for incremental analysis (can be same as output file)
+   * File to read history from for incremental analysis (can be same as output
+   * file)
    * 
    * @parameter expression="${historyInputFile}"
    */
@@ -111,25 +111,25 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="true" expression="${detectInlinedCode}"
    */
   private boolean               detectInlinedCode;
-  
+
   /**
    * Mutation operators to apply
    * 
-   * @parameter  expression="${mutators}"
+   * @parameter expression="${mutators}"
    */
   private List<String>          mutators;
 
   /**
    * Weighting to allow for timeouts
    * 
-   * @parameter default-value="1.25"  expression="${timeoutFactor}"
+   * @parameter default-value="1.25" expression="${timeoutFactor}"
    */
   private float                 timeoutFactor;
 
   /**
    * Constant factor to allow for timeouts
    * 
-   * @parameter default-value="3000"  expression="${timeoutConstant}"
+   * @parameter default-value="3000" expression="${timeoutConstant}"
    */
   private long                  timeoutConstant;
 
@@ -150,7 +150,7 @@ public class PitMojo extends AbstractMojo {
   /**
    * Formats to output during analysis phase
    * 
-   * @parameter  expression="${outputFormats}"
+   * @parameter expression="${outputFormats}"
    */
   private List<String>          outputFormats;
 
@@ -164,16 +164,16 @@ public class PitMojo extends AbstractMojo {
   /**
    * Throw error if no mutations found
    * 
-   * @parameter default-value="true"  expression="${failWhenNoMutations}"
+   * @parameter default-value="true" expression="${failWhenNoMutations}"
    */
   private boolean               failWhenNoMutations;
-  
+
   /**
    * Create timestamped subdirectory for report
    * 
    * @parameter default-value="true" expression="${timestampedReports}"
    */
-  private boolean timestampedReports;
+  private boolean               timestampedReports;
 
   /**
    * TestNG Groups to exclude
@@ -188,20 +188,20 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${includedTestNGGroups}"
    */
   private List<String>          includedTestNGGroups;
-  
+
   /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
    * @parameter expression="${mutationUnitSize}"
    */
-  private int mutationUnitSize;
-  
+  private int                   mutationUnitSize;
+
   /**
    * Export line coverage data
    * 
    * @parameter default-value="false" expression="${exportLineCoverage}"
    */
-  private boolean exportLineCoverage;
+  private boolean               exportLineCoverage;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -210,7 +210,7 @@ public class PitMojo extends AbstractMojo {
    * @required
    * @readonly
    */
-  protected MavenProject          project;
+  protected MavenProject        project;
 
   /**
    * <i>Internal</i>: Map of plugin artifacts.
@@ -221,8 +221,7 @@ public class PitMojo extends AbstractMojo {
    */
   private Map<String, Artifact> pluginArtifactMap;
 
-
-  protected final GoalStrategy    goalStrategy;
+  protected final GoalStrategy  goalStrategy;
 
   public PitMojo() {
     this(new RunPitStrategy());
@@ -233,15 +232,20 @@ public class PitMojo extends AbstractMojo {
   }
 
   public void execute() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
-    this.goalStrategy.execute( detectBaseDir() ,data);
+    if (shouldRun()) {
+      final ReportOptions data = new MojoToReportOptionsConverter(this)
+          .convert();
+      this.goalStrategy.execute(detectBaseDir(), data);
+    } else {
+      this.getLog().info("Skipping project");
+    }
   }
 
   protected File detectBaseDir() {
     // execution project doesn't seem to always be available.
     // possbily a maven 2 vs maven 3 issue?
-    MavenProject executionProject = project.getExecutionProject();
-    if ( executionProject == null ) {
+    final MavenProject executionProject = this.project.getExecutionProject();
+    if (executionProject == null) {
       return null;
     }
     return executionProject.getBasedir();
@@ -266,7 +270,6 @@ public class PitMojo extends AbstractMojo {
   public List<String> getAvoidCallsTo() {
     return this.avoidCallsTo;
   }
-
 
   public File getReportsDirectory() {
     return this.reportsDirectory;
@@ -333,45 +336,47 @@ public class PitMojo extends AbstractMojo {
   }
 
   public int getMutationUnitSize() {
-    return mutationUnitSize;
+    return this.mutationUnitSize;
   }
 
   public boolean isTimestampedReports() {
-    return timestampedReports;
+    return this.timestampedReports;
   }
 
   public boolean isDetectInlinedCode() {
     return this.detectInlinedCode;
   }
-  
-  public void setTimestampedReports(boolean timestampedReports) {
+
+  public void setTimestampedReports(final boolean timestampedReports) {
     this.timestampedReports = timestampedReports;
   }
 
   public File getHistoryOutputFile() {
-    return historyOutputFile;
+    return this.historyOutputFile;
   }
 
-  public void setHistoryOutputFile(File historyOutputFile) {
+  public void setHistoryOutputFile(final File historyOutputFile) {
     this.historyOutputFile = historyOutputFile;
   }
 
   public File getHistoryInputFile() {
-    return historyInputFile;
+    return this.historyInputFile;
   }
 
-  public void setHistoryInputFile(File historyInputFile) {
+  public void setHistoryInputFile(final File historyInputFile) {
     this.historyInputFile = historyInputFile;
   }
 
   public boolean isExportLineCoverage() {
-    return exportLineCoverage;
+    return this.exportLineCoverage;
   }
 
-  public void setExportLineCoverage(boolean exportLineCoverage) {
+  public void setExportLineCoverage(final boolean exportLineCoverage) {
     this.exportLineCoverage = exportLineCoverage;
   }
-  
-  
+
+  protected boolean shouldRun() {
+    return !this.project.getPackaging().equalsIgnoreCase("pom");
+  }
 
 }

@@ -120,6 +120,14 @@ public class ScmMojoTest extends BasePitMojoTest {
     verify(this.executionStrategy, times(1)).execute(any(File.class), any(ReportOptions.class));
   }
   
+  public void testDoesNotAnalysePomProjects() throws Exception {
+    setupConnection();
+    setFileWithStatus(ScmFileStatus.MODIFIED);
+    when(this.project.getPackaging()).thenReturn("pom");
+    this.testee.execute(); 
+    verify(this.executionStrategy, never()).execute(any(File.class), any(ReportOptions.class));
+  }
+  
   private void setupConnection() {
     when(this.scm.getConnection()).thenReturn("url");
     this.testee.setConnectionType("connection");

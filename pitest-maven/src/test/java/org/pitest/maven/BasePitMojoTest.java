@@ -54,6 +54,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
           fileToString()));
     when(this.project.getTestClasspathElements())
         .thenReturn(classPath);
+    when(this.project.getPackaging()).thenReturn("jar");
   }
 
   private F<File, String> fileToString() {

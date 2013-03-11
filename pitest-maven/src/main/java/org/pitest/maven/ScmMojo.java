@@ -86,6 +86,11 @@ public class ScmMojo extends PitMojo {
 
   @Override
   public void execute() throws MojoExecutionException {
+    
+    if ( !shouldRun() ) {
+      this.getLog().info("Skipping project");
+      return;
+    }
 
     this.targetClasses = findModifiedClassNames();
 
