@@ -18,16 +18,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.pitest.MultipleTestGroup;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -65,9 +64,9 @@ public class MutationTestBuilder {
     this.baseDir = baseDir;
   }
 
-  public List<TestUnit> createMutationTestUnits(
+  public List<MutationAnalysisUnit> createMutationTestUnits(
       final Collection<ClassName> codeClasses) {
-    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    final List<MutationAnalysisUnit> tus = new ArrayList<MutationAnalysisUnit>();
 
     for (final ClassName clazz : codeClasses) {
       final Collection<MutationDetails> mutationsForClasses = this.mutationSource
@@ -78,10 +77,12 @@ public class MutationTestBuilder {
         createMutationAnalysisUnits(tus, clazz, mutationsForClasses);
       }
     }
+
+    Collections.sort(tus,new AnalyisPriorityComparator());
     return tus;
   }
 
-  private void createMutationAnalysisUnits(final List<TestUnit> tus,
+  private void createMutationAnalysisUnits(final List<MutationAnalysisUnit> tus,
       final ClassName clazz,
       final Collection<MutationDetails> mutationsForClasses) {
     if (this.data.getMutationUnitSize() > 0) {
@@ -94,16 +95,16 @@ public class MutationTestBuilder {
     }
   }
 
-  private F<List<MutationDetails>, TestUnit> mutationDetailsToTestUnit(
+  private F<List<MutationDetails>, MutationAnalysisUnit> mutationDetailsToTestUnit(
       final ClassName clazz) {
-    return new F<List<MutationDetails>, TestUnit>() {
-      public TestUnit apply(final List<MutationDetails> mutations) {
+    return new F<List<MutationDetails>, MutationAnalysisUnit>() {
+      public MutationAnalysisUnit apply(final List<MutationDetails> mutations) {
         return createMutationTestUnit(mutations);
       }
     };
   }
 
-  private TestUnit createMutationTestUnit(
+  private MutationAnalysisUnit createMutationTestUnit(
       final Collection<MutationDetails> mutationsForClasses) {
 
     final Collection<MutationResult> analysedMutations = this.analyser
@@ -122,17 +123,17 @@ public class MutationTestBuilder {
       return makeUnanalysedUnit(needAnalysis);
     }
 
-    return new MultipleTestGroup(Arrays.asList(makePreAnalysedUnit(analysed),
+    return new MixedAnalysisUnit(Arrays.asList(makePreAnalysedUnit(analysed),
         makeUnanalysedUnit(needAnalysis)));
 
   }
 
-  private TestUnit makePreAnalysedUnit(final Collection<MutationResult> analysed) {
+  private MutationAnalysisUnit makePreAnalysedUnit(final Collection<MutationResult> analysed) {
     return new KnownStatusMutationTestUnit(
         this.mutationConfig.getMutatorNames(), analysed);
   }
 
-  private TestUnit makeUnanalysedUnit(
+  private MutationAnalysisUnit makeUnanalysedUnit(
       final Collection<MutationDetails> needAnalysis) {
     final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
     FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),

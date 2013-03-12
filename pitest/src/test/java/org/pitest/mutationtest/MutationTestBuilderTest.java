@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.util.JavaAgent;
 
@@ -68,7 +67,7 @@ public class MutationTestBuilderTest {
     this.data.setMutationUnitSize(1);
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Arrays.asList(createDetails(), createDetails(), createDetails()));
-    final List<TestUnit> actual = this.testee.createMutationTestUnits(Arrays
+    final List<MutationAnalysisUnit> actual = this.testee.createMutationTestUnits(Arrays
         .asList(new ClassName("foo")));
     assertEquals(3, actual.size());
   }
@@ -80,13 +79,28 @@ public class MutationTestBuilderTest {
     assertTrue(this.testee.createMutationTestUnits(
         Arrays.asList(new ClassName("foo"))).isEmpty());
   }
+  
+  @Test
+  public void shouldOrderLargestUnitFirst() {
+    final MutationDetails mutation1 = createDetails();
+    final MutationDetails mutation2 = createDetails();
+    ClassName foo = ClassName.fromString("foo");
+    ClassName bar = ClassName.fromString("bar");
+    when(this.source.createMutations(foo)).thenReturn(
+        Arrays.asList(mutation1));
+    when(this.source.createMutations(bar)).thenReturn(
+        Arrays.asList(mutation1, mutation2));
+    final List<MutationAnalysisUnit> actual = this.testee.createMutationTestUnits(Arrays
+        .asList(foo,bar));
+    assertTrue(actual.get(0).priority() > actual.get(1).priority());
+  }
 
   private void assertCreatesOneTestUnitForTwoMutations() {
     final MutationDetails mutation1 = createDetails();
     final MutationDetails mutation2 = createDetails();
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Arrays.asList(mutation1, mutation2));
-    final List<TestUnit> actual = this.testee.createMutationTestUnits(Arrays
+    final List<MutationAnalysisUnit> actual = this.testee.createMutationTestUnits(Arrays
         .asList(new ClassName("foo")));
     assertEquals(1, actual.size());
   }

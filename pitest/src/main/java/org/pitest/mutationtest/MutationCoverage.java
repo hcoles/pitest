@@ -146,7 +146,7 @@ public class MutationCoverage {
     this.historyStore.initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final List<TestUnit> tus = buildMutationTests(coverageData);
+    final List<? extends TestUnit> tus = buildMutationTests(coverageData);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -213,7 +213,7 @@ public class MutationCoverage {
     }
   }
 
-  private List<TestUnit> buildMutationTests(final CoverageDatabase coverageData) {
+  private List<? extends TestUnit> buildMutationTests(final CoverageDatabase coverageData) {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
@@ -237,7 +237,7 @@ public class MutationCoverage {
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
 
-  private void checkMutationsFound(final List<TestUnit> tus) {
+  private void checkMutationsFound(final List<? extends TestUnit> tus) {
     if (tus.isEmpty()) {
       if (this.data.shouldFailWhenNoMutations()) {
         throw new PitHelpError(Help.NO_MUTATIONS_FOUND);

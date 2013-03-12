@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.instrument;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -50,6 +51,14 @@ public class KnownStatusMutationTestUnitTest {
 
     final MutationMetaData expected = new MutationMetaData(mutators, mutations);
     verify(this.rc).notifyEnd(this.testee.getDescription(), expected);
+  }
+  
+  @Test
+  public void shouldHaveHighPriorityToAnalyse() {
+    this.testee = new KnownStatusMutationTestUnit(
+        Collections.<String> emptyList(),
+        Collections.<MutationResult> emptyList());
+    assertEquals(Integer.MAX_VALUE, testee.priority());
   }
 
 }

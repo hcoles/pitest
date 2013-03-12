@@ -3,7 +3,6 @@ package org.pitest.mutationtest.instrument;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
-import org.pitest.PitError;
 import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
@@ -86,17 +84,13 @@ public class MutationTestUnitTest {
     verify(this.rc).notifyEnd(any(Description.class), eq(metaData));
   }
 
+  
   private MutationMetaData makeMetaData(final MutationDetails details,
       final MutationStatusTestPair status) {
     return new MutationMetaData(this.mutationConfig.getMutatorNames(),
         Collections.singletonList(new MutationResult(details, status)));
   }
 
-  @Test
-  public void shouldReportErrorWhenCannotLaunchChildProcess() {
-    when(this.javaAgent.getJarLocation()).thenThrow(new PitError("oops"));
-
-  }
 
   private void addMutation() {
     this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,
