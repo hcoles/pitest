@@ -10,7 +10,7 @@ import java.util.Comparator;
  * has just picked up a large unit.
  *
  */
-class AnalyisPriorityComparator implements Comparator<MutationAnalysisUnit> {
+class AnalysisPriorityComparator implements Comparator<MutationAnalysisUnit> {
 
   public int compare(MutationAnalysisUnit a, MutationAnalysisUnit b) {  
     return b.priority() - a.priority();

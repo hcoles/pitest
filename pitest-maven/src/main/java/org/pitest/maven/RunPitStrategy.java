@@ -31,6 +31,7 @@ import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.CompoundListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;
+import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.SettingsFactory;
 import org.pitest.mutationtest.Timings;
@@ -83,9 +84,10 @@ public class RunPitStrategy implements GoalStrategy {
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
-    final MutationCoverage report = new MutationCoverage(baseDir, history,
-        code, coverageDatabase, data, reportFactory, timings,
-        new DefaultBuildVerifier());
+    MutationStrategies strategies = new MutationStrategies(history, coverageDatabase, reportFactory,    new DefaultBuildVerifier());
+    
+    final MutationCoverage report = new MutationCoverage(strategies, baseDir, 
+        code, data,  timings);
 
     try {
       report.runReport();

@@ -53,9 +53,9 @@ import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
 import org.pitest.mutationtest.report.SmartSourceLocator;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
-import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
@@ -66,38 +66,30 @@ public class MutationCoverage {
 
   private static final Logger     LOG = Log.getLogger();
   private final ReportOptions     data;
-  private final ListenerFactory   listenerFactory;
-  private final CoverageGenerator coverage;
+  
+  private final MutationStrategies strategies;
   private final Timings           timings;
-  private final BuildVerifier     buildVerifier;
   private final CodeSource        code;
-  private final HistoryStore      historyStore;
   private final File              baseDir;
 
-  public MutationCoverage(final File baseDir, final HistoryStore history,
-      final CodeSource code, final CoverageGenerator coverage,
-      final ReportOptions data, final ListenerFactory listenerFactory,
-      final Timings timings, final BuildVerifier buildVerifier) {
-    this.historyStore = history;
-    this.coverage = coverage;
-    this.listenerFactory = listenerFactory;
+  public MutationCoverage(final MutationStrategies strategies, final File baseDir,
+      final CodeSource code, final ReportOptions data, final Timings timings) {
+    this.strategies = strategies;
     this.data = data;
     this.timings = timings;
-    this.buildVerifier = buildVerifier;
     this.code = code;
     this.baseDir = baseDir;
   }
 
-  public final void run() {
+  public final MutationStatistics run() {
     try {
-      this.runReport();
-
+      return this.runReport();
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
   }
 
-  public void runReport() throws IOException {
+  public MutationStatistics runReport() throws IOException {
 
     Log.setVerbose(this.data.isVerbose());
 
@@ -117,7 +109,7 @@ public class MutationCoverage {
 
     verifyBuildSuitableForMutationTesting();
 
-    final CoverageDatabase coverageData = this.coverage.calculateCoverage();
+    final CoverageDatabase coverageData = coverage().calculateCoverage();
 
     LOG.fine("Used memory after coverage calculation "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
@@ -129,21 +121,21 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
     staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
 
-    final MutationResultListener mutationReportListener = this.listenerFactory
+    final MutationResultListener mutationReportListener = this.strategies.listenerFactory()
         .getListener(coverageData, t0,
             new SmartSourceLocator(this.data.getSourceDirs()));
 
     staticConfig.addTestListener(MutationResultAdapter
         .adapt(mutationReportListener));
     staticConfig.addTestListener(MutationResultAdapter
-        .adapt(new HistoryListener(this.historyStore)));
+        .adapt(new HistoryListener(history())));
 
     if (!this.data.isVerbose()) {
       staticConfig.addTestListener(MutationResultAdapter
           .adapt(new SpinnerListener(System.out)));
     }
 
-    this.historyStore.initialize();
+    history().initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<? extends TestUnit> tus = buildMutationTests(coverageData);
@@ -168,13 +160,15 @@ public class MutationCoverage {
 
     printStats(stats);
 
+    return stats.getStatistics();
+
   }
 
   private void recordClassPath(final CoverageDatabase coverageData) {
     final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
     final Collection<HierarchicalClassId> ids = FCollection.map(
         this.code.getClassInfo(allClassNames), ClassInfo.toFullClassId());
-    this.historyStore.recordClassPath(ids, coverageData);
+    history().recordClassPath(ids, coverageData);
   }
 
   private Set<ClassName> getAllClassesAndTests(
@@ -189,7 +183,7 @@ public class MutationCoverage {
   }
 
   private void verifyBuildSuitableForMutationTesting() {
-    this.buildVerifier.verify(this.code);
+    this.strategies.buildVerifier().verify(this.code);
   }
 
   private void printStats(final MutationStatisticsListener stats) {
@@ -213,7 +207,8 @@ public class MutationCoverage {
     }
   }
 
-  private List<? extends TestUnit> buildMutationTests(final CoverageDatabase coverageData) {
+  private List<? extends TestUnit> buildMutationTests(
+      final CoverageDatabase coverageData) {
     final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
@@ -228,14 +223,15 @@ public class MutationCoverage {
             this.data.getClassPath()));
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
-        new DefaultCodeHistory(this.code, this.historyStore), coverageData);
+        new DefaultCodeHistory(this.code, history()), coverageData);
 
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
         mutationConfig, analyser, source, this.data,
-        this.coverage.getConfiguration(), this.coverage.getJavaAgent());
+        coverage().getConfiguration(), coverage().getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
+
 
   private void checkMutationsFound(final List<? extends TestUnit> tus) {
     if (tus.isEmpty()) {
@@ -281,6 +277,14 @@ public class MutationCoverage {
 
   private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
+  }
+  
+  private CoverageGenerator coverage() {
+    return this.strategies.coverage();
+  }
+  
+  private HistoryStore history() {
+    return this.strategies.history();
   }
 
 }

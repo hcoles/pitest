@@ -87,10 +87,11 @@ public class MutationCoverageReport {
 
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);
+      
+      MutationStrategies strategies = new MutationStrategies(history, coverageGenerator, reportFactory,  new DefaultBuildVerifier());
 
-      final MutationCoverage instance = new MutationCoverage(null, history,
-          code, coverageGenerator, data, reportFactory, timings,
-          new DefaultBuildVerifier());
+      final MutationCoverage instance = new MutationCoverage(strategies, 
+          null, code,  data,  timings);
 
       instance.run();
     } finally {

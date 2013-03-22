@@ -42,6 +42,7 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.report.SourceLocator;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 public class MutationCoverageReportTest {
@@ -82,13 +83,6 @@ public class MutationCoverageReportTest {
 
   }
 
-  private void createAndRunTestee() {
-    this.testee = new MutationCoverage(null, this.history, this.code,
-        this.coverage, this.data, this.listenerFactory, new Timings(),
-        new DefaultBuildVerifier());
-    this.testee.run();
-  }
-
   @Test
   public void shouldReportErrorWhenNoMutationsFoundAndFlagSet() {
     try {
@@ -125,6 +119,21 @@ public class MutationCoverageReportTest {
     createAndRunTestee();
 
     verify(this.history).recordClassPath(Arrays.asList(fooId), this.coverageDb);
+  }
+
+  @Test
+  public void shouldReportNoMutationsFoundWhenNoneDetected() {
+    this.data.setFailWhenNoMutations(false);
+    final MutationStatistics actual = createAndRunTestee();
+    assertEquals(0, actual.getTotalMutations());
+  }
+
+  private MutationStatistics createAndRunTestee() {
+    final MutationStrategies strategies = new MutationStrategies(this.history,
+        this.coverage, this.listenerFactory, new DefaultBuildVerifier());
+    this.testee = new MutationCoverage(strategies, null, this.code, this.data,
+        new Timings());
+    return this.testee.run();
   }
 
 }

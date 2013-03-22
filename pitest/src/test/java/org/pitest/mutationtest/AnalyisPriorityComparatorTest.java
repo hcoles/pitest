@@ -12,7 +12,7 @@ import org.pitest.extension.ResultCollector;
 
 public class AnalyisPriorityComparatorTest {
   
-  private AnalyisPriorityComparator testee = new AnalyisPriorityComparator();
+  private AnalysisPriorityComparator testee = new AnalysisPriorityComparator();
 
   @Test
   public void shouldPrioritiseLargestFirst() {

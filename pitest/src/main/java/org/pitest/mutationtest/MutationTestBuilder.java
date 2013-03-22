@@ -78,7 +78,7 @@ public class MutationTestBuilder {
       }
     }
 
-    Collections.sort(tus,new AnalyisPriorityComparator());
+    Collections.sort(tus,new AnalysisPriorityComparator());
     return tus;
   }
 
