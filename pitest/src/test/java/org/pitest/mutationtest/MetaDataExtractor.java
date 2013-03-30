@@ -43,17 +43,16 @@ public class MetaDataExtractor implements MutationResultListener {
     return dss;
   }
 
-  
   public int getNumberOfTestsRun() {
-    F2<Integer, MutationResult, Integer> sum = new   F2<Integer, MutationResult, Integer> () {
-      public Integer apply(Integer a, MutationResult b) {
+    final F2<Integer, MutationResult, Integer> sum = new F2<Integer, MutationResult, Integer>() {
+      public Integer apply(final Integer a, final MutationResult b) {
         return a + b.getNumberOfTestsRun();
       }
-      
+
     };
-    return FCollection.fold(sum, 0, data);
+    return FCollection.fold(sum, 0, this.data);
   }
-  
+
   public void runStart() {
 
   }

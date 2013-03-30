@@ -300,7 +300,6 @@ public class TestMutationTesting {
         Mutator.RETURN_VALS.asCollection());
     verifyLineNumbers(100);
   }
-  
 
   private void run(final Class<?> clazz, final Class<?> test,
       final Collection<? extends MethodMutatorFactory> mutators) {
@@ -356,9 +355,9 @@ public class TestMutationTesting {
     final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
         ClassInfo.toClassName());
 
-    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
-        false, False.<String> instance(), Collections.<String> emptyList(),
-        mutators, true);
+    final MutationEngine engine = new DefaultMutationConfigFactory()
+        .createEngine(false, False.<String> instance(),
+            Collections.<String> emptyList(), mutators, true);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         Collections.<String> emptyList());
@@ -371,7 +370,8 @@ public class TestMutationTesting {
         mutationConfig, new NullAnalyser(), source, data,
         coverageOptions.getPitConfig(), launchOptions.getJavaAgentFinder());
 
-    final List<MutationAnalysisUnit> tus = builder.createMutationTestUnits(codeClasses);
+    final List<MutationAnalysisUnit> tus = builder
+        .createMutationTestUnits(codeClasses);
 
     this.pit.run(this.container, tus);
   }

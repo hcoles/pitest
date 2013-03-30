@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BeforeAfterClassTest {
-  
+
   @BeforeClass
   public static void doSomething() {
     // well actually do nothing except be here
@@ -14,11 +14,11 @@ public class BeforeAfterClassTest {
 
   @Test
   public void shouldKillMutant1() {
-    assertEquals(1,CoveredByABeforeAfterClassTest.returnOne());
+    assertEquals(1, CoveredByABeforeAfterClassTest.returnOne());
   }
-  
+
   @Test
   public void shouldKillMutantAgainButShouldNotBeRun() {
-    assertEquals(1,CoveredByABeforeAfterClassTest.returnOne());
+    assertEquals(1, CoveredByABeforeAfterClassTest.returnOne());
   }
 }

@@ -49,7 +49,6 @@ import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -333,18 +332,18 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     verifyResults(SURVIVED);
   }
-  
+
   @Test
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
     this.data.setMutators(Mutator.RETURN_VALS.asCollection());
-    this.data.setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
     this.data
-        .setTargetTests(predicateFor(BeforeAfterClassTest.class));
+        .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
+    this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
 
     createAndRun();
 
     verifyResults(KILLED);
-    assertEquals(1,this.metaDataExtractor.getNumberOfTestsRun());
+    assertEquals(1, this.metaDataExtractor.getNumberOfTestsRun());
   }
 
   private void createAndRun() {
@@ -375,10 +374,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       final HistoryStore history = new NullHistoryStore();
 
-      MutationStrategies strategies = new MutationStrategies(history, coverageDatabase, listenerFactory(), new DefaultBuildVerifier());
+      final MutationStrategies strategies = new MutationStrategies(history,
+          coverageDatabase, listenerFactory());
 
-      final MutationCoverage testee = new MutationCoverage(strategies, null, code,
-         this.data, timings);
+      final MutationCoverage testee = new MutationCoverage(strategies, null,
+          code, this.data, timings);
 
       testee.run();
     } finally {

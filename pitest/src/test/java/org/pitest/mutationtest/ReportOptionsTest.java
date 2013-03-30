@@ -39,7 +39,7 @@ public class ReportOptionsTest {
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("java/Integer"));
   }
-  
+
   @Test
   public void shouldNotAllowUserToCalculateCoverageForCoverageImplementation() {
     this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
@@ -47,14 +47,13 @@ public class ReportOptionsTest {
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("org/pitest/coverage"));
   }
-  
-  @Test(expected=PitHelpError.class)
+
+  @Test(expected = PitHelpError.class)
   public void shouldNotAllowUserToMakePITMutateItself() {
     this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
         .singleton("org.pitest.*")));
     this.testee.createCoverageOptions();
   }
-
 
   @Test
   public void shouldDefaultToNoLineCoverageExport() {

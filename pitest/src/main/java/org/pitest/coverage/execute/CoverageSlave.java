@@ -66,7 +66,8 @@ public class CoverageSlave {
         throw paramsFromParent.getPitConfig().verifyEnvironment().value();
       }
 
-      invokeQueue = new CoveragePipe(new BufferedOutputStream(s.getOutputStream()));
+      invokeQueue = new CoveragePipe(new BufferedOutputStream(
+          s.getOutputStream()));
 
       CodeCoverageStore.init(invokeQueue);
 

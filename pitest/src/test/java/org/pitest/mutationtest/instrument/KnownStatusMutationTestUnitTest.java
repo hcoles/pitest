@@ -52,13 +52,13 @@ public class KnownStatusMutationTestUnitTest {
     final MutationMetaData expected = new MutationMetaData(mutators, mutations);
     verify(this.rc).notifyEnd(this.testee.getDescription(), expected);
   }
-  
+
   @Test
   public void shouldHaveHighPriorityToAnalyse() {
     this.testee = new KnownStatusMutationTestUnit(
         Collections.<String> emptyList(),
         Collections.<MutationResult> emptyList());
-    assertEquals(Integer.MAX_VALUE, testee.priority());
+    assertEquals(Integer.MAX_VALUE, this.testee.priority());
   }
 
 }

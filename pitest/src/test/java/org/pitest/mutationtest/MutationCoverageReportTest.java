@@ -17,6 +17,8 @@ package org.pitest.mutationtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,12 +40,16 @@ import org.pitest.classinfo.CodeSource;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.internal.ClassByteArraySource;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatistics;
-import org.pitest.mutationtest.verify.DefaultBuildVerifier;
+import org.pitest.mutationtest.verify.BuildVerifier;
 
 public class MutationCoverageReportTest {
 
@@ -69,6 +75,18 @@ public class MutationCoverageReportTest {
   @Mock
   private HistoryStore           history;
 
+  @Mock
+  private MutationConfigFactory  mutationFactory;
+
+  @Mock
+  private BuildVerifier          verifier;
+
+  @Mock
+  private MutationEngine         engine;
+
+  @Mock
+  private Mutater                mutater;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -76,11 +94,20 @@ public class MutationCoverageReportTest {
     this.data.setSourceDirs(Collections.<File> emptyList());
     this.data.setMutators(Mutator.DEFAULTS.asCollection());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
-    // when(this.coverageDb.initialise()).thenReturn(true);
     when(
         this.listenerFactory.getListener(any(CoverageDatabase.class),
             anyLong(), any(SourceLocator.class))).thenReturn(this.listener);
+    mockMutationEngine();
+  }
 
+  @SuppressWarnings("unchecked")
+  private void mockMutationEngine() {
+    when(
+        this.mutationFactory.createEngine(anyBoolean(), any(Predicate.class),
+            anyCollection(), anyCollection(), anyBoolean())).thenReturn(
+        this.engine);
+    when(this.engine.createMutator(any(ClassByteArraySource.class)))
+        .thenReturn(this.mutater);
   }
 
   @Test
@@ -122,15 +149,35 @@ public class MutationCoverageReportTest {
   }
 
   @Test
+  public void shouldCheckBuildSuitableForMutationTesting() {
+    createAndRunTestee();
+    verify(this.verifier).verify(any(CodeSource.class));
+  }
+
+  @Test
   public void shouldReportNoMutationsFoundWhenNoneDetected() {
     this.data.setFailWhenNoMutations(false);
     final MutationStatistics actual = createAndRunTestee();
     assertEquals(0, actual.getTotalMutations());
   }
 
+  @Test
+  public void shouldReportMutationsFoundWhenSomeDetected() {
+    this.data.setFailWhenNoMutations(false);
+    final ClassName foo = ClassName.fromString("foo");
+    when(this.mutater.findMutations(foo)).thenReturn(
+        Arrays.asList(MutationDetailsMother.makeMutation()));
+    when(this.code.getCodeUnderTestNames()).thenReturn(
+        Collections.singleton(foo));
+    final MutationStatistics actual = createAndRunTestee();
+    assertEquals(1, actual.getTotalMutations());
+  }
+
   private MutationStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(this.history,
-        this.coverage, this.listenerFactory, new DefaultBuildVerifier());
+        this.coverage, this.listenerFactory).with(this.mutationFactory).with(
+        this.verifier);
+
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new Timings());
     return this.testee.run();

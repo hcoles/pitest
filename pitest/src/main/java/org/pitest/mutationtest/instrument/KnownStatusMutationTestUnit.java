@@ -11,7 +11,8 @@ import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.testunit.AbstractTestUnit;
 import org.pitest.util.Log;
 
-public class KnownStatusMutationTestUnit extends AbstractTestUnit implements MutationAnalysisUnit {
+public class KnownStatusMutationTestUnit extends AbstractTestUnit implements
+    MutationAnalysisUnit {
 
   private static final Logger              LOG = Log.getLogger();
 

@@ -39,9 +39,10 @@ class AdaptingRunListener extends RunListener {
 
   @Override
   public void testStarted(final Description description) throws Exception {
-    if ( this.finished ) {
+    if (this.finished) {
       // If the JUnit test has been annotated with @BeforeClass or @AfterClass
-      // need to force the exit after the first failure as tests will be run as a block
+      // need to force the exit after the first failure as tests will be run as
+      // a block
       // rather than individually.
       // This is apparently the junit way.
       throw new StoppedByUserException();

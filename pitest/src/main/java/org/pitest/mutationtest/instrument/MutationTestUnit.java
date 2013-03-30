@@ -30,9 +30,9 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
+import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -43,7 +43,8 @@ import org.pitest.util.Log;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.SocketFinder;
 
-public class MutationTestUnit extends AbstractTestUnit implements MutationAnalysisUnit {
+public class MutationTestUnit extends AbstractTestUnit implements
+    MutationAnalysisUnit {
 
   private final static Logger               LOG = Log.getLogger();
 

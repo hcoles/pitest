@@ -11,34 +11,33 @@ import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 
 public class AnalyisPriorityComparatorTest {
-  
-  private AnalysisPriorityComparator testee = new AnalysisPriorityComparator();
+
+  private final AnalysisPriorityComparator testee = new AnalysisPriorityComparator();
 
   @Test
   public void shouldPrioritiseLargestFirst() {
-    MutationAnalysisUnit a = unit(1);
-    MutationAnalysisUnit b = unit(2);
-    MutationAnalysisUnit c = unit(3);
-    List<MutationAnalysisUnit> actual = Arrays.asList(a,b,c);
-    Collections.sort(actual, testee);
-    assertEquals(Arrays.asList(c,b,a), actual);
+    final MutationAnalysisUnit a = unit(1);
+    final MutationAnalysisUnit b = unit(2);
+    final MutationAnalysisUnit c = unit(3);
+    final List<MutationAnalysisUnit> actual = Arrays.asList(a, b, c);
+    Collections.sort(actual, this.testee);
+    assertEquals(Arrays.asList(c, b, a), actual);
   }
 
   @Test
   public void shouldPreserveCorrectOrder() {
-    MutationAnalysisUnit a = unit(3);
-    MutationAnalysisUnit b = unit(2);
-    MutationAnalysisUnit c = unit(1);
-    List<MutationAnalysisUnit> actual = Arrays.asList(a,b,c);
-    Collections.sort(actual, testee);
-    assertEquals(Arrays.asList(a,b,c), actual);
+    final MutationAnalysisUnit a = unit(3);
+    final MutationAnalysisUnit b = unit(2);
+    final MutationAnalysisUnit c = unit(1);
+    final List<MutationAnalysisUnit> actual = Arrays.asList(a, b, c);
+    Collections.sort(actual, this.testee);
+    assertEquals(Arrays.asList(a, b, c), actual);
   }
-  
 
   private MutationAnalysisUnit unit(final int count) {
     return new MutationAnalysisUnit() {
 
-      public void execute(ClassLoader loader, ResultCollector rc) {
+      public void execute(final ClassLoader loader, final ResultCollector rc) {
 
       }
 
@@ -49,12 +48,12 @@ public class AnalyisPriorityComparatorTest {
       public int priority() {
         return count;
       }
-      
+
       @Override
       public String toString() {
-        return ""+count;
+        return "" + count;
       }
-      
+
     };
   }
 

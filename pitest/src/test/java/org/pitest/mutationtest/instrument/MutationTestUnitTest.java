@@ -84,13 +84,11 @@ public class MutationTestUnitTest {
     verify(this.rc).notifyEnd(any(Description.class), eq(metaData));
   }
 
-  
   private MutationMetaData makeMetaData(final MutationDetails details,
       final MutationStatusTestPair status) {
     return new MutationMetaData(this.mutationConfig.getMutatorNames(),
         Collections.singletonList(new MutationResult(details, status)));
   }
-
 
   private void addMutation() {
     this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,

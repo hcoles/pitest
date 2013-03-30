@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 
 public class InlineConstantMutatorTest extends MutatorTestBase {
 

@@ -90,12 +90,12 @@ public class AdaptingRunListenerTest {
     this.testee.testStarted(this.junitDesc);
     verify(this.rc).notifyStart(this.pitDescription);
   }
-  
-  @Test(expected=StoppedByUserException.class)
-  public void shouldRunStoppedByUserExceptionIfMoreTestsRunAfterAFailure() throws Exception {
+
+  @Test(expected = StoppedByUserException.class)
+  public void shouldRunStoppedByUserExceptionIfMoreTestsRunAfterAFailure()
+      throws Exception {
     this.testee.testFailure(new Failure(this.junitDesc, this.throwable));
     this.testee.testStarted(this.junitDesc);
   }
-  
 
 }

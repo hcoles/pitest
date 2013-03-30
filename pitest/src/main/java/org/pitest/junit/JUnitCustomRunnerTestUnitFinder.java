@@ -43,7 +43,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
-    
+
     if (isNotARunnableTest(runner, clazz.getName())) {
       return Collections.emptyList();
     }
@@ -87,8 +87,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private boolean runnerCannotBeSplit(final Runner runner) {
-    String runnerName = runner.getClass().getName();
-    return runnerName.equals("junitparams.JUnitParamsRunner") || runnerName.startsWith("org.spockframework.runtime.Sputnik");
+    final String runnerName = runner.getClass().getName();
+    return runnerName.equals("junitparams.JUnitParamsRunner")
+        || runnerName.startsWith("org.spockframework.runtime.Sputnik");
   }
 
   private boolean isJUnitThreeSuiteMethodNotForOwnClass(final Runner runner,

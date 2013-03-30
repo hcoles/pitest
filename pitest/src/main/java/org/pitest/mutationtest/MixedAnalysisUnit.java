@@ -9,30 +9,31 @@ import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.testunit.AbstractTestUnit;
 
-class MixedAnalysisUnit extends AbstractTestUnit implements MutationAnalysisUnit{
-  
+class MixedAnalysisUnit extends AbstractTestUnit implements
+    MutationAnalysisUnit {
+
   private final Collection<MutationAnalysisUnit> children;
 
-  public MixedAnalysisUnit(Collection<MutationAnalysisUnit> children) {
+  public MixedAnalysisUnit(final Collection<MutationAnalysisUnit> children) {
     super(new Description("MixedAnalysisUnit"));
     this.children = children;
   }
 
   public int priority() {
-    return FCollection.fold(sum(), 0, children);
+    return FCollection.fold(sum(), 0, this.children);
   }
 
   private F2<Integer, MutationAnalysisUnit, Integer> sum() {
     return new F2<Integer, MutationAnalysisUnit, Integer>() {
-      public Integer apply(Integer a, MutationAnalysisUnit b) {
+      public Integer apply(final Integer a, final MutationAnalysisUnit b) {
         return a + b.priority();
       }
-      
+
     };
   }
 
   @Override
-  public void execute(ClassLoader loader, ResultCollector rc) {
+  public void execute(final ClassLoader loader, final ResultCollector rc) {
     for (final TestUnit each : this.children) {
       each.execute(loader, rc);
       if (rc.shouldExit()) {
@@ -40,6 +41,5 @@ class MixedAnalysisUnit extends AbstractTestUnit implements MutationAnalysisUnit
       }
     }
   }
-
 
 }

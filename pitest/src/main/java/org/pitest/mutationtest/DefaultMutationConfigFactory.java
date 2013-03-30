@@ -29,7 +29,8 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
-public final class DefaultMutationConfigFactory {
+public final class DefaultMutationConfigFactory implements
+    MutationConfigFactory {
 
   public final static Collection<String> LOGGING_CLASSES = Arrays
                                                              .asList(
@@ -38,8 +39,7 @@ public final class DefaultMutationConfigFactory {
                                                                  "org.slf4j",
                                                                  "org.apache.commons.logging");
 
-  public static MutationEngine createEngine(
-      final boolean mutateStaticInitializers,
+  public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,

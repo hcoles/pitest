@@ -32,7 +32,6 @@ import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 /**
  * Entry point for command line interface
@@ -87,11 +86,12 @@ public class MutationCoverageReport {
 
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);
-      
-      MutationStrategies strategies = new MutationStrategies(history, coverageGenerator, reportFactory,  new DefaultBuildVerifier());
 
-      final MutationCoverage instance = new MutationCoverage(strategies, 
-          null, code,  data,  timings);
+      final MutationStrategies strategies = new MutationStrategies(history,
+          coverageGenerator, reportFactory);
+
+      final MutationCoverage instance = new MutationCoverage(strategies, null,
+          code, data, timings);
 
       instance.run();
     } finally {

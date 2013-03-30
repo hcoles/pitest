@@ -62,18 +62,19 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverage {
 
-  private final static int        MB  = 1024 * 1024;
+  private final static int         MB  = 1024 * 1024;
 
-  private static final Logger     LOG = Log.getLogger();
-  private final ReportOptions     data;
-  
+  private static final Logger      LOG = Log.getLogger();
+  private final ReportOptions      data;
+
   private final MutationStrategies strategies;
-  private final Timings           timings;
-  private final CodeSource        code;
-  private final File              baseDir;
+  private final Timings            timings;
+  private final CodeSource         code;
+  private final File               baseDir;
 
-  public MutationCoverage(final MutationStrategies strategies, final File baseDir,
-      final CodeSource code, final ReportOptions data, final Timings timings) {
+  public MutationCoverage(final MutationStrategies strategies,
+      final File baseDir, final CodeSource code, final ReportOptions data,
+      final Timings timings) {
     this.strategies = strategies;
     this.data = data;
     this.timings = timings;
@@ -116,24 +117,9 @@ public class MutationCoverage {
     LOG.fine("Free Memory after coverage calculation "
         + (runtime.freeMemory() / MB) + " mb");
 
-    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-
     final MutationStatisticsListener stats = new MutationStatisticsListener();
-    staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
-
-    final MutationResultListener mutationReportListener = this.strategies.listenerFactory()
-        .getListener(coverageData, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
-
-    staticConfig.addTestListener(MutationResultAdapter
-        .adapt(mutationReportListener));
-    staticConfig.addTestListener(MutationResultAdapter
-        .adapt(new HistoryListener(history())));
-
-    if (!this.data.isVerbose()) {
-      staticConfig.addTestListener(MutationResultAdapter
-          .adapt(new SpinnerListener(System.out)));
-    }
+    final DefaultStaticConfig staticConfig = createConfig(t0, coverageData,
+        stats);
 
     history().initialize();
 
@@ -162,6 +148,29 @@ public class MutationCoverage {
 
     return stats.getStatistics();
 
+  }
+
+  private DefaultStaticConfig createConfig(final long t0,
+      final CoverageDatabase coverageData,
+      final MutationStatisticsListener stats) {
+    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+
+    staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
+
+    final MutationResultListener mutationReportListener = this.strategies
+        .listenerFactory().getListener(coverageData, t0,
+            new SmartSourceLocator(this.data.getSourceDirs()));
+
+    staticConfig.addTestListener(MutationResultAdapter
+        .adapt(mutationReportListener));
+    staticConfig.addTestListener(MutationResultAdapter
+        .adapt(new HistoryListener(history())));
+
+    if (!this.data.isVerbose()) {
+      staticConfig.addTestListener(MutationResultAdapter
+          .adapt(new SpinnerListener(System.out)));
+    }
+    return staticConfig;
   }
 
   private void recordClassPath(final CoverageDatabase coverageData) {
@@ -209,7 +218,7 @@ public class MutationCoverage {
 
   private List<? extends TestUnit> buildMutationTests(
       final CoverageDatabase coverageData) {
-    final MutationEngine engine = DefaultMutationConfigFactory.createEngine(
+    final MutationEngine engine = this.strategies.factory().createEngine(
         this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
         this.data.getLoggingClasses(), this.data.getMutators(),
@@ -226,12 +235,11 @@ public class MutationCoverage {
         new DefaultCodeHistory(this.code, history()), coverageData);
 
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
-        mutationConfig, analyser, source, this.data,
-        coverage().getConfiguration(), coverage().getJavaAgent());
+        mutationConfig, analyser, source, this.data, coverage()
+            .getConfiguration(), coverage().getJavaAgent());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
-
 
   private void checkMutationsFound(final List<? extends TestUnit> tus) {
     if (tus.isEmpty()) {
@@ -257,7 +265,6 @@ public class MutationCoverage {
     if (this.data.getNumberOfThreads() > 1) {
       return new BaseThreadPoolContainer(this.data.getNumberOfThreads(),
           classLoaderFactory(), Executors.defaultThreadFactory()) {
-
       };
     } else {
       return new UnContainer();
@@ -278,11 +285,11 @@ public class MutationCoverage {
   private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
   }
-  
+
   private CoverageGenerator coverage() {
     return this.strategies.coverage();
   }
-  
+
   private HistoryStore history() {
     return this.strategies.history();
   }

@@ -78,12 +78,12 @@ public class MutationTestBuilder {
       }
     }
 
-    Collections.sort(tus,new AnalysisPriorityComparator());
+    Collections.sort(tus, new AnalysisPriorityComparator());
     return tus;
   }
 
-  private void createMutationAnalysisUnits(final List<MutationAnalysisUnit> tus,
-      final ClassName clazz,
+  private void createMutationAnalysisUnits(
+      final List<MutationAnalysisUnit> tus, final ClassName clazz,
       final Collection<MutationDetails> mutationsForClasses) {
     if (this.data.getMutationUnitSize() > 0) {
       final FunctionalList<List<MutationDetails>> groupedMutations = FCollection
@@ -128,7 +128,8 @@ public class MutationTestBuilder {
 
   }
 
-  private MutationAnalysisUnit makePreAnalysedUnit(final Collection<MutationResult> analysed) {
+  private MutationAnalysisUnit makePreAnalysedUnit(
+      final Collection<MutationResult> analysed) {
     return new KnownStatusMutationTestUnit(
         this.mutationConfig.getMutatorNames(), analysed);
   }

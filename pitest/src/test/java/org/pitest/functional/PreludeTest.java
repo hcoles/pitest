@@ -44,13 +44,13 @@ public class PreludeTest {
   public void isNotNullShouldReturnTrueWhenNotNull() {
     assertTrue(Prelude.isNotNull().apply(1));
   }
-  
+
   @Test
   public void printToShouldPrintValueToStream() {
-    Integer i = Integer.valueOf(42);
-    PrintStream stream = Mockito.mock(PrintStream.class);
+    final Integer i = Integer.valueOf(42);
+    final PrintStream stream = Mockito.mock(PrintStream.class);
     Prelude.printTo(stream).apply(i);
     verify(stream).print(i);
   }
-  
+
 }

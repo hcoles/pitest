@@ -3,35 +3,60 @@ package org.pitest.mutationtest;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.verify.BuildVerifier;
+import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 
 public class MutationStrategies {
 
-  private final HistoryStore history;
-  private final CoverageGenerator coverage;
-  private final ListenerFactory listenerFactory;
-  private final BuildVerifier buildVerifier;
-  
-  public MutationStrategies( HistoryStore history, CoverageGenerator coverage, ListenerFactory listenerFactory, BuildVerifier buildVerifier) {
+  private final HistoryStore          history;
+  private final CoverageGenerator     coverage;
+  private final ListenerFactory       listenerFactory;
+  private final BuildVerifier         buildVerifier;
+  private final MutationConfigFactory factory;
+
+  public MutationStrategies(final HistoryStore history,
+      final CoverageGenerator coverage, final ListenerFactory listenerFactory) {
+    this(new DefaultMutationConfigFactory(), history, coverage,
+        listenerFactory, new DefaultBuildVerifier());
+  }
+
+  private MutationStrategies(final MutationConfigFactory factory,
+      final HistoryStore history, final CoverageGenerator coverage,
+      final ListenerFactory listenerFactory, final BuildVerifier buildVerifier) {
     this.history = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
     this.buildVerifier = buildVerifier;
+    this.factory = factory;
   }
 
   public HistoryStore history() {
-    return history;
+    return this.history;
   }
 
   public CoverageGenerator coverage() {
-    return coverage;
+    return this.coverage;
   }
 
   public ListenerFactory listenerFactory() {
-    return listenerFactory;
+    return this.listenerFactory;
   }
 
   public BuildVerifier buildVerifier() {
-    return buildVerifier;
+    return this.buildVerifier;
+  }
+
+  public MutationConfigFactory factory() {
+    return this.factory;
+  }
+
+  public MutationStrategies with(final MutationConfigFactory factory) {
+    return new MutationStrategies(factory, this.history, this.coverage,
+        this.listenerFactory, this.buildVerifier);
+  }
+
+  public MutationStrategies with(final BuildVerifier verifier) {
+    return new MutationStrategies(this.factory, this.history, this.coverage,
+        this.listenerFactory, verifier);
   }
 
 }

@@ -221,12 +221,13 @@ public class ReportOptions {
 
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
-    Predicate<String>  filter = Prelude.and(or(this.targetClasses), not(isBlackListed()));
+    final Predicate<String> filter = Prelude.and(or(this.targetClasses),
+        not(isBlackListed()));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
 
-  private void checkNotTryingToMutateSelf(Predicate<String> filter) {
+  private void checkNotTryingToMutateSelf(final Predicate<String> filter) {
     if (filter.apply(Pitest.class.getName())) {
       throw new PitHelpError(Help.BAD_FILTER);
     }
@@ -277,29 +278,31 @@ public class ReportOptions {
     return this.targetTests;
   }
 
-
   @Override
   public String toString() {
-    return "ReportOptions [config=" + config + ", targetClasses="
-        + targetClasses + ", excludedMethods=" + excludedMethods
-        + ", excludedClasses=" + excludedClasses + ", codePaths=" + codePaths
-        + ", reportDir=" + reportDir + ", historyInputLocation="
-        + historyInputLocation + ", historyOutputLocation="
-        + historyOutputLocation + ", sourceDirs=" + sourceDirs
-        + ", classPathElements=" + classPathElements + ", mutators=" + mutators
-        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", mutateStaticInitializers=" + mutateStaticInitializers
-        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
-        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
-        + timeoutConstant + ", targetTests=" + targetTests
-        + ", loggingClasses=" + loggingClasses + ", maxMutationsPerClass="
-        + maxMutationsPerClass + ", verbose=" + verbose
-        + ", failWhenNoMutations=" + failWhenNoMutations + ", outputs="
-        + outputs + ", groupConfig=" + groupConfig + ", mutationUnitSize="
-        + mutationUnitSize + ", shouldCreateTimestampedReports="
-        + shouldCreateTimestampedReports + ", detectInlinedCode="
-        + detectInlinedCode + ", exportLineCoverage=" + exportLineCoverage
-        + "]";
+    return "ReportOptions [config=" + this.config + ", targetClasses="
+        + this.targetClasses + ", excludedMethods=" + this.excludedMethods
+        + ", excludedClasses=" + this.excludedClasses + ", codePaths="
+        + this.codePaths + ", reportDir=" + this.reportDir
+        + ", historyInputLocation=" + this.historyInputLocation
+        + ", historyOutputLocation=" + this.historyOutputLocation
+        + ", sourceDirs=" + this.sourceDirs + ", classPathElements="
+        + this.classPathElements + ", mutators=" + this.mutators
+        + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + ", maxMutationsPerClass="
+        + this.maxMutationsPerClass + ", verbose=" + this.verbose
+        + ", failWhenNoMutations=" + this.failWhenNoMutations + ", outputs="
+        + this.outputs + ", groupConfig=" + this.groupConfig
+        + ", mutationUnitSize=" + this.mutationUnitSize
+        + ", shouldCreateTimestampedReports="
+        + this.shouldCreateTimestampedReports + ", detectInlinedCode="
+        + this.detectInlinedCode + ", exportLineCoverage="
+        + this.exportLineCoverage + "]";
   }
 
   @SuppressWarnings("unchecked")

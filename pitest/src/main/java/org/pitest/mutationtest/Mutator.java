@@ -91,7 +91,6 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    */
   CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
 
-
   /**
    * Experimental mutator that removed assignments to member variables.
    */
@@ -109,9 +108,8 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
   /**
    * All the mutators
    */
-  ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS,
-       INLINE_CONSTS, EXPERIMENTAL_MEMBER_VARIABLE,
-      EXPERIMENTAL_SWITCH);
+  ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS, INLINE_CONSTS,
+      EXPERIMENTAL_MEMBER_VARIABLE, EXPERIMENTAL_SWITCH);
 
   Mutator(final Mutator... groups) {
     this.impls = asCollection(groups);
