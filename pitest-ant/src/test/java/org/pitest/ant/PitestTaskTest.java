@@ -385,6 +385,13 @@ public class PitestTaskTest {
     verify(this.arg, never()).setValue("--excludedClasses=");
   }
   
+  @Test
+  public void shouldPassMutationThresholdToJavaTask() {
+    this.pitestTask.setMutationThreshold("42");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--mutationThreshold=42");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

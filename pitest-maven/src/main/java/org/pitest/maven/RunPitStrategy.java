@@ -42,11 +42,12 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.util.JavaAgent;
 
 public class RunPitStrategy implements GoalStrategy {
 
-  public void execute(final File baseDir, final ReportOptions data)
+  public MutationStatistics execute(final File baseDir, final ReportOptions data)
       throws MojoExecutionException {
 
     final SettingsFactory settings = new SettingsFactory(data);
@@ -88,8 +89,8 @@ public class RunPitStrategy implements GoalStrategy {
     final MutationCoverage report = new MutationCoverage(strategies, baseDir, 
         code, data,  timings);
 
-    try {
-      report.runReport();
+    try {    
+      return report.runReport();
     } catch (final IOException e) {
       throw new MojoExecutionException("fail", e);
     } finally {

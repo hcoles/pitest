@@ -7,8 +7,11 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.pitest.functional.Option;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 
 /**
  * Goal which runs a coverage mutation report
@@ -202,6 +205,12 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="false" expression="${exportLineCoverage}"
    */
   private boolean               exportLineCoverage;
+  
+  /**
+   * 
+   * @parameter default-value="0" expression="${mutationThreshold}"
+   */
+  private int mutationThreshold;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -231,14 +240,28 @@ public class PitMojo extends AbstractMojo {
     this.goalStrategy = strategy;
   }
 
-  public void execute() throws MojoExecutionException {
+  public final void execute() throws MojoExecutionException, MojoFailureException {
     if (shouldRun()) {
-      final ReportOptions data = new MojoToReportOptionsConverter(this)
-          .convert();
-      this.goalStrategy.execute(detectBaseDir(), data);
+      Option<MutationStatistics> result = analyse();
+      if (result.hasSome()) {
+        throwErrorIfScoreBelowThreshold(result.value());
+      }
+
     } else {
       this.getLog().info("Skipping project");
     }
+  }
+  
+  private void throwErrorIfScoreBelowThreshold(MutationStatistics result) throws MojoFailureException {
+    if ( mutationThreshold != 0  && result.getPercentageDetected() < this.mutationThreshold ) {
+      throw new MojoFailureException("Mutation score of " + result.getPercentageDetected() + " is below threshold of " + mutationThreshold);
+    }
+  }
+  
+  protected Option<MutationStatistics> analyse() throws MojoExecutionException {
+    final ReportOptions data = new MojoToReportOptionsConverter(this)
+    .convert();
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
   }
 
   protected File detectBaseDir() {

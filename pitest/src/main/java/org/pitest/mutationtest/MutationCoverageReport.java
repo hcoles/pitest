@@ -32,6 +32,7 @@ import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 
 /**
  * Entry point for command line interface
@@ -48,12 +49,19 @@ public class MutationCoverageReport {
       System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
       final ReportOptions data = pr.getOptions();
-      runReport(data);
+      MutationStatistics stats = runReport(data);      
+      throwErrorIfScoreBelowThreshold(stats, data.getMutationThreshold());
     }
 
   }
 
-  private static void runReport(final ReportOptions data) {
+  private static void throwErrorIfScoreBelowThreshold(MutationStatistics stats, int threshold) {
+    if ( threshold != 0 && stats.getPercentageDetected() < threshold ) {
+      throw new RuntimeException("Mutation score of " + stats.getPercentageDetected() + " is below threshold of " + threshold );
+    }
+  }
+
+  private static MutationStatistics runReport(final ReportOptions data) {
 
     final SettingsFactory settings = new SettingsFactory(data);
 
@@ -93,7 +101,7 @@ public class MutationCoverageReport {
       final MutationCoverage instance = new MutationCoverage(strategies, null,
           code, data, timings);
 
-      instance.run();
+      return instance.run();
     } finally {
       agent.close();
       historyWriter.close();

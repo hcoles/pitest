@@ -8,7 +8,10 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.plugin.MojoFailureException;
+import org.mockito.Mockito;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 
 public class PitMojoTest extends BasePitMojoTest {
 
@@ -18,25 +21,40 @@ public class PitMojoTest extends BasePitMojoTest {
   public void setUp() throws Exception {
     super.setUp();
   }
-  
 
   public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration(""));
-    Build build = new Build();
+    final Build build = new Build();
     build.setOutputDirectory("foo");
     this.testee.getProject().setBuild(build);
     this.testee.execute();
-    verify(this.executionStrategy).execute(any(File.class),any(ReportOptions.class));
+    verify(this.executionStrategy).execute(any(File.class),
+        any(ReportOptions.class));
   }
-  
-  public void testDoesNotAnalysePomProjects()
-      throws Exception {
+
+  public void testDoesNotAnalysePomProjects() throws Exception {
     when(this.project.getPackaging()).thenReturn("pom");
     this.testee = createPITMojo(createPomWithConfiguration(""));
     this.testee.execute();
-    verify(this.executionStrategy, never()).execute(any(File.class),any(ReportOptions.class));
+    verify(this.executionStrategy, never()).execute(any(File.class),
+        any(ReportOptions.class));
   }
 
+  public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
+      throws Exception {
+    this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
+    final MutationStatistics stats = Mockito.mock(MutationStatistics.class);
+    when(stats.getPercentageDetected()).thenReturn(20l);
+    when(
+        this.executionStrategy.execute(any(File.class),
+            any(ReportOptions.class))).thenReturn(stats);
+    try {
+      this.testee.execute();
+      fail();
+    } catch (final MojoFailureException ex) {
+      // pass
+    }
+  }
 
 }

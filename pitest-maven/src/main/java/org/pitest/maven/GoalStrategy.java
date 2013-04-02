@@ -18,8 +18,9 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 
 public interface GoalStrategy {
 
-  public void execute(File baseDir, ReportOptions options) throws MojoExecutionException;
+  public MutationStatistics execute(File baseDir, ReportOptions options) throws MojoExecutionException;
 }

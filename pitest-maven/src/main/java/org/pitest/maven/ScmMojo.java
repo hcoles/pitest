@@ -19,7 +19,9 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 
 /**
  * Goal which runs a coverage mutation report only for files that have been
@@ -40,11 +42,10 @@ public class ScmMojo extends PitMojo {
   private ScmManager  manager;
 
   /**
-   * List of scm status to include. Names match those defined
-   * by the maven scm plugin.
+   * List of scm status to include. Names match those defined by the maven scm
+   * plugin.
    * 
-   * Common values include ADDED,MODIFIED (the defaults)
-   * & UNKNOWN. 
+   * Common values include ADDED,MODIFIED (the defaults) & UNKNOWN.
    * 
    * @parameter expression="${include}"
    */
@@ -85,27 +86,23 @@ public class ScmMojo extends PitMojo {
   }
 
   @Override
-  public void execute() throws MojoExecutionException {
-    
-    if ( !shouldRun() ) {
-      this.getLog().info("Skipping project");
-      return;
-    }
+  protected Option<MutationStatistics> analyse() throws MojoExecutionException {
 
     this.targetClasses = findModifiedClassNames();
 
     if (this.targetClasses.isEmpty()) {
       this.getLog().info(
           "No locally modified files found - nothing to mutation test");
-    } else {
-      logClassNames();
-      defaultTargetTestsToGroupNameIfNoValueSet();
-      final ReportOptions data = new MojoToReportOptionsConverter(this)
-          .convert();
-      data.setFailWhenNoMutations(false);
-
-      this.goalStrategy.execute(detectBaseDir(), data);
+      return Option.none();
     }
+
+    logClassNames();
+    defaultTargetTestsToGroupNameIfNoValueSet();
+    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
+    data.setFailWhenNoMutations(false);
+
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
+
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
@@ -157,8 +154,8 @@ public class ScmMojo extends PitMojo {
 
   private Set<ScmFileStatus> makeStatusSet() {
     if ((this.include == null) || this.include.isEmpty()) {
-      return new HashSet<ScmFileStatus>(Arrays.asList(ScmStatus.ADDED.getStatus(),
-          ScmStatus.MODIFIED.getStatus()));
+      return new HashSet<ScmFileStatus>(Arrays.asList(
+          ScmStatus.ADDED.getStatus(), ScmStatus.MODIFIED.getStatus()));
     }
     final Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
     FCollection.mapTo(this.include, stringToMavenScmStatus(), s);

@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
+import static org.pitest.mutationtest.config.ConfigOption.*;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
@@ -100,6 +100,7 @@ public class OptionsParser {
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
+  private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -252,6 +253,8 @@ public class OptionsParser {
     this.historyOutputSpec = parserAccepts(HISTORY_OUTPUT_LOCATION)
         .withRequiredArg().ofType(File.class)
         .describedAs("File to write history to for incremental analysis");
+    
+    this.mutationThreshHoldSpec = parserAccepts(MUTATION_THRESHOLD).withRequiredArg().ofType(Integer.class).describedAs("Mutation score below which to throw an error").defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
 
   }
 
@@ -325,6 +328,7 @@ public class OptionsParser {
 
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
+    data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);

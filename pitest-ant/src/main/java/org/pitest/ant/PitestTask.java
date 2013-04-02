@@ -183,10 +183,16 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.HISTORY_OUTPUT_LOCATION, value);
   }
 
+  public void setMutationThreshold(final String value) {
+    this.setOption(ConfigOption.MUTATION_THRESHOLD, value);
+  }
+  
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);
     }
   }
+
+
 
 }

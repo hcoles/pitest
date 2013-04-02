@@ -341,6 +341,13 @@ public class OptionsParserTest {
     assertEquals(new File("foo"), actual.getHistoryOutputLocation());
   }
 
+  @Test
+  public void shouldParseMutationThreshold() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+        "--mutationThreshold", "42");
+    assertEquals(42, actual.getMutationThreshold());
+  }
+  
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();
