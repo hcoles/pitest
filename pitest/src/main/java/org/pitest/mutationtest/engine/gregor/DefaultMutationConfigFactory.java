@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,17 +20,15 @@ import java.util.Collection;
 import org.pitest.functional.F;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.config.DefaultMutationEngineConfiguration;
+import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
 public final class DefaultMutationConfigFactory implements
-    MutationConfigFactory {
+    MutationEngineFactory {
 
   public final static Collection<String> LOGGING_CLASSES = Arrays
                                                              .asList(

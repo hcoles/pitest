@@ -76,7 +76,7 @@ public class MutationCoverageReportTest {
   private HistoryStore           history;
 
   @Mock
-  private MutationConfigFactory  mutationFactory;
+  private MutationEngineFactory  mutationFactory;
 
   @Mock
   private BuildVerifier          verifier;

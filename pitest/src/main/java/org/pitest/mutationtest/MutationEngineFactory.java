@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.MutationEngine;
 
-public interface MutationConfigFactory {
+public interface MutationEngineFactory {
 
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,

@@ -56,6 +56,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
@@ -298,7 +299,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(100);
+    verifyLineNumbers(101);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,

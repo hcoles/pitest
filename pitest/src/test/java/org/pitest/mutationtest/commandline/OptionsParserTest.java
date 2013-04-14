@@ -30,10 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.report.OutputFormat;
 
 public class OptionsParserTest {

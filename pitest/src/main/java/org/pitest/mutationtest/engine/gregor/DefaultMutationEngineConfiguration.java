@@ -12,16 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.config;
+package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Collection;
 
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
-public class DefaultMutationEngineConfiguration implements
+class DefaultMutationEngineConfiguration implements
     MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
@@ -29,7 +27,7 @@ public class DefaultMutationEngineConfiguration implements
   private final Collection<? extends MethodMutatorFactory> mutators;
   private final InlinedCodeFilter                          inlinedCodeDetector;
 
-  public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
+  DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
       final InlinedCodeFilter inlinedCodeDetector) {

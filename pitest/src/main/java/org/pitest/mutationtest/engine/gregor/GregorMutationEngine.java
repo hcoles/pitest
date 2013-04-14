@@ -22,7 +22,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassByteArraySource;
-import org.pitest.mutationtest.config.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;

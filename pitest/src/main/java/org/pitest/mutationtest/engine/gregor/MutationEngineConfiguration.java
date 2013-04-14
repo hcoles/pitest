@@ -12,13 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.config;
+package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Collection;
 
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public interface MutationEngineConfiguration {

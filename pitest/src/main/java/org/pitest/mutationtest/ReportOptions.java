@@ -41,7 +41,7 @@ import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;

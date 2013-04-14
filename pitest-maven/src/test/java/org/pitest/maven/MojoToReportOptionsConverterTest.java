@@ -25,10 +25,10 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.maven.MojoToReportOptionsConverter;
 import org.pitest.maven.PitMojo;
-import org.pitest.mutationtest.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Unchecked;
 
