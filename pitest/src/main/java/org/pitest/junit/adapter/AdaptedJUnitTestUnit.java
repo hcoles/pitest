@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -73,6 +74,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
     final Runner runner = createRunner(this.clazz);
+    checkForErrorRunner(runner);
     filterIfRequired(rc, runner);
 
     try {
@@ -91,6 +93,13 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
       throw translateCheckedException(e);
     }
 
+  }
+
+  private void checkForErrorRunner(Runner runner) {
+    if (runner instanceof ErrorReportingRunner) {
+      LOG.warning("JUnit error for class " + this.clazz + " : " + runner.getDescription());
+    }
+    
   }
 
   private void filterIfRequired(final ResultCollector rc, final Runner runner) {

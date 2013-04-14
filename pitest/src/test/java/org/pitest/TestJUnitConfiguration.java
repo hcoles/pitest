@@ -571,6 +571,8 @@ public class TestJUnitConfiguration {
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
+
+  
   private void run(final Class<?> clazz) {
     this.pitest.run(this.container, this.testee, clazz);
   }

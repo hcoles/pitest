@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.pitest.functional.F;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
@@ -137,6 +138,20 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
   public static Collection<MethodMutatorFactory> asCollection(
       final Collection<? extends Mutator> groups) {
     return FCollection.flatMap(groups, Prelude.id(Mutator.class));
+  }
+  
+  
+  public static Collection<MethodMutatorFactory> fromStrings(
+      final Collection<String> names) {
+    return FCollection.flatMap(names, fromString());
+  }
+
+  private static F<String, Iterable<MethodMutatorFactory>> fromString() {
+    return new F<String, Iterable<MethodMutatorFactory>> () {
+      public Iterable<MethodMutatorFactory> apply(String a) {
+        return valueOf(a);
+      }
+    };
   }
 
 }

@@ -79,7 +79,7 @@ public class ReportOptions {
 
   private Collection<File>                           sourceDirs;
   private Collection<String>                         classPathElements;
-  private Collection<? extends MethodMutatorFactory> mutators;
+  private Collection<String> mutators;
 
   private int                                        dependencyAnalysisMaxDistance;
   private boolean                                    mutateStaticInitializers       = false;
@@ -154,7 +154,7 @@ public class ReportOptions {
   /**
    * @return the mutators
    */
-  public Collection<? extends MethodMutatorFactory> getMutators() {
+  public Collection<String> getMutators() {
     return this.mutators;
   }
 
@@ -163,7 +163,7 @@ public class ReportOptions {
    *          the mutators to set
    */
   public void setMutators(
-      final Collection<? extends MethodMutatorFactory> mutators) {
+      final Collection<String> mutators) {
     this.mutators = mutators;
   }
 

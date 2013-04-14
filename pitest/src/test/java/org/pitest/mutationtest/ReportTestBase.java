@@ -27,7 +27,7 @@ public abstract class ReportTestBase {
     this.metaDataExtractor = new MetaDataExtractor();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    this.data.setMutators(Mutator.DEFAULTS.asCollection());
+   // this.data.setMutators(Mutator.DEFAULTS.asCollection());
   }
 
   protected ListenerFactory listenerFactory() {

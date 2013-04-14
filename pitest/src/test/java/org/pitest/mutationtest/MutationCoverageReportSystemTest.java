@@ -41,6 +41,8 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.extension.Configuration;
+import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.internal.IsolationUtils;
@@ -127,7 +129,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test(expected = PitHelpError.class)
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
-    this.data.setMutators(Mutator.MATH.asCollection());
+    setMutators(Mutator.MATH);
     this.data
         .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
@@ -135,6 +137,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
     // should not get here
   }
+
 
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
@@ -149,8 +152,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
-    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
-
+    setMutators(Mutator.RETURN_VALS);
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
@@ -289,7 +291,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldMarkChildJVMCrashesAsRunErrors() {
-    this.data.setMutators(Mutator.NEGATE_CONDITIONALS.asCollection());
+    setMutators(Mutator.NEGATE_CONDITIONALS);
     this.data.setTargetClasses(predicateFor(CrashesJVMWhenMutated.class));
     this.data
         .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
@@ -301,7 +303,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldCombineAndKillInlinedMutationsInFinallyBlocks() {
-    this.data.setMutators(Mutator.INCREMENTS.asCollection());
+    setMutators(Mutator.INCREMENTS);
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
     this.data.setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
     this.data.setDetectInlinedCode(true);
@@ -312,7 +314,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldUseTestsDefinedInASuppliedJUnitThreeSuite() {
-    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
+    setMutators(Mutator.RETURN_VALS);
     this.data.setTargetClasses(predicateFor(CoveredByJUnitThreeSuite.class));
     this.data.setTargetTests(predicateFor(JUnitThreeSuite.class));
     this.data.setVerbose(true);
@@ -323,7 +325,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldReportCombinedCoveredButNotTestedMutationsInFinallyBlocksAsSurvived() {
-    this.data.setMutators(Mutator.INCREMENTS.asCollection());
+    setMutators(Mutator.INCREMENTS);
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
     this.data
         .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
@@ -335,7 +337,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
-    this.data.setMutators(Mutator.RETURN_VALS.asCollection());
+    setMutators(Mutator.RETURN_VALS);
     this.data
         .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
     this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
@@ -395,6 +397,18 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     while ((len = in.read(buf)) >= 0) {
       out.write(buf, 0, len);
     }
+  }
+  
+  private void setMutators(Mutator mutator) {
+    this.data.setMutators(FCollection.map(Arrays.asList(mutator), asString()));
+  }
+  
+  private F<Mutator, String> asString() {
+    return new F<Mutator, String>() {
+      public String apply(Mutator a) {
+        return a.name();
+      }
+    };
   }
 
 }

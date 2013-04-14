@@ -27,10 +27,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigurationFactory;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Functions;
@@ -160,21 +158,12 @@ public class MojoToReportOptionsConverter {
         .filter(this.mojo.getPluginArtifactMap().values(), filter);
   }
 
-  private Collection<MethodMutatorFactory> determineMutators() {
-    if (hasValue(this.mojo.getMutators())) {
-      return FCollection.flatMap(this.mojo.getMutators(), stringToMutators());
+  private Collection<String> determineMutators() {
+    if (this.mojo.getMutators() != null) {
+      return this.mojo.getMutators();
     } else {
-      return Mutator.DEFAULTS.asCollection();
+      return Collections.emptyList();
     }
-  }
-
-  private F<String, Mutator> stringToMutators() {
-    return new F<String, Mutator>() {
-      public Mutator apply(final String a) {
-        return Mutator.valueOf(a);
-      }
-
-    };
   }
 
   private Collection<Predicate<String>> determineTargetClasses() {

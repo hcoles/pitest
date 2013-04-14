@@ -356,7 +356,7 @@ public class TestMutationTesting {
         ClassInfo.toClassName());
 
     final MutationEngine engine = new DefaultMutationConfigFactory()
-        .createEngine(false, False.<String> instance(),
+        .createEngineWithMutators(false, False.<String> instance(),
             Collections.<String> emptyList(), mutators, true);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
@@ -375,6 +375,7 @@ public class TestMutationTesting {
 
     this.pit.run(this.container, tus);
   }
+
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);

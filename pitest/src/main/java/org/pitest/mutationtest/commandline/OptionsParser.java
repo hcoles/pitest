@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import static org.pitest.mutationtest.config.ConfigOption.*;
+import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
@@ -29,6 +29,7 @@ import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PROJECT_FILE;
@@ -56,7 +57,6 @@ import joptsimple.OptionSpecBuilder;
 
 import org.pitest.functional.FCollection;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ConfigurationFactory;
@@ -81,7 +81,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     sourceDirSpec;
   private final OptionSpec<File>                     historyOutputSpec;
   private final OptionSpec<File>                     historyInputSpec;
-  private final OptionSpec<Mutator>                  mutators;
+  private final OptionSpec<String>                   mutators;
   private final OptionSpec<String>                   jvmArgs;
   private final ArgumentAcceptingOptionSpec<Boolean> mutateStatics;
   private final OptionSpec<Float>                    timeoutFactorSpec;
@@ -154,9 +154,8 @@ public class OptionsParser {
         .describedAs("comma seperated list of source directories").required();
 
     this.mutators = parserAccepts(MUTATIONS).withRequiredArg()
-        .ofType(Mutator.class).withValuesSeparatedBy(',')
-        .describedAs("comma seperated list of mutation operators")
-        .defaultsTo(Mutator.DEFAULTS);
+        .ofType(String.class).withValuesSeparatedBy(',')
+        .describedAs("comma seperated list of mutation operators");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
@@ -297,7 +296,7 @@ public class OptionsParser {
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
-    data.setMutators(Mutator.asCollection(this.mutators.values(userArgs)));
+    data.setMutators(this.mutators.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
 

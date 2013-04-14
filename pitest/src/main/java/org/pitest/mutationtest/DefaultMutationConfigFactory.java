@@ -42,13 +42,22 @@ public final class DefaultMutationConfigFactory implements
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
+      final Collection<String> mutators, final boolean detectInlinedCode) {
+    return createEngineWithMutators(mutateStaticInitializers, excludedMethods,
+        loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators),
+        detectInlinedCode);
+  }
+  
+  public MutationEngine createEngineWithMutators(final boolean mutateStaticInitializers,
+      final Predicate<String> excludedMethods,
+      final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
       final boolean detectInlinedCode) {
-    final Collection<? extends MethodMutatorFactory> ms = createMutatorListFromArrayOrUseDefaults(mutators);
+
     final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
         Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        filter, loggingClasses, ms, inlinedCodeDetector(detectInlinedCode));
+        filter, loggingClasses, mutators, inlinedCodeDetector(detectInlinedCode));
     return new GregorMutationEngine(config);
   }
 
@@ -62,9 +71,9 @@ public final class DefaultMutationConfigFactory implements
   }
 
   private static Collection<? extends MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
-      final Collection<? extends MethodMutatorFactory> mutators) {
-    if (!mutators.isEmpty()) {
-      return mutators;
+      final Collection<String> mutators) {
+    if (mutators != null && !mutators.isEmpty()) {
+      return Mutator.fromStrings(mutators);
     } else {
       return Mutator.DEFAULTS.asCollection();
     }

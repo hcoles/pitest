@@ -88,7 +88,7 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
     assertEquals(
-        Mutator.asCollection(Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH),
+        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(), Mutator.MATH.name()),
         actual.getMutators());
   }
 
