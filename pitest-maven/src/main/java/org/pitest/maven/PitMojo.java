@@ -207,10 +207,18 @@ public class PitMojo extends AbstractMojo {
   private boolean               exportLineCoverage;
   
   /**
+   * Mutation score threshold at which to fail build
    * 
    * @parameter default-value="0" expression="${mutationThreshold}"
    */
   private int mutationThreshold;
+  
+  /**
+   * Engine to use when generating mutations.
+   * 
+   * @parameter default-value="gregor" expression="${mutationEngine}"
+   */
+  private String mutationEngine;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -378,28 +386,24 @@ public class PitMojo extends AbstractMojo {
     return this.historyOutputFile;
   }
 
-  public void setHistoryOutputFile(final File historyOutputFile) {
-    this.historyOutputFile = historyOutputFile;
-  }
 
   public File getHistoryInputFile() {
     return this.historyInputFile;
   }
 
-  public void setHistoryInputFile(final File historyInputFile) {
-    this.historyInputFile = historyInputFile;
-  }
 
   public boolean isExportLineCoverage() {
     return this.exportLineCoverage;
-  }
-
-  public void setExportLineCoverage(final boolean exportLineCoverage) {
-    this.exportLineCoverage = exportLineCoverage;
   }
 
   protected boolean shouldRun() {
     return !this.project.getPackaging().equalsIgnoreCase("pom");
   }
 
+  public String getMutationEngine() {
+    return mutationEngine;
+  }
+
+  
+  
 }

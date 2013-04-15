@@ -23,12 +23,9 @@ import java.util.HashSet;
 import org.apache.maven.model.Model;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.maven.MojoToReportOptionsConverter;
-import org.pitest.maven.PitMojo;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.engine.gregor.Mutator;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Unchecked;
 
@@ -157,7 +154,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testDefaultsLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
     final ReportOptions actual = parseConfig("");
-    assertEquals(DefaultMutationConfigFactory.LOGGING_CLASSES,
+    assertEquals(ReportOptions.LOGGING_CLASSES,
         actual.getLoggingClasses());
   }
 
@@ -272,6 +269,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesLineCoverageExportFlagWhenNotSet() {
     ReportOptions actual = parseConfig("<exportLineCoverage>false</exportLineCoverage>");
     assertFalse(actual.shouldExportLineCoverage());
+  }
+  
+  public void testParsesEngineWhenSet() {
+    ReportOptions actual = parseConfig("<mutationEngine>foo</mutationEngine>");
+    assertEquals("foo", actual.getMutationEngine());
   }
   
   private ReportOptions parseConfig(final String xml) {

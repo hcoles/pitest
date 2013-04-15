@@ -95,7 +95,7 @@ public class MutationCoverageReport {
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);
 
-      final MutationStrategies strategies = new MutationStrategies(history,
+      final MutationStrategies strategies = new MutationStrategies(settings.createEngine(),history,
           coverageGenerator, reportFactory);
 
       final MutationCoverage instance = new MutationCoverage(strategies, null,

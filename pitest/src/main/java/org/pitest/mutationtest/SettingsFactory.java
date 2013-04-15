@@ -1,9 +1,11 @@
 package org.pitest.mutationtest;
 
+import org.pitest.PitError;
 import org.pitest.coverage.export.CoverageExporter;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.util.ServiceLoader;
 
 public class SettingsFactory {
 
@@ -23,6 +25,15 @@ public class SettingsFactory {
     } else {
       return new NullCoverageExporter();
     }
+  }
+  
+  public MutationEngineFactory createEngine() {
+    for ( MutationEngineFactory each : ServiceLoader.load(MutationEngineFactory.class) ) {
+      if ( each.name().equals(options.getMutationEngine())) {
+        return each;
+      }
+    }
+    throw new PitError("Could not load requested engine " + options.getMutationEngine());
   }
 
 }

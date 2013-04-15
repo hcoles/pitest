@@ -1,7 +1,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageGenerator;
-import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
@@ -14,9 +13,9 @@ public class MutationStrategies {
   private final BuildVerifier         buildVerifier;
   private final MutationEngineFactory factory;
 
-  public MutationStrategies(final HistoryStore history,
+  public MutationStrategies(final MutationEngineFactory factory,final HistoryStore history,
       final CoverageGenerator coverage, final ListenerFactory listenerFactory) {
-    this(new DefaultMutationConfigFactory(), history, coverage,
+    this(factory, history, coverage,
         listenerFactory, new DefaultBuildVerifier());
   }
 

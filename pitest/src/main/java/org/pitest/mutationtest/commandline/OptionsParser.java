@@ -29,6 +29,7 @@ import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
@@ -101,6 +102,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
+  private final OptionSpec<String>                   mutationEngine;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -252,8 +254,15 @@ public class OptionsParser {
     this.historyOutputSpec = parserAccepts(HISTORY_OUTPUT_LOCATION)
         .withRequiredArg().ofType(File.class)
         .describedAs("File to write history to for incremental analysis");
-    
-    this.mutationThreshHoldSpec = parserAccepts(MUTATION_THRESHOLD).withRequiredArg().ofType(Integer.class).describedAs("Mutation score below which to throw an error").defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
+
+    this.mutationThreshHoldSpec = parserAccepts(MUTATION_THRESHOLD)
+        .withRequiredArg().ofType(Integer.class)
+        .describedAs("Mutation score below which to throw an error")
+        .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
+
+    this.mutationEngine = parserAccepts(MUTATION_ENGINE).withRequiredArg()
+        .ofType(String.class).describedAs("mutation engine to use")
+        .defaultsTo(MUTATION_ENGINE.getDefault(String.class));
 
   }
 
@@ -328,6 +337,7 @@ public class OptionsParser {
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
+    data.setMutationEngine(this.mutationEngine.value(userArgs));
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);

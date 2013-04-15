@@ -392,6 +392,13 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--mutationThreshold=42");
   }
   
+  @Test
+  public void shouldPassMutationEngineToJavaTask() {
+    this.pitestTask.setMutationEngine("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--mutationEngine=foo");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

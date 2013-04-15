@@ -14,28 +14,19 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.pitest.functional.F;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
-public final class DefaultMutationConfigFactory implements
+public final class GregorEngineFactory implements
     MutationEngineFactory {
-
-  public final static Collection<String> LOGGING_CLASSES = Arrays
-                                                             .asList(
-                                                                 "java.util.logging",
-                                                                 "org.apache.log4j",
-                                                                 "org.slf4j",
-                                                                 "org.apache.commons.logging");
 
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
@@ -108,6 +99,10 @@ public final class DefaultMutationConfigFactory implements
       }
 
     };
+  }
+
+  public String name() {
+    return "gregor";
   }
 
 };

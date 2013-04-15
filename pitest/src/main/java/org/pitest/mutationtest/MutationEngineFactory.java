@@ -12,5 +12,7 @@ public interface MutationEngineFactory {
       final Collection<String> loggingClasses,
       final Collection<String> mutators,
       final boolean detectInlinedCode);
+  
+  public String name();
 
 }

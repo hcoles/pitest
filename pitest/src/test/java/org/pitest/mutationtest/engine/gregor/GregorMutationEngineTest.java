@@ -22,7 +22,6 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.True;
-import org.pitest.mutationtest.Mutator;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;

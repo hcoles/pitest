@@ -4,7 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.PitError;
 import org.pitest.coverage.export.NullCoverageExporter;
+import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 
 public class SettingsFactoryTest {
 
@@ -21,6 +23,17 @@ public class SettingsFactoryTest {
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
     this.options.setExportLineCoverage(false);
     assertTrue(this.testee.createCoverageExporter() instanceof NullCoverageExporter);
+  }
+  
+  @Test
+  public void shouldReturnEngineWhenRequestedEngineIsKnown() {
+    assertTrue(this.testee.createEngine() instanceof GregorEngineFactory);
+  }
+  
+  @Test(expected=PitError.class)
+  public void shouldThrowErrorWhenRequestedEngineNotKnown() {
+    options.setMutationEngine("unknown");
+    testee.createEngine();
   }
 
 }

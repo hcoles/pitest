@@ -56,8 +56,9 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
+import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.Mutator;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
@@ -299,7 +300,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(101);
+    verifyLineNumbers(102);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
@@ -356,7 +357,7 @@ public class TestMutationTesting {
     final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
         ClassInfo.toClassName());
 
-    final MutationEngine engine = new DefaultMutationConfigFactory()
+    final MutationEngine engine = new GregorEngineFactory()
         .createEngineWithMutators(false, False.<String> instance(),
             Collections.<String> emptyList(), mutators, true);
 

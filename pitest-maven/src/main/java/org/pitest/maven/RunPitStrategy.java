@@ -84,7 +84,7 @@ public class RunPitStrategy implements GoalStrategy {
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
-    MutationStrategies strategies = new MutationStrategies(history, coverageDatabase, reportFactory);
+    MutationStrategies strategies = new MutationStrategies(settings.createEngine(),history, coverageDatabase, reportFactory);
     
     final MutationCoverage report = new MutationCoverage(strategies, baseDir, 
         code, data,  timings);

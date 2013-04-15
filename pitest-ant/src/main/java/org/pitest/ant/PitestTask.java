@@ -187,12 +187,14 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.MUTATION_THRESHOLD, value);
   }
   
+  public void setMutationEngine(String value) {
+    this.setOption(ConfigOption.MUTATION_ENGINE, value);  
+  }
+  
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);
     }
   }
-
-
 
 }

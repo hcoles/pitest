@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -41,7 +42,6 @@ import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.PathNamePredicate;
 import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.mutationtest.engine.gregor.DefaultMutationConfigFactory;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
@@ -56,58 +56,69 @@ import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
+// FIXME move all logic to SettingsFactory and turn into simple bean
+
 /**
- * FIXME move all logic to SettingsFactory and turn into simple bean
+ * Big ball of user supplied options to configure
+ * various aspects of mutation testing.
  * 
  */
 public class ReportOptions {
 
-  private Configuration                              config;
-  private Collection<Predicate<String>>              targetClasses;
-  private Collection<Predicate<String>>              excludedMethods                = Collections
-                                                                                        .emptyList();
+  public final static Collection<String> LOGGING_CLASSES                = Arrays
+                                                                            .asList(
+                                                                                "java.util.logging",
+                                                                                "org.apache.log4j",
+                                                                                "org.slf4j",
+                                                                                "org.apache.commons.logging");
 
-  private Collection<Predicate<String>>              excludedClasses                = Collections
-                                                                                        .emptyList();
+  private Configuration                  config;
+  private Collection<Predicate<String>>  targetClasses;
+  private Collection<Predicate<String>>  excludedMethods                = Collections
+                                                                            .emptyList();
 
-  private Collection<String>                         codePaths;
+  private Collection<Predicate<String>>  excludedClasses                = Collections
+                                                                            .emptyList();
 
-  private String                                     reportDir;
+  private Collection<String>             codePaths;
 
-  private File                                       historyInputLocation;
-  private File                                       historyOutputLocation;
+  private String                         reportDir;
 
-  private Collection<File>                           sourceDirs;
-  private Collection<String>                         classPathElements;
-  private Collection<String> mutators;
+  private File                           historyInputLocation;
+  private File                           historyOutputLocation;
 
-  private int                                        dependencyAnalysisMaxDistance;
-  private boolean                                    mutateStaticInitializers       = false;
+  private Collection<File>               sourceDirs;
+  private Collection<String>             classPathElements;
+  private Collection<String>             mutators;
 
-  private final List<String>                         jvmArgs                        = new ArrayList<String>();
-  private int                                        numberOfThreads                = 0;
-  private float                                      timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
-  private long                                       timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
+  private int                            dependencyAnalysisMaxDistance;
+  private boolean                        mutateStaticInitializers       = false;
 
-  private Collection<Predicate<String>>              targetTests;
+  private final List<String>             jvmArgs                        = new ArrayList<String>();
+  private int                            numberOfThreads                = 0;
+  private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
+  private long                           timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
-  private Collection<String>                         loggingClasses                 = new ArrayList<String>();
+  private Collection<Predicate<String>>  targetTests;
 
-  private int                                        maxMutationsPerClass;
+  private Collection<String>             loggingClasses                 = new ArrayList<String>();
 
-  private boolean                                    verbose                        = false;
-  private boolean                                    failWhenNoMutations            = false;
+  private int                            maxMutationsPerClass;
 
-  private final Collection<OutputFormat>             outputs                        = new LinkedHashSet<OutputFormat>();
+  private boolean                        verbose                        = false;
+  private boolean                        failWhenNoMutations            = false;
 
-  private TestGroupConfig                            groupConfig;
+  private final Collection<OutputFormat> outputs                        = new LinkedHashSet<OutputFormat>();
 
-  private int                                        mutationUnitSize;
-  private boolean                                    shouldCreateTimestampedReports = true;
-  private boolean                                    detectInlinedCode              = false;
-  private boolean                                    exportLineCoverage             = false;
-  private int mutationThreshold;
+  private TestGroupConfig                groupConfig;
 
+  private int                            mutationUnitSize;
+  private boolean                        shouldCreateTimestampedReports = true;
+  private boolean                        detectInlinedCode              = false;
+  private boolean                        exportLineCoverage             = false;
+  private int                            mutationThreshold;
+
+  private String                         mutationEngine                 = "gregor";
 
   public boolean isVerbose() {
     return this.verbose;
@@ -162,8 +173,7 @@ public class ReportOptions {
    * @param mutators
    *          the mutators to set
    */
-  public void setMutators(
-      final Collection<String> mutators) {
+  public void setMutators(final Collection<String> mutators) {
     this.mutators = mutators;
   }
 
@@ -277,7 +287,6 @@ public class ReportOptions {
     return this.targetTests;
   }
 
-
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
@@ -301,7 +310,7 @@ public class ReportOptions {
 
   public Collection<String> getLoggingClasses() {
     if (this.loggingClasses.isEmpty()) {
-      return DefaultMutationConfigFactory.LOGGING_CLASSES;
+      return LOGGING_CLASSES;
     } else {
       return this.loggingClasses;
     }
@@ -529,38 +538,48 @@ public class ReportOptions {
   }
 
   public int getMutationThreshold() {
-    return mutationThreshold;
+    return this.mutationThreshold;
   }
 
-  public void setMutationThreshold(int value) {
-    mutationThreshold = value;
-    
+  public void setMutationThreshold(final int value) {
+    this.mutationThreshold = value;
   }
-  
+
   @Override
   public String toString() {
-    return "ReportOptions [config=" + config + ", targetClasses="
-        + targetClasses + ", excludedMethods=" + excludedMethods
-        + ", excludedClasses=" + excludedClasses + ", codePaths=" + codePaths
-        + ", reportDir=" + reportDir + ", historyInputLocation="
-        + historyInputLocation + ", historyOutputLocation="
-        + historyOutputLocation + ", sourceDirs=" + sourceDirs
-        + ", classPathElements=" + classPathElements + ", mutators=" + mutators
-        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", mutateStaticInitializers=" + mutateStaticInitializers
-        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
-        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
-        + timeoutConstant + ", targetTests=" + targetTests
-        + ", loggingClasses=" + loggingClasses + ", maxMutationsPerClass="
-        + maxMutationsPerClass + ", verbose=" + verbose
-        + ", failWhenNoMutations=" + failWhenNoMutations + ", outputs="
-        + outputs + ", groupConfig=" + groupConfig + ", mutationUnitSize="
-        + mutationUnitSize + ", shouldCreateTimestampedReports="
-        + shouldCreateTimestampedReports + ", detectInlinedCode="
-        + detectInlinedCode + ", exportLineCoverage=" + exportLineCoverage
-        + ", mutationThreshold=" + mutationThreshold + "]";
+    return "ReportOptions [config=" + this.config + ", targetClasses="
+        + this.targetClasses + ", excludedMethods=" + this.excludedMethods
+        + ", excludedClasses=" + this.excludedClasses + ", codePaths="
+        + this.codePaths + ", reportDir=" + this.reportDir
+        + ", historyInputLocation=" + this.historyInputLocation
+        + ", historyOutputLocation=" + this.historyOutputLocation
+        + ", sourceDirs=" + this.sourceDirs + ", classPathElements="
+        + this.classPathElements + ", mutators=" + this.mutators
+        + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + ", maxMutationsPerClass="
+        + this.maxMutationsPerClass + ", verbose=" + this.verbose
+        + ", failWhenNoMutations=" + this.failWhenNoMutations + ", outputs="
+        + this.outputs + ", groupConfig=" + this.groupConfig
+        + ", mutationUnitSize=" + this.mutationUnitSize
+        + ", shouldCreateTimestampedReports="
+        + this.shouldCreateTimestampedReports + ", detectInlinedCode="
+        + this.detectInlinedCode + ", exportLineCoverage="
+        + this.exportLineCoverage + ", mutationThreshold="
+        + this.mutationThreshold + ", mutationEngine=" + this.mutationEngine
+        + "]";
   }
 
+  public String getMutationEngine() {
+    return this.mutationEngine;
+  }
 
-  
+  public void setMutationEngine(final String mutationEngine) {
+    this.mutationEngine = mutationEngine;
+  }
+
 }

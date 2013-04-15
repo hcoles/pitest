@@ -46,6 +46,7 @@ import org.pitest.help.PitHelpError;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatistics;
@@ -174,7 +175,7 @@ public class MutationCoverageReportTest {
   }
 
   private MutationStatistics createAndRunTestee() {
-    final MutationStrategies strategies = new MutationStrategies(this.history,
+    final MutationStrategies strategies = new MutationStrategies(new GregorEngineFactory(),this.history,
         this.coverage, this.listenerFactory).with(this.mutationFactory).with(
         this.verifier);
 
