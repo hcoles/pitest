@@ -14,6 +14,8 @@
  */
 package org.pitest.maven;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.apache.maven.artifact.Artifact;
@@ -21,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.maven.DependencyFilter;
 
 public class DependencyFilterTest {
 
@@ -39,13 +40,21 @@ public class DependencyFilterTest {
   @Test
   public void shouldAllowWhiteListedGroups() {
     when(this.artifact.getGroupId()).thenReturn("foo");
-    this.testee.apply(this.artifact);
+    assertTrue(this.testee.apply(this.artifact));
   }
 
   @Test
   public void shouldNotAllowNonWhiteListedGroups() {
     when(this.artifact.getGroupId()).thenReturn("faa");
-    this.testee.apply(this.artifact);
+    when(this.artifact.getArtifactId()).thenReturn("foo");
+    assertFalse(this.testee.apply(this.artifact));
+  }
+
+  @Test
+  public void shouldAllowAnyArtifactNamedMutationEngine() {
+    when(this.artifact.getGroupId()).thenReturn("not.allowd");
+    when(this.artifact.getArtifactId()).thenReturn("mutation-engine");
+    assertTrue(this.testee.apply(this.artifact));
   }
 
 }
