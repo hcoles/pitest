@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.pitest.bytecode.blocks.BlockCounter;
-import org.pitest.bytecode.blocks.ConcreteBlockCounter;
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
+import org.pitest.mutationtest.engine.gregor.blocks.ConcreteBlockCounter;
 
 public class Context implements BlockCounter {
 

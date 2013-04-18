@@ -1,4 +1,4 @@
-package org.pitest.bytecode.blocks;
+package org.pitest.mutationtest.engine.gregor.blocks;
 
 public interface BlockCounter {
 
