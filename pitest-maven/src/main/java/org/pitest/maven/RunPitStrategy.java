@@ -84,12 +84,13 @@ public class RunPitStrategy implements GoalStrategy {
 
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
-    MutationStrategies strategies = new MutationStrategies(settings.createEngine(),history, coverageDatabase, reportFactory);
-    
-    final MutationCoverage report = new MutationCoverage(strategies, baseDir, 
-        code, data,  timings);
+    final MutationStrategies strategies = new MutationStrategies(
+        settings.createEngine(), history, coverageDatabase, reportFactory);
 
-    try {    
+    final MutationCoverage report = new MutationCoverage(strategies, baseDir,
+        code, data, timings);
+
+    try {
       return report.runReport();
     } catch (final IOException e) {
       throw new MojoExecutionException("fail", e);

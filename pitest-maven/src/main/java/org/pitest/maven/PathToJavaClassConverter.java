@@ -27,7 +27,8 @@ class PathToJavaClassConverter implements F<String, Iterable<String>> {
     final File f = new File(a);
     final String modifiedFilePath = f.getAbsolutePath();
 
-    if (modifiedFilePath.startsWith(this.sourceRoot) && modifiedFilePath.indexOf('.') != -1 ) {
+    if (modifiedFilePath.startsWith(this.sourceRoot)
+        && (modifiedFilePath.indexOf('.') != -1)) {
       return createClassGlobFromFilePath(this.sourceRoot, modifiedFilePath);
     }
     return Collections.emptyList();
@@ -38,10 +39,12 @@ class PathToJavaClassConverter implements F<String, Iterable<String>> {
       final String modifiedFilePath) {
     final String rootedPath = modifiedFilePath.substring(
         sourceRoot.length() + 1, modifiedFilePath.length());
-    // some scms report paths in portable format, some in os specific format (i think)
+    // some scms report paths in portable format, some in os specific format (i
+    // think)
     // replace both possibilities regardless of host os
     return Collections.singleton(stripFileExtension(rootedPath).replace('/',
-        '.').replace('\\', '.') + "*");
+        '.').replace('\\', '.')
+        + "*");
   }
 
   private String stripFileExtension(final String rootedPath) {

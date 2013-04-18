@@ -22,5 +22,6 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 
 public interface GoalStrategy {
 
-  public MutationStatistics execute(File baseDir, ReportOptions options) throws MojoExecutionException;
+  public MutationStatistics execute(File baseDir, ReportOptions options)
+      throws MojoExecutionException;
 }

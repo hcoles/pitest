@@ -11,15 +11,17 @@ public class ScmStatusTest {
   public void shouldMapTheStringAddedToTheRightScmFileStatus() {
     assertEquals(ScmFileStatus.ADDED, ScmStatus.valueOf("ADDED").getStatus());
   }
-  
+
   @Test
   public void shouldMapTheStringModifiedToTheRightScmFileStatus() {
-    assertEquals(ScmFileStatus.MODIFIED, ScmStatus.valueOf("MODIFIED").getStatus());
+    assertEquals(ScmFileStatus.MODIFIED, ScmStatus.valueOf("MODIFIED")
+        .getStatus());
   }
-  
+
   @Test
   public void shouldMapTheStringUnknownToTheRightScmFileStatus() {
-    assertEquals(ScmFileStatus.UNKNOWN, ScmStatus.valueOf("UNKNOWN").getStatus());
+    assertEquals(ScmFileStatus.UNKNOWN, ScmStatus.valueOf("UNKNOWN")
+        .getStatus());
   }
 
 }

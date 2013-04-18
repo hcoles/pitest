@@ -73,7 +73,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     verify(this.manager).makeScmRepository(devUrl);
 
   }
-  
+
   public void testUsesCorrectConnectionWhenNonDeveloperConnectionSet()
       throws Exception {
     final String url = "prodcon";
@@ -84,50 +84,64 @@ public class ScmMojoTest extends BasePitMojoTest {
     verify(this.manager).makeScmRepository(url);
 
   }
-  
+
   public void testClassesAddedToScmAreMutationTested() throws Exception {
     setupConnection();
     setFileWithStatus(ScmFileStatus.ADDED);
-    this.testee.execute(); 
-    verify(this.executionStrategy).execute(any(File.class), any(ReportOptions.class));
+    this.testee.execute();
+    verify(this.executionStrategy).execute(any(File.class),
+        any(ReportOptions.class));
   }
 
-  private void setFileWithStatus( ScmFileStatus status) throws ScmException {
+  private void setFileWithStatus(final ScmFileStatus status)
+      throws ScmException {
     when(this.manager.status(any(ScmRepository.class), any(ScmFileSet.class)))
-    .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",status))));
+        .thenReturn(
+            new StatusScmResult("", Arrays.asList(new ScmFile(
+                "foo/bar/Bar.java", status))));
   }
 
   public void testModifiedClassesAreMutationTested() throws Exception {
     setupConnection();
     setFileWithStatus(ScmFileStatus.MODIFIED);
-    this.testee.execute(); 
-    verify(this.executionStrategy).execute(any(File.class), any(ReportOptions.class));
+    this.testee.execute();
+    verify(this.executionStrategy).execute(any(File.class),
+        any(ReportOptions.class));
   }
-  
-  public void testUnknownAndDeletedClassesAreNotMutationTested() throws Exception {
+
+  public void testUnknownAndDeletedClassesAreNotMutationTested()
+      throws Exception {
     setupConnection();
     when(this.manager.status(any(ScmRepository.class), any(ScmFileSet.class)))
-    .thenReturn(new StatusScmResult("", Arrays.asList(new ScmFile("foo/bar/Bar.java",ScmFileStatus.DELETED), new ScmFile("foo/bar/Bar.java",ScmFileStatus.UNKNOWN))));
-    this.testee.execute(); 
-    verify(this.executionStrategy, never()).execute(any(File.class), any(ReportOptions.class));
+        .thenReturn(
+            new StatusScmResult("", Arrays.asList(new ScmFile(
+                "foo/bar/Bar.java", ScmFileStatus.DELETED), new ScmFile(
+                "foo/bar/Bar.java", ScmFileStatus.UNKNOWN))));
+    this.testee.execute();
+    verify(this.executionStrategy, never()).execute(any(File.class),
+        any(ReportOptions.class));
   }
-  
+
   public void testCanOverrideInspectedStatus() throws Exception {
     setupConnection();
     setFileWithStatus(ScmFileStatus.UNKNOWN);
-    configurePitMojo(this.testee, createPomWithConfiguration("<include><value>DELETED</value><value>UNKNOWN</value></include>"));
-    this.testee.execute(); 
-    verify(this.executionStrategy, times(1)).execute(any(File.class), any(ReportOptions.class));
+    configurePitMojo(
+        this.testee,
+        createPomWithConfiguration("<include><value>DELETED</value><value>UNKNOWN</value></include>"));
+    this.testee.execute();
+    verify(this.executionStrategy, times(1)).execute(any(File.class),
+        any(ReportOptions.class));
   }
-  
+
   public void testDoesNotAnalysePomProjects() throws Exception {
     setupConnection();
     setFileWithStatus(ScmFileStatus.MODIFIED);
     when(this.project.getPackaging()).thenReturn("pom");
-    this.testee.execute(); 
-    verify(this.executionStrategy, never()).execute(any(File.class), any(ReportOptions.class));
+    this.testee.execute();
+    verify(this.executionStrategy, never()).execute(any(File.class),
+        any(ReportOptions.class));
   }
-  
+
   private void setupConnection() {
     when(this.scm.getConnection()).thenReturn("url");
     this.testee.setConnectionType("connection");

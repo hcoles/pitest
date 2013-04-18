@@ -42,25 +42,23 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   @Mock
   protected RunPitStrategy executionStrategy;
-  
-  protected List<String> classPath;
+
+  protected List<String>   classPath;
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.initMocks(this);
-    classPath = new ArrayList<String>(
-      FCollection.map(ClassPath.getClassPathElementsAsFiles(),
-          fileToString()));
-    when(this.project.getTestClasspathElements())
-        .thenReturn(classPath);
+    this.classPath = new ArrayList<String>(FCollection.map(
+        ClassPath.getClassPathElementsAsFiles(), fileToString()));
+    when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");
   }
 
   private F<File, String> fileToString() {
     return new F<File, String>() {
 
-      public String apply(File a) {
+      public String apply(final File a) {
         return a.getAbsolutePath();
       }
 
@@ -82,25 +80,24 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         "</project>";
     return pom;
   }
-  
+
   protected PitMojo createPITMojo(final String config) throws Exception {
-   
+
     final PitMojo pitMojo = new PitMojo(this.executionStrategy);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }
 
-  protected void configurePitMojo(final PitMojo pitMojo, final String config) throws Exception  {
+  protected void configurePitMojo(final PitMojo pitMojo, final String config)
+      throws Exception {
     final Xpp3Dom xpp3dom = Xpp3DomBuilder.build(new StringReader(config));
     final PlexusConfiguration pluginConfiguration = extractPluginConfiguration(
         "pitest-maven", xpp3dom);
-
 
     // default the report dir to something
     setVariableValueToObject(pitMojo, "reportsDirectory", new File("."));
 
     configureMojo(pitMojo, pluginConfiguration);
-
 
     final Map<String, Artifact> pluginArtifacts = new HashMap<String, Artifact>();
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
@@ -108,6 +105,5 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(pitMojo, "project", this.project);
 
   }
-  
 
 }

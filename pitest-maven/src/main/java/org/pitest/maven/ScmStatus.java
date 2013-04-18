@@ -93,7 +93,7 @@ public enum ScmStatus {
   private final ScmFileStatus status;
 
   public ScmFileStatus getStatus() {
-    return status;
+    return this.status;
   }
 
   ScmStatus(final ScmFileStatus status) {

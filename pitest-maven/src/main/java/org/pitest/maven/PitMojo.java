@@ -205,20 +205,20 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="false" expression="${exportLineCoverage}"
    */
   private boolean               exportLineCoverage;
-  
+
   /**
    * Mutation score threshold at which to fail build
    * 
    * @parameter default-value="0" expression="${mutationThreshold}"
    */
-  private int mutationThreshold;
-  
+  private int                   mutationThreshold;
+
   /**
    * Engine to use when generating mutations.
    * 
    * @parameter default-value="gregor" expression="${mutationEngine}"
    */
-  private String mutationEngine;
+  private String                mutationEngine;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -248,9 +248,10 @@ public class PitMojo extends AbstractMojo {
     this.goalStrategy = strategy;
   }
 
-  public final void execute() throws MojoExecutionException, MojoFailureException {
+  public final void execute() throws MojoExecutionException,
+      MojoFailureException {
     if (shouldRun()) {
-      Option<MutationStatistics> result = analyse();
+      final Option<MutationStatistics> result = analyse();
       if (result.hasSome()) {
         throwErrorIfScoreBelowThreshold(result.value());
       }
@@ -259,16 +260,19 @@ public class PitMojo extends AbstractMojo {
       this.getLog().info("Skipping project");
     }
   }
-  
-  private void throwErrorIfScoreBelowThreshold(MutationStatistics result) throws MojoFailureException {
-    if ( mutationThreshold != 0  && result.getPercentageDetected() < this.mutationThreshold ) {
-      throw new MojoFailureException("Mutation score of " + result.getPercentageDetected() + " is below threshold of " + mutationThreshold);
+
+  private void throwErrorIfScoreBelowThreshold(final MutationStatistics result)
+      throws MojoFailureException {
+    if ((this.mutationThreshold != 0)
+        && (result.getPercentageDetected() < this.mutationThreshold)) {
+      throw new MojoFailureException("Mutation score of "
+          + result.getPercentageDetected() + " is below threshold of "
+          + this.mutationThreshold);
     }
   }
-  
+
   protected Option<MutationStatistics> analyse() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this)
-    .convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
   }
 
@@ -386,11 +390,9 @@ public class PitMojo extends AbstractMojo {
     return this.historyOutputFile;
   }
 
-
   public File getHistoryInputFile() {
     return this.historyInputFile;
   }
-
 
   public boolean isExportLineCoverage() {
     return this.exportLineCoverage;
@@ -401,9 +403,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   public String getMutationEngine() {
-    return mutationEngine;
+    return this.mutationEngine;
   }
 
-  
-  
 }

@@ -51,7 +51,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-
   public void testUsesSourceDirectoriesFromProject() {
     when(this.project.getCompileSourceRoots()).thenReturn(Arrays.asList("src"));
     when(this.project.getTestCompileSourceRoots()).thenReturn(
@@ -81,9 +80,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>MATH</param>" + //
         "                  </mutators>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(
-        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(), Mutator.MATH.name()),
-        actual.getMutators());
+    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(),
+        Mutator.MATH.name()), actual.getMutators());
   }
 
   public void testParsersMutateStaticInitializersFlag() {
@@ -122,8 +120,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-
-
   public void testParsesListOfExcludedClassGlobsAndApplyTheseToTests() {
     final String xml = "<excludedClasses>" + //
         "                      <param>foo*</param>" + //
@@ -154,8 +150,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testDefaultsLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
     final ReportOptions actual = parseConfig("");
-    assertEquals(ReportOptions.LOGGING_CLASSES,
-        actual.getLoggingClasses());
+    assertEquals(ReportOptions.LOGGING_CLASSES, actual.getLoggingClasses());
   }
 
   public void testParsesListOfClassesToAvoidCallTo() {
@@ -188,10 +183,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertTrue(parseConfig("<verbose>true</verbose>").isVerbose());
     assertFalse(parseConfig("<verbose>false</verbose>").isVerbose());
   }
-  
+
   public void testParsesDetectInlineCodeFlag() {
-    assertTrue(parseConfig("<detectInlinedCode>true</detectInlinedCode>").isDetectInlinedCode());
-    assertFalse(parseConfig("<detectInlinedCode>false</detectInlinedCode>").isDetectInlinedCode());
+    assertTrue(parseConfig("<detectInlinedCode>true</detectInlinedCode>")
+        .isDetectInlinedCode());
+    assertFalse(parseConfig("<detectInlinedCode>false</detectInlinedCode>")
+        .isDetectInlinedCode());
   }
 
   public void testDefaultsToHtmlReportWhenNoOutputFormatsSpecified() {
@@ -218,64 +215,66 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(parseConfig("<failWhenNoMutations>false</failWhenNoMutations>")
         .shouldFailWhenNoMutations());
   }
-  
+
   public void testParsesTestGroupsToExclude() {
-    ReportOptions actual = parseConfig("<excludedTestNGGroups><value>foo</value><value>bar</value></excludedTestNGGroups>");
+    final ReportOptions actual = parseConfig("<excludedTestNGGroups><value>foo</value><value>bar</value></excludedTestNGGroups>");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getExcludedGroups());
   }
 
   public void testParsesTestGroupsToInclude() {
-    ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    final ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }
-  
+
   public void testMaintainsOrderOfClassPath() {
-    ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
-    assertEquals(this.classPath,actual.getClassPathElements());    
+    final ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    assertEquals(this.classPath, actual.getClassPathElements());
   }
-  
+
   public void testParsesMutationUnitSize() {
-    ReportOptions actual = parseConfig("<mutationUnitSize>50</mutationUnitSize>");
+    final ReportOptions actual = parseConfig("<mutationUnitSize>50</mutationUnitSize>");
     assertEquals(50, actual.getMutationUnitSize());
   }
 
   public void testDefaultsMutationUnitSizeToCorrectValue() {
     final ReportOptions actual = parseConfig("");
-    assertEquals((int)ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class), actual.getMutationUnitSize());
+    assertEquals(
+        (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
+        actual.getMutationUnitSize());
   }
-    
+
   public void testParsesTimeStampedReports() {
-    ReportOptions actual = parseConfig("<timestampedReports>false</timestampedReports>");
+    final ReportOptions actual = parseConfig("<timestampedReports>false</timestampedReports>");
     assertEquals(false, actual.shouldCreateTimeStampedReports());
   }
-  
+
   public void testParsesHistoryInputFile() {
-    ReportOptions actual = parseConfig("<historyInputFile>foo</historyInputFile>");
-    assertEquals(new File("foo"),actual.getHistoryInputLocation());
+    final ReportOptions actual = parseConfig("<historyInputFile>foo</historyInputFile>");
+    assertEquals(new File("foo"), actual.getHistoryInputLocation());
   }
-  
+
   public void testParsesHistoryoutputFile() {
-    ReportOptions actual = parseConfig("<historyOutputFile>foo</historyOutputFile>");
-    assertEquals(new File("foo"),actual.getHistoryOutputLocation());
+    final ReportOptions actual = parseConfig("<historyOutputFile>foo</historyOutputFile>");
+    assertEquals(new File("foo"), actual.getHistoryOutputLocation());
   }
-  
+
   public void testParsesLineCoverageExportFlagWhenSet() {
-    ReportOptions actual = parseConfig("<exportLineCoverage>true</exportLineCoverage>");
+    final ReportOptions actual = parseConfig("<exportLineCoverage>true</exportLineCoverage>");
     assertTrue(actual.shouldExportLineCoverage());
   }
-  
+
   public void testParsesLineCoverageExportFlagWhenNotSet() {
-    ReportOptions actual = parseConfig("<exportLineCoverage>false</exportLineCoverage>");
+    final ReportOptions actual = parseConfig("<exportLineCoverage>false</exportLineCoverage>");
     assertFalse(actual.shouldExportLineCoverage());
   }
-  
+
   public void testParsesEngineWhenSet() {
-    ReportOptions actual = parseConfig("<mutationEngine>foo</mutationEngine>");
+    final ReportOptions actual = parseConfig("<mutationEngine>foo</mutationEngine>");
     assertEquals("foo", actual.getMutationEngine());
   }
-  
+
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
