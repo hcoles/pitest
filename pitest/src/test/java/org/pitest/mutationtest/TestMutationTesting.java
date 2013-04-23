@@ -255,6 +255,7 @@ public class TestMutationTesting {
 
   }
 
+  
   public static class EatsMemoryWhenMutated {
     public static int loop() throws InterruptedException {
       int i = 1;

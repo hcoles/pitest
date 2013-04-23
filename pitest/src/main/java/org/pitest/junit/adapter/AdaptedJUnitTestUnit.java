@@ -104,6 +104,10 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private void filterIfRequired(final ResultCollector rc, final Runner runner) {
     if (this.filter.hasSome()) {
+      if ( !(runner instanceof Filterable) ) {
+        LOG.warning("Not able to filter " + runner.getDescription() + ". Mutation may have prevented JUnit from constructing test");
+        return;
+      }
       final Filterable f = (Filterable) runner;
       try {
         f.filter(this.filter.value());

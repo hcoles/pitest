@@ -140,7 +140,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     // should not get here
   }
 
-
   @Test
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
     this.data.setMutateStaticInitializers(true);
@@ -350,6 +349,21 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     assertEquals(1, this.metaDataExtractor.getNumberOfTestsRun());
   }
 
+  @Test
+  public void shouldKillMutationsWhenMutationsPreventsConstructionOfTestClass() {
+    setMutators(Mutator.RETURN_VALS);
+
+    this.data
+        .setTargetClasses(predicateFor(com.example.mutatablecodeintest.Mutee.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.mutatablecodeintest.MuteeTest.class));
+
+    createAndRun();
+
+    verifyResults(KILLED);
+
+  }
+
   private void createAndRun() {
     createAndRun(new JUnitCompatibleConfiguration());
   }
@@ -378,8 +392,9 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       final HistoryStore history = new NullHistoryStore();
 
-      final MutationStrategies strategies = new MutationStrategies(new GregorEngineFactory(),history,
-          coverageDatabase, listenerFactory());
+      final MutationStrategies strategies = new MutationStrategies(
+          new GregorEngineFactory(), history, coverageDatabase,
+          listenerFactory());
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
           code, this.data, timings);
@@ -400,11 +415,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       out.write(buf, 0, len);
     }
   }
-  
+
   private void setMutators(Mutator mutator) {
     this.data.setMutators(FCollection.map(Arrays.asList(mutator), asString()));
   }
-  
+
   private F<Mutator, String> asString() {
     return new F<Mutator, String>() {
       public String apply(Mutator a) {
