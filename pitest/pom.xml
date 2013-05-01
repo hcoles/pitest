@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.30-SNAPSHOT</version>
+		<version>0.30</version>
 	</parent>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
@@ -110,8 +109,7 @@
 							</artifactSet>
 
 							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 							</transformers>
 
 							<relocations>
@@ -184,8 +182,7 @@
 									issue with maven-shade-plugin There appears to be some stale state from previous 
 									executions of the Shade plugin, which manifest themselves as "We have a duplicate" 
 									warnings on build and also as some classes not being updated on build. -->
-								<delete
-									file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
+								<delete file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
 							</target>
 						</configuration>
 					</execution>
