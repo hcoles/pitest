@@ -131,7 +131,7 @@ public class MutationSourceTest {
 
   private MutationDetails makeMutation(final String method) {
     final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
-    return new MutationDetails(id, "file", "desc", method, 1, 2);
+    return new MutationDetails(id, "file", "desc", new MethodName(method), 1, 2);
   }
 
 }

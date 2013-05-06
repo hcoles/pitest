@@ -93,7 +93,7 @@ public class MutationCoverageReportTest {
     MockitoAnnotations.initMocks(this);
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    //this.data.setMutators(Mutator.DEFAULTS.asCollection());
+    // this.data.setMutators(Mutator.DEFAULTS.asCollection());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
     when(
         this.listenerFactory.getListener(any(CoverageDatabase.class),
@@ -175,9 +175,9 @@ public class MutationCoverageReportTest {
   }
 
   private MutationStatistics createAndRunTestee() {
-    final MutationStrategies strategies = new MutationStrategies(new GregorEngineFactory(),this.history,
-        this.coverage, this.listenerFactory).with(this.mutationFactory).with(
-        this.verifier);
+    final MutationStrategies strategies = new MutationStrategies(
+        new GregorEngineFactory(), this.history, this.coverage,
+        this.listenerFactory).with(this.mutationFactory).with(this.verifier);
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new Timings());

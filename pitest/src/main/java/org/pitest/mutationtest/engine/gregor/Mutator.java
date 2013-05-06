@@ -138,16 +138,15 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
       final Collection<? extends Mutator> groups) {
     return FCollection.flatMap(groups, Prelude.id(Mutator.class));
   }
-  
-  
+
   public static Collection<MethodMutatorFactory> fromStrings(
       final Collection<String> names) {
     return FCollection.flatMap(names, fromString());
   }
 
   private static F<String, Iterable<MethodMutatorFactory>> fromString() {
-    return new F<String, Iterable<MethodMutatorFactory>> () {
-      public Iterable<MethodMutatorFactory> apply(String a) {
+    return new F<String, Iterable<MethodMutatorFactory>>() {
+      public Iterable<MethodMutatorFactory> apply(final String a) {
         return valueOf(a);
       }
     };

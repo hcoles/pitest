@@ -416,13 +416,13 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
-  private void setMutators(Mutator mutator) {
+  private void setMutators(final Mutator mutator) {
     this.data.setMutators(FCollection.map(Arrays.asList(mutator), asString()));
   }
 
   private F<Mutator, String> asString() {
     return new F<Mutator, String>() {
-      public String apply(Mutator a) {
+      public String apply(final Mutator a) {
         return a.name();
       }
     };

@@ -24,6 +24,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
@@ -43,7 +44,7 @@ public class Context implements BlockCounter {
   private Option<MutationIdentifier>            target                         = Option
                                                                                    .none();
   private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
-  private String                                methodName;
+  private MethodName                            methodName;
 
   private final Set<String>                     mutationFindingDisabledReasons = new HashSet<String>();
 
@@ -141,7 +142,7 @@ public class Context implements BlockCounter {
   }
 
   public void registerMethod(final String name) {
-    this.methodName = name;
+    this.methodName = new MethodName(name);
   }
 
   public boolean shouldMutate(final MutationIdentifier newId) {

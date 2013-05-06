@@ -26,14 +26,16 @@ public class SettingsFactory {
       return new NullCoverageExporter();
     }
   }
-  
+
   public MutationEngineFactory createEngine() {
-    for ( MutationEngineFactory each : ServiceLoader.load(MutationEngineFactory.class) ) {
-      if ( each.name().equals(options.getMutationEngine())) {
+    for (final MutationEngineFactory each : ServiceLoader
+        .load(MutationEngineFactory.class)) {
+      if (each.name().equals(this.options.getMutationEngine())) {
         return each;
       }
     }
-    throw new PitError("Could not load requested engine " + options.getMutationEngine());
+    throw new PitError("Could not load requested engine "
+        + this.options.getMutationEngine());
   }
 
 }

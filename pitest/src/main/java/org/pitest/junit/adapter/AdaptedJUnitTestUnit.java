@@ -95,17 +95,19 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   }
 
-  private void checkForErrorRunner(Runner runner) {
+  private void checkForErrorRunner(final Runner runner) {
     if (runner instanceof ErrorReportingRunner) {
-      LOG.warning("JUnit error for class " + this.clazz + " : " + runner.getDescription());
+      LOG.warning("JUnit error for class " + this.clazz + " : "
+          + runner.getDescription());
     }
-    
+
   }
 
   private void filterIfRequired(final ResultCollector rc, final Runner runner) {
     if (this.filter.hasSome()) {
-      if ( !(runner instanceof Filterable) ) {
-        LOG.warning("Not able to filter " + runner.getDescription() + ". Mutation may have prevented JUnit from constructing test");
+      if (!(runner instanceof Filterable)) {
+        LOG.warning("Not able to filter " + runner.getDescription()
+            + ". Mutation may have prevented JUnit from constructing test");
         return;
       }
       final Filterable f = (Filterable) runner;

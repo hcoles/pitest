@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.gregor.blocks.ConcreteBlockCounter;
 
 public class ConcreteBlockCounterTest {
 

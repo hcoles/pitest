@@ -86,9 +86,8 @@ public class OptionsParserTest {
   public void shouldParseCommaSeperatedListOfMutationOperators() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
-    assertEquals(
-        Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(), Mutator.MATH.name()),
-        actual.getMutators());
+    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(),
+        Mutator.MATH.name()), actual.getMutators());
   }
 
   @Test
@@ -213,8 +212,7 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(ReportOptions.LOGGING_CLASSES,
-        actual.getLoggingClasses());
+    assertEquals(ReportOptions.LOGGING_CLASSES, actual.getLoggingClasses());
   }
 
   @Test
@@ -342,24 +340,24 @@ public class OptionsParserTest {
 
   @Test
   public void shouldParseMutationThreshold() {
-    final ReportOptions actual = parseAddingRequiredArgs(
-        "--mutationThreshold", "42");
+    final ReportOptions actual = parseAddingRequiredArgs("--mutationThreshold",
+        "42");
     assertEquals(42, actual.getMutationThreshold());
   }
-  
+
   @Test
   public void shouldDefaultToGregorEngineWhenNoOptionSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs();
     assertEquals("gregor", actual.getMutationEngine());
   }
-  
+
   @Test
   public void shouldParseMutationEnigne() {
-    final ReportOptions actual = parseAddingRequiredArgs(
-        "--mutationEngine", "foo");
+    final ReportOptions actual = parseAddingRequiredArgs("--mutationEngine",
+        "foo");
     assertEquals("foo", actual.getMutationEngine());
   }
-  
+
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();

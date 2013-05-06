@@ -16,6 +16,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -140,7 +141,7 @@ public class IncrementalAnalyserTest {
 
   private MutationDetails makeMutation(final String method) {
     final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
-    return new MutationDetails(id, "file", "desc", method, 1, 2);
+    return new MutationDetails(id, "file", "desc", new MethodName(method), 1, 2);
   }
 
   private void setHistoryForAllMutationsTo(final DetectionStatus status) {

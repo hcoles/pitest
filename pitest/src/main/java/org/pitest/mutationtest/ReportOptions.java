@@ -59,8 +59,8 @@ import org.pitest.util.Unchecked;
 // FIXME move all logic to SettingsFactory and turn into simple bean
 
 /**
- * Big ball of user supplied options to configure
- * various aspects of mutation testing.
+ * Big ball of user supplied options to configure various aspects of mutation
+ * testing.
  * 
  */
 public class ReportOptions {

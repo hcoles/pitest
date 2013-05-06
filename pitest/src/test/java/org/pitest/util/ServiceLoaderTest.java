@@ -7,20 +7,23 @@ import org.junit.Test;
 import org.pitest.mutationtest.MutationEngineFactory;
 
 public class ServiceLoaderTest {
-  
+
   public static interface AService {
-    
+
   }
 
   @Test
   public void shouldReturnNoValuesWhenNoServicesFounds() throws Exception {
-    Iterable<AService> actual = ServiceLoader.load(AService.class, Thread.currentThread().getContextClassLoader());
+    final Iterable<AService> actual = ServiceLoader.load(AService.class, Thread
+        .currentThread().getContextClassLoader());
     assertFalse(actual.iterator().hasNext());
   }
-  
+
   @Test
   public void shouldReturnValueWhenServiceFound() throws Exception {
-    Iterable<MutationEngineFactory> actual = ServiceLoader.load(MutationEngineFactory.class, Thread.currentThread().getContextClassLoader());
+    final Iterable<MutationEngineFactory> actual = ServiceLoader.load(
+        MutationEngineFactory.class, Thread.currentThread()
+            .getContextClassLoader());
     assertTrue(actual.iterator().hasNext());
   }
 

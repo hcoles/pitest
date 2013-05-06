@@ -11,12 +11,15 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class InlinedFinallyBlockDetectorTest {
 
   private InlinedFinallyBlockDetector testee;
+
+  private final static MethodName     A_METHOD = new MethodName("method");
 
   @Before
   public void setUp() {
@@ -73,19 +76,19 @@ public class InlinedFinallyBlockDetectorTest {
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final int index) {
     return new MutationDetails(makeId(Collections.singleton(index), mutator),
-        "file", "desc", "method", line, block, true);
+        "file", "desc", A_METHOD, line, block, true);
   }
 
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", "method", line, block, true);
+        "file", "desc", A_METHOD, line, block, true);
   }
 
   private MutationDetails makeMutant(final int line, final int block,
       final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", "method", line, block);
+        "file", "desc", A_METHOD, line, block);
   }
 
   private MutationDetails makeMutant(final int line, final int block,

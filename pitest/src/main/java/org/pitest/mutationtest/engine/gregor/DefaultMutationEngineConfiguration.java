@@ -19,8 +19,7 @@ import java.util.Collection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
-class DefaultMutationEngineConfiguration implements
-    MutationEngineConfiguration {
+class DefaultMutationEngineConfiguration implements MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
   private final Collection<String>                         doNotMutate;

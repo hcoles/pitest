@@ -25,8 +25,7 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
-public final class GregorEngineFactory implements
-    MutationEngineFactory {
+public final class GregorEngineFactory implements MutationEngineFactory {
 
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
@@ -36,8 +35,9 @@ public final class GregorEngineFactory implements
         loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators),
         detectInlinedCode);
   }
-  
-  public MutationEngine createEngineWithMutators(final boolean mutateStaticInitializers,
+
+  public MutationEngine createEngineWithMutators(
+      final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
@@ -46,7 +46,8 @@ public final class GregorEngineFactory implements
     final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
         Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        filter, loggingClasses, mutators, inlinedCodeDetector(detectInlinedCode));
+        filter, loggingClasses, mutators,
+        inlinedCodeDetector(detectInlinedCode));
     return new GregorMutationEngine(config);
   }
 
@@ -61,7 +62,7 @@ public final class GregorEngineFactory implements
 
   private static Collection<? extends MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(
       final Collection<String> mutators) {
-    if (mutators != null && !mutators.isEmpty()) {
+    if ((mutators != null) && !mutators.isEmpty()) {
       return Mutator.fromStrings(mutators);
     } else {
       return Mutator.DEFAULTS.asCollection();

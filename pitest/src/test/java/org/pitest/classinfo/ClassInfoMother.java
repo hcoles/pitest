@@ -14,13 +14,19 @@ public class ClassInfoMother {
       final ClassPointer parent) {
     final ClassInfoBuilder data = new ClassInfoBuilder();
     data.id = id;
-    final ClassInfo ci = new ClassInfo(parent, new DefaultClassPointer(null),
-        data);
-    return ci;
+    return new ClassInfo(parent, new DefaultClassPointer(null), data);
   }
 
   public static ClassInfo make(final ClassName name) {
     return make(new ClassIdentifier(1, name));
+  }
+
+  public static ClassInfo make(final ClassName name, final String fileName) {
+    final DefaultClassPointer parent = new DefaultClassPointer(null);
+    final ClassInfoBuilder data = new ClassInfoBuilder();
+    data.id = new ClassIdentifier(1, name);
+    data.sourceFile = fileName;
+    return new ClassInfo(parent, new DefaultClassPointer(null), data);
   }
 
   public static ClassInfo make(final String name) {

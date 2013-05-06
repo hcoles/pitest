@@ -11,7 +11,8 @@ public class MutationDetailsMother {
 
   public static MutationDetails makeMutation(final ClassName clazz) {
     return new MutationDetails(new MutationIdentifier(clazz.asJavaName(), 1,
-        "mutatorId"), "foo.java", "A mutation", "fooMethod", 0, 0);
+        "mutatorId"), "foo.java", "A mutation", new MethodName("fooMethod"), 0,
+        0);
   }
 
 }

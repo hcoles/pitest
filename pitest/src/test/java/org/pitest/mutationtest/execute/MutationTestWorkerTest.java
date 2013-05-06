@@ -21,6 +21,7 @@ import org.pitest.Description;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F3;
+import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
@@ -159,7 +160,8 @@ public class MutationTestWorkerTest {
 
   public MutationDetails makeMutant(final String clazz, final int index) {
     final MutationDetails md = new MutationDetails(new MutationIdentifier(
-        clazz, index, "mutator"), "sourceFile", "desc", "method", 42, 0);
+        clazz, index, "mutator"), "sourceFile", "desc",
+        new MethodName("method"), 42, 0);
 
     when(this.mutater.getMutation(md.getId())).thenReturn(
         new Mutant(md, new byte[0]));

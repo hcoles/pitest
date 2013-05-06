@@ -255,7 +255,6 @@ public class TestMutationTesting {
 
   }
 
-  
   public static class EatsMemoryWhenMutated {
     public static int loop() throws InterruptedException {
       int i = 1;
@@ -378,7 +377,6 @@ public class TestMutationTesting {
 
     this.pit.run(this.container, tus);
   }
-
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);

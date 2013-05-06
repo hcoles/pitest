@@ -13,10 +13,11 @@ public class MutationStrategies {
   private final BuildVerifier         buildVerifier;
   private final MutationEngineFactory factory;
 
-  public MutationStrategies(final MutationEngineFactory factory,final HistoryStore history,
-      final CoverageGenerator coverage, final ListenerFactory listenerFactory) {
-    this(factory, history, coverage,
-        listenerFactory, new DefaultBuildVerifier());
+  public MutationStrategies(final MutationEngineFactory factory,
+      final HistoryStore history, final CoverageGenerator coverage,
+      final ListenerFactory listenerFactory) {
+    this(factory, history, coverage, listenerFactory,
+        new DefaultBuildVerifier());
   }
 
   private MutationStrategies(final MutationEngineFactory factory,

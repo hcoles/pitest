@@ -24,16 +24,16 @@ public class SettingsFactoryTest {
     this.options.setExportLineCoverage(false);
     assertTrue(this.testee.createCoverageExporter() instanceof NullCoverageExporter);
   }
-  
+
   @Test
   public void shouldReturnEngineWhenRequestedEngineIsKnown() {
     assertTrue(this.testee.createEngine() instanceof GregorEngineFactory);
   }
-  
-  @Test(expected=PitError.class)
+
+  @Test(expected = PitError.class)
   public void shouldThrowErrorWhenRequestedEngineNotKnown() {
-    options.setMutationEngine("unknown");
-    testee.createEngine();
+    this.options.setMutationEngine("unknown");
+    this.testee.createEngine();
   }
 
 }

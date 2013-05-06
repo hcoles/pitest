@@ -191,6 +191,19 @@ public class CoverageDataTest {
     assertThat(actual.getTests(), hasItems("fooTest", "fooTest2"));
   }
 
+  @Test
+  public void shouldProvideListOfClassesForSourceFile() {
+    final ClassName foo = ClassName.fromString("foo");
+    final ClassName bar = ClassName.fromString("bar");
+    final ClassInfo fooClass = ClassInfoMother.make(foo, "foo.java");
+    final ClassInfo barClass = ClassInfoMother.make(bar, "bar.java");
+    final Collection<ClassInfo> classes = Arrays.asList(fooClass, barClass);
+    when(this.code.getCode()).thenReturn(classes);
+
+    assertEquals(Arrays.asList(barClass),
+        this.testee.getClassesForFile("bar.java"));
+  }
+
   private static F<TestInfo, Integer> testInfoToExecutionTime() {
     return new F<TestInfo, Integer>() {
       public Integer apply(final TestInfo a) {

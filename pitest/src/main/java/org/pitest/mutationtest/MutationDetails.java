@@ -27,7 +27,7 @@ import org.pitest.util.StringUtil;
 public class MutationDetails {
 
   private final MutationIdentifier  id;
-  private final String              method;
+  private final MethodName          method;
   private final String              filename;
   private final int                 block;
   private final int                 lineNumber;
@@ -36,13 +36,13 @@ public class MutationDetails {
   private final boolean             isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final String method, final int lineNumber,
+      final String description, final MethodName method, final int lineNumber,
       final int block) {
     this(id, filename, description, method, lineNumber, block, false);
   }
 
   public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final String method, final int lineNumber,
+      final String description, final MethodName method, final int lineNumber,
       final int block, final boolean isInFinallyBlock) {
     this.id = id;
     this.description = description;
@@ -66,7 +66,8 @@ public class MutationDetails {
   }
 
   public String getHtmlSafeDescription() {
-    return StringUtil.escapeBasicHtmlChars(this.description);
+    return StringUtil.escapeBasicHtmlChars(this.method.describe() + ":"
+        + this.description);
   }
 
   public String getClazz() {
@@ -77,7 +78,7 @@ public class MutationDetails {
     return this.id.getClassName();
   }
 
-  public String getMethod() {
+  public MethodName getMethod() {
     return this.method;
   }
 
@@ -107,7 +108,7 @@ public class MutationDetails {
   }
 
   public boolean isInStaticInitializer() {
-    return this.getMethod().trim().startsWith("<clinit>");
+    return this.getMethod().raw().trim().startsWith("<clinit>");
   }
 
   public int getBlock() {

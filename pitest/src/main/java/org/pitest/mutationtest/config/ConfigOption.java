@@ -142,16 +142,16 @@ public enum ConfigOption {
    * Location to write history to for incremental analysis
    */
   HISTORY_OUTPUT_LOCATION("historyOutputLocation"),
-  
+
   /**
    * Mutation score below which to throw an error
    */
-  MUTATION_THRESHOLD("mutationThreshold",0),
-  
+  MUTATION_THRESHOLD("mutationThreshold", 0),
+
   /**
    * Mutation engine to use
    */
-  MUTATION_ENGINE("mutationEngine","gregor");
+  MUTATION_ENGINE("mutationEngine", "gregor");
 
   private final String text;
   private final Object defaultValue;

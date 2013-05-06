@@ -10,9 +10,8 @@ public interface MutationEngineFactory {
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
-      final Collection<String> mutators,
-      final boolean detectInlinedCode);
-  
+      final Collection<String> mutators, final boolean detectInlinedCode);
+
   public String name();
 
 }

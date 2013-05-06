@@ -112,15 +112,16 @@ public class MutationHtmlReportListener implements MutationResultListener {
         .getResults();
 
     final List<Line> lines = createAnnotatedSourceCodeLines(fileName,
-        mutationsForThisFile, mutationMetaData.getClasses());
+        mutationsForThisFile);
 
     return new SourceFile(fileName, lines,
         mutationsForThisFile.groupMutationsByLine());
   }
 
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
-      final MutationResultList mutationsForThisFile,
-      final Collection<ClassInfo> classes) throws IOException {
+      final MutationResultList mutationsForThisFile) throws IOException {
+    final Collection<ClassInfo> classes = this.coverage
+        .getClassesForFile(sourceFile);
     final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
     if (reader.hasSome()) {

@@ -49,15 +49,18 @@ public class MutationCoverageReport {
       System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
       final ReportOptions data = pr.getOptions();
-      MutationStatistics stats = runReport(data);      
+      final MutationStatistics stats = runReport(data);
       throwErrorIfScoreBelowThreshold(stats, data.getMutationThreshold());
     }
 
   }
 
-  private static void throwErrorIfScoreBelowThreshold(MutationStatistics stats, int threshold) {
-    if ( threshold != 0 && stats.getPercentageDetected() < threshold ) {
-      throw new RuntimeException("Mutation score of " + stats.getPercentageDetected() + " is below threshold of " + threshold );
+  private static void throwErrorIfScoreBelowThreshold(
+      final MutationStatistics stats, final int threshold) {
+    if ((threshold != 0) && (stats.getPercentageDetected() < threshold)) {
+      throw new RuntimeException("Mutation score of "
+          + stats.getPercentageDetected() + " is below threshold of "
+          + threshold);
     }
   }
 
@@ -95,8 +98,8 @@ public class MutationCoverageReport {
       final HistoryStore history = new XStreamHistoryStore(historyWriter,
           reader);
 
-      final MutationStrategies strategies = new MutationStrategies(settings.createEngine(),history,
-          coverageGenerator, reportFactory);
+      final MutationStrategies strategies = new MutationStrategies(
+          settings.createEngine(), history, coverageGenerator, reportFactory);
 
       final MutationCoverage instance = new MutationCoverage(strategies, null,
           code, data, timings);

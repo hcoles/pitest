@@ -16,8 +16,6 @@ import org.mockito.Mock;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.MethodDecoratorTest;
-import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
-import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
 public class BlockTrackingMethodDecoratorTest extends MethodDecoratorTest {
 

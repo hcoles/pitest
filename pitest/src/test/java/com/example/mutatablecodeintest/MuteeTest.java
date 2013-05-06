@@ -13,25 +13,23 @@ public class MuteeTest {
 
   int i;
 
-  public MuteeTest (int i) {
+  public MuteeTest(final int i) {
     this.i = i;
   }
- 
 
   @Parameters
   public static Collection<Object[]> params() {
-    if ( Mutee.returnOne() != 1 ) {
+    if (Mutee.returnOne() != 1) {
       throw new RuntimeException();
     }
     return Arrays.asList(new Object[][] { { 1 }, { 2 }, { 3 } });
   }
-  
 
   @Test
   public void test1() {
 
   }
-  
+
   @Test
   public void test2() {
 

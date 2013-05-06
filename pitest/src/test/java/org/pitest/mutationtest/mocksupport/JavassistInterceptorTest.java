@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -29,7 +30,7 @@ public class JavassistInterceptorTest {
     this.interceptedClass = new AClassWithAOpenClassFileMethod();
     final byte[] bytes = "replaced".getBytes();
     this.mutant = new Mutant(new MutationDetails(new MutationIdentifier(
-        "match", 0, "foo"), "foo", "foo", "foo", 0, 0), bytes);
+        "match", 0, "foo"), "foo", "foo", new MethodName("foo"), 0, 0), bytes);
   }
 
   @Test
