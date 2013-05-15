@@ -2,6 +2,14 @@
 <head>
 <style type='text/css'>
 $css$
+
+.pop {outline:none; }
+.pop strong {line-height:30px;}
+.pop {text-decoration:none;}
+.pop span { z-index:10;display:none; padding:14px 20px; margin-top:-30px; margin-left:28px; width:800px; line-height:16px; word-wrap:break-word; }
+.pop:hover span{ display:inline; position:absolute; color:#111; border:1px solid #DCA; background:#fffAF0;}
+
+.pop span { border-radius:4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; -moz-box-shadow: 5px 5px 8px #CCC; -webkit-box-shadow: 5px 5px 8px #CCC; box-shadow: 5px 5px 8px #CCC; }
 </style>
 
 </head>
@@ -20,10 +28,15 @@ $sourceFile.lines:{ line |
 $line.number$
 </td>
 <td class='$line.styles.mutation$'>
+<span class='pop'>
 <a href='#group$sourceFile$_$line.number$'>$line.numberOfMutationsForDisplay$</a>
+<span>
+$line.mutations:{ mutation |
+$i$. $mutation.details.location$ : $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$<br/>
+}$
+</span>
 </td>
 <td class='$line.styles.code$'><pre><span  class='$line.styles.mutation$'>$line.text$</span></pre></td></tr>
-
 }$
 
 
@@ -37,7 +50,7 @@ $sourceFile.groups:{ group |
 
 <a name='group$sourceFile$_$group.id$'/> 
 
-$group.mutations: { mutation | <p class='$mutation.status$'>$mutation.details.htmlSafeDescription$ : $mutation.statusDescription$</p> }$
+$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</p> }$
 </td>
 </tr>
 }$

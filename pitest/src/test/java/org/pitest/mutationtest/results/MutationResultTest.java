@@ -24,14 +24,21 @@ public class MutationResultTest {
   private MutationResult testee;
 
   @Test
-  public void shouldReturnNameOfKillingTestInStatusDescriptionWhenKnown() {
+  public void shouldReturnNameOfKillingTestWhenKnown() {
     this.testee = new MutationResult(null, new MutationStatusTestPair(1,
         DetectionStatus.KILLED, "good test"));
-    assertEquals("KILLED -> good test", this.testee.getStatusDescription());
+    assertEquals("good test", this.testee.getKillingTestDescription());
+  }
+  
+  @Test
+  public void shouldNoneWhenNoKillingTest() {
+    this.testee = new MutationResult(null, new MutationStatusTestPair(1,
+        DetectionStatus.TIMED_OUT));
+    assertEquals("none", this.testee.getKillingTestDescription());
   }
 
   @Test
-  public void shouldReturnOnlyStatusInStatusDescriptionWhenKillingTestNotKnown() {
+  public void shouldReturnStatusDescription() {
     this.testee = new MutationResult(null, new MutationStatusTestPair(1,
         DetectionStatus.TIMED_OUT));
     assertEquals("TIMED_OUT", this.testee.getStatusDescription());

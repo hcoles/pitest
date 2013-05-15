@@ -43,6 +43,7 @@ import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.verify.NullBuildVerifier;
 import org.pitest.util.JavaAgent;
 
 public class RunPitStrategy implements GoalStrategy {
@@ -85,7 +86,7 @@ public class RunPitStrategy implements GoalStrategy {
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory);
+        settings.createEngine(), history, coverageDatabase, reportFactory).with(new NullBuildVerifier());
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, timings);

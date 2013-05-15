@@ -50,10 +50,11 @@ public class MutationResult {
   }
 
   public String getStatusDescription() {
-    for (final String test : getKillingTest()) {
-      return getStatus() + " -> " + test;
-    }
     return getStatus().name();
+  }
+  
+  public String getKillingTestDescription() {
+    return getKillingTest().getOrElse("none");
   }
 
   @Override
