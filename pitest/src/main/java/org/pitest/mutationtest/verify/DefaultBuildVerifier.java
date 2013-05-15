@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.CodeSource;
+import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
@@ -28,22 +29,28 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   public void verify(final CodeSource code) {
     final Collection<ClassInfo> codeClasses = code.getCode();
-    FCollection.forEach(codeClasses, throwErrorIfHasNoLineNumbers());
+    // perform only a weak check for line numbers as
+    // some jvm languages are not guaranteed to produce them for all classes
+    checkAtLeastOneClassHasLineNumbers(codeClasses);
     FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
   }
 
-  private SideEffect1<ClassInfo> throwErrorIfHasNoLineNumbers() {
-    return new SideEffect1<ClassInfo>() {
-      public void apply(final ClassInfo a) {
-        // ignore non top level classes - the compiler sometimes will generate
-        // empty anonymous inner classes with no line numbers
-        if (!a.isInterface() && a.isTopLevelClass()
-            && (a.getNumberOfCodeLines() == 0)) {
-          throw new PitHelpError(Help.NO_LINE_NUMBERS, a.getName().asJavaName());
-        }
+  private void checkAtLeastOneClassHasLineNumbers(
+      final Collection<ClassInfo> codeClasses) {
+    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())) {
+      throw new PitHelpError(Help.NO_LINE_NUMBERS);
+    }
+  }
+
+  private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
+    return new F<ClassInfo, Boolean>() {
+      public Boolean apply(ClassInfo a) {
+        return a.getNumberOfCodeLines() != 0;
       }
+      
     };
   }
+
 
   private SideEffect1<ClassInfo> throwErrorIfHasNoSourceFile() {
     return new SideEffect1<ClassInfo>() {

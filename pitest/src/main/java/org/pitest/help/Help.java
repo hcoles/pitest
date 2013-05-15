@@ -27,7 +27,7 @@ public enum Help {
   NO_SOURCE_FILE(
       "The class %s does not contain a source debug information. All classes must be compiled with source and line number debug information."), //
   NO_LINE_NUMBERS(
-      "The class %s does not contain line number debug information. All classes must be compiled with source and line number debug information."), //
+      "No classes found with line number debug information. All classes must be compiled with source and line number debug information."), //
   NO_TEST_LIBRARY(
       "No test library found on classpath. PIT requires either JUnit 4 (but can run JUnit 3 tests) or TestNG"), //
   BAD_FILTER(

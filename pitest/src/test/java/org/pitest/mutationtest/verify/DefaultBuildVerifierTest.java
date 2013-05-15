@@ -46,17 +46,6 @@ public class DefaultBuildVerifierTest {
     this.testee = new DefaultBuildVerifier();
   }
 
-  private static interface AnInterface {
-
-  }
-
-  @Test
-  public void shouldNotThrowErrorForInterfaceCompiledWithDebugInfo() {
-    setupClassPath(AnInterface.class);
-    this.testee.verify(this.code);
-    // pass
-  }
-
   private static class AClass {
 
   }
