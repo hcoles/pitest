@@ -37,7 +37,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   private void checkAtLeastOneClassHasLineNumbers(
       final Collection<ClassInfo> codeClasses) {
-    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())) {
+    if (!FCollection.contains(codeClasses, aClassWithLineNumbers()) && !codeClasses.isEmpty()) {
       throw new PitHelpError(Help.NO_LINE_NUMBERS);
     }
   }

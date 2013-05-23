@@ -15,6 +15,7 @@
 
 package org.pitest.mutationtest.verify;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -67,6 +68,16 @@ public class DefaultBuildVerifierTest {
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoLines");
     this.testee.verify(this.code);
+  }
+
+  @Test
+  public void shouldNotThrowAnErrorWhenNoClassesFound() {
+    when(this.code.getCode()).thenReturn(Collections.<ClassInfo>emptyList());
+    try {
+      this.testee.verify(this.code);
+    } catch (final PitHelpError e) {
+      fail();
+    }
   }
 
   private void setupClassPath(final Class<?> clazz) {
