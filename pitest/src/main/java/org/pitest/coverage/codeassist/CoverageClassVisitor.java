@@ -47,7 +47,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
 
-    return new CoverageMethodVisitor(this, this.classId, methodVisitor);
+    return new CoverageAnalyser(this, this.classId, methodVisitor, access, name, desc,signature, exceptions);
 
   }
 

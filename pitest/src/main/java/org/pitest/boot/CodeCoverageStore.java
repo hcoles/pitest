@@ -35,8 +35,8 @@ public final class CodeCoverageStore {
                                                                                              .replace(
                                                                                                  '.',
                                                                                                  '/');
-  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLine";
-  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(J)V";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLines";
+  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(I[I)V";
 
   private static InvokeReceiver                invokeQueue;
   private static int                           classId                                   = 0;
@@ -58,12 +58,15 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public static void visitLine(final long lineId) { // NO_UCD
-    final int line = decodeLineId(lineId);
-    final int clazz = decodeClassId(lineId);
-    final boolean[] bs = classHits.get(clazz);
+  
+  public static void visitLines(int classId, int[] probes) { // NO_UCD
+
+    final boolean[] bs = classHits.get(classId);
     bs[CLASS_HIT_INDEX] = true;
-    bs[line + 1] = true;
+    for ( int i = 0; i != probes.length; i++) {
+      bs[probes[i] + 1] = true;
+    }
+ 
   }
 
   public synchronized static void reset() {

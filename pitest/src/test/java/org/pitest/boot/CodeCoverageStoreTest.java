@@ -92,11 +92,8 @@ public class CodeCoverageStoreTest {
     final int classId = CodeCoverageStore.registerClass("foo");
     CodeCoverageStore
         .registerClassProbes(classId, new int[] { 10, 20, 30, 42 });
-    final long line10 = CodeCoverageStore.encode(classId, 0);
-    final long line42 = CodeCoverageStore.encode(classId, 3);
 
-    CodeCoverageStore.visitLine(line10);
-    CodeCoverageStore.visitLine(line42);
+    CodeCoverageStore.visitLines(classId, new int[]{0,3});
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -111,11 +108,10 @@ public class CodeCoverageStoreTest {
     final int barId = CodeCoverageStore.registerClass("bar");
     CodeCoverageStore.registerClassProbes(fooId, new int[] { 13, 20, 30, 42 });
     CodeCoverageStore.registerClassProbes(barId, new int[] { 11 });
-    final long line20 = CodeCoverageStore.encode(fooId, 1);
-    final long line0 = CodeCoverageStore.encode(barId, 0);
 
-    CodeCoverageStore.visitLine(line20);
-    CodeCoverageStore.visitLine(line0);
+
+    CodeCoverageStore.visitLines(fooId, new int[]{1});
+    CodeCoverageStore.visitLines(barId, new int[]{0});
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -128,9 +124,8 @@ public class CodeCoverageStoreTest {
   public void shouldClearHitCountersWhenReset() {
     final int classId = CodeCoverageStore.registerClass("foo");
     CodeCoverageStore.registerClassProbes(classId, new int[] { 10 });
-    final long line10 = CodeCoverageStore.encode(classId, 0);
-
-    CodeCoverageStore.visitLine(line10);
+ 
+    CodeCoverageStore.visitLines(classId, new int[]{0});
     CodeCoverageStore.reset();
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
@@ -196,7 +191,7 @@ public class CodeCoverageStoreTest {
             Thread.sleep(sleepPeriod);
           } catch (final InterruptedException e) {
           }
-          CodeCoverageStore.visitLine(i);
+          CodeCoverageStore.visitLines(0,new int[]{i});
         }
       }
     };
