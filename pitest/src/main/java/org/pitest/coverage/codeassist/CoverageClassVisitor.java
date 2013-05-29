@@ -30,6 +30,10 @@ import org.pitest.boot.CodeCoverageStore;
  */
 public class CoverageClassVisitor extends MethodFilteringAdapter {
   private final int           classId;
+  
+  /**
+   * List of line numbers - index of the array is the probeid. 
+   */
   private final List<Integer> probesToLines = new ArrayList<Integer>();
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
