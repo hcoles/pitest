@@ -93,7 +93,7 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore
         .registerClassProbes(classId, new int[] { 10, 20, 30, 42 });
 
-    CodeCoverageStore.visitLines(classId, new int[]{0,3});
+    CodeCoverageStore.visitLines(classId, new int[] { 0, 3 });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -109,9 +109,8 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.registerClassProbes(fooId, new int[] { 13, 20, 30, 42 });
     CodeCoverageStore.registerClassProbes(barId, new int[] { 11 });
 
-
-    CodeCoverageStore.visitLines(fooId, new int[]{1});
-    CodeCoverageStore.visitLines(barId, new int[]{0});
+    CodeCoverageStore.visitLines(fooId, new int[] { 1 });
+    CodeCoverageStore.visitLines(barId, new int[] { 0 });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -124,8 +123,8 @@ public class CodeCoverageStoreTest {
   public void shouldClearHitCountersWhenReset() {
     final int classId = CodeCoverageStore.registerClass("foo");
     CodeCoverageStore.registerClassProbes(classId, new int[] { 10 });
- 
-    CodeCoverageStore.visitLines(classId, new int[]{0});
+
+    CodeCoverageStore.visitLines(classId, new int[] { 0 });
     CodeCoverageStore.reset();
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
@@ -191,7 +190,7 @@ public class CodeCoverageStoreTest {
             Thread.sleep(sleepPeriod);
           } catch (final InterruptedException e) {
           }
-          CodeCoverageStore.visitLines(0,new int[]{i});
+          CodeCoverageStore.visitLines(0, new int[] { i });
         }
       }
     };

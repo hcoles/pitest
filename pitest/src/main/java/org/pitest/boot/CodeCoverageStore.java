@@ -58,15 +58,14 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  
-  public static void visitLines(int classId, int[] probes) { // NO_UCD
+  public static void visitLines(final int classId, final int[] probes) { // NO_UCD
 
     final boolean[] bs = classHits.get(classId);
     bs[CLASS_HIT_INDEX] = true;
-    for ( int i = 0; i != probes.length; i++) {
+    for (int i = 0; i != probes.length; i++) {
       bs[probes[i] + 1] = true;
     }
- 
+
   }
 
   public synchronized static void reset() {

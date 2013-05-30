@@ -37,20 +37,20 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   private void checkAtLeastOneClassHasLineNumbers(
       final Collection<ClassInfo> codeClasses) {
-    if (!FCollection.contains(codeClasses, aClassWithLineNumbers()) && !codeClasses.isEmpty()) {
+    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())
+        && !codeClasses.isEmpty()) {
       throw new PitHelpError(Help.NO_LINE_NUMBERS);
     }
   }
 
   private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
     return new F<ClassInfo, Boolean>() {
-      public Boolean apply(ClassInfo a) {
+      public Boolean apply(final ClassInfo a) {
         return a.getNumberOfCodeLines() != 0;
       }
-      
+
     };
   }
-
 
   private SideEffect1<ClassInfo> throwErrorIfHasNoSourceFile() {
     return new SideEffect1<ClassInfo>() {

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.verify.BuildVerifier;
+import org.pitest.util.Unchecked;
 
 public class MutationCoverageReportTest {
 
@@ -181,7 +183,11 @@ public class MutationCoverageReportTest {
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new Timings());
-    return this.testee.run();
+    try {
+      return this.testee.runReport();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
   }
 
 }

@@ -52,7 +52,7 @@ public class MutationResult {
   public String getStatusDescription() {
     return getStatus().name();
   }
-  
+
   public String getKillingTestDescription() {
     return getKillingTest().getOrElse("none");
   }

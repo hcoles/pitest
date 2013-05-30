@@ -58,7 +58,6 @@ import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
-import org.pitest.util.Unchecked;
 
 public class MutationCoverage {
 
@@ -80,14 +79,6 @@ public class MutationCoverage {
     this.timings = timings;
     this.code = code;
     this.baseDir = baseDir;
-  }
-
-  public final MutationStatistics run() {
-    try {
-      return this.runReport();
-    } catch (final IOException ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
   }
 
   public MutationStatistics runReport() throws IOException {

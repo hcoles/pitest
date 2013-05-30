@@ -16,9 +16,9 @@ public class CoverageAnalyser extends MethodNode {
   private final int                  classId;
   private final MethodVisitor        mv;
 
-  public CoverageAnalyser(CoverageClassVisitor cv, int classId,
-      MethodVisitor mv, int access, String name, String desc, String signature,
-      String[] exceptions) {
+  public CoverageAnalyser(final CoverageClassVisitor cv, final int classId,
+      final MethodVisitor mv, final int access, final String name,
+      final String desc, final String signature, final String[] exceptions) {
     super(access, name, desc, signature, exceptions);
     this.mv = mv;
     this.cv = cv;
@@ -27,15 +27,15 @@ public class CoverageAnalyser extends MethodNode {
 
   @Override
   public void visitEnd() {
-    int numberOfLines = countRequiredProbes();
-    accept(new CoverageMethodVisitor(cv, classId, mv, access, name, desc,
-        numberOfLines));
+    final int numberOfLines = countRequiredProbes();
+    accept(new CoverageMethodVisitor(this.cv, this.classId, this.mv,
+        this.access, this.name, this.desc, numberOfLines));
   }
 
   private int countRequiredProbes() {
     int count = 0;
-    for (int i = 0; i < instructions.size(); i++) {
-      AbstractInsnNode ins = instructions.get(i);
+    for (int i = 0; i < this.instructions.size(); i++) {
+      final AbstractInsnNode ins = this.instructions.get(i);
       if (ins instanceof LineNumberNode) {
         count++;
 

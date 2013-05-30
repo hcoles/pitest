@@ -29,7 +29,7 @@ public class MutationResultTest {
         DetectionStatus.KILLED, "good test"));
     assertEquals("good test", this.testee.getKillingTestDescription());
   }
-  
+
   @Test
   public void shouldNoneWhenNoKillingTest() {
     this.testee = new MutationResult(null, new MutationStatusTestPair(1,

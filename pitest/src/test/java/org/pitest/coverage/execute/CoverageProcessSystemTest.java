@@ -57,20 +57,21 @@ public class CoverageProcessSystemTest {
 
     }
   }
-  
+
   public static class CoveredBeforeExceptionTestee {
     static int i;
+
     public static void bar() {
       i++;
     }
   }
-  
+
   public static class ThrowsExceptionTestee {
     public void foo() {
       CoveredBeforeExceptionTestee.bar();
       throwsException();
     }
-    
+
     private void throwsException() {
       throw new RuntimeException();
     }
@@ -91,11 +92,11 @@ public class CoverageProcessSystemTest {
 
     }
   }
-  
+
   public static class TestsClassWithException {
     @Test
     public void test() {
-      ThrowsExceptionTestee t = new ThrowsExceptionTestee();
+      final ThrowsExceptionTestee t = new ThrowsExceptionTestee();
       t.foo();
     }
   }
@@ -110,14 +111,15 @@ public class CoverageProcessSystemTest {
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
 
   }
-  
+
   @Test
   public void shouldCalculateCoverageForClassThatThrowsException()
       throws IOException, InterruptedException, ExecutionException {
 
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsClassWithException.class);
 
-    assertTrue(coveredClasses.contains(coverageFor(CoveredBeforeExceptionTestee.class)));
+    assertTrue(coveredClasses
+        .contains(coverageFor(CoveredBeforeExceptionTestee.class)));
 
   }
 

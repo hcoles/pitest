@@ -68,7 +68,7 @@ public class MutationDetails {
   public String getHtmlSafeDescription() {
     return StringUtil.escapeBasicHtmlChars(this.description);
   }
-  
+
   public String getLocation() {
     return this.method.describe();
   }

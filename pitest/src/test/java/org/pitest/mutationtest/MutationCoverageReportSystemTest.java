@@ -57,6 +57,7 @@ import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.JavaAgent;
+import org.pitest.util.Unchecked;
 
 import com.example.BeforeAfterClassTest;
 import com.example.CoveredByABeforeAfterClassTest;
@@ -399,7 +400,9 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       final MutationCoverage testee = new MutationCoverage(strategies, null,
           code, this.data, timings);
 
-      testee.run();
+      testee.runReport();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
     } finally {
       agent.close();
     }
