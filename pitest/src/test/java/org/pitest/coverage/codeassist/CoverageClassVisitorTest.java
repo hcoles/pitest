@@ -38,7 +38,7 @@ public class CoverageClassVisitorTest {
     this.testee.registerLine(12);
     this.testee.visitEnd();
 
-    CodeCoverageStore.visitLines(this.classId, new int[] { 1 });
+    CodeCoverageStore.visitLines(this.classId, 0, new boolean[] { false, true });
 
     assertEquals(Arrays.asList(CodeCoverageStore.encode(this.classId, 12)),
         CodeCoverageStore.getHits());

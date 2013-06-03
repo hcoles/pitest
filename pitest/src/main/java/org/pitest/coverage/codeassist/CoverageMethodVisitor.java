@@ -46,9 +46,9 @@ import org.pitest.boot.CodeCoverageStore;
 public class CoverageMethodVisitor extends AdviceAdapter {
   private final MethodVisitor        methodVisitor;
   private final int                  classId;
-  private final int                  numberOfLines;
+  private final int                  numberOfProbes;
   private final CoverageClassVisitor cv;
-
+  private final int probeOffset;
   /**
    * label to mark start of try finally block that is added to each method
    */
@@ -59,28 +59,32 @@ public class CoverageMethodVisitor extends AdviceAdapter {
    */
   private final Label                handler   = new Label();
 
-  int                                lineCount = 0;
-  int                                probeArrayLocal;
+  private int                                probeCount = 0;
+//  private int                                probeArrayLocal;
+  private int                                probeHitArrayLocal;
+
 
   public CoverageMethodVisitor(final CoverageClassVisitor cv,
       final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc, final int numberOfLines) {
+      final String name, final String desc, final int numberOfLines, final int probeOffset) {
     super(Opcodes.ASM4, writer, access, name, desc);
 
     this.methodVisitor = writer;
     this.classId = classId;
     this.cv = cv;
-    this.numberOfLines = numberOfLines;
+    this.numberOfProbes = numberOfLines;
+    this.probeOffset = probeOffset;
   }
 
   @Override
   public void visitCode() {
     super.visitCode();
-    this.probeArrayLocal = newLocal(Type.getType("[I"));
-    pushConstant(this.numberOfLines);
 
-    this.mv.visitIntInsn(NEWARRAY, T_INT);
-    this.mv.visitVarInsn(ASTORE, this.probeArrayLocal);
+    this.probeHitArrayLocal = newLocal(Type.getType("[Z"));
+    
+    pushConstant(this.numberOfProbes);
+    this.mv.visitIntInsn(NEWARRAY, T_BOOLEAN);
+    this.mv.visitVarInsn(ASTORE, this.probeHitArrayLocal);
 
     this.mv.visitLabel(this.before);
   }
@@ -92,7 +96,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
     this.mv.visitLabel(this.handler);
 
     this.mv.visitInsn(ATHROW);
-    this.mv.visitMaxs(maxStack, maxLocals);
+    this.mv.visitMaxs(0, 0);
   }
 
   @Override
@@ -102,25 +106,28 @@ public class CoverageMethodVisitor extends AdviceAdapter {
 
   private void generateProbeReportCode() {
 
-    this.mv.visitLdcInsn(this.classId);
-    this.mv.visitVarInsn(ALOAD, this.probeArrayLocal);
+    pushConstant(this.classId);
+    pushConstant(this.probeOffset);
+    this.mv.visitVarInsn(ALOAD, this.probeHitArrayLocal);
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
         CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME,
-        CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC);
+        "(II[Z)V");
   }
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
     // get probe id - unique within parent class
-    final int probeId = this.cv.registerLine(line);
+    this.cv.registerLine(line);
 
-    this.mv.visitVarInsn(ALOAD, this.probeArrayLocal);
-    pushConstant(this.lineCount);
-    pushConstant(probeId);
-    this.mv.visitInsn(IASTORE);
-    this.lineCount++;
+    // FIXME probe 0 will register as covered when not hit
+    
+    this.mv.visitVarInsn(ALOAD, this.probeHitArrayLocal);
+    pushConstant(this.probeCount);
+    pushConstant(1);
+    this.mv.visitInsn(BASTORE);
+    this.probeCount++;
 
     this.methodVisitor.visitLineNumber(line, start);
   }

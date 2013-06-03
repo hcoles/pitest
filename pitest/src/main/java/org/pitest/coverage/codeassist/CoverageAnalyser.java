@@ -15,21 +15,32 @@ public class CoverageAnalyser extends MethodNode {
   private final CoverageClassVisitor cv;
   private final int                  classId;
   private final MethodVisitor        mv;
+  private final int                  probeOffset;
 
   public CoverageAnalyser(final CoverageClassVisitor cv, final int classId,
-      final MethodVisitor mv, final int access, final String name,
-      final String desc, final String signature, final String[] exceptions) {
+      final int probeOffset, final MethodVisitor mv, final int access,
+      final String name, final String desc, final String signature,
+      final String[] exceptions) {
     super(access, name, desc, signature, exceptions);
     this.mv = mv;
     this.cv = cv;
     this.classId = classId;
+    this.probeOffset = probeOffset;
   }
 
   @Override
   public void visitEnd() {
-    final int numberOfLines = countRequiredProbes();
-    accept(new CoverageMethodVisitor(this.cv, this.classId, this.mv,
-        this.access, this.name, this.desc, numberOfLines));
+    final int nuberOfProbes = countRequiredProbes();
+
+    if ((nuberOfProbes <= 11) && (nuberOfProbes >= 1)) {
+      accept(new LocalVariableCoverageMethodVisitor(this.cv, this.classId,
+          this.mv, this.access, this.name, this.desc, nuberOfProbes,
+          this.probeOffset));
+    } else {
+      accept(new CoverageMethodVisitor(this.cv, this.classId, this.mv,
+          this.access, this.name, this.desc, nuberOfProbes, this.probeOffset));
+    }
+
   }
 
   private int countRequiredProbes() {
@@ -38,7 +49,6 @@ public class CoverageAnalyser extends MethodNode {
       final AbstractInsnNode ins = this.instructions.get(i);
       if (ins instanceof LineNumberNode) {
         count++;
-
       }
     }
     return count;

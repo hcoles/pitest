@@ -36,7 +36,6 @@ public final class CodeCoverageStore {
                                                                                                  '.',
                                                                                                  '/');
   public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME = "visitLines";
-  public static final String                   CODE_COVERAGE_CALCULATOR_CODE_METHOD_DESC = "(I[I)V";
 
   private static InvokeReceiver                invokeQueue;
   private static int                           classId                                   = 0;
@@ -49,8 +48,11 @@ public final class CodeCoverageStore {
   // investigated
   private final static Map<Integer, boolean[]> classHits                                 = new ConcurrentHashMap<Integer, boolean[]>();
 
+  // encoded classid/methodid map to array of line numbers indexed by probe index
   private final static Map<Integer, int[]>     classProbeToLineMapping                   = new ConcurrentHashMap<Integer, int[]>();
 
+ 
+  
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
   }
@@ -58,16 +60,275 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public static void visitLines(final int classId, final int[] probes) { // NO_UCD
-
+  public static void visitLines(final int classId, int offset, final boolean[] probes) { // NO_UCD
     final boolean[] bs = classHits.get(classId);
     bs[CLASS_HIT_INDEX] = true;
     for (int i = 0; i != probes.length; i++) {
-      bs[probes[i] + 1] = true;
+      if ( probes[i]) {
+        bs[i + offset + 1] = true;
+      }
     }
-
   }
-
+  
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///
+  /// Overloaded special case implementations for methods with 1 to N probes. Allows probes to be implemented as
+  /// local variables and the loop in the array based version to be unrolled.
+  ///
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+  }
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+  }
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+  }
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+      if (p6) {
+        bs[offset + 7] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+      if (p6) {
+        bs[offset + 7] = true;
+      }
+      if (p7) {
+        bs[offset + 8] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7, boolean p8) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+      if (p6) {
+        bs[offset + 7] = true;
+      }
+      if (p7) {
+        bs[offset + 8] = true;
+      }
+      if (p8) {
+        bs[offset + 9] = true;
+      }
+  } 
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7, boolean p8, boolean p9) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+      if (p6) {
+        bs[offset + 7] = true;
+      }
+      if (p7) {
+        bs[offset + 8] = true;
+      }
+      if (p8) {
+        bs[offset + 9] = true;
+      }
+      if (p9) {
+        bs[offset + 10] = true;
+      }
+  }   
+  
+  public static void visitSingleLine(final int classId, int offset, final boolean p0, boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7, boolean p8, boolean p9, boolean p10) { // NO_UCD
+    final boolean[] bs = classHits.get(classId);
+    bs[CLASS_HIT_INDEX] = true;
+      if (p0) {
+        bs[offset + 1] = true;
+      }
+      if (p1) {
+        bs[offset + 2] = true;
+      }
+      if (p2) {
+        bs[offset + 3] = true;
+      }
+      if (p3) {
+        bs[offset + 4] = true;
+      }
+      if (p4) {
+        bs[offset + 5] = true;
+      }
+      if (p5) {
+        bs[offset + 6] = true;
+      }
+      if (p6) {
+        bs[offset + 7] = true;
+      }
+      if (p7) {
+        bs[offset + 8] = true;
+      }
+      if (p8) {
+        bs[offset + 9] = true;
+      }
+      if (p9) {
+        bs[offset + 10] = true;
+      }
+      if (p10) {
+        bs[offset + 11] = true;
+      }      
+  }    
+  
   public synchronized static void reset() {
     for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
       classHits.put(each.getKey(), new boolean[each.getValue().length]);

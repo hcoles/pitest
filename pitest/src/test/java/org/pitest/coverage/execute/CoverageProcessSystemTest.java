@@ -31,6 +31,8 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.SocketFinder;
 
+import com.example.MultiLineCoverageTestee;
+
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
 
@@ -50,12 +52,36 @@ public class CoverageProcessSystemTest {
 
   public static class Testee2 {
     public void foo() {
-
+    
     }
 
     public void bar() {
 
     }
+  }
+  
+  public static class TesteeWithMultipleLines {
+    
+    public int bar(int i, int j) {
+      i = i + j;
+      j= + j + j;
+      i = j + i;
+      
+      return i++;
+    }
+    
+    public int foo(int i) {
+      int j = 0;
+       try {
+         j  = j + 1;
+         j = Math.max(i, j);
+         return j;
+       } catch(RuntimeException ex) {
+           return 1;
+       }
+    }
+
+
   }
 
   public static class CoveredBeforeExceptionTestee {
@@ -89,7 +115,12 @@ public class CoverageProcessSystemTest {
     public void testFoo2() {
       final Testee2 testee2 = new Testee2();
       testee2.foo();
-
+    }
+    
+    @Test
+    public void testFoo3() {
+      final TesteeWithMultipleLines testee2 = new TesteeWithMultipleLines();
+      testee2.foo(1);
     }
   }
 
@@ -100,16 +131,170 @@ public class CoverageProcessSystemTest {
       t.foo();
     }
   }
+  
+  public static class TestsForMultilineCoverage {
+    
+    private MultiLineCoverageTestee t = new MultiLineCoverageTestee();
+    
+    @Test
+    public void test1() {
+      t.lines1(1);
+    }
+
+    @Test
+    public void test2() {
+      t.lines2(1);
+    }
+    
+    @Test
+    public void test3() {
+      t.lines3(1);
+    }
+    
+    @Test
+    public void test4() {
+      t.lines4(1);
+    }
+    
+    @Test
+    public void test5() {
+      t.lines5(1);
+    }
+    
+    @Test
+    public void test6() {
+      t.lines6(1);
+    }
+    
+    @Test
+    public void test7() {
+      t.lines7(1);
+    }
+    
+    @Test
+    public void test8() {
+      t.lines8(1);
+    }
+    
+    @Test
+    public void test9() {
+      t.lines9(1);
+    }
+    
+    @Test
+    public void test10() {
+      t.lines10(1);
+    }
+    
+    @Test
+    public void test11() {
+      t.lines11(1);
+    }
+    
+    @Test
+    public void test12() {
+      t.lines12(1);
+    }
+  }
+
+  
+  
+  // check all the specialised implementations broadly work
+  @Test
+  public void shouldCalculateCoverageForSingleLineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test1", 1);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor2LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test2", 2);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor3LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test3", 3);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor4LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test4", 4);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor5LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test5", 5);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor6LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test6", 6);
+  }
+
+  @Test
+  public void shouldCalculateCoverageFor7LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test7", 7);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor8LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test8", 8);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor9LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test9", 9);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor10LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test10", 10);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor11LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test11", 11);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageFor12LineMethods() throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
+    assertCoverage(coveredClasses, "test12", 12);
+  }
+  
+  private void assertCoverage(FunctionalList<CoverageResult> coveredClasses, String testName, int numberOfLines) {
+    assertTrue(coveredClasses.contains(coverage(testName, numberOfLines)));
+  }
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
       throws IOException, InterruptedException, ExecutionException {
 
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
+    
+    printCoverage(coveredClasses);
 
     assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
+    assertTrue(coveredClasses.contains(coverageFor(TesteeWithMultipleLines.class)));
+  }
 
+  private void printCoverage(final FunctionalList<CoverageResult> coveredClasses) {
+    for ( CoverageResult i : coveredClasses ) {
+      for ( ClassStatistics j : i.getCoverage() ) {
+        System.out.println(j);
+      }
+    }
   }
 
   @Test
@@ -118,6 +303,8 @@ public class CoverageProcessSystemTest {
 
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsClassWithException.class);
 
+    printCoverage(coveredClasses);
+    
     assertTrue(coveredClasses
         .contains(coverageFor(CoveredBeforeExceptionTestee.class)));
 
@@ -208,7 +395,6 @@ public class CoverageProcessSystemTest {
   }
 
   private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
-
     return new F<CoverageResult, Boolean>() {
 
       public Boolean apply(final CoverageResult a) {
@@ -240,5 +426,16 @@ public class CoverageProcessSystemTest {
 
     };
   }
+  
+  private F<CoverageResult, Boolean> coverage(final String testName, final int numberOfLines) {
+    return new F<CoverageResult, Boolean>() {
+
+      public Boolean apply(final CoverageResult a) {
+        return a.getTestUnitDescription().getName().startsWith(testName) && a.getNumberOfCoveredLines() == numberOfLines + 1;
+      }
+
+    };
+  }
+
 
 }

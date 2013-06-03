@@ -14,6 +14,7 @@
  */
 package org.pitest.boot;
 
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -35,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.functional.SideEffect2;
 
 public class CodeCoverageStoreTest {
 
@@ -93,7 +95,8 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore
         .registerClassProbes(classId, new int[] { 10, 20, 30, 42 });
 
-    CodeCoverageStore.visitLines(classId, new int[] { 0, 3 });
+    CodeCoverageStore.visitLines(classId, 0, new boolean[] { true, false,
+        false, true });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -109,8 +112,9 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.registerClassProbes(fooId, new int[] { 13, 20, 30, 42 });
     CodeCoverageStore.registerClassProbes(barId, new int[] { 11 });
 
-    CodeCoverageStore.visitLines(fooId, new int[] { 1 });
-    CodeCoverageStore.visitLines(barId, new int[] { 0 });
+    CodeCoverageStore.visitLines(fooId, 0, new boolean[] { false, true, false,
+        false });
+    CodeCoverageStore.visitLines(barId, 0, new boolean[] { true });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
     assertThat(
@@ -124,7 +128,7 @@ public class CodeCoverageStoreTest {
     final int classId = CodeCoverageStore.registerClass("foo");
     CodeCoverageStore.registerClassProbes(classId, new int[] { 10 });
 
-    CodeCoverageStore.visitLines(classId, new int[] { 0 });
+    CodeCoverageStore.visitLines(classId, 0, new boolean[] { true });
     CodeCoverageStore.reset();
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
@@ -149,6 +153,213 @@ public class CodeCoverageStoreTest {
 
     assertNull(future.get());
 
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation1() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0]);
+      }
+
+    };
+    assertLineCombinations(1, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation2() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1]);
+      }
+
+    };
+    assertLineCombinations(2, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation3() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2]);
+      }
+
+    };
+    assertLineCombinations(3, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation4() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3]);
+      }
+
+    };
+    assertLineCombinations(4, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation5() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4]);
+      }
+
+    };
+    assertLineCombinations(5, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation6() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5]);
+      }
+
+    };
+    assertLineCombinations(6, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation7() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5], probes[6]);
+      }
+
+    };
+    assertLineCombinations(7, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation8() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7]);
+      }
+
+    };
+    assertLineCombinations(8, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation9() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+            probes[8]);
+      }
+
+    };
+    assertLineCombinations(9, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation10() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+            probes[8], probes[9]);
+      }
+
+    };
+    assertLineCombinations(10, se);
+  }
+
+  @Test
+  public void shouldReportCorrectCoverageForSpecialisation11() {
+    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
+
+      public void apply(final Integer classId, final boolean[] probes) {
+        CodeCoverageStore.visitSingleLine(classId, 0, probes[0], probes[1],
+            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+            probes[8], probes[9], probes[10]);
+      }
+
+    };
+    assertLineCombinations(11, se);
+  }
+
+  private void assertLineCombinations(final int size,
+      final SideEffect2<Integer, boolean[]> function) {
+    ascendingPermuation(size, function);
+    CodeCoverageStore.resetAllStaticState();
+    descendingPermutation(size, function);
+  }
+
+  private void ascendingPermuation(int size, SideEffect2<Integer, boolean[]> function) {
+    final int classId = CodeCoverageStore.registerClass("foo");
+    CodeCoverageStore.registerClassProbes(classId, new int[] { 0, 1, 2, 3, 4,
+        5, 6, 7, 8, 9, 10, 11, 12, 13, 14 });
+    final boolean[] probes = new boolean[size];
+    
+    function.apply(classId, probes);
+    assertDoesNotHitLine(classId, 1, 2, 3);
+    
+    for (int i = 0; i != probes.length; i++) {
+      probes[i] = true;
+      function.apply(classId, probes);
+      for (int j = 0; j <= i; j++) {
+        assertHitsLine(classId, j);
+      }
+      for (int j = i + 1; j != probes.length; j++) {
+        assertDoesNotHitLine(classId, j);
+      }
+    } 
+  }
+
+  private void descendingPermutation(final int size,
+      final SideEffect2<Integer, boolean[]> function) {
+    final int classId = CodeCoverageStore.registerClass("foo");
+    CodeCoverageStore.registerClassProbes(classId, new int[] { 0, 1, 2, 3, 4,
+        5, 6, 7, 8, 9, 10, 11, 12, 13, 14 });
+    final boolean[] probes = new boolean[size];
+    
+    
+    for (int i = probes.length - 1; i != 0; i--) {
+      probes[i] = true;
+      function.apply(classId, probes);
+      for (int j = 0; j != i; j++) {
+        assertDoesNotHitLine(classId, j);
+      }
+      for (int j = probes.length; j != i; j--) {
+        assertHitsLine(classId, j -1);
+      }
+    }
+  }
+
+  private void assertHitsLine(final int classId, final int... i) {
+    final Collection<Long> actual = CodeCoverageStore.getHits();
+    for (final int probe : i) {
+      assertThat(actual, hasItems(CodeCoverageStore.encode(classId, probe)));
+    }
+  }
+
+  private void assertDoesNotHitLine(final int classId, final int... i) {
+    final Collection<Long> actual = CodeCoverageStore.getHits();
+    for (final int probe : i) {
+      assertThat(actual,
+          not(hasItems(CodeCoverageStore.encode(classId, probe))));
+    }
   }
 
   private Callable<ConcurrentModificationException> makeReader() {
@@ -190,7 +401,8 @@ public class CodeCoverageStoreTest {
             Thread.sleep(sleepPeriod);
           } catch (final InterruptedException e) {
           }
-          CodeCoverageStore.visitLines(0, new int[] { i });
+          final boolean b[] = new boolean[1000];
+          CodeCoverageStore.visitLines(0, 0, b);
         }
       }
     };

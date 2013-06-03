@@ -20,7 +20,7 @@ public class CoverageMethodVisitorTest extends MethodDecoratorTest {
   public void setUp() {
     super.setUp();
     this.testee = new CoverageMethodVisitor(this.cv, 0, this.mv, 0, "name",
-        "()V", 0);
+        "()V", 0, 0);
   }
 
   @Override

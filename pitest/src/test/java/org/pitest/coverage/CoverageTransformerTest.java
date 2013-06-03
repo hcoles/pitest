@@ -7,10 +7,15 @@ import static org.junit.Assert.assertTrue;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.instrument.IllegalClassFormatException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -62,13 +67,33 @@ public class CoverageTransformerTest {
         testee.transform(null, "anything", null, null, bs)));
   }
 
+  public boolean foo(int i) {
+    boolean a = true;
+    if ( i < 4) {
+      a = false;
+    }
+    return a;
+  }
+  
   @Test
   public void shouldGenerateValidClasses() throws IllegalClassFormatException {
-    final StringWriter sw = new StringWriter();
+
+    assertValidClass(String.class);
+    assertValidClass(Integer.class);
+    assertValidClass(Vector.class);
+    assertValidClass(ArrayList.class);
+    assertValidClass(Collections.class);
+    assertValidClass(ConcurrentHashMap.class);
+    assertValidClass(Math.class);
+  }
+
+  private void assertValidClass(final Class<?> clazz)
+      throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
         True.<String> all());
-    final byte[] bs = testee.transform(null, String.class.getName(), null,
+    final byte[] bs = testee.transform(null, clazz.getName(), null,
         null, this.bytes.apply(String.class.getName()).value());
+    final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);
   }
