@@ -137,6 +137,5 @@ public class ClassNameTest {
     assertFalse(ClassName.fromString("org/example/Foo").equals(
         ClassName.fromString("org.example.Bar")));
   }
-  
 
 }

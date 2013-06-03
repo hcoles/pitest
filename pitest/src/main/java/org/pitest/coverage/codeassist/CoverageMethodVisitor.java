@@ -48,25 +48,25 @@ public class CoverageMethodVisitor extends AdviceAdapter {
   private final int                  classId;
   private final int                  numberOfProbes;
   private final CoverageClassVisitor cv;
-  private final int probeOffset;
+  private final int                  probeOffset;
   /**
    * label to mark start of try finally block that is added to each method
    */
-  private final Label                before    = new Label();
+  private final Label                before     = new Label();
 
   /**
    * label to mark handler block of try finally
    */
-  private final Label                handler   = new Label();
+  private final Label                handler    = new Label();
 
-  private int                                probeCount = 0;
-//  private int                                probeArrayLocal;
-  private int                                probeHitArrayLocal;
-
+  private int                        probeCount = 0;
+  // private int probeArrayLocal;
+  private int                        probeHitArrayLocal;
 
   public CoverageMethodVisitor(final CoverageClassVisitor cv,
       final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc, final int numberOfLines, final int probeOffset) {
+      final String name, final String desc, final int numberOfLines,
+      final int probeOffset) {
     super(Opcodes.ASM4, writer, access, name, desc);
 
     this.methodVisitor = writer;
@@ -81,7 +81,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
     super.visitCode();
 
     this.probeHitArrayLocal = newLocal(Type.getType("[Z"));
-    
+
     pushConstant(this.numberOfProbes);
     this.mv.visitIntInsn(NEWARRAY, T_BOOLEAN);
     this.mv.visitVarInsn(ASTORE, this.probeHitArrayLocal);
@@ -111,8 +111,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
     this.mv.visitVarInsn(ALOAD, this.probeHitArrayLocal);
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
-        CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
-        CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CODE_METHOD_NAME,
+        CodeCoverageStore.CLASS_NAME, CodeCoverageStore.PROBE_METHOD_NAME,
         "(II[Z)V");
   }
 
@@ -121,8 +120,6 @@ public class CoverageMethodVisitor extends AdviceAdapter {
     // get probe id - unique within parent class
     this.cv.registerLine(line);
 
-    // FIXME probe 0 will register as covered when not hit
-    
     this.mv.visitVarInsn(ALOAD, this.probeHitArrayLocal);
     pushConstant(this.probeCount);
     pushConstant(1);

@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -67,14 +66,14 @@ public class CoverageTransformerTest {
         testee.transform(null, "anything", null, null, bs)));
   }
 
-  public boolean foo(int i) {
+  public boolean foo(final int i) {
     boolean a = true;
-    if ( i < 4) {
+    if (i < 4) {
       a = false;
     }
     return a;
   }
-  
+
   @Test
   public void shouldGenerateValidClasses() throws IllegalClassFormatException {
 
@@ -91,8 +90,8 @@ public class CoverageTransformerTest {
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
         True.<String> all());
-    final byte[] bs = testee.transform(null, clazz.getName(), null,
-        null, this.bytes.apply(String.class.getName()).value());
+    final byte[] bs = testee.transform(null, clazz.getName(), null, null,
+        this.bytes.apply(String.class.getName()).value());
     final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);

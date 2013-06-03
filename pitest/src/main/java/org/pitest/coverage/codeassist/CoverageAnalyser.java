@@ -32,7 +32,7 @@ public class CoverageAnalyser extends MethodNode {
   public void visitEnd() {
     final int nuberOfProbes = countRequiredProbes();
 
-    if ((nuberOfProbes <= 11) && (nuberOfProbes >= 1)) {
+    if ((nuberOfProbes <= 15) && (nuberOfProbes >= 1)) {
       accept(new LocalVariableCoverageMethodVisitor(this.cv, this.classId,
           this.mv, this.access, this.name, this.desc, nuberOfProbes,
           this.probeOffset));

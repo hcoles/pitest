@@ -1,8 +1,5 @@
 package org.pitest.coverage.codeassist;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -15,26 +12,26 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
   private final int                  classId;
   private final int                  numberOfProbes;
   private final CoverageClassVisitor cv;
-  private final int probeOffset;
+  private final int                  probeOffset;
 
   /**
    * label to mark start of try finally block that is added to each method
    */
-  private final Label                before    = new Label();
+  private final Label                before     = new Label();
 
   /**
    * label to mark handler block of try finally
    */
-  private final Label                handler   = new Label();
+  private final Label                handler    = new Label();
 
   int                                probeCount = 0;
-  int locals[];//                                locals = new ArrayList<Integer>();
-
-  
+  int                                locals[];                 // locals = new
+                                                               // ArrayList<Integer>();
 
   public LocalVariableCoverageMethodVisitor(final CoverageClassVisitor cv,
       final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc, final int numberOfLines, final int probeOffset) {
+      final String name, final String desc, final int numberOfLines,
+      final int probeOffset) {
     super(Opcodes.ASM4, writer, access, name, desc);
 
     this.methodVisitor = writer;
@@ -48,13 +45,12 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
   public void visitCode() {
     super.visitCode();
 
-    locals = new int[numberOfProbes];
-    for ( int i = 0; i != numberOfProbes; i++) {
-      locals[i]= newLocal(Type.getType("Z")); 
+    this.locals = new int[this.numberOfProbes];
+    for (int i = 0; i != this.numberOfProbes; i++) {
+      this.locals[i] = newLocal(Type.getType("Z"));
       pushConstant(0);
-      this.mv.visitVarInsn(ISTORE, locals[i]);
+      this.mv.visitVarInsn(ISTORE, this.locals[i]);
     }
-
 
     this.mv.visitLabel(this.before);
   }
@@ -66,32 +62,32 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
     this.mv.visitLabel(this.handler);
 
     this.mv.visitInsn(ATHROW);
-    
+
     // values actually unimportant as we're using compute max
-    this.mv.visitMaxs(maxStack, nextLocal);
+    this.mv.visitMaxs(maxStack, this.nextLocal);
   }
 
   @Override
   protected void onMethodExit(final int opcode) {
-   //if ( opcode != ATHROW) {
+    // if ( opcode != ATHROW) {
     generateProbeReportCode();
-  //  }
+    // }
   }
 
   private void generateProbeReportCode() {
-    
- 
+
     pushConstant(this.classId);
     pushConstant(this.probeOffset);
-    
-    for ( int i : locals) {
+
+    for (final int i : this.locals) {
       this.mv.visitVarInsn(ILOAD, i);
     }
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
-        CodeCoverageStore.CODE_COVERAGE_CALCULATOR_CLASS_NAME,
-        "visitSingleLine",
-        "(II" + String.format(String.format("%%0%dd", this.numberOfProbes), 0).replace("0","Z") +")V");
+        CodeCoverageStore.CLASS_NAME, CodeCoverageStore.PROBE_METHOD_NAME,
+        "(II"
+            + String.format(String.format("%%0%dd", this.numberOfProbes), 0)
+                .replace("0", "Z") + ")V");
   }
 
   @Override
@@ -100,7 +96,7 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
     this.cv.registerLine(line);
 
     pushConstant(1);
-    this.mv.visitVarInsn(ISTORE, locals[probeCount]);
+    this.mv.visitVarInsn(ISTORE, this.locals[this.probeCount]);
     this.probeCount++;
 
     this.methodVisitor.visitLineNumber(line, start);
