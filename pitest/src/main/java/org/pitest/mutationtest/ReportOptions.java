@@ -70,7 +70,10 @@ public class ReportOptions {
                                                                                 "java.util.logging",
                                                                                 "org.apache.log4j",
                                                                                 "org.slf4j",
-                                                                                "org.apache.commons.logging");
+                                                                                "org.apache.commons.logging",
+                                                                                "scala.Predef$.assume",
+                                                                                "scala.Predef$.require",
+                                                                                "scala.Predef$.ensuring");
 
   private Configuration                  config;
   private Collection<Predicate<String>>  targetClasses;

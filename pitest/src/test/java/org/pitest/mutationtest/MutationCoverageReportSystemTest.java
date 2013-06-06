@@ -362,7 +362,20 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
 
     verifyResults(KILLED);
+  }
+  
+  @Test
+  public void shouldKillMutationsWhenKillingTestClassContainsAnIgnoreOnAnotherMethod() {
+    setMutators(Mutator.RETURN_VALS);
 
+    this.data
+        .setTargetClasses(predicateFor(com.example.testhasignores.Mutee.class));
+    this.data
+        .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
+
+    createAndRun();
+
+    verifyResults(KILLED);
   }
 
   private void createAndRun() {
