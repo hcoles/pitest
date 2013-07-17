@@ -49,7 +49,7 @@ public abstract class IsolationUtils {
                                                                                          final Class<?> clazz,
                                                                                          final ClassLoader loader) {
                                                                                        return IsolationUtils
-                                                                                           .fromDifferentLoader(
+                                                                                           .fromIncompatibleLoader(
                                                                                                clazz,
                                                                                                loader);
                                                                                      }
@@ -93,13 +93,22 @@ public abstract class IsolationUtils {
     return foreginXstream;
   }
 
-  private static boolean fromDifferentLoader(final Class<?> clazz,
+  private static boolean fromIncompatibleLoader(final Class<?> clazz,
       final ClassLoader loader) {
-    try {
-      return clazz != Class.forName(clazz.getName(), false, loader);
-    } catch (final ClassNotFoundException ex) {
-      throw translateCheckedException(ex);
+
+    ClassLoader target = clazz.getClassLoader();
+    if ((target == IsolationUtils.bootClassLoader())
+        || (loader == IsolationUtils.bootClassLoader())) {
+      return false;
     }
+
+    while (target != IsolationUtils.bootClassLoader()) {
+      if (target == loader) {
+        return false;
+      }
+      target = target.getParent();
+    }
+    return true;
   }
 
   public static Class<?> convertForClassLoader(final ClassLoader loader,

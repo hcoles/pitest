@@ -52,7 +52,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
     this(IsolationUtils.loaderDetectionStrategy(), clazz, filter);
   }
 
-  public AdaptedJUnitTestUnit(
+  AdaptedJUnitTestUnit(
       final ClassLoaderDetectionStrategy loaderDetection, final Class<?> clazz,
       final Option<Filter> filter) {
     super(new org.pitest.Description(createName(clazz, filter), clazz));
