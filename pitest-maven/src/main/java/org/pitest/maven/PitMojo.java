@@ -1,6 +1,7 @@
 package org.pitest.maven;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
  * @phase integration-test
  */
 public class PitMojo extends AbstractMojo {
+  
+  // Concrete List types declared for all fields to work around maven 2 bug
 
   /**
    * Classes to include in mutation test
@@ -30,7 +33,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetClasses}"
    * 
    */
-  protected List<String>        targetClasses;
+  protected ArrayList<String>        targetClasses;
 
   /**
    * Tests to run
@@ -38,7 +41,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetTests}"
    * 
    */
-  protected List<String>        targetTests;
+  protected ArrayList<String>        targetTests;
 
   /**
    * Methods not to mutate
@@ -46,7 +49,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${excludedMethods}"
    * 
    */
-  private List<String>          excludedMethods;
+  private ArrayList<String>          excludedMethods;
 
   /**
    * Classes not to mutate or run tests from
@@ -54,14 +57,14 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${excludedClasses}"
    * 
    */
-  private List<String>          excludedClasses;
+  private ArrayList<String>          excludedClasses;
 
   /**
    * 
    * @parameter expression="${avoidCallsTo}"
    * 
    */
-  private List<String>          avoidCallsTo;
+  private ArrayList<String>          avoidCallsTo;
 
   /**
    * Base directory where all reports are written to.
@@ -120,7 +123,7 @@ public class PitMojo extends AbstractMojo {
    * 
    * @parameter expression="${mutators}"
    */
-  private List<String>          mutators;
+  private ArrayList<String>          mutators;
 
   /**
    * Weighting to allow for timeouts
@@ -148,14 +151,14 @@ public class PitMojo extends AbstractMojo {
    * 
    * @parameter
    */
-  private List<String>          jvmArgs;
+  private ArrayList<String>          jvmArgs;
 
   /**
    * Formats to output during analysis phase
    * 
    * @parameter expression="${outputFormats}"
    */
-  private List<String>          outputFormats;
+  private ArrayList<String>          outputFormats;
 
   /**
    * Output verbose logging
@@ -183,14 +186,14 @@ public class PitMojo extends AbstractMojo {
    * 
    * @parameter expression="${excludedTestNGGroups}"
    */
-  private List<String>          excludedTestNGGroups;
+  private ArrayList<String>          excludedTestNGGroups;
 
   /**
    * TestNG Groups to include
    * 
    * @parameter expression="${includedTestNGGroups}"
    */
-  private List<String>          includedTestNGGroups;
+  private ArrayList<String>          includedTestNGGroups;
 
   /**
    * Maximum number of mutations to include in a single analysis unit.

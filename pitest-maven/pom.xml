@@ -84,6 +84,6 @@
 
 	<properties>
 		<scm.version>1.8.1</scm.version>
-		<maven.version>2.0.9</maven.version>
+		<maven.version>2.2.1</maven.version>
 	</properties>
 </project>

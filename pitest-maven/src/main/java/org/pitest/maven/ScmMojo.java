@@ -88,7 +88,7 @@ public class ScmMojo extends PitMojo {
   @Override
   protected Option<MutationStatistics> analyse() throws MojoExecutionException {
 
-    this.targetClasses = findModifiedClassNames();
+    this.targetClasses = makeConcreteList(findModifiedClassNames());
 
     if (this.targetClasses.isEmpty()) {
       this.getLog().info(
@@ -107,8 +107,8 @@ public class ScmMojo extends PitMojo {
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
     if (this.getTargetTests() == null) {
-      this.targetTests = Collections.singletonList(this.getProject()
-          .getGroupId() + "*");
+      this.targetTests = makeConcreteList(Collections.singletonList(this.getProject()
+          .getGroupId() + "*"));
     }
   }
 
@@ -206,6 +206,14 @@ public class ScmMojo extends PitMojo {
 
   public void setScmRootDir(final File scmRootDir) {
     this.scmRootDir = scmRootDir;
+  }
+  
+  /**
+   * A bug in maven 2 requires that all list fields
+   * declare a concrete list type
+   */
+  private static ArrayList<String> makeConcreteList(List<String> list) {
+    return new ArrayList<String>(list);
   }
 
 }
