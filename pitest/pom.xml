@@ -34,12 +34,12 @@
 					<testNGArtifactName>none:none</testNGArtifactName>
 
 					<includes>
-						<include>**/Test*.java</include>
-						<include>**/*Test.java</include>
+						<include>org/**/Test*.java</include>
+						<include>org/**/*Test.java</include>
 					</includes>
 					<excludes>
 						<exclude>**/*$*</exclude>
-						<exclude>**/com/*/**.java</exclude>
+						<exclude>com/*/**.java</exclude>
 						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
 					</excludes>
 					<excludedGroups>org.pitest.SystemTest</excludedGroups>

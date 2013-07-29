@@ -25,7 +25,7 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
   private final Label                handler    = new Label();
 
   int                                probeCount = 0;
-  int                                locals[];                 // locals = new
+  int                                locals[];                // locals = new
                                                                // ArrayList<Integer>();
 
   public LocalVariableCoverageMethodVisitor(final CoverageClassVisitor cv,
@@ -61,6 +61,8 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
     this.mv.visitTryCatchBlock(this.before, this.handler, this.handler, null);
     this.mv.visitLabel(this.handler);
 
+    generateProbeReportCode();
+
     this.mv.visitInsn(ATHROW);
 
     // values actually unimportant as we're using compute max
@@ -69,9 +71,10 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
 
   @Override
   protected void onMethodExit(final int opcode) {
-    // if ( opcode != ATHROW) {
-    generateProbeReportCode();
-    // }
+    // generated catch block will handle any throws ending block
+    if (opcode != ATHROW) {
+      generateProbeReportCode();
+    }
   }
 
   private void generateProbeReportCode() {

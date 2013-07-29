@@ -95,13 +95,18 @@ public class CoverageMethodVisitor extends AdviceAdapter {
     this.mv.visitTryCatchBlock(this.before, this.handler, this.handler, null);
     this.mv.visitLabel(this.handler);
 
+    generateProbeReportCode();
+
     this.mv.visitInsn(ATHROW);
     this.mv.visitMaxs(0, 0);
   }
 
   @Override
   protected void onMethodExit(final int opcode) {
-    generateProbeReportCode();
+    // generated catch block will handle any throws ending block
+    if (opcode != ATHROW) {
+      generateProbeReportCode();
+    }
   }
 
   private void generateProbeReportCode() {

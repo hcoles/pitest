@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -31,190 +34,20 @@ import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.util.ProcessArgs;
 import org.pitest.util.SocketFinder;
 
-import com.example.MultiLineCoverageTestee;
+import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
+import com.example.coverage.execute.samples.simple.Testee;
+import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
+import com.example.coverage.execute.samples.simple.Tests;
+import com.example.coverage.execute.samples.simple.TestsForMultilineCoverage;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
 
-  public static class Testee implements Runnable {
-    public void foo() {
-    }
-
-    public void bar() {
-
-    }
-
-    public void run() {
-      new Testee2().bar();
-    }
-
-  }
-
-  public static class Testee2 {
-    public void foo() {
-
-    }
-
-    public void bar() {
-
-    }
-  }
-
-  public static class TesteeWithMultipleLines {
-
-    public int bar(int i, int j) {
-      i = i + j;
-      j = +j + j;
-      i = j + i;
-
-      return i++;
-    }
-
-    public int foo(final int i) {
-      int j = 0;
-      try {
-        j = j + 1;
-        j = Math.max(i, j);
-        return j;
-      } catch (final RuntimeException ex) {
-        return 1;
-      }
-    }
-
-  }
-
-  public static class CoveredBeforeExceptionTestee {
-    static int i;
-
-    public static void bar() {
-      i++;
-    }
-  }
-
-  public static class ThrowsExceptionTestee {
-    public void foo() {
-      CoveredBeforeExceptionTestee.bar();
-      throwsException();
-    }
-
-    private void throwsException() {
-      throw new RuntimeException();
-    }
-  }
-
-  public static class Tests {
-    @Test
-    public void testFoo() {
-      final Testee testee = new Testee();
-      testee.foo();
-
-    }
-
-    @Test
-    public void testFoo2() {
-      final Testee2 testee2 = new Testee2();
-      testee2.foo();
-    }
-
-    @Test
-    public void testFoo3() {
-      final TesteeWithMultipleLines testee2 = new TesteeWithMultipleLines();
-      testee2.foo(1);
-    }
-  }
-
-  public static class TestsClassWithException {
-    @Test
-    public void test() {
-      final ThrowsExceptionTestee t = new ThrowsExceptionTestee();
-      t.foo();
-    }
-  }
-
-  public static class TestsForMultilineCoverage {
-
-    private final MultiLineCoverageTestee t = new MultiLineCoverageTestee();
-
-    @Test
-    public void test1() {
-      this.t.lines1(1);
-    }
-
-    @Test
-    public void test2() {
-      this.t.lines2(1);
-    }
-
-    @Test
-    public void test3() {
-      this.t.lines3(1);
-    }
-
-    @Test
-    public void test4() {
-      this.t.lines4(1);
-    }
-
-    @Test
-    public void test5() {
-      this.t.lines5(1);
-    }
-
-    @Test
-    public void test6() {
-      this.t.lines6(1);
-    }
-
-    @Test
-    public void test7() {
-      this.t.lines7(1);
-    }
-
-    @Test
-    public void test8() {
-      this.t.lines8(1);
-    }
-
-    @Test
-    public void test9() {
-      this.t.lines9(1);
-    }
-
-    @Test
-    public void test10() {
-      this.t.lines10(1);
-    }
-
-    @Test
-    public void test11() {
-      this.t.lines11(1);
-    }
-
-    @Test
-    public void test12() {
-      this.t.lines12(1);
-    }
-
-    @Test
-    public void test13() {
-      this.t.lines13(1);
-    }
-
-    @Test
-    public void test14() {
-      this.t.lines14(1);
-    }
-
-    @Test
-    public void test15() {
-      this.t.lines15(1);
-    }
-
-    @Test
-    public void test30() {
-      this.t.lines30(1);
-    }
-  }
 
   // check all the specialised implementations broadly work
   @Test
@@ -329,11 +162,6 @@ public class CoverageProcessSystemTest {
     assertCoverage(coveredClasses, "test30", 30);
   }
 
-  private void assertCoverage(
-      final FunctionalList<CoverageResult> coveredClasses,
-      final String testName, final int numberOfLines) {
-    assertTrue(coveredClasses.contains(coverage(testName, numberOfLines)));
-  }
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
@@ -358,16 +186,21 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageForClassThatThrowsException()
+  public void shouldCalculateCoverageForSmallMethodThatThrowsException()
       throws IOException, InterruptedException, ExecutionException {
-
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsClassWithException.class);
-
-    printCoverage(coveredClasses);
-
     assertTrue(coveredClasses
         .contains(coverageFor(CoveredBeforeExceptionTestee.class)));
-
+    assertTrue(coveredClasses
+        .contains(coverageFor(ThrowsExceptionTestee.class, Arrays.asList(5,6,10))));
+  }
+  
+  @Test
+  public void shouldCalculateCoverageForLargeMethodThatThrowsException()
+      throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionFromLargeMethodTestee.class);
+    assertTrue(coveredClasses
+        .contains(coverageFor(ThrowsExceptionFromLargeMethodTestee.class, Arrays.asList(7,35,41))));
   }
 
   public static class TestInDifferentClassLoader {
@@ -472,9 +305,31 @@ public class CoverageProcessSystemTest {
 
         };
       }
-
     };
   }
+  
+  private F<CoverageResult, Boolean> coverageFor(final Class<?> class1, final Collection<Integer> lines) {
+    return new F<CoverageResult, Boolean>() {
+
+      public Boolean apply(final CoverageResult a) {
+        return FCollection.contains(a.getCoverage(), resultFor(class1));
+      }
+
+      private F<ClassStatistics, Boolean> resultFor(final Class<?> class1) {
+        return new F<ClassStatistics, Boolean>() {
+
+          public Boolean apply(final ClassStatistics a) {
+            Set<Integer> required = new HashSet<Integer>(lines);
+            
+            return a.getClassName().equals(ClassName.fromClass(class1))
+                && a.getUniqueVisitedLines().containsAll(required);
+          }
+
+        };
+      }
+    };
+  }
+
 
   private Predicate<String> coverOnlyTestees() {
 
@@ -497,6 +352,12 @@ public class CoverageProcessSystemTest {
       }
 
     };
+  }
+  
+  private void assertCoverage(
+      final FunctionalList<CoverageResult> coveredClasses,
+      final String testName, final int numberOfLines) {
+    assertTrue(coveredClasses.contains(coverage(testName, numberOfLines)));
   }
 
 }
