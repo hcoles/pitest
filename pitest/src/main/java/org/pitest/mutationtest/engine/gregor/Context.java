@@ -20,12 +20,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
 import org.pitest.mutationtest.engine.gregor.blocks.ConcreteBlockCounter;
@@ -44,7 +46,7 @@ public class Context implements BlockCounter {
   private Option<MutationIdentifier>            target                         = Option
                                                                                    .none();
   private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
-  private MethodName                            methodName;
+  private Location                              location;
 
   private final Set<String>                     mutationFindingDisabledReasons = new HashSet<String>();
 
@@ -65,7 +67,7 @@ public class Context implements BlockCounter {
   private MutationIdentifier getNextMutationIdentifer(
       final MethodMutatorFactory factory, final String className) {
     final int index = getAndIncrementIndex(factory);
-    return new MutationIdentifier(className, index,
+    return new MutationIdentifier(this.location, index,
         factory.getGloballyUniqueId());
   }
 
@@ -108,8 +110,7 @@ public class Context implements BlockCounter {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
         getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
-        description, this.methodName, this.lastLineNumber,
-        this.blockCounter.getCurrentBlock(),
+        description, this.lastLineNumber, this.blockCounter.getCurrentBlock(),
         this.blockCounter.isWithinExceptionHandler());
     registerMutation(details);
     return newId;
@@ -141,8 +142,10 @@ public class Context implements BlockCounter {
     this.sourceFile = source;
   }
 
-  public void registerMethod(final String name) {
-    this.methodName = new MethodName(name);
+  public void registerMethod(final String name, final String descriptor) {
+    this.location = Location.location(
+        ClassName.fromString(this.classInfo.getName()), new MethodName(name),
+        descriptor);
   }
 
   public boolean shouldMutate(final MutationIdentifier newId) {

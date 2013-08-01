@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -28,16 +29,17 @@ public class DefaultReporterTest {
 
   @Test
   public void shouldSendMutationIdentifierToOutputStream() throws IOException {
-    final MutationIdentifier mi = new MutationIdentifier("foo", 0, "foo");
+    final MutationIdentifier mi = new MutationIdentifier(aLocation(), 0, "foo");
     this.testee.describe(mi);
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DESCRIBE, is.readByte());
     assertEquals(is.read(MutationIdentifier.class), mi);
   }
 
+
   @Test
   public void shouldSendDetectionStatus() throws IOException {
-    final MutationIdentifier mi = new MutationIdentifier("foo", 0, "foo");
+    final MutationIdentifier mi = new MutationIdentifier(aLocation(), 0, "foo");
     final MutationStatusTestPair ms = new MutationStatusTestPair(2,
         DetectionStatus.KILLED, "foo");
     this.testee.report(mi, ms);
@@ -59,5 +61,9 @@ public class DefaultReporterTest {
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DONE, is.readByte());
     assertEquals(is.readInt(), ExitCode.TIMEOUT.getCode());
+  }
+  
+  private Location aLocation() {
+    return Location.location("foo","","");
   }
 }

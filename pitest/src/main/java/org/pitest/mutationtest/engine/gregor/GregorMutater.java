@@ -112,7 +112,8 @@ class GregorMutater implements Mutater {
     final Context context = new Context();
     context.setTargetMutation(Option.some(id));
 
-    final Option<byte[]> bytes = this.byteSource.apply(id.getClazz());
+    final Option<byte[]> bytes = this.byteSource.apply(id.getClassName()
+        .asJavaName());
 
     final PremutationClassInfo classInfo = performPreScan(bytes.value());
 

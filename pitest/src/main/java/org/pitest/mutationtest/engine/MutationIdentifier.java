@@ -23,28 +23,48 @@ import org.pitest.classinfo.ClassName;
 
 public class MutationIdentifier {
 
-  private final String              className;
+  private final Location            location;
   private final Collection<Integer> indexes;
   private final String              mutator;
 
-  public MutationIdentifier(final String className, final int index,
+  public MutationIdentifier(final Location location, final int index,
       final String mutatorUniqueId) {
-    this(className, Collections.singleton(index), mutatorUniqueId);
+    this(location, Collections.singleton(index), mutatorUniqueId);
   }
 
-  public MutationIdentifier(final String className, final Set<Integer> indexes,
-      final String mutatorUniqueId) {
-    this.className = className.intern();
+  public MutationIdentifier(final Location location,
+      final Set<Integer> indexes, final String mutatorUniqueId) {
+    this.location = location;
     this.indexes = new ArrayList<Integer>(indexes);
     this.mutator = mutatorUniqueId;
   }
 
-  public String getClazz() {
-    return this.className;
+  public Location getLocation() {
+    return this.location;
   }
 
   public String getMutator() {
     return this.mutator;
+  }
+
+  public int getFirstIndex() {
+    return this.indexes.iterator().next();
+  }
+
+  @Override
+  public String toString() {
+    return "MutationIdentifier [location=" + this.location + ", indexes="
+        + this.indexes + ", mutator=" + this.mutator + "]";
+  }
+
+  public boolean matches(final MutationIdentifier newId) {
+    return this.location.equals(newId.location)
+        && this.mutator.equals(newId.mutator)
+        && this.indexes.contains(newId.getFirstIndex());
+  }
+
+  public ClassName getClassName() {
+    return this.location.getClassName();
   }
 
   @Override
@@ -52,9 +72,9 @@ public class MutationIdentifier {
     final int prime = 31;
     int result = 1;
     result = (prime * result)
-        + ((this.className == null) ? 0 : this.className.hashCode());
-    result = (prime * result)
         + ((this.indexes == null) ? 0 : this.indexes.hashCode());
+    result = (prime * result)
+        + ((this.location == null) ? 0 : this.location.hashCode());
     result = (prime * result)
         + ((this.mutator == null) ? 0 : this.mutator.hashCode());
     return result;
@@ -72,18 +92,18 @@ public class MutationIdentifier {
       return false;
     }
     final MutationIdentifier other = (MutationIdentifier) obj;
-    if (this.className == null) {
-      if (other.className != null) {
-        return false;
-      }
-    } else if (!this.className.equals(other.className)) {
-      return false;
-    }
     if (this.indexes == null) {
       if (other.indexes != null) {
         return false;
       }
     } else if (!this.indexes.equals(other.indexes)) {
+      return false;
+    }
+    if (this.location == null) {
+      if (other.location != null) {
+        return false;
+      }
+    } else if (!this.location.equals(other.location)) {
       return false;
     }
     if (this.mutator == null) {
@@ -94,26 +114,6 @@ public class MutationIdentifier {
       return false;
     }
     return true;
-  }
-
-  public int getFirstIndex() {
-    return this.indexes.iterator().next();
-  }
-
-  @Override
-  public String toString() {
-    return "Mutation -> className=" + this.className + ", mutator="
-        + this.mutator;
-  }
-
-  public boolean matches(final MutationIdentifier newId) {
-    return this.className.equals(newId.className)
-        && this.mutator.equals(newId.mutator)
-        && this.indexes.contains(newId.getFirstIndex());
-  }
-
-  public ClassName getClassName() {
-    return ClassName.fromString(this.className);
   }
 
 }

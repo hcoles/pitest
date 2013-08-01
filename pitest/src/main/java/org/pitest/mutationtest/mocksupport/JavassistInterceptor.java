@@ -17,6 +17,7 @@ package org.pitest.mutationtest.mocksupport;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.Unchecked;
@@ -53,7 +54,9 @@ public class JavassistInterceptor {
   }
 
   private static boolean isMutatedClass(final String name) {
-    return (mutant != null) && mutant.getDetails().getClazz().equals(name);
+    return (mutant != null)
+        && mutant.getDetails().getClassName()
+            .equals(ClassName.fromString(name));
   }
 
   public static void setMutant(final Mutant newMutant) {

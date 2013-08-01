@@ -19,6 +19,7 @@ import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -43,7 +44,8 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnNoneWhenNoMatchingHistoricResultExists() {
-    final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation(), 0,
+        "mutator");
     final Option<MutationStatusTestPair> actual = this.testee
         .getPreviousResult(id);
     assertEquals(Option.none(), actual);
@@ -51,7 +53,8 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnHistoricResultWhenOneExists() {
-    final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation(), 0,
+        "mutator");
     final MutationStatusTestPair expected = new MutationStatusTestPair(0,
         DetectionStatus.KILLED, "foo");
     this.results.put(id, expected);
@@ -126,4 +129,7 @@ public class DefaultCodeHistoryTest {
     return makeHistory(ci.getHierarchicalId());
   }
 
+  private Location aLocation() {
+    return Location.location("foo", "", "");
+  }
 }

@@ -69,7 +69,7 @@ public class MutationMetaData implements MetaData {
   private static F<MutationResult, ClassName> mutationsToClass() {
     return new F<MutationResult, ClassName>() {
       public ClassName apply(final MutationResult a) {
-        return ClassName.fromString(a.getDetails().getClazz());
+        return a.getDetails().getClassName();
       }
     };
   }

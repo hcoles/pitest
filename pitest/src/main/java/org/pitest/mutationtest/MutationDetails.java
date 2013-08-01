@@ -27,7 +27,6 @@ import org.pitest.util.StringUtil;
 public class MutationDetails {
 
   private final MutationIdentifier  id;
-  private final MethodName          method;
   private final String              filename;
   private final int                 block;
   private final int                 lineNumber;
@@ -36,17 +35,15 @@ public class MutationDetails {
   private final boolean             isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final MethodName method, final int lineNumber,
-      final int block) {
-    this(id, filename, description, method, lineNumber, block, false);
+      final String description, final int lineNumber, final int block) {
+    this(id, filename, description, lineNumber, block, false);
   }
 
   public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final MethodName method, final int lineNumber,
-      final int block, final boolean isInFinallyBlock) {
+      final String description, final int lineNumber, final int block,
+      final boolean isInFinallyBlock) {
     this.id = id;
     this.description = description;
-    this.method = method;
     this.filename = filename;
     this.lineNumber = lineNumber;
     this.block = block;
@@ -55,10 +52,10 @@ public class MutationDetails {
 
   @Override
   public String toString() {
-    return "MutationDetails [id=" + this.id + ", method=" + this.method
-        + ", filename=" + this.filename + ", block=" + this.block
-        + ", lineNumber=" + this.lineNumber + ", description="
-        + this.description + ", testsInOrder=" + this.testsInOrder + "]";
+    return "MutationDetails [id=" + this.id + ", filename=" + this.filename
+        + ", block=" + this.block + ", lineNumber=" + this.lineNumber
+        + ", description=" + this.description + ", testsInOrder="
+        + this.testsInOrder + "]";
   }
 
   public String getDescription() {
@@ -70,11 +67,7 @@ public class MutationDetails {
   }
 
   public String getLocation() {
-    return this.method.describe();
-  }
-
-  public String getClazz() {
-    return this.id.getClazz();
+    return this.id.getLocation().getMethodName().describe();
   }
 
   public ClassName getClassName() {
@@ -82,7 +75,7 @@ public class MutationDetails {
   }
 
   public MethodName getMethod() {
-    return this.method;
+    return this.id.getLocation().getMethodName();
   }
 
   public String getFilename() {
@@ -94,7 +87,7 @@ public class MutationDetails {
   }
 
   public ClassLine getClassLine() {
-    return new ClassLine(this.id.getClazz(), this.lineNumber);
+    return new ClassLine(this.id.getClassName(), this.lineNumber);
   }
 
   public MutationIdentifier getId() {
@@ -138,17 +131,7 @@ public class MutationDetails {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = (prime * result) + this.block;
-    result = (prime * result)
-        + ((this.description == null) ? 0 : this.description.hashCode());
-    result = (prime * result)
-        + ((this.filename == null) ? 0 : this.filename.hashCode());
     result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
-    result = (prime * result) + this.lineNumber;
-    result = (prime * result)
-        + ((this.method == null) ? 0 : this.method.hashCode());
-    result = (prime * result)
-        + ((this.testsInOrder == null) ? 0 : this.testsInOrder.hashCode());
     return result;
   }
 
@@ -164,45 +147,11 @@ public class MutationDetails {
       return false;
     }
     final MutationDetails other = (MutationDetails) obj;
-    if (this.block != other.block) {
-      return false;
-    }
-    if (this.description == null) {
-      if (other.description != null) {
-        return false;
-      }
-    } else if (!this.description.equals(other.description)) {
-      return false;
-    }
-    if (this.filename == null) {
-      if (other.filename != null) {
-        return false;
-      }
-    } else if (!this.filename.equals(other.filename)) {
-      return false;
-    }
     if (this.id == null) {
       if (other.id != null) {
         return false;
       }
     } else if (!this.id.equals(other.id)) {
-      return false;
-    }
-    if (this.lineNumber != other.lineNumber) {
-      return false;
-    }
-    if (this.method == null) {
-      if (other.method != null) {
-        return false;
-      }
-    } else if (!this.method.equals(other.method)) {
-      return false;
-    }
-    if (this.testsInOrder == null) {
-      if (other.testsInOrder != null) {
-        return false;
-      }
-    } else if (!this.testsInOrder.equals(other.testsInOrder)) {
       return false;
     }
     return true;

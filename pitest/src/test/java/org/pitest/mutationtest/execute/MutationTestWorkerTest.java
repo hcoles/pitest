@@ -18,11 +18,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
+import org.pitest.classinfo.ClassName;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F3;
-import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -40,7 +41,7 @@ public class MutationTestWorkerTest {
   private Mutater                                  mutater;
 
   @Mock
-  private F3<String, ClassLoader, byte[], Boolean> hotswapper;
+  private F3<ClassName, ClassLoader, byte[], Boolean> hotswapper;
 
   @Mock
   private TimeOutDecoratedTestSource               testSource;
@@ -86,7 +87,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
@@ -103,7 +104,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(false);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
@@ -119,7 +120,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(String.class), any(ClassLoader.class),
+        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(
@@ -160,8 +161,8 @@ public class MutationTestWorkerTest {
 
   public MutationDetails makeMutant(final String clazz, final int index) {
     final MutationDetails md = new MutationDetails(new MutationIdentifier(
-        clazz, index, "mutator"), "sourceFile", "desc",
-        new MethodName("method"), 42, 0);
+        Location.location(clazz, "method", "()V"), index, "mutator"), "sourceFile", "desc",
+         42, 0);
 
     when(this.mutater.getMutation(md.getId())).thenReturn(
         new Mutant(md, new byte[0]));

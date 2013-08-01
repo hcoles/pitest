@@ -70,7 +70,7 @@ public class XMLReportListener implements MutationResultListener {
   private String makeMutationNode(final MutationResult mutation) {
     final MutationDetails details = mutation.getDetails();
     return makeNode(clean(details.getFilename()), sourceFile)
-        + makeNode(clean(details.getClazz()), mutatedClass)
+        + makeNode(clean(details.getClassName().asJavaName()), mutatedClass)
         + makeNode(clean(details.getMethod().raw()), mutatedMethod)
         + makeNode("" + details.getLineNumber(), lineNumber)
         + makeNode(clean(details.getMutator()), mutator)

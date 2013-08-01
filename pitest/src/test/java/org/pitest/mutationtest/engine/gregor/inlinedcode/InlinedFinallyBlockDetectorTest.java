@@ -11,15 +11,13 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class InlinedFinallyBlockDetectorTest {
 
   private InlinedFinallyBlockDetector testee;
-
-  private final static MethodName     A_METHOD = new MethodName("method");
 
   @Before
   public void setUp() {
@@ -76,19 +74,19 @@ public class InlinedFinallyBlockDetectorTest {
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final int index) {
     return new MutationDetails(makeId(Collections.singleton(index), mutator),
-        "file", "desc", A_METHOD, line, block, true);
+        "file", "desc", line, block, true);
   }
 
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", A_METHOD, line, block, true);
+        "file", "desc", line, block, true);
   }
 
   private MutationDetails makeMutant(final int line, final int block,
       final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", A_METHOD, line, block);
+        "file", "desc", line, block);
   }
 
   private MutationDetails makeMutant(final int line, final int block,
@@ -98,7 +96,7 @@ public class InlinedFinallyBlockDetectorTest {
 
   private MutationIdentifier makeId(final Set<Integer> indexes,
       final String mutator) {
-    return new MutationIdentifier("foo", indexes, mutator);
+    return new MutationIdentifier(Location.location("foo", "method", "()V"), indexes, mutator);
   }
 
 }

@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class LimitNumberOfMutationPerClassFilterTest {
@@ -69,11 +69,11 @@ public class LimitNumberOfMutationPerClassFilterTest {
   }
 
   private MutationDetails makeMutation(final int id) {
-    return new MutationDetails(makeId(id), "", "", new MethodName(""), 0, 0);
+    return new MutationDetails(makeId(id), "", "", 0, 0);
   }
 
   private MutationIdentifier makeId(final int id) {
-    return new MutationIdentifier("", id, "");
+    return new MutationIdentifier(Location.location("", "", ""), id, "");
   }
 
 }

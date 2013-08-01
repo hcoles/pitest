@@ -20,8 +20,8 @@ import java.util.Collections;
 import org.pitest.DescriptionMother;
 import org.pitest.ExtendedTestResult;
 import org.pitest.TestResult;
-import org.pitest.mutationtest.MethodName;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
@@ -33,8 +33,8 @@ public class MutationTestResultMother {
   }
 
   public static MutationDetails createDetails(final String sourceFile) {
-    return new MutationDetails(new MutationIdentifier("class", 1, "mutator"),
-        sourceFile, "desc", new MethodName("method"), 42, 0);
+    return new MutationDetails(new MutationIdentifier(Location.location("class","method","()V"), 1, "mutator"),
+        sourceFile, "desc", 42, 0);
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {

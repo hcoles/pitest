@@ -130,10 +130,10 @@ public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
     mapTo(value, mutationToIndex(), indexes);
 
     final MutationIdentifier id = new MutationIdentifier(first.getId()
-        .getClazz(), indexes, first.getId().getMutator());
+        .getLocation(), indexes, first.getId().getMutator());
 
     return new MutationDetails(id, first.getFilename(), first.getDescription(),
-        first.getMethod(), first.getLineNumber(), first.getBlock());
+        first.getLineNumber(), first.getBlock());
   }
 
   private static F<MutationDetails, Integer> mutationToIndex() {

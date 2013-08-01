@@ -16,6 +16,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -75,8 +76,8 @@ public class MutationTestSlaveTest {
 
   @Test
   public void shouldReportErrorWhenOneOccursDuringAnalysis() {
-    this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,
-        "foo"), null, null, null, 0, 0));
+    this.mutations.add(new MutationDetails(new MutationIdentifier(Location.location("foo","method","()V"), 1,
+        "foo"), null, null, 0, 0));
     when(this.mutater.getMutation(any(MutationIdentifier.class))).thenThrow(
         new PitError("foo"));
     this.testee.run();

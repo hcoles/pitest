@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.pitest.DefaultStaticConfig;
 import org.pitest.MultipleTestGroup;
 import org.pitest.Pitest;
+import org.pitest.classinfo.ClassName;
 import org.pitest.containers.UnContainer;
 import org.pitest.extension.Container;
 import org.pitest.extension.TestUnit;
@@ -46,13 +47,14 @@ import org.pitest.util.Log;
 
 public class MutationTestWorker {
 
-  private static final Logger                            LOG = Log.getLogger();
-  private final Mutater                                  mutater;
-  private final ClassLoader                              loader;
-  private final F3<String, ClassLoader, byte[], Boolean> hotswap;
+  private static final Logger                               LOG = Log
+                                                                    .getLogger();
+  private final Mutater                                     mutater;
+  private final ClassLoader                                 loader;
+  private final F3<ClassName, ClassLoader, byte[], Boolean> hotswap;
 
   public MutationTestWorker(
-      final F3<String, ClassLoader, byte[], Boolean> hotswap,
+      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap,
       final Mutater mutater, final ClassLoader loader) {
     this.loader = loader;
     this.mutater = mutater;
@@ -126,7 +128,7 @@ public class MutationTestWorker {
     final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
     final Container c = createNewContainer(activeloader);
     final long t0 = System.currentTimeMillis();
-    if (this.hotswap.apply(mutationId.getClazz(), activeloader,
+    if (this.hotswap.apply(mutationId.getClassName(), activeloader,
         mutatedClass.getBytes())) {
       LOG.fine("replaced class with mutant in "
           + (System.currentTimeMillis() - t0) + " ms");

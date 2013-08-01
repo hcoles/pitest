@@ -126,7 +126,7 @@ public abstract class MutatorTestBase {
     return new Transformation() {
 
       public byte[] transform(final String name, final byte[] bytes) {
-        if (name.equals(mutant.getDetails().getClazz())) {
+        if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
           return mutant.getBytes();
         } else {
           return bytes;

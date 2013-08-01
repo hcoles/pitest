@@ -20,6 +20,7 @@ import org.pitest.extension.Configuration;
 import org.pitest.extension.ResultCollector;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
@@ -91,8 +92,8 @@ public class MutationTestUnitTest {
   }
 
   private void addMutation() {
-    this.mutations.add(new MutationDetails(new MutationIdentifier("foo", 1,
-        "foo"), null, null, null, 0, 0));
+    this.mutations.add(new MutationDetails(new MutationIdentifier(Location.location("foo","method","()V"), 1,
+        "foo"), null, null, 0, 0));
   }
 
 }

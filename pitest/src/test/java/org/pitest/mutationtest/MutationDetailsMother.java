@@ -1,6 +1,7 @@
 package org.pitest.mutationtest;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class MutationDetailsMother {
@@ -10,8 +11,8 @@ public class MutationDetailsMother {
   }
 
   public static MutationDetails makeMutation(final ClassName clazz) {
-    return new MutationDetails(new MutationIdentifier(clazz.asJavaName(), 1,
-        "mutatorId"), "foo.java", "A mutation", new MethodName("fooMethod"), 0,
+    return new MutationDetails(new MutationIdentifier(Location.location(clazz, new MethodName("aMethod"), "()V"), 1,
+        "mutatorId"), "foo.java", "A mutation", 0,
         0);
   }
 

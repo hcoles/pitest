@@ -70,13 +70,13 @@ public class MutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final F3<String, ClassLoader, byte[], Boolean> hotswap = new F3<String, ClassLoader, byte[], Boolean>() {
+      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new F3<ClassName, ClassLoader, byte[], Boolean>() {
 
-        public Boolean apply(final String clazzName, final ClassLoader loader,
-            final byte[] b) {
+        public Boolean apply(final ClassName clazzName,
+            final ClassLoader loader, final byte[] b) {
           Class<?> clazz;
           try {
-            clazz = Class.forName(clazzName, false, loader);
+            clazz = Class.forName(clazzName.asJavaName(), false, loader);
             return HotSwapAgent.hotSwap(clazz, b);
           } catch (final ClassNotFoundException e) {
             throw Unchecked.translateCheckedException(e);

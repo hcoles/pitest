@@ -20,6 +20,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassByteArraySource;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -130,8 +131,8 @@ public class MutationSourceTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier("foo", 0, "mutator");
-    return new MutationDetails(id, "file", "desc", new MethodName(method), 1, 2);
+    final MutationIdentifier id = new MutationIdentifier(Location.location("foo",method,"()V"), 0, "mutator");
+    return new MutationDetails(id, "file", "desc", 1, 2);
   }
 
 }

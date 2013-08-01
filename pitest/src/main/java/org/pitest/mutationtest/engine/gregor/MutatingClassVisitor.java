@@ -60,7 +60,7 @@ class MutatingClassVisitor extends ClassVisitor {
   public MethodVisitor visitMethod(final int access, final String methodName,
       final String methodDescriptor, final String signature,
       final String[] exceptions) {
-    this.context.registerMethod(methodName);
+    this.context.registerMethod(methodName, methodDescriptor);
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
         methodDescriptor, signature, exceptions);
 
