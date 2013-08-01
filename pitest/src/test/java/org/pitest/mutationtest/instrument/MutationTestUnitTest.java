@@ -4,7 +4,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,9 +33,6 @@ public class MutationTestUnitTest {
   private List<MutationDetails> mutations;
   private Collection<ClassName> tests;
 
-  private String                classPath;
-  private File                  baseDir;
-
   @Mock
   private Configuration         config;
 
@@ -64,9 +60,9 @@ public class MutationTestUnitTest {
         Collections.<String> emptyList());
     this.mutations = new ArrayList<MutationDetails>();
     this.tests = new ArrayList<ClassName>();
-    this.testee = new MutationTestUnit(this.baseDir, this.mutations,
+    this.testee = new MutationTestUnit(null, this.mutations,
         this.tests, this.config, this.mutationConfig, this.javaAgent,
-        this.timeout, false, this.classPath);
+        this.timeout, false, null);
   }
 
   @Test

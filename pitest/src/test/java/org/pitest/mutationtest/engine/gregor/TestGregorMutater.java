@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -347,9 +346,28 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(new ResourceFolderByteArraySource(),
         True.<MethodInfo> all(), Mutator.VOID_METHOD_CALLS.asCollection());
     final Collection<MutationDetails> actualDetails = findMutationsFor("Java7TryWithResources");
-    FCollection.forEach(actualDetails, Prelude.print());
     assertEquals(2, FCollection.filter(actualDetails, isInFinallyBlock())
         .size());
+  }
+  
+  public static class HasTwoMutableMethods {
+    public int a() {
+      return 1;
+    }
+
+    public int a(int i) {
+      return 1;
+    }
+  }
+  
+  @Test
+  public void shouldScopeMutationIndexesByMethod() {
+    createTesteeWith(Mutator.RETURN_VALS.asCollection());
+    final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
+    assertEquals(2, actualDetails.size());
+    assertEquals(0,actualDetails.get(0).getId().getFirstIndex());
+    assertEquals(0,actualDetails.get(1).getId().getFirstIndex());
+    assertFalse(actualDetails.get(0).getId().equals(actualDetails.get(1).getId()));
   }
 
   private static F<MutationDetails, Boolean> isInFinallyBlock() {

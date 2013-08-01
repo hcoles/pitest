@@ -146,6 +146,7 @@ public class Context implements BlockCounter {
     this.location = Location.location(
         ClassName.fromString(this.classInfo.getName()), new MethodName(name),
         descriptor);
+    this.mutatorIndexes.clear();
   }
 
   public boolean shouldMutate(final MutationIdentifier newId) {
