@@ -38,7 +38,7 @@ public class Location {
       final MethodName method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);
   }
-
+  
   public ClassName getClassName() {
     return this.clazz;
   }
@@ -52,21 +52,25 @@ public class Location {
   }
   
   public Location with(ClassName clazz) {
-    return new Location(clazz,this.method, this.methodDesc);
+    return newLocation(clazz,this.method, this.methodDesc);
   }
     
   public Location withMethod(String method) {
-    return new Location(clazz, MethodName.fromString(method), this.methodDesc);
+    return newLocation(clazz, MethodName.fromString(method), this.methodDesc);
   }
   
   public Location withClass(String clazz) {
-    return new Location(ClassName.fromString(clazz),this.method, this.methodDesc);
+    return newLocation(ClassName.fromString(clazz),this.method, this.methodDesc);
   }
   
   public Location withMethodDesc(String desc) {
-    return new Location(clazz, method, desc);
+    return newLocation(clazz, method, desc);
   }
   
+  protected Location newLocation(final ClassName clazz,
+      final MethodName method, final String methodDesc) {
+    return new Location(clazz, method, methodDesc);
+  }
   
   @Override
   public int hashCode() {
