@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.engine.gregor.inlinedcode;
 
 import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class InlinedFinallyBlockDetectorTest {
@@ -96,7 +96,7 @@ public class InlinedFinallyBlockDetectorTest {
 
   private MutationIdentifier makeId(final Set<Integer> indexes,
       final String mutator) {
-    return new MutationIdentifier(Location.location("foo", "method", "()V"), indexes, mutator);
+    return new MutationIdentifier(aLocation(), indexes, mutator);
   }
 
 }

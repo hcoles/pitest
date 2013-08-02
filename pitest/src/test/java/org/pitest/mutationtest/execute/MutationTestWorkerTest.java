@@ -3,6 +3,7 @@ package org.pitest.mutationtest.execute;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,7 +24,6 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.functional.F3;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -161,7 +161,7 @@ public class MutationTestWorkerTest {
 
   public MutationDetails makeMutant(final String clazz, final int index) {
     final MutationDetails md = new MutationDetails(new MutationIdentifier(
-        Location.location(clazz, "method", "()V"), index, "mutator"), "sourceFile", "desc",
+        aLocation().withClass(clazz), index, "mutator"), "sourceFile", "desc",
          42, 0);
 
     when(this.mutater.getMutation(md.getId())).thenReturn(

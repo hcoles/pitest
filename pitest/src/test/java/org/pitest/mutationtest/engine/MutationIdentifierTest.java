@@ -2,6 +2,7 @@ package org.pitest.mutationtest.engine;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,30 +13,30 @@ public class MutationIdentifierTest {
   
   @Test
   public void shouldEqualSelf() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
     assertTrue(a.equals(a));
   }
   
   @Test
   public void shouldBeUnEqualWhenIndexDiffers() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 2, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 2, "M" );
     assertFalse(a.equals(b));
     assertFalse(b.equals(a));
   }
   
   @Test
   public void shouldBeUnEqualWhenMutatorDiffers() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "FOO" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "BAR" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "FOO" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "BAR" );
     assertFalse(a.equals(b));
     assertFalse(b.equals(a));
   }
 
   @Test
   public void shouldBeUnEqualWhenLocationDiffers() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("FOO", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("BAR", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation().withClass("FOO"), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation().withClass("BAR"), 1, "M" );
     assertFalse(a.equals(b));
     assertFalse(b.equals(a));
   }
@@ -43,8 +44,8 @@ public class MutationIdentifierTest {
   
   @Test
   public void shouldHaveSymmetricEqulasImplementation() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "M" );
     assertTrue(a.equals(b));
     assertTrue(b.equals(a));
     assertTrue(a.hashCode() == b.hashCode());
@@ -52,44 +53,44 @@ public class MutationIdentifierTest {
   
   @Test
   public void shouldMatchWhenObjectsAreEqual() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "M" );
     assertTrue(a.matches(b));
   }
   
   @Test
   public void shouldMatchWhenIndexesOverlap() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), new HashSet<Integer>(Arrays.asList(1,2)), "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), new HashSet<Integer>(Arrays.asList(1,2)), "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "M" );
     assertTrue(a.matches(b));
   }
   
   @Test
   public void shouldNotMatchWhenIndexesDoNotOverlap() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), new HashSet<Integer>(100,200), "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), new HashSet<Integer>(100,200), "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "M" );
     assertFalse(a.matches(b));
   }
   
   @Test
   public void shouldNotMatchWhenMutatorsDiffer() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "XXXX" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "XXXX" );
     assertFalse(a.matches(b));
   }
   
   
   @Test
   public void shouldNotMatchWhenIndexesDiffer() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "()V"), 100, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 100, "M" );
     assertFalse(a.matches(b));
   }
   
   @Test
   public void shouldNotMatchWhenLocationsDiffer() {
-    MutationIdentifier a = new MutationIdentifier(Location.location("foo", "bar", "()V"), 1, "M" );
-    MutationIdentifier b = new MutationIdentifier(Location.location("foo", "bar", "XXXX"), 1, "M" );
+    MutationIdentifier a = new MutationIdentifier(aLocation().withMethodDesc("X"), 1, "M" );
+    MutationIdentifier b = new MutationIdentifier(aLocation().withMethodDesc("Y"), 1, "M" );
     assertFalse(a.matches(b));
   }
   

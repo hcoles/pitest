@@ -67,7 +67,7 @@ public class MutationDetails {
   }
 
   public String getLocation() {
-    return this.id.getLocation().getMethodName().describe();
+    return this.id.getLocation().describe();
   }
 
   public ClassName getClassName() {
@@ -104,7 +104,7 @@ public class MutationDetails {
   }
 
   public boolean isInStaticInitializer() {
-    return this.getMethod().raw().trim().startsWith("<clinit>");
+    return this.getMethod().name().trim().startsWith("<clinit>");
   }
 
   public int getBlock() {

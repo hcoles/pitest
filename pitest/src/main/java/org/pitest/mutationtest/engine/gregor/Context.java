@@ -144,7 +144,7 @@ public class Context implements BlockCounter {
 
   public void registerMethod(final String name, final String descriptor) {
     this.location = Location.location(
-        ClassName.fromString(this.classInfo.getName()), new MethodName(name),
+        ClassName.fromString(this.classInfo.getName()), MethodName.fromString(name),
         descriptor);
     this.mutatorIndexes.clear();
   }

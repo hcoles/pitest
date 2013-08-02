@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -129,7 +129,5 @@ public class DefaultCodeHistoryTest {
     return makeHistory(ci.getHierarchicalId());
   }
 
-  private Location aLocation() {
-    return Location.location("foo", "", "");
-  }
+
 }

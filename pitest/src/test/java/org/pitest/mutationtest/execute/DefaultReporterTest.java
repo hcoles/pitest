@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.execute;
 
 import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +9,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -62,8 +62,5 @@ public class DefaultReporterTest {
     assertEquals(Id.DONE, is.readByte());
     assertEquals(is.readInt(), ExitCode.TIMEOUT.getCode());
   }
-  
-  private Location aLocation() {
-    return Location.location("foo","","");
-  }
+
 }

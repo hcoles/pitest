@@ -3,6 +3,7 @@ package org.pitest.mutationtest.execute;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.extension.Configuration;
 import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -76,7 +76,7 @@ public class MutationTestSlaveTest {
 
   @Test
   public void shouldReportErrorWhenOneOccursDuringAnalysis() {
-    this.mutations.add(new MutationDetails(new MutationIdentifier(Location.location("foo","method","()V"), 1,
+    this.mutations.add(new MutationDetails(new MutationIdentifier(aLocation(), 1,
         "foo"), null, null, 0, 0));
     when(this.mutater.getMutation(any(MutationIdentifier.class))).thenThrow(
         new PitError("foo"));

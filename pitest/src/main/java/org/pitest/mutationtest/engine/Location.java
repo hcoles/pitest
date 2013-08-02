@@ -21,13 +21,13 @@ import org.pitest.mutationtest.MethodName;
  * The co-ordinates of a method within a class.
  * 
  */
-public final class Location {
+public class Location {
 
   private final ClassName  clazz;
   private final MethodName method;
   private final String     methodDesc;
 
-  Location(final ClassName clazz, final MethodName method,
+  public Location(final ClassName clazz, final MethodName method,
       final String methodDesc) {
     this.clazz = clazz;
     this.method = method;
@@ -37,12 +37,6 @@ public final class Location {
   public static Location location(final ClassName clazz,
       final MethodName method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);
-  }
-
-  public static Location location(final String clazz, final String method,
-      final String methodDesc) {
-    return location(ClassName.fromString(clazz), new MethodName(method),
-        methodDesc);
   }
 
   public ClassName getClassName() {
@@ -56,7 +50,24 @@ public final class Location {
   public String getMethodDesc() {
     return this.methodDesc;
   }
-
+  
+  public Location with(ClassName clazz) {
+    return new Location(clazz,this.method, this.methodDesc);
+  }
+    
+  public Location withMethod(String method) {
+    return new Location(clazz, MethodName.fromString(method), this.methodDesc);
+  }
+  
+  public Location withClass(String clazz) {
+    return new Location(ClassName.fromString(clazz),this.method, this.methodDesc);
+  }
+  
+  public Location withMethodDesc(String desc) {
+    return new Location(clazz, method, desc);
+  }
+  
+  
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -110,6 +121,10 @@ public final class Location {
   public String toString() {
     return "Location [clazz=" + this.clazz + ", method=" + this.method
         + ", methodDesc=" + this.methodDesc + "]";
+  }
+
+  public String describe() {
+    return method.name();
   }
 
 }

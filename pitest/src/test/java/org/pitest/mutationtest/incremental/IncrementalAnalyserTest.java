@@ -3,6 +3,7 @@ package org.pitest.mutationtest.incremental;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -17,7 +18,6 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
@@ -140,8 +140,7 @@ public class IncrementalAnalyserTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(Location.location(
-        "foo", method, ""), 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation().withMethod(method), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

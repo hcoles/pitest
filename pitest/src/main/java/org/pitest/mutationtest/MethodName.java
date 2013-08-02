@@ -1,13 +1,17 @@
 package org.pitest.mutationtest;
 
-public class MethodName {
+public final class MethodName {
 
   private final String name;
 
-  public MethodName(final String name) {
+  MethodName(final String name) {
     this.name = name;
   }
 
+  public static MethodName fromString(String name) {
+    return new MethodName(name);
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -44,11 +48,7 @@ public class MethodName {
     return this.name;
   }
 
-  public final String raw() {
-    return this.name;
-  }
-
-  public String describe() {
+  public final String name() {
     return this.name;
   }
 
