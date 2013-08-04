@@ -3,7 +3,7 @@ package org.pitest.mutationtest.instrument;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,6 @@ import org.pitest.extension.ResultCollector;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
@@ -88,8 +87,7 @@ public class MutationTestUnitTest {
   }
 
   private void addMutation() {
-    this.mutations.add(new MutationDetails(new MutationIdentifier(aLocation(), 1,
-        "foo"), null, null, 0, 0));
+    this.mutations.add(new MutationDetails(aMutationId(), null, null, 0, 0));
   }
 
 }

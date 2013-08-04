@@ -2,6 +2,7 @@ package org.pitest.mutationtest.mocksupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -11,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.StreamUtil;
 
 public class JavassistInterceptorTest {
@@ -29,7 +29,7 @@ public class JavassistInterceptorTest {
   public void setUp() {
     this.interceptedClass = new AClassWithAOpenClassFileMethod();
     final byte[] bytes = "replaced".getBytes();
-    this.mutant = new Mutant(new MutationDetails(new MutationIdentifier(aLocation().withClass("match"), 0, "foo"), "foo", "foo", 0, 0), bytes);
+    this.mutant = new Mutant(new MutationDetails(aMutationId().withLocation(aLocation().withClass("match")), "foo", "foo", 0, 0), bytes);
   }
 
   @Test

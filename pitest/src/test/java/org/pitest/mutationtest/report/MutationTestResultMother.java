@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.report;
 
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import org.pitest.DescriptionMother;
 import org.pitest.ExtendedTestResult;
 import org.pitest.TestResult;
 import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
 
@@ -34,8 +33,7 @@ public class MutationTestResultMother {
   }
 
   public static MutationDetails createDetails(final String sourceFile) {
-    return new MutationDetails(new MutationIdentifier(aLocation().withClass("class").withMethod("method").withMethodDesc("()V"), 1, "mutator"),
-        sourceFile, "desc", 42, 0);
+    return new MutationDetails(aMutationId(), sourceFile, "desc", 42, 0);
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {

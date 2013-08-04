@@ -3,7 +3,7 @@ package org.pitest.mutationtest.incremental;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.*;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -140,7 +140,7 @@ public class IncrementalAnalyserTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(aLocation().withMethod(method), 0, "mutator");
+    final MutationIdentifier id =  aMutationId().withLocation(aLocation().withMethod(method));
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

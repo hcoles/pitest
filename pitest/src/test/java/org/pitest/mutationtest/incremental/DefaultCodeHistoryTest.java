@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +44,7 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnNoneWhenNoMatchingHistoricResultExists() {
-    final MutationIdentifier id = new MutationIdentifier(aLocation(), 0,
-        "mutator");
+    final MutationIdentifier id = aMutationId();
     final Option<MutationStatusTestPair> actual = this.testee
         .getPreviousResult(id);
     assertEquals(Option.none(), actual);
@@ -53,8 +52,7 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnHistoricResultWhenOneExists() {
-    final MutationIdentifier id = new MutationIdentifier(aLocation(), 0,
-        "mutator");
+    final MutationIdentifier id = aMutationId();
     final MutationStatusTestPair expected = new MutationStatusTestPair(0,
         DetectionStatus.KILLED, "foo");
     this.results.put(id, expected);

@@ -53,7 +53,7 @@ public class XMLReportListenerTest {
     final MutationResult mr = createdKilledMutationWithKillingTestOf("foo");
     this.testee.handleMutationResult(MutationTestResultMother
         .createMetaData(mr));
-    final String expected = "<mutation detected='true' status='KILLED'><sourceFile>file</sourceFile><mutatedClass>class</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest>foo</killingTest></mutation>\n";
+    final String expected = "<mutation detected='true' status='KILLED'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest>foo</killingTest></mutation>\n";
     assertEquals(expected, this.out.toString());
   }
 
@@ -78,7 +78,7 @@ public class XMLReportListenerTest {
     final MutationResult mr = createSurvivingMutant();
     this.testee.handleMutationResult(MutationTestResultMother
         .createMetaData(mr));
-    final String expected = "<mutation detected='false' status='SURVIVED'><sourceFile>file</sourceFile><mutatedClass>class</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest/></mutation>\n";
+    final String expected = "<mutation detected='false' status='SURVIVED'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest/></mutation>\n";
     assertEquals(expected, this.out.toString());
   }
 

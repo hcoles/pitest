@@ -16,7 +16,7 @@ package org.pitest.mutationtest.filter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,7 +73,7 @@ public class LimitNumberOfMutationPerClassFilterTest {
   }
 
   private MutationIdentifier makeId(final int id) {
-    return new MutationIdentifier(aLocation(), id, "");
+    return aMutationId().withIndex(id);
   }
 
 }

@@ -17,14 +17,14 @@ package org.pitest.mutationtest.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import org.pitest.classinfo.ClassName;
 
 public class MutationIdentifier {
 
   private final Location            location;
-  private final Collection<Integer> indexes;
+  private final List<Integer> indexes;
   private final String              mutator;
 
   public MutationIdentifier(final Location location, final int index,
@@ -33,7 +33,7 @@ public class MutationIdentifier {
   }
 
   public MutationIdentifier(final Location location,
-      final Set<Integer> indexes, final String mutatorUniqueId) {
+      final Collection<Integer> indexes, final String mutatorUniqueId) {
     this.location = location;
     this.indexes = new ArrayList<Integer>(indexes);
     this.mutator = mutatorUniqueId;
@@ -50,7 +50,19 @@ public class MutationIdentifier {
   public int getFirstIndex() {
     return this.indexes.iterator().next();
   }
+  
+  public MutationIdentifier withLocation(Location location) {
+    return new MutationIdentifier(location,indexes,mutator);
+  }
+  
+  public MutationIdentifier withMutation(String mutator) {
+    return new MutationIdentifier(location,indexes,mutator);
+  }
 
+  public MutationIdentifier withIndex(int id) {
+    return new MutationIdentifier(location,id,mutator);
+  }
+  
   @Override
   public String toString() {
     return "MutationIdentifier [location=" + this.location + ", indexes="
@@ -115,5 +127,7 @@ public class MutationIdentifier {
     }
     return true;
   }
+
+
 
 }
