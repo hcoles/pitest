@@ -55,7 +55,7 @@ public class MutationIdentifier {
     return new MutationIdentifier(location,indexes,mutator);
   }
   
-  public MutationIdentifier withMutation(String mutator) {
+  public MutationIdentifier withMutator(String mutator) {
     return new MutationIdentifier(location,indexes,mutator);
   }
 
