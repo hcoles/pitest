@@ -33,7 +33,7 @@ public class DependencyFilter implements Predicate<Artifact> {
     // mutation engines must be available on the classpath of
     // the slave processes. This enabled by naming convention.
     return this.allowedGroups.contains(a.getGroupId())
-        || a.getArtifactId().equals("mutation-engine");
+        || a.getArtifactId().equals("mutation-engine") || a.getArtifactId().endsWith("pit-extensions");
   }
 
 }
