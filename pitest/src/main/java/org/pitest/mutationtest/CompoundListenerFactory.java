@@ -14,11 +14,9 @@
  */
 package org.pitest.mutationtest;
 
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.extension.CompoundTestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.report.SourceLocator;
 
 public class CompoundListenerFactory implements ListenerFactory {
 
@@ -28,22 +26,23 @@ public class CompoundListenerFactory implements ListenerFactory {
     this.children = children;
   }
 
-  public MutationResultListener getListener(final CoverageDatabase coverage,
-      final long startTime, final SourceLocator locator) {
+  public MutationResultListener getListener(ListenerArguments args) {
     return new CompoundTestListener(FCollection.map(this.children,
-        factoryToListener(coverage, startTime, locator)));
+        factoryToListener(args)));
   }
 
-  private F<ListenerFactory, MutationResultListener> factoryToListener(
-      final CoverageDatabase coverage, final long startTime,
-      final SourceLocator locator) {
+  private F<ListenerFactory, MutationResultListener> factoryToListener(final ListenerArguments args) {
     return new F<ListenerFactory, MutationResultListener>() {
 
       public MutationResultListener apply(final ListenerFactory a) {
-        return a.getListener(coverage, startTime, locator);
+        return a.getListener(args);
       }
 
     };
+  }
+
+  public String name() {
+    throw new UnsupportedOperationException();
   }
 
 }

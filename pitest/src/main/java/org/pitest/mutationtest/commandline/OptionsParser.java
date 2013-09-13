@@ -61,7 +61,6 @@ import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ConfigurationFactory;
-import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
@@ -91,7 +90,7 @@ public class OptionsParser {
   private final OptionSpec<Integer>                  maxMutationsPerClassSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
-  private final OptionSpec<OutputFormat>             outputFormatSpec;
+  private final OptionSpec<String>             outputFormatSpec;
   private final OptionSpec<String>                   projectFileSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
@@ -211,11 +210,11 @@ public class OptionsParser {
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
-        .ofType(OutputFormat.class)
+        .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of formats in which to write output during the analysis phase")
-        .defaultsTo(OutputFormat.HTML);
+            "comma seperated list of listeners to receive mutation results")
+        .defaultsTo("HTML");
 
     this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')

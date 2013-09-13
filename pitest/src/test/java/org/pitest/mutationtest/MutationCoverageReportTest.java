@@ -19,7 +19,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +48,7 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.HistoryStore;
-import org.pitest.mutationtest.report.SourceLocator;
+import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.util.Unchecked;
@@ -89,6 +88,9 @@ public class MutationCoverageReportTest {
 
   @Mock
   private Mutater                mutater;
+  
+  @Mock
+  private ResultOutputStrategy output;
 
   @Before
   public void setUp() {
@@ -98,8 +100,7 @@ public class MutationCoverageReportTest {
     // this.data.setMutators(Mutator.DEFAULTS.asCollection());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
     when(
-        this.listenerFactory.getListener(any(CoverageDatabase.class),
-            anyLong(), any(SourceLocator.class))).thenReturn(this.listener);
+        this.listenerFactory.getListener(any(ListenerArguments.class))).thenReturn(this.listener);
     mockMutationEngine();
   }
 
@@ -178,8 +179,8 @@ public class MutationCoverageReportTest {
 
   private MutationStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
-        new GregorEngineFactory(), this.history, this.coverage,
-        this.listenerFactory).with(this.mutationFactory).with(this.verifier);
+        new GregorEngineFactory(), this.history, this.coverage,this.listenerFactory,
+        output).with(this.mutationFactory).with(this.verifier);
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new Timings());

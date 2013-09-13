@@ -408,7 +408,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       final MutationStrategies strategies = new MutationStrategies(
           new GregorEngineFactory(), history, coverageDatabase,
-          listenerFactory());
+          listenerFactory(), null);
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
           code, this.data, timings);

@@ -48,7 +48,6 @@ import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.report.DatedDirectoryReportDirCreationStrategy;
 import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
-import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ReportDirCreationStrategy;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.UndatedReportDirCreationStrategy;
@@ -108,7 +107,7 @@ public class ReportOptions {
   private boolean                        verbose                        = false;
   private boolean                        failWhenNoMutations            = false;
 
-  private final Collection<OutputFormat> outputs                        = new LinkedHashSet<OutputFormat>();
+  private final Collection<String> outputs                        = new LinkedHashSet<String>();
 
   private TestGroupConfig                groupConfig;
 
@@ -346,11 +345,11 @@ public class ReportOptions {
     this.excludedClasses = excludedClasses;
   }
 
-  public void addOutputFormats(final Collection<OutputFormat> formats) {
+  public void addOutputFormats(final Collection<String> formats) {
     this.outputs.addAll(formats);
   }
 
-  public Iterable<OutputFormat> getOutputFormats() {
+  public Collection <String> getOutputFormats() {
     return this.outputs;
   }
 

@@ -29,9 +29,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigurationFactory;
-import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.testng.TestGroupConfig;
-import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 
@@ -195,12 +193,11 @@ public class MojoToReportOptionsConverter {
     };
   }
 
-  private Collection<OutputFormat> determineOutputFormats() {
+  private Collection<String> determineOutputFormats() {
     if (hasValue(this.mojo.getOutputFormats())) {
-      return FCollection.map(this.mojo.getOutputFormats(),
-          Functions.stringToEnum(OutputFormat.class));
+      return this.mojo.getOutputFormats();
     } else {
-      return Arrays.asList(OutputFormat.HTML);
+      return Arrays.asList("HTML");
     }
   }
 

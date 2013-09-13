@@ -33,7 +33,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.engine.gregor.Mutator;
-import org.pitest.mutationtest.report.OutputFormat;
 
 public class OptionsParserTest {
 
@@ -244,7 +243,7 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML)),
+    assertEquals(new HashSet<String>(Arrays.asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -253,8 +252,8 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
         "HTML,CSV");
     assertEquals(
-        new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML,
-            OutputFormat.CSV)), actual.getOutputFormats());
+        new HashSet<String>(Arrays.asList("HTML",
+            "CSV")), actual.getOutputFormats());
   }
 
   @Test

@@ -15,35 +15,18 @@
 
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
+import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.mutationtest.report.SourceLocator;
 
 public class HtmlReportFactory implements ListenerFactory {
 
-  private final ResultOutputStrategy outputStrategy;
-
-  public HtmlReportFactory(final ResultOutputStrategy outputStrategy) {
-    this.outputStrategy = outputStrategy;
+  public MutationResultListener getListener(ListenerArguments args) {
+    return new MutationHtmlReportListener(args.getCoverage(), args.getOutputStrategy(),
+        args.getLocator());
   }
 
-  public MutationResultListener getListener(final CoverageDatabase coverage,
-      final long startTime, final SourceLocator locator) {
-    return new MutationHtmlReportListener(coverage, this.outputStrategy,
-        locator);
+  public String name() {
+    return "HTML";
   }
-
-  public static F<ResultOutputStrategy, ListenerFactory> createFactoryFunction() {
-    return new F<ResultOutputStrategy, ListenerFactory>() {
-
-      public ListenerFactory apply(final ResultOutputStrategy outputStrategy) {
-        return new HtmlReportFactory(outputStrategy);
-      }
-
-    };
-  }
-
 }

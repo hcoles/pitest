@@ -148,9 +148,11 @@ public class MutationCoverage {
 
     staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
 
+    final ListenerArguments args = new ListenerArguments(strategies.output(), coverageData, 
+        new SmartSourceLocator(this.data.getSourceDirs()), t0);
+    
     final MutationResultListener mutationReportListener = this.strategies
-        .listenerFactory().getListener(coverageData, t0,
-            new SmartSourceLocator(this.data.getSourceDirs()));
+        .listenerFactory().getListener(args);
 
     staticConfig.addTestListener(MutationResultAdapter
         .adapt(mutationReportListener));

@@ -9,11 +9,10 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
-import org.pitest.mutationtest.CompoundListenerFactory;
+import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationStrategies;
@@ -25,7 +24,6 @@ import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
-import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.util.JavaAgent;
 
@@ -56,10 +54,8 @@ public class EntryPoint {
 
     final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 
-    final CompoundListenerFactory reportFactory = new CompoundListenerFactory(
-        FCollection.map(data.getOutputFormats(),
-            OutputFormat.createFactoryForFormat(reportOutput)));
-
+    final ListenerFactory reportFactory = settings.createListener();
+        
     final CoverageOptions coverageOptions = data.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
     final MutationClassPaths cps = data.getMutationClassPaths();
@@ -75,7 +71,7 @@ public class EntryPoint {
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory);
+        settings.createEngine(), history, coverageDatabase, reportFactory, reportOutput);
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, timings);
@@ -90,5 +86,7 @@ public class EntryPoint {
       historyWriter.close();
     }
   }
+  
+
 
 }

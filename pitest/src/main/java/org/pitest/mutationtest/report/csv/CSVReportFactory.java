@@ -14,34 +14,18 @@
  */
 package org.pitest.mutationtest.report.csv;
 
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
+import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.mutationtest.report.SourceLocator;
 
 public class CSVReportFactory implements ListenerFactory {
 
-  private final ResultOutputStrategy outputStrategy;
-
-  public CSVReportFactory(final ResultOutputStrategy outputStrategy) {
-    this.outputStrategy = outputStrategy;
+  public MutationResultListener getListener(ListenerArguments args) {
+    return new CSVReportListener(args.getOutputStrategy());
   }
 
-  public MutationResultListener getListener(final CoverageDatabase coverage,
-      final long startTime, final SourceLocator locator) {
-    return new CSVReportListener(this.outputStrategy);
-  }
-
-  public static F<ResultOutputStrategy, ListenerFactory> createFactoryFunction() {
-    return new F<ResultOutputStrategy, ListenerFactory>() {
-
-      public ListenerFactory apply(final ResultOutputStrategy outputStrategy) {
-        return new CSVReportFactory(outputStrategy);
-      }
-
-    };
+  public String name() {
+    return "CSV";
   }
 
 }

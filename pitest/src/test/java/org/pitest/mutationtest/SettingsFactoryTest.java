@@ -1,6 +1,9 @@
 package org.pitest.mutationtest;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,5 +38,22 @@ public class SettingsFactoryTest {
     this.options.setMutationEngine("unknown");
     this.testee.createEngine();
   }
+  
+  @Test
+  public void shouldReturnListenerWhenRequestedListenerIsKnown() {
+    this.options.addOutputFormats(Arrays.asList("XML"));
+    assertNotNull(this.testee.createListener());
+  }
 
+  @Test
+  public void shouldSupportXMLCSVAndHTML() {
+    this.options.addOutputFormats(Arrays.asList("CSV","XML", "HTML"));
+    assertNotNull(this.testee.createListener());
+  }
+  
+  @Test(expected = PitError.class)
+  public void shouldThrowErrorWhenRequestedListenerNotKnown() {
+    this.options.addOutputFormats(Arrays.asList("unknown"));
+    this.testee.createListener();
+  }
 }

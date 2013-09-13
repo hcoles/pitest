@@ -26,7 +26,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.engine.gregor.Mutator;
-import org.pitest.mutationtest.report.OutputFormat;
 import org.pitest.util.Unchecked;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
@@ -193,7 +192,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testDefaultsToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseConfig("");
-    assertEquals(new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML)),
+    assertEquals(new HashSet<String>(Arrays.asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -204,8 +203,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                  </outputFormats>";
     final ReportOptions actual = parseConfig(xml);
     assertEquals(
-        new HashSet<OutputFormat>(Arrays.asList(OutputFormat.HTML,
-            OutputFormat.CSV)), actual.getOutputFormats());
+        new HashSet<String>(Arrays.asList("HTML",
+            "CSV")), actual.getOutputFormats());
   }
 
   public void testObeysFailWhenNoMutationsFlagWhenPackagingTypeIsNotPOM() {
