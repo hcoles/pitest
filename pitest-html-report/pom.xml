@@ -8,10 +8,10 @@
 		<groupId>org.pitest</groupId>
 		<version>0.32-SNAPSHOT</version>
 	</parent>
-	<artifactId>pitest-command-line</artifactId>
-	<name>pitest-command-line</name>
+	<artifactId>pitest-html-report</artifactId>
+	<name>pitest-html-report</name>
 	<url>http://pitest.org</url>
-	<description>Pitest command line tool.</description>
+	<description>Pitest html report plugin.</description>
 
 	<build>
 		<plugins>
@@ -41,14 +41,24 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>net.sf.jopt-simple:*</include>
-									<include>org.pitest:pitest-html-report</include>
+									<include>org.antlr:*</include>
+									<include>antlr:*</include>
 								</includes>
 							</artifactSet>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 							</transformers>
+							<relocations>
+								<relocation>
+									<pattern>org.antlr</pattern>
+									<shadedPattern>org.pitest.reloc.antlr</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>antlr</pattern>
+									<shadedPattern>org.pitest.reloc.antlr.common</shadedPattern>
+								</relocation>
+							</relocations>
 						</configuration>
 					</execution>
 				</executions>
@@ -66,15 +76,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.pitest</groupId>
-			<artifactId>pitest-html-report</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.antlr</groupId>
+			<artifactId>stringtemplate</artifactId>
+			<version>3.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.jopt-simple</groupId>
-			<artifactId>jopt-simple</artifactId>
-			<version>4.3</version>
+			<groupId>org.pitest</groupId>
+			<artifactId>pitest</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
+
 
 	</dependencies>
 

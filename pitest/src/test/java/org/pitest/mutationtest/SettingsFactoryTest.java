@@ -46,8 +46,8 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  public void shouldSupportXMLCSVAndHTML() {
-    this.options.addOutputFormats(Arrays.asList("CSV","XML", "HTML"));
+  public void shouldSupportXMLAndCSV() {
+    this.options.addOutputFormats(Arrays.asList("CSV","XML"));
     assertNotNull(this.testee.createListener());
   }
   

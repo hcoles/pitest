@@ -1,3 +1,2 @@
 org.pitest.mutationtest.report.csv.CSVReportFactory
-org.pitest.mutationtest.report.html.HtmlReportFactory
 org.pitest.mutationtest.report.xml.XMLReportFactory
