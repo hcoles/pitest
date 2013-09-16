@@ -28,7 +28,7 @@ import org.pitest.boot.CodeCoverageStore;
 /**
  * Instruments a class with probes on each line
  */
-public class CoverageClassVisitor extends MethodFilteringAdapter {
+public class CoverageClassVisitor extends MethodFilteringAdapter implements LineTracker {
   private final int           classId;
 
   /**
@@ -41,9 +41,8 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     this.classId = classId;
   }
 
-  int registerLine(final int line) {
+  public void registerLine(final int line) {
     this.probesToLines.add(line);
-    return this.probesToLines.size() - 1;
   }
 
   @Override

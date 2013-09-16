@@ -12,18 +12,19 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class CoverageAnalyser extends MethodNode {
 
-  private final CoverageClassVisitor cv;
+  private static final int MAX_SUPPORTED_LOCAL_PROBES = 15;
+  private final LineTracker lineTracker;
   private final int                  classId;
   private final MethodVisitor        mv;
   private final int                  probeOffset;
 
-  public CoverageAnalyser(final CoverageClassVisitor cv, final int classId,
+  public CoverageAnalyser(final LineTracker lineTracker, final int classId,
       final int probeOffset, final MethodVisitor mv, final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
     super(access, name, desc, signature, exceptions);
     this.mv = mv;
-    this.cv = cv;
+    this.lineTracker = lineTracker;
     this.classId = classId;
     this.probeOffset = probeOffset;
   }
@@ -32,12 +33,12 @@ public class CoverageAnalyser extends MethodNode {
   public void visitEnd() {
     final int nuberOfProbes = countRequiredProbes();
 
-    if ((nuberOfProbes <= 15) && (nuberOfProbes >= 1)) {
-      accept(new LocalVariableCoverageMethodVisitor(this.cv, this.classId,
+    if ((nuberOfProbes <= MAX_SUPPORTED_LOCAL_PROBES) && (nuberOfProbes >= 1)) {
+      accept(new LocalVariableCoverageMethodVisitor(this.lineTracker, this.classId,
           this.mv, this.access, this.name, this.desc, nuberOfProbes,
           this.probeOffset));
     } else {
-      accept(new CoverageMethodVisitor(this.cv, this.classId, this.mv,
+      accept(new CoverageMethodVisitor(this.lineTracker, this.classId, this.mv,
           this.access, this.name, this.desc, nuberOfProbes, this.probeOffset));
     }
 

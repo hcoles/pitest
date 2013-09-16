@@ -47,7 +47,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
   private final MethodVisitor        methodVisitor;
   private final int                  classId;
   private final int                  numberOfProbes;
-  private final CoverageClassVisitor cv;
+  private final LineTracker          lineTracker;
   private final int                  probeOffset;
   /**
    * label to mark start of try finally block that is added to each method
@@ -63,7 +63,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
   // private int probeArrayLocal;
   private int                        probeHitArrayLocal;
 
-  public CoverageMethodVisitor(final CoverageClassVisitor cv,
+  public CoverageMethodVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,
       final String name, final String desc, final int numberOfLines,
       final int probeOffset) {
@@ -71,7 +71,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
 
     this.methodVisitor = writer;
     this.classId = classId;
-    this.cv = cv;
+    this.lineTracker = lineTracker;
     this.numberOfProbes = numberOfLines;
     this.probeOffset = probeOffset;
   }
@@ -122,8 +122,8 @@ public class CoverageMethodVisitor extends AdviceAdapter {
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
-    // get probe id - unique within parent class
-    this.cv.registerLine(line);
+
+    this.lineTracker.registerLine(line);
 
     this.mv.visitVarInsn(ALOAD, this.probeHitArrayLocal);
     pushConstant(this.probeCount);
