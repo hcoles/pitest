@@ -25,3 +25,4 @@ syntax: regexp
 ^pitest-maven-verification/target$
 syntax: glob
 */target/*
+Foo

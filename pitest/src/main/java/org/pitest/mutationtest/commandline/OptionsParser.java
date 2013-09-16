@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
+import static org.pitest.mutationtest.config.ConfigOption.*;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
@@ -102,6 +102,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
   private final OptionSpec<String>                   mutationEngine;
+  private final  ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
 
   public OptionsParser() {
     this.parser = new OptionParser();
@@ -207,6 +208,10 @@ public class OptionsParser {
     this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
         .ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether or not to generate verbose output");
+    
+    this.exportLineCoverageSpec = parserAccepts(EXPORT_LINE_COVERAGE).withOptionalArg()
+        .ofType(Boolean.class).defaultsTo(true)
+        .describedAs("whether or not to dump per test line coverage data to disk");
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
@@ -337,6 +342,9 @@ public class OptionsParser {
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
+    
+    data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)
+        && userArgs.valueOf(this.exportLineCoverageSpec));
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);

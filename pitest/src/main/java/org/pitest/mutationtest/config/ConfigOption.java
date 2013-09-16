@@ -151,7 +151,12 @@ public enum ConfigOption {
   /**
    * Mutation engine to use
    */
-  MUTATION_ENGINE("mutationEngine", "gregor");
+  MUTATION_ENGINE("mutationEngine", "gregor"),
+  
+  /**
+   * Dump per test line coverage to disk
+   */
+  EXPORT_LINE_COVERAGE("exportLineCoverage", false);
 
   private final String text;
   private final Object defaultValue;

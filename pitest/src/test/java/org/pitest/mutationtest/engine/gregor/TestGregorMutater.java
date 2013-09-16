@@ -370,6 +370,7 @@ public class TestGregorMutater extends MutatorTestBase {
     assertFalse(actualDetails.get(0).getId().equals(actualDetails.get(1).getId()));
   }
 
+  
   private static F<MutationDetails, Boolean> isInFinallyBlock() {
     return new F<MutationDetails, Boolean>() {
       public Boolean apply(final MutationDetails a) {

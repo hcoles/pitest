@@ -356,7 +356,18 @@ public class OptionsParserTest {
         "foo");
     assertEquals("foo", actual.getMutationEngine());
   }
+  
+  @Test
+  public void shouldParseExportLineCoverageFlag() {
+    final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage");
+    assertTrue(actual.shouldExportLineCoverage());
+  }
 
+  @Test
+  public void shouldNotExportLineCoverageWhenFlagNotSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertFalse(actual.shouldExportLineCoverage());
+  }
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();
