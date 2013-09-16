@@ -22,7 +22,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Path;
-import org.pitest.mutationtest.MutationCoverageReport;
+import org.pitest.mutationtest.commandline.MutationCoverageReport;
 import org.pitest.mutationtest.config.ConfigOption;
 
 public class PitestTask extends Task { // NO_UCD (test only)

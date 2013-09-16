@@ -24,13 +24,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.FileUtils;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.Test;
-import org.pitest.mutationtest.MutationCoverageReport;
 import org.pitest.util.FileUtil;
 
 /**
@@ -38,8 +39,7 @@ import org.pitest.util.FileUtil;
  */
 public class PitMojoIT {
 
-  private final String version = MutationCoverageReport.class.getPackage()
-                                   .getImplementationVersion();
+  private final String version = getVersion();
 
   private Verifier     verifier;
 
@@ -60,40 +60,37 @@ public class PitMojoIT {
     final String secondRun = readCoverage(testDir);
     assertEquals(firstRun, secondRun);
   }
-  
+
   @Test
-  public void shouldWorkWithPowerMock()  throws Exception  {
+  public void shouldWorkWithPowerMock() throws Exception {
     final File testDir = prepare("/pit-powermock");
     this.verifier.executeGoal("test");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
     final String actual = readResults(testDir);
-    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>")); 
-    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>")); 
-    assertThat(actual, containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>")); 
+    assertThat(
+        actual,
+        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>"));
+    assertThat(
+        actual,
+        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>"));
+    assertThat(
+        actual,
+        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>"));
     assertThat(actual, not(containsString("status='RUN_ERROR'")));
   }
 
-  private String readResults(File testDir) throws FileNotFoundException, IOException {
-    File coverage = new File(testDir
-        .getAbsoluteFile()
-        + File.separator
-        + "target"
-        + File.separator
-        + "pit-reports"
-        + File.separator
+  private String readResults(File testDir) throws FileNotFoundException,
+      IOException {
+    File coverage = new File(testDir.getAbsoluteFile() + File.separator
+        + "target" + File.separator + "pit-reports" + File.separator
         + "mutations.xml");
     return FileUtil.readToString(new FileInputStream(coverage));
   }
 
   private String readCoverage(final File testDir) throws IOException,
       FileNotFoundException {
-    File coverage = new File(testDir
-        .getAbsoluteFile()
-        + File.separator
-        + "target"
-        + File.separator
-        + "pit-reports"
-        + File.separator
+    File coverage = new File(testDir.getAbsoluteFile() + File.separator
+        + "target" + File.separator + "pit-reports" + File.separator
         + "linecoverage.xml");
     return FileUtil.readToString(new FileInputStream(coverage));
   }
@@ -116,6 +113,19 @@ public class PitMojoIT {
     this.verifier.getCliOptions().add("-Dpit.version=" + this.version);
 
     return testDir;
+  }
+
+  private static String getVersion() {
+    String path = "/version.prop";
+    InputStream stream = Pitest.class.getResourceAsStream(path);
+    Properties props = new Properties();
+    try {
+      props.load(stream);
+      stream.close();
+      return (String) props.get("version");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

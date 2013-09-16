@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.pitest.mutationtest.MutationCoverageReport;
+import org.pitest.mutationtest.commandline.MutationCoverageReport;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PitestTaskTest {

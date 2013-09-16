@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>org.pitest</groupId>
-            <artifactId>pitest</artifactId>
+            <artifactId>pitest-command-line</artifactId>
             <version>${project.version}</version>
         </dependency>
 
