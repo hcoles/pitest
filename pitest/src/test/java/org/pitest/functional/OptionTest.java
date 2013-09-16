@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.PitError;
 
 public class OptionTest {
 
@@ -83,7 +82,7 @@ public class OptionTest {
     assertEquals(FOO, Option.some(FOO).value());
   }
 
-  @Test(expected = PitError.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void shouldThrowErrorIfTryToRetrieveValueWhenWeHaveNone() {
     Option.none().value();
   }

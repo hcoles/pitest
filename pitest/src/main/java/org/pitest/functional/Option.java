@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.pitest.PitError;
-
 public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -93,7 +91,7 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
     @Override
     public T value() {
-      throw new PitError("Tried to retrieve value but had None.");
+      throw new UnsupportedOperationException("Tried to retrieve value but had None.");
     }
 
     @Override
