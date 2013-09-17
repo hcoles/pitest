@@ -275,13 +275,13 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected Option<MutationStatistics> analyse() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this, new DependencyFilter()).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
   }
 
   protected File detectBaseDir() {
     // execution project doesn't seem to always be available.
-    // possbily a maven 2 vs maven 3 issue?
+    // possibily a maven 2 vs maven 3 issue?
     final MavenProject executionProject = this.project.getExecutionProject();
     if (executionProject == null) {
       return null;

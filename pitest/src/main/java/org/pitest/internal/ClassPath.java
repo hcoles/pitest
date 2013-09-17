@@ -147,7 +147,7 @@ public class ClassPath implements Iterable<ClassPathRoot> {
   }
 
   /** FIXME move somewhere common */
-  private static String[] getClassPathElements() {
+  public static String[] getClassPathElements() {
     final String classPath = System.getProperty("java.class.path");
     final String separator = File.pathSeparator;
     if (classPath != null) {

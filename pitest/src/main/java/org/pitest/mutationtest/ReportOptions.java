@@ -365,25 +365,6 @@ public class ReportOptions {
     this.failWhenNoMutations = failWhenNoMutations;
   }
 
-  public void addClassPathElements(
-      final List<String> additionalClassPathElements) {
-    final List<String> elements = new ArrayList<String>();
-    FCollection.mapTo(ClassPath.getClassPathElementsAsFiles(), fileToString(),
-        elements);
-    elements.addAll(additionalClassPathElements);
-    setClassPathElements(elements);
-  }
-
-  private static F<File, String> fileToString() {
-    return new F<File, String>() {
-
-      public String apply(final File a) {
-        return a.getAbsolutePath();
-      }
-
-    };
-  }
-
   @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),

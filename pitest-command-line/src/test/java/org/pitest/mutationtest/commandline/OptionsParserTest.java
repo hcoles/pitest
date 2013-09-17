@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
@@ -37,10 +40,16 @@ import org.pitest.mutationtest.engine.gregor.Mutator;
 public class OptionsParserTest {
 
   private OptionsParser testee;
+  
+  @Mock
+  private Predicate<String> filter;
+  
 
   @Before
   public void setUp() {
-    this.testee = new OptionsParser();
+    MockitoAnnotations.initMocks(this);
+    when(filter.apply(any(String.class))).thenReturn(true);
+    this.testee = new OptionsParser(filter);
   }
 
   @Test

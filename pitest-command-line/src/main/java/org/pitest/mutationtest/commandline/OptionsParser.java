@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import static org.pitest.mutationtest.config.ConfigOption.*;
+import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
@@ -22,6 +22,7 @@ import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.EXPORT_LINE_COVERAGE;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
@@ -47,7 +48,9 @@ import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionException;
@@ -56,7 +59,10 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
+import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
+import org.pitest.internal.ClassPath;
 import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
@@ -70,6 +76,8 @@ import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
 public class OptionsParser {
+  
+  private final Predicate<String> dependencyFilter;
 
   private final OptionParser                         parser;
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
@@ -90,7 +98,7 @@ public class OptionsParser {
   private final OptionSpec<Integer>                  maxMutationsPerClassSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
-  private final OptionSpec<String>             outputFormatSpec;
+  private final OptionSpec<String>                   outputFormatSpec;
   private final OptionSpec<String>                   projectFileSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
@@ -102,9 +110,12 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
   private final OptionSpec<String>                   mutationEngine;
-  private final  ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
+  private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
 
-  public OptionsParser() {
+  public OptionsParser(Predicate<String> dependencyFilter) {
+    
+    this.dependencyFilter = dependencyFilter;
+    
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
@@ -208,10 +219,13 @@ public class OptionsParser {
     this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
         .ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether or not to generate verbose output");
-    
-    this.exportLineCoverageSpec = parserAccepts(EXPORT_LINE_COVERAGE).withOptionalArg()
-        .ofType(Boolean.class).defaultsTo(true)
-        .describedAs("whether or not to dump per test line coverage data to disk");
+
+    this.exportLineCoverageSpec = parserAccepts(EXPORT_LINE_COVERAGE)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(true)
+        .describedAs(
+            "whether or not to dump per test line coverage data to disk");
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
@@ -342,7 +356,7 @@ public class OptionsParser {
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
-    
+
     data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)
         && userArgs.valueOf(this.exportLineCoverageSpec));
 
@@ -357,7 +371,11 @@ public class OptionsParser {
   }
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
-    data.addClassPathElements(userArgs.valuesOf(this.additionalClassPathSpec));
+    
+    final List<String> elements = new ArrayList<String>();
+    elements.addAll(FArray.filter(ClassPath.getClassPathElements(), dependencyFilter));
+    elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
+    data.setClassPathElements(elements);
   }
 
   private void setTestConfiguration(final OptionSet userArgs,

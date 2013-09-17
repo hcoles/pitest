@@ -27,8 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,6 +47,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
+import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.internal.classloader.ClassPathRoot;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -262,7 +265,12 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
       this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
-      this.data.addClassPathElements(Arrays.asList(location));
+      
+      List<String> cp = new ArrayList<String>();
+      cp.addAll(Arrays.asList(ClassPath.getClassPathElements()));
+      cp.add(location);
+      
+      this.data.setClassPathElements(cp);
       this.data.setDependencyAnalysisMaxDistance(-1);
       this.data.setExcludedClasses(predicateFor("*Power*", "*JMockit*"));
       createAndRun();

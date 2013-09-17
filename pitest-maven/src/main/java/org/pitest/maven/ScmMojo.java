@@ -98,7 +98,7 @@ public class ScmMojo extends PitMojo {
 
     logClassNames();
     defaultTargetTestsToGroupNameIfNoValueSet();
-    final ReportOptions data = new MojoToReportOptionsConverter(this).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this, new DependencyFilter()).convert();
     data.setFailWhenNoMutations(false);
 
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));

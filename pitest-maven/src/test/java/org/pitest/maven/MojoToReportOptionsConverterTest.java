@@ -20,7 +20,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
+import org.mockito.Mockito;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
@@ -278,7 +280,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     try {
       final String pom = createPomWithConfiguration(xml);
       final PitMojo mojo = createPITMojo(pom);
-      this.testee = new MojoToReportOptionsConverter(mojo);
+      @SuppressWarnings("unchecked")
+      Predicate<Artifact> filter = Mockito.mock(Predicate.class);
+      this.testee = new MojoToReportOptionsConverter(mojo, filter);
       final ReportOptions actual = this.testee.convert();
       return actual;
     } catch (final Exception ex) {

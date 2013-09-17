@@ -36,9 +36,11 @@ import org.pitest.util.Log;
 public class MojoToReportOptionsConverter {
 
   private final PitMojo mojo;
+  private final Predicate<Artifact> dependencyFilter;
 
-  public MojoToReportOptionsConverter(final PitMojo mojo) {
+  public MojoToReportOptionsConverter(final PitMojo mojo, Predicate<Artifact> dependencyFilter) {
     this.mojo = mojo;
+    this.dependencyFilter = dependencyFilter;
   }
 
   @SuppressWarnings("unchecked")
@@ -152,9 +154,8 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<Artifact> filteredDependencies() {
-    final DependencyFilter filter = new DependencyFilter("org.pitest");
     return FCollection
-        .filter(this.mojo.getPluginArtifactMap().values(), filter);
+        .filter(this.mojo.getPluginArtifactMap().values(), dependencyFilter);
   }
 
   private Collection<String> determineMutators() {

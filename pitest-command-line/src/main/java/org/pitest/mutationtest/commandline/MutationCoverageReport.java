@@ -27,7 +27,7 @@ public class MutationCoverageReport {
 
   public static void main(final String args[]) {
 
-    final OptionsParser parser = new OptionsParser();
+    final OptionsParser parser = new OptionsParser(new PluginFilter());
     final ParseResult pr = parser.parse(args);
 
     if (!pr.isOk()) {
@@ -35,6 +35,7 @@ public class MutationCoverageReport {
       System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
       final ReportOptions data = pr.getOptions();
+      
       final MutationStatistics stats = runReport(data);
       throwErrorIfScoreBelowThreshold(stats, data.getMutationThreshold());
     }
