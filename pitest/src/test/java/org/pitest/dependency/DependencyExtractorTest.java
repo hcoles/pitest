@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
-import org.pitest.internal.ClassPathByteArraySource;
 
 public class DependencyExtractorTest {
 

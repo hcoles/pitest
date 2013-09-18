@@ -30,10 +30,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.classloader.ClassPathRoot;
 
 public class ClassPathTest {
 

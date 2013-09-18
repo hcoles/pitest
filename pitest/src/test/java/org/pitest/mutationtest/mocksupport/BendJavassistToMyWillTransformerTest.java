@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 public class BendJavassistToMyWillTransformerTest {

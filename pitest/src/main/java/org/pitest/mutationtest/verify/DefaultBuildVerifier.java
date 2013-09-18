@@ -18,7 +18,7 @@ package org.pitest.mutationtest.verify;
 import java.util.Collection;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.CodeSource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;

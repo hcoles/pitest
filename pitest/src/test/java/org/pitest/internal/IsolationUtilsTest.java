@@ -4,7 +4,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.classpath.ClassLoaderDetectionStrategy;
+import org.pitest.classpath.ClassPath;
+import org.pitest.mutationtest.execute.DefaultPITClassloader;
 
 public class IsolationUtilsTest {
 

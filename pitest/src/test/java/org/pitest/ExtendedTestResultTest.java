@@ -17,6 +17,7 @@ package org.pitest;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.functional.Option;
 
 public class ExtendedTestResultTest {

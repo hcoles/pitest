@@ -22,10 +22,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.testng.TestGroupConfig;
 

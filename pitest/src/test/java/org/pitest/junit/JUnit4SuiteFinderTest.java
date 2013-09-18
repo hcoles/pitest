@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.pitest.internal.TestClass;
+import org.pitest.extension.TestClass;
 
 public class JUnit4SuiteFinderTest {
 

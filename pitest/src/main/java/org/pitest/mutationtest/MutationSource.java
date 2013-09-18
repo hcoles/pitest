@@ -19,12 +19,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
-import org.pitest.internal.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;

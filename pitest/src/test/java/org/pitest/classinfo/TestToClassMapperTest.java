@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassByteArraySource;
 
 public class TestToClassMapperTest {
 

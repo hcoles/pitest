@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import org.pitest.classpath.ClassLoaderDetectionStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;

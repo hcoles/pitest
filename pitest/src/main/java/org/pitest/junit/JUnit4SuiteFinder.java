@@ -21,9 +21,9 @@ import java.util.List;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.pitest.extension.TestClass;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.TestClass;
 
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 

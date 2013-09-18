@@ -15,8 +15,8 @@
 package org.pitest.mutationtest;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.ClassPath;
 
 public class MutationClassPaths {
 

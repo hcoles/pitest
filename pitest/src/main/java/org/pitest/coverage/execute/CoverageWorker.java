@@ -21,11 +21,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.pitest.DefaultStaticConfig;
-import org.pitest.Pitest;
-import org.pitest.containers.UnContainer;
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.extension.Container;
+import org.pitest.execute.Container;
+import org.pitest.execute.DefaultStaticConfig;
+import org.pitest.execute.Pitest;
+import org.pitest.execute.containers.UnContainer;
 import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 

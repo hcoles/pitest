@@ -17,13 +17,12 @@ package org.pitest.mutationtest.config;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.common.CompoundConfiguration;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.ClassByteArraySource;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;

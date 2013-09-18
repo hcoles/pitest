@@ -9,9 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.boot.CodeCoverageStore;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.codeassist.CoverageClassVisitor;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.util.ComputeClassWriter;
 
 public class CoverageTransformer implements ClassFileTransformer {

@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.pitest.classpath.ClassPath;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ClassPath;
 
 public class JavaProcessTest {
 

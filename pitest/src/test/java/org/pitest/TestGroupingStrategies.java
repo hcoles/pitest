@@ -26,13 +26,15 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.execute.Container;
+import org.pitest.execute.DefaultStaticConfig;
+import org.pitest.execute.GroupPerClassStrategy;
+import org.pitest.execute.Pitest;
+import org.pitest.execute.ResultSource;
+import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.extension.Configuration;
-import org.pitest.extension.Container;
 import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.ResultSource;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.GroupPerClassStrategy;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 
 public class TestGroupingStrategies {

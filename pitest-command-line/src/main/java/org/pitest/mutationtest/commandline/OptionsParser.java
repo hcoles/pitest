@@ -59,11 +59,11 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
+import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPath;
-import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ConfigurationFactory;

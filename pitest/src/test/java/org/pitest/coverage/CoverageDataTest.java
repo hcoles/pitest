@@ -35,7 +35,7 @@ import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.CodeSource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.export.LineCoverage;

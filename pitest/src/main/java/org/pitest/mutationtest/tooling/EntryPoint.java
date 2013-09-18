@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.pitest.classinfo.CodeSource;
+import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassPathByteArraySource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassPath;
-import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ListenerFactory;
 import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;

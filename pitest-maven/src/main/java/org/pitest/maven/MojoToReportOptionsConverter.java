@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassPathByteArraySource;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.testng.TestGroupConfig;

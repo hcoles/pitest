@@ -6,11 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
+import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassPath;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.ClassPathRoot;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
 

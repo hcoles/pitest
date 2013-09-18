@@ -24,13 +24,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.CodeSource;
 import org.pitest.classinfo.Repository;
+import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.util.ResourceFolderByteArraySource;
 

@@ -17,7 +17,7 @@ package org.pitest.mutationtest;
 import java.util.Collection;
 import java.util.List;
 
-import org.pitest.internal.ClassByteArraySource;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 

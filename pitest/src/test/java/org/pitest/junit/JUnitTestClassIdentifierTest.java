@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
-import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 public class JUnitTestClassIdentifierTest {

@@ -32,6 +32,7 @@ import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.FileUtils;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.Test;
+import org.pitest.execute.Pitest;
 import org.pitest.util.FileUtil;
 
 /**

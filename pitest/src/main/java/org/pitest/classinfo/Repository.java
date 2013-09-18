@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassByteArraySource;
 
 public class Repository implements ClassInfoSource {
 

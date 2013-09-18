@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pitest.CompoundTestSuiteFinder;
 import org.pitest.extension.Configuration;
 import org.pitest.extension.TestClassIdentifier;
 import org.pitest.extension.TestSuiteFinder;
 import org.pitest.extension.TestUnitFinder;
+import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;

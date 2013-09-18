@@ -14,8 +14,8 @@
  */
 package org.pitest.internal;
 
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.classloader.ClassPathRoot;
 
 public class PathNamePredicate implements Predicate<ClassPathRoot> {
 

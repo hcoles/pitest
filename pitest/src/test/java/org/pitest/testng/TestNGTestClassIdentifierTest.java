@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.Repository;
-import org.pitest.internal.ClassloaderByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 import com.example.testng.AnnotatedAtClassLevel;

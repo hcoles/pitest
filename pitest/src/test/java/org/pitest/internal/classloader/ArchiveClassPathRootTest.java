@@ -27,6 +27,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.classpath.ArchiveClassPathRoot;
 
 public class ArchiveClassPathRootTest {
 

@@ -7,6 +7,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.coverage.execute.ResultType;
+import org.pitest.execute.DefaultResultClassifier;
 import org.pitest.testunit.TestUnitState;
 
 /**

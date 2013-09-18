@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.pitest.classpath.ClassPath;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ClassPath;
 
 public class DependencyClassVisitorTest {
 

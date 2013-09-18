@@ -16,7 +16,6 @@ package org.pitest.extension;
 
 import java.util.List;
 
-import org.pitest.internal.TestClass;
 
 public interface GroupingStrategy {
 

@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.TestClassIdentifier;
+import org.pitest.mutationtest.config.CompoundTestClassIdentifier;
 
 public class CompoundTestClassIdentifierTest {
 

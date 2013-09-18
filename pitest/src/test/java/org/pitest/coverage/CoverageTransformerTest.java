@@ -22,10 +22,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.boot.InvokeReceiver;
+import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.True;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 public class CoverageTransformerTest {

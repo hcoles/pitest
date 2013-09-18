@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.extension.TestUnit;
 
 public class UnGroupedStrategyTest {

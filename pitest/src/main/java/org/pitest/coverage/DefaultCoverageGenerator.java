@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.CodeSource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.CoverageProcess;
 import org.pitest.coverage.execute.CoverageResult;

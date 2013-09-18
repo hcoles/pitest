@@ -30,10 +30,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.codeassist.ClassUtils;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassByteArraySource;
-import org.pitest.internal.ClassloaderByteArraySource;
 import org.pitest.internal.IsolationUtils;
 
 public class RepositoryTest {

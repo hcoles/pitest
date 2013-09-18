@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.execute.MultipleTestGroup;
 import org.pitest.extension.ResultCollector;
 import org.pitest.extension.TestUnit;
 import org.pitest.internal.IsolationUtils;

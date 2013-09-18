@@ -33,12 +33,14 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.containers.UnContainer;
-import org.pitest.extension.Container;
-import org.pitest.extension.StaticConfiguration;
+import org.pitest.execute.Container;
+import org.pitest.execute.DefaultStaticConfig;
+import org.pitest.execute.Pitest;
+import org.pitest.execute.StaticConfiguration;
+import org.pitest.execute.UnGroupedStrategy;
+import org.pitest.execute.containers.UnContainer;
 import org.pitest.extension.TestListener;
 import org.pitest.extension.TestUnit;
-import org.pitest.extension.common.UnGroupedStrategy;
 import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 

@@ -32,13 +32,13 @@ import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.ClassByteArraySource;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 

@@ -17,8 +17,8 @@ package org.pitest.testng;
 import java.util.Collections;
 
 import org.pitest.PitError;
+import org.pitest.classpath.ClassLoaderDetectionStrategy;
 import org.pitest.extension.ResultCollector;
-import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
 import org.pitest.testunit.AbstractTestUnit;
 import org.testng.ITestListener;

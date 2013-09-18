@@ -18,7 +18,6 @@ package org.pitest.extension;
 import java.util.List;
 
 import org.pitest.functional.F;
-import org.pitest.internal.TestClass;
 
 public interface TestSuiteFinder extends F<TestClass, List<TestClass>> {
 

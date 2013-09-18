@@ -21,9 +21,9 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 
 import org.junit.Test;
+import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.Prelude;
-import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.internal.classloader.DirectoryClassPathRoot;
 
 public class PathNamePredicateTest {
 

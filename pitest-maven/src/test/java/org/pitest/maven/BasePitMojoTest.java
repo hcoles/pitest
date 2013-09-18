@@ -31,9 +31,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classpath.ClassPath;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.internal.ClassPath;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 

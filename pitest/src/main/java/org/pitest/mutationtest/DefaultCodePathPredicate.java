@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest;
 
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.classloader.ClassPathRoot;
 
 public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
 

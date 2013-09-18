@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import org.pitest.extension.CompoundTestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 

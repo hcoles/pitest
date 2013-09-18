@@ -33,8 +33,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassByteArraySource;
 
 public class JarCreatingJarFinderTest {
 

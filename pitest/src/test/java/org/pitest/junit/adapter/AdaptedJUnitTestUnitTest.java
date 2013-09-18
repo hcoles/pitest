@@ -25,9 +25,9 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classpath.ClassLoaderDetectionStrategy;
 import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Option;
-import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
 
 public class AdaptedJUnitTestUnitTest {

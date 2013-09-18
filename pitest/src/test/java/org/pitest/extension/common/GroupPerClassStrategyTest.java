@@ -26,7 +26,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
-import org.pitest.MultipleTestGroup;
+import org.pitest.execute.GroupPerClassStrategy;
+import org.pitest.execute.MultipleTestGroup;
 import org.pitest.extension.TestUnit;
 
 public class GroupPerClassStrategyTest {

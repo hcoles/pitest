@@ -21,9 +21,9 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.internal.classloader.ArchiveClassPathRoot;
-import org.pitest.internal.classloader.ClassPathRoot;
-import org.pitest.internal.classloader.DirectoryClassPathRoot;
+import org.pitest.classpath.ArchiveClassPathRoot;
+import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.DirectoryClassPathRoot;
 
 public class DefaultDependencyPathPredicateTest {
 

@@ -14,9 +14,9 @@
  */
 package org.pitest.simpletest;
 
-import org.pitest.internal.ClassPath;
+import org.pitest.classpath.ClassPath;
 import org.pitest.internal.IsolationUtils;
-import org.pitest.internal.classloader.DefaultPITClassloader;
+import org.pitest.mutationtest.execute.DefaultPITClassloader;
 
 public class TransformingClassLoader extends DefaultPITClassloader {
 

@@ -30,8 +30,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.Description;
 import org.pitest.PitError;
+import org.pitest.classpath.ClassLoaderDetectionStrategy;
 import org.pitest.extension.ResultCollector;
-import org.pitest.internal.ClassLoaderDetectionStrategy;
 import org.pitest.internal.IsolationUtils;
 
 import com.example.testng.Fails;

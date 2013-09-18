@@ -21,8 +21,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import org.pitest.classpath.ClassPath;
 import org.pitest.functional.SideEffect1;
-import org.pitest.internal.ClassPath;
 
 public final class ProcessArgs {
 
