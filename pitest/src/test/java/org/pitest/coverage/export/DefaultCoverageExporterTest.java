@@ -11,8 +11,8 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.instrument.ClassLine;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
+import org.pitest.coverage.ClassLine;
+import org.pitest.util.ResultOutputStrategy;
 
 public class DefaultCoverageExporterTest {
 

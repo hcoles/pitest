@@ -58,6 +58,7 @@ import org.pitest.testapi.TestUnit;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
+import org.pitest.util.Timings;
 
 public class MutationCoverage {
 

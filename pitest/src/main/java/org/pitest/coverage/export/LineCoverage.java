@@ -2,7 +2,7 @@ package org.pitest.coverage.export;
 
 import java.util.Collection;
 
-import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.coverage.ClassLine;
 
 public class LineCoverage {
 

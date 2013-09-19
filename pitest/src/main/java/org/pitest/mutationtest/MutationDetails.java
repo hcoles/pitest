@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.util.StringUtil;
 
 public class MutationDetails {

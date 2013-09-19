@@ -20,8 +20,8 @@ import java.io.Writer;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
 
 public class CSVReportListener implements MutationResultListener {

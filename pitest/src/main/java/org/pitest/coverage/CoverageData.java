@@ -38,7 +38,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.testapi.Description;
 import org.pitest.util.Log;
 

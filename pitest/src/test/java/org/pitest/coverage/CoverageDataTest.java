@@ -40,7 +40,6 @@ import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.coverage.export.LineCoverage;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.instrument.ClassLine;
 import org.pitest.testapi.Description;
 
 public class CoverageDataTest {

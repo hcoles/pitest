@@ -8,8 +8,8 @@ import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.util.PitError;
+import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.ServiceLoader;
 
 public class SettingsFactory {

@@ -69,6 +69,7 @@ import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Functions;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.Timings;
 
 import com.example.MutationsInNestedClasses;
 import com.example.MutationsInNestedClassesTest;
@@ -302,7 +303,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(102);
+    verifyLineNumbers(105);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,

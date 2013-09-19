@@ -62,6 +62,7 @@ import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
 import com.example.BeforeAfterClassTest;

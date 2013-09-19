@@ -38,11 +38,11 @@ import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.report.MutationTestSummaryData;
 import org.pitest.mutationtest.report.MutationTotals;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
+import org.pitest.util.ResultOutputStrategy;
 
 public class MutationHtmlReportListener implements MutationResultListener {
 

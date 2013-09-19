@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.execute.ExitingResultCollector;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 

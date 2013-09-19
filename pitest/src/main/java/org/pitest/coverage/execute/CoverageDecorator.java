@@ -19,8 +19,8 @@ import java.lang.management.ThreadMXBean;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageReceiver;
+import org.pitest.execute.ExitingResultCollector;
 import org.pitest.extension.common.TestUnitDecorator;
-import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.Log;

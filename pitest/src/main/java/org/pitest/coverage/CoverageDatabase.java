@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
-import org.pitest.mutationtest.instrument.ClassLine;
 
 public interface CoverageDatabase {
 

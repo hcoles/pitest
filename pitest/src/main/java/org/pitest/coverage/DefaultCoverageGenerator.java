@@ -36,12 +36,12 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.mutationtest.Timings;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {

@@ -14,7 +14,6 @@
  */
 package org.pitest.execute;
 
-import org.pitest.coverage.execute.ResultType;
 import org.pitest.testapi.TestResult;
 
 public interface ResultClassifier {

@@ -17,7 +17,6 @@ package org.pitest.execute;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.pitest.coverage.execute.ResultType;
 import org.pitest.testapi.TestResult;
 import org.pitest.util.PitError;
 

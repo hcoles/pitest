@@ -26,7 +26,6 @@ import org.pitest.execute.Container;
 import org.pitest.execute.DefaultStaticConfig;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.testapi.TestUnit;
 
 public class CoverageWorker implements Runnable {
@@ -49,11 +48,8 @@ public class CoverageWorker implements Runnable {
       Collections.sort(decoratedTests, testComparator());
 
       final Container c = new UnContainer();
-
-      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
-
       final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-      staticConfig.addTestListener(listener);
+
       staticConfig.addTestListener(new ErrorListener());
 
       final Pitest pit = new Pitest(staticConfig);

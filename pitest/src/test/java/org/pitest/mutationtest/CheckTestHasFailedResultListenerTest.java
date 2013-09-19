@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.DescriptionMother;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.execute.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;

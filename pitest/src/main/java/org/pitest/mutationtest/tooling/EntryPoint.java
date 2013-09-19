@@ -18,14 +18,14 @@ import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.SettingsFactory;
-import org.pitest.mutationtest.Timings;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.process.JavaAgent;
+import org.pitest.util.ResultOutputStrategy;
+import org.pitest.util.Timings;
 
 public class EntryPoint {
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.mutationtest.instrument;
+package org.pitest.coverage;
 
 import org.pitest.classinfo.ClassName;
 

@@ -48,9 +48,10 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.HistoryStore;
-import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.verify.BuildVerifier;
+import org.pitest.util.ResultOutputStrategy;
+import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
 public class MutationCoverageReportTest {
