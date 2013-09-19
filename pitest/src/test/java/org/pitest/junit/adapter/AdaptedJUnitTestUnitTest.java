@@ -25,10 +25,10 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.classpath.ClassLoaderDetectionStrategy;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.ClassLoaderDetectionStrategy;
+import org.pitest.util.IsolationUtils;
 
 public class AdaptedJUnitTestUnitTest {
 

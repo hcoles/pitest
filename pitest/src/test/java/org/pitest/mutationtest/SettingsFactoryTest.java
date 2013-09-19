@@ -7,9 +7,9 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.PitError;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
+import org.pitest.util.PitError;
 
 public class SettingsFactoryTest {
 

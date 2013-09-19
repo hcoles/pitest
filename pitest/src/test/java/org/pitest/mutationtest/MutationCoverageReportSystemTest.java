@@ -39,27 +39,29 @@ import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.PathFilter;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.Mutator;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.process.JavaAgent;
+import org.pitest.testapi.Configuration;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
-import org.pitest.util.JavaAgent;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
 
 import com.example.BeforeAfterClassTest;
@@ -401,7 +403,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
           new True<ClassPathRoot>());
-      final MutationClassPaths cps = new MutationClassPaths(
+      final ProjectClassPaths cps = new ProjectClassPaths(
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final Timings timings = new Timings();

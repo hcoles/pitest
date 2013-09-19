@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
@@ -42,6 +41,7 @@ import org.pitest.coverage.export.LineCoverage;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.testapi.Description;
 
 public class CoverageDataTest {
 

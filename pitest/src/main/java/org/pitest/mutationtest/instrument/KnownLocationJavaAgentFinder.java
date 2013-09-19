@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.instrument;
 
 import org.pitest.functional.Option;
-import org.pitest.util.JavaAgent;
+import org.pitest.process.JavaAgent;
 
 public class KnownLocationJavaAgentFinder implements JavaAgent {
 

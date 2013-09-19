@@ -12,26 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.extension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+package org.pitest.testapi;
 
-import org.junit.Test;
-import org.pitest.extension.TestClass;
-import org.pitest.internal.IsolationUtils;
+import java.util.List;
 
-public class TestClassTest {
+public interface TestUnitFinder {
 
-  @Test
-  public void shouldCloneViaXStreamWithoutError() throws Exception {
-    try {
-      final TestClass testee = new TestClass(TestClassTest.class);
-      final TestClass actual = (TestClass) IsolationUtils.clone(testee);
-      assertEquals(testee, actual);
-    } catch (final Throwable t) {
-      fail();
-    }
-  }
+  public List<TestUnit> findTestUnits(final Class<?> clazz);
 
 }

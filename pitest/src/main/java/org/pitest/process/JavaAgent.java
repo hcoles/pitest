@@ -12,20 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-
-package org.pitest.extension;
+package org.pitest.process;
 
 import org.pitest.functional.Option;
-import org.pitest.help.PitHelpError;
 
-public interface Configuration {
+public interface JavaAgent {
 
-  public TestUnitFinder testUnitFinder();
+  public Option<String> getJarLocation();
 
-  public TestSuiteFinder testSuiteFinder();
-
-  public TestClassIdentifier testClassIdentifier();
-
-  public Option<PitHelpError> verifyEnvironment();
+  public void close();
 
 }

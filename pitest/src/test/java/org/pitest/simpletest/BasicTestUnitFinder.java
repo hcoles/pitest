@@ -24,16 +24,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.Description;
-import org.pitest.PitError;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.reflection.Reflection;
 import org.pitest.simpletest.steps.CallStep;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
+import org.pitest.util.PitError;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 

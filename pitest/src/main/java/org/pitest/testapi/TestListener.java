@@ -12,8 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.testunit;
+package org.pitest.testapi;
 
-public enum TestUnitState {
-  STARTED, FINISHED, NOT_RUN;
+
+/**
+ * @author henry
+ * 
+ */
+public interface TestListener {
+
+  public void onRunStart();
+
+  public void onTestStart(Description d);
+
+  public void onTestFailure(TestResult tr);
+
+  public void onTestError(TestResult tr);
+
+  public void onTestSkipped(TestResult tr);
+
+  public void onTestSuccess(TestResult tr);
+
+  public void onRunEnd();
+
 }

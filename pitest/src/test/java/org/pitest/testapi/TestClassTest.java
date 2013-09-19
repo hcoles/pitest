@@ -12,14 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.util;
+package org.pitest.testapi;
 
-import org.pitest.functional.Option;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public interface JavaAgent {
+import org.junit.Test;
+import org.pitest.testapi.TestClass;
+import org.pitest.util.IsolationUtils;
 
-  public Option<String> getJarLocation();
+public class TestClassTest {
 
-  public void close();
+  @Test
+  public void shouldCloneViaXStreamWithoutError() throws Exception {
+    try {
+      final TestClass testee = new TestClass(TestClassTest.class);
+      final TestClass actual = (TestClass) IsolationUtils.clone(testee);
+      assertEquals(testee, actual);
+    } catch (final Throwable t) {
+      fail();
+    }
+  }
 
 }

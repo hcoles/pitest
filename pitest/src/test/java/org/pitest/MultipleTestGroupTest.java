@@ -26,9 +26,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.execute.MultipleTestGroup;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
+import org.pitest.util.IsolationUtils;
 
 public class MultipleTestGroupTest {
 

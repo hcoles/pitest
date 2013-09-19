@@ -14,7 +14,6 @@
  */
 package org.pitest.util;
 
-import org.pitest.PitError;
 
 public abstract class Unchecked {
 

@@ -25,7 +25,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DescriptionMother;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.ResultCollector;
 
 public class CustomRunnerExecutorTest {
 

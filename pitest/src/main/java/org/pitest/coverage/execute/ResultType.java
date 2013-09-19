@@ -14,10 +14,10 @@
  */
 package org.pitest.coverage.execute;
 
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.F;
 import org.pitest.functional.SideEffect1;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
 
 /**
  * @author henry

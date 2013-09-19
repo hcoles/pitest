@@ -20,7 +20,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.IsolationUtils;
 
 public abstract class Functions {
   private final static Logger LOG = Log.getLogger();

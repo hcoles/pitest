@@ -33,7 +33,6 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.instrument.MutationMetaData;
@@ -42,6 +41,7 @@ import org.pitest.mutationtest.report.MutationTotals;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.util.FileUtil;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
 public class MutationHtmlReportListener implements MutationResultListener {

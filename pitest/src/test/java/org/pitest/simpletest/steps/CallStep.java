@@ -17,11 +17,11 @@ package org.pitest.simpletest.steps;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.pitest.Description;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.simpletest.TestExecutionException;
 import org.pitest.simpletest.TestMethod;
 import org.pitest.simpletest.TestStep;
+import org.pitest.testapi.Description;
+import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry

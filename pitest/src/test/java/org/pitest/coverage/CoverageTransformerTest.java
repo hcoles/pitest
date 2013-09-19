@@ -26,7 +26,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.True;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 
 public class CoverageTransformerTest {
   

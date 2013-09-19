@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
 
 public class ExitingResultCollectorTest {
 

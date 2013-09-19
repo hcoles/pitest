@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Henry Coles
+ * Copyright 2011 Henry Coles
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -12,13 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.classpath;
 
-package org.pitest.extension;
+import org.pitest.functional.predicate.Predicate;
 
-import java.util.List;
+public class ClassFilter {
+  private final Predicate<String> test;
+  private final Predicate<String> code;
 
-import org.pitest.functional.F;
+  public ClassFilter(final Predicate<String> test, final Predicate<String> code) {
+    this.test = test;
+    this.code = code;
 
-public interface TestSuiteFinder extends F<TestClass, List<TestClass>> {
+  }
 
+  public Predicate<String> getTest() {
+    return this.test;
+  }
+
+  public Predicate<String> getCode() {
+    return this.code;
+  }
 }

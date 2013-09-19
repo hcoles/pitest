@@ -12,29 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.coverage.execute;
+package org.pitest.classpath;
 
-import java.util.List;
+import org.pitest.functional.predicate.Predicate;
 
-import org.pitest.process.JavaAgent;
+public class PathFilter {
 
-public class LaunchOptions {
+  private final Predicate<ClassPathRoot> codeFilter;
+  private final Predicate<ClassPathRoot> testFilter;
 
-  private final JavaAgent    javaAgentFinder;
-  private final List<String> childJVMArgs;
-
-  public LaunchOptions(final JavaAgent javaAgentFinder,
-      final List<String> childJVMArgs) {
-    this.javaAgentFinder = javaAgentFinder;
-    this.childJVMArgs = childJVMArgs;
+  public PathFilter(final Predicate<ClassPathRoot> codeFilter,
+      final Predicate<ClassPathRoot> testFilter) {
+    this.codeFilter = codeFilter;
+    this.testFilter = testFilter;
   }
 
-  public JavaAgent getJavaAgentFinder() {
-    return this.javaAgentFinder;
+  public Predicate<ClassPathRoot> getCodeFilter() {
+    return this.codeFilter;
   }
 
-  public List<String> getChildJVMArgs() {
-    return this.childJVMArgs;
+  public Predicate<ClassPathRoot> getTestFilter() {
+    return this.testFilter;
   }
 
 }

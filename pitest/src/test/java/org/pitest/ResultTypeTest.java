@@ -21,7 +21,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.execute.ResultType;
-import org.pitest.extension.TestListener;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
 
 public class ResultTypeTest {
 

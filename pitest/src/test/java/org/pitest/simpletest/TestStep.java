@@ -14,7 +14,7 @@
  */
 package org.pitest.simpletest;
 
-import org.pitest.Description;
+import org.pitest.testapi.Description;
 
 public interface TestStep {
 

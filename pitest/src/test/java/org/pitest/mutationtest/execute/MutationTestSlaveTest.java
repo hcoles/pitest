@@ -12,16 +12,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.PitError;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.testapi.Configuration;
 import org.pitest.util.ExitCode;
+import org.pitest.util.PitError;
 import org.pitest.util.SafeDataInputStream;
 
 public class MutationTestSlaveTest {

@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.pitest.Description;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.testapi.Description;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;
 

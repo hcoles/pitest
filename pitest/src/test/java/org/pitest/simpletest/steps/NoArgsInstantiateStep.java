@@ -16,10 +16,10 @@ package org.pitest.simpletest.steps;
 
 import java.lang.reflect.Modifier;
 
-import org.pitest.Description;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.simpletest.CanNotCreateTestClassException;
 import org.pitest.simpletest.TestStep;
+import org.pitest.testapi.Description;
+import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry

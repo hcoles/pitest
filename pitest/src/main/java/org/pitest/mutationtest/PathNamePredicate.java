@@ -17,23 +17,26 @@ package org.pitest.mutationtest;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.predicate.Predicate;
 
-public class PathFilter {
+public class PathNamePredicate implements Predicate<ClassPathRoot> {
 
-  private final Predicate<ClassPathRoot> codeFilter;
-  private final Predicate<ClassPathRoot> testFilter;
+  private final Predicate<String> stringFilter;
 
-  PathFilter(final Predicate<ClassPathRoot> codeFilter,
-      final Predicate<ClassPathRoot> testFilter) {
-    this.codeFilter = codeFilter;
-    this.testFilter = testFilter;
+  public PathNamePredicate(final Predicate<String> stringFilter) {
+    this.stringFilter = stringFilter;
   }
 
-  public Predicate<ClassPathRoot> getCodeFilter() {
-    return this.codeFilter;
+  public Boolean apply(final ClassPathRoot classPathRoot) {
+    return cacheLocationOptionExists(classPathRoot)
+        && cacheLocationMatchesFilter(classPathRoot);
   }
 
-  public Predicate<ClassPathRoot> getTestFilter() {
-    return this.testFilter;
+  private Boolean cacheLocationMatchesFilter(final ClassPathRoot classPathRoot) {
+    final String cacheLocationValue = classPathRoot.cacheLocation().value();
+    return this.stringFilter.apply(cacheLocationValue);
+  }
+
+  private boolean cacheLocationOptionExists(final ClassPathRoot a) {
+    return a.cacheLocation().hasSome();
   }
 
 }

@@ -12,19 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.classpath;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
 
-public class MutationClassPaths {
+public class ProjectClassPaths {
 
   private final ClassPath   classPath;
   private final ClassFilter classFilter;
   private final PathFilter  pathFilter;
 
-  public MutationClassPaths(final ClassPath classPath,
+  public ProjectClassPaths(final ClassPath classPath,
       final ClassFilter classFilter, final PathFilter pathFilter) {
     this.classPath = classPath;
     this.classFilter = classFilter;

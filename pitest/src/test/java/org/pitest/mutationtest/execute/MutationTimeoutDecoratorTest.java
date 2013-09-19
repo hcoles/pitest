@@ -26,10 +26,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 public class MutationTimeoutDecoratorTest {
 

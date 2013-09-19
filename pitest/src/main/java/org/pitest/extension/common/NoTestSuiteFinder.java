@@ -3,8 +3,8 @@ package org.pitest.extension.common;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.extension.TestClass;
-import org.pitest.extension.TestSuiteFinder;
+import org.pitest.testapi.TestClass;
+import org.pitest.testapi.TestSuiteFinder;
 
 public class NoTestSuiteFinder implements TestSuiteFinder {
 

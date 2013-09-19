@@ -20,11 +20,11 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 import org.pitest.util.Unchecked;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {

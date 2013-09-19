@@ -17,15 +17,15 @@ package org.pitest.junit.adapter;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.ResultCollector;
 
 public class CustomRunnerExecutor {
 
-  private final org.pitest.Description description;
+  private final org.pitest.testapi.Description description;
   private final Runner                 runner;
   private final ResultCollector        rc;
 
-  public CustomRunnerExecutor(final org.pitest.Description description,
+  public CustomRunnerExecutor(final org.pitest.testapi.Description description,
       final Runner runner, final ResultCollector rc) {
     this.runner = runner;
     this.rc = rc;

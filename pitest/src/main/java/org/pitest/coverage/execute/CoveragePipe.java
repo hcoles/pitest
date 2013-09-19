@@ -3,10 +3,10 @@ package org.pitest.coverage.execute;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import org.pitest.Description;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.testapi.Description;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataOutputStream;
 

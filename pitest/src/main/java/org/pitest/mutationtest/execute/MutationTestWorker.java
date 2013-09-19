@@ -30,9 +30,7 @@ import org.pitest.execute.MultipleTestGroup;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.containers.ConcreteResultCollector;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F3;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
 import org.pitest.mutationtest.ExitingResultCollector;
 import org.pitest.mutationtest.MutationDetails;
@@ -42,6 +40,8 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.testapi.TestUnit;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
 public class MutationTestWorker {

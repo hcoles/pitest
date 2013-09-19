@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.pitest.dependency.DependencyExtractor;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.testapi.TestUnit;
 import org.pitest.util.Unchecked;
 
 class DependencyFilter {

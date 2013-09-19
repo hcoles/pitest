@@ -14,17 +14,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.ResultCollector;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
-import org.pitest.util.JavaAgent;
+import org.pitest.process.JavaAgent;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
 
 public class MutationTestUnitTest {
 

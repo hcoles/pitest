@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.pitest.coverage.interprocess.CoverageCommunicationThread;
 import org.pitest.functional.SideEffect1;
-import org.pitest.util.ProcessArgs;
-import org.pitest.util.WrappingProcess;
+import org.pitest.process.ProcessArgs;
+import org.pitest.process.WrappingProcess;
 
 public class CoverageProcess {
 

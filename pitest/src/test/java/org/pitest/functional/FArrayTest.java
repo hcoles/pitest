@@ -13,10 +13,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.PitError;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
+import org.pitest.util.PitError;
 
 /**
  * @author henry

@@ -16,9 +16,9 @@ package org.pitest.execute;
 
 import java.util.List;
 
-import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.TestClass;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.GroupingStrategy;
+import org.pitest.testapi.TestClass;
+import org.pitest.testapi.TestUnit;
 
 public class UnGroupedStrategy implements GroupingStrategy {
 

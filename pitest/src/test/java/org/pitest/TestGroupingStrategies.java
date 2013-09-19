@@ -32,10 +32,10 @@ import org.pitest.execute.GroupPerClassStrategy;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.ResultSource;
 import org.pitest.execute.UnGroupedStrategy;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.TestUnit;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.GroupingStrategy;
+import org.pitest.testapi.TestUnit;
 
 public class TestGroupingStrategies {
 

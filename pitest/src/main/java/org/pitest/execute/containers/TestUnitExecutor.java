@@ -16,8 +16,8 @@ package org.pitest.execute.containers;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.pitest.TestResult;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
 
 public class TestUnitExecutor implements Runnable {
 

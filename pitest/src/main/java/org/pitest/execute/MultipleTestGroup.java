@@ -17,10 +17,10 @@ package org.pitest.execute;
 
 import java.util.List;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 public class MultipleTestGroup extends AbstractTestUnit {
 

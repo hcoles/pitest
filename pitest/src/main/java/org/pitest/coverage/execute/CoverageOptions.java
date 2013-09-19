@@ -15,8 +15,8 @@ package org.pitest.coverage.execute;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import org.pitest.extension.Configuration;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.testapi.Configuration;
 
 public class CoverageOptions {
 

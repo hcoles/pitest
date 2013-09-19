@@ -24,10 +24,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.pitest.TestResult;
 import org.pitest.execute.Container;
 import org.pitest.execute.ResultSource;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
 
 public class BaseThreadPoolContainer implements Container {
 

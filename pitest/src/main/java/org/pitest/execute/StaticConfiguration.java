@@ -16,8 +16,8 @@ package org.pitest.execute;
 
 import java.util.Collection;
 
-import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.TestListener;
+import org.pitest.testapi.GroupingStrategy;
+import org.pitest.testapi.TestListener;
 
 public interface StaticConfiguration {
 

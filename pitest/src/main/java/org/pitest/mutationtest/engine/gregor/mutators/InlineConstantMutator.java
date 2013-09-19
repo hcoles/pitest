@@ -17,11 +17,11 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.PitError;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.util.PitError;
 
 /**
  * The <code>InlineConstantMutator</code> is a mutator that mutates integer

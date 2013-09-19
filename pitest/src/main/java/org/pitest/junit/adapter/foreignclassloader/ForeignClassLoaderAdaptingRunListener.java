@@ -20,9 +20,9 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.SideEffect2;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.IsolationUtils;
 
 class ForeignClassLoaderAdaptingRunListener extends RunListener {
 
@@ -63,7 +63,7 @@ class ForeignClassLoaderAdaptingRunListener extends RunListener {
   }
 
   private void storeAsString(
-      final SideEffect2<ResultCollector, org.pitest.Description> result) {
+      final SideEffect2<ResultCollector, org.pitest.testapi.Description> result) {
     this.events.add(IsolationUtils.toXml(result));
   }
 

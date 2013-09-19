@@ -3,8 +3,8 @@ package org.pitest.junit;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
 
 public class CompoundTestUnitFinder implements TestUnitFinder {
 

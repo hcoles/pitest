@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.pitest.Description;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
@@ -40,6 +39,7 @@ import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.instrument.ClassLine;
+import org.pitest.testapi.Description;
 import org.pitest.util.Log;
 
 public class CoverageData implements CoverageDatabase {

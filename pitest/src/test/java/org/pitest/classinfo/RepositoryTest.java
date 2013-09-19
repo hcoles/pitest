@@ -33,7 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.codeassist.ClassUtils;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 
 public class RepositoryTest {
 

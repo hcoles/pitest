@@ -39,10 +39,12 @@ import org.pitest.execute.Pitest;
 import org.pitest.execute.StaticConfiguration;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
 
 import com.example.JUnitParamsTest;
 

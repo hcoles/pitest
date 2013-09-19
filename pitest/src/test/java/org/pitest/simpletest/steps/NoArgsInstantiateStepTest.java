@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 
 public class NoArgsInstantiateStepTest {
 

@@ -26,8 +26,8 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.testng.TestGroupConfig;
+import org.pitest.util.IsolationUtils;
 
 import com.example.testng.FullyCoveredByTestNGTesteeTest;
 

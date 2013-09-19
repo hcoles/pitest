@@ -29,15 +29,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.TestClass;
-import org.pitest.extension.TestClassIdentifier;
-import org.pitest.extension.TestSuiteFinder;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestClass;
+import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.TestSuiteFinder;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
 
 public class CompoundConfigurationTest {
 

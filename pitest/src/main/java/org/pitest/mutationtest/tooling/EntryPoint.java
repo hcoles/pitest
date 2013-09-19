@@ -7,13 +7,13 @@ import java.io.Reader;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ListenerFactory;
-import org.pitest.mutationtest.MutationClassPaths;
 import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.ReportOptions;
@@ -25,7 +25,7 @@ import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
-import org.pitest.util.JavaAgent;
+import org.pitest.process.JavaAgent;
 
 public class EntryPoint {
 
@@ -58,7 +58,7 @@ public class EntryPoint {
         
     final CoverageOptions coverageOptions = data.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
-    final MutationClassPaths cps = data.getMutationClassPaths();
+    final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
         .testClassIdentifier());

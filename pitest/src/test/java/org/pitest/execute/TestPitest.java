@@ -13,12 +13,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
-import org.pitest.TestResult;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.TestListener;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
 
 /**
  * @author henry

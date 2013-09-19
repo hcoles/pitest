@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.junit.Test;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.reflection.Reflection;
+import org.pitest.util.IsolationUtils;
 
 public class TestMethodTest {
 

@@ -27,11 +27,11 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.util.ProcessArgs;
+import org.pitest.process.ProcessArgs;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
 
 import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;

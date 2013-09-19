@@ -25,13 +25,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.execute.Reporter;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 public class TimeOutDecoratedTestSourceTest {
 

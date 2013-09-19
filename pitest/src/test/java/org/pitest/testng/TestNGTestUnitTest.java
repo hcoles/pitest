@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
-import org.pitest.PitError;
-import org.pitest.classpath.ClassLoaderDetectionStrategy;
-import org.pitest.extension.ResultCollector;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.ClassLoaderDetectionStrategy;
+import org.pitest.util.IsolationUtils;
+import org.pitest.util.PitError;
 
 import com.example.testng.Fails;
 import com.example.testng.HasGroups;

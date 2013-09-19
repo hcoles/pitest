@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.extension;
+package org.pitest.testapi;
 
-import java.util.List;
+import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 
-public interface TestUnitFinder {
+public interface Configuration {
 
-  public List<TestUnit> findTestUnits(final Class<?> clazz);
+  public TestUnitFinder testUnitFinder();
+
+  public TestSuiteFinder testSuiteFinder();
+
+  public TestClassIdentifier testClassIdentifier();
+
+  public Option<PitHelpError> verifyEnvironment();
 
 }

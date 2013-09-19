@@ -3,10 +3,10 @@ package org.pitest.coverage.execute;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.pitest.Description;
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
+import org.pitest.testapi.Description;
 
 public class CoverageResult implements Serializable {
 

@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.pitest.DescriptionMother;
-import org.pitest.TestResult;
 import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.testapi.TestResult;
 
 public class MutationTestResultMother {
 

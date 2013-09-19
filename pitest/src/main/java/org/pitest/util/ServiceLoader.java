@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 
-import org.pitest.PitError;
 
 /**
  * Simple java 1.6 ServiceLoader like behaviour for 1.5 From

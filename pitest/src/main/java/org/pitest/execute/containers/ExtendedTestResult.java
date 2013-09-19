@@ -17,11 +17,11 @@ package org.pitest.execute.containers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.TestResult;
 import org.pitest.functional.Option;
-import org.pitest.testunit.TestUnitState;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnitState;
 
 public class ExtendedTestResult extends TestResult {
 

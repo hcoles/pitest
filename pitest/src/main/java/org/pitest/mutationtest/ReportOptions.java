@@ -29,11 +29,13 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.PathFilter;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.execute.Pitest;
-import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -41,7 +43,6 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.PathNamePredicate;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
@@ -51,6 +52,7 @@ import org.pitest.mutationtest.report.DirectoryResultOutputStrategy;
 import org.pitest.mutationtest.report.ReportDirCreationStrategy;
 import org.pitest.mutationtest.report.ResultOutputStrategy;
 import org.pitest.mutationtest.report.UndatedReportDirCreationStrategy;
+import org.pitest.testapi.Configuration;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
@@ -385,9 +387,9 @@ public class ReportOptions {
     };
   }
 
-  public MutationClassPaths getMutationClassPaths() {
+  public ProjectClassPaths getMutationClassPaths() {
 
-    return new MutationClassPaths(this.getClassPath(), createClassesFilter(),
+    return new ProjectClassPaths(this.getClassPath(), createClassesFilter(),
         createPathFilter());
   }
 

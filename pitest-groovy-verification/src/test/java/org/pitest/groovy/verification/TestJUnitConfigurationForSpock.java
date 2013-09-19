@@ -8,15 +8,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.TestResult;
 import org.pitest.execute.Container;
 import org.pitest.execute.DefaultStaticConfig;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.StaticConfiguration;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.TestListener;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
 
 import com.example.spock.SpockTest;
 import com.example.spock.ParametrizedSpockTest;

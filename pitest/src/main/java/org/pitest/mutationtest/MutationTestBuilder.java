@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.domain.TestInfo;
-import org.pitest.extension.Configuration;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -36,7 +35,8 @@ import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
-import org.pitest.util.JavaAgent;
+import org.pitest.process.JavaAgent;
+import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
 
 public class MutationTestBuilder {

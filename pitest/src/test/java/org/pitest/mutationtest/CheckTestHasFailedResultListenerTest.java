@@ -18,11 +18,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.Description;
 import org.pitest.DescriptionMother;
-import org.pitest.TestResult;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestResult;
 
 public class CheckTestHasFailedResultListenerTest {
 

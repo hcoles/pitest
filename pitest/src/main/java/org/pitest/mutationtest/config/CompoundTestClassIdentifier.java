@@ -15,9 +15,9 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.extension.TestClassIdentifier;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.testapi.TestClassIdentifier;
 
 public class CompoundTestClassIdentifier implements TestClassIdentifier {
 

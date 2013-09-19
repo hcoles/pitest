@@ -15,9 +15,9 @@
 
 package org.pitest.junit.adapter.foreignclassloader;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.SideEffect2;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
 
 class Skipped implements SideEffect2<ResultCollector, Description> {
 

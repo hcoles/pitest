@@ -10,6 +10,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.SideEffect1;
+import org.pitest.process.JavaProcess;
 
 public class JavaProcessTest {
 

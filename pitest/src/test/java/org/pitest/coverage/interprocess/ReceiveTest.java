@@ -10,11 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.execute.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
+import org.pitest.testapi.Description;
 import org.pitest.util.SafeDataInputStream;
 
 public class ReceiveTest {

@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.util.JavaAgent;
+import org.pitest.process.JavaAgent;
+import org.pitest.testapi.Configuration;
 
 public class MutationTestBuilderTest {
 

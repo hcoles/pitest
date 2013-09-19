@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.TestClassIdentifier;
-import org.pitest.extension.TestSuiteFinder;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.TestSuiteFinder;
+import org.pitest.testapi.TestUnitFinder;
 
 public class ConfigurationForTesting implements Configuration {
 

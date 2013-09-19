@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
 
 public class AnalyisPriorityComparatorTest {
 

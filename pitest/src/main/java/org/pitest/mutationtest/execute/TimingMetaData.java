@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.execute;
 
-import org.pitest.MetaData;
+import org.pitest.testapi.MetaData;
 
 public class TimingMetaData implements MetaData {
 

@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.Prelude;
+import org.pitest.mutationtest.PathNamePredicate;
 
 public class PathNamePredicateTest {
 

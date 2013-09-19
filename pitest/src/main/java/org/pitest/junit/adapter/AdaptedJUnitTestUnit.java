@@ -31,13 +31,13 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.RunnerBuilder;
-import org.pitest.classpath.ClassLoaderDetectionStrategy;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.foreignclassloader.ForeignClassLoaderCustomRunnerExecutor;
 import org.pitest.reflection.Reflection;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.ClassLoaderDetectionStrategy;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
 public class AdaptedJUnitTestUnit extends AbstractTestUnit {
@@ -54,7 +54,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   AdaptedJUnitTestUnit(final ClassLoaderDetectionStrategy loaderDetection,
       final Class<?> clazz, final Option<Filter> filter) {
-    super(new org.pitest.Description(createName(clazz, filter), clazz));
+    super(new org.pitest.testapi.Description(createName(clazz, filter), clazz));
     this.loaderDetection = loaderDetection;
     this.clazz = clazz;
     this.filter = filter;

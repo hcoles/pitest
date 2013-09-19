@@ -4,15 +4,15 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.StoppedByUserException;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.ResultCollector;
 
 class AdaptingRunListener extends RunListener {
 
-  private final org.pitest.Description description;
+  private final org.pitest.testapi.Description description;
   private final ResultCollector        rc;
   private boolean                      finished = false;
 
-  public AdaptingRunListener(final org.pitest.Description description,
+  public AdaptingRunListener(final org.pitest.testapi.Description description,
       final ResultCollector rc) {
     this.description = description;
     this.rc = rc;

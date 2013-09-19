@@ -16,11 +16,11 @@ package org.pitest.testng;
 
 import java.util.Collections;
 
-import org.pitest.PitError;
-import org.pitest.classpath.ClassLoaderDetectionStrategy;
-import org.pitest.extension.ResultCollector;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.ClassLoaderDetectionStrategy;
+import org.pitest.util.IsolationUtils;
+import org.pitest.util.PitError;
 import org.testng.ITestListener;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
@@ -42,7 +42,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
   public TestNGTestUnit(
       final ClassLoaderDetectionStrategy classloaderDetection,
       final Class<?> clazz, final TestGroupConfig config) {
-    super(new org.pitest.Description("_", clazz));
+    super(new org.pitest.testapi.Description("_", clazz));
     this.clazz = clazz;
     this.classloaderDetection = classloaderDetection;
     this.config = config;

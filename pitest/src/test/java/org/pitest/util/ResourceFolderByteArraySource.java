@@ -10,7 +10,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
 

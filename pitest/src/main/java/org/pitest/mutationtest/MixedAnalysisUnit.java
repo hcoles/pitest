@@ -2,12 +2,12 @@ package org.pitest.mutationtest;
 
 import java.util.Collection;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 class MixedAnalysisUnit extends AbstractTestUnit implements
     MutationAnalysisUnit {

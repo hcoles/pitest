@@ -28,15 +28,15 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnotatedWith;
 import org.pitest.reflection.Reflection;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
+import org.pitest.util.IsolationUtils;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 

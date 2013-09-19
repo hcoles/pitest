@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.extension.ResultCollector;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.testapi.ResultCollector;
 
 public class KnownStatusMutationTestUnitTest {
 

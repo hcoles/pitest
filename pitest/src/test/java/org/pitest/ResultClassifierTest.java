@@ -9,7 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.coverage.execute.ResultType;
 import org.pitest.execute.DefaultResultClassifier;
-import org.pitest.testunit.TestUnitState;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnitState;
 
 /**
  * @author henry

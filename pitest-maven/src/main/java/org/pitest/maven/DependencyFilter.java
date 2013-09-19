@@ -18,11 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.pitest.PitError;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.util.PitError;
 import org.pitest.util.ServiceLoader;
 
 public class DependencyFilter implements Predicate<Artifact> {

@@ -25,10 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.execute.GroupPerClassStrategy;
 import org.pitest.execute.MultipleTestGroup;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestUnit;
 
 public class GroupPerClassStrategyTest {
 

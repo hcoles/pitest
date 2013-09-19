@@ -2,7 +2,7 @@ package com.example;
 
 import java.io.InputStream;
 
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 
 public class LoadsResourcesFromClassPath {
 

@@ -34,7 +34,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
@@ -42,6 +41,7 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
 import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
 
 public abstract class MutatorTestBase {

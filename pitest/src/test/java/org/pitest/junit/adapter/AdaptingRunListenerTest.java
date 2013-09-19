@@ -26,13 +26,13 @@ import org.junit.runner.notification.StoppedByUserException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DescriptionMother;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.ResultCollector;
 
 public class AdaptingRunListenerTest {
 
   private AdaptingRunListener    testee;
 
-  private org.pitest.Description pitDescription;
+  private org.pitest.testapi.Description pitDescription;
 
   private Throwable              throwable;
 

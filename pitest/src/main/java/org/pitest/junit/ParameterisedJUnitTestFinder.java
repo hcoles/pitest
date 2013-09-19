@@ -23,12 +23,12 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.Parameterized;
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
 
 public class ParameterisedJUnitTestFinder implements TestUnitFinder {
   public List<TestUnit> findTestUnits(final Class<?> clazz) {

@@ -18,10 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.Description;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.F3;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
@@ -29,6 +26,9 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.TimeOutDecoratedTestSource;
 import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 public class MutationTestWorkerTest {
 

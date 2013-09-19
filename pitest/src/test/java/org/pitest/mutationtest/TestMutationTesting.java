@@ -39,6 +39,8 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.PathFilter;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.DefaultCoverageGenerator;
@@ -49,12 +51,10 @@ import org.pitest.execute.Container;
 import org.pitest.execute.DefaultStaticConfig;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.Configuration;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.internal.IsolationUtils;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -63,10 +63,12 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.process.JavaAgent;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;
+import org.pitest.testapi.Configuration;
 import org.pitest.util.Functions;
-import org.pitest.util.JavaAgent;
+import org.pitest.util.IsolationUtils;
 
 import com.example.MutationsInNestedClasses;
 import com.example.MutationsInNestedClassesTest;
@@ -341,7 +343,7 @@ public class TestMutationTesting {
     final PathFilter pf = new PathFilter(
         Prelude.not(new DefaultDependencyPathPredicate()),
         Prelude.not(new DefaultDependencyPathPredicate()));
-    final MutationClassPaths cps = new MutationClassPaths(data.getClassPath(),
+    final ProjectClassPaths cps = new ProjectClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 
     final Timings timings = new Timings();

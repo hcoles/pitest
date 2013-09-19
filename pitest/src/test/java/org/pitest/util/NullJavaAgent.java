@@ -15,6 +15,7 @@
 package org.pitest.util;
 
 import org.pitest.functional.Option;
+import org.pitest.process.JavaAgent;
 
 public class NullJavaAgent implements JavaAgent {
 

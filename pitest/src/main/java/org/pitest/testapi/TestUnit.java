@@ -12,29 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
+package org.pitest.testapi;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
 
 /**
  * @author henry
  * 
  */
-public interface TestListener {
+public interface TestUnit {
 
-  public void onRunStart();
+  public void execute(ClassLoader loader, ResultCollector rc);
 
-  public void onTestStart(Description d);
-
-  public void onTestFailure(TestResult tr);
-
-  public void onTestError(TestResult tr);
-
-  public void onTestSkipped(TestResult tr);
-
-  public void onTestSuccess(TestResult tr);
-
-  public void onRunEnd();
+  public Description getDescription();
 
 }

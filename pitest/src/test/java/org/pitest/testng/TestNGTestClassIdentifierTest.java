@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 
 import com.example.testng.AnnotatedAtClassLevel;
 import com.example.testng.InheritsFromAnnotatedBase;

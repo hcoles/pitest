@@ -17,11 +17,11 @@ package org.pitest.testng;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.extension.TestUnit;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.IsAnotatedWith;
 import org.pitest.reflection.Reflection;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitFinder;
 
 public class TestNGTestUnitFinder implements TestUnitFinder {
 

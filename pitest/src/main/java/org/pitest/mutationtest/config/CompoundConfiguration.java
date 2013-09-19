@@ -16,16 +16,16 @@ package org.pitest.mutationtest.config;
 
 import java.util.List;
 
-import org.pitest.extension.Configuration;
-import org.pitest.extension.TestClassIdentifier;
-import org.pitest.extension.TestSuiteFinder;
-import org.pitest.extension.TestUnitFinder;
 import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.TestSuiteFinder;
+import org.pitest.testapi.TestUnitFinder;
 
 public class CompoundConfiguration implements Configuration {
 

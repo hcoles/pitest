@@ -1,4 +1,4 @@
-package org.pitest.classpath;
+package org.pitest.util;
 
 public interface ClassLoaderDetectionStrategy {
 

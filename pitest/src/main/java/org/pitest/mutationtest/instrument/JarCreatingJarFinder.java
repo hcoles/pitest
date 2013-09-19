@@ -28,8 +28,8 @@ import org.pitest.boot.InvokeReceiver;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.Option;
+import org.pitest.process.JavaAgent;
 import org.pitest.util.FileUtil;
-import org.pitest.util.JavaAgent;
 import org.pitest.util.Unchecked;
 
 public class JarCreatingJarFinder implements JavaAgent {

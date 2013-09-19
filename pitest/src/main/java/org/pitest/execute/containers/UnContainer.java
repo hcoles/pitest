@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.pitest.TestResult;
 import org.pitest.execute.Container;
 import org.pitest.execute.ResultSource;
-import org.pitest.extension.TestUnit;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
+import org.pitest.util.IsolationUtils;
 
 public class UnContainer implements Container {
 

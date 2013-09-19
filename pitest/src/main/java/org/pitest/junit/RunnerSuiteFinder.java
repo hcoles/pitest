@@ -23,14 +23,14 @@ import java.util.Set;
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.pitest.extension.TestClass;
-import org.pitest.extension.TestSuiteFinder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
+import org.pitest.testapi.TestClass;
+import org.pitest.testapi.TestSuiteFinder;
 
 public class RunnerSuiteFinder implements TestSuiteFinder {
 

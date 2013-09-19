@@ -16,11 +16,11 @@ package org.pitest.execute.containers;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.TestResult;
-import org.pitest.extension.ResultCollector;
-import org.pitest.testunit.TestUnitState;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnitState;
 import org.pitest.util.Unchecked;
 
 public final class ConcreteResultCollector implements ResultCollector {

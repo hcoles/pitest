@@ -15,28 +15,27 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.NameToClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.extension.TestClassIdentifier;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationClassPaths;
+import org.pitest.testapi.TestClassIdentifier;
 
 /**
  * Provides access to code and tests on the classpath
  */
 public class CodeSource implements ClassInfoSource {
 
-  private final MutationClassPaths  classPath;
+  private final ProjectClassPaths  classPath;
   private final Repository          classRepository;
   private final TestClassIdentifier testIdentifier;
 
-  public CodeSource(final MutationClassPaths classPath,
+  public CodeSource(final ProjectClassPaths classPath,
       final TestClassIdentifier testIdentifier) {
     this(classPath, new Repository(new ClassPathByteArraySource(
         classPath.getClassPath())), testIdentifier);
   }
 
-  CodeSource(final MutationClassPaths classPath,
+  CodeSource(final ProjectClassPaths classPath,
       final Repository classRepository, final TestClassIdentifier testIdentifier) {
     this.classPath = classPath;
     this.classRepository = classRepository;

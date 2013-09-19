@@ -14,9 +14,9 @@
  */
 package org.pitest.mutationtest;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.ResultCollector;
 
 public class ExitingResultCollector implements ResultCollector {
 

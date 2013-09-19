@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.functional.Option;
+import org.pitest.testapi.MetaData;
 
 public class ExtendedTestResultTest {
 

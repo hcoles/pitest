@@ -7,7 +7,6 @@ import java.util.HashMap;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.internal.IsolationUtils;
 
 public class ComputeClassWriterTest {
 

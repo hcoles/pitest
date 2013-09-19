@@ -14,9 +14,9 @@
  */
 package org.pitest.extension.common;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestUnit;
 
 public abstract class TestUnitDecorator implements TestUnit {
 

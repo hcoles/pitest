@@ -1,4 +1,4 @@
-package org.pitest.internal;
+package org.pitest.util;
 
 public class SerializationException extends RuntimeException {
 

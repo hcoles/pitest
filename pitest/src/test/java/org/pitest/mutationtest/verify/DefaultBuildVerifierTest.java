@@ -31,7 +31,7 @@ import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.help.PitHelpError;
-import org.pitest.internal.IsolationUtils;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.ResourceFolderByteArraySource;
 
 public class DefaultBuildVerifierTest {

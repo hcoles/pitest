@@ -17,10 +17,10 @@ package org.pitest.mutationtest.execute;
 import java.util.Collection;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Configuration;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.testapi.Configuration;
 
 public class SlaveArguments {
 

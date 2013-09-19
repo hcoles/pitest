@@ -23,11 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
 import org.pitest.classinfo.ClassName;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationAnalysisUnit;
@@ -36,11 +32,15 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.process.JavaAgent;
+import org.pitest.process.ProcessArgs;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.ResultCollector;
 import org.pitest.util.ExitCode;
-import org.pitest.util.JavaAgent;
 import org.pitest.util.Log;
-import org.pitest.util.ProcessArgs;
 import org.pitest.util.SocketFinder;
 
 public class MutationTestUnit extends AbstractTestUnit implements

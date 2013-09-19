@@ -16,7 +16,7 @@ package org.pitest.execute;
 
 import java.util.List;
 
-import org.pitest.TestResult;
+import org.pitest.testapi.TestResult;
 
 public interface ResultSource {
 

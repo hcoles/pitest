@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.ResultCollector;
 
 class TimingMetaDataResultCollector implements ResultCollector {
 

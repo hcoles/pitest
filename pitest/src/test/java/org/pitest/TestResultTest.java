@@ -3,8 +3,10 @@ package org.pitest;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.testunit.TestUnitState;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnitState;
+import org.pitest.util.IsolationUtils;
 
 public class TestResultTest {
 

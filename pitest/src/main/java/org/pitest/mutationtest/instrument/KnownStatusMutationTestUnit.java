@@ -3,12 +3,12 @@ package org.pitest.mutationtest.instrument;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.pitest.Description;
-import org.pitest.MetaData;
-import org.pitest.extension.ResultCollector;
 import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.results.MutationResult;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.MetaData;
+import org.pitest.testapi.ResultCollector;
 import org.pitest.util.Log;
 
 public class KnownStatusMutationTestUnit extends AbstractTestUnit implements

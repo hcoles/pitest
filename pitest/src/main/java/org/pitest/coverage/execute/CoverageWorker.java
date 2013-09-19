@@ -26,8 +26,8 @@ import org.pitest.execute.Container;
 import org.pitest.execute.DefaultStaticConfig;
 import org.pitest.execute.Pitest;
 import org.pitest.execute.containers.UnContainer;
-import org.pitest.extension.TestUnit;
 import org.pitest.mutationtest.CheckTestHasFailedResultListener;
+import org.pitest.testapi.TestUnit;
 
 public class CoverageWorker implements Runnable {
 

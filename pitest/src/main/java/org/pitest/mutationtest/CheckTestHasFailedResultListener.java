@@ -14,11 +14,11 @@
  */
 package org.pitest.mutationtest;
 
-import org.pitest.Description;
-import org.pitest.TestResult;
-import org.pitest.extension.TestListener;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 

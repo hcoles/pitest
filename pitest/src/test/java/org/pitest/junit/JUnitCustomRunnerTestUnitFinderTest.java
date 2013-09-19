@@ -37,7 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.mockito.MockitoAnnotations;
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.TestUnit;
 
 import com.example.JUnitParamsTest;
 import com.example.TheoryTest;

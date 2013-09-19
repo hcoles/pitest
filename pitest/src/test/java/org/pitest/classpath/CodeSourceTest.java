@@ -15,9 +15,8 @@ import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.CodeSource;
-import org.pitest.extension.TestClassIdentifier;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationClassPaths;
+import org.pitest.testapi.TestClassIdentifier;
 
 public class CodeSourceTest {
 
@@ -27,7 +26,7 @@ public class CodeSourceTest {
   private Repository          repository;
 
   @Mock
-  private MutationClassPaths  classPath;
+  private ProjectClassPaths  classPath;
 
   @Mock
   private TestClassIdentifier testIdentifer;

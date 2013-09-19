@@ -21,15 +21,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.pitest.TestResult;
 import org.pitest.coverage.execute.ResultType;
-import org.pitest.extension.Configuration;
-import org.pitest.extension.GroupingStrategy;
-import org.pitest.extension.TestClass;
-import org.pitest.extension.TestListener;
-import org.pitest.extension.TestUnit;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.GroupingStrategy;
+import org.pitest.testapi.TestClass;
+import org.pitest.testapi.TestListener;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
 import org.pitest.util.Log;
 
 public class Pitest {

@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.pitest.extension.TestClass;
+import org.pitest.testapi.TestClass;
 
 import com.example.TheoryTest;
 

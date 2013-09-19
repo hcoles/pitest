@@ -1,6 +1,6 @@
 package org.pitest.mutationtest;
 
-import org.pitest.extension.TestUnit;
+import org.pitest.testapi.TestUnit;
 
 public interface MutationAnalysisUnit extends TestUnit {
 

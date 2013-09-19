@@ -16,11 +16,11 @@ package org.pitest.simpletest;
 
 import java.util.Collection;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
 import org.pitest.functional.Option;
-import org.pitest.internal.IsolationUtils;
-import org.pitest.testunit.AbstractTestUnit;
+import org.pitest.testapi.AbstractTestUnit;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
+import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry

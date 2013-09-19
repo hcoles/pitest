@@ -12,14 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.extension;
-
-import java.util.List;
+package org.pitest.testapi;
 
 
-public interface GroupingStrategy {
+/**
+ * @author henry
+ * 
+ */
+public abstract class AbstractTestUnit implements TestUnit {
 
-  public List<? extends TestUnit> group(TestClass c,
-      List<TestUnit> testUnitsFromClass);
+  private final Description description;
+
+  public AbstractTestUnit(final Description description) {
+    this.description = description;
+  }
+
+  public abstract void execute(final ClassLoader loader,
+      final ResultCollector rc);
+
+  public final Description getDescription() {
+    return this.description;
+  }
 
 }

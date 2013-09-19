@@ -31,12 +31,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
-import org.pitest.PitError;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Log;
+import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
 
 public class ClassPath implements Iterable<ClassPathRoot> {

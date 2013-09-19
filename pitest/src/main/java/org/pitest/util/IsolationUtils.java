@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.internal;
+package org.pitest.util;
 
 import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Unchecked.translateCheckedException;
@@ -27,12 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import org.pitest.classpath.ClassLoaderDetectionStrategy;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.reflection.Reflection;
-import org.pitest.util.PitXmlDriver;
-import org.pitest.util.Unchecked;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;

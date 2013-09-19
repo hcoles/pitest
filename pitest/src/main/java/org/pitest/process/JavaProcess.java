@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.util;
+package org.pitest.process;
 
 import static org.pitest.functional.Prelude.or;
 
@@ -29,6 +29,8 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.util.Monitor;
+import org.pitest.util.StreamMonitor;
 
 public class JavaProcess {
 

@@ -14,8 +14,8 @@
  */
 package org.pitest.testng;
 
-import org.pitest.Description;
-import org.pitest.extension.ResultCollector;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.ResultCollector;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
