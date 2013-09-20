@@ -1,14 +1,13 @@
 /**
  * 
  */
-package org.pitest;
+package org.pitest.execute;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.execute.DefaultResultClassifier;
-import org.pitest.execute.ResultType;
+import org.pitest.DescriptionMother;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnitState;

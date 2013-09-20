@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor;
+package org.pitest.mutationtest.engine.gregor.inlinedcode;
 
 import static org.junit.Assert.assertSame;
 

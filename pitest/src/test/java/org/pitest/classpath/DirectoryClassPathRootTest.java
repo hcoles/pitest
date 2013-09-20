@@ -1,4 +1,4 @@
-package org.pitest.internal.classloader;
+package org.pitest.classpath;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

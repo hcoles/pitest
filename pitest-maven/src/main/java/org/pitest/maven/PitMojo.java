@@ -11,6 +11,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 
@@ -24,6 +25,8 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
  * @phase integration-test
  */
 public class PitMojo extends AbstractMojo {
+  
+  protected final Predicate<Artifact> filter;
   
   // Concrete List types declared for all fields to work around maven 2 bug
 
@@ -244,11 +247,12 @@ public class PitMojo extends AbstractMojo {
   protected final GoalStrategy  goalStrategy;
 
   public PitMojo() {
-    this(new RunPitStrategy());
+    this(new RunPitStrategy(), new DependencyFilter());
   }
 
-  public PitMojo(final GoalStrategy strategy) {
+  public PitMojo(final GoalStrategy strategy, Predicate<Artifact> filter) {
     this.goalStrategy = strategy;
+    this.filter = filter;
   }
 
   public final void execute() throws MojoExecutionException,
@@ -275,7 +279,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected Option<MutationStatistics> analyse() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this, new DependencyFilter()).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
   }
 

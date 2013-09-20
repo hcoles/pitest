@@ -215,19 +215,6 @@ public class RepositoryTest {
     aClass.value().isCodeLine(139); // flakey
   }
 
-  @Test
-  public void matchIfTopLevelClassShouldReturnTrueForTopLevelClasses() {
-    final Option<ClassInfo> aClass = this.testee
-        .fetchClass(RepositoryTest.class);
-    assertTrue(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
-  }
-
-  @Test
-  public void matchIfTopLevelClassShouldReturnFalseForInnerClasses() {
-    final Option<ClassInfo> aClass = this.testee
-        .fetchClass(NonStaticInnerClass.class);
-    assertFalse(ClassInfo.matchIfTopLevelClass().apply(aClass.value()));
-  }
 
   @Ignore
   static class Annotated {

@@ -16,6 +16,12 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>org.pitest.maven.SystemTest</excludedGroups>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.12</version>
 				<dependencies>

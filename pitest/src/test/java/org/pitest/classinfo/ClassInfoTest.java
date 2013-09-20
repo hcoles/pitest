@@ -105,12 +105,6 @@ public class ClassInfoTest {
     assertTrue(ClassInfo.matchIfAbstract().apply(this.testee));
   }
 
-  @Test
-  public void matchIfInterfaceShouldReturnTrueForAbstractClasses() {
-    this.data.access = Opcodes.ACC_INTERFACE;
-    makeTestee();
-    assertTrue(ClassInfo.matchIfInterface().apply(this.testee));
-  }
 
   private void makeTestee() {
     this.testee = new ClassInfo(null, null, this.data);

@@ -1,4 +1,4 @@
-package org.pitest.util;
+package org.pitest.process;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.SideEffect1;
-import org.pitest.process.JavaProcess;
+import org.pitest.util.NullJavaAgent;
 
 public class JavaProcessTest {
 

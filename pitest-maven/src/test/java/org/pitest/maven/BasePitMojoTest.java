@@ -34,6 +34,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
@@ -44,6 +45,9 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   protected RunPitStrategy executionStrategy;
 
   protected List<String>   classPath;
+
+  @Mock
+  protected Predicate<Artifact> filter;
 
   @Override
   protected void setUp() throws Exception {
@@ -83,7 +87,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   protected PitMojo createPITMojo(final String config) throws Exception {
 
-    final PitMojo pitMojo = new PitMojo(this.executionStrategy);
+    final PitMojo pitMojo = new PitMojo(this.executionStrategy, filter);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }

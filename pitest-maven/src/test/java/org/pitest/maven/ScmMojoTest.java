@@ -42,7 +42,7 @@ public class ScmMojoTest extends BasePitMojoTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    this.testee = new ScmMojo(this.executionStrategy, this.manager);
+    this.testee = new ScmMojo(this.executionStrategy, this.manager, filter);
     this.testee.setScmRootDir(new File("foo"));
     when(this.project.getBuild()).thenReturn(this.build);
     when(this.build.getSourceDirectory()).thenReturn("foo");

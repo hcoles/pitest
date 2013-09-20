@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -20,6 +21,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 
@@ -76,8 +78,8 @@ public class ScmMojo extends PitMojo {
   private File        scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
-      final ScmManager manager) {
-    super(executionStrategy);
+      final ScmManager manager, Predicate<Artifact> filter) {
+    super(executionStrategy, filter);
     this.manager = manager;
   }
 
@@ -98,7 +100,7 @@ public class ScmMojo extends PitMojo {
 
     logClassNames();
     defaultTargetTestsToGroupNameIfNoValueSet();
-    final ReportOptions data = new MojoToReportOptionsConverter(this, new DependencyFilter()).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
     data.setFailWhenNoMutations(false);
 
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));

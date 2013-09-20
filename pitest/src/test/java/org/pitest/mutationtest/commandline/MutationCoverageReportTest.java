@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.commandline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -44,6 +44,14 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.ListenerArguments;
+import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationCoverage;
+import org.pitest.mutationtest.MutationDetailsMother;
+import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationStrategies;
+import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;

@@ -26,3 +26,4 @@ syntax: regexp
 syntax: glob
 */target/*
 Foo
+ucdetector_reports

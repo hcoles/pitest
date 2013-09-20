@@ -1,4 +1,4 @@
-package org.pitest;
+package org.pitest.testapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

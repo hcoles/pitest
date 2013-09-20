@@ -149,23 +149,6 @@ public class ClassInfo {
     };
   }
 
-  public static F<ClassInfo, Boolean> matchIfInterface() {
-    return new F<ClassInfo, Boolean>() {
-      public Boolean apply(final ClassInfo a) {
-        return a.isInterface();
-      }
-
-    };
-  }
-
-  public static F<ClassInfo, Boolean> matchIfTopLevelClass() {
-    return new F<ClassInfo, Boolean>() {
-      public Boolean apply(final ClassInfo a) {
-        return a.isTopLevelClass();
-      }
-
-    };
-  }
 
   @Override
   public String toString() {
@@ -190,13 +173,5 @@ public class ClassInfo {
     };
   }
 
-  public static F<ClassInfo, ClassIdentifier> toClassId() {
-    return new F<ClassInfo, ClassIdentifier>() {
-      public ClassIdentifier apply(final ClassInfo a) {
-        return a.getId();
-      }
-
-    };
-  }
 
 }
