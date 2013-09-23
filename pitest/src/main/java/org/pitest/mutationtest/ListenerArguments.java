@@ -1,7 +1,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.mutationtest.report.SourceLocator;
 import org.pitest.util.ResultOutputStrategy;
 
 public class ListenerArguments {

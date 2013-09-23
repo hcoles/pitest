@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest;
 
 import java.io.File;
 import java.io.Reader;
@@ -22,6 +22,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.SourceLocator;
 
 public class SmartSourceLocator implements SourceLocator {
 
