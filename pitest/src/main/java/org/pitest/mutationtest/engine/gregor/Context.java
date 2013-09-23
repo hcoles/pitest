@@ -17,6 +17,7 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -120,7 +121,7 @@ public class Context implements BlockCounter {
     this.target = target;
   }
 
-  public FunctionalList<MutationDetails> getMutationDetails(
+  public List<MutationDetails> getMutationDetails(
       final MutationIdentifier id) {
     return this.mutations.filter(hasId(id));
   }

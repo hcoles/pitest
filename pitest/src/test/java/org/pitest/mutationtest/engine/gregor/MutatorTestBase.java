@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
@@ -31,6 +32,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.F;
+import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
@@ -145,7 +147,7 @@ public abstract class MutatorTestBase {
 
   }
 
-  protected FunctionalList<Mutant> getMutants(
+  protected List<Mutant> getMutants(
       final FunctionalList<MutationDetails> details) {
     return details.map(createMutant());
   }
@@ -195,11 +197,11 @@ public abstract class MutatorTestBase {
   final FunctionalList<MutationDetails> details,
       final String... expectedResults) {
 
-    final FunctionalList<Mutant> mutants = this.getMutants(details);
+    final List<Mutant> mutants = this.getMutants(details);
     assertEquals("Should return one mutant for each request", details.size(),
         mutants.size());
-    final FunctionalList<String> results = mutants
-        .map(mutantToStringReults(mutee));
+    final FunctionalList<String> results = FCollection.map(mutants
+        ,mutantToStringReults(mutee));
 
     int i = 0;
     for (final String actual : results) {

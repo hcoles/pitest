@@ -21,6 +21,7 @@ import static org.pitest.util.Functions.classNameToJVMClassName;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -125,7 +126,7 @@ class GregorMutater implements Mutater {
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    final FunctionalList<MutationDetails> details = context
+    final List<MutationDetails> details = context
         .getMutationDetails(context.getTargetMutation().value());
 
     return new Mutant(details.get(0), w.toByteArray());
