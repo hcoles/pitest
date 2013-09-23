@@ -21,9 +21,9 @@ import org.apache.maven.artifact.Artifact;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.PitError;
-import org.pitest.util.ServiceLoader;
 
 public class DependencyFilter implements Predicate<Artifact> {
 
@@ -31,8 +31,8 @@ public class DependencyFilter implements Predicate<Artifact> {
 
   public DependencyFilter() {
 
-    final Iterable<ClientClasspathPlugin> runtimePlugins = ServiceLoader
-        .load(ClientClasspathPlugin.class);
+    final Iterable<? extends ClientClasspathPlugin> runtimePlugins = PluginServices
+        .findClientClasspathPlugins();
     FCollection.mapTo(runtimePlugins, artifactToPair(), this.groups);
   }
 
@@ -41,21 +41,28 @@ public class DependencyFilter implements Predicate<Artifact> {
 
       public GroupIdPair apply(final ClientClasspathPlugin a) {
         final Package p = a.getClass().getPackage();
+
         final GroupIdPair g = new GroupIdPair(p.getImplementationVendor(),
             p.getImplementationTitle());
 
         if (g.id == null) {
-          throw new PitError(
-              "No implementation title in manifest of plugin jar ");
+          reportBadPlugin("title", a);
         }
 
         if (g.group == null) {
-          throw new PitError(
-              "No implementation vendor in manifest of plugin jar ");
+          reportBadPlugin("vendor", a);
         }
 
         return g;
 
+      }
+
+      private void reportBadPlugin(final String missingProperty,
+          final ClientClasspathPlugin a) {
+        final Class<?> clss = a.getClass();
+        throw new PitError("No implementation " + missingProperty
+            + " in manifest of plugin jar for " + clss + " in "
+            + clss.getProtectionDomain().getCodeSource().getLocation());
       }
 
     };

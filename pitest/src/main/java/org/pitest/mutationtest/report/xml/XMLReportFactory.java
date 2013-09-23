@@ -27,5 +27,9 @@ public class XMLReportFactory implements ListenerFactory {
   public String name() {
     return "XML";
   }
+  
+  public String description() {
+    return "Default xml report plugin";
+  }
 
 }

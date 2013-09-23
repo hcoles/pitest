@@ -6,16 +6,15 @@ import java.util.Set;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.PluginServices;
 import org.pitest.plugin.ToolClasspathPlugin;
-import org.pitest.util.ServiceLoader;
 
 public class PluginFilter implements Predicate<String>{
   
   private final Set<String> excludedClassPathElement = new HashSet<String>();
   
   public PluginFilter() {
-    final Iterable<ToolClasspathPlugin> nonRuntimePlugins = ServiceLoader
-        .load(ToolClasspathPlugin.class);
+    final Iterable<? extends ToolClasspathPlugin> nonRuntimePlugins = PluginServices.findToolClasspathPlugins();
     FCollection.mapTo(nonRuntimePlugins, classToLocation(), excludedClassPathElement);   
   }
 

@@ -105,5 +105,9 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   public String name() {
     return "gregor";
   }
+  
+  public String description() {
+    return "Default mutation engine";
+  }
 
 };

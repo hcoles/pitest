@@ -29,4 +29,8 @@ public class HtmlReportFactory implements ListenerFactory {
   public String name() {
     return "HTML";
   }
+  
+  public String description() {
+    return "Default html report plugin";
+  }
 }

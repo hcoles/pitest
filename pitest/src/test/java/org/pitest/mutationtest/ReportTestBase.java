@@ -38,6 +38,10 @@ public abstract class ReportTestBase {
         return null;
       }
 
+      public String description() {
+        return null;
+      }
+
     };
   }
 

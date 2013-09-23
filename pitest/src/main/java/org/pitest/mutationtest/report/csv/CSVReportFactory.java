@@ -28,4 +28,8 @@ public class CSVReportFactory implements ListenerFactory {
     return "CSV";
   }
 
+  public String description() {
+    return "Default csv report plugin";
+  }
+
 }

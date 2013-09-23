@@ -44,4 +44,8 @@ public class CompoundListenerFactory implements ListenerFactory {
     throw new UnsupportedOperationException();
   }
 
+  public String description() {
+    throw new UnsupportedOperationException();
+  }
+
 }

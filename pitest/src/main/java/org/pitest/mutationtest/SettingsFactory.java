@@ -10,7 +10,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
-import org.pitest.util.ServiceLoader;
 
 public class SettingsFactory {
 
@@ -33,8 +32,7 @@ public class SettingsFactory {
   }
 
   public MutationEngineFactory createEngine() {
-    for (final MutationEngineFactory each : ServiceLoader
-        .load(MutationEngineFactory.class)) {
+    for (final MutationEngineFactory each : PluginServices.findMutationEngines()) {
       if (each.name().equals(this.options.getMutationEngine())) {
         return each;
       }
@@ -44,14 +42,19 @@ public class SettingsFactory {
   }
   
   public ListenerFactory createListener() {
-    Iterable<ListenerFactory> listeners = ServiceLoader.load(ListenerFactory.class);
+    return new CompoundListenerFactory(findListeners());
+  }
+
+    
+  private Iterable<ListenerFactory> findListeners() {
+    Iterable<? extends ListenerFactory> listeners = PluginServices.findListeners();
     Collection<ListenerFactory> matches = FCollection.filter(listeners, nameMatches(this.options.getOutputFormats()));
     if ( matches.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested");
     }
-    return new CompoundListenerFactory(matches);
+    return matches;
   }
-
+  
   private static F<ListenerFactory, Boolean> nameMatches(final Iterable<String> outputFormats) {
     return new F<ListenerFactory, Boolean>() {
       public Boolean apply(ListenerFactory a) {

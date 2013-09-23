@@ -7,7 +7,6 @@
 		<groupId>org.pitest</groupId>
 		<version>0.32-SNAPSHOT</version>
 	</parent>
-	<organization><name>org.pitest</name></organization>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
 	<name>pitest</name>

@@ -4,8 +4,9 @@ import java.util.Collection;
 
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.plugin.ClientClasspathPlugin;
 
-public interface MutationEngineFactory {
+public interface MutationEngineFactory extends ClientClasspathPlugin {
 
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,

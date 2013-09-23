@@ -12,8 +12,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.PluginServices;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.plugin.ToolClasspathPlugin;
 
 /**
  * Goal which runs a coverage mutation report
@@ -258,6 +261,15 @@ public class PitMojo extends AbstractMojo {
   public final void execute() throws MojoExecutionException,
       MojoFailureException {
     if (shouldRun()) {
+      
+      for ( ToolClasspathPlugin each  : PluginServices.findToolClasspathPlugins() ) {
+        this.getLog().info("Found plugin : " + each);
+      }
+      
+      for ( ClientClasspathPlugin each  : PluginServices.findClientClasspathPlugins() ) {
+        this.getLog().info("Found shared classpath plugin : " + each);
+      }
+      
       final Option<MutationStatistics> result = analyse();
       if (result.hasSome()) {
         throwErrorIfScoreBelowThreshold(result.value());
