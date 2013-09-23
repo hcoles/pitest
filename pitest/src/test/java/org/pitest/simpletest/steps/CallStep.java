@@ -21,7 +21,6 @@ import org.pitest.simpletest.TestExecutionException;
 import org.pitest.simpletest.TestMethod;
 import org.pitest.simpletest.TestStep;
 import org.pitest.testapi.Description;
-import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry
@@ -39,8 +38,7 @@ public class CallStep implements TestStep {
       final Description testDescription, final Object target) {
     try {
 
-      final Method m2 = IsolationUtils.convertForClassLoader(loader,
-          this.m.getMethod());
+      final Method m2 = this.m.getMethod();
 
       if (!m2.isAccessible()) {
         m2.setAccessible(true);

@@ -15,24 +15,14 @@
 
 package org.pitest.util;
 
-import static org.pitest.util.Functions.classToName;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.WeakHashMap;
 
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.reflection.Reflection;
-
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
@@ -60,10 +50,6 @@ public abstract class IsolationUtils {
 
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
-  }
-
-  public static void setContextClassLoader(final ClassLoader loader) {
-    Thread.currentThread().setContextClassLoader(loader);
   }
 
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
@@ -128,53 +114,11 @@ public abstract class IsolationUtils {
 
   }
 
-  public static Method convertForClassLoader(final ClassLoader loader,
-      final Method m) {
-
-    if (loader != m.getDeclaringClass().getClassLoader()) {
-      final Class<?> c2 = convertForClassLoader(loader, m.getDeclaringClass());
-
-      final List<String> params = FCollection.map(
-          Arrays.asList(m.getParameterTypes()), classToName());
-
-      final F<Method, Boolean> p = new F<Method, Boolean>() {
-        public Boolean apply(final Method a) {
-          if (a.getName().equals(m.getName())
-              && a.getReturnType().getName()
-                  .equals(m.getReturnType().getName())) {
-            final List<String> parameters = FCollection.map(
-                Arrays.asList(a.getParameterTypes()), classToName());
-            return parameters.equals(params);
-          }
-          return false;
-
-        }
-
-      };
-      final List<Method> matches = FCollection.filter(
-          Reflection.allMethods(c2), p);
-      // FIXME check length exactly 1
-      return matches.get(0);
-    } else {
-      return m;
-    }
-
-  }
-
   public static String toXml(final Object o) {
     final Writer writer = new StringWriter();
     XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
 
     return writer.toString();
-  }
-
-  public static String toTransportString(final Object o) {
-    try {
-      final Base64Encoder encoder = new Base64Encoder();
-      return encoder.encode(toXml(o).getBytes("UTF-8"));
-    } catch (final UnsupportedEncodingException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
   }
 
   public static String decodeTransportString(final String encodedXml)
@@ -183,15 +127,6 @@ public abstract class IsolationUtils {
     return new String(encoder.decode(encodedXml), "UTF-8");
   }
 
-  public static Object fromTransportString(final String encodedXml) {
-    try {
-      return fromXml(decodeTransportString(encodedXml));
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    } catch (final XStreamException ex) {
-      throw new SerializationException(ex);
-    }
-  }
 
   public static Object fromXml(final String xml) {
     return XSTREAM_INSTANCE.fromXML(xml);
