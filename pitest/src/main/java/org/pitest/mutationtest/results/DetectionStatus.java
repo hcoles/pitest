@@ -17,16 +17,14 @@ package org.pitest.mutationtest.results;
 import org.pitest.util.ExitCode;
 
 public enum DetectionStatus {
-  KILLED(true, 4), SURVIVED(false, 0), TIMED_OUT(true, 2), NON_VIABLE(true, 3), MEMORY_ERROR(
-      true, 1), NOT_STARTED(false, 1), STARTED(false, 1), RUN_ERROR(true, 0), NO_COVERAGE(
-      false, 0);
+  KILLED(true), SURVIVED(false), TIMED_OUT(true), NON_VIABLE(true), MEMORY_ERROR(
+      true), NOT_STARTED(false), STARTED(false), RUN_ERROR(true), NO_COVERAGE(
+      false);
 
   private final boolean detected;
-  private final int     ranking;
 
-  DetectionStatus(final boolean detected, final int ranking) {
+  DetectionStatus(final boolean detected) {
     this.detected = detected;
-    this.ranking = ranking;
   }
 
   public static DetectionStatus getForErrorExitCode(final ExitCode exitCode) {
@@ -44,7 +42,4 @@ public enum DetectionStatus {
     return this.detected;
   }
 
-  public int getRanking() {
-    return this.ranking;
-  }
 };

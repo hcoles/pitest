@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.report.html;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.functional.Option;
@@ -34,14 +33,7 @@ public class Line {
     this.text = text;
     this.lineCovered = lineCovered;
     this.mutations = mutations;
-    final Comparator<MutationResult> c = new Comparator<MutationResult>() {
-
-      public int compare(final MutationResult o1, final MutationResult o2) {
-        return o1.getStatus().getRanking() - o2.getStatus().getRanking();
-      }
-
-    };
-    Collections.sort(mutations, c);
+    Collections.sort(mutations, new ResultComparator());
   }
 
   public long getNumber() {
