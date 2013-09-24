@@ -17,7 +17,6 @@ package org.pitest.mutationtest.engine;
 import java.util.List;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.MutationDetails;
 
 public interface Mutater {
 

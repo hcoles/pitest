@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.engine;
 
-import org.pitest.mutationtest.MutationDetails;
 
 public final class Mutant {
 

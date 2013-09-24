@@ -17,13 +17,13 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationConfig;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.build.MutationTestUnit;
-import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;

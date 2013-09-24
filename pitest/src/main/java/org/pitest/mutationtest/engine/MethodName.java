@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.engine;
 
 public final class MethodName {
 

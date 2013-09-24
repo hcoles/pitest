@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.MethodName;
 
 /**
  * The co-ordinates of a method within a class.

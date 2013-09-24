@@ -6,9 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.MutationDetailsMother;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationDetailsMother;
 
 public class NoInlinedCodeDetectionTest {
 

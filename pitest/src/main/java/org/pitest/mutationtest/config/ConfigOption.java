@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.config;
 
-import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
 

@@ -20,8 +20,6 @@ import org.pitest.mutationtest.SettingsFactory;
 import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
-import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
-import org.pitest.mutationtest.instrument.KnownLocationJavaAgentFinder;
 import org.pitest.process.JavaAgent;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;

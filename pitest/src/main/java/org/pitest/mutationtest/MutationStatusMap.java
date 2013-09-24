@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest;
 
 import static org.pitest.functional.Prelude.putToMap;
 
@@ -26,10 +26,7 @@ import java.util.Set;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationDetails;
-import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MutationStatusMap {
 

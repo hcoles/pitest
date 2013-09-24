@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.tooling;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,6 +35,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 
 public class JarCreatingJarFinderTest {
 

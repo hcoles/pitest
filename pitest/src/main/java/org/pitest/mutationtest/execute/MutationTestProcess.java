@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
 
-import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationStatusMap;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.MutationStatusMap;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
 import org.pitest.util.ExitCode;

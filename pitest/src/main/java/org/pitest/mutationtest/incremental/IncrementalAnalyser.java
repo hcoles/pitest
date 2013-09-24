@@ -16,9 +16,9 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.Log;
 
 public class IncrementalAnalyser implements MutationAnalyser {

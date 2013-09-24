@@ -16,7 +16,7 @@ package org.pitest.mutationtest.filter;
 
 import java.util.Collection;
 
-import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 public enum UnfilteredMutationFilter implements MutationFilter {
   INSTANCE;

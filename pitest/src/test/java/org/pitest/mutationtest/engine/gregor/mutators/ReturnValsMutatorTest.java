@@ -19,8 +19,8 @@ import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class ReturnValsMutatorTest extends MutatorTestBase {

@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;

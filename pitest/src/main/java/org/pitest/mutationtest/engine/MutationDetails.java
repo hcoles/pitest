@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,6 @@ import java.util.List;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.domain.TestInfo;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.StringUtil;
 
 public class MutationDetails {

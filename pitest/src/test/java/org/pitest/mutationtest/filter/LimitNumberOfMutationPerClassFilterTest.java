@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class LimitNumberOfMutationPerClassFilterTest {

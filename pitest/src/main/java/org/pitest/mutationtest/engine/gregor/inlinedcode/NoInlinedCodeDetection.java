@@ -2,7 +2,7 @@ package org.pitest.mutationtest.engine.gregor.inlinedcode;
 
 import java.util.Collection;
 
-import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 public class NoInlinedCodeDetection implements InlinedCodeFilter {
 

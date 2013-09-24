@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.tooling;
 
 import org.pitest.functional.Option;
 import org.pitest.process.JavaAgent;

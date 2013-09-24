@@ -30,7 +30,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
-import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
+import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;

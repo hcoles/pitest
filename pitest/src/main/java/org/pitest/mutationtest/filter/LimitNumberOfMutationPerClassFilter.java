@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
 

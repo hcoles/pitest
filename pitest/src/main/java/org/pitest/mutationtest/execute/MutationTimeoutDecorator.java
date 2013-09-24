@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.SideEffect;
-import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.Unchecked;

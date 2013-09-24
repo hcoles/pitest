@@ -1,7 +1,9 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.engine;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.MethodName;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class MutationDetailsMother {

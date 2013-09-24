@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.execute;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +23,7 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.execute.MutationTimeoutDecorator;
-import org.pitest.mutationtest.execute.Reporter;
-import org.pitest.mutationtest.execute.TimeOutSystemExitSideEffect;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.TestUnit;
 
 public class TimeOutDecoratedTestSource {

@@ -2,6 +2,7 @@ package org.pitest.mutationtest;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class LocationMother {

@@ -27,7 +27,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.pitest.functional.SideEffect;
-import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 
