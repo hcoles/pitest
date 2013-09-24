@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Glob;
 
 public abstract class ReportTestBase {

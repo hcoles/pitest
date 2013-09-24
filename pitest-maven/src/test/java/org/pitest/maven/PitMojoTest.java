@@ -10,7 +10,7 @@ import java.io.File;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoFailureException;
 import org.mockito.Mockito;
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 
 public class PitMojoTest extends BasePitMojoTest {

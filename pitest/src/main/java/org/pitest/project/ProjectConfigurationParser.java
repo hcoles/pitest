@@ -1,6 +1,6 @@
 package org.pitest.project;
 
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 
 /**
  * A see ProjectConfigurationParser is responsible for parsing a project file

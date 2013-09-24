@@ -7,6 +7,8 @@ import java.util.Map;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.mutationtest.ClassHistory;
+import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;

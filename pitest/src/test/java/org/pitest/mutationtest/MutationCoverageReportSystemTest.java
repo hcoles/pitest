@@ -53,7 +53,6 @@ import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.Mutator;
-import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;

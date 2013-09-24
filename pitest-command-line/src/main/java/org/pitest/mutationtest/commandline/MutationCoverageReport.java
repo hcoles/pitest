@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.EntryPoint;

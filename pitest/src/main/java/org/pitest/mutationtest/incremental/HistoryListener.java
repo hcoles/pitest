@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.incremental;
 
+import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;

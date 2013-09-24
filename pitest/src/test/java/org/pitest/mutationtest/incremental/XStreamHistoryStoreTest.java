@@ -27,6 +27,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;

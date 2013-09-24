@@ -1,10 +1,11 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.report.csv.CSVReportFactory;
 

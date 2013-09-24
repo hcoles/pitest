@@ -15,7 +15,7 @@
 package org.pitest.mutationtest.commandline;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 
 public class ParseResult {
 

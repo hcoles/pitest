@@ -6,7 +6,7 @@ import java.util.Set;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.PluginServices;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ToolClasspathPlugin;
 
 public class PluginFilter implements Predicate<String>{

@@ -17,7 +17,7 @@ package org.pitest.maven;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 
 public interface GoalStrategy {

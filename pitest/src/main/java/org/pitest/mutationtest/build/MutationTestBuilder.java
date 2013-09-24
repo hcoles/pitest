@@ -35,7 +35,7 @@ import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;

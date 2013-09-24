@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.junit.Test;
+import org.pitest.mutationtest.tooling.SpinnerListener;
 
 public class SpinnerListenerTest {
 

@@ -8,6 +8,8 @@ import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.ClassHistory;
+import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 

@@ -21,7 +21,7 @@ import org.apache.maven.artifact.Artifact;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.PluginServices;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.PitError;
 

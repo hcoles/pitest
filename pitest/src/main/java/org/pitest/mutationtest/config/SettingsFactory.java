@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import java.util.Collection;
 
@@ -8,6 +8,9 @@ import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.CompoundListenerFactory;
+import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 

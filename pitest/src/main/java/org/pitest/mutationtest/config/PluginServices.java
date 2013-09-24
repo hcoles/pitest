@@ -1,8 +1,10 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.util.ServiceLoader;

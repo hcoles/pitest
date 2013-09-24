@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import static org.mockito.Mockito.verify;
 
@@ -6,7 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
+import org.pitest.mutationtest.tooling.MutationResultAdapter;
 
 public class MutationResultAdapterTest {
 

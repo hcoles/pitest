@@ -33,8 +33,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.Mutator;
 
 public class OptionsParserTest {

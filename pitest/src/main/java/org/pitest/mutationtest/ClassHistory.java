@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.incremental;
+package org.pitest.mutationtest;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
@@ -8,7 +8,7 @@ public class ClassHistory {
   private final HierarchicalClassId id;
   private final String              coverageId;
 
-  ClassHistory(final HierarchicalClassId id, final String coverageId) {
+  public ClassHistory(final HierarchicalClassId id, final String coverageId) {
     this.id = id;
     this.coverageId = coverageId;
   }

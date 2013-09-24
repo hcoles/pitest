@@ -1,6 +1,8 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;

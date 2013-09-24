@@ -1,7 +1,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageGenerator;
-import org.pitest.mutationtest.incremental.HistoryStore;
 import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.util.ResultOutputStrategy;

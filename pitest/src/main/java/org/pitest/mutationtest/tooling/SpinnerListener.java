@@ -1,6 +1,9 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import java.io.PrintStream;
+
+import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.MutationResultListener;
 
 
 public class SpinnerListener implements MutationResultListener {
