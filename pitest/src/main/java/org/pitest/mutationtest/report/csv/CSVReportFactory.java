@@ -15,10 +15,10 @@
 package org.pitest.mutationtest.report.csv;
 
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
 
-public class CSVReportFactory implements ListenerFactory {
+public class CSVReportFactory implements MutationResultListenerFactory {
 
   public MutationResultListener getListener(ListenerArguments args) {
     return new CSVReportListener(args.getOutputStrategy());

@@ -41,23 +41,23 @@ public class SettingsFactory {
         + this.options.getMutationEngine());
   }
   
-  public ListenerFactory createListener() {
+  public MutationResultListenerFactory createListener() {
     return new CompoundListenerFactory(findListeners());
   }
 
     
-  private Iterable<ListenerFactory> findListeners() {
-    Iterable<? extends ListenerFactory> listeners = PluginServices.findListeners();
-    Collection<ListenerFactory> matches = FCollection.filter(listeners, nameMatches(this.options.getOutputFormats()));
+  private Iterable<MutationResultListenerFactory> findListeners() {
+    Iterable<? extends MutationResultListenerFactory> listeners = PluginServices.findListeners();
+    Collection<MutationResultListenerFactory> matches = FCollection.filter(listeners, nameMatches(this.options.getOutputFormats()));
     if ( matches.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested");
     }
     return matches;
   }
   
-  private static F<ListenerFactory, Boolean> nameMatches(final Iterable<String> outputFormats) {
-    return new F<ListenerFactory, Boolean>() {
-      public Boolean apply(ListenerFactory a) {
+  private static F<MutationResultListenerFactory, Boolean> nameMatches(final Iterable<String> outputFormats) {
+    return new F<MutationResultListenerFactory, Boolean>() {
+      public Boolean apply(MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
       }  
     };

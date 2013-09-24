@@ -13,7 +13,7 @@ import org.pitest.coverage.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.ReportOptions;
@@ -54,7 +54,7 @@ public class EntryPoint {
 
     final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 
-    final ListenerFactory reportFactory = settings.createListener();
+    final MutationResultListenerFactory reportFactory = settings.createListener();
         
     final CoverageOptions coverageOptions = data.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());

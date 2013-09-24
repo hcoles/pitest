@@ -45,7 +45,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationDetailsMother;
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -69,7 +69,7 @@ public class MutationCoverageReportTest {
   private ReportOptions          data;
 
   @Mock
-  private ListenerFactory        listenerFactory;
+  private MutationResultListenerFactory        listenerFactory;
 
   @Mock
   private MutationResultListener listener;

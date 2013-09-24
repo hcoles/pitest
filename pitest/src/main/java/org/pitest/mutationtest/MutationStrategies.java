@@ -10,21 +10,21 @@ public class MutationStrategies {
 
   private final HistoryStore          history;
   private final CoverageGenerator     coverage;
-  private final ListenerFactory       listenerFactory;
+  private final MutationResultListenerFactory       listenerFactory;
   private final BuildVerifier         buildVerifier;
   private final MutationEngineFactory factory;
   private final ResultOutputStrategy output;
 
   public MutationStrategies(final MutationEngineFactory factory,
       final HistoryStore history, final CoverageGenerator coverage,
-      final ListenerFactory listenerFactory,ResultOutputStrategy output ) {
+      final MutationResultListenerFactory listenerFactory,ResultOutputStrategy output ) {
     this(factory, history, coverage, listenerFactory, output,
         new DefaultBuildVerifier());
   }
 
   private MutationStrategies(final MutationEngineFactory factory,
       final HistoryStore history, final CoverageGenerator coverage,
-      final ListenerFactory listenerFactory, ResultOutputStrategy output, final BuildVerifier buildVerifier) {
+      final MutationResultListenerFactory listenerFactory, ResultOutputStrategy output, final BuildVerifier buildVerifier) {
     this.history = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
@@ -41,7 +41,7 @@ public class MutationStrategies {
     return this.coverage;
   }
 
-  public ListenerFactory listenerFactory() {
+  public MutationResultListenerFactory listenerFactory() {
     return this.listenerFactory;
   }
 

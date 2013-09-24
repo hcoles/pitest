@@ -16,10 +16,10 @@
 package org.pitest.mutationtest.report.html;
 
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
 
-public class HtmlReportFactory implements ListenerFactory {
+public class HtmlReportFactory implements MutationResultListenerFactory {
 
   public MutationResultListener getListener(ListenerArguments args) {
     return new MutationHtmlReportListener(args.getCoverage(), args.getOutputStrategy(),

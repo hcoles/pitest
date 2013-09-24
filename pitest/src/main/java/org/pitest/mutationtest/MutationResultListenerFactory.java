@@ -18,7 +18,7 @@ package org.pitest.mutationtest;
 import org.pitest.plugin.ToolClasspathPlugin;
 
 
-public interface ListenerFactory extends ToolClasspathPlugin {
+public interface MutationResultListenerFactory extends ToolClasspathPlugin {
 
   public MutationResultListener getListener(ListenerArguments args);
   

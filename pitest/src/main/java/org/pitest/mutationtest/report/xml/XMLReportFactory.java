@@ -15,10 +15,10 @@
 package org.pitest.mutationtest.report.xml;
 
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.ListenerFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
 
-public class XMLReportFactory implements ListenerFactory {
+public class XMLReportFactory implements MutationResultListenerFactory {
 
   public MutationResultListener getListener(ListenerArguments args) {
     return new XMLReportListener(args.getOutputStrategy());

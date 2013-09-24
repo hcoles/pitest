@@ -3,6 +3,10 @@ package org.pitest.mutationtest;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.util.ResultOutputStrategy;
 
+/**
+ * Data passed to the listener MutationResultListener factories
+ * for use when constructing listeners.
+ */
 public class ListenerArguments {
   
   private final ResultOutputStrategy outputStrategy;

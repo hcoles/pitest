@@ -28,8 +28,8 @@ public abstract class ReportTestBase {
     // this.data.setMutators(Mutator.DEFAULTS.asCollection());
   }
 
-  protected ListenerFactory listenerFactory() {
-    return new ListenerFactory() {
+  protected MutationResultListenerFactory listenerFactory() {
+    return new MutationResultListenerFactory() {
       public MutationResultListener getListener(ListenerArguments args) {
         return ReportTestBase.this.metaDataExtractor;
       }

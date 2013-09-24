@@ -32,10 +32,10 @@ public class CompoundListenerFactoryTest {
   private CompoundListenerFactory testee;
 
   @Mock
-  private ListenerFactory         firstChild;
+  private MutationResultListenerFactory         firstChild;
 
   @Mock
-  private ListenerFactory         secondChild;
+  private MutationResultListenerFactory         secondChild;
 
   @Before
   public void setUp() {

@@ -17,11 +17,11 @@ package org.pitest.mutationtest;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 
-public class CompoundListenerFactory implements ListenerFactory {
+public class CompoundListenerFactory implements MutationResultListenerFactory {
 
-  private final Iterable<ListenerFactory> children;
+  private final Iterable<MutationResultListenerFactory> children;
 
-  public CompoundListenerFactory(final Iterable<ListenerFactory> children) {
+  public CompoundListenerFactory(final Iterable<MutationResultListenerFactory> children) {
     this.children = children;
   }
 
@@ -30,10 +30,10 @@ public class CompoundListenerFactory implements ListenerFactory {
         factoryToListener(args)));
   }
 
-  private F<ListenerFactory, MutationResultListener> factoryToListener(final ListenerArguments args) {
-    return new F<ListenerFactory, MutationResultListener>() {
+  private F<MutationResultListenerFactory, MutationResultListener> factoryToListener(final ListenerArguments args) {
+    return new F<MutationResultListenerFactory, MutationResultListener>() {
 
-      public MutationResultListener apply(final ListenerFactory a) {
+      public MutationResultListener apply(final MutationResultListenerFactory a) {
         return a.getListener(args);
       }
 

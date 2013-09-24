@@ -19,11 +19,11 @@ import java.util.Enumeration;
  */
 public abstract class ServiceLoader {
 
-  public static <S> Iterable<S> load(final Class<S> ifc) {
+  public static <S> Collection<S> load(final Class<S> ifc) {
     return load(ifc, Thread.currentThread().getContextClassLoader());
   }
 
-  public static <S> Iterable<S> load(final Class<S> ifc,
+  public static <S> Collection<S> load(final Class<S> ifc,
       final ClassLoader loader) {
     try {
       return loadImpl(ifc, loader);
@@ -32,7 +32,7 @@ public abstract class ServiceLoader {
     }
   }
 
-  private static <S> Iterable<S> loadImpl(final Class<S> ifc,
+  private static <S> Collection<S> loadImpl(final Class<S> ifc,
       final ClassLoader loader) throws IOException {
     final Enumeration<URL> e = loader.getResources("META-INF/services/"
         + ifc.getName());
