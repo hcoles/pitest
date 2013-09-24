@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.mutationtest.results.Confidence;
 import org.pitest.mutationtest.results.DetectionStatus;
 
 public class LineStyle {
@@ -57,7 +56,7 @@ public class LineStyle {
       return "survived";
     }
 
-    if (status.getConfidence().equals(Confidence.HIGH)) {
+    if (ConfidenceMap.hasHighConfidence(status)) {
       return "killed";
     } else {
       return "uncertain";
