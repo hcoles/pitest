@@ -308,7 +308,7 @@ public class TestMutationTesting {
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         Mutator.RETURN_VALS.asCollection());
-    verifyLineNumbers(105);
+    verifyLineNumbers(110);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
