@@ -9,7 +9,6 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.instrument.MutationStatusMap;
-import org.pitest.mutationtest.instrument.MutationTestCommunicationThread;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
 import org.pitest.util.ExitCode;

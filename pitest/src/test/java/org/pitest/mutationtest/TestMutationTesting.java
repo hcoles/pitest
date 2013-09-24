@@ -55,6 +55,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.build.MutationSource;
+import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;

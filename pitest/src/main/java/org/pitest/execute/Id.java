@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument.protocol;
+package org.pitest.execute;
 
 public abstract class Id {
   public final static byte DESCRIBE = 1;

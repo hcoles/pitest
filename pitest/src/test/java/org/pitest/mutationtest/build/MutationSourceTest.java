@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -22,6 +22,9 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +25,9 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
+import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.TestInfoPriorisationComparator;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;

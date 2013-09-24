@@ -7,8 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
+import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.instrument.protocol.Id;
 
 class SocketReadingCallable implements Callable<ExitCode> {
 

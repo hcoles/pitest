@@ -12,18 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.execute;
 
 import java.net.ServerSocket;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.execute.SlaveArguments;
-import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;
 import org.pitest.util.Log;
 import org.pitest.util.ReceiveStrategy;

@@ -9,10 +9,10 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.execute.Id;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SafeDataInputStream;
 

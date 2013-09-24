@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -15,6 +15,7 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.build.KnownStatusMutationTestUnit;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 import org.pitest.testapi.ResultCollector;
 

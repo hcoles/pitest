@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.build;
 
 import java.util.Collection;
 import java.util.logging.Logger;

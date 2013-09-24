@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,8 +30,13 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Prelude;
-import org.pitest.mutationtest.instrument.KnownStatusMutationTestUnit;
-import org.pitest.mutationtest.instrument.MutationTestUnit;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationAnalyser;
+import org.pitest.mutationtest.MutationAnalysisUnit;
+import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;

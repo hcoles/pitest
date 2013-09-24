@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest.build;
 
 import static org.pitest.functional.Prelude.printWith;
 import static org.pitest.util.Unchecked.translateCheckedException;
@@ -33,6 +33,8 @@ import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
+import org.pitest.mutationtest.instrument.MutationStatusMap;
+import org.pitest.mutationtest.instrument.TimeoutLengthStrategy;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.AbstractTestUnit;

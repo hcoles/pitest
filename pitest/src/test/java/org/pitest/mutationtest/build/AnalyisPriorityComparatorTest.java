@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.pitest.mutationtest.MutationAnalysisUnit;
+import org.pitest.mutationtest.build.AnalysisPriorityComparator;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 

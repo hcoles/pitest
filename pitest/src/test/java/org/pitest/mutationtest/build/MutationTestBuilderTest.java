@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +15,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.MutationAnalysisUnit;
+import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.NullAnalyser;
+import org.pitest.mutationtest.ReportOptions;
+import org.pitest.mutationtest.build.MutationSource;
+import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;

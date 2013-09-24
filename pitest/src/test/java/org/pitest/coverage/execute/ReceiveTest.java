@@ -13,8 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.execute.Receive;
+import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.testapi.Description;
 import org.pitest.util.SafeDataInputStream;
 
