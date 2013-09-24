@@ -12,6 +12,7 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.coverage.ClassLine;
+import org.pitest.coverage.LineCoverage;
 import org.pitest.util.ResultOutputStrategy;
 
 public class DefaultCoverageExporterTest {

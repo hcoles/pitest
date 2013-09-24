@@ -1,9 +1,8 @@
-package org.pitest.coverage.interprocess;
+package org.pitest.coverage.execute;
 
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.functional.SideEffect1;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataOutputStream;

@@ -1,4 +1,4 @@
-package org.pitest.coverage.interprocess;
+package org.pitest.coverage.execute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -11,7 +11,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.boot.CodeCoverageStore;
-import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.CoverageResult;
+import org.pitest.coverage.execute.Receive;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.testapi.Description;

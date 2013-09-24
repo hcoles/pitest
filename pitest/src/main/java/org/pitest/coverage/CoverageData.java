@@ -32,8 +32,6 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.domain.TestInfo;
-import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.export.LineCoverage;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
@@ -51,7 +49,7 @@ public class CoverageData implements CoverageDatabase {
 
   private boolean                                             hasFailedTest = false;
 
-  CoverageData(final CodeSource code) {
+  public CoverageData(final CodeSource code) {
     this.code = code;
   }
 
@@ -88,7 +86,7 @@ public class CoverageData implements CoverageDatabase {
 
   }
 
-  void calculateClassCoverage(final CoverageResult cr) {
+  public void calculateClassCoverage(final CoverageResult cr) {
 
     checkForFailedTest(cr);
     final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),

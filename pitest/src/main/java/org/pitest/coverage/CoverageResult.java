@@ -1,9 +1,8 @@
-package org.pitest.coverage.execute;
+package org.pitest.coverage;
 
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.pitest.coverage.ClassStatistics;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.testapi.Description;

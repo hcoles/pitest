@@ -21,6 +21,7 @@ import org.pitest.SystemTest;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPath;
 import org.pitest.coverage.ClassStatistics;
+import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;

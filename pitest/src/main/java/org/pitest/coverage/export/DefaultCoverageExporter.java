@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.pitest.coverage.CoverageExporter;
+import org.pitest.coverage.LineCoverage;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
 

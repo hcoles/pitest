@@ -2,7 +2,7 @@ package org.pitest.mutationtest;
 
 import java.util.Collection;
 
-import org.pitest.coverage.export.CoverageExporter;
+import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.F;

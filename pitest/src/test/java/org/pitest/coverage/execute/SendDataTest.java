@@ -1,4 +1,4 @@
-package org.pitest.coverage.interprocess;
+package org.pitest.coverage.execute;
 
 import static org.mockito.Mockito.verify;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.execute.SendData;
 import org.pitest.util.SafeDataOutputStream;
 
 public class SendDataTest {

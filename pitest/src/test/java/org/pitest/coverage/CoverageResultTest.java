@@ -1,4 +1,4 @@
-package org.pitest.coverage.execute;
+package org.pitest.coverage;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.coverage.ClassStatistics;
+import org.pitest.coverage.CoverageResult;
 
 public class CoverageResultTest {
 

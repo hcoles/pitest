@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import org.pitest.coverage.interprocess.CoverageCommunicationThread;
+import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;

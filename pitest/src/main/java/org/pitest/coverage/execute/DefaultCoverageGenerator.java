@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.coverage;
+package org.pitest.coverage.execute;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +25,10 @@ import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
-import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.execute.CoverageProcess;
-import org.pitest.coverage.execute.CoverageResult;
-import org.pitest.coverage.execute.LaunchOptions;
-import org.pitest.coverage.export.CoverageExporter;
+import org.pitest.coverage.CoverageData;
+import org.pitest.coverage.CoverageExporter;
+import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;

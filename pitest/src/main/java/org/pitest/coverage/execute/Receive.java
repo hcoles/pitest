@@ -1,4 +1,4 @@
-package org.pitest.coverage.interprocess;
+package org.pitest.coverage.execute;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.ClassStatistics;
-import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.testapi.Description;

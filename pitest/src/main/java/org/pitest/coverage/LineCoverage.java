@@ -1,8 +1,7 @@
-package org.pitest.coverage.export;
+package org.pitest.coverage;
 
 import java.util.Collection;
 
-import org.pitest.coverage.ClassLine;
 
 public class LineCoverage {
 

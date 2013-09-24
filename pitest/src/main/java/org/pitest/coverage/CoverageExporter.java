@@ -1,6 +1,7 @@
-package org.pitest.coverage.export;
+package org.pitest.coverage;
 
 import java.util.Collection;
+
 
 public interface CoverageExporter {
 

@@ -1,10 +1,9 @@
-package org.pitest.coverage.interprocess;
+package org.pitest.coverage.execute;
 
 import java.net.ServerSocket;
 import java.util.List;
 
-import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.execute.CoverageResult;
+import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.util.CommunicationThread;
 
