@@ -14,11 +14,11 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.Log;
 
 public class IncrementalAnalyser implements MutationAnalyser {

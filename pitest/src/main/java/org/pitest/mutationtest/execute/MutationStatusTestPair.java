@@ -15,7 +15,7 @@
 package org.pitest.mutationtest.execute;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.DetectionStatus;
 
 public class MutationStatusTestPair {
 

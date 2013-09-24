@@ -20,11 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.mutationtest.report.MutationTestResultMother;
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationStatisticsListenerTest {
 

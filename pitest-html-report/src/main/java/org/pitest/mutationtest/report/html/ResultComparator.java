@@ -3,10 +3,10 @@ package org.pitest.mutationtest.report.html;
 import java.util.Comparator;
 import java.util.EnumMap;
 
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationResult;
 
-import static  org.pitest.mutationtest.results.DetectionStatus.*;
+import static org.pitest.mutationtest.DetectionStatus.*;
 
 class ResultComparator implements Comparator<MutationResult> {
   

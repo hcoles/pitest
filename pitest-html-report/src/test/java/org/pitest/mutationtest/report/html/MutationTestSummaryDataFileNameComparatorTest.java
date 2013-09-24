@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.report.MutationTestSummaryData;
-import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationTestSummaryDataFileNameComparatorTest {
 

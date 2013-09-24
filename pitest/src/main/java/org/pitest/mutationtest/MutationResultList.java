@@ -27,7 +27,6 @@ import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.report.MutationGrouping;
-import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationResultList implements FunctionalIterable<MutationResult> {
 

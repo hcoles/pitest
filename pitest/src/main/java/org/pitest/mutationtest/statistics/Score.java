@@ -21,7 +21,7 @@ import java.util.Map;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.DetectionStatus;
 
 public class Score {
 

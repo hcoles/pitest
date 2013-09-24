@@ -24,8 +24,8 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultList;
-import org.pitest.mutationtest.results.MutationResult;
 
 public class MutationTestSummaryData {
 

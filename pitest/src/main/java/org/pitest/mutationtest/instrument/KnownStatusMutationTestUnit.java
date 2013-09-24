@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.pitest.mutationtest.MutationAnalysisUnit;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.MetaData;

@@ -33,8 +33,6 @@ import org.pitest.functional.Prelude;
 import org.pitest.mutationtest.instrument.KnownStatusMutationTestUnit;
 import org.pitest.mutationtest.instrument.MutationTestUnit;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;

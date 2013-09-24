@@ -16,11 +16,11 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
-import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
-import static org.pitest.mutationtest.results.DetectionStatus.RUN_ERROR;
-import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
-import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
+import static org.pitest.mutationtest.DetectionStatus.KILLED;
+import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.DetectionStatus.RUN_ERROR;
+import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
 import java.io.File;
 import java.io.FileOutputStream;

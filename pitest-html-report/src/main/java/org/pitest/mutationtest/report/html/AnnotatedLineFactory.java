@@ -26,7 +26,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.InputStreamLineIterable;
 import org.pitest.util.StringUtil;
 

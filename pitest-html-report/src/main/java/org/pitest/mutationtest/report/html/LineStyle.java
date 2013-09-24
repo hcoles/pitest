@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.DetectionStatus;
 
 public class LineStyle {
 

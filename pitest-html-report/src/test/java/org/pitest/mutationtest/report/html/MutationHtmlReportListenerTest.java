@@ -32,11 +32,11 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
 import org.pitest.util.ResultOutputStrategy;
 
 public class MutationHtmlReportListenerTest {

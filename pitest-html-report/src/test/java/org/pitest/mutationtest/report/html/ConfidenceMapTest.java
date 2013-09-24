@@ -3,7 +3,7 @@ package org.pitest.mutationtest.report.html;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.DetectionStatus;
 
 public class ConfidenceMapTest {
   

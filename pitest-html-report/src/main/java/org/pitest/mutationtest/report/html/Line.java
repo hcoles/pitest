@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationResult;
 
 public class Line {
   private final long                 number;

@@ -19,11 +19,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
+import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.instrument.protocol.Id;
-import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.util.CommunicationThread;
 import org.pitest.util.Log;
 import org.pitest.util.ReceiveStrategy;

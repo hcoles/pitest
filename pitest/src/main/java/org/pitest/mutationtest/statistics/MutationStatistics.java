@@ -25,7 +25,7 @@ import java.util.Map;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.MutationResult;
 
 public class MutationStatistics {
   private final Map<String, Score> mutatorTotalMap  = new HashMap<String, Score>();

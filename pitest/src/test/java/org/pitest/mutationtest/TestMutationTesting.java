@@ -15,12 +15,12 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.results.DetectionStatus.KILLED;
-import static org.pitest.mutationtest.results.DetectionStatus.MEMORY_ERROR;
-import static org.pitest.mutationtest.results.DetectionStatus.NON_VIABLE;
-import static org.pitest.mutationtest.results.DetectionStatus.NO_COVERAGE;
-import static org.pitest.mutationtest.results.DetectionStatus.SURVIVED;
-import static org.pitest.mutationtest.results.DetectionStatus.TIMED_OUT;
+import static org.pitest.mutationtest.DetectionStatus.KILLED;
+import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
+import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +62,6 @@ import org.pitest.mutationtest.engine.gregor.Mutator;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.instrument.JarCreatingJarFinder;
 import org.pitest.mutationtest.instrument.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.results.DetectionStatus;
 import org.pitest.process.JavaAgent;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;

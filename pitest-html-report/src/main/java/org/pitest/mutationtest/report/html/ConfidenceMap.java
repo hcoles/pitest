@@ -2,7 +2,7 @@ package org.pitest.mutationtest.report.html;
 
 import java.util.EnumSet;
 
-import org.pitest.mutationtest.results.DetectionStatus;
+import org.pitest.mutationtest.DetectionStatus;
 
 class ConfidenceMap {
 

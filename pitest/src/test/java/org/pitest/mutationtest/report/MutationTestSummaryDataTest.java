@@ -10,7 +10,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.mutationtest.results.MutationResult;
+import org.pitest.mutationtest.MutationResult;
 
 public class MutationTestSummaryDataTest {
 
