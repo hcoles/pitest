@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 /**
  * Always selects the start status for a mutation

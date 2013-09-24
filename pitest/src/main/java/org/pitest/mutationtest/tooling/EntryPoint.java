@@ -14,7 +14,6 @@ import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationResultListenerFactory;
-import org.pitest.mutationtest.MutationCoverage;
 import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.ReportOptions;
 import org.pitest.mutationtest.SettingsFactory;

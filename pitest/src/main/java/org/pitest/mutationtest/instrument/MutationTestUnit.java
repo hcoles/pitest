@@ -30,6 +30,7 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.process.JavaAgent;

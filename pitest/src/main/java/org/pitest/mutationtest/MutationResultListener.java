@@ -1,6 +1,5 @@
 package org.pitest.mutationtest;
 
-import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public interface MutationResultListener {
 

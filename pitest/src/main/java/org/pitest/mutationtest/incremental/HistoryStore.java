@@ -7,8 +7,8 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 public interface HistoryStore {
 

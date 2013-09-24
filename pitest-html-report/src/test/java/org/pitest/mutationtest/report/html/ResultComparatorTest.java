@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.MutationStatusTestPair;
 
 public class ResultComparatorTest {
 

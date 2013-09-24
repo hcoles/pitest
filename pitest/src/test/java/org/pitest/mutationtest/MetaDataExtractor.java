@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public class MetaDataExtractor implements MutationResultListener {
 

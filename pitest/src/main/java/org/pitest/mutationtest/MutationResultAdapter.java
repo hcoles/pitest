@@ -1,7 +1,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;

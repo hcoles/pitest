@@ -29,8 +29,8 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 
 public class XStreamHistoryStoreTest {

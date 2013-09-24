@@ -15,7 +15,6 @@
 package org.pitest.mutationtest;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 public class MutationResult {
 

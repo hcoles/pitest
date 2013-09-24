@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.statistics;
 
+import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public class MutationStatisticsListener implements MutationResultListener,
     MutationStatisticsSource {

@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 import org.pitest.mutationtest.execute.SlaveArguments;
 import org.pitest.mutationtest.instrument.protocol.Id;
 import org.pitest.util.CommunicationThread;

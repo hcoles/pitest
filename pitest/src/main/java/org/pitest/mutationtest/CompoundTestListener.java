@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public class CompoundTestListener implements MutationResultListener {
 

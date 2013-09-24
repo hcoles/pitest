@@ -29,7 +29,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationDetails;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
+import org.pitest.mutationtest.MutationStatusTestPair;
 
 public class MutationStatusMap {
 

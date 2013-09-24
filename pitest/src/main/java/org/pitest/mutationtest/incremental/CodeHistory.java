@@ -4,8 +4,8 @@ import java.math.BigInteger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 public interface CodeHistory {
 

@@ -16,6 +16,7 @@ package org.pitest.mutationtest.execute;
 
 import java.io.IOException;
 
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 

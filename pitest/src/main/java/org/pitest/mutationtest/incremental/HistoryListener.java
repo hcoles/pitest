@@ -1,8 +1,8 @@
 package org.pitest.mutationtest.incremental;
 
+import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 
 public class HistoryListener implements MutationResultListener {
 

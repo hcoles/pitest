@@ -18,8 +18,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.pitest.mutationtest.DetectionStatus;
-import org.piteimport org.pitest.mutationtest.results.DetectionStatus;
-import org.pitest.mutationtest.execute.MutationStatusTestPair;
 
 public class MutationResultTest {
 

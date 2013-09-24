@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.instrument;
+package org.pitest.mutationtest;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,7 +22,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.report.MutationTestSummaryData;
 import org.pitest.testapi.MetaData;
 

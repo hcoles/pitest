@@ -22,8 +22,8 @@ import java.util.Collections;
 import org.pitest.DescriptionMother;
 import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.mutationtest.MutationDetails;
+import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.instrument.MutationMetaData;
 import org.pitest.testapi.TestResult;
 
 public class MutationTestResultMother {

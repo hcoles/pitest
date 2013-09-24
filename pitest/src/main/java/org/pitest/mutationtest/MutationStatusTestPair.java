@@ -12,10 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.execute;
+package org.pitest.mutationtest;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.DetectionStatus;
 
 public class MutationStatusTestPair {
 
