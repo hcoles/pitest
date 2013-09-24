@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.report.MutationTestSummaryData;
 
 public class PackageSummaryDataTest {
 

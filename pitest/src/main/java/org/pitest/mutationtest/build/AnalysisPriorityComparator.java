@@ -2,7 +2,6 @@ package org.pitest.mutationtest.build;
 
 import java.util.Comparator;
 
-import org.pitest.mutationtest.MutationAnalysisUnit;
 
 /**
  * Comparator to prioritise the order of mutation analysis units.

@@ -1,6 +1,9 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.util.ResultOutputStrategy;

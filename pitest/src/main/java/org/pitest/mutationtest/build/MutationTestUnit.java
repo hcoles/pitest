@@ -27,7 +27,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationStatusMap;

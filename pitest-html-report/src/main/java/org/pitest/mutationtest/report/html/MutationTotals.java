@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.html;
 
 public class MutationTotals {
 

@@ -3,7 +3,6 @@ package org.pitest.mutationtest.build;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.testapi.AbstractTestUnit;

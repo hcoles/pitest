@@ -32,7 +32,6 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
-import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.config.ReportOptions;

@@ -47,8 +47,6 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.MutationStrategies;
-import org.pitest.mutationtest.SmartSourceLocator;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.config.ReportOptions;

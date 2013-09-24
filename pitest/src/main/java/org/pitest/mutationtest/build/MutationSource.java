@@ -26,7 +26,6 @@ import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Prelude;
 import org.pitest.mutationtest.MutationConfig;
-import org.pitest.mutationtest.TestInfoPriorisationComparator;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.filter.MutationFilter;

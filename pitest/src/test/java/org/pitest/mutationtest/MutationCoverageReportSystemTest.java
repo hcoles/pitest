@@ -56,6 +56,7 @@ import org.pitest.mutationtest.engine.gregor.Mutator;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
+import org.pitest.mutationtest.tooling.MutationStrategies;
 import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;
 import org.pitest.testng.TestGroupConfig;

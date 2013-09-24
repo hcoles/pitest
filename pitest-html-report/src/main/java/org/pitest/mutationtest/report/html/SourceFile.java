@@ -16,7 +16,6 @@ package org.pitest.mutationtest.report.html;
 
 import java.util.List;
 
-import org.pitest.mutationtest.report.MutationGrouping;
 
 public class SourceFile {
 

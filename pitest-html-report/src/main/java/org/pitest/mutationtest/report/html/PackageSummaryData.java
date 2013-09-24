@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.mutationtest.report.MutationTestSummaryData;
-import org.pitest.mutationtest.report.MutationTotals;
 
 public class PackageSummaryData implements Comparable<PackageSummaryData> {
 

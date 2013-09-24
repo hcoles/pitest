@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.MutationAnalysisUnit;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;

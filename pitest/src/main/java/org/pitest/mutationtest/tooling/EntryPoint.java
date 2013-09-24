@@ -15,7 +15,6 @@ import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
-import org.pitest.mutationtest.MutationStrategies;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;

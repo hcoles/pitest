@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,6 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.ListenerArguments;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.mutationtest.config.CompoundListenerFactory;
 
 public class CompoundListenerFactoryTest {
 

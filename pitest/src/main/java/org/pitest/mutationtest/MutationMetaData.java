@@ -19,10 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.report.MutationTestSummaryData;
 import org.pitest.testapi.MetaData;
 
 public class MutationMetaData implements MetaData {
@@ -45,6 +43,10 @@ public class MutationMetaData implements MetaData {
     FCollection.mapTo(this.mutations, mutationResultToFileName(),
         uniqueFilenames);
     return uniqueFilenames;
+  }
+  
+  public Set<String> getMutatorNames() {
+    return this.mutatorNames;
   }
 
   private static F<MutationResult, String> mutationResultToFileName() {
@@ -80,13 +82,6 @@ public class MutationMetaData implements MetaData {
         : "default";
   }
 
-  public MutationTestSummaryData createSummaryData(
-      final CoverageDatabase coverage) {
-
-    return new MutationTestSummaryData(getFirstFileName(), this.mutations,
-        this.mutatorNames, coverage.getClassInfo(getMutatedClass()),
-        coverage.getNumberOfCoveredLines(getMutatedClass()));
-  }
 
   @Override
   public int hashCode() {

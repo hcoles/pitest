@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.predicate.Predicate;

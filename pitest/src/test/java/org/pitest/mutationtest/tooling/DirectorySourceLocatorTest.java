@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.tooling;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.DirectorySourceLocator;
+import org.pitest.mutationtest.tooling.DirectorySourceLocator;
 
 public class DirectorySourceLocatorTest {
 

@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.html;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.report.html.MutationTestSummaryData;
 
 public class MutationTestSummaryDataTest {
 

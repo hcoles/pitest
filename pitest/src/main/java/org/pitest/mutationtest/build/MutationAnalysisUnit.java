@@ -1,4 +1,4 @@
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.build;
 
 import org.pitest.testapi.TestUnit;
 

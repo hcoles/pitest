@@ -12,10 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.ListenerArguments;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 
 public class CompoundListenerFactory implements MutationResultListenerFactory {
 

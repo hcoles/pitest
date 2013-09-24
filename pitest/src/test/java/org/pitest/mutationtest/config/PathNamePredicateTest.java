@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.mutationtest;
+package org.pitest.mutationtest.config;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.Prelude;
-import org.pitest.mutationtest.PathNamePredicate;
+import org.pitest.mutationtest.config.PathNamePredicate;
 
 public class PathNamePredicateTest {
 

@@ -34,11 +34,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationMetaData;
-import org.pitest.mutationtest.MutationResultList;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
-import org.pitest.mutationtest.report.MutationTestSummaryData;
-import org.pitest.mutationtest.report.MutationTotals;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -99,8 +96,16 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private PackageSummaryData collectPackageSummaries(
       final MutationMetaData mutationMetaData) {
     final String packageName = mutationMetaData.getPackageName();
+        
     return this.packageSummaryData.update(packageName,
-        mutationMetaData.createSummaryData(this.coverage));
+        createSummaryData(this.coverage,mutationMetaData));
+  }
+  
+  public MutationTestSummaryData createSummaryData(
+      final CoverageDatabase coverage, final MutationMetaData data) {
+    return new MutationTestSummaryData(data.getFirstFileName(), data.getMutations(),
+        data.getMutatorNames(), coverage.getClassInfo(data.getMutatedClass()),
+        coverage.getNumberOfCoveredLines(data.getMutatedClass()));
   }
 
   private SourceFile createAnnotatedSourceFile(

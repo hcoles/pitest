@@ -1,9 +1,10 @@
-package org.pitest.mutationtest.report;
+package org.pitest.mutationtest.report.html;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.mutationtest.report.html.MutationTotals;
 
 public class MutationTotalsTest {
 
