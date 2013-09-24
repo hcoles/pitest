@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
-import org.pitest.mutationtest.engine.gregor.GregorEngineFactory;
+import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.util.PitError;
 
 public class SettingsFactoryTest {

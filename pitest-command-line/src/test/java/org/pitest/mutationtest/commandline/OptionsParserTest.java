@@ -35,7 +35,7 @@ import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.engine.gregor.Mutator;
+import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
 public class OptionsParserTest {
 

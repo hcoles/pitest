@@ -1,1 +1,1 @@
-org.pitest.mutationtest.engine.gregor.GregorEngineFactory
+org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory
