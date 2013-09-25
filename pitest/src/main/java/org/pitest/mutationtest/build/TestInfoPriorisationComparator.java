@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.TestInfo;
 
 public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
     Serializable {

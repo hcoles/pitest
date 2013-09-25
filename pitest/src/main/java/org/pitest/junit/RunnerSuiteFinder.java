@@ -26,23 +26,22 @@ import org.junit.runner.Runner;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestSuiteFinder;
 
 public class RunnerSuiteFinder implements TestSuiteFinder {
 
   @SuppressWarnings("unchecked")
-  public List<TestClass> apply(final TestClass a) {
+  public List<Class<?>> apply(final Class<?> a) {
 
-    final Runner runner = AdaptedJUnitTestUnit.createRunner(a.getClazz());
+    final Runner runner = AdaptedJUnitTestUnit.createRunner(a);
 
     final List<Description> allChildren = new ArrayList<Description>();
     flattenChildren(allChildren, runner.getDescription());
 
-    final Set<TestClass> classes = new LinkedHashSet<TestClass>(runner
+    final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(runner
         .getDescription().getChildren().size());
 
     final List<Description> suites = FCollection.filter(allChildren,
@@ -50,7 +49,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
     FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
 
     classes.remove(a);
-    return new ArrayList<TestClass>(classes);
+    return new ArrayList<Class<?>>(classes);
 
   }
 
@@ -71,15 +70,15 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
     };
   }
 
-  private static F<Description, Option<TestClass>> descriptionToTestClass() {
-    return new F<Description, Option<TestClass>>() {
+  private static F<Description, Option<Class<?>>> descriptionToTestClass() {
+    return new F<Description, Option<Class<?>>>() {
 
-      public Option<TestClass> apply(final Description a) {
+      public Option<Class<?>> apply(final Description a) {
         final Class<?> clazz = a.getTestClass();
         if (clazz != null) {
-          return Option.some(new TestClass(clazz));
+          return Option.<Class<?>>some(clazz);
         } else {
-          return Option.<TestClass> none();
+          return Option.<Class<?>> none();
         }
       }
 

@@ -22,14 +22,14 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
-class DefaultMutationEngineConfiguration implements MutationEngineConfiguration {
+public class DefaultMutationEngineConfiguration implements MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
   private final Collection<String>                         doNotMutate;
   private final Collection<? extends MethodMutatorFactory> mutators;
   private final InlinedCodeFilter                          inlinedCodeDetector;
 
-  DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
+  public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
       final InlinedCodeFilter inlinedCodeDetector) {

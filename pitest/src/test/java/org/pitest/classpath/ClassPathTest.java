@@ -33,8 +33,8 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 
 public class ClassPathTest {
 

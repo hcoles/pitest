@@ -14,8 +14,8 @@
  */
 package org.pitest.dependency;
 
-import static org.pitest.functional.Prelude.and;
-import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.and;
+import static org.pitest.functional.prelude.Prelude.not;
 
 import java.io.IOException;
 import java.util.ArrayList;

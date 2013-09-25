@@ -18,12 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.testapi.GroupingStrategy;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestUnit;
 
 public class GroupPerClassStrategy implements GroupingStrategy {
 
-  public List<? extends TestUnit> group(final TestClass c,
+  public List<? extends TestUnit> group(final Class<?> c,
       final List<TestUnit> testUnitsFromClass) {
     return Collections.singletonList(new MultipleTestGroup(testUnitsFromClass));
   }

@@ -5,7 +5,7 @@ package org.pitest.functional.predicate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.not;
 
 import org.junit.Test;
 

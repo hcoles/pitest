@@ -14,7 +14,7 @@
  */
 package org.pitest.process;
 
-import static org.pitest.functional.Prelude.or;
+import static org.pitest.functional.prelude.Prelude.or;
 
 import java.io.File;
 import java.io.IOException;

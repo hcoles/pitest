@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.PitError;
 
 /**

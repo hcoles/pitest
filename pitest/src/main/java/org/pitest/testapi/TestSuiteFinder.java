@@ -19,6 +19,6 @@ import java.util.List;
 
 import org.pitest.functional.F;
 
-public interface TestSuiteFinder extends F<TestClass, List<TestClass>> {
+public interface TestSuiteFinder extends F<Class<?>, List<Class<?>>> {
 
 }

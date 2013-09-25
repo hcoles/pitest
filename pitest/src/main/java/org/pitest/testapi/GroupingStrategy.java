@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface GroupingStrategy {
 
-  public List<? extends TestUnit> group(TestClass c,
+  public List<? extends TestUnit> group(Class<?> c,
       List<TestUnit> testUnitsFromClass);
 
 }

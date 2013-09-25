@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;

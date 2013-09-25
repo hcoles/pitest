@@ -18,9 +18,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Prelude.id;
-import static org.pitest.functional.Prelude.isEqualTo;
-import static org.pitest.functional.Prelude.isGreaterThan;
+import static org.pitest.functional.prelude.Prelude.id;
+import static org.pitest.functional.prelude.Prelude.isEqualTo;
+import static org.pitest.functional.prelude.Prelude.isGreaterThan;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +28,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.functional.prelude.Prelude;
 
 public class MutableListTest {
 

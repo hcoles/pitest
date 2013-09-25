@@ -17,7 +17,7 @@ package org.pitest.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Prelude.isEqualTo;
+import static org.pitest.functional.prelude.Prelude.isEqualTo;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
+import org.pitest.functional.prelude.Prelude;
 
 public class InputStreamLineIterableTest {
 

@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.Prelude.putToMap;
+import static org.pitest.functional.prelude.Prelude.putToMap;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;

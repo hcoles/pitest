@@ -34,7 +34,7 @@ import org.pitest.execute.Pitest;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Prelude;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;

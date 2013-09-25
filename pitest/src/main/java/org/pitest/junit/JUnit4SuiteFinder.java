@@ -21,19 +21,16 @@ import java.util.List;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.pitest.functional.FCollection;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestSuiteFinder;
 
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 
-  public List<TestClass> apply(final TestClass a) {
-    final SuiteClasses annotation = a.getClazz().getAnnotation(
+  public List<Class<?>> apply(final Class<?> a) {
+    final SuiteClasses annotation = a.getAnnotation(
         SuiteClasses.class);
 
-    if ((annotation != null) && hasSuitableRunnner(a.getClazz())) {
-      return FCollection.map(Arrays.asList(annotation.value()),
-          TestClass.classToTestClass());
+    if ((annotation != null) && hasSuitableRunnner(a)) {
+      return Arrays.asList(annotation.value());
     } else {
       return Collections.emptyList();
     }

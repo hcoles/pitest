@@ -17,12 +17,11 @@ package org.pitest.execute;
 import java.util.List;
 
 import org.pitest.testapi.GroupingStrategy;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestUnit;
 
 public class UnGroupedStrategy implements GroupingStrategy {
 
-  public List<? extends TestUnit> group(final TestClass c,
+  public List<? extends TestUnit> group(final Class<?> c,
       final List<TestUnit> testUnitsFromClass) {
     return testUnitsFromClass;
   }

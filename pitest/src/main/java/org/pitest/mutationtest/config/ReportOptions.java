@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.config;
 
-import static org.pitest.functional.Prelude.not;
-import static org.pitest.functional.Prelude.or;
+import static org.pitest.functional.prelude.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.or;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,8 +39,8 @@ import org.pitest.execute.Pitest;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;

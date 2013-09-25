@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.engine.gregor.config;
+package org.pitest.mutationtest.engine.gregor;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,9 +22,6 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.True;
-import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;

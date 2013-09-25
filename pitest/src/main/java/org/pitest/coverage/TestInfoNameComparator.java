@@ -18,7 +18,6 @@ package org.pitest.coverage;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.pitest.coverage.domain.TestInfo;
 
 class TestInfoNameComparator implements Comparator<TestInfo>, Serializable {
 

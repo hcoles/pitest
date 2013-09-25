@@ -18,14 +18,15 @@ package org.pitest.execute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.GroupingStrategy;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
@@ -91,13 +92,48 @@ public class Pitest {
     final List<TestUnit> testUnits = new ArrayList<TestUnit>();
 
     for (final Class<?> c : classes) {
-      final Collection<TestUnit> testUnitsFromClass = new TestClass(c)
-          .getTestUnits(startConfig, groupStrategy);
+      final Collection<TestUnit> testUnitsFromClass = getTestUnits(c,
+          startConfig, groupStrategy);
       testUnits.addAll(testUnitsFromClass);
     }
 
     return testUnits;
 
+  }
+
+  private static Collection<TestUnit> getTestUnits(final Class<?> suiteClass,
+      final Configuration startConfig, final GroupingStrategy groupStrategy) {
+
+    final List<TestUnit> tus = new ArrayList<TestUnit>();
+    final Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
+    findTestUnits(tus, visitedClasses, suiteClass, startConfig, groupStrategy);
+    return tus;
+  }
+
+  private static void findTestUnits(final List<TestUnit> tus,
+      final Set<Class<?>> visitedClasses, final Class<?> suiteClass,
+      final Configuration startConfig, final GroupingStrategy groupStrategy) {
+    visitedClasses.add(suiteClass);
+    final Collection<Class<?>> tcs = startConfig.testSuiteFinder().apply(
+        suiteClass);
+
+    for (final Class<?> tc : tcs) {
+      if (!visitedClasses.contains(tc)) {
+        findTestUnits(tus, visitedClasses, tc, startConfig, groupStrategy);
+      }
+    }
+
+    final List<TestUnit> testsInThisClass = getTestUnitsWithinClass(suiteClass,
+        startConfig);
+    if (!testsInThisClass.isEmpty()) {
+      tus.addAll(groupStrategy.group(suiteClass, testsInThisClass));
+    }
+
+  }
+
+  private static List<TestUnit> getTestUnitsWithinClass(
+      final Class<?> suiteClass, final Configuration classConfig) {
+    return classConfig.testUnitFinder().findTestUnits(suiteClass);
   }
 
   private void processResultsFromQueue(final Container container,

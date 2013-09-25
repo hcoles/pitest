@@ -23,7 +23,7 @@ import java.io.File;
 import org.junit.Test;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.DirectoryClassPathRoot;
-import org.pitest.functional.Prelude;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.PathNamePredicate;
 
 public class PathNamePredicateTest {

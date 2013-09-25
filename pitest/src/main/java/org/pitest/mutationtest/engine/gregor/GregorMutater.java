@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.pitest.functional.Prelude.and;
-import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.and;
+import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;

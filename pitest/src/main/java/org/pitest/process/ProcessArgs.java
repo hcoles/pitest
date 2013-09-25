@@ -14,8 +14,8 @@
  */
 package org.pitest.process;
 
-import static org.pitest.functional.Prelude.print;
-import static org.pitest.functional.Prelude.printTo;
+import static org.pitest.functional.prelude.Prelude.print;
+import static org.pitest.functional.prelude.Prelude.printTo;
 
 import java.io.File;
 import java.util.Collections;

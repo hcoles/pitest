@@ -17,8 +17,8 @@ package org.pitest.mutationtest.engine.gregor.inlinedcode;
 import static org.pitest.functional.FCollection.bucket;
 import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
-import static org.pitest.functional.Prelude.isEqualTo;
-import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.isEqualTo;
+import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.ArrayList;
 import java.util.Collection;

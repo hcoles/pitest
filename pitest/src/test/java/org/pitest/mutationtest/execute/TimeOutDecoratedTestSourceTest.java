@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.execute.Reporter;

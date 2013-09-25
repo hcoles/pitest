@@ -33,7 +33,6 @@ import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClass;
 import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnit;
@@ -95,13 +94,14 @@ public class CompoundConfigurationTest {
         .testUnitFinder().findTestUnits(String.class));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void shouldFindSuiteClassesWhenAChildFindsSuiteClasses() {
-    final TestClass tc = new TestClass(String.class);
-    when(this.suiteFinderOne.apply(any(TestClass.class))).thenReturn(
-        Collections.<TestClass> emptyList());
-    when(this.suiteFinderTwo.apply(any(TestClass.class))).thenReturn(
-        Arrays.asList(tc));
+    final Class<?> tc = String.class;
+    when(this.suiteFinderOne.apply(any(Class.class))).thenReturn(
+        Collections.<Class<?>> emptyList());
+    when(this.suiteFinderTwo.apply(any(Class.class))).thenReturn(
+        Arrays.<Class<?>>asList(tc));
     assertEquals(Arrays.asList(tc), this.testee.testSuiteFinder().apply(tc));
   }
 

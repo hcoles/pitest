@@ -2,7 +2,7 @@ package org.pitest.functional.predicate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.pitest.functional.Prelude.and;
+import static org.pitest.functional.prelude.Prelude.and;
 
 import org.junit.Test;
 

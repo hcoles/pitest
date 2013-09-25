@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.domain.TestInfo;
 import org.pitest.functional.Option;
 
 public class TestInfoNameComparatorTest {

@@ -1,8 +1,8 @@
 package org.pitest.classpath;
 
 import static org.pitest.functional.FCollection.flatMap;
-import static org.pitest.functional.Prelude.and;
-import static org.pitest.functional.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.and;
+import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.Collection;
 import java.util.HashSet;

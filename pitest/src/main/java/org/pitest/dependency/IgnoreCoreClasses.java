@@ -17,8 +17,8 @@ package org.pitest.dependency;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.pitest.functional.Prelude;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.Glob;
 
 public class IgnoreCoreClasses implements Predicate<DependencyAccess> {

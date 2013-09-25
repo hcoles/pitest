@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.domain.TestInfo;
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Prelude;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;

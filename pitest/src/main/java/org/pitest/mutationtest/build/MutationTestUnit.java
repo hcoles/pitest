@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.build;
 
-import static org.pitest.functional.Prelude.printWith;
+import static org.pitest.functional.prelude.Prelude.printWith;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.File;
@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Prelude;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationMetaData;

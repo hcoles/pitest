@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.pitest.testapi.TestClass;
 
 public class JUnit4SuiteFinderTest {
 
@@ -38,7 +37,7 @@ public class JUnit4SuiteFinderTest {
 
   @Test
   public void shouldReturnEmptyCollectionForUnannotatedClass() {
-    final TestClass noAnnotation = new TestClass(JUnit4SuiteFinderTest.class);
+    final Class<?> noAnnotation = JUnit4SuiteFinderTest.class;
     assertTrue(this.testee.apply(noAnnotation).isEmpty());
   }
 
@@ -53,10 +52,9 @@ public class JUnit4SuiteFinderTest {
 
   @Test
   public void shouldReturnTestClassForEachClassInSuiteClassesAnnotationWhenRunnerIsSuite() {
-    final TestClass annotated = new TestClass(
-        HideFromJUnit.AnnotatedJUnit.class);
-    final Collection<TestClass> expected = Arrays.asList(new TestClass(
-        String.class), new TestClass(Integer.class));
+    final Class<?> annotated = HideFromJUnit.AnnotatedJUnit.class;
+    final Collection<Class<?>> expected = Arrays.<Class<?>>asList(
+        String.class, Integer.class);
     assertEquals(expected, this.testee.apply(annotated));
   }
 

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.functional;
+package org.pitest.functional.prelude;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.pitest.functional.F;
+import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.And;
 import org.pitest.functional.predicate.Not;
 import org.pitest.functional.predicate.Or;
