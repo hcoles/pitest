@@ -69,21 +69,7 @@ public class MutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new F3<ClassName, ClassLoader, byte[], Boolean>() {
-
-        public Boolean apply(final ClassName clazzName,
-            final ClassLoader loader, final byte[] b) {
-          Class<?> clazz;
-          try {
-            clazz = Class.forName(clazzName.asJavaName(), false, loader);
-            return HotSwapAgent.hotSwap(clazz, b);
-          } catch (final ClassNotFoundException e) {
-            throw Unchecked.translateCheckedException(e);
-          }
-
-        }
-
-      };
+      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = hotswap();
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
@@ -104,7 +90,28 @@ public class MutationTestSlave {
 
   }
 
+  private static F3<ClassName, ClassLoader, byte[], Boolean> hotswap() {
+    final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new F3<ClassName, ClassLoader, byte[], Boolean>() {
+
+      public Boolean apply(final ClassName clazzName, final ClassLoader loader,
+          final byte[] b) {
+        Class<?> clazz;
+        try {
+          clazz = Class.forName(clazzName.asJavaName(), false, loader);
+          return HotSwapAgent.hotSwap(clazz, b);
+        } catch (final ClassNotFoundException e) {
+          throw Unchecked.translateCheckedException(e);
+        }
+
+      }
+
+    };
+    return hotswap;
+  }
+
   public static void main(final String[] args) {
+
+    LOG.log(Level.FINE, "slave started");
 
     enablePowerMockSupport();
 
@@ -125,6 +132,8 @@ public class MutationTestSlave {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
     } catch (final IOException ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
+    } catch (final RuntimeException t) {
+      LOG.log(Level.WARNING, "RuntimeException during mutation test", t);
     } finally {
       if (s != null) {
         safelyCloseSocket(s);

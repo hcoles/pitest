@@ -29,18 +29,29 @@ public class CoverageTransformer implements ClassFileTransformer {
       throws IllegalClassFormatException {
     final boolean include = shouldInclude(className);
     if (include) {
-      final ClassReader reader = new ClassReader(classfileBuffer);
-      final ClassWriter writer = new ComputeClassWriter(
-          new ClassloaderByteArraySource(loader), this.computeCache,
-          ClassWriter.COMPUTE_FRAMES);
-
-      final int id = CodeCoverageStore.registerClass(className);
-      reader.accept(new CoverageClassVisitor(id, writer),
-          ClassReader.EXPAND_FRAMES);
-      return writer.toByteArray();
+      try {
+        return transformBytes(loader, className, classfileBuffer);
+      } catch (final RuntimeException t) {
+        System.err.println("RuntimeException while transforming  " + className);
+        t.printStackTrace();
+        throw t;
+      }
     } else {
       return null;
     }
+  }
+
+  private byte[] transformBytes(final ClassLoader loader,
+      final String className, final byte[] classfileBuffer) {
+    final ClassReader reader = new ClassReader(classfileBuffer);
+    final ClassWriter writer = new ComputeClassWriter(
+        new ClassloaderByteArraySource(loader), this.computeCache,
+        ClassWriter.COMPUTE_FRAMES);
+
+    final int id = CodeCoverageStore.registerClass(className);
+    reader.accept(new CoverageClassVisitor(id, writer),
+        ClassReader.EXPAND_FRAMES);
+    return writer.toByteArray();
   }
 
   private boolean shouldInclude(final String className) {
