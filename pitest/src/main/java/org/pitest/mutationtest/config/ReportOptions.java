@@ -212,7 +212,7 @@ public class ReportOptions {
         FCollection.map(this.classPathElements, stringToFile()));
   }
 
-  private F<String, File> stringToFile() {
+  private static F<String, File> stringToFile() {
     return new F<String, File>() {
 
       public File apply(final String a) {
@@ -229,7 +229,7 @@ public class ReportOptions {
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
     final Predicate<String> filter = Prelude.and(or(this.targetClasses),
-        not(isBlackListed()));
+        not(isBlackListed(ReportOptions.this.excludedClasses)));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -291,16 +291,16 @@ public class ReportOptions {
       return this.getTargetClassesFilter(); // if no tests specified assume the
                                             // target classes filter covers both
     } else {
-      return Prelude.and(or(this.targetTests), not(isBlackListed()));
+      return Prelude.and(or(this.targetTests), not(isBlackListed(ReportOptions.this.excludedClasses)));
     }
 
   }
 
-  private Predicate<String> isBlackListed() {
+  private static Predicate<String> isBlackListed(final Collection<Predicate<String>> excludedClasses) {
     return new Predicate<String>() {
 
       public Boolean apply(final String a) {
-        return or(ReportOptions.this.excludedClasses).apply(a);
+        return or(excludedClasses).apply(a);
       }
 
     };
