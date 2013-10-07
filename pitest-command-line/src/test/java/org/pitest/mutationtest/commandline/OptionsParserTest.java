@@ -352,6 +352,13 @@ public class OptionsParserTest {
         "42");
     assertEquals(42, actual.getMutationThreshold());
   }
+  
+  @Test
+  public void shouldParseCoverageThreshold() {
+    final ReportOptions actual = parseAddingRequiredArgs("--coverageThreshold",
+        "42");
+    assertEquals(42, actual.getCoverageThreshold());
+  }
 
   @Test
   public void shouldDefaultToGregorEngineWhenNoOptionSupplied() {

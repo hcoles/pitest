@@ -23,7 +23,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 /**
  * Goal which runs a coverage mutation report only for files that have been
@@ -88,7 +88,7 @@ public class ScmMojo extends PitMojo {
   }
 
   @Override
-  protected Option<MutationStatistics> analyse() throws MojoExecutionException {
+  protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
 
     this.targetClasses = makeConcreteList(findModifiedClassNames());
 

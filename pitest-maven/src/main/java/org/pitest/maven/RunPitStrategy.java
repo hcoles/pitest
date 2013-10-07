@@ -18,13 +18,13 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.AnalysisResult;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 
 public class RunPitStrategy implements GoalStrategy {
 
-  public MutationStatistics execute(final File baseDir, final ReportOptions data)
+  public CombinedStatistics execute(final File baseDir, final ReportOptions data)
       throws MojoExecutionException {
 
      EntryPoint e = new EntryPoint();

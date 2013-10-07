@@ -199,7 +199,17 @@ public class CoverageDataTest {
     assertEquals(Arrays.asList(barClass),
         this.testee.getClassesForFile("bar.java"));
   }
-
+  
+  @Test
+  public void shouldIncludeAllCoveredLinesInCoverageSummary() {
+    this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
+        1));
+    this.testee.calculateClassCoverage(makeCoverageResult("bar", "barTest", 0,
+        1));
+    CoverageSummary actual = testee.createSummary();
+    assertEquals(2, actual.getNumberOfCoveredLines());
+  }
+  
   private static F<TestInfo, Integer> testInfoToExecutionTime() {
     return new F<TestInfo, Integer>() {
       public Integer apply(final TestInfo a) {

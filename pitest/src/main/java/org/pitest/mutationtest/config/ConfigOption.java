@@ -147,6 +147,11 @@ public enum ConfigOption {
    * Mutation score below which to throw an error
    */
   MUTATION_THRESHOLD("mutationThreshold", 0),
+  
+  /**
+   * Line coverage score below which to throw an error
+   */
+  COVERAGE_THRESHOLD("coverageThreshold", 0),
 
   /**
    * Mutation engine to use

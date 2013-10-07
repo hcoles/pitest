@@ -393,6 +393,13 @@ public class PitestTaskTest {
   }
   
   @Test
+  public void shouldPassCoverageThresholdToJavaTask() {
+    this.pitestTask.setCoverageThreshold("42");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--coverageThreshold=42");
+  }
+  
+  @Test
   public void shouldPassMutationEngineToJavaTask() {
     this.pitestTask.setMutationEngine("foo");
     this.pitestTask.execute(this.java);

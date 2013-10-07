@@ -19,5 +19,7 @@ public interface CoverageDatabase {
   BigInteger getCoverageIdForClass(ClassName clazz);
 
   Collection<ClassInfo> getClassesForFile(String sourceFile);
+  
+  CoverageSummary createSummary();
 
 }

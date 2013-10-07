@@ -54,7 +54,7 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.MutationCoverage;
 import org.pitest.mutationtest.tooling.MutationStrategies;
 import org.pitest.mutationtest.verify.BuildVerifier;
@@ -106,7 +106,6 @@ public class MutationCoverageReportTest {
     MockitoAnnotations.initMocks(this);
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    // this.data.setMutators(Mutator.DEFAULTS.asCollection());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
     when(
         this.listenerFactory.getListener(any(ListenerArguments.class))).thenReturn(this.listener);
@@ -170,8 +169,8 @@ public class MutationCoverageReportTest {
   @Test
   public void shouldReportNoMutationsFoundWhenNoneDetected() {
     this.data.setFailWhenNoMutations(false);
-    final MutationStatistics actual = createAndRunTestee();
-    assertEquals(0, actual.getTotalMutations());
+    final CombinedStatistics actual = createAndRunTestee();
+    assertEquals(0, actual.getMutationStatistics().getTotalMutations());
   }
 
   @Test
@@ -182,11 +181,11 @@ public class MutationCoverageReportTest {
         Arrays.asList(MutationDetailsMother.makeMutation()));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(foo));
-    final MutationStatistics actual = createAndRunTestee();
-    assertEquals(1, actual.getTotalMutations());
+    final CombinedStatistics actual = createAndRunTestee();
+    assertEquals(1, actual.getMutationStatistics().getTotalMutations());
   }
 
-  private MutationStatistics createAndRunTestee() {
+  private CombinedStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
         new GregorEngineFactory(), this.history, this.coverage,this.listenerFactory,
         output).with(this.mutationFactory).with(this.verifier);

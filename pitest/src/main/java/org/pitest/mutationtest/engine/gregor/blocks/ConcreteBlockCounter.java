@@ -21,7 +21,7 @@ public class ConcreteBlockCounter implements BlockCounter {
     return this.currentBlock;
   }
 
-  public boolean isWithinExceptionHandler() {
+  public boolean isWithinFinallyBlock() {
     return this.isWithinExceptionHandler;
   }
 

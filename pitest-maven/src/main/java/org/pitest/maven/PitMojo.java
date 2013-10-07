@@ -10,11 +10,13 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.pitest.coverage.CoverageSummary;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 
@@ -221,6 +223,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="0" expression="${mutationThreshold}"
    */
   private int                   mutationThreshold;
+  
+  /**
+   * Line coverage threshold at which to fail build
+   * 
+   * @parameter default-value="0" expression="${coverageThreshold}"
+   */
+  private int                   coverageThreshold;
 
   /**
    * Engine to use when generating mutations.
@@ -270,9 +279,10 @@ public class PitMojo extends AbstractMojo {
         this.getLog().info("Found shared classpath plugin : " + each);
       }
       
-      final Option<MutationStatistics> result = analyse();
+      final Option<CombinedStatistics> result = analyse();
       if (result.hasSome()) {
-        throwErrorIfScoreBelowThreshold(result.value());
+        throwErrorIfScoreBelowThreshold(result.value().getMutationStatistics());
+        throwErrorIfCoverageBelowThreshold(result.value().getCoverageSummary());
       }
 
     } else {
@@ -280,6 +290,16 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
+  private void throwErrorIfCoverageBelowThreshold(
+      CoverageSummary coverageSummary)      throws MojoFailureException {
+    if ((this.coverageThreshold != 0)
+        && (coverageSummary.getCoverage() < this.coverageThreshold)) {
+      throw new MojoFailureException("Line coverage of "
+          + coverageSummary.getCoverage() + " is below threshold of "
+          + this.coverageThreshold);
+    }
+  }
+  
   private void throwErrorIfScoreBelowThreshold(final MutationStatistics result)
       throws MojoFailureException {
     if ((this.mutationThreshold != 0)
@@ -290,7 +310,7 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  protected Option<MutationStatistics> analyse() throws MojoExecutionException {
+  protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
   }

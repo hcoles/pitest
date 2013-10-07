@@ -14,9 +14,11 @@
  */
 package org.pitest.mutationtest.commandline;
 
+import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.AnalysisResult;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
 
@@ -36,13 +38,23 @@ public class MutationCoverageReport {
     } else {
       final ReportOptions data = pr.getOptions();
       
-      final MutationStatistics stats = runReport(data);
-      throwErrorIfScoreBelowThreshold(stats, data.getMutationThreshold());
+      final CombinedStatistics stats = runReport(data);
+      throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(), data.getCoverageThreshold());
+      throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(), data.getMutationThreshold());
     }
 
   }
 
-  private static void throwErrorIfScoreBelowThreshold(
+  private static void throwErrorIfScoreBelowCoverageThreshold(
+      CoverageSummary stats, int threshold) {
+    if ((threshold != 0) && (stats.getCoverage() < threshold)) {
+      throw new RuntimeException("Mutation score of "
+          + stats.getCoverage() + " is below threshold of "
+          + threshold);
+    }
+  }
+
+  private static void throwErrorIfScoreBelowMutationThreshold(
       final MutationStatistics stats, final int threshold) {
     if ((threshold != 0) && (stats.getPercentageDetected() < threshold)) {
       throw new RuntimeException("Mutation score of "
@@ -51,7 +63,7 @@ public class MutationCoverageReport {
     }
   }
 
-  private static MutationStatistics runReport(final ReportOptions data) {
+  private static CombinedStatistics runReport(final ReportOptions data) {
 
     final EntryPoint e = new EntryPoint();
     final AnalysisResult result = e.execute(null, data);

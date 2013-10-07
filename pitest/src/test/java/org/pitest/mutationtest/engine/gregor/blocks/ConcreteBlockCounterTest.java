@@ -26,11 +26,11 @@ public class ConcreteBlockCounterTest {
 
   @Test
   public void shouldTrackWhenCodeIsWithinFinallyBlocks() {
-    assertFalse(this.testee.isWithinExceptionHandler());
+    assertFalse(this.testee.isWithinFinallyBlock());
     this.testee.registerFinallyBlockStart();
-    assertTrue(this.testee.isWithinExceptionHandler());
+    assertTrue(this.testee.isWithinFinallyBlock());
     this.testee.registerFinallyBlockEnd();
-    assertFalse(this.testee.isWithinExceptionHandler());
+    assertFalse(this.testee.isWithinFinallyBlock());
   }
 
 }

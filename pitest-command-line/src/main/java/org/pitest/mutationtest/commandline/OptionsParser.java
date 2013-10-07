@@ -18,6 +18,7 @@ import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
+import static org.pitest.mutationtest.config.ConfigOption.COVERAGE_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
@@ -109,6 +110,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<Integer> coverageThreshHoldSpec;
   private final OptionSpec<String>                   mutationEngine;
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
 
@@ -277,6 +279,11 @@ public class OptionsParser {
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Mutation score below which to throw an error")
         .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
+    
+    this.coverageThreshHoldSpec = parserAccepts(COVERAGE_THRESHOLD)
+        .withRequiredArg().ofType(Integer.class)
+        .describedAs("Line coverage below which to throw an error")
+        .defaultsTo(COVERAGE_THRESHOLD.getDefault(Integer.class));
 
     this.mutationEngine = parserAccepts(MUTATION_ENGINE).withRequiredArg()
         .ofType(String.class).describedAs("mutation engine to use")
@@ -355,6 +362,7 @@ public class OptionsParser {
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
+    data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
 
     data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)

@@ -244,4 +244,26 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
+  public CoverageSummary createSummary() {
+    return new CoverageSummary(numberOfLines(), coveredLines());
+  }
+
+  private int numberOfLines() {
+    return FCollection.fold(numberLines(), 0,
+        code.getClassInfo(classCoverage.keySet()));
+  }
+
+  private int coveredLines() {
+    return FCollection.fold(numberCoveredLines(), 0, classCoverage.keySet());
+  }
+
+  private F2<Integer, ClassInfo, Integer> numberLines() {
+    return new F2<Integer, ClassInfo, Integer>() {
+
+      public Integer apply(final Integer a, final ClassInfo clazz) {
+        return a + clazz.getNumberOfCodeLines();
+      }
+
+    };
+  }
 }

@@ -57,7 +57,6 @@ import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
-import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
 import org.pitest.testapi.TestUnit;
@@ -88,7 +87,7 @@ public class MutationCoverage {
     this.baseDir = baseDir;
   }
 
-  public MutationStatistics runReport() throws IOException {
+  public CombinedStatistics runReport() throws IOException {
 
     Log.setVerbose(this.data.isVerbose());
 
@@ -144,7 +143,7 @@ public class MutationCoverage {
 
     printStats(stats);
 
-    return stats.getStatistics();
+    return new CombinedStatistics(stats.getStatistics(), coverageData.createSummary());
 
   }
 
