@@ -24,7 +24,7 @@ public class AnalysisResult {
   public Option<CombinedStatistics> getStatistics() {
     return this.statistics;
   }
-  
+
   public Option<Exception> getError() {
     return this.error;
   }

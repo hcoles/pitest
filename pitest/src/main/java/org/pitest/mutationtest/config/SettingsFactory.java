@@ -10,6 +10,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.process.DefaultJavaExecutableLocator;
+import org.pitest.process.JavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 
@@ -34,7 +36,8 @@ public class SettingsFactory {
   }
 
   public MutationEngineFactory createEngine() {
-    for (final MutationEngineFactory each : PluginServices.findMutationEngines()) {
+    for (final MutationEngineFactory each : PluginServices
+        .findMutationEngines()) {
       if (each.name().equals(this.options.getMutationEngine())) {
         return each;
       }
@@ -42,37 +45,41 @@ public class SettingsFactory {
     throw new PitError("Could not load requested engine "
         + this.options.getMutationEngine());
   }
-  
+
   public MutationResultListenerFactory createListener() {
     return new CompoundListenerFactory(findListeners());
   }
 
-    
+  public JavaExecutableLocator getJavaExecutable() {
+    return new DefaultJavaExecutableLocator();
+  }
+
   private Iterable<MutationResultListenerFactory> findListeners() {
-    Iterable<? extends MutationResultListenerFactory> listeners = PluginServices.findListeners();
-    Collection<MutationResultListenerFactory> matches = FCollection.filter(listeners, nameMatches(this.options.getOutputFormats()));
-    if ( matches.size() < this.options.getOutputFormats().size()) {
+    final Iterable<? extends MutationResultListenerFactory> listeners = PluginServices
+        .findListeners();
+    final Collection<MutationResultListenerFactory> matches = FCollection
+        .filter(listeners, nameMatches(this.options.getOutputFormats()));
+    if (matches.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested");
     }
     return matches;
   }
-  
-  private static F<MutationResultListenerFactory, Boolean> nameMatches(final Iterable<String> outputFormats) {
+
+  private static F<MutationResultListenerFactory, Boolean> nameMatches(
+      final Iterable<String> outputFormats) {
     return new F<MutationResultListenerFactory, Boolean>() {
-      public Boolean apply(MutationResultListenerFactory a) {
+      public Boolean apply(final MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
-      }  
-    };
-  }
-  
-  private static Predicate<String> equalsIgnoreCase(final String other) {
-    return new Predicate<String>() {
-      public Boolean apply(String a) {
-        return a.equalsIgnoreCase(other);
       }
     };
   }
 
-
+  private static Predicate<String> equalsIgnoreCase(final String other) {
+    return new Predicate<String>() {
+      public Boolean apply(final String a) {
+        return a.equalsIgnoreCase(other);
+      }
+    };
+  }
 
 }

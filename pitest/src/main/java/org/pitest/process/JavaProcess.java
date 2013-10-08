@@ -123,14 +123,12 @@ public class JavaProcess {
   }
 
   public static JavaProcess launch(final File workingDirectory,
-      final SideEffect1<String> systemOutHandler,
+      final String javaProc, final SideEffect1<String> systemOutHandler,
       final SideEffect1<String> sysErrHandler, final List<String> args,
       final Class<?> mainClass, final List<String> programArgs,
       final JavaAgent javaAgent, final String initialClassPath)
       throws IOException {
-    final String separator = System.getProperty("file.separator");
-    final String javaProc = System.getProperty("java.home") + separator + "bin"
-        + separator + "java";
+
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);

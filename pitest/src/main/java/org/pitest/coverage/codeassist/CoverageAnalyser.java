@@ -12,11 +12,11 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class CoverageAnalyser extends MethodNode {
 
-  private static final int MAX_SUPPORTED_LOCAL_PROBES = 15;
-  private final LineTracker lineTracker;
-  private final int                  classId;
-  private final MethodVisitor        mv;
-  private final int                  probeOffset;
+  private static final int    MAX_SUPPORTED_LOCAL_PROBES = 15;
+  private final LineTracker   lineTracker;
+  private final int           classId;
+  private final MethodVisitor mv;
+  private final int           probeOffset;
 
   public CoverageAnalyser(final LineTracker lineTracker, final int classId,
       final int probeOffset, final MethodVisitor mv, final int access,
@@ -34,9 +34,9 @@ public class CoverageAnalyser extends MethodNode {
     final int nuberOfProbes = countRequiredProbes();
 
     if ((nuberOfProbes <= MAX_SUPPORTED_LOCAL_PROBES) && (nuberOfProbes >= 1)) {
-      accept(new LocalVariableCoverageMethodVisitor(this.lineTracker, this.classId,
-          this.mv, this.access, this.name, this.desc, nuberOfProbes,
-          this.probeOffset));
+      accept(new LocalVariableCoverageMethodVisitor(this.lineTracker,
+          this.classId, this.mv, this.access, this.name, this.desc,
+          nuberOfProbes, this.probeOffset));
     } else {
       accept(new CoverageMethodVisitor(this.lineTracker, this.classId, this.mv,
           this.access, this.name, this.desc, nuberOfProbes, this.probeOffset));

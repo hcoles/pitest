@@ -15,12 +15,12 @@
 package org.pitest.mutationtest.report.csv;
 
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 
 public class CSVReportFactory implements MutationResultListenerFactory {
 
-  public MutationResultListener getListener(ListenerArguments args) {
+  public MutationResultListener getListener(final ListenerArguments args) {
     return new CSVReportListener(args.getOutputStrategy());
   }
 

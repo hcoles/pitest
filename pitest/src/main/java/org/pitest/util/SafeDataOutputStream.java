@@ -18,7 +18,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 public class SafeDataOutputStream {
 
   private final DataOutputStream dos;

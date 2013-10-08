@@ -22,8 +22,8 @@ import org.pitest.testapi.ResultCollector;
 public class CustomRunnerExecutor {
 
   private final org.pitest.testapi.Description description;
-  private final Runner                 runner;
-  private final ResultCollector        rc;
+  private final Runner                         runner;
+  private final ResultCollector                rc;
 
   public CustomRunnerExecutor(final org.pitest.testapi.Description description,
       final Runner runner, final ResultCollector rc) {

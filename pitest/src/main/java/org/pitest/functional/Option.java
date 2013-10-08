@@ -91,7 +91,8 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
     @Override
     public T value() {
-      throw new UnsupportedOperationException("Tried to retrieve value but had None.");
+      throw new UnsupportedOperationException(
+          "Tried to retrieve value but had None.");
     }
 
     @Override

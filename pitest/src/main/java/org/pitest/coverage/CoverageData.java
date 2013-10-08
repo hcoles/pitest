@@ -250,11 +250,12 @@ public class CoverageData implements CoverageDatabase {
 
   private int numberOfLines() {
     return FCollection.fold(numberLines(), 0,
-        code.getClassInfo(classCoverage.keySet()));
+        this.code.getClassInfo(this.classCoverage.keySet()));
   }
 
   private int coveredLines() {
-    return FCollection.fold(numberCoveredLines(), 0, classCoverage.keySet());
+    return FCollection.fold(numberCoveredLines(), 0,
+        this.classCoverage.keySet());
   }
 
   private F2<Integer, ClassInfo, Integer> numberLines() {

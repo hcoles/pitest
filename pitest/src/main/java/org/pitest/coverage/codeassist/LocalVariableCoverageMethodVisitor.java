@@ -8,25 +8,25 @@ import org.objectweb.asm.commons.AdviceAdapter;
 import org.pitest.boot.CodeCoverageStore;
 
 public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
-  private final MethodVisitor        methodVisitor;
-  private final int                  classId;
-  private final int                  numberOfProbes;
-  private final LineTracker          lineTracker;
-  private final int                  probeOffset;
+  private final MethodVisitor methodVisitor;
+  private final int           classId;
+  private final int           numberOfProbes;
+  private final LineTracker   lineTracker;
+  private final int           probeOffset;
 
   /**
    * label to mark start of try finally block that is added to each method
    */
-  private final Label                before     = new Label();
+  private final Label         before     = new Label();
 
   /**
    * label to mark handler block of try finally
    */
-  private final Label                handler    = new Label();
+  private final Label         handler    = new Label();
 
-  int                                probeCount = 0;
-  int                                locals[];                // locals = new
-                                                               // ArrayList<Integer>();
+  int                         probeCount = 0;
+  int                         locals[];                // locals = new
+                                                        // ArrayList<Integer>();
 
   public LocalVariableCoverageMethodVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,

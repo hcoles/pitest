@@ -10,23 +10,25 @@ import org.pitest.util.ResultOutputStrategy;
 
 public class MutationStrategies {
 
-  private final HistoryStore          history;
-  private final CoverageGenerator     coverage;
-  private final MutationResultListenerFactory       listenerFactory;
-  private final BuildVerifier         buildVerifier;
-  private final MutationEngineFactory factory;
-  private final ResultOutputStrategy output;
+  private final HistoryStore                  history;
+  private final CoverageGenerator             coverage;
+  private final MutationResultListenerFactory listenerFactory;
+  private final BuildVerifier                 buildVerifier;
+  private final MutationEngineFactory         factory;
+  private final ResultOutputStrategy          output;
 
   public MutationStrategies(final MutationEngineFactory factory,
       final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory,ResultOutputStrategy output ) {
+      final MutationResultListenerFactory listenerFactory,
+      final ResultOutputStrategy output) {
     this(factory, history, coverage, listenerFactory, output,
         new DefaultBuildVerifier());
   }
 
   private MutationStrategies(final MutationEngineFactory factory,
       final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory, ResultOutputStrategy output, final BuildVerifier buildVerifier) {
+      final MutationResultListenerFactory listenerFactory,
+      final ResultOutputStrategy output, final BuildVerifier buildVerifier) {
     this.history = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
@@ -56,7 +58,7 @@ public class MutationStrategies {
   }
 
   public ResultOutputStrategy output() {
-    return output;
+    return this.output;
   }
 
   public MutationStrategies with(final MutationEngineFactory factory) {

@@ -17,7 +17,6 @@ package org.pitest.mutationtest.config;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
 
-
 public class CompoundTestListener implements MutationResultListener {
 
   private final Iterable<MutationResultListener> children;

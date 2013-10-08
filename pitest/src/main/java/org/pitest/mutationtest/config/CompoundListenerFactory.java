@@ -24,16 +24,18 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
 
   private final Iterable<MutationResultListenerFactory> children;
 
-  public CompoundListenerFactory(final Iterable<MutationResultListenerFactory> children) {
+  public CompoundListenerFactory(
+      final Iterable<MutationResultListenerFactory> children) {
     this.children = children;
   }
 
-  public MutationResultListener getListener(ListenerArguments args) {
+  public MutationResultListener getListener(final ListenerArguments args) {
     return new CompoundTestListener(FCollection.map(this.children,
         factoryToListener(args)));
   }
 
-  private F<MutationResultListenerFactory, MutationResultListener> factoryToListener(final ListenerArguments args) {
+  private F<MutationResultListenerFactory, MutationResultListener> factoryToListener(
+      final ListenerArguments args) {
     return new F<MutationResultListenerFactory, MutationResultListener>() {
 
       public MutationResultListener apply(final MutationResultListenerFactory a) {

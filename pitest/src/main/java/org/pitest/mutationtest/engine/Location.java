@@ -37,7 +37,7 @@ public class Location {
       final MethodName method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);
   }
-  
+
   public ClassName getClassName() {
     return this.clazz;
   }
@@ -49,28 +49,30 @@ public class Location {
   public String getMethodDesc() {
     return this.methodDesc;
   }
-  
-  public Location with(ClassName clazz) {
-    return newLocation(clazz,this.method, this.methodDesc);
+
+  public Location with(final ClassName clazz) {
+    return newLocation(clazz, this.method, this.methodDesc);
   }
-    
-  public Location withMethod(String method) {
-    return newLocation(clazz, MethodName.fromString(method), this.methodDesc);
+
+  public Location withMethod(final String method) {
+    return newLocation(this.clazz, MethodName.fromString(method),
+        this.methodDesc);
   }
-  
-  public Location withClass(String clazz) {
-    return newLocation(ClassName.fromString(clazz),this.method, this.methodDesc);
+
+  public Location withClass(final String clazz) {
+    return newLocation(ClassName.fromString(clazz), this.method,
+        this.methodDesc);
   }
-  
-  public Location withMethodDesc(String desc) {
-    return newLocation(clazz, method, desc);
+
+  public Location withMethodDesc(final String desc) {
+    return newLocation(this.clazz, this.method, desc);
   }
-  
+
   protected Location newLocation(final ClassName clazz,
       final MethodName method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -127,7 +129,7 @@ public class Location {
   }
 
   public String describe() {
-    return method.name();
+    return this.method.name();
   }
 
 }

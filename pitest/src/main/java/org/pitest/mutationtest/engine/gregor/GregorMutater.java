@@ -126,8 +126,8 @@ class GregorMutater implements Mutater {
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    final List<MutationDetails> details = context
-        .getMutationDetails(context.getTargetMutation().value());
+    final List<MutationDetails> details = context.getMutationDetails(context
+        .getTargetMutation().value());
 
     return new Mutant(details.get(0), w.toByteArray());
 

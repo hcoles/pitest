@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
 
-
 public class SpinnerListener implements MutationResultListener {
 
   private final static String[] SPINNER_CHARS = new String[] { "\u0008/",

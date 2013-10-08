@@ -3,7 +3,7 @@ package org.pitest.mutationtest.build;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.LocationMother.*;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,13 +23,13 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
-import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
+import org.pitest.process.LaunchOptions;
 
 public class MutationSourceTest {
 
@@ -58,8 +58,7 @@ public class MutationSourceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     when(this.engine.createMutator(this.source)).thenReturn(this.mutater);
-    this.config = new MutationConfig(this.engine,
-        Collections.<String> emptyList());
+    this.config = new MutationConfig(this.engine, new LaunchOptions(null));
     setupFilterFactoryToFilterNothing();
     this.testee = new MutationSource(this.config, this.filter, this.coverage,
         this.source);

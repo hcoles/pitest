@@ -44,7 +44,6 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -57,7 +56,9 @@ import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
 import org.pitest.mutationtest.tooling.MutationStrategies;
+import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
@@ -400,7 +401,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       this.data.setConfiguration(configuration);
       final CoverageOptions coverageOptions = this.data.createCoverageOptions();
-      final LaunchOptions launchOptions = new LaunchOptions(agent,
+      final LaunchOptions launchOptions = new LaunchOptions(agent, new DefaultJavaExecutableLocator(),
           this.data.getJvmArgs());
 
       final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),

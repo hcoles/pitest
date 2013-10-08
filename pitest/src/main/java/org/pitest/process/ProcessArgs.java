@@ -32,6 +32,7 @@ public final class ProcessArgs {
   private List<String>        jvmArgs    = Collections.emptyList();
   private JavaAgent           javaAgentFinder;
   private File                workingDir = null;
+  private String              javaExecutable;
 
   private ProcessArgs(final String launchClassPath) {
     this.launchClassPath = launchClassPath;
@@ -57,16 +58,6 @@ public final class ProcessArgs {
 
   public ProcessArgs andStderr(final SideEffect1<String> stderr) {
     this.stdErr = stderr;
-    return this;
-  }
-
-  public ProcessArgs andJVMArgs(final List<String> jvmArgs) {
-    this.jvmArgs = jvmArgs;
-    return this;
-  }
-
-  public ProcessArgs andJavaAgentFinder(final JavaAgent agent) {
-    this.javaAgentFinder = agent;
     return this;
   }
 
@@ -102,12 +93,19 @@ public final class ProcessArgs {
     this.jvmArgs = jvmArgs;
   }
 
-  public void setJavaAgentFinder(final JavaAgent javaAgentFinder) {
-    this.javaAgentFinder = javaAgentFinder;
-  }
-
   public File getWorkingDir() {
     return this.workingDir;
+  }
+
+  public String getJavaExecutable() {
+    return this.javaExecutable;
+  }
+
+  public ProcessArgs andLaunchOptions(final LaunchOptions launchOptions) {
+    this.jvmArgs = launchOptions.getChildJVMArgs();
+    this.javaAgentFinder = launchOptions.getJavaAgentFinder();
+    this.javaExecutable = launchOptions.getJavaExecutable();
+    return this;
   }
 
 };

@@ -44,7 +44,7 @@ public class MutationMetaData implements MetaData {
         uniqueFilenames);
     return uniqueFilenames;
   }
-  
+
   public Set<String> getMutatorNames() {
     return this.mutatorNames;
   }
@@ -81,7 +81,6 @@ public class MutationMetaData implements MetaData {
     return lastDot > 0 ? fileName.asJavaName().substring(0, lastDot)
         : "default";
   }
-
 
   @Override
   public int hashCode() {

@@ -14,7 +14,6 @@
  */
 package org.pitest.testapi;
 
-
 public interface ResultCollector {
 
   public void notifyEnd(Description description, Throwable t, MetaData... data);

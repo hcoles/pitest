@@ -149,7 +149,6 @@ public class ClassInfo {
     };
   }
 
-
   @Override
   public String toString() {
     return this.id.getName().asJavaName();
@@ -172,6 +171,5 @@ public class ClassInfo {
 
     };
   }
-
 
 }

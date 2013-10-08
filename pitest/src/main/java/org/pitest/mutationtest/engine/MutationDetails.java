@@ -76,11 +76,10 @@ public class MutationDetails {
   public MethodName getMethod() {
     return this.id.getLocation().getMethodName();
   }
-  
+
   public String getMethodDescription() {
     return this.id.getLocation().getMethodDesc();
   }
-
 
   public String getFilename() {
     return this.filename;

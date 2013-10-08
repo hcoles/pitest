@@ -15,19 +15,20 @@
 package org.pitest.mutationtest;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.process.LaunchOptions;
 
 public final class MutationConfig {
 
-  private final List<String>   jvmArgs;
+  private final LaunchOptions  launchOptions;
   private final MutationEngine engine;
 
-  public MutationConfig(final MutationEngine engine, final List<String> jvmArgs) {
-    this.jvmArgs = jvmArgs;
+  public MutationConfig(final MutationEngine engine,
+      final LaunchOptions launchOptions) {
+    this.launchOptions = launchOptions;
     this.engine = engine;
   }
 
@@ -39,8 +40,8 @@ public final class MutationConfig {
     return this.engine;
   }
 
-  public List<String> getJVMArgs() {
-    return this.jvmArgs;
+  public LaunchOptions getLaunchOptions() {
+    return this.launchOptions;
   }
 
   public Collection<String> getMutatorNames() {
@@ -48,48 +49,18 @@ public final class MutationConfig {
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.engine == null) ? 0 : this.engine.hashCode());
-    result = (prime * result)
-        + ((this.jvmArgs == null) ? 0 : this.jvmArgs.hashCode());
-    return result;
+  public boolean equals(final Object rhs) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final MutationConfig other = (MutationConfig) obj;
-    if (this.engine == null) {
-      if (other.engine != null) {
-        return false;
-      }
-    } else if (!this.engine.equals(other.engine)) {
-      return false;
-    }
-    if (this.jvmArgs == null) {
-      if (other.jvmArgs != null) {
-        return false;
-      }
-    } else if (!this.jvmArgs.equals(other.jvmArgs)) {
-      return false;
-    }
-    return true;
+  public int hashCode() {
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String toString() {
-    return "MutationConfig [jvmArgs=" + this.jvmArgs + ", engine="
+    return "MutationConfig [launchOptions=" + this.launchOptions + ", engine="
         + this.engine + "]";
   }
 

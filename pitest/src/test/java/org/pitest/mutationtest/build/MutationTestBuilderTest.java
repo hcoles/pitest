@@ -17,12 +17,11 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.NullAnalyser;
-import org.pitest.mutationtest.build.MutationSource;
-import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
 
 public class MutationTestBuilderTest {
@@ -49,11 +48,10 @@ public class MutationTestBuilderTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.data = new ReportOptions();
-    this.mutationConfig = new MutationConfig(this.engine,
-        Collections.<String> emptyList());
+    this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(this.javaAgent));
     this.testee = new MutationTestBuilder(null, this.mutationConfig,
-        new NullAnalyser(), this.source, this.data, this.configuration,
-        this.javaAgent);
+        new NullAnalyser(), this.source, this.data, this.configuration
+        );
   }
 
   @Test

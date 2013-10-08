@@ -36,7 +36,6 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.process.JavaAgent;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
 
@@ -49,19 +48,17 @@ public class MutationTestBuilder {
   private final ReportOptions    data;
   private final MutationConfig   mutationConfig;
   private final Configuration    configuration;
-  private final JavaAgent        javaAgent;
   private final File             baseDir;
 
   public MutationTestBuilder(final File baseDir,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
       final MutationSource mutationSource, final ReportOptions data,
-      final Configuration configuration, final JavaAgent javaAgent) {
+      final Configuration configuration) {
     this.data = data;
     this.mutationConfig = mutationConfig;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.configuration = configuration;
-    this.javaAgent = javaAgent;
     this.baseDir = baseDir;
   }
 
@@ -142,7 +139,7 @@ public class MutationTestBuilder {
         uniqueTestClasses);
 
     return new MutationTestUnit(this.baseDir, needAnalysis, uniqueTestClasses,
-        this.configuration, this.mutationConfig, this.javaAgent,
+        this.configuration, this.mutationConfig,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());

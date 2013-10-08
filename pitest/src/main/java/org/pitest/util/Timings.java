@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 public class Timings {
 
   public static enum Stage {

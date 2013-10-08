@@ -9,8 +9,8 @@ import org.pitest.testapi.ResultCollector;
 class AdaptingRunListener extends RunListener {
 
   private final org.pitest.testapi.Description description;
-  private final ResultCollector        rc;
-  private boolean                      finished = false;
+  private final ResultCollector                rc;
+  private boolean                              finished = false;
 
   public AdaptingRunListener(final org.pitest.testapi.Description description,
       final ResultCollector rc) {

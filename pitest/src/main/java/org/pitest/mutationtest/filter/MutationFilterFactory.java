@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.filter;
 
-
 public interface MutationFilterFactory {
 
   MutationFilter createFilter();

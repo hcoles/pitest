@@ -35,7 +35,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
@@ -119,10 +119,9 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
-        .andJVMArgs(this.launchOptions.getChildJVMArgs())
-        .andJavaAgentFinder(this.launchOptions.getJavaAgentFinder())
-        .andStderr(logInfo()).andStdout(captureStandardOutIfVerbose()),
-        this.coverageOptions, socket, filteredTests, handler);
+        .andLaunchOptions(this.launchOptions).andStderr(logInfo())
+        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
+        socket, filteredTests, handler);
 
     process.start();
     process.waitToDie();
@@ -183,8 +182,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return this.coverageOptions.getPitConfig();
   }
 
-  public JavaAgent getJavaAgent() {
-    return this.launchOptions.getJavaAgentFinder();
+  public LaunchOptions getLaunchOptions() {
+    return this.launchOptions;
   }
 
 }

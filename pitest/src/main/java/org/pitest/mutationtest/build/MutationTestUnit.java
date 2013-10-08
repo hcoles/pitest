@@ -20,7 +20,6 @@ import static org.pitest.util.Unchecked.translateCheckedException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
@@ -34,7 +33,6 @@ import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.mutationtest.execute.SlaveArguments;
-import org.pitest.process.JavaAgent;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Configuration;
@@ -50,7 +48,6 @@ public class MutationTestUnit extends AbstractTestUnit implements
 
   private final static Logger               LOG = Log.getLogger();
 
-  private final JavaAgent                   javaAgentFinder;
   private final MutationConfig              config;
   private final TimeoutLengthStrategy       timeoutStrategy;
   private final Collection<MutationDetails> availableMutations;
@@ -64,14 +61,13 @@ public class MutationTestUnit extends AbstractTestUnit implements
   public MutationTestUnit(final File baseDir,
       final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses, final Configuration pitConfig,
-      final MutationConfig mutationConfig, final JavaAgent javaAgentFinder,
+      final MutationConfig mutationConfig,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final String classPath) {
     super(new Description("Mutation test"));
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
     this.pitConfig = pitConfig;
-    this.javaAgentFinder = javaAgentFinder;
     this.timeoutStrategy = timeoutStrategy;
     this.testClasses = testClasses;
     this.verbose = verbose;
@@ -147,7 +143,7 @@ public class MutationTestUnit extends AbstractTestUnit implements
         Log.isVerbose(), this.pitConfig);
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
-        .andJVMArgs(getJVMArgs()).andJavaAgentFinder(this.javaAgentFinder)
+        .andLaunchOptions(this.config.getLaunchOptions())
         .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
         .andStderr(printWith("stderr "));
 
@@ -196,10 +192,6 @@ public class MutationTestUnit extends AbstractTestUnit implements
       LOG.fine("Slave exited ok");
     }
 
-  }
-
-  private List<String> getJVMArgs() {
-    return this.config.getJVMArgs();
   }
 
   private void runTestsInSeperateProcess(final MutationStatusMap mutations)

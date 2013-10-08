@@ -16,7 +16,6 @@ package org.pitest.testapi;
 
 import java.util.List;
 
-
 public interface GroupingStrategy {
 
   public List<? extends TestUnit> group(Class<?> c,

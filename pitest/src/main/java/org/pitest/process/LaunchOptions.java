@@ -12,21 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.coverage.execute;
+package org.pitest.process;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.pitest.process.JavaAgent;
 
 public class LaunchOptions {
 
-  private final JavaAgent    javaAgentFinder;
-  private final List<String> childJVMArgs;
+  private final JavaAgent             javaAgentFinder;
+  private final List<String>          childJVMArgs;
+  private final JavaExecutableLocator javaExecutable;
+
+  public LaunchOptions(final JavaAgent javaAgentFinder) {
+    this(javaAgentFinder, new DefaultJavaExecutableLocator(), Collections
+        .<String> emptyList());
+  }
 
   public LaunchOptions(final JavaAgent javaAgentFinder,
+      final JavaExecutableLocator javaExecutable,
       final List<String> childJVMArgs) {
     this.javaAgentFinder = javaAgentFinder;
     this.childJVMArgs = childJVMArgs;
+    this.javaExecutable = javaExecutable;
   }
 
   public JavaAgent getJavaAgentFinder() {
@@ -35,6 +43,10 @@ public class LaunchOptions {
 
   public List<String> getChildJVMArgs() {
     return this.childJVMArgs;
+  }
+
+  public String getJavaExecutable() {
+    return this.javaExecutable.javaExecutable();
   }
 
 }

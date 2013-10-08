@@ -143,7 +143,8 @@ public class MutationCoverage {
 
     printStats(stats);
 
-    return new CombinedStatistics(stats.getStatistics(), coverageData.createSummary());
+    return new CombinedStatistics(stats.getStatistics(),
+        coverageData.createSummary());
 
   }
 
@@ -154,9 +155,10 @@ public class MutationCoverage {
 
     staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
 
-    final ListenerArguments args = new ListenerArguments(strategies.output(), coverageData, 
-        new SmartSourceLocator(this.data.getSourceDirs()), t0);
-    
+    final ListenerArguments args = new ListenerArguments(
+        this.strategies.output(), coverageData, new SmartSourceLocator(
+            this.data.getSourceDirs()), t0);
+
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(args);
 
@@ -223,8 +225,8 @@ public class MutationCoverage {
         this.data.getLoggingClasses(), this.data.getMutators(),
         this.data.isDetectInlinedCode());
 
-    final MutationConfig mutationConfig = new MutationConfig(engine,
-        this.data.getJvmArgs());
+    final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
+        .getLaunchOptions());
 
     final MutationSource source = new MutationSource(mutationConfig,
         limitMutationsPerClass(), coverageData, new ClassPathByteArraySource(
@@ -235,7 +237,7 @@ public class MutationCoverage {
 
     final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
         mutationConfig, analyser, source, this.data, coverage()
-            .getConfiguration(), coverage().getJavaAgent());
+            .getConfiguration());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

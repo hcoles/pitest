@@ -22,7 +22,8 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
-public class DefaultMutationEngineConfiguration implements MutationEngineConfiguration {
+public class DefaultMutationEngineConfiguration implements
+    MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
   private final Collection<String>                         doNotMutate;

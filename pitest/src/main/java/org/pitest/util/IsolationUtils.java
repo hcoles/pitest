@@ -127,7 +127,6 @@ public abstract class IsolationUtils {
     return new String(encoder.decode(encodedXml), "UTF-8");
   }
 
-
   public static Object fromXml(final String xml) {
     return XSTREAM_INSTANCE.fromXML(xml);
   }

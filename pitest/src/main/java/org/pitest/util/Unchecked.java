@@ -14,7 +14,6 @@
  */
 package org.pitest.util;
 
-
 public abstract class Unchecked {
 
   public static RuntimeException translateCheckedException(final Throwable ex) {

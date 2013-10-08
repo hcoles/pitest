@@ -44,24 +44,24 @@ import org.pitest.boot.CodeCoverageStore;
  * current approach.
  */
 public class CoverageMethodVisitor extends AdviceAdapter {
-  private final MethodVisitor        methodVisitor;
-  private final int                  classId;
-  private final int                  numberOfProbes;
-  private final LineTracker          lineTracker;
-  private final int                  probeOffset;
+  private final MethodVisitor methodVisitor;
+  private final int           classId;
+  private final int           numberOfProbes;
+  private final LineTracker   lineTracker;
+  private final int           probeOffset;
   /**
    * label to mark start of try finally block that is added to each method
    */
-  private final Label                before     = new Label();
+  private final Label         before     = new Label();
 
   /**
    * label to mark handler block of try finally
    */
-  private final Label                handler    = new Label();
+  private final Label         handler    = new Label();
 
-  private int                        probeCount = 0;
+  private int                 probeCount = 0;
   // private int probeArrayLocal;
-  private int                        probeHitArrayLocal;
+  private int                 probeHitArrayLocal;
 
   public CoverageMethodVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,

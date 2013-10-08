@@ -30,8 +30,9 @@ public class JavaProcessTest {
   @Test
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
       InterruptedException {
+    DefaultJavaExecutableLocator je = new DefaultJavaExecutableLocator();
     final JavaProcess jp = JavaProcess.launch(
-        new File(System.getProperty("user.dir")), nullHandler(), nullHandler(),
+        new File(System.getProperty("user.dir")), je.javaExecutable(), nullHandler(), nullHandler(),
         Collections.<String> emptyList(), JavaProcessTest.class,
         Collections.<String> emptyList(), NullJavaAgent.instance(),
         new ClassPath().getLocalClassPath());

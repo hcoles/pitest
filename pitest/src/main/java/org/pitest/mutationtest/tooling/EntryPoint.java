@@ -11,7 +11,6 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.coverage.execute.LaunchOptions;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
@@ -20,6 +19,7 @@ import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
 
@@ -31,10 +31,30 @@ public class EntryPoint {
    * The big grab bag of config stored in ReportOptions must be setup correctly
    * first.
    * 
+   * @param baseDir
+   *          directory from which analysis will be run
+   * @param data
+   *          big mess of configuration options
+   * 
    */
   public AnalysisResult execute(final File baseDir, final ReportOptions data) {
-
     final SettingsFactory settings = new SettingsFactory(data);
+    return execute(baseDir, data, settings);
+  }
+
+  /**
+   * Entry point for tools with tool specific behaviour
+   * 
+   * @param baseDir
+   *          directory from which analysis will be run
+   * @param data
+   *          big mess of configuration options
+   * @param settings
+   *          factory for various strategies. Override default to provide tool
+   *          specific behaviours
+   */
+  public AnalysisResult execute(final File baseDir, final ReportOptions data,
+      final SettingsFactory settings) {
 
     final ClassPath cp = data.getClassPath();
 
@@ -45,15 +65,18 @@ public class EntryPoint {
     // with distributed testing
     final JavaAgent jac = new JarCreatingJarFinder(
         new ClassPathByteArraySource(cp));
+
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
         jac.getJarLocation().value());
 
     final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 
-    final MutationResultListenerFactory reportFactory = settings.createListener();
-        
+    final MutationResultListenerFactory reportFactory = settings
+        .createListener();
+
     final CoverageOptions coverageOptions = data.createCoverageOptions();
-    final LaunchOptions launchOptions = new LaunchOptions(ja, data.getJvmArgs());
+    final LaunchOptions launchOptions = new LaunchOptions(ja,
+        settings.getJavaExecutable(), data.getJvmArgs());
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
@@ -67,7 +90,8 @@ public class EntryPoint {
     final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory, reportOutput);
+        settings.createEngine(), history, coverageDatabase, reportFactory,
+        reportOutput);
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, timings);
@@ -81,6 +105,7 @@ public class EntryPoint {
       ja.close();
       historyWriter.close();
     }
+
   }
-  
+
 }

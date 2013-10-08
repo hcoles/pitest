@@ -21,11 +21,10 @@ import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
-import org.pitest.mutationtest.build.MutationTestUnit;
-
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
@@ -60,11 +59,11 @@ public class MutationTestUnitTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.mutationConfig = new MutationConfig(this.engine,
-        Collections.<String> emptyList());
+       new LaunchOptions( this.javaAgent));
     this.mutations = new ArrayList<MutationDetails>();
     this.tests = new ArrayList<ClassName>();
     this.testee = new MutationTestUnit(null, this.mutations,
-        this.tests, this.config, this.mutationConfig, this.javaAgent,
+        this.tests, this.config, this.mutationConfig,
         this.timeout, false, null);
   }
 

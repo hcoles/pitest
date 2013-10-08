@@ -76,7 +76,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       public Option<Class<?>> apply(final Description a) {
         final Class<?> clazz = a.getTestClass();
         if (clazz != null) {
-          return Option.<Class<?>>some(clazz);
+          return Option.<Class<?>> some(clazz);
         } else {
           return Option.<Class<?>> none();
         }

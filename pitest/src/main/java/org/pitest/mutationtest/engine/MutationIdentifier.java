@@ -23,9 +23,9 @@ import org.pitest.classinfo.ClassName;
 
 public class MutationIdentifier {
 
-  private final Location            location;
+  private final Location      location;
   private final List<Integer> indexes;
-  private final String              mutator;
+  private final String        mutator;
 
   public MutationIdentifier(final Location location, final int index,
       final String mutatorUniqueId) {
@@ -50,19 +50,19 @@ public class MutationIdentifier {
   public int getFirstIndex() {
     return this.indexes.iterator().next();
   }
-  
-  public MutationIdentifier withLocation(Location location) {
-    return new MutationIdentifier(location,indexes,mutator);
-  }
-  
-  public MutationIdentifier withMutator(String mutator) {
-    return new MutationIdentifier(location,indexes,mutator);
+
+  public MutationIdentifier withLocation(final Location location) {
+    return new MutationIdentifier(location, this.indexes, this.mutator);
   }
 
-  public MutationIdentifier withIndex(int id) {
-    return new MutationIdentifier(location,id,mutator);
+  public MutationIdentifier withMutator(final String mutator) {
+    return new MutationIdentifier(this.location, this.indexes, mutator);
   }
-  
+
+  public MutationIdentifier withIndex(final int id) {
+    return new MutationIdentifier(this.location, id, this.mutator);
+  }
+
   @Override
   public String toString() {
     return "MutationIdentifier [location=" + this.location + ", indexes="
@@ -127,7 +127,5 @@ public class MutationIdentifier {
     }
     return true;
   }
-
-
 
 }

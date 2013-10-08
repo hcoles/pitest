@@ -6,21 +6,20 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 public class CombinedStatistics {
 
   private final MutationStatistics mutationStatistics;
-  private final CoverageSummary coverageSummary;
-  
-  public CombinedStatistics(MutationStatistics mutationStatistics, CoverageSummary coverageSummary)  {
+  private final CoverageSummary    coverageSummary;
+
+  public CombinedStatistics(final MutationStatistics mutationStatistics,
+      final CoverageSummary coverageSummary) {
     this.mutationStatistics = mutationStatistics;
     this.coverageSummary = coverageSummary;
   }
 
   public MutationStatistics getMutationStatistics() {
-    return mutationStatistics;
+    return this.mutationStatistics;
   }
 
   public CoverageSummary getCoverageSummary() {
-    return coverageSummary;
+    return this.coverageSummary;
   }
-  
-  
-  
+
 }

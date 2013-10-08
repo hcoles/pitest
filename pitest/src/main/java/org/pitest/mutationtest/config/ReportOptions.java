@@ -61,7 +61,6 @@ import org.pitest.util.Unchecked;
  * 
  */
 public class ReportOptions {
-  
 
   public final static Collection<String> LOGGING_CLASSES                = Arrays
                                                                             .asList(
@@ -106,7 +105,7 @@ public class ReportOptions {
   private boolean                        verbose                        = false;
   private boolean                        failWhenNoMutations            = false;
 
-  private final Collection<String> outputs                        = new LinkedHashSet<String>();
+  private final Collection<String>       outputs                        = new LinkedHashSet<String>();
 
   private TestGroupConfig                groupConfig;
 
@@ -292,12 +291,14 @@ public class ReportOptions {
       return this.getTargetClassesFilter(); // if no tests specified assume the
                                             // target classes filter covers both
     } else {
-      return Prelude.and(or(this.targetTests), not(isBlackListed(ReportOptions.this.excludedClasses)));
+      return Prelude.and(or(this.targetTests),
+          not(isBlackListed(ReportOptions.this.excludedClasses)));
     }
 
   }
 
-  private static Predicate<String> isBlackListed(final Collection<Predicate<String>> excludedClasses) {
+  private static Predicate<String> isBlackListed(
+      final Collection<Predicate<String>> excludedClasses) {
     return new Predicate<String>() {
 
       public Boolean apply(final String a) {
@@ -349,7 +350,7 @@ public class ReportOptions {
     this.outputs.addAll(formats);
   }
 
-  public Collection <String> getOutputFormats() {
+  public Collection<String> getOutputFormats() {
     return this.outputs;
   }
 
@@ -525,7 +526,6 @@ public class ReportOptions {
     this.mutationThreshold = value;
   }
 
-
   public String getMutationEngine() {
     return this.mutationEngine;
   }
@@ -535,38 +535,41 @@ public class ReportOptions {
   }
 
   public int getCoverageThreshold() {
-    return coverageThreshold;
+    return this.coverageThreshold;
   }
 
-  public void setCoverageThreshold(int coverageThreshold) {
+  public void setCoverageThreshold(final int coverageThreshold) {
     this.coverageThreshold = coverageThreshold;
   }
 
   @Override
   public String toString() {
-    return "ReportOptions [config=" + config + ", targetClasses="
-        + targetClasses + ", excludedMethods=" + excludedMethods
-        + ", excludedClasses=" + excludedClasses + ", codePaths=" + codePaths
-        + ", reportDir=" + reportDir + ", historyInputLocation="
-        + historyInputLocation + ", historyOutputLocation="
-        + historyOutputLocation + ", sourceDirs=" + sourceDirs
-        + ", classPathElements=" + classPathElements + ", mutators=" + mutators
-        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", mutateStaticInitializers=" + mutateStaticInitializers
-        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
-        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
-        + timeoutConstant + ", targetTests=" + targetTests
-        + ", loggingClasses=" + loggingClasses + ", maxMutationsPerClass="
-        + maxMutationsPerClass + ", verbose=" + verbose
-        + ", failWhenNoMutations=" + failWhenNoMutations + ", outputs="
-        + outputs + ", groupConfig=" + groupConfig + ", mutationUnitSize="
-        + mutationUnitSize + ", shouldCreateTimestampedReports="
-        + shouldCreateTimestampedReports + ", detectInlinedCode="
-        + detectInlinedCode + ", exportLineCoverage=" + exportLineCoverage
-        + ", mutationThreshold=" + mutationThreshold + ", coverageThreshold="
-        + coverageThreshold + ", mutationEngine=" + mutationEngine + "]";
+    return "ReportOptions [config=" + this.config + ", targetClasses="
+        + this.targetClasses + ", excludedMethods=" + this.excludedMethods
+        + ", excludedClasses=" + this.excludedClasses + ", codePaths="
+        + this.codePaths + ", reportDir=" + this.reportDir
+        + ", historyInputLocation=" + this.historyInputLocation
+        + ", historyOutputLocation=" + this.historyOutputLocation
+        + ", sourceDirs=" + this.sourceDirs + ", classPathElements="
+        + this.classPathElements + ", mutators=" + this.mutators
+        + ", dependencyAnalysisMaxDistance="
+        + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
+        + this.mutateStaticInitializers + ", jvmArgs=" + this.jvmArgs
+        + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
+        + this.timeoutFactor + ", timeoutConstant=" + this.timeoutConstant
+        + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + ", maxMutationsPerClass="
+        + this.maxMutationsPerClass + ", verbose=" + this.verbose
+        + ", failWhenNoMutations=" + this.failWhenNoMutations + ", outputs="
+        + this.outputs + ", groupConfig=" + this.groupConfig
+        + ", mutationUnitSize=" + this.mutationUnitSize
+        + ", shouldCreateTimestampedReports="
+        + this.shouldCreateTimestampedReports + ", detectInlinedCode="
+        + this.detectInlinedCode + ", exportLineCoverage="
+        + this.exportLineCoverage + ", mutationThreshold="
+        + this.mutationThreshold + ", coverageThreshold="
+        + this.coverageThreshold + ", mutationEngine=" + this.mutationEngine
+        + "]";
   }
 
-  
-  
 }

@@ -14,7 +14,6 @@
  */
 package org.pitest.testapi;
 
-
 /**
  * @author henry
  * 

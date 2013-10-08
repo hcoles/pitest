@@ -31,6 +31,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
+import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
@@ -275,11 +276,14 @@ public class CoverageProcessSystemTest {
       }
 
     };
+    
+
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+    final LaunchOptions lo = new LaunchOptions(agent);
     final SocketFinder sf = new SocketFinder();
     final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(new ClassPath()).andJavaAgentFinder(agent), sa,
+        .withClassPath(new ClassPath()).andLaunchOptions(lo), sa,
         sf.getNextAvailableServerSocket(), Arrays.asList(test.getName()),
         handler);
     process.start();

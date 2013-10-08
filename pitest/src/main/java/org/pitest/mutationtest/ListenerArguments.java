@@ -4,17 +4,19 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.util.ResultOutputStrategy;
 
 /**
- * Data passed to the listener MutationResultListener factories
- * for use when constructing listeners.
+ * Data passed to the listener MutationResultListener factories for use when
+ * constructing listeners.
  */
 public class ListenerArguments {
-  
+
   private final ResultOutputStrategy outputStrategy;
-  private final CoverageDatabase coverage;
-  private final long startTime;
-  private final SourceLocator locator;
-  
-  public ListenerArguments(ResultOutputStrategy outputStrategy, CoverageDatabase coverage, SourceLocator locator, long startTime) {
+  private final CoverageDatabase     coverage;
+  private final long                 startTime;
+  private final SourceLocator        locator;
+
+  public ListenerArguments(final ResultOutputStrategy outputStrategy,
+      final CoverageDatabase coverage, final SourceLocator locator,
+      final long startTime) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
@@ -22,21 +24,19 @@ public class ListenerArguments {
   }
 
   public ResultOutputStrategy getOutputStrategy() {
-    return outputStrategy;
+    return this.outputStrategy;
   }
 
   public CoverageDatabase getCoverage() {
-    return coverage;
+    return this.coverage;
   }
 
   public long getStartTime() {
-    return startTime;
+    return this.startTime;
   }
 
   public SourceLocator getLocator() {
-    return locator;
+    return this.locator;
   }
 
-  
-  
 }

@@ -3,7 +3,6 @@ package org.pitest.process;
 import java.io.IOException;
 import java.util.Arrays;
 
-
 public class WrappingProcess {
 
   private final int         port;
@@ -22,8 +21,9 @@ public class WrappingProcess {
   public void start() throws IOException {
     final String[] args = { "" + this.port };
     this.process = JavaProcess.launch(this.argsBuilder.getWorkingDir(),
-        this.argsBuilder.getStdout(), this.argsBuilder.getStdErr(),
-        this.argsBuilder.getJvmArgs(), this.slaveClass, Arrays.asList(args),
+        this.argsBuilder.getJavaExecutable(), this.argsBuilder.getStdout(),
+        this.argsBuilder.getStdErr(), this.argsBuilder.getJvmArgs(),
+        this.slaveClass, Arrays.asList(args),
         this.argsBuilder.getJavaAgentFinder(),
         this.argsBuilder.getLaunchClassPath());
   }

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.pitest.mutationtest.engine.MutationDetails;
 
-
 /**
  * Chooses a start status for a mutation
  */

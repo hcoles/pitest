@@ -8,10 +8,10 @@ public final class MethodName {
     this.name = name;
   }
 
-  public static MethodName fromString(String name) {
+  public static MethodName fromString(final String name) {
     return new MethodName(name);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;

@@ -25,7 +25,7 @@ import org.pitest.testapi.TestClassIdentifier;
  */
 public class CodeSource implements ClassInfoSource {
 
-  private final ProjectClassPaths  classPath;
+  private final ProjectClassPaths   classPath;
   private final Repository          classRepository;
   private final TestClassIdentifier testIdentifier;
 

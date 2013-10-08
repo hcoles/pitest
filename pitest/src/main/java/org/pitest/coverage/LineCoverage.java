@@ -2,7 +2,6 @@ package org.pitest.coverage;
 
 import java.util.Collection;
 
-
 public class LineCoverage {
 
   private final ClassLine          classLine;

@@ -121,8 +121,7 @@ public class Context implements BlockCounter {
     this.target = target;
   }
 
-  public List<MutationDetails> getMutationDetails(
-      final MutationIdentifier id) {
+  public List<MutationDetails> getMutationDetails(final MutationIdentifier id) {
     return this.mutations.filter(hasId(id));
   }
 
@@ -145,8 +144,8 @@ public class Context implements BlockCounter {
 
   public void registerMethod(final String name, final String descriptor) {
     this.location = Location.location(
-        ClassName.fromString(this.classInfo.getName()), MethodName.fromString(name),
-        descriptor);
+        ClassName.fromString(this.classInfo.getName()),
+        MethodName.fromString(name), descriptor);
     this.mutatorIndexes.clear();
   }
 

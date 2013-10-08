@@ -26,8 +26,7 @@ import org.pitest.testapi.TestSuiteFinder;
 public class JUnit4SuiteFinder implements TestSuiteFinder {
 
   public List<Class<?>> apply(final Class<?> a) {
-    final SuiteClasses annotation = a.getAnnotation(
-        SuiteClasses.class);
+    final SuiteClasses annotation = a.getAnnotation(SuiteClasses.class);
 
     if ((annotation != null) && hasSuitableRunnner(a)) {
       return Arrays.asList(annotation.value());

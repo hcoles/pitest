@@ -15,7 +15,7 @@
 
 package org.pitest.coverage;
 
-import org.pitest.process.JavaAgent;
+import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
 
 public interface CoverageGenerator {
@@ -24,6 +24,6 @@ public interface CoverageGenerator {
 
   Configuration getConfiguration();
 
-  JavaAgent getJavaAgent();
+  LaunchOptions getLaunchOptions();
 
 }
