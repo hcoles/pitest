@@ -14,34 +14,25 @@
  */
 package org.pitest.mutationtest.build;
 
-import static org.pitest.functional.prelude.Prelude.printWith;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.SideEffect1;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationStatusMap;
-import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.execute.MutationTestProcess;
-import org.pitest.mutationtest.execute.SlaveArguments;
-import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.AbstractTestUnit;
-import org.pitest.testapi.Configuration;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.MetaData;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
-import org.pitest.util.SocketFinder;
 
 public class MutationTestUnit extends AbstractTestUnit implements
     MutationAnalysisUnit {
@@ -49,30 +40,21 @@ public class MutationTestUnit extends AbstractTestUnit implements
   private final static Logger               LOG = Log.getLogger();
 
   private final MutationConfig              config;
-  private final TimeoutLengthStrategy       timeoutStrategy;
   private final Collection<MutationDetails> availableMutations;
-  private final boolean                     verbose;
-  private final String                      classPath;
-  private final File                        baseDir;
-  private final Configuration               pitConfig;
-
+  private final WorkerFactory workerFactory;
+  
   private final Collection<ClassName>       testClasses;
 
-  public MutationTestUnit(final File baseDir,
+  public MutationTestUnit(
       final Collection<MutationDetails> availableMutations,
-      final Collection<ClassName> testClasses, final Configuration pitConfig,
+      final Collection<ClassName> testClasses,
       final MutationConfig mutationConfig,
-      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
-      final String classPath) {
+      WorkerFactory workerFactor) {
     super(new Description("Mutation test"));
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
-    this.pitConfig = pitConfig;
-    this.timeoutStrategy = timeoutStrategy;
     this.testClasses = testClasses;
-    this.verbose = verbose;
-    this.classPath = classPath;
-    this.baseDir = baseDir;
+    this.workerFactory = workerFactor;
   }
 
   @Override
@@ -123,7 +105,7 @@ public class MutationTestUnit extends AbstractTestUnit implements
 
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
-    final MutationTestProcess worker = createWorker(remainingMutations);
+    final MutationTestProcess worker = workerFactory.createWorker(remainingMutations, this.testClasses);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(mutations,
@@ -136,36 +118,10 @@ public class MutationTestUnit extends AbstractTestUnit implements
 
   }
 
-  private MutationTestProcess createWorker(
-      final Collection<MutationDetails> remainingMutations) {
-    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-        this.testClasses, this.config.getEngine(), this.timeoutStrategy,
-        Log.isVerbose(), this.pitConfig);
-
-    final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
-        .andLaunchOptions(this.config.getLaunchOptions())
-        .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
-        .andStderr(printWith("stderr "));
-
-    final SocketFinder sf = new SocketFinder();
-    final MutationTestProcess worker = new MutationTestProcess(
-        sf.getNextAvailableServerSocket(), args, fileArgs);
-    return worker;
-  }
-
   private ExitCode waitForSlaveToDie(final MutationTestProcess worker) {
     final ExitCode exitCode = worker.waitToDie();
     LOG.fine("Exit code was - " + exitCode);
     return exitCode;
-  }
-
-  private SideEffect1<String> captureStdOutIfVerbose() {
-    if (this.verbose) {
-      return Prelude.printWith("stdout ");
-    } else {
-      return Prelude.noSideEffect(String.class);
-    }
-
   }
 
   private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(

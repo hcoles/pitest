@@ -17,7 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.NullAnalyser;
-import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
@@ -27,8 +26,6 @@ import org.pitest.testapi.Configuration;
 public class MutationTestBuilderTest {
 
   private MutationTestBuilder testee;
-
-  private ReportOptions       data;
 
   private MutationConfig      mutationConfig;
 
@@ -44,31 +41,33 @@ public class MutationTestBuilderTest {
   @Mock
   private Configuration       configuration;
 
+  @Mock
+  private WorkerFactory       wf;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.data = new ReportOptions();
-    this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(this.javaAgent));
-    this.testee = new MutationTestBuilder(null, this.mutationConfig,
-        new NullAnalyser(), this.source, this.data, this.configuration
-        );
+    this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(
+        this.javaAgent));
+    makeTesteeWithUnitSizeOf(0);
   }
+
 
   @Test
   public void shouldCreateSingleUnitPerClassWhenUnitSizeIsZero() {
-    this.data.setMutationUnitSize(0);
+    makeTesteeWithUnitSizeOf(0);
     assertCreatesOneTestUnitForTwoMutations();
   }
 
   @Test
   public void shouldCreateSingleUnitPerClassWhenUnitSizeIsLessThanZero() {
-    this.data.setMutationUnitSize(-1);
+    makeTesteeWithUnitSizeOf(-1);
     assertCreatesOneTestUnitForTwoMutations();
   }
 
   @Test
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
-    this.data.setMutationUnitSize(1);
+    makeTesteeWithUnitSizeOf(1);
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Arrays.asList(createDetails(), createDetails(), createDetails()));
     final List<MutationAnalysisUnit> actual = this.testee
@@ -106,6 +105,11 @@ public class MutationTestBuilderTest {
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
     assertEquals(1, actual.size());
+  }
+  
+  private void makeTesteeWithUnitSizeOf(int unitSize) {
+    testee = new MutationTestBuilder(this.wf, this.mutationConfig,
+        new NullAnalyser(), this.source, unitSize);
   }
 
 }

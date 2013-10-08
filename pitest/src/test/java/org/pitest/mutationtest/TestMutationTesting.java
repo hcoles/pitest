@@ -58,6 +58,7 @@ import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -377,9 +378,14 @@ public class TestMutationTesting {
         UnfilteredMutationFilter.factory(), coverageData,
         new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
 
-    final MutationTestBuilder builder = new MutationTestBuilder(null,
-        mutationConfig, new NullAnalyser(), source, data,
-        coverageOptions.getPitConfig());
+    WorkerFactory wf = new WorkerFactory(
+        null,  coverageOptions.getPitConfig(), mutationConfig,
+        new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
+            data.getTimeoutConstant()), data.isVerbose(),
+        data.getClassPath().getLocalClassPath());
+    
+    final MutationTestBuilder builder = new MutationTestBuilder(wf,
+        mutationConfig, new NullAnalyser(), source, 0);
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

@@ -49,6 +49,8 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
@@ -235,9 +237,15 @@ public class MutationCoverage {
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
 
-    final MutationTestBuilder builder = new MutationTestBuilder(this.baseDir,
-        mutationConfig, analyser, source, this.data, coverage()
-            .getConfiguration());
+    final WorkerFactory wf =
+    new WorkerFactory(
+        this.baseDir, coverage()
+        .getConfiguration(), mutationConfig,
+        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
+            this.data.getTimeoutConstant()), this.data.isVerbose(),
+        this.data.getClassPath().getLocalClassPath());
+    final MutationTestBuilder builder = new MutationTestBuilder(wf,
+        mutationConfig, analyser, source, this.data.getMutationUnitSize() );
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

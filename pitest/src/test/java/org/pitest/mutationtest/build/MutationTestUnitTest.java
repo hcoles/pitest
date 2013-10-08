@@ -62,9 +62,9 @@ public class MutationTestUnitTest {
        new LaunchOptions( this.javaAgent));
     this.mutations = new ArrayList<MutationDetails>();
     this.tests = new ArrayList<ClassName>();
-    this.testee = new MutationTestUnit(null, this.mutations,
-        this.tests, this.config, this.mutationConfig,
-        this.timeout, false, null);
+    this.testee = new MutationTestUnit(this.mutations,
+        this.tests, this.mutationConfig,
+        new WorkerFactory(null, config, mutationConfig, timeout, false, null));
   }
 
   @Test

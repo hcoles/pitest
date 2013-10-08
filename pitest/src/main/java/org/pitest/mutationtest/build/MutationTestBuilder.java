@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.build;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,9 +33,7 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
 
 public class MutationTestBuilder {
@@ -45,21 +42,18 @@ public class MutationTestBuilder {
 
   private final MutationSource   mutationSource;
   private final MutationAnalyser analyser;
-  private final ReportOptions    data;
   private final MutationConfig   mutationConfig;
-  private final Configuration    configuration;
-  private final File             baseDir;
+  private final WorkerFactory workerFactory;
+  private final int unitSize;
 
-  public MutationTestBuilder(final File baseDir,
+  public MutationTestBuilder(final WorkerFactory workerFactory,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
-      final MutationSource mutationSource, final ReportOptions data,
-      final Configuration configuration) {
-    this.data = data;
+      final MutationSource mutationSource, final int unitSize) {
+    this.unitSize = unitSize;
     this.mutationConfig = mutationConfig;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
-    this.configuration = configuration;
-    this.baseDir = baseDir;
+    this.workerFactory = workerFactory;
   }
 
   public List<MutationAnalysisUnit> createMutationTestUnits(
@@ -83,9 +77,9 @@ public class MutationTestBuilder {
   private void createMutationAnalysisUnits(
       final List<MutationAnalysisUnit> tus, final ClassName clazz,
       final Collection<MutationDetails> mutationsForClasses) {
-    if (this.data.getMutationUnitSize() > 0) {
+    if (unitSize > 0) {
       final FunctionalList<List<MutationDetails>> groupedMutations = FCollection
-          .splitToLength(this.data.getMutationUnitSize(), mutationsForClasses);
+          .splitToLength(unitSize, mutationsForClasses);
       FCollection
           .mapTo(groupedMutations, mutationDetailsToTestUnit(clazz), tus);
     } else {
@@ -138,11 +132,7 @@ public class MutationTestBuilder {
     FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(this.baseDir, needAnalysis, uniqueTestClasses,
-        this.configuration, this.mutationConfig,
-        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
-            .getClassPath().getLocalClassPath());
+    return new MutationTestUnit(needAnalysis, uniqueTestClasses, this.mutationConfig, workerFactory);
   }
 
   private static F<MutationResult, MutationDetails> resultToDetails() {
