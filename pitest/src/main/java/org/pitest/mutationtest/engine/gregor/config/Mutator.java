@@ -32,6 +32,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
@@ -91,6 +92,8 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * Optional mutator that replaces constructor calls with null values.
    */
   CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
+  
+  REMOVE_CONDITIONAL(RemoveConditionalMutator.REMOVE_CONDITIONALS_MUTATOR),
 
   /**
    * Experimental mutator that removed assignments to member variables.
@@ -110,7 +113,7 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * All the mutators
    */
   ALL(DEFAULTS, NON_VOID_METHOD_CALLS, CONSTRUCTOR_CALLS, INLINE_CONSTS,
-      EXPERIMENTAL_MEMBER_VARIABLE, EXPERIMENTAL_SWITCH);
+      EXPERIMENTAL_MEMBER_VARIABLE, EXPERIMENTAL_SWITCH, REMOVE_CONDITIONAL);
 
   Mutator(final Mutator... groups) {
     this.impls = asCollection(groups);
