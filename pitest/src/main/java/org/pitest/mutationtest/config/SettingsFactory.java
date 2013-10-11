@@ -12,6 +12,7 @@ import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
+import org.pitest.process.KnownLocationJavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 
@@ -51,6 +52,9 @@ public class SettingsFactory {
   }
 
   public JavaExecutableLocator getJavaExecutable() {
+    if ( options.getJavaExecutable() != null ) {
+      return new KnownLocationJavaExecutableLocator(options.getJavaExecutable());
+    }
     return new DefaultJavaExecutableLocator();
   }
 

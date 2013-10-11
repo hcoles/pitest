@@ -118,6 +118,8 @@ public class ReportOptions {
 
   private String                         mutationEngine                 = "gregor";
 
+  private String                         javaExecutable;
+
   public boolean isVerbose() {
     return this.verbose;
   }
@@ -542,6 +544,14 @@ public class ReportOptions {
     this.coverageThreshold = coverageThreshold;
   }
 
+  public String getJavaExecutable() {
+    return this.javaExecutable;
+  }
+
+  public void setJavaExecutable(final String javaExecutable) {
+    this.javaExecutable = javaExecutable;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [config=" + this.config + ", targetClasses="
@@ -569,7 +579,7 @@ public class ReportOptions {
         + this.exportLineCoverage + ", mutationThreshold="
         + this.mutationThreshold + ", coverageThreshold="
         + this.coverageThreshold + ", mutationEngine=" + this.mutationEngine
-        + "]";
+        + ", javaExecutable=" + this.javaExecutable + "]";
   }
 
 }

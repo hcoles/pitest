@@ -1,15 +1,15 @@
 package org.pitest.mutationtest.config;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.util.PitError;
 
@@ -57,5 +57,18 @@ public class SettingsFactoryTest {
   public void shouldThrowErrorWhenRequestedListenerNotKnown() {
     this.options.addOutputFormats(Arrays.asList("unknown"));
     this.testee.createListener();
+  }
+  
+  @Test
+  public void shouldReturnADefaultJavaExecutableWhenNoneIsSpecified() {
+    this.options.setJavaExecutable(null);
+    File actual = new File(testee.getJavaExecutable().javaExecutable());
+    assertTrue(actual.exists());
+  }
+  
+  @Test
+  public void shouldReturnSpecifiedJavaExecutableWhenOneSet() {
+    this.options.setJavaExecutable("foo");
+    assertEquals("foo",testee.getJavaExecutable().javaExecutable());
   }
 }
