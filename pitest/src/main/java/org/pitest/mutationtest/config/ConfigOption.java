@@ -161,7 +161,12 @@ public enum ConfigOption {
   /**
    * Dump per test line coverage to disk
    */
-  EXPORT_LINE_COVERAGE("exportLineCoverage", false);
+  EXPORT_LINE_COVERAGE("exportLineCoverage", false),
+  
+  /**
+   * Path to executable with which to run tests
+   */
+  JVM_PATH("jvmPath");
 
   private final String text;
   private final Object defaultValue;

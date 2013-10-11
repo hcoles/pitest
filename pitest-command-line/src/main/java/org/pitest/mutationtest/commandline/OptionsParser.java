@@ -28,6 +28,7 @@ import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATION
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
+import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
@@ -113,6 +114,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Integer> coverageThreshHoldSpec;
   private final OptionSpec<String>                   mutationEngine;
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
+  private final OptionSpec<String>                   javaExecutable;
 
   public OptionsParser(Predicate<String> dependencyFilter) {
     
@@ -288,6 +290,9 @@ public class OptionsParser {
     this.mutationEngine = parserAccepts(MUTATION_ENGINE).withRequiredArg()
         .ofType(String.class).describedAs("mutation engine to use")
         .defaultsTo(MUTATION_ENGINE.getDefault(String.class));
+    
+    this.javaExecutable = parserAccepts(JVM_PATH).withRequiredArg()
+        .ofType(String.class).describedAs("path to java executable");
 
   }
 
@@ -370,6 +375,7 @@ public class OptionsParser {
 
     setClassPath(userArgs, data);
     setTestConfiguration(userArgs, data);
+    data.setJavaExecutable(this.javaExecutable.value(userArgs));
 
     if (userArgs.has("?")) {
       return new ParseResult(data, "See above for supported parameters.");

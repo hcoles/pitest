@@ -118,6 +118,7 @@ public class MojoToReportOptionsConverter {
     data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
     data.setExportLineCoverage(this.mojo.isExportLineCoverage());
     data.setMutationEngine(this.mojo.getMutationEngine());
+    data.setJavaExecutable(this.mojo.getJavaExecutable());
 
     return data;
   }

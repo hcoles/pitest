@@ -195,10 +195,16 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.MUTATION_ENGINE, value);  
   }
   
+  public void setJVM(String value) {
+    this.setOption(ConfigOption.JVM_PATH, value);  
+  }
+  
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);
     }
   }
+
+
 
 }

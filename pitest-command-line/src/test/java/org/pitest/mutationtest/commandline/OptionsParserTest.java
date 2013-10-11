@@ -366,11 +366,26 @@ public class OptionsParserTest {
     assertEquals("gregor", actual.getMutationEngine());
   }
 
+
   @Test
   public void shouldParseMutationEnigne() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationEngine",
         "foo");
     assertEquals("foo", actual.getMutationEngine());
+  }
+  
+  
+  @Test
+  public void shouldDefaultJVMToNull() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertEquals(null, actual.getJavaExecutable());
+  }
+  
+  @Test
+  public void shouldParseJVM() {
+    final ReportOptions actual = parseAddingRequiredArgs("--jvmPath",
+        "foo");
+    assertEquals("foo", actual.getJavaExecutable());
   }
   
   @Test

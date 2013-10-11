@@ -275,6 +275,16 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig("<mutationEngine>foo</mutationEngine>");
     assertEquals("foo", actual.getMutationEngine());
   }
+  
+  public void testDefaultsJavaExecutableToNull() {
+    final ReportOptions actual = parseConfig("");
+    assertEquals(null, actual.getJavaExecutable());
+  }
+  
+  public void testParsesJavaExecutable() {
+    final ReportOptions actual = parseConfig("<jvm>foo</jvm>");
+    assertEquals("foo", actual.getJavaExecutable());
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {

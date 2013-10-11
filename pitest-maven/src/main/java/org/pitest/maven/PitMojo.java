@@ -230,6 +230,14 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="0" expression="${coverageThreshold}"
    */
   private int                   coverageThreshold;
+  
+  /**
+   * Path to java executable to use when running tests. Will default
+   * to executable in JAVA_HOME if none set.
+   * 
+   * @parameter
+   */
+  private String jvm;
 
   /**
    * Engine to use when generating mutations.
@@ -443,6 +451,14 @@ public class PitMojo extends AbstractMojo {
 
   public String getMutationEngine() {
     return this.mutationEngine;
+  }
+
+  public String getJavaExecutable() {
+    return jvm;
+  }
+
+  public void setJavaExecutable(String javaExecutable) {
+    this.jvm = javaExecutable;
   }
 
 }

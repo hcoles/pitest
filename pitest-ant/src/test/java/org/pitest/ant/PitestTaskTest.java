@@ -406,6 +406,13 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--mutationEngine=foo");
   }
   
+  @Test
+  public void shouldPassJVMToJavaTask() {
+    this.pitestTask.setJVM("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--jvmPath=foo");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;
