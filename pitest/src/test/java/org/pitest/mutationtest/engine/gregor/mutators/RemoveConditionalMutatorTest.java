@@ -174,6 +174,54 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIF_ICMPEQ(1), mutant, expected);
     assertMutantCallableReturns(new HasIF_ICMPEQ(0), mutant, expected);
   }
+  
+ static class HasIF_ACMPEQ implements Callable<String> {
+    private final Object i;
+
+    HasIF_ACMPEQ(final Object i) {
+      this.i = i;
+    }
+
+    public String call() {
+      if (this.i != this) {
+        return "was not zero";
+      } else {
+        return "was zero";
+      }
+    }
+  }
+
+  @Test
+  public void shouldReplaceIF_ACMPEQ() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIF_ACMPEQ.class);
+    final String expected = "was not zero";
+    assertMutantCallableReturns(new HasIF_ACMPEQ(1), mutant, expected);
+    assertMutantCallableReturns(new HasIF_ACMPEQ(0), mutant, expected);
+  }
+  
+  static class HasIF_ACMPNE implements Callable<String> {
+    private final Object i;
+
+    HasIF_ACMPNE(final Object i) {
+      this.i = i;
+    }
+
+    public String call() {
+      if (this.i == this) {
+        return "was not zero";
+      } else {
+        return "was zero";
+      }
+    }
+  }
+
+  @Test
+  public void shouldReplaceIF_ACMPNE() throws Exception {
+    final Mutant mutant = getFirstMutant(HasIF_ACMPNE.class);
+    final String expected = "was not zero";
+    assertMutantCallableReturns(new HasIF_ACMPNE(1), mutant, expected);
+    assertMutantCallableReturns(new HasIF_ACMPNE(0), mutant, expected);
+  }
 
   static class HasIFLE implements Callable<String> {
     private final int i;

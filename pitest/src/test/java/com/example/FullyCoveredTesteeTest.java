@@ -30,5 +30,40 @@ public class FullyCoveredTesteeTest {
 
     assertEquals(1, testee.coverMe());
   }
+  
+  
+  
 
+  public boolean equals(Object obj) {
+
+
+
+      if (this == obj) {
+
+  
+
+          return true;
+
+   
+
+      }
+
+
+
+      if (obj instanceof Integer) {
+
+  
+
+          return false;
+
+     
+
+      }
+
+
+      return false;
+
+   
+
+  }
 }
