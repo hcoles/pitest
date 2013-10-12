@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -10,7 +11,9 @@ import java.util.Comparator;
  * just picked up a large unit.
  * 
  */
-class AnalysisPriorityComparator implements Comparator<MutationAnalysisUnit> {
+class AnalysisPriorityComparator implements Comparator<MutationAnalysisUnit>, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   public int compare(final MutationAnalysisUnit a, final MutationAnalysisUnit b) {
     return b.priority() - a.priority();

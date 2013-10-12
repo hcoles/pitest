@@ -1,10 +1,13 @@
 package org.pitest.mutationtest.report.html;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 
 public class MutationTestSummaryDataFileNameComparator implements
-    Comparator<MutationTestSummaryData> {
+    Comparator<MutationTestSummaryData>, Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   public int compare(final MutationTestSummaryData arg0,
       final MutationTestSummaryData arg1) {

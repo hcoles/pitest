@@ -1,15 +1,25 @@
 package org.pitest.mutationtest.report.html;
 
+import static org.pitest.mutationtest.DetectionStatus.KILLED;
+import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
+import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.DetectionStatus.NOT_STARTED;
+import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.DetectionStatus.RUN_ERROR;
+import static org.pitest.mutationtest.DetectionStatus.STARTED;
+import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
+
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.EnumMap;
 
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 
-import static org.pitest.mutationtest.DetectionStatus.*;
+class ResultComparator implements Comparator<MutationResult>, Serializable {
 
-class ResultComparator implements Comparator<MutationResult> {
-  
+  private static final long serialVersionUID = 1L;
   private final static EnumMap<DetectionStatus,Integer> RANK = new EnumMap<DetectionStatus,Integer>(DetectionStatus.class);
   
   static {
