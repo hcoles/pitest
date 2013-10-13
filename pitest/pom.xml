@@ -130,14 +130,6 @@
 									<pattern>com.thoughtworks.xstream</pattern>
 									<shadedPattern>org.pitest.reloc.xstream</shadedPattern>
 								</relocation>
-								<relocation>
-									<pattern>org.antlr</pattern>
-									<shadedPattern>org.pitest.reloc.antlr</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>antlr</pattern>
-									<shadedPattern>org.pitest.reloc.antlr.common</shadedPattern>
-								</relocation>
 							</relocations>
 						</configuration>
 					</execution>
