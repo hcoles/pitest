@@ -33,7 +33,18 @@ public class CoverageAnalyser extends MethodNode {
   public void visitEnd() {
     final int nuberOfProbes = countRequiredProbes();
 
-    if ((nuberOfProbes <= MAX_SUPPORTED_LOCAL_PROBES) && (nuberOfProbes >= 1)) {
+    // according to the jvm spec
+    // "There must never be an uninitialized class instance in a local variable in code protected by an exception handler"
+    // the code to add finally blocks used by the local variable and array based probe approaches is not currently
+    // able to meet this guarantee for constructors. Allthough they appear to work, they are rejected by the
+    // java 7 verifier - hence fall back to a simple but slow approach.
+    if ((nuberOfProbes == 1) || this.name.equals("<init>")) {
+      accept(new SimpleCoverageVisitor(this.lineTracker, this.classId, this.mv,
+          this.access, this.name, this.desc, this.probeOffset));
+    }
+
+    else if ((nuberOfProbes <= MAX_SUPPORTED_LOCAL_PROBES)
+        && (nuberOfProbes >= 1)) {
       accept(new LocalVariableCoverageMethodVisitor(this.lineTracker,
           this.classId, this.mv, this.access, this.name, this.desc,
           nuberOfProbes, this.probeOffset));

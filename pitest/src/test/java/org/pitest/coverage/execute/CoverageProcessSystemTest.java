@@ -43,6 +43,7 @@ import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeM
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
 import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
 import com.example.coverage.execute.samples.simple.Tests;
 import com.example.coverage.execute.samples.simple.TestsForMultilineCoverage;
@@ -57,6 +58,14 @@ public class CoverageProcessSystemTest {
       InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultilineCoverage.class);
     assertCoverage(coveredClasses, "test1", 1);
+  }
+  
+  @Test
+  public void shouldCalculateCoverageForConstructors() throws IOException,
+      InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TesteeWithComplexConstructorsTest.class);
+    assertCoverage(coveredClasses, "testHigh", 4);
+    assertCoverage(coveredClasses, "testLow", 3);
   }
 
   @Test
@@ -341,7 +350,7 @@ public class CoverageProcessSystemTest {
     return new Predicate<String>() {
 
       public Boolean apply(final String a) {
-        return a.contains("Testee");
+        return a.contains("Testee") && !a.endsWith("Test");
       }
 
     };
