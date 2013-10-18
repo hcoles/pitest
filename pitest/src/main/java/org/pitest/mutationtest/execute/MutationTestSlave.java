@@ -28,6 +28,7 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.execute.Pitest;
@@ -46,7 +47,6 @@ import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
-import org.pitest.util.Unchecked;
 
 public class MutationTestSlave {
 
@@ -69,12 +69,15 @@ public class MutationTestSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = hotswap();
-
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
+
+      final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
+          loader);
+
+      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(byteSource);
+
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.engine.createMutator(new ClassloaderByteArraySource(
-              loader)), loader);
+          paramsFromParent.engine.createMutator(byteSource), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, paramsFromParent.pitConfig);
@@ -88,25 +91,6 @@ public class MutationTestSlave {
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
 
-  }
-
-  private static F3<ClassName, ClassLoader, byte[], Boolean> hotswap() {
-    final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new F3<ClassName, ClassLoader, byte[], Boolean>() {
-
-      public Boolean apply(final ClassName clazzName, final ClassLoader loader,
-          final byte[] b) {
-        Class<?> clazz;
-        try {
-          clazz = Class.forName(clazzName.asJavaName(), false, loader);
-          return HotSwapAgent.hotSwap(clazz, b);
-        } catch (final ClassNotFoundException e) {
-          throw Unchecked.translateCheckedException(e);
-        }
-
-      }
-
-    };
-    return hotswap;
   }
 
   public static void main(final String[] args) {
