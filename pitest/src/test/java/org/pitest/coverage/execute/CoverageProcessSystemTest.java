@@ -64,8 +64,10 @@ public class CoverageProcessSystemTest {
   public void shouldCalculateCoverageForConstructors() throws IOException,
       InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TesteeWithComplexConstructorsTest.class);
-    assertCoverage(coveredClasses, "testHigh", 4);
-    assertCoverage(coveredClasses, "testLow", 3);
+    assertTrue(coversLine(coveredClasses, "testHigh", 9));
+    assertFalse(coversLine(coveredClasses, "testHigh", 11));
+    assertTrue(coversLine(coveredClasses, "testLow", 11));
+    assertFalse(coversLine(coveredClasses, "testLow", 9));
   }
 
   @Test
@@ -180,7 +182,7 @@ public class CoverageProcessSystemTest {
 
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
 
-    printCoverage(coveredClasses);
+    //printCoverage(coveredClasses);
 
     assertTrue(coveredClasses.contains(coverageFor(Testee2.class)));
     assertTrue(coveredClasses.contains(coverageFor(Testee.class)));
@@ -188,7 +190,7 @@ public class CoverageProcessSystemTest {
         .contains(coverageFor(TesteeWithMultipleLines.class)));
   }
 
-  private void printCoverage(final FunctionalList<CoverageResult> coveredClasses) {
+  protected void printCoverage(final FunctionalList<CoverageResult> coveredClasses) {
     for (final CoverageResult i : coveredClasses) {
       for (final ClassStatistics j : i.getCoverage()) {
         System.out.println(j);
@@ -372,6 +374,31 @@ public class CoverageProcessSystemTest {
       final FunctionalList<CoverageResult> coveredClasses,
       final String testName, final int numberOfLines) {
     assertTrue(coveredClasses.contains(coverage(testName, numberOfLines)));
+  }
+  
+  private boolean coversLine(
+      final FunctionalList<CoverageResult> coveredClasses,
+      final String testName, final int line) {
+    return coveredClasses.contains(hitsLine(testName, line));
+  }
+
+  private F<CoverageResult, Boolean> hitsLine(final String testName, final int line) {
+      return new F<CoverageResult, Boolean>() {
+        public Boolean apply(final CoverageResult a) {
+          return a.getTestUnitDescription().getName().startsWith(testName)
+              && (FCollection.contains(a.getCoverage(), hasLine(line)));
+        }
+
+        private F<ClassStatistics, Boolean> hasLine(final int line) {
+         return new F<ClassStatistics, Boolean>() {
+          public Boolean apply(ClassStatistics a) {
+            return a.getUniqueVisitedLines().contains(line);
+          }
+           
+         };
+        }
+
+      };
   }
 
 }
