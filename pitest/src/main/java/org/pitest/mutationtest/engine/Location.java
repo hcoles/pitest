@@ -20,7 +20,7 @@ import org.pitest.classinfo.ClassName;
  * The co-ordinates of a method within a class.
  * 
  */
-public class Location {
+public class Location implements Comparable<Location> {
 
   private final ClassName  clazz;
   private final MethodName method;
@@ -130,6 +130,20 @@ public class Location {
 
   public String describe() {
     return this.method.name();
+  }
+
+  public int compareTo(Location o) {
+    int comp = this.clazz.compareTo(o.getClassName());
+    if ( comp != 0 ) {
+      return comp;
+    }
+    
+    comp = this.method.name().compareTo(o.getMethodName().name());
+    if ( comp != 0 ) {
+      return comp;
+    }
+    
+    return this.methodDesc.compareTo(o.getMethodDesc());
   }
 
 }

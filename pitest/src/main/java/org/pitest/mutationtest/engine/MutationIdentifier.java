@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.pitest.classinfo.ClassName;
 
-public class MutationIdentifier {
+public class MutationIdentifier implements Comparable<MutationIdentifier>{
 
   private final Location      location;
   private final List<Integer> indexes;
@@ -126,6 +126,18 @@ public class MutationIdentifier {
       return false;
     }
     return true;
+  }
+
+  public int compareTo(MutationIdentifier other) {
+    int comp = this.location.compareTo(other.getLocation());
+    if ( comp != 0 ) {
+      return comp;
+    }
+    comp = this.mutator.compareTo(other.getMutator());
+    if ( comp != 0 ) {
+      return comp;
+    }
+    return this.indexes.get(0).compareTo(other.indexes.get(0));
   }
 
 }

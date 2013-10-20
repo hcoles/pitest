@@ -1,11 +1,14 @@
 package org.pitest.mutationtest.engine;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -92,6 +95,23 @@ public class MutationIdentifierTest {
     MutationIdentifier a = new MutationIdentifier(aLocation().withMethodDesc("X"), 1, "M" );
     MutationIdentifier b = new MutationIdentifier(aLocation().withMethodDesc("Y"), 1, "M" );
     assertFalse(a.matches(b));
+  }
+  
+  @Test
+  public void shouldSortInConsistantOrder() {
+    MutationIdentifier a = new MutationIdentifier(aLocation(), 1, "A" );
+    MutationIdentifier b = new MutationIdentifier(aLocation(), 1, "Z" );
+    MutationIdentifier c = new MutationIdentifier(aLocation(), 1, "AA" );
+    MutationIdentifier d = new MutationIdentifier(aLocation(), 3, "AA" );
+    MutationIdentifier e = new MutationIdentifier(aLocation().withMethod("a"), 3, "AA" );
+    List<MutationIdentifier> mis = Arrays.asList(a,b,c,d,e);
+    Collections.sort(mis);
+    final List<MutationIdentifier> expectedOrder = Arrays.asList(e,a,c,d,b);
+    assertEquals(expectedOrder, mis);
+    mis = Arrays.asList(e,b,d,a,c);
+    Collections.sort(mis);
+    assertEquals(expectedOrder, mis);
+    
   }
   
 }
