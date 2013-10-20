@@ -132,17 +132,17 @@ public class Location implements Comparable<Location> {
     return this.method.name();
   }
 
-  public int compareTo(Location o) {
+  public int compareTo(final Location o) {
     int comp = this.clazz.compareTo(o.getClassName());
-    if ( comp != 0 ) {
+    if (comp != 0) {
       return comp;
     }
-    
+
     comp = this.method.name().compareTo(o.getMethodName().name());
-    if ( comp != 0 ) {
+    if (comp != 0) {
       return comp;
     }
-    
+
     return this.methodDesc.compareTo(o.getMethodDesc());
   }
 

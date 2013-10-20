@@ -122,8 +122,7 @@ public class MutationTestBuilder {
 
   private MutationAnalysisUnit makePreAnalysedUnit(
       final Collection<MutationResult> analysed) {
-    return new KnownStatusMutationTestUnit(
-        this.mutationConfig.getMutatorNames(), analysed);
+    return new KnownStatusMutationTestUnit(analysed);
   }
 
   private MutationAnalysisUnit makeUnanalysedUnit(

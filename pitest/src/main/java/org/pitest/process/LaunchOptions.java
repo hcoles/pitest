@@ -17,7 +17,6 @@ package org.pitest.process;
 import java.util.Collections;
 import java.util.List;
 
-
 public class LaunchOptions {
 
   private final JavaAgent             javaAgentFinder;

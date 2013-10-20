@@ -48,7 +48,7 @@ class RemoveConditionalMethodVisitor extends MethodVisitor {
           this.factory, DESCRIPTION);
 
       if (this.context.shouldMutate(newId)) {
-         emptyStack(opcode);
+        emptyStack(opcode);
       } else {
         this.mv.visitJumpInsn(opcode, label);
       }
@@ -58,19 +58,18 @@ class RemoveConditionalMethodVisitor extends MethodVisitor {
 
   }
 
-  private void emptyStack(int opcode) {
-    switch(opcode) {
+  private void emptyStack(final int opcode) {
+    switch (opcode) {
     case Opcodes.IF_ICMPNE:
     case Opcodes.IF_ICMPEQ:
     case Opcodes.IF_ACMPEQ:
     case Opcodes.IF_ACMPNE:
-      super.visitInsn(Opcodes.POP2); 
+      super.visitInsn(Opcodes.POP2);
       break;
     default:
-      super.visitInsn(Opcodes.POP); 
+      super.visitInsn(Opcodes.POP);
     }
 
-    
   }
 
   private boolean canMutate(final int opcode) {

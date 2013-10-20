@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import java.util.Collection;
-
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -42,10 +40,6 @@ public final class MutationConfig {
 
   public LaunchOptions getLaunchOptions() {
     return this.launchOptions;
-  }
-
-  public Collection<String> getMutatorNames() {
-    return this.engine.getMutatorNames();
   }
 
   @Override

@@ -117,13 +117,21 @@ public class MutationCoverage {
         + (runtime.freeMemory() / MB) + " mb");
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
+
+    final MutationEngine engine = this.strategies.factory().createEngine(
+        this.data.isMutateStaticInitializers(),
+        Prelude.or(this.data.getExcludedMethods()),
+        this.data.getLoggingClasses(), this.data.getMutators(),
+        this.data.isDetectInlinedCode());
+
     final DefaultStaticConfig staticConfig = createConfig(t0, coverageData,
-        stats);
+        stats, engine);
 
     history().initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final List<? extends TestUnit> tus = buildMutationTests(coverageData);
+    final List<? extends TestUnit> tus = buildMutationTests(coverageData,
+        engine);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -152,14 +160,14 @@ public class MutationCoverage {
 
   private DefaultStaticConfig createConfig(final long t0,
       final CoverageDatabase coverageData,
-      final MutationStatisticsListener stats) {
+      final MutationStatisticsListener stats, final MutationEngine engine) {
     final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
 
     staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            this.data.getSourceDirs()), t0);
+            this.data.getSourceDirs()), engine, t0);
 
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(args);
@@ -220,12 +228,7 @@ public class MutationCoverage {
   }
 
   private List<? extends TestUnit> buildMutationTests(
-      final CoverageDatabase coverageData) {
-    final MutationEngine engine = this.strategies.factory().createEngine(
-        this.data.isMutateStaticInitializers(),
-        Prelude.or(this.data.getExcludedMethods()),
-        this.data.getLoggingClasses(), this.data.getMutators(),
-        this.data.isDetectInlinedCode());
+      final CoverageDatabase coverageData, final MutationEngine engine) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -237,15 +240,13 @@ public class MutationCoverage {
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
 
-    final WorkerFactory wf =
-    new WorkerFactory(
-        this.baseDir, coverage()
+    final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(),
-        this.data.getClassPath().getLocalClassPath());
+            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
+            .getClassPath().getLocalClassPath());
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, analyser, source, this.data.getMutationUnitSize() );
+        mutationConfig, analyser, source, this.data.getMutationUnitSize());
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

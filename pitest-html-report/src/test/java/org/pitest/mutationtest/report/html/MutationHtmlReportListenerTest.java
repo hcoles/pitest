@@ -70,7 +70,7 @@ public class MutationHtmlReportListenerTest {
         Collections.singleton(this.classInfo));
 
     this.testee = new MutationHtmlReportListener(this.coverageDb,
-        this.outputStrategy, this.sourceLocator);
+        this.outputStrategy, Collections.<String>emptyList(), this.sourceLocator);
   }
 
   @Test

@@ -17,7 +17,6 @@ package org.pitest.mutationtest.report;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.pitest.DescriptionMother;
 import org.pitest.execute.containers.ExtendedTestResult;
@@ -37,8 +36,7 @@ public class MutationTestResultMother {
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {
-    return new MutationMetaData(Collections.<String> emptyList(),
-        Arrays.asList(mrs));
+    return new MutationMetaData(Arrays.asList(mrs));
   }
 
   public static TestResult createResult(final MutationMetaData md) {

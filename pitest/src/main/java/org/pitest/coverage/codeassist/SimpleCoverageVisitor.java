@@ -8,12 +8,11 @@ import org.pitest.boot.CodeCoverageStore;
 /**
  * Instruments via a method call at each line.
  * 
- * This simplistic approach is generally slow, but does not
- * require finally blocks that are difficult to generate
- * correctly for constructors.
+ * This simplistic approach is generally slow, but does not require finally
+ * blocks that are difficult to generate correctly for constructors.
  * 
- * This simple approach should however provide better performance
- * for single line methods.
+ * This simple approach should however provide better performance for single
+ * line methods.
  */
 public class SimpleCoverageVisitor extends MethodVisitor {
   private final MethodVisitor methodVisitor;
@@ -25,8 +24,7 @@ public class SimpleCoverageVisitor extends MethodVisitor {
 
   public SimpleCoverageVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc,
-      final int probeOffset) {
+      final String name, final String desc, final int probeOffset) {
     super(Opcodes.ASM4, writer);
 
     this.methodVisitor = writer;
@@ -34,19 +32,18 @@ public class SimpleCoverageVisitor extends MethodVisitor {
     this.lineTracker = lineTracker;
     this.probeOffset = probeOffset;
   }
- 
+
   @Override
   public void visitLineNumber(final int line, final Label start) {
 
     this.lineTracker.registerLine(line);
     this.methodVisitor.visitLdcInsn(this.classId);
-    this.methodVisitor.visitLdcInsn(this.probeCount + probeOffset);
+    this.methodVisitor.visitLdcInsn(this.probeCount + this.probeOffset);
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
-        CodeCoverageStore.CLASS_NAME, "visitSingleProbe",
-        "(II)V");
-    
-    probeCount++;
+        CodeCoverageStore.CLASS_NAME, "visitSingleProbe", "(II)V");
+
+    this.probeCount++;
 
     super.visitLineNumber(line, start);
   }

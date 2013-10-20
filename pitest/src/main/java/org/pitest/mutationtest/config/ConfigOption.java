@@ -162,7 +162,7 @@ public enum ConfigOption {
    * Dump per test line coverage to disk
    */
   EXPORT_LINE_COVERAGE("exportLineCoverage", false),
-  
+
   /**
    * Path to executable with which to run tests
    */

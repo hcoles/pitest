@@ -19,16 +19,15 @@ import org.pitest.util.Log;
 import org.pitest.util.SocketFinder;
 
 public class WorkerFactory {
-  
-  private final String                      classPath;
-  private final File                        baseDir;
-  private final Configuration               pitConfig;
-  private final TimeoutLengthStrategy       timeoutStrategy;
-  private final boolean                     verbose;
-  private final MutationConfig              config;
-  
-  public WorkerFactory(final File baseDir,
-      final Configuration pitConfig,
+
+  private final String                classPath;
+  private final File                  baseDir;
+  private final Configuration         pitConfig;
+  private final TimeoutLengthStrategy timeoutStrategy;
+  private final boolean               verbose;
+  private final MutationConfig        config;
+
+  public WorkerFactory(final File baseDir, final Configuration pitConfig,
       final MutationConfig mutationConfig,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final String classPath) {
@@ -40,31 +39,31 @@ public class WorkerFactory {
     this.config = mutationConfig;
   }
 
-    public MutationTestProcess createWorker(
-        final Collection<MutationDetails> remainingMutations,       Collection<ClassName> testClasses) {
-      final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
-          testClasses, this.config.getEngine(), this.timeoutStrategy,
-          Log.isVerbose(), this.pitConfig);
+  public MutationTestProcess createWorker(
+      final Collection<MutationDetails> remainingMutations,
+      final Collection<ClassName> testClasses) {
+    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
+        testClasses, this.config.getEngine(), this.timeoutStrategy,
+        Log.isVerbose(), this.pitConfig);
 
-      final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
-          .andLaunchOptions(this.config.getLaunchOptions())
-          .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
-          .andStderr(printWith("stderr "));
+    final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
+        .andLaunchOptions(this.config.getLaunchOptions())
+        .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
+        .andStderr(printWith("stderr "));
 
-      final SocketFinder sf = new SocketFinder();
-      final MutationTestProcess worker = new MutationTestProcess(
-          sf.getNextAvailableServerSocket(), args, fileArgs);
-      return worker;
+    final SocketFinder sf = new SocketFinder();
+    final MutationTestProcess worker = new MutationTestProcess(
+        sf.getNextAvailableServerSocket(), args, fileArgs);
+    return worker;
+  }
+
+  private SideEffect1<String> captureStdOutIfVerbose() {
+    if (this.verbose) {
+      return Prelude.printWith("stdout ");
+    } else {
+      return Prelude.noSideEffect(String.class);
     }
-  
 
-    private SideEffect1<String> captureStdOutIfVerbose() {
-      if (this.verbose) {
-        return Prelude.printWith("stdout ");
-      } else {
-        return Prelude.noSideEffect(String.class);
-      }
+  }
 
-    }
-    
 }

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -49,13 +50,15 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
   private final CoverageDatabase          coverage;
+  private final Set<String> mutatorNames = new HashSet<String>();
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
-      final ResultOutputStrategy outputStrategy,
+      final ResultOutputStrategy outputStrategy, Collection<String> mutatorNames,
       final SourceLocator... locators) {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
     this.sourceRoots.addAll(Arrays.asList(locators));
+    this.mutatorNames.addAll(mutatorNames);
   }
 
   private void generateAnnotatedSourceFile(
@@ -104,7 +107,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public MutationTestSummaryData createSummaryData(
       final CoverageDatabase coverage, final MutationMetaData data) {
     return new MutationTestSummaryData(data.getFirstFileName(), data.getMutations(),
-        data.getMutatorNames(), coverage.getClassInfo(data.getMutatedClass()),
+        mutatorNames, coverage.getClassInfo(data.getMutatedClass()),
         coverage.getNumberOfCoveredLines(data.getMutatedClass()));
   }
 

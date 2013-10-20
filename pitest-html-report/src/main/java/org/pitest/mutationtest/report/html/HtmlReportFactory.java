@@ -16,13 +16,13 @@
 package org.pitest.mutationtest.report.html;
 
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 
 public class HtmlReportFactory implements MutationResultListenerFactory {
 
   public MutationResultListener getListener(ListenerArguments args) {
-    return new MutationHtmlReportListener(args.getCoverage(), args.getOutputStrategy(),
+    return new MutationHtmlReportListener(args.getCoverage(), args.getOutputStrategy(), args.getEngine().getMutatorNames(),
         args.getLocator());
   }
 

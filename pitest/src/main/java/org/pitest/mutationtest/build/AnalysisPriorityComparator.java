@@ -11,7 +11,8 @@ import java.util.Comparator;
  * just picked up a large unit.
  * 
  */
-class AnalysisPriorityComparator implements Comparator<MutationAnalysisUnit>, Serializable {
+class AnalysisPriorityComparator implements Comparator<MutationAnalysisUnit>,
+    Serializable {
 
   private static final long serialVersionUID = 1L;
 

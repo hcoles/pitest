@@ -1,6 +1,7 @@
 package org.pitest.mutationtest;
 
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.util.ResultOutputStrategy;
 
 /**
@@ -13,14 +14,16 @@ public class ListenerArguments {
   private final CoverageDatabase     coverage;
   private final long                 startTime;
   private final SourceLocator        locator;
+  private final MutationEngine       engine;
 
   public ListenerArguments(final ResultOutputStrategy outputStrategy,
       final CoverageDatabase coverage, final SourceLocator locator,
-      final long startTime) {
+      final MutationEngine engine, final long startTime) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
     this.startTime = startTime;
+    this.engine = engine;
   }
 
   public ResultOutputStrategy getOutputStrategy() {
@@ -37,6 +40,10 @@ public class ListenerArguments {
 
   public SourceLocator getLocator() {
     return this.locator;
+  }
+
+  public MutationEngine getEngine() {
+    return this.engine;
   }
 
 }

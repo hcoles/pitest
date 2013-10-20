@@ -52,8 +52,9 @@ public class SettingsFactory {
   }
 
   public JavaExecutableLocator getJavaExecutable() {
-    if ( options.getJavaExecutable() != null ) {
-      return new KnownLocationJavaExecutableLocator(options.getJavaExecutable());
+    if (this.options.getJavaExecutable() != null) {
+      return new KnownLocationJavaExecutableLocator(
+          this.options.getJavaExecutable());
     }
     return new DefaultJavaExecutableLocator();
   }

@@ -17,13 +17,10 @@ public class KnownStatusMutationTestUnit extends AbstractTestUnit implements
   private static final Logger              LOG = Log.getLogger();
 
   private final Collection<MutationResult> mutations;
-  private final Collection<String>         mutatorNames;
 
-  public KnownStatusMutationTestUnit(final Collection<String> mutatorNames,
-      final Collection<MutationResult> mutations) {
+  public KnownStatusMutationTestUnit(final Collection<MutationResult> mutations) {
     super(new Description("Mutation test"));
     this.mutations = mutations;
-    this.mutatorNames = mutatorNames;
   }
 
   @Override
@@ -40,7 +37,7 @@ public class KnownStatusMutationTestUnit extends AbstractTestUnit implements
   }
 
   private void reportResults(final ResultCollector rc) {
-    final MetaData md = new MutationMetaData(this.mutatorNames, this.mutations);
+    final MetaData md = new MutationMetaData(this.mutations);
     rc.notifyEnd(this.getDescription(), md);
   }
 

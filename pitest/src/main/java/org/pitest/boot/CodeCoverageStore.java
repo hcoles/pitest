@@ -58,7 +58,7 @@ public final class CodeCoverageStore {
 
   private CodeCoverageStore() {
   }
-  
+
   public static void visitSingleProbe(final int classId, final int probe) {
     final boolean[] bs = classHits.get(classId);
     bs[CLASS_HIT_INDEX] = true;

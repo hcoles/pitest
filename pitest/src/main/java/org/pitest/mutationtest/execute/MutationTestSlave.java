@@ -74,7 +74,8 @@ public class MutationTestSlave {
       final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
           loader);
 
-      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(byteSource);
+      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(
+          byteSource);
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           paramsFromParent.engine.createMutator(byteSource), loader);

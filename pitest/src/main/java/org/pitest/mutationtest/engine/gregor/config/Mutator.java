@@ -92,7 +92,7 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * Optional mutator that replaces constructor calls with null values.
    */
   CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
-  
+
   REMOVE_CONDITIONALS(RemoveConditionalMutator.REMOVE_CONDITIONALS_MUTATOR),
 
   /**

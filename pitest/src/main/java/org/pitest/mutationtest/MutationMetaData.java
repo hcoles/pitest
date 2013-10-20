@@ -25,13 +25,10 @@ import org.pitest.testapi.MetaData;
 
 public class MutationMetaData implements MetaData {
 
-  private final Set<String>                mutatorNames = new HashSet<String>();
   private final Collection<MutationResult> mutations;
 
-  public MutationMetaData(final Collection<String> mutatorNames,
-      final Collection<MutationResult> mutations) {
+  public MutationMetaData(final Collection<MutationResult> mutations) {
     this.mutations = mutations;
-    this.mutatorNames.addAll(mutatorNames);
   }
 
   public String getFirstFileName() {
@@ -43,10 +40,6 @@ public class MutationMetaData implements MetaData {
     FCollection.mapTo(this.mutations, mutationResultToFileName(),
         uniqueFilenames);
     return uniqueFilenames;
-  }
-
-  public Set<String> getMutatorNames() {
-    return this.mutatorNames;
   }
 
   private static F<MutationResult, String> mutationResultToFileName() {
@@ -88,8 +81,6 @@ public class MutationMetaData implements MetaData {
     int result = 1;
     result = (prime * result)
         + ((this.mutations == null) ? 0 : this.mutations.hashCode());
-    result = (prime * result)
-        + ((this.mutatorNames == null) ? 0 : this.mutatorNames.hashCode());
     return result;
   }
 
@@ -110,13 +101,6 @@ public class MutationMetaData implements MetaData {
         return false;
       }
     } else if (!this.mutations.equals(other.mutations)) {
-      return false;
-    }
-    if (this.mutatorNames == null) {
-      if (other.mutatorNames != null) {
-        return false;
-      }
-    } else if (!this.mutatorNames.equals(other.mutatorNames)) {
       return false;
     }
     return true;

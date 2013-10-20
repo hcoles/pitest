@@ -41,15 +41,13 @@ public class MutationTestUnit extends AbstractTestUnit implements
 
   private final MutationConfig              config;
   private final Collection<MutationDetails> availableMutations;
-  private final WorkerFactory workerFactory;
-  
+  private final WorkerFactory               workerFactory;
+
   private final Collection<ClassName>       testClasses;
 
-  public MutationTestUnit(
-      final Collection<MutationDetails> availableMutations,
+  public MutationTestUnit(final Collection<MutationDetails> availableMutations,
       final Collection<ClassName> testClasses,
-      final MutationConfig mutationConfig,
-      WorkerFactory workerFactor) {
+      final MutationConfig mutationConfig, final WorkerFactory workerFactor) {
     super(new Description("Mutation test"));
     this.availableMutations = availableMutations;
     this.config = mutationConfig;
@@ -105,7 +103,8 @@ public class MutationTestUnit extends AbstractTestUnit implements
 
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
-    final MutationTestProcess worker = workerFactory.createWorker(remainingMutations, this.testClasses);
+    final MutationTestProcess worker = this.workerFactory.createWorker(
+        remainingMutations, this.testClasses);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(mutations,
@@ -162,7 +161,7 @@ public class MutationTestUnit extends AbstractTestUnit implements
   private void reportResults(final MutationStatusMap mutationsMap,
       final ResultCollector rc) {
 
-    final MetaData md = new MutationMetaData(this.config.getMutatorNames(),
+    final MetaData md = new MutationMetaData(
         mutationsMap.createMutationResults());
 
     rc.notifyEnd(this.getDescription(), md);

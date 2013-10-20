@@ -85,7 +85,7 @@ public class MutationTestUnitTest {
 
   private MutationMetaData makeMetaData(final MutationDetails details,
       final MutationStatusTestPair status) {
-    return new MutationMetaData(this.mutationConfig.getMutatorNames(),
+    return new MutationMetaData(
         Collections.singletonList(new MutationResult(details, status)));
   }
 
