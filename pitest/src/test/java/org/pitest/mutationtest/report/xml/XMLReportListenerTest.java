@@ -52,7 +52,7 @@ public class XMLReportListenerTest {
   public void shouldOutputKillingTestWhenOneFound() throws IOException {
     final MutationResult mr = createdKilledMutationWithKillingTestOf("foo");
     this.testee.handleMutationResult(MutationTestResultMother
-        .createMetaData(mr));
+        .createClassResults(mr));
     final String expected = "<mutation detected='true' status='KILLED'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><methodDescription>()I</methodDescription><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest>foo</killingTest></mutation>\n";
     assertEquals(expected, this.out.toString());
   }
@@ -61,7 +61,7 @@ public class XMLReportListenerTest {
   public void shouldEscapeGTAndLTSymbols() {
     final MutationResult mr = createdKilledMutationWithKillingTestOf("<foo>");
     this.testee.handleMutationResult(MutationTestResultMother
-        .createMetaData(mr));
+        .createClassResults(mr));
     assertTrue(this.out.toString().contains("&#60;foo&#62;"));
   }
 
@@ -77,7 +77,7 @@ public class XMLReportListenerTest {
   public void shouldOutputNoneWhenNoKillingTestFound() throws IOException {
     final MutationResult mr = createSurvivingMutant();
     this.testee.handleMutationResult(MutationTestResultMother
-        .createMetaData(mr));
+        .createClassResults(mr));
     final String expected = "<mutation detected='false' status='SURVIVED'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><methodDescription>()I</methodDescription><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><killingTest/></mutation>\n";
     assertEquals(expected, this.out.toString());
   }

@@ -54,7 +54,7 @@ public class MetaDataExtractor implements MutationResultListener {
 
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     this.data.addAll(metaData.getMutations());
   }
 

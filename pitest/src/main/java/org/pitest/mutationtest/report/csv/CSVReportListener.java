@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.util.ResultOutputStrategy;
@@ -68,7 +68,7 @@ public class CSVReportListener implements MutationResultListener {
     }
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     try {
 
       for (final MutationResult mutation : metaData.getMutations()) {

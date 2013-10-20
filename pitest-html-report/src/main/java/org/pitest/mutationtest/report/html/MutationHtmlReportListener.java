@@ -34,7 +34,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.util.FileUtil;
@@ -97,7 +97,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   private PackageSummaryData collectPackageSummaries(
-      final MutationMetaData mutationMetaData) {
+      final ClassMutationResults mutationMetaData) {
     final String packageName = mutationMetaData.getPackageName();
         
     return this.packageSummaryData.update(packageName,
@@ -105,10 +105,10 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
   
   public MutationTestSummaryData createSummaryData(
-      final CoverageDatabase coverage, final MutationMetaData data) {
-    return new MutationTestSummaryData(data.getFirstFileName(), data.getMutations(),
-        mutatorNames, coverage.getClassInfo(data.getMutatedClass()),
-        coverage.getNumberOfCoveredLines(data.getMutatedClass()));
+      final CoverageDatabase coverage, final ClassMutationResults data) {
+    return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
+        mutatorNames, coverage.getClassInfo(Collections.singleton(data.getMutatedClass())),
+        coverage.getNumberOfCoveredLines(Collections.singleton(data.getMutatedClass())));
   }
 
   private SourceFile createAnnotatedSourceFile(
@@ -224,11 +224,11 @@ public class MutationHtmlReportListener implements MutationResultListener {
     createIndexPages();
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     final PackageSummaryData packageData = collectPackageSummaries(metaData);
 
     generateAnnotatedSourceFile(packageData.getForSourceFile(metaData
-        .getFirstFileName()));
+        .getFileName()));
 
   }
 

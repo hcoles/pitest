@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.incremental;
 
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.HistoryStore;
-import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 
@@ -17,7 +17,7 @@ public class HistoryListener implements MutationResultListener {
 
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     for (final MutationResult each : metaData.getMutations()) {
       this.historyStore.recordResult(each);
     }

@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.tooling;
 
 import org.pitest.functional.Option;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.testapi.Description;
@@ -47,7 +48,9 @@ public class MutationResultAdapter implements TestListener {
 
   private void extractMutationData(final TestResult tr) {
     for (final MutationMetaData metaData : extractMetaData(tr)) {
-      this.child.handleMutationResult(metaData);
+      for (final ClassMutationResults cr : metaData.toClassResults()) {
+        this.child.handleMutationResult(cr);
+      }
     }
   }
 

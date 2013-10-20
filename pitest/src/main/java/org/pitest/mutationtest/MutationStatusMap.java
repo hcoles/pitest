@@ -19,6 +19,7 @@ import static org.pitest.functional.prelude.Prelude.putToMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class MutationStatusMap {
         putToMap(this.mutationMap, new MutationStatusTestPair(0, status)));
   }
 
-  public Collection<MutationResult> createMutationResults() {
+  public List<MutationResult> createMutationResults() {
     return FCollection.map(this.mutationMap.entrySet(),
         detailsToMutationResults());
 

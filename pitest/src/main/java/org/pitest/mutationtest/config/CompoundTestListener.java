@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.config;
 
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 
 public class CompoundTestListener implements MutationResultListener {
@@ -32,7 +32,7 @@ public class CompoundTestListener implements MutationResultListener {
 
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     for (final MutationResultListener each : this.children) {
       each.handleMutationResult(metaData);
     }

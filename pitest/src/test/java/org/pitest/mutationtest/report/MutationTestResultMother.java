@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import org.pitest.DescriptionMother;
 import org.pitest.execute.containers.ExtendedTestResult;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -38,10 +39,14 @@ public class MutationTestResultMother {
   public static MutationMetaData createMetaData(final MutationResult... mrs) {
     return new MutationMetaData(Arrays.asList(mrs));
   }
-
+  
+  public static ClassMutationResults createClassResults(final MutationResult... mrs) {
+    return new ClassMutationResults(Arrays.asList(mrs));
+  }
+  
   public static TestResult createResult(final MutationMetaData md) {
     return new ExtendedTestResult(
         DescriptionMother.createEmptyDescription("foo"), null, md);
   }
-
+  
 }

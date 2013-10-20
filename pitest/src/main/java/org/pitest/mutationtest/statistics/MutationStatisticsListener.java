@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.statistics;
 
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 
 public class MutationStatisticsListener implements MutationResultListener,
@@ -30,7 +30,7 @@ public class MutationStatisticsListener implements MutationResultListener,
 
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     processMetaData(metaData);
   }
 
@@ -38,7 +38,7 @@ public class MutationStatisticsListener implements MutationResultListener,
 
   }
 
-  private void processMetaData(final MutationMetaData value) {
+  private void processMetaData(final ClassMutationResults value) {
     this.mutatorScores.registerResults(value.getMutations());
   }
 }

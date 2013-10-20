@@ -14,65 +14,53 @@
  */
 package org.pitest.mutationtest;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
 import org.pitest.testapi.MetaData;
 
 public class MutationMetaData implements MetaData {
 
-  private final Collection<MutationResult> mutations;
+  private final List<MutationResult> mutations;
 
-  public MutationMetaData(final Collection<MutationResult> mutations) {
+  public MutationMetaData(final List<MutationResult> mutations) {
     this.mutations = mutations;
-  }
-
-  public String getFirstFileName() {
-    return getSourceFiles().iterator().next();
-  }
-
-  public Collection<String> getSourceFiles() {
-    final Set<String> uniqueFilenames = new HashSet<String>();
-    FCollection.mapTo(this.mutations, mutationResultToFileName(),
-        uniqueFilenames);
-    return uniqueFilenames;
-  }
-
-  private static F<MutationResult, String> mutationResultToFileName() {
-    return new F<MutationResult, String>() {
-      public String apply(final MutationResult a) {
-        return a.getDetails().getFilename();
-      }
-    };
   }
 
   public Collection<MutationResult> getMutations() {
     return this.mutations;
   }
 
-  public Collection<ClassName> getMutatedClass() {
-    final Set<ClassName> classes = new HashSet<ClassName>(1);
-    FCollection.mapTo(this.mutations, mutationsToClass(), classes);
-    return classes;
-  }
-
-  private static F<MutationResult, ClassName> mutationsToClass() {
-    return new F<MutationResult, ClassName>() {
-      public ClassName apply(final MutationResult a) {
-        return a.getDetails().getClassName();
+  public Collection<ClassMutationResults> toClassResults() {
+    Collections.sort(this.mutations, comparator());
+    final List<ClassMutationResults> cmrs = new ArrayList<ClassMutationResults>();
+    final List<MutationResult> buffer = new ArrayList<MutationResult>();
+    ClassName cn = null;
+    for (final MutationResult each : this.mutations) {
+      if ((cn != null) && !each.getDetails().getClassName().equals(cn)) {
+        cmrs.add(new ClassMutationResults(buffer));
+        buffer.clear();
       }
-    };
+      cn = each.getDetails().getClassName();
+      buffer.add(each);
+    }
+    cmrs.add(new ClassMutationResults(buffer));
+    return cmrs;
+
   }
 
-  public String getPackageName() {
-    final ClassName fileName = getMutatedClass().iterator().next();
-    final int lastDot = fileName.asJavaName().lastIndexOf('.');
-    return lastDot > 0 ? fileName.asJavaName().substring(0, lastDot)
-        : "default";
+  private static Comparator<MutationResult> comparator() {
+    return new Comparator<MutationResult>() {
+
+      public int compare(final MutationResult arg0, final MutationResult arg1) {
+        return arg0.getDetails().getId().compareTo(arg1.getDetails().getId());
+      }
+
+    };
   }
 
   @Override

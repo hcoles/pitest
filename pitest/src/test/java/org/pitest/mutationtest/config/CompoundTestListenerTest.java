@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 
@@ -61,7 +61,7 @@ public class CompoundTestListenerTest {
 
   @Test
   public void shouldCallOnTestErrorForAllChildren() {
-    final MutationMetaData metaData = new MutationMetaData(
+    final ClassMutationResults metaData = new ClassMutationResults(
         Collections.<MutationResult> emptyList());
     this.testee.handleMutationResult(metaData);
     verify(this.firstChild, times(1)).handleMutationResult(metaData);

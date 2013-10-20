@@ -6,9 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.HistoryStore;
-import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
@@ -29,8 +29,8 @@ public class HistoryListenerTest {
   @Test
   public void shouldRecordMutationResults() {
     final MutationResult mr = makeResult();
-    final MutationMetaData metaData = MutationTestResultMother
-        .createMetaData(mr);
+    final ClassMutationResults metaData = MutationTestResultMother
+        .createClassResults(mr);
     this.testee.handleMutationResult(metaData);
     verify(this.store).recordResult(mr);
   }

@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -52,7 +52,7 @@ public class XMLReportListener implements MutationResultListener {
     this.out = out;
   }
 
-  private void writeResult(final MutationMetaData metaData) {
+  private void writeResult(final ClassMutationResults metaData) {
     for (final MutationResult mutation : metaData.getMutations()) {
       writeMutationResultXML(mutation);
     }
@@ -124,7 +124,7 @@ public class XMLReportListener implements MutationResultListener {
     write("<mutations>\n");
   }
 
-  public void handleMutationResult(final MutationMetaData metaData) {
+  public void handleMutationResult(final ClassMutationResults metaData) {
     writeResult(metaData);
   }
 

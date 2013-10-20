@@ -6,13 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
-import org.pitest.mutationtest.tooling.MutationResultAdapter;
 
 public class MutationResultAdapterTest {
 
@@ -42,8 +41,8 @@ public class MutationResultAdapterTest {
   @Test
   public void shouldExtractMetaDataWhenTestSuccess() {
     final MutationResult mr = makeResult();
-    final MutationMetaData metaData = MutationTestResultMother
-        .createMetaData(mr);
+    final ClassMutationResults metaData = MutationTestResultMother
+        .createClassResults(mr);
     this.testee.onTestSuccess(MutationTestResultMother
         .createResult(MutationTestResultMother.createMetaData(mr)));
     verify(this.child).handleMutationResult(metaData);
@@ -52,8 +51,8 @@ public class MutationResultAdapterTest {
   @Test
   public void shouldExtractMetaDataWhenTestError() {
     final MutationResult mr = makeResult();
-    final MutationMetaData metaData = MutationTestResultMother
-        .createMetaData(mr);
+    final ClassMutationResults metaData = MutationTestResultMother
+        .createClassResults(mr);
     this.testee.onTestError(MutationTestResultMother
         .createResult(MutationTestResultMother.createMetaData(mr)));
     verify(this.child).handleMutationResult(metaData);
@@ -62,8 +61,8 @@ public class MutationResultAdapterTest {
   @Test
   public void shouldExtractMetaDataWhenTestFailure() {
     final MutationResult mr = makeResult();
-    final MutationMetaData metaData = MutationTestResultMother
-        .createMetaData(mr);
+    final ClassMutationResults metaData = MutationTestResultMother
+        .createClassResults(mr);
     this.testee.onTestFailure(MutationTestResultMother
         .createResult(MutationTestResultMother.createMetaData(mr)));
     verify(this.child).handleMutationResult(metaData);

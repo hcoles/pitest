@@ -89,7 +89,7 @@ public class MutationHtmlReportListenerTest {
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
         .thenReturn(Option.<Reader> none());
     this.testee.handleMutationResult(MutationTestResultMother
-        .createMetaData(mr));
+        .createClassResults(mr));
     verify(this.sourceLocator).locate(any(Collection.class), eq(fileName));
   }
 

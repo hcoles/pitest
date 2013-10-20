@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.build;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.mutationtest.MutationMetaData;
@@ -14,11 +14,11 @@ import org.pitest.util.Log;
 public class KnownStatusMutationTestUnit extends AbstractTestUnit implements
     MutationAnalysisUnit {
 
-  private static final Logger              LOG = Log.getLogger();
+  private static final Logger        LOG = Log.getLogger();
 
-  private final Collection<MutationResult> mutations;
+  private final List<MutationResult> mutations;
 
-  public KnownStatusMutationTestUnit(final Collection<MutationResult> mutations) {
+  public KnownStatusMutationTestUnit(final List<MutationResult> mutations) {
     super(new Description("Mutation test"));
     this.mutations = mutations;
   }

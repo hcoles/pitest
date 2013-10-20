@@ -4,7 +4,7 @@ public interface MutationResultListener {
 
   void runStart();
 
-  void handleMutationResult(MutationMetaData metaData);
+  void handleMutationResult(ClassMutationResults results);
 
   void runEnd();
 

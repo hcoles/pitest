@@ -43,8 +43,8 @@ public class MutationTestBuilder {
   private final MutationSource   mutationSource;
   private final MutationAnalyser analyser;
   private final MutationConfig   mutationConfig;
-  private final WorkerFactory workerFactory;
-  private final int unitSize;
+  private final WorkerFactory    workerFactory;
+  private final int              unitSize;
 
   public MutationTestBuilder(final WorkerFactory workerFactory,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
@@ -77,9 +77,9 @@ public class MutationTestBuilder {
   private void createMutationAnalysisUnits(
       final List<MutationAnalysisUnit> tus, final ClassName clazz,
       final Collection<MutationDetails> mutationsForClasses) {
-    if (unitSize > 0) {
+    if (this.unitSize > 0) {
       final FunctionalList<List<MutationDetails>> groupedMutations = FCollection
-          .splitToLength(unitSize, mutationsForClasses);
+          .splitToLength(this.unitSize, mutationsForClasses);
       FCollection
           .mapTo(groupedMutations, mutationDetailsToTestUnit(clazz), tus);
     } else {
@@ -104,8 +104,8 @@ public class MutationTestBuilder {
 
     final Collection<MutationDetails> needAnalysis = FCollection.filter(
         analysedMutations, statusNotKnown()).map(resultToDetails());
-    final Collection<MutationResult> analysed = FCollection.filter(
-        analysedMutations, Prelude.not(statusNotKnown()));
+    final List<MutationResult> analysed = FCollection.filter(analysedMutations,
+        Prelude.not(statusNotKnown()));
 
     if (needAnalysis.isEmpty()) {
       return makePreAnalysedUnit(analysed);
@@ -121,7 +121,7 @@ public class MutationTestBuilder {
   }
 
   private MutationAnalysisUnit makePreAnalysedUnit(
-      final Collection<MutationResult> analysed) {
+      final List<MutationResult> analysed) {
     return new KnownStatusMutationTestUnit(analysed);
   }
 
@@ -131,7 +131,8 @@ public class MutationTestBuilder {
     FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(needAnalysis, uniqueTestClasses, this.mutationConfig, workerFactory);
+    return new MutationTestUnit(needAnalysis, uniqueTestClasses,
+        this.mutationConfig, this.workerFactory);
   }
 
   private static F<MutationResult, MutationDetails> resultToDetails() {
