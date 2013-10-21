@@ -48,7 +48,9 @@ public class MutationMetaData implements MetaData {
       cn = each.getDetails().getClassName();
       buffer.add(each);
     }
-    cmrs.add(new ClassMutationResults(buffer));
+    if ( !buffer.isEmpty() ) {
+      cmrs.add(new ClassMutationResults(buffer));
+    }
     return cmrs;
 
   }

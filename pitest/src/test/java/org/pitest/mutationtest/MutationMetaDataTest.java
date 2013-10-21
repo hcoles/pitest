@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -34,6 +35,12 @@ public class MutationMetaDataTest {
     assertEquals(3,second.getMutations().size());
   }
 
+  @Test
+  public void shouldNotCreateEmptyClassResultsObjects() {
+    MutationMetaData testee = new MutationMetaData(Collections.<MutationResult>emptyList());
+    assertEquals(0,testee.toClassResults().size());
+  }
+  
   private MutationResult makeResult(String clazz, String method) {
     Location location = Location.location(ClassName.fromString(clazz), MethodName.fromString(method), "()V");
     MutationIdentifier id =  new MutationIdentifier(location,1,"mutator");
