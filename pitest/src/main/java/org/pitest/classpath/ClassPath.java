@@ -15,8 +15,6 @@
 
 package org.pitest.classpath;
 
-import static org.pitest.functional.FCollection.filter;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,45 +30,47 @@ import java.util.zip.ZipException;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
 
-public class ClassPath implements Iterable<ClassPathRoot> {
+public class ClassPath {
 
   private final static Logger       LOG   = Log.getLogger();
 
-  private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
+  private final CompoundClassPathRoot root;
 
   public ClassPath() {
     this(ClassPath.getClassPathElementsAsFiles());
   }
 
   public ClassPath(final ClassPathRoot... roots) {
-    this.roots.addAll(Arrays.asList(roots));
+    this(Arrays.asList(roots));
+  }
+  
+  public ClassPath(List<ClassPathRoot> roots) {
+    this.root = new CompoundClassPathRoot(roots);
   }
 
   public ClassPath(final Collection<File> files) {
-    final F<File, Boolean> exists = new F<File, Boolean>() {
+    this(createRoots(FCollection.filter(files, exists())));
+  }
+
+  private static F<File, Boolean> exists() {
+    return new F<File, Boolean>() {
       public Boolean apply(final File a) {
         return a.exists() && a.canRead();
       }
     };
-    this.roots.addAll(createRoots(FCollection.filter(files, exists)));
   }
 
   public Collection<String> classNames() {
-    final List<String> arrayList = new ArrayList<String>();
-    for (final ClassPathRoot root : this.roots) {
-      arrayList.addAll(root.classNames());
-    }
-    return arrayList;
+    return root.classNames();
   }
 
   // fixme should not be determining type here
-  private Collection<ClassPathRoot> createRoots(final Collection<File> files) {
+  private static List<ClassPathRoot> createRoots(final Collection<File> files) {
     File lastFile = null;
     try {
       final List<ClassPathRoot> rs = new ArrayList<ClassPathRoot>();
@@ -98,37 +97,23 @@ public class ClassPath implements Iterable<ClassPathRoot> {
   }
 
   public byte[] getClassData(final String classname) throws IOException {
-    byte[] b = null;
-    for (final ClassPathRoot root : this.roots) {
-      final InputStream s = root.getData(classname);
-      if (s != null) {
-        try {
-          b = StreamUtil.streamToByteArray(s);
-        } finally {
-          s.close();
-        }
-        break;
+    InputStream is = root.getData(classname);
+    if ( is != null ) {
+      try {
+      return StreamUtil.streamToByteArray(is);
+      } finally {
+        is.close();
       }
     }
-    return b;
+    return null;  
   }
 
   public URL findResource(final String name) {
     try {
-      return findRootForResource(name);
+      return root.getResource(name);
     } catch (final IOException exception) {
       return null;
     }
-  }
-
-  private URL findRootForResource(final String name) throws IOException {
-    for (final ClassPathRoot root : this.roots) {
-      final URL u = root.getResource(name);
-      if (u != null) {
-        return u;
-      }
-    }
-    return null;
   }
 
   public static Collection<File> getClassPathElementsAsFiles() {
@@ -155,30 +140,22 @@ public class ClassPath implements Iterable<ClassPathRoot> {
 
   }
 
-  public Iterator<ClassPathRoot> iterator() {
-    return this.roots.iterator();
-  }
 
   public Collection<String> findClasses(final Predicate<String> nameFilter) {
     return FCollection.filter(classNames(), nameFilter);
   }
 
+  public String getLocalClassPath() {
+    return root.cacheLocation().value();
+  }
+  
   public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {
-    return new ClassPath(filter(this.roots, predicate).toArray(
+    return new ClassPath(FCollection.filter(this.root, predicate).toArray(
         new ClassPathRoot[0]));
   }
-
-  public String getLocalClassPath() {
-    StringBuilder classpath = new StringBuilder();
-    for (final ClassPathRoot each : this.roots) {
-      final Option<String> additional = each.cacheLocation();
-      for (final String path : additional) {
-        classpath = classpath.append(File.pathSeparator + path);
-      }
-    }
-
-    return classpath.toString();
-
+  
+  public CompoundClassPathRoot asRoot() {
+    return this.root;
   }
 
 }

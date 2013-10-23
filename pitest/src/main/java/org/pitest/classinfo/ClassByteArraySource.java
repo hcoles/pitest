@@ -14,9 +14,10 @@
  */
 package org.pitest.classinfo;
 
-import org.pitest.functional.F;
 import org.pitest.functional.Option;
 
-public interface ClassByteArraySource extends F<String, Option<byte[]>> {
+public interface ClassByteArraySource {
+  
+  public Option<byte[]> apply(String clazz);
 
 }
