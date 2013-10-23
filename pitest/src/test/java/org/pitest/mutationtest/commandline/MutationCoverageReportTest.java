@@ -50,6 +50,7 @@ import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -67,7 +68,7 @@ public class MutationCoverageReportTest {
   private MutationCoverage       testee;
 
   private ReportOptions          data;
-
+  
   @Mock
   private MutationResultListenerFactory        listenerFactory;
 
@@ -190,7 +191,7 @@ public class MutationCoverageReportTest {
         new GregorEngineFactory(), this.history, this.coverage,this.listenerFactory,
         output).with(this.mutationFactory).with(this.verifier);
 
-    this.testee = new MutationCoverage(strategies, null, this.code, this.data,
+    this.testee = new MutationCoverage(strategies, null, this.code, this.data, new SettingsFactory(this.data),
         new Timings());
     try {
       return this.testee.runReport();

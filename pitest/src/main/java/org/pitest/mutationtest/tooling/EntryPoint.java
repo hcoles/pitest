@@ -94,7 +94,7 @@ public class EntryPoint {
         reportOutput);
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
-        code, data, timings);
+        code, data, settings, timings);
 
     try {
       return AnalysisResult.success(report.runReport());

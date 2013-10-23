@@ -50,6 +50,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
@@ -424,7 +425,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
           listenerFactory(), null);
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
-          code, this.data, timings);
+          code, this.data, new SettingsFactory(this.data), timings);
 
       testee.runReport();
     } catch (final IOException e) {

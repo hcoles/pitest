@@ -2,9 +2,11 @@ package org.pitest.mutationtest.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.util.ServiceLoader;
@@ -16,7 +18,10 @@ public class PluginServices {
    * controlling process only.
    */
   public static Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
-    return findListeners();
+    final List<ToolClasspathPlugin> l = new ArrayList<ToolClasspathPlugin>();
+    l.addAll(findListeners());
+    l.addAll(findGroupers());
+    return l;
   }
 
   /**
@@ -24,13 +29,17 @@ public class PluginServices {
    * under test at runtime
    */
   public static Iterable<? extends ClientClasspathPlugin> findClientClasspathPlugins() {
-    final ArrayList<ClientClasspathPlugin> l = new ArrayList<ClientClasspathPlugin>();
+    final List<ClientClasspathPlugin> l = new ArrayList<ClientClasspathPlugin>();
     l.addAll(findMutationEngines());
     l.addAll(nullPlugins());
     return l;
   }
+  
+  static Collection<? extends MutationGrouper> findGroupers() {
+    return ServiceLoader.load(MutationGrouper.class);
+  }
 
-  static Iterable<? extends MutationResultListenerFactory> findListeners() {
+  static Collection<? extends MutationResultListenerFactory> findListeners() {
     return ServiceLoader.load(MutationResultListenerFactory.class);
   }
 

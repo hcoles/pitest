@@ -280,11 +280,11 @@ public class PitMojo extends AbstractMojo {
     if (shouldRun()) {
       
       for ( ToolClasspathPlugin each  : PluginServices.findToolClasspathPlugins() ) {
-        this.getLog().info("Found plugin : " + each);
+        this.getLog().info("Found plugin : " + each.description());
       }
       
       for ( ClientClasspathPlugin each  : PluginServices.findClientClasspathPlugins() ) {
-        this.getLog().info("Found shared classpath plugin : " + each);
+        this.getLog().info("Found shared classpath plugin : " + each.description());
       }
       
       final Option<CombinedStatistics> result = analyse();

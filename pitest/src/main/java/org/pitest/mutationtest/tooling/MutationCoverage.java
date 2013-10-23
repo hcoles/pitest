@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
@@ -52,6 +53,7 @@ import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationPerClassFilter;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
@@ -69,21 +71,25 @@ import org.pitest.util.Timings;
 
 public class MutationCoverage {
 
-  private final static int         MB  = 1024 * 1024;
+  private final static int           MB  = 1024 * 1024;
 
-  private static final Logger      LOG = Log.getLogger();
-  private final ReportOptions      data;
+  private static final Logger        LOG = Log.getLogger();
+  private final ReportOptions        data;
 
-  private final MutationStrategies strategies;
-  private final Timings            timings;
-  private final CodeSource         code;
-  private final File               baseDir;
 
-  public MutationCoverage(final MutationStrategies strategies,
-      final File baseDir, final CodeSource code, final ReportOptions data,
-      final Timings timings) {
+  private final MutationStrategies   strategies;
+  private final Timings              timings;
+  private final CodeSource           code;
+  private final File                 baseDir;
+  private final SettingsFactory      settings;
+
+
+  public MutationCoverage(
+      final MutationStrategies strategies, final File baseDir,
+      final CodeSource code, final ReportOptions data, final SettingsFactory settings, final Timings timings) {
     this.strategies = strategies;
     this.data = data;
+    this.settings = settings;
     this.timings = timings;
     this.code = code;
     this.baseDir = baseDir;
@@ -232,10 +238,11 @@ public class MutationCoverage {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
+    
+    ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
 
     final MutationSource source = new MutationSource(mutationConfig,
-        limitMutationsPerClass(), coverageData, new ClassPathByteArraySource(
-            this.data.getClassPath()));
+        limitMutationsPerClass(), coverageData, bas);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
@@ -245,8 +252,12 @@ public class MutationCoverage {
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
+    
+    
+    
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, analyser, source, this.data.getMutationUnitSize());
+        mutationConfig, analyser, source, settings.getMutationGrouper(),
+        bas);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

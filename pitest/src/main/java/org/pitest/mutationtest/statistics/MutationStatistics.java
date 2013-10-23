@@ -105,6 +105,7 @@ public class MutationStatistics {
         + this.getPercentageDetected() + "%)");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
+    
   }
 
   private String getTestsPerMutation() {

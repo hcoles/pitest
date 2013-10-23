@@ -54,6 +54,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
@@ -374,9 +375,10 @@ public class TestMutationTesting {
 
     final MutationConfig mutationConfig = new MutationConfig(engine,launchOptions);
 
+    ClassloaderByteArraySource bas = new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
     final MutationSource source = new MutationSource(mutationConfig,
         UnfilteredMutationFilter.factory(), coverageData,
-        new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader()));
+        bas);
 
     WorkerFactory wf = new WorkerFactory(
         null,  coverageOptions.getPitConfig(), mutationConfig,
@@ -385,7 +387,7 @@ public class TestMutationTesting {
         data.getClassPath().getLocalClassPath());
     
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, new NullAnalyser(), source, 0);
+        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0), bas);
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

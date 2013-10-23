@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.report.MutationTestResultMother.createDetails;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.LocationMother;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.NullAnalyser;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -52,7 +53,6 @@ public class MutationTestBuilderTest {
     makeTesteeWithUnitSizeOf(0);
   }
 
-
   @Test
   public void shouldCreateSingleUnitPerClassWhenUnitSizeIsZero() {
     makeTesteeWithUnitSizeOf(0);
@@ -69,12 +69,12 @@ public class MutationTestBuilderTest {
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
     makeTesteeWithUnitSizeOf(1);
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
-        Arrays.asList(createDetails(), createDetails(), createDetails()));
+        Arrays.asList(createDetails("foo"), createDetails("foo"), createDetails("foo")));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
     assertEquals(3, actual.size());
   }
-
+  
   @Test
   public void shouldCreateNoUnitsWhenNoMutationsFound() {
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
@@ -85,21 +85,21 @@ public class MutationTestBuilderTest {
 
   @Test
   public void shouldOrderLargestUnitFirst() {
-    final MutationDetails mutation1 = createDetails();
-    final MutationDetails mutation2 = createDetails();
+    final MutationDetails mutation1 = createDetails("foo");
+    final MutationDetails mutation2 = createDetails("bar");
     final ClassName foo = ClassName.fromString("foo");
     final ClassName bar = ClassName.fromString("bar");
     when(this.source.createMutations(foo)).thenReturn(Arrays.asList(mutation1));
     when(this.source.createMutations(bar)).thenReturn(
-        Arrays.asList(mutation1, mutation2));
+        Arrays.asList(mutation2, mutation2));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(foo, bar));
     assertTrue(actual.get(0).priority() > actual.get(1).priority());
   }
 
   private void assertCreatesOneTestUnitForTwoMutations() {
-    final MutationDetails mutation1 = createDetails();
-    final MutationDetails mutation2 = createDetails();
+    final MutationDetails mutation1 = createDetails("foo");
+    final MutationDetails mutation2 = createDetails("foo");
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Arrays.asList(mutation1, mutation2));
     final List<MutationAnalysisUnit> actual = this.testee
@@ -109,7 +109,11 @@ public class MutationTestBuilderTest {
   
   private void makeTesteeWithUnitSizeOf(int unitSize) {
     testee = new MutationTestBuilder(this.wf, this.mutationConfig,
-        new NullAnalyser(), this.source, unitSize);
+        new NullAnalyser(), this.source, new DefaultGrouper(unitSize), null);
   }
 
+  public static MutationDetails createDetails(String clazz) {
+    return new MutationDetails(aMutationId().withLocation(LocationMother.aLocation().with(ClassName.fromString(clazz))), "", "desc", 42, 0);
+  }
+  
 }
