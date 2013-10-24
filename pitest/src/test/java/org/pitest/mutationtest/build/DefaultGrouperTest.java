@@ -30,7 +30,7 @@ public class DefaultGrouperTest {
   @Test
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
     makeTesteeWithUnitSizeOf(1);
-    final List<List<MutationDetails>> actual = this.testee.groupMutations(null,
+    final List<List<MutationDetails>> actual = this.testee.groupMutations(
         Arrays.asList(new ClassName("foo")), Arrays.asList(
             createDetails("foo"), createDetails("foo"), createDetails("foo")));
 
@@ -41,7 +41,7 @@ public class DefaultGrouperTest {
     final MutationDetails mutation1 = createDetails("foo");
     final MutationDetails mutation2 = createDetails("foo");
     final List<List<MutationDetails>> actual = this.testee.groupMutations(null,
-        null, Arrays.asList(mutation1, mutation2));
+        Arrays.asList(mutation1, mutation2));
     assertEquals(1, actual.size());
   }
 

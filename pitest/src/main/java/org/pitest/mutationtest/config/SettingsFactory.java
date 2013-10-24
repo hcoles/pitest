@@ -10,8 +10,9 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
-import org.pitest.mutationtest.build.DefaultGrouper;
+import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationGrouper;
+import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
@@ -61,10 +62,10 @@ public class SettingsFactory {
     return new DefaultJavaExecutableLocator();
   }
 
-  public MutationGrouper getMutationGrouper() {
-    Collection<? extends MutationGrouper> groupers = PluginServices.findGroupers();
+  public MutationGrouperFactory getMutationGrouper() {
+    Collection<? extends MutationGrouperFactory> groupers = PluginServices.findGroupers();
     if ( groupers.isEmpty() ) {
-      return new DefaultGrouper(options.getMutationUnitSize());
+      return new DefaultMutationGrouperFactory();
     }
     if ( groupers.size() > 1) {
       throw new PitError("Multiple implementations of " + MutationGrouper.class.getName() + " detected on classpath");

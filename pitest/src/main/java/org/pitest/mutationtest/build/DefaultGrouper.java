@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -19,8 +18,7 @@ public class DefaultGrouper implements MutationGrouper {
     this.unitSize = unitSize;
   }
 
-  public List<List<MutationDetails>> groupMutations(
-      final ClassPathRoot bas, final Collection<ClassName> codeClasses,
+  public List<List<MutationDetails>> groupMutations(final Collection<ClassName> codeClasses,
       final Collection<MutationDetails> mutations) {
     final Map<ClassName, Collection<MutationDetails>> bucketed = FCollection
         .bucket(mutations, byClass());

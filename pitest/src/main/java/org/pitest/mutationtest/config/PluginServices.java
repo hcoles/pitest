@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
-import org.pitest.mutationtest.build.MutationGrouper;
+import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.util.ServiceLoader;
@@ -35,8 +35,8 @@ public class PluginServices {
     return l;
   }
   
-  static Collection<? extends MutationGrouper> findGroupers() {
-    return ServiceLoader.load(MutationGrouper.class);
+  static Collection<? extends MutationGrouperFactory> findGroupers() {
+    return ServiceLoader.load(MutationGrouperFactory.class);
   }
 
   static Collection<? extends MutationResultListenerFactory> findListeners() {

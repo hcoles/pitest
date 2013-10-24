@@ -39,7 +39,6 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
-import org.pitest.classpath.OtherClassLoaderClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageDatabase;
@@ -389,9 +388,7 @@ public class TestMutationTesting {
             .getLocalClassPath());
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0),
-        new OtherClassLoaderClassPathRoot(
-            IsolationUtils.getContextClassLoader()));
+        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0));
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

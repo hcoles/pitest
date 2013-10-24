@@ -29,7 +29,6 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.ClassPathByteArraySource;
-import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
@@ -49,6 +48,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
@@ -241,8 +241,6 @@ public class MutationCoverage {
         .getLaunchOptions());
     
     ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
-    ClassPathRoot cpr = this.data
-        .getClassPath().asRoot();
     
     final MutationSource source = new MutationSource(mutationConfig,
         limitMutationsPerClass(), coverageData, bas);
@@ -255,10 +253,10 @@ public class MutationCoverage {
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
-      
+    
+    MutationGrouper grouper = settings.getMutationGrouper().makeFactory(code, data.getNumberOfThreads(), data.getMutationUnitSize());
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, analyser, source, settings.getMutationGrouper(),
-        cpr);
+        mutationConfig, analyser, source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

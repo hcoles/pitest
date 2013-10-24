@@ -109,7 +109,7 @@ public class MutationTestBuilderTest {
   
   private void makeTesteeWithUnitSizeOf(int unitSize) {
     testee = new MutationTestBuilder(this.wf, this.mutationConfig,
-        new NullAnalyser(), this.source, new DefaultGrouper(unitSize), null);
+        new NullAnalyser(), this.source, new DefaultGrouper(unitSize));
   }
 
   public static MutationDetails createDetails(String clazz) {

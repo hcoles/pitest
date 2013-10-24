@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPathRoot;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -41,17 +40,15 @@ public class MutationTestBuilder {
   private final MutationConfig   mutationConfig;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper grouper;
-  private final ClassPathRoot root;
 
   public MutationTestBuilder(final WorkerFactory workerFactory,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
-      final MutationSource mutationSource, final MutationGrouper grouper, ClassPathRoot root) {
+      final MutationSource mutationSource, final MutationGrouper grouper) {
     this.mutationConfig = mutationConfig;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.workerFactory = workerFactory;
     this.grouper = grouper;
-    this.root = root;
   }
 
   public List<MutationAnalysisUnit> createMutationTestUnits(
@@ -77,7 +74,7 @@ public class MutationTestBuilder {
     }
 
     if (!needAnalysis.isEmpty()) {
-      for (final Collection<MutationDetails> ms : grouper.groupMutations(root, codeClasses, needAnalysis)) {
+      for (final Collection<MutationDetails> ms : grouper.groupMutations(codeClasses, needAnalysis)) {
         tus.add(makeUnanalysedUnit(ms));
       }
     }
