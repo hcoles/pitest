@@ -39,6 +39,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.OtherClassLoaderClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageDatabase;
@@ -373,21 +374,24 @@ public class TestMutationTesting {
         .createEngineWithMutators(false, False.<String> instance(),
             Collections.<String> emptyList(), mutators, true);
 
-    final MutationConfig mutationConfig = new MutationConfig(engine,launchOptions);
+    final MutationConfig mutationConfig = new MutationConfig(engine,
+        launchOptions);
 
-    ClassloaderByteArraySource bas = new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
+    final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
+        IsolationUtils.getContextClassLoader());
     final MutationSource source = new MutationSource(mutationConfig,
-        UnfilteredMutationFilter.factory(), coverageData,
-        bas);
+        UnfilteredMutationFilter.factory(), coverageData, bas);
 
-    WorkerFactory wf = new WorkerFactory(
-        null,  coverageOptions.getPitConfig(), mutationConfig,
+    final WorkerFactory wf = new WorkerFactory(null,
+        coverageOptions.getPitConfig(), mutationConfig,
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
-            data.getTimeoutConstant()), data.isVerbose(),
-        data.getClassPath().getLocalClassPath());
-    
+            data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
+            .getLocalClassPath());
+
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0), bas);
+        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0),
+        new OtherClassLoaderClassPathRoot(
+            IsolationUtils.getContextClassLoader()));
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

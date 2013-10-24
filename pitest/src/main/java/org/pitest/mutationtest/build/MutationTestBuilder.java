@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.build;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,8 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -42,17 +41,17 @@ public class MutationTestBuilder {
   private final MutationConfig   mutationConfig;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper grouper;
-  private final ClassByteArraySource bas;
+  private final ClassPathRoot root;
 
   public MutationTestBuilder(final WorkerFactory workerFactory,
       final MutationConfig mutationConfig, final MutationAnalyser analyser,
-      final MutationSource mutationSource, final MutationGrouper grouper, ClassByteArraySource bas) {
+      final MutationSource mutationSource, final MutationGrouper grouper, ClassPathRoot root) {
     this.mutationConfig = mutationConfig;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.workerFactory = workerFactory;
     this.grouper = grouper;
-    this.bas = bas;
+    this.root = root;
   }
 
   public List<MutationAnalysisUnit> createMutationTestUnits(
@@ -78,8 +77,8 @@ public class MutationTestBuilder {
     }
 
     if (!needAnalysis.isEmpty()) {
-      for (final Collection<MutationDetails> ms : grouper.groupMutations(bas, codeClasses, needAnalysis)) {
-        tus.add(createMutationTestUnit(ms));
+      for (final Collection<MutationDetails> ms : grouper.groupMutations(root, codeClasses, needAnalysis)) {
+        tus.add(makeUnanalysedUnit(ms));
       }
     }
     
@@ -107,29 +106,6 @@ public class MutationTestBuilder {
     };
   }
 
-  private MutationAnalysisUnit createMutationTestUnit(
-      final Collection<MutationDetails> mutationsForClasses) {
-
-    final Collection<MutationResult> analysedMutations = this.analyser
-        .analyse(mutationsForClasses);
-
-    final Collection<MutationDetails> needAnalysis = FCollection.filter(
-        analysedMutations, statusNotKnown()).map(resultToDetails());
-    final List<MutationResult> analysed = FCollection.filter(
-        analysedMutations, Prelude.not(statusNotKnown()));
-
-    if (needAnalysis.isEmpty()) {
-      return makePreAnalysedUnit(analysed);
-    }
-
-    if (analysed.isEmpty()) {
-      return makeUnanalysedUnit(needAnalysis);
-    }
-
-    return new MixedAnalysisUnit(Arrays.asList(makePreAnalysedUnit(analysed),
-        makeUnanalysedUnit(needAnalysis)));
-
-  }
 
   private MutationAnalysisUnit makePreAnalysedUnit(
       final List<MutationResult> analysed) {

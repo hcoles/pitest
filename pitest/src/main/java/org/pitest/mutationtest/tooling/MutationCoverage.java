@@ -29,6 +29,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.ClassPathByteArraySource;
+import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
@@ -240,7 +241,9 @@ public class MutationCoverage {
         .getLaunchOptions());
     
     ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
-
+    ClassPathRoot cpr = this.data
+        .getClassPath().asRoot();
+    
     final MutationSource source = new MutationSource(mutationConfig,
         limitMutationsPerClass(), coverageData, bas);
 
@@ -252,12 +255,10 @@ public class MutationCoverage {
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
-    
-    
-    
+      
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
         mutationConfig, analyser, source, settings.getMutationGrouper(),
-        bas);
+        cpr);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
