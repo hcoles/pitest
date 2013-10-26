@@ -13,6 +13,8 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
+import org.pitest.mutationtest.filter.CompoundFilterFactory;
+import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
@@ -99,6 +101,11 @@ public class SettingsFactory {
         return a.equalsIgnoreCase(other);
       }
     };
+  }
+
+  public MutationFilterFactory createMutationFilter() {
+    Collection<? extends MutationFilterFactory> filters = PluginServices.findFilters();
+    return new CompoundFilterFactory(filters);
   }
 
 }

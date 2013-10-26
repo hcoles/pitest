@@ -27,7 +27,6 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.process.LaunchOptions;
 
@@ -36,9 +35,6 @@ public class MutationSourceTest {
   private MutationSource        testee;
 
   private MutationConfig        config;
-
-  @Mock
-  private MutationFilterFactory filter;
 
   @Mock
   private CoverageDatabase      coverage;
@@ -59,15 +55,10 @@ public class MutationSourceTest {
     MockitoAnnotations.initMocks(this);
     when(this.engine.createMutator(this.source)).thenReturn(this.mutater);
     this.config = new MutationConfig(this.engine, new LaunchOptions(null));
-    setupFilterFactoryToFilterNothing();
-    this.testee = new MutationSource(this.config, this.filter, this.coverage,
+    this.testee = new MutationSource(this.config, UnfilteredMutationFilter.INSTANCE, this.coverage,
         this.source);
   }
 
-  private void setupFilterFactoryToFilterNothing() {
-    when(this.filter.createFilter()).thenReturn(
-        UnfilteredMutationFilter.INSTANCE);
-  }
 
   @Test
   public void shouldReturnNoMuationsWhenNoneFound() {

@@ -21,16 +21,6 @@ import org.pitest.mutationtest.engine.MutationDetails;
 public enum UnfilteredMutationFilter implements MutationFilter {
   INSTANCE;
 
-  public static MutationFilterFactory factory() {
-    return new MutationFilterFactory() {
-
-      public MutationFilter createFilter() {
-        return INSTANCE;
-      }
-
-    };
-  }
-
   public Collection<MutationDetails> filter(
       final Collection<MutationDetails> mutations) {
     return mutations;

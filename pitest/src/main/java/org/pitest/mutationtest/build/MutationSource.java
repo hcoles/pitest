@@ -29,7 +29,6 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.filter.MutationFilter;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.util.Log;
 
 public class MutationSource {
@@ -41,21 +40,20 @@ public class MutationSource {
 
   private final MutationConfig        mutationConfig;
   private final CoverageDatabase      coverageDatabase;
-  private final MutationFilterFactory filterFactory;
+  private final MutationFilter        filter;
   private final ClassByteArraySource  source;
 
   public MutationSource(final MutationConfig mutationConfig,
-      final MutationFilterFactory filterFactory,
+      final MutationFilter filter,
       final CoverageDatabase coverageDatabase, final ClassByteArraySource source) {
     this.mutationConfig = mutationConfig;
     this.coverageDatabase = coverageDatabase;
-    this.filterFactory = filterFactory;
+    this.filter = filter;
     this.source = source;
   }
 
   public Collection<MutationDetails> createMutations(final ClassName clazz) {
 
-    final MutationFilter filter = this.filterFactory.createFilter();
     final Mutater m = this.mutationConfig.createMutator(this.source);
 
     final Collection<MutationDetails> availableMutations = filter.filter(m

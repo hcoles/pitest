@@ -28,15 +28,6 @@ public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
     this.maxMutationsPerClass = max;
   }
 
-  public static MutationFilterFactory factory(final int maxMutationsPerClass) {
-    return new MutationFilterFactory() {
-
-      public MutationFilter createFilter() {
-        return new LimitNumberOfMutationPerClassFilter(maxMutationsPerClass);
-      }
-
-    };
-  }
 
   public Collection<MutationDetails> filter(
       final Collection<MutationDetails> mutations) {

@@ -379,7 +379,7 @@ public class TestMutationTesting {
     final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     final MutationSource source = new MutationSource(mutationConfig,
-        UnfilteredMutationFilter.factory(), coverageData, bas);
+        UnfilteredMutationFilter.INSTANCE, coverageData, bas);
 
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig,
