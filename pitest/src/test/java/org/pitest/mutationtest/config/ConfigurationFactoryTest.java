@@ -49,9 +49,9 @@ public class ConfigurationFactoryTest {
     this.testee = new ConfigurationFactory(this.groupConfig, this.source);
     this.realSource = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
-    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
+    when(this.source.getBytes("org.junit.runner.Runner")).thenReturn(
         Option.<byte[]> none());
-    when(this.source.apply("org.testng.TestNG")).thenReturn(
+    when(this.source.getBytes("org.testng.TestNG")).thenReturn(
         Option.<byte[]> none());
   }
 
@@ -99,13 +99,13 @@ public class ConfigurationFactoryTest {
   }
 
   private void putTestNGOnClasspath() {
-    when(this.source.apply("org.testng.TestNG")).thenReturn(
-        this.realSource.apply("org.testng.TestNG"));
+    when(this.source.getBytes("org.testng.TestNG")).thenReturn(
+        this.realSource.getBytes("org.testng.TestNG"));
   }
 
   private void putJUnitOnClasspath() {
-    when(this.source.apply("org.junit.runner.Runner")).thenReturn(
-        this.realSource.apply("org.junit.runner.Runner"));
+    when(this.source.getBytes("org.junit.runner.Runner")).thenReturn(
+        this.realSource.getBytes("org.junit.runner.Runner"));
   }
 
 }

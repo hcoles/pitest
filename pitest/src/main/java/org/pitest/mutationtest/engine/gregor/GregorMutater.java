@@ -69,7 +69,7 @@ class GregorMutater implements Mutater {
 
     final Context context = new Context();
     context.setTargetMutation(Option.<MutationIdentifier> none());
-    return GregorMutater.this.byteSource.apply(classToMutate.asInternalName())
+    return GregorMutater.this.byteSource.getBytes(classToMutate.asInternalName())
         .flatMap(findMutations(context));
 
   }
@@ -113,7 +113,7 @@ class GregorMutater implements Mutater {
     final Context context = new Context();
     context.setTargetMutation(Option.some(id));
 
-    final Option<byte[]> bytes = this.byteSource.apply(id.getClassName()
+    final Option<byte[]> bytes = this.byteSource.getBytes(id.getClassName()
         .asJavaName());
 
     final PremutationClassInfo classInfo = performPreScan(bytes.value());

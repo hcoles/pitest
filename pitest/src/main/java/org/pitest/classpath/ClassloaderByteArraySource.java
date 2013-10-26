@@ -28,7 +28,7 @@ public class ClassloaderByteArraySource implements ClassByteArraySource {
     this.cp = new ClassPath(new OtherClassLoaderClassPathRoot(loader));
   }
 
-  public Option<byte[]> apply(final String classname) {
+  public Option<byte[]> getBytes(final String classname) {
     try {
       return Option.some(this.cp.getClassData(classname));
     } catch (final IOException ex) {

@@ -184,6 +184,6 @@ public class ComputeClassWriter extends ClassWriter {
    * @return the ClassReader corresponding to 'type'.
    */
   private ClassReader typeInfo(final String type) {
-    return new ClassReader(this.bytes.apply(type).value());
+    return new ClassReader(this.bytes.getBytes(type).value());
   }
 }

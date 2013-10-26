@@ -31,7 +31,7 @@ public class ClassPathByteArraySource implements ClassByteArraySource {
     this.classPath = classPath;
   }
 
-  public Option<byte[]> apply(final String classname) {
+  public Option<byte[]> getBytes(final String classname) {
     try {
       return Option.some(this.classPath.getClassData(classname));
     } catch (final IOException e) {

@@ -30,7 +30,7 @@ public class BendJavassistToMyWillTransformerTest {
     this.testee = new BendJavassistToMyWillTransformer(this.filter);
     final ClassloaderByteArraySource source = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
-    this.bytes = source.apply("java.lang.String").value();
+    this.bytes = source.getBytes("java.lang.String").value();
   }
 
   @Test

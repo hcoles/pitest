@@ -65,10 +65,10 @@ public class RepositoryTest {
   @Test
   public void shouldOnlyCheckSourceForUnknownClassesOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
     this.testee.hasClass(new ClassName("foo"));
     this.testee.hasClass(new ClassName("foo"));
-    verify(this.source, times(1)).apply("foo");
+    verify(this.source, times(1)).getBytes("foo");
   }
 
   @Test
@@ -80,19 +80,19 @@ public class RepositoryTest {
   @Test
   public void shouldOnlyLookForUnknownClassesOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
     this.testee.fetchClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
-    verify(this.source, times(1)).apply("foo");
+    verify(this.source, times(1)).getBytes("foo");
   }
 
   @Test
   public void shouldOnlyQuerySourceForAnUnknownClassOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.apply(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
     this.testee.hasClass(new ClassName("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
-    verify(this.source, times(1)).apply("foo");
+    verify(this.source, times(1)).getBytes("foo");
   }
 
   @Test
@@ -103,11 +103,11 @@ public class RepositoryTest {
   @Test
   public void shouldOnlyLookForKnownClassOnce() throws ClassNotFoundException {
     this.testee = new Repository(this.source);
-    when(this.source.apply(anyString())).thenReturn(
+    when(this.source.getBytes(anyString())).thenReturn(
         Option.some(ClassUtils.classAsBytes(String.class)));
     this.testee.fetchClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
-    verify(this.source, times(1)).apply("foo");
+    verify(this.source, times(1)).getBytes("foo");
   }
 
   @Test

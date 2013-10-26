@@ -47,7 +47,7 @@ public class JarCreatingJarFinderTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(this.byteSource.apply(anyString())).thenReturn(
+    when(this.byteSource.getBytes(anyString())).thenReturn(
         Option.some(new byte[1]));
     this.testee = new JarCreatingJarFinder(this.byteSource);
   }

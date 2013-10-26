@@ -112,7 +112,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   }
 
   private byte[] classBytes(final String className) throws IOException {
-    return this.classByteSource.apply(className).value();
+    return this.classByteSource.getBytes(className).value();
   }
 
   public void close() {

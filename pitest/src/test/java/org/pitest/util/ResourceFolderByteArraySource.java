@@ -13,7 +13,7 @@ import org.pitest.functional.Option;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
 
-  public Option<byte[]> apply(final String classname) {
+  public Option<byte[]> getBytes(final String classname) {
     final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());
     try {
       return Option.some(cp.getClassData(classname));

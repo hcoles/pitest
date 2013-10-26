@@ -78,7 +78,7 @@ public class Repository implements ClassInfoSource {
     if (this.unknownClasses.contains(name)) {
       return Option.none();
     }
-    final Option<byte[]> option = this.source.apply(name.asJavaName());
+    final Option<byte[]> option = this.source.getBytes(name.asJavaName());
     if (option.hasSome()) {
       return option;
     }

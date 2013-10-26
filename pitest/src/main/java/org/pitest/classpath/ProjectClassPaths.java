@@ -47,5 +47,9 @@ public class ProjectClassPaths {
   public ClassPath getClassPath() {
     return this.classPath;
   }
+  
+  public ClassFilter getFilter() {
+    return this.classFilter;
+  }
 
 }

@@ -18,6 +18,6 @@ import org.pitest.functional.Option;
 
 public interface ClassByteArraySource {
   
-  public Option<byte[]> apply(String clazz);
+  public Option<byte[]> getBytes(String clazz);
 
 }

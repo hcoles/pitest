@@ -160,7 +160,7 @@ public class DependencyExtractor {
   @SuppressWarnings("unchecked")
   private List<DependencyAccess> extract(final String clazz,
       final Predicate<DependencyAccess> filter) throws IOException {
-    final Option<byte[]> bytes = this.classToBytes.apply(clazz);
+    final Option<byte[]> bytes = this.classToBytes.getBytes(clazz);
     if (bytes.hasNone()) {
       LOG.warning("No bytes found for " + clazz);
       return Collections.emptyList();

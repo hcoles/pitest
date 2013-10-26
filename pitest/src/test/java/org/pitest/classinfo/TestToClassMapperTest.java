@@ -42,7 +42,7 @@ public class TestToClassMapperTest {
   @Test
   public void shouldMapTestsPostfixedWithTestToTesteeWhenTesteeExists() {
     final byte[] bytes = { 0 };
-    when(this.source.apply("com.example.Foo")).thenReturn(Option.some(bytes));
+    when(this.source.getBytes("com.example.Foo")).thenReturn(Option.some(bytes));
     assertEquals(new ClassName("com.example.Foo"),
         this.testee.findTestee("com.example.FooTest").value());
   }
@@ -50,7 +50,7 @@ public class TestToClassMapperTest {
   @Test
   public void shouldMapTestsPrefixedWithTestToTesteeWhenTesteeExists() {
     final byte[] bytes = { 0 };
-    when(this.source.apply("com.example.Foo")).thenReturn(Option.some(bytes));
+    when(this.source.getBytes("com.example.Foo")).thenReturn(Option.some(bytes));
     assertEquals(new ClassName("com.example.Foo"),
         this.testee.findTestee("com.example.TestFoo").value());
   }
@@ -58,7 +58,7 @@ public class TestToClassMapperTest {
   @Test
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
     final byte[] bytes = null;
-    when(this.source.apply("com.example.Foo")).thenReturn(Option.some(bytes));
+    when(this.source.getBytes("com.example.Foo")).thenReturn(Option.some(bytes));
     assertEquals(Option.none(), this.testee.findTestee("com.example.TestFoo"));
   }
 
