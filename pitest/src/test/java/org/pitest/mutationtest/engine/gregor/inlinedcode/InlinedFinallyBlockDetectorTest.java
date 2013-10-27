@@ -74,13 +74,13 @@ public class InlinedFinallyBlockDetectorTest {
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final int index) {
     return new MutationDetails(makeId(Collections.singleton(index), mutator),
-        "file", "desc", line, block, true);
+        "file", "desc", line, block, true, false);
   }
 
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", line, block, true);
+        "file", "desc", line, block, true, false);
   }
 
   private MutationDetails makeMutant(final int line, final int block,

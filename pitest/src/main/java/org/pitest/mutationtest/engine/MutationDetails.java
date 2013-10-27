@@ -32,21 +32,23 @@ public class MutationDetails {
   private final String              description;
   private final ArrayList<TestInfo> testsInOrder = new ArrayList<TestInfo>();
   private final boolean             isInFinallyBlock;
+  private final boolean             poison;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block) {
-    this(id, filename, description, lineNumber, block, false);
+    this(id, filename, description, lineNumber, block, false, false);
   }
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block,
-      final boolean isInFinallyBlock) {
+      final boolean isInFinallyBlock, final boolean poison) {
     this.id = id;
     this.description = description;
     this.filename = filename;
     this.lineNumber = lineNumber;
     this.block = block;
     this.isInFinallyBlock = isInFinallyBlock;
+    this.poison = poison;
   }
 
   @Override
@@ -106,6 +108,10 @@ public class MutationDetails {
     this.testsInOrder.trimToSize();
   }
 
+  public boolean mayPoisonJVM() {
+    return poison || isInStaticInitializer();
+  }
+  
   public boolean isInStaticInitializer() {
     return this.getMethod().name().trim().startsWith("<clinit>");
   }

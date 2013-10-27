@@ -112,7 +112,7 @@ public class Context implements BlockCounter {
         getJavaClassName());
     final MutationDetails details = new MutationDetails(newId, getFileName(),
         description, this.lastLineNumber, this.blockCounter.getCurrentBlock(),
-        this.blockCounter.isWithinFinallyBlock());
+        this.blockCounter.isWithinFinallyBlock(), false);
     registerMutation(details);
     return newId;
   }

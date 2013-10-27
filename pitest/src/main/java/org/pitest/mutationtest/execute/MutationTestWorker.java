@@ -91,7 +91,7 @@ public class MutationTestWorker {
 
     r.describe(mutationId);
 
-    final MutationStatusTestPair mutationDetected = handleMutation(mutationId,
+    final MutationStatusTestPair mutationDetected = handleMutation(mutationDetails,
         mutatedClass, relevantTests);
 
     r.report(mutationId, mutationDetected);
@@ -100,7 +100,7 @@ public class MutationTestWorker {
   }
 
   private MutationStatusTestPair handleMutation(
-      final MutationIdentifier mutationId, final Mutant mutatedClass,
+      final MutationDetails mutationId, final Mutant mutatedClass,
       final List<TestUnit> relevantTests) {
     MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
@@ -117,13 +117,13 @@ public class MutationTestWorker {
   }
 
   private MutationStatusTestPair handleCoveredMutation(
-      final MutationIdentifier mutationId, final Mutant mutatedClass,
+      final MutationDetails mutationId, final Mutant mutatedClass,
       final List<TestUnit> relevantTests) {
     MutationStatusTestPair mutationDetected;
     LOG.fine("" + relevantTests.size() + " relevant test for "
         + mutatedClass.getDetails().getMethod());
 
-    final ClassLoader activeloader = pickClassLoaderForMutant(mutatedClass);
+    final ClassLoader activeloader = pickClassLoaderForMutant(mutationId);
     final Container c = createNewContainer(activeloader);
     final long t0 = System.currentTimeMillis();
     if (this.hotswap.apply(mutationId.getClassName(), activeloader,
@@ -151,18 +151,14 @@ public class MutationTestWorker {
     return c;
   }
 
-  private ClassLoader pickClassLoaderForMutant(final Mutant mutant) {
-    if (hasMutationInStaticInitializer(mutant)) {
+  private ClassLoader pickClassLoaderForMutant(final MutationDetails mutant) {
+    if (mutant.mayPoisonJVM()) {
       LOG.fine("Creating new classloader for static initializer");
       return new DefaultPITClassloader(new ClassPath(),
           IsolationUtils.bootClassLoader());
     } else {
       return this.loader;
     }
-  }
-
-  private boolean hasMutationInStaticInitializer(final Mutant mutant) {
-    return mutant.getDetails().isInStaticInitializer();
   }
 
   @Override
