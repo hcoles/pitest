@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.junit.adapter.foreignclassloader;
+package org.pitest.junit.adapter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.DescriptionMother;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.foreignclassloader.Events;
 
 public class ForeignClassLoaderAdaptingRunListenerTest {
 
@@ -105,7 +106,7 @@ public class ForeignClassLoaderAdaptingRunListenerTest {
   }
 
   private void applyEvents() {
-    ForeignClassLoaderCustomRunnerExecutor.applyEvents(this.queue, this.rc,
+    Events.applyEvents(this.queue, this.rc,
         this.pitDescription);
   }
 }

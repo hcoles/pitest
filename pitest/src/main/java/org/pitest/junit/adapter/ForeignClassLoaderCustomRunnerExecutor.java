@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.junit.adapter.foreignclassloader;
+package org.pitest.junit.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +45,5 @@ public class ForeignClassLoaderCustomRunnerExecutor implements Callable<List<Str
 
   }
 
-  public static void applyEvents(final List<String> encodedEvents,
-      final ResultCollector rc, final Description description) {
-    for (final String each : encodedEvents) {
-      @SuppressWarnings("unchecked")
-      final SideEffect2<ResultCollector, org.pitest.testapi.Description> event = (SideEffect2<ResultCollector, org.pitest.testapi.Description>) IsolationUtils
-          .fromXml(each);
-      event.apply(rc, description);
-    }
-
-  }
 
 }

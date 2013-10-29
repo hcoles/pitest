@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.junit.adapter.foreignclassloader;
+package org.pitest.testapi.foreignclassloader;
 
 import org.pitest.functional.SideEffect2;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 
-class Success implements SideEffect2<ResultCollector, Description> {
+public class Start implements SideEffect2<ResultCollector, Description> {
 
   public void apply(final ResultCollector rc, final Description description) {
-    rc.notifyEnd(description);
+    rc.notifyStart(description);
   }
 
 }

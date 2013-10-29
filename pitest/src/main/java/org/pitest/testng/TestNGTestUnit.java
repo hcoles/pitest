@@ -15,12 +15,15 @@
 package org.pitest.testng;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.foreignclassloader.Events;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.PitError;
+import org.pitest.util.Unchecked;
 import org.testng.ITestListener;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
@@ -56,10 +59,25 @@ public class TestNGTestUnit extends AbstractTestUnit {
   public void execute(final ClassLoader loader, final ResultCollector rc) {
 
     if (this.classloaderDetection.fromDifferentLoader(this.clazz, loader)) {
-      throw new PitError(
-          "mutation of static initializers not currently supported for TestNG");
+      executeInForeignLoader(rc,loader);
+    } else {
+      executeInCurrentLoader(rc);
     }
+  }
 
+  private void executeInForeignLoader(ResultCollector rc, ClassLoader loader) {
+    ForeignClassLoaderTestNGExecutor e = new ForeignClassLoaderTestNGExecutor(createSuite());
+    try {
+      List<String> q = e.call();
+      Events.applyEvents(q, rc,
+          this.getDescription());
+    } catch (Exception ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+    
+  }
+
+  private void executeInCurrentLoader( final ResultCollector rc) {
     final ITestListener listener = new TestNGAdapter(this.clazz,
         this.getDescription(), rc);
     final TestNG testng = new TestNG(false);

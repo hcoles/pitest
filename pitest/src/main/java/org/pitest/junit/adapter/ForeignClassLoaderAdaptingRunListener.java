@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.junit.adapter.foreignclassloader;
+package org.pitest.junit.adapter;
 
 import java.util.List;
 
@@ -22,6 +22,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.pitest.functional.SideEffect2;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.foreignclassloader.Fail;
+import org.pitest.testapi.foreignclassloader.Skipped;
+import org.pitest.testapi.foreignclassloader.Start;
+import org.pitest.testapi.foreignclassloader.Success;
 import org.pitest.util.IsolationUtils;
 
 class ForeignClassLoaderAdaptingRunListener extends RunListener {

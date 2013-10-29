@@ -32,11 +32,11 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.PitError;
 
 import com.example.testng.Fails;
 import com.example.testng.HasGroups;
 import com.example.testng.Passes;
+import com.example.testng.Skips;
 
 public class TestNGTestUnitTest {
 
@@ -62,9 +62,25 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
 
+
+  @Test
+  public void shouldReportTestClassStartWhenExecutingInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(), Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
+  }
+  
   @Test
   public void shouldReportTestMethodStart() {
     this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifyStart(
+        new Description("passes", Passes.class));
+  }
+  
+  @Test
+  public void shouldReportTestMethodStartWhenExecutingInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(),Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyStart(
         new Description("passes", Passes.class));
@@ -77,6 +93,15 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1))
         .notifyEnd(new Description("passes", Passes.class));
   }
+  
+  @Test
+  public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfullyInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(),Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1))
+        .notifyEnd(new Description("passes", Passes.class));
+  }
+
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFails() {
@@ -86,11 +111,31 @@ public class TestNGTestUnitTest {
         eq(new Description("fails", Fails.class)),
         any(AssertionFailedError.class));
   }
-
-  @Test(expected = PitError.class)
-  public void shouldReportErrorWhenRunInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, this.config);
+  
+  @Test
+  public void shouldSkipPassingTestsAfterAFailure() {
+    this.testee = new TestNGTestUnit(Fails.class, this.config);
     this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifySkipped(
+        eq(new Description("passes", Fails.class)));
+  }
+  
+  
+  @Test
+  public void shouldReportTestEndWithThrowableWhenTestFailsInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(),Fails.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifyEnd(
+        eq(new Description("fails", Fails.class)),
+        any(AssertionFailedError.class));
+  }
+
+  @Test
+  public void shouldSkipPassingTestsAfterAFailureInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(),Fails.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifySkipped(
+        eq(new Description("passes", Fails.class)));
   }
 
   @Test
@@ -116,7 +161,23 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifyEnd(
         new Description("includeAndExcludeGroup", HasGroups.class));
   }
+  
+  @Test
+  public void shouldReportTestSkipped() {
+    this.testee = new TestNGTestUnit(Skips.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifySkipped(
+        eq(new Description("skip", Skips.class)));
+  }
 
+  @Test
+  public void shouldReportTestSkippedInForeignClassloader() {
+    this.testee = new TestNGTestUnit(neverMatch(), Skips.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1)).notifySkipped(
+        eq(new Description("skip", Skips.class)));
+  }
+  
   private ClassLoaderDetectionStrategy neverMatch() {
     return new ClassLoaderDetectionStrategy() {
       public boolean fromDifferentLoader(final Class<?> clazz,

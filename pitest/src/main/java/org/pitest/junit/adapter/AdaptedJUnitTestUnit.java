@@ -31,9 +31,9 @@ import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.RunnerBuilder;
 import org.pitest.functional.Option;
-import org.pitest.junit.adapter.foreignclassloader.ForeignClassLoaderCustomRunnerExecutor;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.foreignclassloader.Events;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -157,7 +157,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private void convertStringsToResults(final ResultCollector rc,
       final List<String> q) {
-    ForeignClassLoaderCustomRunnerExecutor.applyEvents(q, rc,
+    Events.applyEvents(q, rc,
         this.getDescription());
   }
 

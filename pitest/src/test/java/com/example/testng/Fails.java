@@ -21,4 +21,9 @@ public class Fails {
   public void fails() {
     assertTrue(false);
   }
+  
+  @org.testng.annotations.Test
+  public void passes() {
+    
+  }
 }
