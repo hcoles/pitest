@@ -21,9 +21,10 @@ import org.pitest.functional.Option;
 public class TestInfo {
 
   private final String            name;
+  private final String            definingClass;
+  
   private final int               time;
   private final int               linesCovered;
-  private final String            definingClass;
   private final Option<ClassName> testee;
 
   public TestInfo(final String definingClass, final String name,

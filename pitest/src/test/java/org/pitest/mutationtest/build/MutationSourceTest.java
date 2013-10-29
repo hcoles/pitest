@@ -16,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.ClassLine;
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -32,33 +30,32 @@ import org.pitest.process.LaunchOptions;
 
 public class MutationSourceTest {
 
-  private MutationSource        testee;
+  private MutationSource       testee;
 
-  private MutationConfig        config;
-
-  @Mock
-  private CoverageDatabase      coverage;
+  private MutationConfig       config;
 
   @Mock
-  private ClassByteArraySource  source;
+  private ClassByteArraySource source;
 
   @Mock
-  private Mutater               mutater;
+  private Mutater              mutater;
 
   @Mock
-  private MutationEngine        engine;
+  private MutationEngine       engine;
 
-  private final ClassName       foo = ClassName.fromString("foo");
+  @Mock
+  private TestPrioritiser      prioritiser;
+
+  private final ClassName      foo = ClassName.fromString("foo");
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     when(this.engine.createMutator(this.source)).thenReturn(this.mutater);
     this.config = new MutationConfig(this.engine, new LaunchOptions(null));
-    this.testee = new MutationSource(this.config, UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(coverage),
-        this.source);
+    this.testee = new MutationSource(this.config,
+        UnfilteredMutationFilter.INSTANCE, this.prioritiser, this.source);
   }
-
 
   @Test
   public void shouldReturnNoMuationsWhenNoneFound() {
@@ -66,42 +63,17 @@ public class MutationSourceTest {
   }
 
   @Test
-  public void shouldAssignTestsForRelevantLineToGeneratedMutations() {
+  public void shouldAssignTestsFromPrioritiserToMutant() {
     final List<TestInfo> expected = makeTestInfos(0);
     final List<MutationDetails> mutations = makeMutations("foo");
-    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
+
+    when(this.prioritiser.assignTests(any(MutationDetails.class))).thenReturn(
         expected);
-
     when(this.mutater.findMutations(any(ClassName.class)))
         .thenReturn(mutations);
     final MutationDetails actual = this.testee.createMutations(this.foo)
         .iterator().next();
     assertEquals(expected, actual.getTestsInOrder());
-  }
-
-  @Test
-  public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
-    final List<TestInfo> expected = makeTestInfos(0);
-    final List<MutationDetails> mutations = makeMutations("<clinit>");
-    when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
-    when(this.mutater.findMutations(any(ClassName.class)))
-        .thenReturn(mutations);
-    final MutationDetails actual = this.testee.createMutations(this.foo)
-        .iterator().next();
-    assertEquals(expected, actual.getTestsInOrder());
-  }
-
-  @Test
-  public void shouldPrioritiseTestsByExecutionTime() {
-    final List<TestInfo> unorderedTests = makeTestInfos(100, 1000, 1);
-    final List<MutationDetails> mutations = makeMutations("foo");
-    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
-        unorderedTests);
-    when(this.mutater.findMutations(any(ClassName.class)))
-        .thenReturn(mutations);
-    final MutationDetails actual = this.testee.createMutations(this.foo)
-        .iterator().next();
-    assertEquals(makeTestInfos(1, 100, 1000), actual.getTestsInOrder());
   }
 
   private List<TestInfo> makeTestInfos(final Integer... times) {
@@ -124,7 +96,8 @@ public class MutationSourceTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(aLocation().with(foo).withMethod(method), 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation().with(
+        this.foo).withMethod(method), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 
