@@ -18,9 +18,8 @@ package org.pitest.junit.adapter;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,12 +32,12 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.RunnerBuilder;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.foreignclassloader.ForeignClassLoaderCustomRunnerExecutor;
-import org.pitest.reflection.Reflection;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
+import org.pitest.util.Unchecked;
 
 public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
@@ -141,20 +140,19 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
     // must jump through hoops to run in different class loader
     // when even our framework classes may be duplicated
     // translate everything via strings
-    final List<String> q = new ArrayList<String>(runner.testCount() * 2);
     final ForeignClassLoaderCustomRunnerExecutor ce = new ForeignClassLoaderCustomRunnerExecutor(
         runner);
-    Object foreignCe = ce;
-    foreignCe = IsolationUtils.cloneForLoader(ce, loader);
-    final Method run = Reflection.publicMethod(foreignCe.getClass(), "run");
+    @SuppressWarnings("unchecked")
+    Callable<List<String>> foreignCe = (Callable<List<String>>) IsolationUtils
+        .cloneForLoader(ce, loader);
 
-    // set an uncloned list to receive results in
-    final Method set = Reflection
-        .publicMethod(foreignCe.getClass(), "setQueue");
-    set.invoke(foreignCe, q);
-    run.invoke(foreignCe);
+    try {
+      final List<String> q = foreignCe.call();
+      convertStringsToResults(rc, q);
+    } catch (Exception ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
 
-    convertStringsToResults(rc, q);
   }
 
   private void convertStringsToResults(final ResultCollector rc,

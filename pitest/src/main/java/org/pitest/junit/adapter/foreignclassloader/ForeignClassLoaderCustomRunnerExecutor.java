@@ -14,7 +14,9 @@
  */
 package org.pitest.junit.adapter.foreignclassloader;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunListener;
@@ -24,31 +26,23 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.util.IsolationUtils;
 
-public class ForeignClassLoaderCustomRunnerExecutor {
+public class ForeignClassLoaderCustomRunnerExecutor implements Callable<List<String>> {
 
   private final Runner runner;
-  private List<String> queue;
 
   public ForeignClassLoaderCustomRunnerExecutor(final Runner runner) {
     this.runner = runner;
   }
 
-  public void run() { // NO_UCD
-
+  public List<String> call() { // NO_UCD
+    List<String> queue = new ArrayList<String>();
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new ForeignClassLoaderAdaptingRunListener(
-        this.queue);
+        queue);
     rn.addFirstListener(listener);
     this.runner.run(rn);
+    return queue;
 
-  }
-
-  public List<String> getQueue() { // NO_UCD
-    return this.queue;
-  }
-
-  public void setQueue(final List<String> queue) { // NO_UCD
-    this.queue = queue;
   }
 
   public static void applyEvents(final List<String> encodedEvents,
