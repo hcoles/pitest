@@ -11,8 +11,9 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
-import org.pitest.mutationtest.build.MutationGrouper;
+import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
+import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.CompoundFilterFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.process.DefaultJavaExecutableLocator;
@@ -66,13 +67,7 @@ public class SettingsFactory {
 
   public MutationGrouperFactory getMutationGrouper() {
     Collection<? extends MutationGrouperFactory> groupers = PluginServices.findGroupers();
-    if ( groupers.isEmpty() ) {
-      return new DefaultMutationGrouperFactory();
-    }
-    if ( groupers.size() > 1) {
-      throw new PitError("Multiple implementations of " + MutationGrouper.class.getName() + " detected on classpath");
-    }
-    return groupers.iterator().next();
+    return firstOrDefault(groupers,  new DefaultMutationGrouperFactory());
   }
   
   private Iterable<MutationResultListenerFactory> findListeners() {
@@ -106,6 +101,21 @@ public class SettingsFactory {
   public MutationFilterFactory createMutationFilter() {
     Collection<? extends MutationFilterFactory> filters = PluginServices.findFilters();
     return new CompoundFilterFactory(filters);
+  }
+
+  public TestPrioritiserFactory getTestPrioritiser() {
+    Collection<? extends TestPrioritiserFactory> testPickers = PluginServices.findTestPrioritisers();
+    return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
+  }
+  
+  private static <T> T firstOrDefault(Collection<? extends T> found, T defaultInstance) {
+    if ( found.isEmpty() ) {
+      return defaultInstance;
+    }
+    if ( found.size() > 1) {
+      throw new PitError("Multiple implementations of plugin detected on classpath");
+    }
+    return found.iterator().next();
   }
 
 }

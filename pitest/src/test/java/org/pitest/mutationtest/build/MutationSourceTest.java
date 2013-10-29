@@ -55,7 +55,7 @@ public class MutationSourceTest {
     MockitoAnnotations.initMocks(this);
     when(this.engine.createMutator(this.source)).thenReturn(this.mutater);
     this.config = new MutationConfig(this.engine, new LaunchOptions(null));
-    this.testee = new MutationSource(this.config, UnfilteredMutationFilter.INSTANCE, this.coverage,
+    this.testee = new MutationSource(this.config, UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(coverage),
         this.source);
   }
 

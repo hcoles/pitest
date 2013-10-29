@@ -78,7 +78,7 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
   public ClassName getClassName() {
     return this.location.getClassName();
   }
-
+  
   @Override
   public int hashCode() {
     final int prime = 31;

@@ -52,6 +52,7 @@ import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
@@ -240,8 +241,10 @@ public class MutationCoverage {
     
     ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
     
+    TestPrioritiser testPrioritiser = settings.getTestPrioritiser().makeTestPrioritiser(code, coverageData);
+    
     final MutationSource source = new MutationSource(mutationConfig,
-        makeFilter().createFilter(code, data.getMaxMutationsPerClass()), coverageData, bas);
+        makeFilter().createFilter(code, data.getMaxMutationsPerClass()), testPrioritiser, bas);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);

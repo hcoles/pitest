@@ -7,6 +7,7 @@ import java.util.List;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
+import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
@@ -23,6 +24,7 @@ public class PluginServices {
     l.addAll(findListeners());
     l.addAll(findGroupers());
     l.addAll(findFilters());
+    l.addAll(findTestPrioritisers());
     return l;
   }
 
@@ -53,6 +55,10 @@ public class PluginServices {
     return ServiceLoader.load(MutationEngineFactory.class);
   }
 
+  static Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
+    return ServiceLoader.load(TestPrioritiserFactory.class);
+  }
+  
   private static Collection<ClientClasspathPlugin> nullPlugins() {
     return ServiceLoader.load(ClientClasspathPlugin.class);
   }

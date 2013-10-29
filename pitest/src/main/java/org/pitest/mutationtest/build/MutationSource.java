@@ -15,16 +15,12 @@
 package org.pitest.mutationtest.build;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -33,21 +29,19 @@ import org.pitest.util.Log;
 
 public class MutationSource {
 
-  private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
-
   private final static Logger         LOG                                  = Log
                                                                                .getLogger();
 
   private final MutationConfig        mutationConfig;
-  private final CoverageDatabase      coverageDatabase;
+  private final TestPrioritiser       testPrioritiser;
   private final MutationFilter        filter;
   private final ClassByteArraySource  source;
 
   public MutationSource(final MutationConfig mutationConfig,
       final MutationFilter filter,
-      final CoverageDatabase coverageDatabase, final ClassByteArraySource source) {
+      final TestPrioritiser testPrioritiser, final ClassByteArraySource source) {
     this.mutationConfig = mutationConfig;
-    this.coverageDatabase = coverageDatabase;
+    this.testPrioritiser = testPrioritiser;
     this.filter = filter;
     this.source = source;
   }
@@ -68,34 +62,14 @@ public class MutationSource {
   private void assignTestsToMutations(
       final Collection<MutationDetails> availableMutations) {
     for (final MutationDetails mutation : availableMutations) {
-      final Collection<TestInfo> testDetails = prioritizeTests(mutation);
-
+      final List<TestInfo> testDetails = testPrioritiser.assignTests(mutation);
       if (testDetails.isEmpty()) {
         LOG.fine("According to coverage no tests hit the mutation " + mutation);
       }
-
       mutation.addTestsInOrder(testDetails);
     }
   }
 
-  private Collection<TestInfo> prioritizeTests(final MutationDetails mutation) {
-    final Collection<TestInfo> testsForMutant = getTestsForMutant(mutation);
-    final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
-        Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis,
-        new TestInfoPriorisationComparator(mutation.getClassName(),
-            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
-    return sortedTis;
-  }
 
-  private Collection<TestInfo> getTestsForMutant(final MutationDetails mutation) {
-    if (!mutation.isInStaticInitializer()) {
-      return this.coverageDatabase
-          .getTestsForClassLine(mutation.getClassLine());
-    } else {
-      LOG.warning("Using untargetted tests");
-      return this.coverageDatabase.getTestsForClass(mutation.getClassName());
-    }
-  }
 
 }

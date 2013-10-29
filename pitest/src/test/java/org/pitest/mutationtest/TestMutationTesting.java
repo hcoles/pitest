@@ -54,6 +54,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.build.DefaultTestPrioritiser;
 import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationSource;
@@ -379,7 +380,7 @@ public class TestMutationTesting {
     final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     final MutationSource source = new MutationSource(mutationConfig,
-        UnfilteredMutationFilter.INSTANCE, coverageData, bas);
+        UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(coverageData), bas);
 
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig,
