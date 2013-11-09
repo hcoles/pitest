@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
@@ -45,6 +44,13 @@ public class MutatorTest {
     }
     assertTrue(expected.containsAll(Mutator.asCollection(Mutator.ALL)));
     assertTrue(Mutator.asCollection(Mutator.ALL).containsAll(expected));
+  }
+
+  @Test
+  public void shouldIncludeBothInvertConditionalsAndRemoveConditionalsInStrongerSetting() {
+    assertTrue(Mutator.STONGER.asCollection().containsAll(
+        Mutator.asCollection(Mutator.REMOVE_CONDITIONALS,
+            Mutator.NEGATE_CONDITIONALS)));
   }
 
 }

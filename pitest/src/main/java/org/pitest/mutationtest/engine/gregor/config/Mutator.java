@@ -93,6 +93,9 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    */
   CONSTRUCTOR_CALLS(ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR),
 
+  /**
+   * Removes conditional statements so that guarded statements always execute
+   */
   REMOVE_CONDITIONALS(RemoveConditionalMutator.REMOVE_CONDITIONALS_MUTATOR),
 
   /**
@@ -108,6 +111,8 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    */
   DEFAULTS(INVERT_NEGS, RETURN_VALS, MATH, VOID_METHOD_CALLS,
       NEGATE_CONDITIONALS, CONDITIONALS_BOUNDARY, INCREMENTS),
+      
+  STONGER(DEFAULTS, REMOVE_CONDITIONALS, EXPERIMENTAL_SWITCH),
 
   /**
    * All the mutators
