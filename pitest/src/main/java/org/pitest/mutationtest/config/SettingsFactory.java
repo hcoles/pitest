@@ -21,6 +21,7 @@ import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
+import org.pitest.util.StringUtil;
 
 public class SettingsFactory {
 
@@ -66,17 +67,19 @@ public class SettingsFactory {
   }
 
   public MutationGrouperFactory getMutationGrouper() {
-    Collection<? extends MutationGrouperFactory> groupers = PluginServices.findGroupers();
-    return firstOrDefault(groupers,  new DefaultMutationGrouperFactory());
+    final Collection<? extends MutationGrouperFactory> groupers = PluginServices
+        .findGroupers();
+    return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
   }
-  
+
   private Iterable<MutationResultListenerFactory> findListeners() {
     final Iterable<? extends MutationResultListenerFactory> listeners = PluginServices
         .findListeners();
     final Collection<MutationResultListenerFactory> matches = FCollection
         .filter(listeners, nameMatches(this.options.getOutputFormats()));
     if (matches.size() < this.options.getOutputFormats().size()) {
-      throw new PitError("Unknown listener requested");
+      throw new PitError("Unknown listener requested in "
+          + StringUtil.join(this.options.getOutputFormats(), ","));
     }
     return matches;
   }
@@ -99,21 +102,25 @@ public class SettingsFactory {
   }
 
   public MutationFilterFactory createMutationFilter() {
-    Collection<? extends MutationFilterFactory> filters = PluginServices.findFilters();
+    final Collection<? extends MutationFilterFactory> filters = PluginServices
+        .findFilters();
     return new CompoundFilterFactory(filters);
   }
 
   public TestPrioritiserFactory getTestPrioritiser() {
-    Collection<? extends TestPrioritiserFactory> testPickers = PluginServices.findTestPrioritisers();
+    final Collection<? extends TestPrioritiserFactory> testPickers = PluginServices
+        .findTestPrioritisers();
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }
-  
-  private static <T> T firstOrDefault(Collection<? extends T> found, T defaultInstance) {
-    if ( found.isEmpty() ) {
+
+  private static <T> T firstOrDefault(final Collection<? extends T> found,
+      final T defaultInstance) {
+    if (found.isEmpty()) {
       return defaultInstance;
     }
-    if ( found.size() > 1) {
-      throw new PitError("Multiple implementations of plugin detected on classpath");
+    if (found.size() > 1) {
+      throw new PitError(
+          "Multiple implementations of plugin detected on classpath");
     }
     return found.iterator().next();
   }
