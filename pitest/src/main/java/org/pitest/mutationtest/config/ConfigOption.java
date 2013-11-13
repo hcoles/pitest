@@ -163,6 +163,11 @@ public enum ConfigOption {
    * Dump per test line coverage to disk
    */
   EXPORT_LINE_COVERAGE("exportLineCoverage", false),
+  
+  /**
+   * Include launch classpath in analysis
+   */
+  INCLUDE_LAUNCH_CLASSPATH("includeLaunchClasspath", true),
 
   /**
    * Path to executable with which to run tests

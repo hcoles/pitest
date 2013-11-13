@@ -15,6 +15,7 @@
 
 package org.pitest.ant;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +32,18 @@ public class PitestTask extends Task { // NO_UCD (test only)
       ConfigOption.TARGET_CLASSES.getParamName(),
       ConfigOption.REPORT_DIR.getParamName(),
       ConfigOption.SOURCE_DIR.getParamName()        };
+  
   private final Map<String, String> options          = new HashMap<String, String>();
+  
+  /**
+   * Classpath to analyse
+   */
   private String                    classpath;
+  
+  /**
+   * Classpath to pitest and plugins
+   */
+  private String pitClasspath;
 
   @Override
   public void execute() throws BuildException {
@@ -44,7 +55,11 @@ public class PitestTask extends Task { // NO_UCD (test only)
   }
 
   void execute(final Java java) {
-    java.setClasspath(generateClasspath());
+        
+    this.setOption(ConfigOption.INCLUDE_LAUNCH_CLASSPATH, "false");
+    this.setOption(ConfigOption.CLASSPATH, generateAnalysisClasspath());
+    
+    java.setClasspath(generateLaunchClasspath());
     java.setClassname(MutationCoverageReport.class.getCanonicalName());
     java.setFailonerror(true);
     java.setFork(true);
@@ -56,6 +71,19 @@ public class PitestTask extends Task { // NO_UCD (test only)
     }
 
     java.execute();
+  }
+  
+  private Path generateLaunchClasspath() {
+    if (this.pitClasspath == null) {
+      throw new BuildException("You must specify the classpath for pitest and its plugins.");
+    }
+
+    final Object reference = getProject().getReference(this.pitClasspath);
+    if (reference != null) {
+      this.pitClasspath = reference.toString();
+    }
+
+    return new Path(getProject(), this.pitClasspath);
   }
 
   private void checkRequiredOptions() {
@@ -70,7 +98,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
     return !this.options.keySet().contains(option);
   }
 
-  private Path generateClasspath() {
+  private String generateAnalysisClasspath() {
     if (this.classpath == null) {
       throw new BuildException("You must specify the classpath.");
     }
@@ -79,8 +107,9 @@ public class PitestTask extends Task { // NO_UCD (test only)
     if (reference != null) {
       this.classpath = reference.toString();
     }
-
-    return new Path(getProject(), this.classpath);
+    
+    return classpath.replaceAll(File.pathSeparator, ",");
+    
   }
 
   public void setReportDir(final String value) {
@@ -162,6 +191,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setClasspath(final String classpath) {
     this.classpath = classpath;
   }
+  
+  public void setPitClasspath(final String classpath) {
+    this.pitClasspath = classpath;
+  }
 
   public void setMutableCodePaths(final String glob) {
     setOption(ConfigOption.CODE_PATHS, glob);
@@ -204,7 +237,5 @@ public class PitestTask extends Task { // NO_UCD (test only)
       this.options.put(option.getParamName(), value);
     }
   }
-
-
 
 }

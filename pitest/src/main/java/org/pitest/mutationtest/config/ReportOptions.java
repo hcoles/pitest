@@ -120,6 +120,8 @@ public class ReportOptions {
 
   private String                         javaExecutable;
 
+  private boolean                        includeLaunchClasspath         = true;
+
   public boolean isVerbose() {
     return this.verbose;
   }
@@ -550,6 +552,14 @@ public class ReportOptions {
 
   public void setJavaExecutable(final String javaExecutable) {
     this.javaExecutable = javaExecutable;
+  }
+
+  public void setIncludeLaunchClasspath(final boolean b) {
+    this.includeLaunchClasspath = b;
+  }
+
+  public boolean isIncludeLaunchClasspath() {
+    return this.includeLaunchClasspath;
   }
 
   @Override

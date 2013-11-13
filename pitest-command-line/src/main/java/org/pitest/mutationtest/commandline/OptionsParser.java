@@ -28,6 +28,7 @@ import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATION
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
+import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_LAUNCH_CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
@@ -78,8 +79,8 @@ import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
 public class OptionsParser {
-  
-  private final Predicate<String> dependencyFilter;
+
+  private final Predicate<String>                    dependencyFilter;
 
   private final OptionParser                         parser;
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
@@ -116,10 +117,12 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
 
+  private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
+
   public OptionsParser(Predicate<String> dependencyFilter) {
-    
+
     this.dependencyFilter = dependencyFilter;
-    
+
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
 
@@ -231,6 +234,10 @@ public class OptionsParser {
         .describedAs(
             "whether or not to dump per test line coverage data to disk");
 
+    this.includeLaunchClasspathSpec = parserAccepts(INCLUDE_LAUNCH_CLASSPATH)
+        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
+        .describedAs("whether or not to anlayse launch classpath");
+
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
         .ofType(String.class)
@@ -281,7 +288,7 @@ public class OptionsParser {
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Mutation score below which to throw an error")
         .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
-    
+
     this.coverageThreshHoldSpec = parserAccepts(COVERAGE_THRESHOLD)
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Line coverage below which to throw an error")
@@ -290,7 +297,7 @@ public class OptionsParser {
     this.mutationEngine = parserAccepts(MUTATION_ENGINE).withRequiredArg()
         .ofType(String.class).describedAs("mutation engine to use")
         .defaultsTo(MUTATION_ENGINE.getDefault(String.class));
-    
+
     this.javaExecutable = parserAccepts(JVM_PATH).withRequiredArg()
         .ofType(String.class).describedAs("path to java executable");
 
@@ -345,6 +352,9 @@ public class OptionsParser {
     data.setDetectInlinedCode(userArgs.has(this.detectInlinedCode)
         && userArgs.valueOf(this.detectInlinedCode));
 
+    data.setIncludeLaunchClasspath(userArgs
+        .valueOf(this.includeLaunchClasspathSpec));
+
     data.setShouldCreateTimestampedReports(userArgs
         .valueOf(this.timestampedReportsSpec));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
@@ -374,6 +384,7 @@ public class OptionsParser {
         && userArgs.valueOf(this.exportLineCoverageSpec));
 
     setClassPath(userArgs, data);
+
     setTestConfiguration(userArgs, data);
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
 
@@ -385,9 +396,14 @@ public class OptionsParser {
   }
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
-    
+
     final List<String> elements = new ArrayList<String>();
-    elements.addAll(FArray.filter(ClassPath.getClassPathElements(), dependencyFilter));
+    if (data.isIncludeLaunchClasspath()) {
+      elements.addAll(Arrays.asList(ClassPath.getClassPathElements()));
+    } else {
+      elements.addAll(FArray.filter(ClassPath.getClassPathElements(),
+          dependencyFilter));
+    }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
   }

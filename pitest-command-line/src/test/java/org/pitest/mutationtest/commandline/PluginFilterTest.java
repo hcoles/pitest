@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.report.html.HtmlReportFactory;
 
 public class PluginFilterTest {
@@ -16,9 +17,10 @@ public class PluginFilterTest {
   }
   
   @Test
-  public void shouldAllowUnrecognisedClasspathElements() {
+  public void shouldIncludeMutationEngine() {
     PluginFilter testee = new PluginFilter();
-    assertTrue(testee.apply("foo"));
+    String pluginLocation = GregorMutationEngine.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+    assertTrue(testee.apply(pluginLocation));
   }
 
 }

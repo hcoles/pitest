@@ -399,6 +399,26 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("");
     assertFalse(actual.shouldExportLineCoverage());
   }
+  
+  @Test
+  public void shouldIncludeLaunchClasspathByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertTrue(actual.isIncludeLaunchClasspath());
+  }
+  
+  @Test
+  public void shouldNotIncludeLaunchClasspathWhenFlagUnset() {
+    final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=false");
+    assertFalse(actual.isIncludeLaunchClasspath());
+  }
+  
+  
+  @Test
+  public void shouldIncludeLaunchClasspathWhenFlag() {
+    final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=true");
+    assertTrue(actual.isIncludeLaunchClasspath());
+  }
+  
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();

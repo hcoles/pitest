@@ -15,6 +15,7 @@
 
 package org.pitest.ant;
 
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -58,6 +59,7 @@ public class PitestTaskTest {
 
     this.pitestTask = new PitestTask();
     this.pitestTask.setClasspath("bin/");
+    this.pitestTask.setPitClasspath("foo/");
     this.pitestTask.setTargetClasses("com.*");
     this.pitestTask.setReportDir("report/");
     this.pitestTask.setSourceDir("src/");
@@ -246,6 +248,8 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--targetClasses=com.*");
     verify(this.arg).setValue("--reportDir=report/");
     verify(this.arg).setValue("--sourceDirs=src/");
+    verify(this.arg).setValue("--includeLaunchClasspath=false");
+    verify(this.arg).setValue(startsWith("--classPath="));
     verifyNoMoreInteractions(this.arg);
   }
 
@@ -294,6 +298,7 @@ public class PitestTaskTest {
 
     this.pitestTask = new PitestTask();
     this.pitestTask.setClasspath("bin/");
+    this.pitestTask.setPitClasspath("foo/");
     this.pitestTask.setProject(this.project);
 
     this.pitestTask.execute(this.java);
@@ -306,6 +311,7 @@ public class PitestTaskTest {
 
     this.pitestTask = new PitestTask();
     this.pitestTask.setClasspath("bin/");
+    this.pitestTask.setPitClasspath("foo/");
     this.pitestTask.setProject(this.project);
     this.pitestTask.setTargetClasses("com.*");
 
@@ -319,6 +325,7 @@ public class PitestTaskTest {
 
     this.pitestTask = new PitestTask();
     this.pitestTask.setClasspath("bin/");
+    this.pitestTask.setPitClasspath("foo/");
     this.pitestTask.setProject(this.project);
     this.pitestTask.setTargetClasses("com.*");
     this.pitestTask.setReportDir("report/");
@@ -327,12 +334,19 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldSetClasspathOnJavaTask() throws Exception {
+  public void shouldSetPitClasspathOnJavaTask() throws Exception {
     final String classpath = "bin/" + File.pathSeparator + "lib/util.jar";
-    this.pitestTask.setClasspath(classpath);
+    this.pitestTask.setPitClasspath(classpath);
     this.pitestTask.execute(this.java);
 
     verify(this.java).setClasspath(argThat(new PathMatcher(classpath)));
+  }
+  
+  @Test
+  public void shouldPassAnalysisClassPathToPit() throws Exception {
+    this.pitestTask.setClasspath("Foo" + File.pathSeparator + "Bar");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--classPath=Foo,Bar");
   }
 
   @Test
@@ -352,7 +366,21 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldSetClasspathAntReferenceOnJavaTask() throws Exception {
+  public void shouldSetPitClasspathAntReferenceOnJavaTask() throws Exception {
+    final String classpath = "app.classpath";
+    final Object reference = "antReference";
+    when(this.project.getReference(classpath)).thenReturn(reference);
+
+    this.pitestTask.setPitClasspath(classpath);
+    this.pitestTask.execute(this.java);
+
+    verify(this.java).setClasspath(
+        argThat(new PathMatcher(reference.toString())));
+  }
+  
+
+  @Test
+  public void shouldPassClasspathAntReferenceToPit() throws Exception {
     final String classpath = "app.classpath";
     final Object reference = "antReference";
     when(this.project.getReference(classpath)).thenReturn(reference);
@@ -360,8 +388,7 @@ public class PitestTaskTest {
     this.pitestTask.setClasspath(classpath);
     this.pitestTask.execute(this.java);
 
-    verify(this.java).setClasspath(
-        argThat(new PathMatcher(reference.toString())));
+    verify(this.arg).setValue("--classPath=" + reference.toString());
   }
 
   @Test
