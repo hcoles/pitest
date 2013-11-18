@@ -38,8 +38,10 @@ import org.pitest.util.SocketFinder;
 
 import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
 import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionInFinallyBlock;
 import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
@@ -206,6 +208,14 @@ public class CoverageProcessSystemTest {
         .contains(coverageFor(CoveredBeforeExceptionTestee.class)));
     assertTrue(coveredClasses
         .contains(coverageFor(ThrowsExceptionTestee.class, Arrays.asList(5,6,10))));
+  }
+  
+  @Test
+  public void shouldCalculateCoverageForMethodThatThrowsExceptionWithFinallyBlock()
+      throws IOException, InterruptedException, ExecutionException {
+    final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionInFinallyBlock.class);
+    assertTrue(coveredClasses
+        .contains(coverageFor(ThrowsExceptionInFinallyBlockTestee.class, Arrays.asList(9,7))));
   }
   
   @Test
