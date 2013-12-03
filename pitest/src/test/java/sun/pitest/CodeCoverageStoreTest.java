@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.boot;
+package sun.pitest;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
@@ -37,6 +37,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.SideEffect2;
+
+import sun.pitest.CodeCoverageStore;
+import sun.pitest.InvokeReceiver;
 
 public class CodeCoverageStoreTest {
 

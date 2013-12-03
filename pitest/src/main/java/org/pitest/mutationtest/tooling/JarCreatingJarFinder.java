@@ -22,15 +22,17 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import org.pitest.boot.CodeCoverageStore;
+
 import org.pitest.boot.HotSwapAgent;
-import org.pitest.boot.InvokeReceiver;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.Option;
 import org.pitest.process.JavaAgent;
 import org.pitest.util.FileUtil;
 import org.pitest.util.Unchecked;
+
+import sun.pitest.CodeCoverageStore;
+import sun.pitest.InvokeReceiver;
 
 public class JarCreatingJarFinder implements JavaAgent {
 

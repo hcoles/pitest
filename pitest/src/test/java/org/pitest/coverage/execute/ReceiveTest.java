@@ -6,17 +6,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.boot.CodeCoverageStore;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.execute.Receive;
 import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Description;
 import org.pitest.util.SafeDataInputStream;
+
+import sun.pitest.CodeCoverageStore;
 
 public class ReceiveTest {
 

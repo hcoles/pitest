@@ -1,4 +1,4 @@
-package org.pitest.boot;
+package sun.pitest;
 
 public interface InvokeReceiver {
 

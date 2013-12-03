@@ -6,13 +6,15 @@ import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.pitest.boot.CodeCoverageStore;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.codeassist.CoverageClassVisitor;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.ComputeClassWriter;
+
+import sun.pitest.CodeCoverageStore;
 
 public class CoverageTransformer implements ClassFileTransformer {
 

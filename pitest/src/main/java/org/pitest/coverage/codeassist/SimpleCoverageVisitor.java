@@ -1,9 +1,11 @@
 package org.pitest.coverage.codeassist;
 
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.boot.CodeCoverageStore;
+
+import sun.pitest.CodeCoverageStore;
 
 /**
  * Instruments via a method call at each line.

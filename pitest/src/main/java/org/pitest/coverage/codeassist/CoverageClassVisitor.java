@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import org.pitest.boot.CodeCoverageStore;
+
+import sun.pitest.CodeCoverageStore;
 
 /**
  * Instruments a class with probes on each line

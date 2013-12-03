@@ -1,11 +1,13 @@
 package org.pitest.coverage.codeassist;
 
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
-import org.pitest.boot.CodeCoverageStore;
+
+import sun.pitest.CodeCoverageStore;
 
 public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
   private final MethodVisitor methodVisitor;

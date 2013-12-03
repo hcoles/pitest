@@ -4,13 +4,15 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.ClassWriter;
-import org.pitest.boot.CodeCoverageStore;
-import org.pitest.boot.InvokeReceiver;
+
+import sun.pitest.CodeCoverageStore;
+import sun.pitest.InvokeReceiver;
 
 public class CoverageClassVisitorTest {
 

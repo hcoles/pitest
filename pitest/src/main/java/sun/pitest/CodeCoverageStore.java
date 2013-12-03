@@ -1,6 +1,7 @@
 /*
- * Based on http://code.google.com/p/javacoveragent/ by
- * "alex.mq0" and "dmitry.kandalov"
+ * Originally based on http://code.google.com/p/javacoveragent/ by
+ * "alex.mq0" and "dmitry.kandalov" - but don't think anything of the original
+ * now remains in terms of either code or design.
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +16,9 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.boot;
+// placed in a sun package so non delegating classloaders are likely
+// to still delegate it's loading
+package sun.pitest;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +24,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.pitest.boot.CodeCoverageStore;
-import org.pitest.boot.InvokeReceiver;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.OtherClassLoaderClassPathRoot;
@@ -32,6 +31,9 @@ import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.True;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
+
+import sun.pitest.CodeCoverageStore;
+import sun.pitest.InvokeReceiver;
 
 public class CoverageTransformerTest {
   

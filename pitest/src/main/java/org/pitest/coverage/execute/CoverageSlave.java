@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.pitest.boot.CodeCoverageStore;
+
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -40,6 +40,8 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
+
+import sun.pitest.CodeCoverageStore;
 
 public class CoverageSlave {
 
