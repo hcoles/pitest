@@ -10,7 +10,7 @@ class AdaptingRunListener extends RunListener {
 
   private final org.pitest.testapi.Description description;
   private final ResultCollector                rc;
-  private boolean                              finished = false;
+  private boolean                              failed = false;
 
   public AdaptingRunListener(final org.pitest.testapi.Description description,
       final ResultCollector rc) {
@@ -21,7 +21,7 @@ class AdaptingRunListener extends RunListener {
   @Override
   public void testFailure(final Failure failure) throws Exception {
     this.rc.notifyEnd(this.description, failure.getException());
-    this.finished = true;
+    this.failed = true;
   }
 
   @Override
@@ -33,13 +33,11 @@ class AdaptingRunListener extends RunListener {
   @Override
   public void testIgnored(final Description description) throws Exception {
     this.rc.notifySkipped(this.description);
-    this.finished = true;
-
   }
 
   @Override
   public void testStarted(final Description description) throws Exception {
-    if (this.finished) {
+    if (this.failed) {
       // If the JUnit test has been annotated with @BeforeClass or @AfterClass
       // need to force the exit after the first failure as tests will be run as
       // a block
@@ -52,7 +50,7 @@ class AdaptingRunListener extends RunListener {
 
   @Override
   public void testFinished(final Description description) throws Exception {
-    if (!this.finished) {
+    if (!this.failed) {
       this.rc.notifyEnd(this.description);
     }
 

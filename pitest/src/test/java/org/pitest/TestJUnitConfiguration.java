@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
@@ -104,7 +105,7 @@ public class TestJUnitConfiguration {
   };
 
   @Test
-  public void shouldCallsSingleStringArgumentsConstructorWithTestNameWithAnnotations() {
+  public void shouldCallSingleStringArgumentsConstructorWithTestNameWithAnnotations() {
     run(JUnit3TestWithSingleStringConstructorAndJUnit4Annotations.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
@@ -129,7 +130,7 @@ public class TestJUnitConfiguration {
   };
 
   @Test
-  public void shouldCallsSingleStringArgumentsConstructorWithTestName() {
+  public void shouldCallSingleStringArgumentsConstructorWithTestName() {
     run(JUnit3TestWithSingleStringConstructor.class);
     verify(this.listener, times(2)).onTestSuccess(any(TestResult.class));
   }
@@ -478,6 +479,32 @@ public class TestJUnitConfiguration {
     run(HasMethodAnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
     verify(this.listener).onTestSuccess((any(TestResult.class)));
+  }
+  
+  public static class HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation {
+    
+    @BeforeClass
+    public static void foo() {
+      
+    }
+
+    @Test
+    @Ignore
+    public void ignoreMe() {
+
+    }
+
+    @Test
+    public void dontIgnoreMe() {
+
+    }
+
+  };
+  
+  @Test
+  public void shouldNotSkipEnabledTestsInAClassWithBeforeClassAnotationAndAnIgnoredTest() {
+      run(HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation.class);
+      verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
 
   @Test

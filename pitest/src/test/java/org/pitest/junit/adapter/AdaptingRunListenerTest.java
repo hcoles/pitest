@@ -79,13 +79,6 @@ public class AdaptingRunListenerTest {
   }
 
   @Test
-  public void shouldNotReportTestEndWithoutErrorAfterIgnore() throws Exception {
-    this.testee.testIgnored(this.junitDesc);
-    this.testee.testFinished(this.junitDesc);
-    verify(this.rc, never()).notifyEnd(this.pitDescription);
-  }
-
-  @Test
   public void shouldReportStartedTests() throws Exception {
     this.testee.testStarted(this.junitDesc);
     verify(this.rc).notifyStart(this.pitDescription);
