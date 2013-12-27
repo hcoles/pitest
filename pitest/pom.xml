@@ -179,6 +179,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+			    <groupId>org.pitest</groupId>
+			    <artifactId>classycle</artifactId>
+			    <version>0.2</version>
+			    <executions>
+					<execution>
+						<id>verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+			            <configuration>
+			               <dependencyDefinition>
+			                   show allResults
+			                   check absenceOfPackageCycles > 1 in org.pitest.*
+			               </dependencyDefinition>	
+			            </configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 		<resources>
