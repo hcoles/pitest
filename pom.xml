@@ -10,9 +10,9 @@
     <url>http://pitest.org</url>
     <description>Mutation testing system for java - parent project</description>
     <scm>
-        <connection>scm:hg:https://pitestrunner.googlecode.com/hg/</connection>
-        <developerConnection>scm:hg:https://pitestrunner.googlecode.com/hg/</developerConnection>
-        <url>http://code.google.com/p/pitestrunner/source/browse/</url>
+        <url>https://github.com/hcoles/pitest</url>
+        <connection>scm:git:git@github.com:hcoles/pitest.git</connection>
+        <developerConnection>scm:git:git@github.com:hcoles/pitest.git</developerConnection>
     </scm>
 
     <licenses>
@@ -22,6 +22,11 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    
+    <issueManagement>
+        <url>https://github.com/hcoles/pitest/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
 
     <developers>
         <developer>
