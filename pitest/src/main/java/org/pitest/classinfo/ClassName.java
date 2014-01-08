@@ -49,18 +49,18 @@ public final class ClassName implements Serializable, Comparable<ClassName> {
   }
 
   public ClassName getNameWithoutPackage() {
-    final int lastSeperator = this.name.lastIndexOf('/');
-    if (lastSeperator != -1) {
-      return new ClassName(this.name.substring(lastSeperator + 1,
+    final int lastSeparator = this.name.lastIndexOf('/');
+    if (lastSeparator != -1) {
+      return new ClassName(this.name.substring(lastSeparator + 1,
           this.name.length()));
     }
     return this;
   }
 
   public ClassName getPackage() {
-    final int lastSeperator = this.name.lastIndexOf('/');
-    if (lastSeperator != -1) {
-      return new ClassName(this.name.substring(0, lastSeperator));
+    final int lastSeparator = this.name.lastIndexOf('/');
+    if (lastSeparator != -1) {
+      return new ClassName(this.name.substring(0, lastSeparator));
     }
     return new ClassName("");
   }

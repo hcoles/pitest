@@ -41,7 +41,7 @@ public class IgnoreCoreClassesTest {
   }
 
   @Test
-  public void shouldIgnoreLegecyJUnitClasses() {
+  public void shouldIgnoreLegacyJUnitClasses() {
     assertIgnored(junit.framework.Assert.class);
   }
 

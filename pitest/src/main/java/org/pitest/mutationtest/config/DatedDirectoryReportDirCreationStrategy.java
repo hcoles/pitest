@@ -24,13 +24,13 @@ public class DatedDirectoryReportDirCreationStrategy implements
   public File createReportDir(final String base) {
     final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
     final String timeString = sdf.format(new Date());
-    final File reportDir = new File(addPathSeperatorIfMissing(base)
+    final File reportDir = new File(addPathSeparatorIfMissing(base)
         + timeString);
     reportDir.mkdirs();
     return reportDir;
   }
 
-  private String addPathSeperatorIfMissing(final String s) {
+  private String addPathSeparatorIfMissing(final String s) {
     if (!s.endsWith(File.separator)) {
       return s + File.separator;
     } else {

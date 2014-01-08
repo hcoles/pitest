@@ -65,73 +65,73 @@ public class BlockTrackingMethodDecoratorTest extends MethodDecoratorTest {
   }
 
   @Test
-  public void shouldRegisiterNewBlockForReturnInstructions() {
+  public void shouldRegisterNewBlockForReturnInstructions() {
     this.testee.visitInsn(RETURN);
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForReturnInstructions() {
+  public void shouldRegisterFinallyBlockEndForReturnInstructions() {
     this.testee.visitInsn(RETURN);
     verify(this.tracker).registerFinallyBlockEnd();
   }
 
   @Test
-  public void shouldRegisiterNewBlockForAReturnInstructions() {
+  public void shouldRegisterNewBlockForAReturnInstructions() {
     this.testee.visitInsn(ARETURN);
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForAReturnInstructions() {
+  public void shouldRegisterFinallyBlockEndForAReturnInstructions() {
     this.testee.visitInsn(ARETURN);
     verify(this.tracker).registerFinallyBlockEnd();
   }
 
   @Test
-  public void shouldRegisiterNewBlockForFReturnInstructions() {
+  public void shouldRegisterNewBlockForFReturnInstructions() {
     this.testee.visitInsn(FRETURN);
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForFReturnInstructions() {
+  public void shouldRegisterFinallyBlockEndForFReturnInstructions() {
     this.testee.visitInsn(FRETURN);
     verify(this.tracker).registerFinallyBlockEnd();
   }
 
   @Test
-  public void shouldRegisiterNewBlockForIReturnInstructions() {
+  public void shouldRegisterNewBlockForIReturnInstructions() {
     this.testee.visitInsn(IRETURN);
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForIReturnInstructions() {
+  public void shouldRegisterFinallyBlockEndForIReturnInstructions() {
     this.testee.visitInsn(IRETURN);
     verify(this.tracker).registerFinallyBlockEnd();
   }
 
   @Test
-  public void shouldRegisiterNewBlockForLReturnInstructions() {
+  public void shouldRegisterNewBlockForLReturnInstructions() {
     this.testee.visitInsn(LRETURN);
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForLReturnInstructions() {
+  public void shouldRegisterFinallyBlockEndForLReturnInstructions() {
     this.testee.visitInsn(LRETURN);
     verify(this.tracker).registerFinallyBlockEnd();
   }
 
   @Test
-  public void shouldRegisiterNewBlockForAThrowInstructions() {
+  public void shouldRegisterNewBlockForAThrowInstructions() {
     this.testee.visitInsn(ATHROW); // possible without also getting a jump??
     verify(this.tracker).registerNewBlock();
   }
 
   @Test
-  public void shouldRegisiterFinallyBlockEndForAThrowInstructions() {
+  public void shouldRegisterFinallyBlockEndForAThrowInstructions() {
     this.testee.visitInsn(ATHROW);
     verify(this.tracker).registerFinallyBlockEnd();
   }

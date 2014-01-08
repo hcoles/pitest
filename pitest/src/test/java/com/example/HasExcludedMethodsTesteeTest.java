@@ -21,7 +21,7 @@ import org.junit.Test;
 public class HasExcludedMethodsTesteeTest {
 
   @Test
-  public void testEcludedMethod() {
+  public void testExcludedMethod() {
     assertEquals(11, HasExcludedMethodsTestee.excludeMe(10));
   }
 
