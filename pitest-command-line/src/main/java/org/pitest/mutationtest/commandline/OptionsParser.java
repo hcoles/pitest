@@ -138,7 +138,7 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of filters to match against classes to test")
+            "comma separated list of filters to match against classes to test")
         .required();
 
     this.avoidCallsSpec = parserAccepts(AVOID_CALLS)
@@ -146,14 +146,14 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of packages to consider as untouchable logging calls");
+            "comma separated list of packages to consider as untouchable logging calls");
 
     this.targetTestsSpec = parserAccepts(TEST_FILTER)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of filters to match against tests to run");
+            "comma separated list of filters to match against tests to run");
 
     this.depth = parserAccepts(DEPENDENCY_DISTANCE).withRequiredArg()
         .ofType(Integer.class)
@@ -171,15 +171,15 @@ public class OptionsParser {
 
     this.sourceDirSpec = parserAccepts(SOURCE_DIR).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
-        .describedAs("comma seperated list of source directories").required();
+        .describedAs("comma separated list of source directories").required();
 
     this.mutators = parserAccepts(MUTATIONS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("comma seperated list of mutation operators");
+        .describedAs("comma separated list of mutation operators");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
-        .describedAs("comma seperated list of child JVM args");
+        .describedAs("comma separated list of child JVM args");
 
     this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS)
         .withOptionalArg()
@@ -214,14 +214,14 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of filters to match against methods to exclude from mutation analysis");
+            "comma separated list of filters to match against methods to exclude from mutation analysis");
 
     this.excludedClassesSpec = parserAccepts(EXCLUDED_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of globs fr classes to exclude when looking for both mutation target and tests");
+            "comma separated list of globs for classes to exclude when looking for both mutation target and tests");
 
     this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
         .ofType(Boolean.class).defaultsTo(true)
@@ -236,19 +236,19 @@ public class OptionsParser {
 
     this.includeLaunchClasspathSpec = parserAccepts(INCLUDE_LAUNCH_CLASSPATH)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
-        .describedAs("whether or not to anlayse launch classpath");
+        .describedAs("whether or not to analyse launch classpath");
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma seperated list of listeners to receive mutation results")
+            "comma separated list of listeners to receive mutation results")
         .defaultsTo("HTML");
 
     this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("coma seperated list of additional classpath elements");
+        .describedAs("coma separated list of additional classpath elements");
 
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)

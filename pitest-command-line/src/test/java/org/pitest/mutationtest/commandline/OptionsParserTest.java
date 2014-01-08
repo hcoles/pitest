@@ -60,7 +60,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldCreatePredicateFromCommaSeperatedListOfTargetClassGlobs() {
+  public void shouldCreatePredicateFromCommaSeparatedListOfTargetClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
@@ -70,7 +70,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfSourceDirectories() {
+  public void shouldParseCommaSeparatedListOfSourceDirectories() {
     final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
         "foo/bar,bar/far");
     assertEquals(Arrays.asList(new File("foo/bar"), new File("bar/far")),
@@ -85,13 +85,13 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfJVMArgs() {
+  public void shouldParseCommaSeparatedListOfJVMArgs() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfMutationOperators() {
+  public void shouldParseCommaSeparatedListOfMutationOperators() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
     assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(),
@@ -179,7 +179,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfTargetTestClassGlobs() {
+  public void shouldParseCommaSeparatedListOfTargetTestClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
@@ -199,7 +199,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToTests() {
+  public void shouldParseCommaSeparatedListOfExcludedClassGlobsAndApplyTheseToTests() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
@@ -208,7 +208,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSperatedListOfExcludedClassGlobsAndApplyTheseToTargets() {
+  public void shouldParseCommaSeparatedListOfExcludedClassGlobsAndApplyTheseToTargets() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
 
@@ -224,7 +224,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfClassesToAvoidCallTo() {
+  public void shouldParseCommaSeparatedListOfClassesToAvoidCallTo() {
     final ReportOptions actual = parseAddingRequiredArgs("--avoidCallsTo",
         "foo,bar,foo.bar");
     assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
@@ -232,7 +232,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfExcludedMethods() {
+  public void shouldParseCommaSeparatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
         "foo*,bar*,car");
     final Predicate<String> actualPredicate = Prelude.or(actual
@@ -257,7 +257,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeperatedListOfOutputFormatsWhenSupplied() {
+  public void shouldParseCommaSeparatedListOfOutputFormatsWhenSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
         "HTML,CSV");
     assertEquals(
@@ -266,7 +266,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldAcceptCommaSeperatedListOfAdditionalClassPathElements() {
+  public void shouldAcceptCommaSeparatedListOfAdditionalClassPathElements() {
     final ReportOptions ro = parseAddingRequiredArgs("--classPath",
         "/foo/bar,./boo");
     final Collection<String> actual = ro.getClassPathElements();
@@ -288,14 +288,14 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseComaSeperatedListOfMutableCodePaths() {
+  public void shouldParseCommaSeparatedListOfMutableCodePaths() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
         "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
   }
 
   @Test
-  public void shouldParseComaSeperatedListOfExcludedTestGroups() {
+  public void shouldParseCommaSeparatedListOfExcludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs(
         "--excludedTestNGGroups", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
@@ -303,7 +303,7 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseComaSeperatedListOfIncludedTestGroups() {
+  public void shouldParseCommaSeparatedListOfIncludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs(
         "--includedTestNGGroups", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
