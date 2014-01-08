@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.example.testng.AnnotatedAtClassLevel;
 import com.example.testng.AnnotatedAtMethodLevel;
+import org.pitest.mutationtest.config.TestGroupConfig;
 
 public class TestNGTestUnitFinderTest {
 

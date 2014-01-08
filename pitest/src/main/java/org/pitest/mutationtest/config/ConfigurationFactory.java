@@ -24,7 +24,6 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.Configuration;
-import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 
 public class ConfigurationFactory {

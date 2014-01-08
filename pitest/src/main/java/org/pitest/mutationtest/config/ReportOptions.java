@@ -48,7 +48,6 @@ import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.testapi.Configuration;
-import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
