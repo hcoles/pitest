@@ -27,11 +27,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import com.example.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -67,22 +65,6 @@ import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
-
-import com.example.BeforeAfterClassTest;
-import com.example.CoveredByABeforeAfterClassTest;
-import com.example.CoveredByEasyMock;
-import com.example.CoveredByJMockit;
-import com.example.CoveredByJUnitThreeSuite;
-import com.example.CrashesJVMWhenMutated;
-import com.example.FailsTestWhenEnvVariableSetTestee;
-import com.example.FullyCoveredTestee;
-import com.example.FullyCoveredTesteeTest;
-import com.example.HasMutationInFinallyBlockNonTest;
-import com.example.HasMutationInFinallyBlockTest;
-import com.example.HasMutationsInFinallyBlock;
-import com.example.JUnitThreeSuite;
-import com.example.KeepAliveThread;
-import com.example.MultipleMutations;
 
 @Category(SystemTest.class)
 public class MutationCoverageReportSystemTest extends ReportTestBase {
@@ -392,6 +374,58 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
+    // Java 8 support
+
+    /**
+     * @author iirekm@gmail.com
+     */
+    @Test
+    public void worksWithJava8Bytecode() {
+        this.data.setTargetTests(predicateFor(Java8ClassTest.class));
+        this.data.setTargetClasses(predicateFor("com.example.Java8Class*"));
+        setMutators(Mutator.INCREMENTS);
+        createAndRun();
+        verifyResults(KILLED, KILLED);
+    }
+
+    /**
+     * @author iirekm@gmail.com
+     */
+    @Test
+    public void worksWithJava8DefaultInterfaceMethods() {
+        this.data.setTargetTests(predicateFor(Java8InterfaceTest.class));
+        this.data.setTargetClasses(predicateFor("com.example.Java8Interface*"));
+        setMutators(Mutator.INCREMENTS);
+        createAndRun();
+        verifyResults(KILLED, KILLED);
+    }
+
+    /**
+     * @author iirekm@gmail.com
+     *
+     * Initial step for Java 8 lambda expressions: check if pure anonymous classes work.
+     */
+    @Test
+    public void worksWithAnonymousClasses() {
+        this.data.setTargetTests(predicateFor(AnonymousClassTest.class));
+        this.data.setTargetClasses(predicateFor("com.example.AnonymousClass*"));
+        setMutators(Mutator.INCREMENTS);
+        createAndRun();
+        verifyResults(KILLED, KILLED);
+    }
+
+    /**
+     * @author iirekm@gmail.com
+     */
+    // TODO @Test
+    public void worksWithJava8LambdaExpressions() {
+        this.data.setTargetTests(predicateFor(Java8LambdaExpressionTest.class));
+        this.data.setTargetClasses(predicateFor("com.example.Java8LambdaExpression*"));
+        setMutators(Mutator.INCREMENTS);
+        createAndRun();
+        verifyResults(KILLED, KILLED);
+    }
+
   private void createAndRun() {
     createAndRun(new JUnitCompatibleConfiguration());
   }
@@ -457,5 +491,4 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       }
     };
   }
-
 }
