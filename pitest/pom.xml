@@ -194,7 +194,11 @@
 			               <dependencyDefinition>
 			                   show allResults
 			                   check absenceOfPackageCycles > 1 in org.pitest.*
-			               </dependencyDefinition>	
+			               </dependencyDefinition>
+                           <excludingClasses>
+                               <!-- in JDK 8 the following class causes a cycle; exclude -->
+                               <excludingClass>org.pitest.execute.Id</excludingClass>
+                           </excludingClasses>
 			            </configuration>
 					</execution>
 				</executions>
@@ -213,12 +217,12 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
-			<version>4.2</version>
+			<version>5.0_BETA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-commons</artifactId>
-			<version>4.2</version>
+			<version>5.0_BETA</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -235,13 +239,13 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-util</artifactId>
-			<version>4.2</version>
+			<version>5.0_BETA</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-analysis</artifactId>
-			<version>4.2</version>
+			<version>5.0_BETA</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -293,6 +297,12 @@
 			<version>0.9.0</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-code-samples</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 </project>

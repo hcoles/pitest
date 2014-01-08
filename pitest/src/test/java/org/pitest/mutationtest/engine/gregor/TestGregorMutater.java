@@ -388,4 +388,12 @@ public class TestGregorMutater extends MutatorTestBase {
     assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
   }
 
+    // Java 8 support
+
+    @Test
+    public void worksWithJava8Bytecode() {
+        createTesteeWith(Mutator.VOID_METHOD_CALLS.asCollection());
+        Collection<MutationDetails> actualDetails = findMutationsFor(Java8Class.class);
+        assertEquals(2, actualDetails.size());
+    }
 }
