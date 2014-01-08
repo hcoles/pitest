@@ -417,7 +417,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     /**
      * @author iirekm@gmail.com
      */
-    // TODO @Test
+    @Test
     public void worksWithJava8LambdaExpressions() {
         this.data.setTargetTests(predicateFor(Java8LambdaExpressionTest.class));
         this.data.setTargetClasses(predicateFor("com.example.Java8LambdaExpression*"));
