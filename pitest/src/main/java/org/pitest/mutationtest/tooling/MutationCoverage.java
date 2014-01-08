@@ -108,7 +108,7 @@ public class MutationCoverage {
     LOG.fine("Running report with " + this.data);
 
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
-    LOG.fine("Maxmium available memory is " + (runtime.maxMemory() / MB)
+    LOG.fine("Maximum available memory is " + (runtime.maxMemory() / MB)
         + " mb");
 
     final long t0 = System.currentTimeMillis();

@@ -40,7 +40,7 @@ public class LineFilterMethodAdapterTest extends MethodDecoratorTest {
   }
 
   @Test
-  public void shouldenableMutationsWhenEncountersANonExcludedLine() {
+  public void shouldEnableMutationsWhenEncountersANonExcludedLine() {
     when(this.classInfo.isLoggingLine(1)).thenReturn(false);
     this.testee.visitLineNumber(1, this.label);
     verify(this.context).enableMutatations(anyString());

@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.MultipleTestGroup;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
@@ -64,7 +63,7 @@ public class MultipleTestGroupTest {
   }
 
   @Test
-  public void shouldStopExecutingWhenResultCollectorRequestsStope() {
+  public void shouldStopExecutingWhenResultCollectorRequestsStop() {
     when(this.rc.shouldExit()).thenReturn(true);
     this.testee = new MultipleTestGroup(Arrays.asList(this.emptyTestUnit,
         this.emptyTestUnit2));

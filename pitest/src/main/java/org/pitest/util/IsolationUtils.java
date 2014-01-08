@@ -55,8 +55,8 @@ public abstract class IsolationUtils {
   public static Object cloneForLoader(final Object o, final ClassLoader loader) {
     try {
       final String xml = toXml(o);
-      final XStream foreginXstream = getXStreamForLoader(loader);
-      return foreginXstream.fromXML(xml);
+      final XStream foreignXstream = getXStreamForLoader(loader);
+      return foreignXstream.fromXML(xml);
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }

@@ -23,15 +23,15 @@ import org.pitest.functional.predicate.Predicate;
  * @author henry
  * 
  */
-public class IsAnotatedWith implements Predicate<Method> {
+public class IsAnnotatedWith implements Predicate<Method> {
 
   private final Class<? extends Annotation> clazz;
 
-  public static IsAnotatedWith instance(final Class<? extends Annotation> clazz) {
-    return new IsAnotatedWith(clazz);
+  public static IsAnnotatedWith instance(final Class<? extends Annotation> clazz) {
+    return new IsAnnotatedWith(clazz);
   }
 
-  public IsAnotatedWith(final Class<? extends Annotation> clazz) {
+  public IsAnnotatedWith(final Class<? extends Annotation> clazz) {
     this.clazz = clazz;
   }
 

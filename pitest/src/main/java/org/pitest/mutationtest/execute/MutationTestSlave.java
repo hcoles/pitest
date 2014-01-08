@@ -148,7 +148,7 @@ public class MutationTestSlave {
       try {
         s.close();
       } catch (final IOException e) {
-        LOG.log(Level.WARNING, "Couldn't close scoket", e);
+        LOG.log(Level.WARNING, "Couldn't close socket", e);
       }
     }
   }

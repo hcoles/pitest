@@ -54,13 +54,13 @@ public abstract class MethodDecoratorTest {
   }
 
   @Test
-  public void shouldForwardVisitAnnotationDeafultCallsToChild() {
+  public void shouldForwardVisitAnnotationDefaultCallsToChild() {
     getTesteeVisitor().visitAnnotationDefault();
     verify(this.mv).visitAnnotationDefault();
   }
 
   @Test
-  public void shouldForwardVisitAttributetCallsToChild() {
+  public void shouldForwardVisitAttributeCallsToChild() {
     getTesteeVisitor().visitAttribute(null);
     verify(this.mv).visitAttribute(null);
   }
