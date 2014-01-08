@@ -45,8 +45,8 @@ public class ClassInfoTest {
     final ClassInfo classB = new ClassInfo(pointerTo(parent),
         emptyClassPointer(), this.data);
 
-    assertFalse(classA.getHierarchicalId().getHirearchialHash()
-        .equals(classB.getHierarchicalId().getHirearchialHash()));
+    assertFalse(classA.getHierarchicalId().getHierarchicalHash()
+        .equals(classB.getHierarchicalId().getHierarchicalHash()));
   }
 
   @Test
@@ -58,8 +58,8 @@ public class ClassInfoTest {
     final ClassInfo classB = new ClassInfo(emptyClassPointer(),
         pointerTo(outer), this.data);
 
-    assertFalse(classA.getHierarchicalId().getHirearchialHash()
-        .equals(classB.getHierarchicalId().getHirearchialHash()));
+    assertFalse(classA.getHierarchicalId().getHierarchicalHash()
+        .equals(classB.getHierarchicalId().getHierarchicalHash()));
   }
 
   private ClassPointer emptyClassPointer() {

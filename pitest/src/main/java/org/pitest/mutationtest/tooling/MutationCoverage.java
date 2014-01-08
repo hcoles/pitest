@@ -108,7 +108,7 @@ public class MutationCoverage {
     LOG.fine("Running report with " + this.data);
 
     LOG.fine("System class path is " + System.getProperty("java.class.path"));
-    LOG.fine("Maxmium available memory is " + (runtime.maxMemory() / MB)
+    LOG.fine("Maximum available memory is " + (runtime.maxMemory() / MB)
         + " mb");
 
     final long t0 = System.currentTimeMillis();
@@ -214,22 +214,22 @@ public class MutationCoverage {
 
   private void printStats(final MutationStatisticsListener stats) {
     final PrintStream ps = System.out;
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     ps.println("- Timings");
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     this.timings.report(ps);
 
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     ps.println("- Statistics");
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     stats.getStatistics().report(ps);
 
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     ps.println("- Mutators");
-    ps.println(StringUtil.seperatorLine('='));
+    ps.println(StringUtil.separatorLine('='));
     for (final Score each : stats.getStatistics().getScores()) {
       each.report(ps);
-      ps.println(StringUtil.seperatorLine());
+      ps.println(StringUtil.separatorLine());
     }
   }
 

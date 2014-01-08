@@ -29,12 +29,12 @@ public class StringUtilTest {
   }
   
   @Test
-  public void shouldIncludeNoSeperatorsWhenJoiningSingleItem() {
+  public void shouldIncludeNoSeparatorsWhenJoiningSingleItem() {
     assertEquals("foo", StringUtil.join(Collections.singleton("foo"), ","));
   }
   
   @Test
-  public void shouldJoinStringWithSeperators() {
+  public void shouldJoinStringWithSeparators() {
     assertEquals("foo,bar,car", StringUtil.join(Arrays.asList("foo", "bar", "car"), ","));
   }
   

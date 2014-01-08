@@ -55,9 +55,9 @@ public class Timings {
       total = total + each.getValue().duration();
       ps.println("> " + each.getKey() + " : " + each.getValue());
     }
-    ps.println(StringUtil.seperatorLine());
+    ps.println(StringUtil.separatorLine());
     ps.println("> Total " + " : " + new TimeSpan(0, total));
-    ps.println(StringUtil.seperatorLine());
+    ps.println(StringUtil.separatorLine());
   }
 
 }

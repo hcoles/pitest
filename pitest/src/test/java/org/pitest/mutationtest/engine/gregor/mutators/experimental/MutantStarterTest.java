@@ -46,7 +46,7 @@ public class MutantStarterTest {
   }
 
   @Test
-  public void shouldConstructMuteeUsingNoArgConstrutor() throws Exception {
+  public void shouldConstructMuteeUsingNoArgConstructor() throws Exception {
     final TestMutee createdMutant = new MutantStarter<TestMutee>(
         TestMutee.class).call();
     assertNotNull(createdMutant);

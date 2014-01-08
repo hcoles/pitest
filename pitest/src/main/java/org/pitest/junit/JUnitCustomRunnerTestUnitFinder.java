@@ -32,7 +32,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
-import org.pitest.reflection.IsAnotatedWith;
+import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
@@ -79,7 +79,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean hasAnnotation(final Set<Method> methods,
       final Class<? extends Annotation> annotation) {
-    return FCollection.contains(methods, IsAnotatedWith.instance(annotation));
+    return FCollection.contains(methods, IsAnnotatedWith.instance(annotation));
   }
 
   private boolean isParameterizedTest(final Runner runner) {

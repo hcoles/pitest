@@ -42,7 +42,7 @@ public class MathMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceIntegerAdditionWithSubstraction() throws Exception {
+  public void shouldReplaceIntegerAdditionWithSubtraction() throws Exception {
     final Mutant mutant = getFirstMutant(HasIAdd.class);
     assertMutantCallableReturns(new HasIAdd(2), mutant, "1");
     assertMutantCallableReturns(new HasIAdd(20), mutant, "19");
@@ -265,7 +265,7 @@ public class MathMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceLongAdditionWithSubstraction() throws Exception {
+  public void shouldReplaceLongAdditionWithSubtraction() throws Exception {
     final Mutant mutant = getFirstMutant(HasLAdd.class);
     assertMutantCallableReturns(new HasLAdd(2), mutant, "1");
     assertMutantCallableReturns(new HasLAdd(20), mutant, "19");
@@ -488,7 +488,7 @@ public class MathMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceFloatAdditionWithSubstraction() throws Exception {
+  public void shouldReplaceFloatAdditionWithSubtraction() throws Exception {
     final Mutant mutant = getFirstMutant(HasFADD.class);
     assertMutantCallableReturns(new HasFADD(2), mutant, "1.0");
     assertMutantCallableReturns(new HasFADD(20), mutant, "19.0");
@@ -590,7 +590,7 @@ public class MathMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceDoubleAdditionWithSubstraction() throws Exception {
+  public void shouldReplaceDoubleAdditionWithSubtraction() throws Exception {
     final Mutant mutant = getFirstMutant(HasDADD.class);
     assertMutantCallableReturns(new HasDADD(2), mutant, "1.0");
     assertMutantCallableReturns(new HasDADD(20), mutant, "19.0");

@@ -48,7 +48,7 @@ public class MutatorTest {
 
   @Test
   public void shouldIncludeBothInvertConditionalsAndRemoveConditionalsInStrongerSetting() {
-    assertTrue(Mutator.STONGER.asCollection().containsAll(
+    assertTrue(Mutator.STRONGER.asCollection().containsAll(
         Mutator.asCollection(Mutator.REMOVE_CONDITIONALS,
             Mutator.NEGATE_CONDITIONALS)));
   }

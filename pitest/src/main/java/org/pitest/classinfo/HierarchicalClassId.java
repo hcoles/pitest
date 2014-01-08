@@ -22,7 +22,7 @@ public class HierarchicalClassId {
     this(new ClassIdentifier(hash, name), hierarchicalHash);
   }
 
-  public String getHirearchialHash() {
+  public String getHierarchicalHash() {
     return this.hierarchicalHash;
   }
 

@@ -31,11 +31,11 @@ public class StringUtil {
     return System.getProperty("line.separator");
   }
 
-  public static String seperatorLine(final char c) {
+  public static String separatorLine(final char c) {
     return repeat(c, 80);
   }
 
-  public static String seperatorLine() {
+  public static String separatorLine() {
     return repeat('-', 80);
   }
 

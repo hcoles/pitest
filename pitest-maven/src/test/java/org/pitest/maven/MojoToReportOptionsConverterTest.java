@@ -61,7 +61,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         actual.getSourceDirs());
   }
 
-  public void testParsesMaxDepenencyDistance() {
+  public void testParsesMaxDependencyDistance() {
     final ReportOptions actual = parseConfig("<maxDependencyDistance>42</maxDependencyDistance>");
     assertEquals(42, actual.getDependencyAnalysisMaxDistance());
   }
@@ -256,7 +256,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(new File("foo"), actual.getHistoryInputLocation());
   }
 
-  public void testParsesHistoryoutputFile() {
+  public void testParsesHistoryOutputFile() {
     final ReportOptions actual = parseConfig("<historyOutputFile>foo</historyOutputFile>");
     assertEquals(new File("foo"), actual.getHistoryOutputLocation());
   }

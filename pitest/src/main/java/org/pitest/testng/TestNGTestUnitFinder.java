@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.functional.FCollection;
-import org.pitest.reflection.IsAnotatedWith;
+import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
@@ -48,7 +48,7 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
 
   private boolean hasMethodAnnotation(final Class<?> clazz) {
     return FCollection.contains(Reflection.allMethods(clazz),
-        IsAnotatedWith.instance(org.testng.annotations.Test.class));
+        IsAnnotatedWith.instance(org.testng.annotations.Test.class));
   }
 
 }
