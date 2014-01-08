@@ -27,7 +27,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  * The <code>MemberVariableMutator</code> is a mutator that mutates assignments
  * to member variables by removing them.
  * 
- * @author Stefan Penndorf <stefan.penndorf@gmail.com>
+ * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
 public class MemberVariableMutator implements MethodMutatorFactory {
 
