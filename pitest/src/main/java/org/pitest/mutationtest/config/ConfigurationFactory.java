@@ -43,7 +43,7 @@ public class ConfigurationFactory {
 
     if (classRepository.fetchClass(
         ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
-      configs.add(new JUnitCompatibleConfiguration());
+      configs.add(new JUnitCompatibleConfiguration(this.config));
     }
 
     if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG"))

@@ -393,7 +393,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   private void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration());
+    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
   }
 
   private void createAndRun(final Configuration configuration) {

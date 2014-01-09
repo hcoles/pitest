@@ -15,12 +15,30 @@
 package org.pitest.junit;
 
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.mutationtest.config.TestGroupConfig;
 import org.pitest.testapi.TestClassIdentifier;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
+  private TestGroupConfig config;
+
+  public JUnitTestClassIdentifier(TestGroupConfig config) {
+
+    this.config = config;
+  }
+
   public boolean isATestClass(final ClassInfo a) {
     return TestInfo.isWithinATestClass(a);
+  }
+
+  public boolean isIncluded(ClassInfo a) {
+    //TODO: Use config and @Category
+    return true;
+  }
+
+  public boolean isExcluded(ClassInfo a) {
+    //TODO: Use config and @Category
+    return false;
   }
 
 }

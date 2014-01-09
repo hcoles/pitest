@@ -35,7 +35,7 @@ public class ConfigurationForTesting implements Configuration {
       }
     }
 
-  };
+  }
 
   public TestUnitFinder testUnitFinder() {
 
@@ -63,6 +63,13 @@ public class ConfigurationForTesting implements Configuration {
         return a.hasAnnotation(TestAnnotationForTesting.class);
       }
 
+      public boolean isIncluded(ClassInfo a) {
+        return true;
+      }
+
+      public boolean isExcluded(ClassInfo a) {
+        return false;
+      }
     };
   }
 

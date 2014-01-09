@@ -33,6 +33,7 @@ import org.pitest.execute.Pitest;
 import org.pitest.execute.ResultSource;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.config.TestGroupConfig;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.GroupingStrategy;
 import org.pitest.testapi.TestUnit;
@@ -55,7 +56,7 @@ public class TestGroupingStrategies {
     when(this.container.getResultSource()).thenReturn(this.rs);
     when(this.container.awaitCompletion()).thenReturn(true);
     when(this.rs.resultsAvailable()).thenReturn(false);
-    this.conf = new JUnitCompatibleConfiguration();
+    this.conf = new JUnitCompatibleConfiguration(new TestGroupConfig());
   }
 
   @RunWith(Suite.class)

@@ -23,6 +23,7 @@ import org.junit.runners.Suite;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.mutationtest.config.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
 public class JUnitTestClassIdentifierTest {
@@ -32,7 +33,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Before
   public void setUp() {
-    this.testee = new JUnitTestClassIdentifier();
+    this.testee = new JUnitTestClassIdentifier(new TestGroupConfig());
     this.classRepostory = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()));
   }

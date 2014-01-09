@@ -30,6 +30,10 @@ public class TestGroupConfig {
         : Collections.<String> emptyList());
   }
 
+  public TestGroupConfig() {
+    this(null, null);
+  }
+
   public List<String> getExcludedGroups() {
     return this.excludedGroups;
   }

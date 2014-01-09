@@ -41,7 +41,9 @@ import org.pitest.execute.StaticConfiguration;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.execute.containers.UnContainer;
 import org.pitest.functional.Option;
+import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.config.TestGroupConfig;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
@@ -51,7 +53,7 @@ import com.example.JUnitParamsTest;
 
 public class TestJUnitConfiguration {
 
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(new TestGroupConfig());
   private Pitest                             pitest;
   private Container                          container;
 
@@ -102,7 +104,7 @@ public class TestJUnitConfiguration {
       assertEquals("testTwo", this.name);
     }
 
-  };
+  }
 
   @Test
   public void shouldCallSingleStringArgumentsConstructorWithTestNameWithAnnotations() {
@@ -127,7 +129,7 @@ public class TestJUnitConfiguration {
       assertEquals("testTwo", this.name);
     }
 
-  };
+  }
 
   @Test
   public void shouldCallSingleStringArgumentsConstructorWithTestName() {
@@ -444,7 +446,7 @@ public class TestJUnitConfiguration {
 
     }
 
-  };
+  }
 
   @Test
   public void shouldSkipAllMethodsInClassAnnotatedWithIgnore() {
@@ -472,7 +474,7 @@ public class TestJUnitConfiguration {
 
     }
 
-  };
+  }
 
   @Test
   public void shouldSkipAllMethodsAnnotatedWithIgnore() {
@@ -499,8 +501,8 @@ public class TestJUnitConfiguration {
 
     }
 
-  };
-  
+  }
+
   @Test
   public void shouldNotSkipEnabledTestsInAClassWithBeforeClassAnotationAndAnIgnoredTest() {
       run(HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation.class);
@@ -509,7 +511,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
-    assertEquals(Option.none(), this.testee.verifyEnvironment());
+    assertEquals(Option.<PitHelpError>none(), this.testee.verifyEnvironment());
   }
 
   public static class HasAssumptionFailure {
@@ -621,8 +623,8 @@ public class TestJUnitConfiguration {
 
     }
 
-  };
-  
+  }
+
   @Test
   public void shouldRunOtherMethodsInAClassWithOneIgnoredTest() {
     run(HasOneMethodAnnotatedAsIgnored.class);
