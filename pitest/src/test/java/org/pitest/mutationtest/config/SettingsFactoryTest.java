@@ -63,6 +63,8 @@ public class SettingsFactoryTest {
   public void shouldReturnADefaultJavaExecutableWhenNoneIsSpecified() {
     this.options.setJavaExecutable(null);
     File actual = new File(testee.getJavaExecutable().javaExecutable());
+    if(System.getProperty("os.name").contains("Windows"))
+        actual = new File(actual.getPath() + ".exe");
     assertTrue(actual.exists());
   }
   

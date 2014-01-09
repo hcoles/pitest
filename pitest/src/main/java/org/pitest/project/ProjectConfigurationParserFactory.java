@@ -3,9 +3,9 @@ package org.pitest.project;
 /**
  * The ProjectConfigurationParserFactory is responsible for creating a
  * ProjectConfigurationParser instance based on a system property.
- * <p/>
- * If the system property is not set, then the default implementation of the
- * ProjectConfigurationParser is used instead.
+ *
+ * <p>If the system property is not set, then the default implementation of the
+ * ProjectConfigurationParser is used instead.</p>
  * 
  * @author Aidan Morgan
  */

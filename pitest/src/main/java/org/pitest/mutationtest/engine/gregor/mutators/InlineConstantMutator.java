@@ -29,7 +29,7 @@ import org.pitest.util.PitError;
  * float inline constants (including double) by replacing them with 1.
  * 
  * 
- * @author Stefan Penndorf <stefan.penndorf@gmail.com>
+ * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
 public class InlineConstantMutator implements MethodMutatorFactory {
 
