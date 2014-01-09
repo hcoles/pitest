@@ -17,9 +17,9 @@ package org.pitest.testng;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
-import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.BaseTestClassIdentifier;
 
-public class TestNGTestClassIdentifier implements TestClassIdentifier {
+public class TestNGTestClassIdentifier extends BaseTestClassIdentifier {
   private final static ClassName annotationName = new ClassName(
                                                     "org.testng.annotations.Test");
 
@@ -29,13 +29,5 @@ public class TestNGTestClassIdentifier implements TestClassIdentifier {
 
   private boolean isATestClass(final Option<ClassInfo> clazz) {
     return clazz.hasSome() && isATestClass(clazz.value());
-  }
-
-  public boolean isIncluded(ClassInfo a) {
-    return true;
-  }
-
-  public boolean isExcluded(ClassInfo a) {
-    return false;
   }
 }
