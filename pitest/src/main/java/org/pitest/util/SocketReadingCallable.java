@@ -7,7 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
-import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 
 class SocketReadingCallable implements Callable<ExitCode> {

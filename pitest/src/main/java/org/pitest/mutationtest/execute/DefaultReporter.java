@@ -17,10 +17,10 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.pitest.execute.Id;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Id;
 import org.pitest.util.SafeDataOutputStream;
 
 public class DefaultReporter implements Reporter {

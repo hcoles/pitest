@@ -195,10 +195,6 @@
 			                   show allResults
 			                   check absenceOfPackageCycles > 1 in org.pitest.*
 			               </dependencyDefinition>
-                           <excludingClasses>
-                               <!-- in JDK 8 the following class causes a cycle; exclude -->
-                               <excludingClass>org.pitest.execute.Id</excludingClass>
-                           </excludingClasses>
 			            </configuration>
 					</execution>
 				</executions>

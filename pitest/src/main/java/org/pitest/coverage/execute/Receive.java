@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.pitest.coverage.ClassStatistics;
 import org.pitest.coverage.CoverageResult;
-import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Description;
+import org.pitest.util.Id;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;
 

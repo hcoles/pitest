@@ -18,12 +18,12 @@ import java.net.ServerSocket;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.CommunicationThread;
+import org.pitest.util.Id;
 import org.pitest.util.Log;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;

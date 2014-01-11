@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.execute.Receive;
-import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Description;
+import org.pitest.util.Id;
 import org.pitest.util.SafeDataInputStream;
 
 import sun.pitest.CodeCoverageStore;

@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.Id;
 import org.pitest.functional.SideEffect1;
 
 public class SocketReadingCallableTest {

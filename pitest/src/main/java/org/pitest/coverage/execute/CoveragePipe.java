@@ -5,9 +5,9 @@ import java.util.Collection;
 
 
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.execute.Id;
 import org.pitest.testapi.Description;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Id;
 import org.pitest.util.SafeDataOutputStream;
 
 import sun.pitest.CodeCoverageStore;
