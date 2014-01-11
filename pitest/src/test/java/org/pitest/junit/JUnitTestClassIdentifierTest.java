@@ -153,12 +153,12 @@ public class JUnitTestClassIdentifierTest {
   }
 
   @Test
-  public void shouldOnlyExcludeTestsNotInExcludedCategories() {
+  public void shouldOnlyExcludeTestsInExcludedCategories() {
     excludedGroups.add(BetaTests.class.getName());
-    assertTrue(this.testee.isExcluded(find(NoCategoryTest.class)));
-    assertTrue(this.testee.isExcluded(find(AlphaCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(BetaCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(TwoCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isExcluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isExcluded(find(TwoCategoryTest.class)));
   }
 
   private ClassInfo find(final Class<?> clazz) {

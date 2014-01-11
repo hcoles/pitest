@@ -43,7 +43,7 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
   public boolean isExcluded(ClassInfo a) {
     List<String> excluded = config.getExcludedGroups();
-    return !excluded.isEmpty() && Collections.disjoint(excluded, getCategories(a));
+    return !excluded.isEmpty() && !Collections.disjoint(excluded, getCategories(a));
   }
 
   private List<String> getCategories(ClassInfo a) {
