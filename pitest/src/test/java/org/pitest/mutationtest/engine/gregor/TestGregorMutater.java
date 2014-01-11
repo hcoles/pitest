@@ -387,5 +387,4 @@ public class TestGregorMutater extends MutatorTestBase {
     final int firstMutationBlock = actualDetails.get(0).getBlock();
     assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
   }
-
 }

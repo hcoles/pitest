@@ -27,7 +27,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 /**
  * The <code>ReturnValuesMutator</code> mutates the return values of method
  * calls. Depending on the return type of the method another mutation is used.
- * <p />
+ *
  * <p>
  * Replacements for primitive types are simple. Replacements of object
  * references are handled by {@link ObjectReferenceReplacer}. Those replacements
@@ -35,7 +35,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  * </p>
  * 
  * 
- * @author Stefan Penndorf <stefan.penndorf@gmail.com>
+ * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
 public class ReturnValuesMutator implements MethodMutatorFactory {
 

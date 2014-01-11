@@ -163,7 +163,9 @@ class GregorMutater implements Mutater {
     return new Predicate<MethodInfo>() {
 
       public Boolean apply(final MethodInfo a) {
-        return !a.isSynthetic();
+        // filter out synthetic methods,
+        // except lambda$... methods, which contain code from lambda expressions
+        return !a.isSynthetic() || a.getName().startsWith("lambda$");
       }
 
     };
