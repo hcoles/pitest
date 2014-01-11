@@ -51,7 +51,7 @@ import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.config.SettingsFactory;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.incremental.NullHistoryStore;

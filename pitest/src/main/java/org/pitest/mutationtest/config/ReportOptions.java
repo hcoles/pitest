@@ -48,6 +48,7 @@ import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
@@ -106,7 +107,7 @@ public class ReportOptions {
 
   private final Collection<String>       outputs                        = new LinkedHashSet<String>();
 
-  private TestGroupConfig                groupConfig;
+  private TestGroupConfig groupConfig;
 
   private int                            mutationUnitSize;
   private boolean                        shouldCreateTimestampedReports = true;

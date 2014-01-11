@@ -70,7 +70,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;

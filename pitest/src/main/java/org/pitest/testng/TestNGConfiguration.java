@@ -17,7 +17,7 @@ package org.pitest.testng;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;

@@ -33,7 +33,7 @@ import org.pitest.execute.Pitest;
 import org.pitest.execute.ResultSource;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.GroupingStrategy;
 import org.pitest.testapi.TestUnit;

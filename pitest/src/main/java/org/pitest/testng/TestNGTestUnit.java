@@ -17,7 +17,7 @@ package org.pitest.testng;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.foreignclassloader.Events;

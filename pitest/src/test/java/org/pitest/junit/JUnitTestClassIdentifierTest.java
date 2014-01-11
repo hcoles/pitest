@@ -24,7 +24,7 @@ import org.junit.runners.Suite;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
 import java.util.ArrayList;

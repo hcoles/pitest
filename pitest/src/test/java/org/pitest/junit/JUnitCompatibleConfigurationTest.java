@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 
 public class JUnitCompatibleConfigurationTest {
   JUnitCompatibleConfiguration testee;

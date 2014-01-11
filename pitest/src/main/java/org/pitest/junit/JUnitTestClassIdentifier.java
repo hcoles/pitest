@@ -16,7 +16,7 @@ package org.pitest.junit;
 
 import org.junit.experimental.categories.Category;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestClassIdentifier;
 
 import java.util.ArrayList;

@@ -26,6 +26,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
 import com.example.testng.FullyCoveredByTestNGTesteeTest;
@@ -35,7 +36,7 @@ public class ConfigurationFactoryTest {
   private ConfigurationFactory testee;
 
   @Mock
-  private TestGroupConfig      groupConfig;
+  private TestGroupConfig groupConfig;
 
   @Mock
   private ClassByteArraySource source;

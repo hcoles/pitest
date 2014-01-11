@@ -29,7 +29,7 @@ import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;

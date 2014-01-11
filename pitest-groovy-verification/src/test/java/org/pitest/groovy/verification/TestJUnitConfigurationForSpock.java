@@ -15,7 +15,7 @@ import org.pitest.execute.StaticConfiguration;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.execute.containers.UnContainer;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.mutationtest.config.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 
