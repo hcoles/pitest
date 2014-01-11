@@ -35,6 +35,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 
 public enum Mutator implements Iterable<MethodMutatorFactory> {
 
@@ -82,6 +83,12 @@ public enum Mutator implements Iterable<MethodMutatorFactory> {
    * increments and decrements of local variables.
    */
   INCREMENTS(IncrementsMutator.INCREMENTS_MUTATOR),
+
+  /**
+   * Optional mutator that removes local variable increments.
+   */
+
+  REMOVE_INCREMENTS(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR),
 
   /**
    * Optional mutator that removes method calls to non void methods.
