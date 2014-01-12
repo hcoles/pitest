@@ -41,17 +41,66 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
-
+    
     <modules>
         <module>pitest-maven</module>
         <module>pitest</module>
         <module>pitest-ant</module>
         <module>pitest-command-line</module>    
         <module>pitest-html-report</module> 
-	<module>pitest-maven-verification</module>
         <module>pitest-groovy-verification</module>
-        <module>pitest-java8-verification</module>
     </modules>
+    
+       <profiles>
+        <profile>
+            <id>prejava8</id>
+            <!-- can only verify java 8 when running with java 8. Would be preferable to allways make
+                 this check using maven toolchains, but need to see if cloudbees can support this -->
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <modules>
+                <module>pitest-java8-verification</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>java8</id>
+            <!-- java 8 compatible release of powermock is not yet available, so disable
+                 the maven verification checks when building with java8 for now-->
+            <activation>
+                <jdk>[1.5,1.6,1.7,1.8)</jdk>
+            </activation>
+            <modules>
+	            <module>pitest-maven-verification</module>
+            </modules>
+        </profile>	
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <!-- common dependencies used in all subprojects -->
     <dependencies>
@@ -144,34 +193,7 @@
         </pluginManagement>
     </build>
 
-    <profiles>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
 
     <!-- versions of libraries which are used in different projects or which are used for few artifacts -->
     <properties>
