@@ -27,44 +27,38 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import com.example.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
-import org.pitest.classpath.ClassPathRoot;
-import org.pitest.classpath.CodeSource;
-import org.pitest.classpath.PathFilter;
-import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.coverage.CoverageGenerator;
-import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
-import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.mutationtest.config.SettingsFactory;
-import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
-import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
-import org.pitest.mutationtest.tooling.MutationCoverage;
-import org.pitest.mutationtest.tooling.MutationStrategies;
-import org.pitest.process.DefaultJavaExecutableLocator;
-import org.pitest.process.JavaAgent;
-import org.pitest.process.LaunchOptions;
-import org.pitest.testapi.Configuration;
 import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.Timings;
-import org.pitest.util.Unchecked;
+
+import com.example.BeforeAfterClassTest;
+import com.example.CoveredByABeforeAfterClassTest;
+import com.example.CoveredByEasyMock;
+import com.example.CoveredByJMockit;
+import com.example.CoveredByJUnitThreeSuite;
+import com.example.CrashesJVMWhenMutated;
+import com.example.FailsTestWhenEnvVariableSetTestee;
+import com.example.FullyCoveredTestee;
+import com.example.FullyCoveredTesteeTest;
+import com.example.HasMutationInFinallyBlockNonTest;
+import com.example.HasMutationInFinallyBlockTest;
+import com.example.HasMutationsInFinallyBlock;
+import com.example.JUnitThreeSuite;
+import com.example.KeepAliveThread;
+import com.example.MultipleMutations;
 
 @Category(SystemTest.class)
 public class MutationCoverageReportSystemTest extends ReportTestBase {
@@ -374,100 +368,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
-    // Java 8 support
 
-    /**
-     * @author iirekm@gmail.com
-     */
-    @Test
-    public void worksWithJava8Bytecode() {
-        this.data.setTargetTests(predicateFor(Java8ClassTest.class));
-        this.data.setTargetClasses(predicateFor("com.example.Java8Class*"));
-        setMutators(Mutator.INCREMENTS);
-        createAndRun();
-        verifyResults(KILLED, KILLED);
-    }
-
-    /**
-     * @author iirekm@gmail.com
-     */
-    @Test
-    public void worksWithJava8DefaultInterfaceMethods() {
-        this.data.setTargetTests(predicateFor(Java8InterfaceTest.class));
-        this.data.setTargetClasses(predicateFor("com.example.Java8Interface*"));
-        setMutators(Mutator.INCREMENTS);
-        createAndRun();
-        verifyResults(KILLED, KILLED);
-    }
-
-    /**
-     * @author iirekm@gmail.com
-     *
-     * Initial step for Java 8 lambda expressions: check if pure anonymous classes work.
-     */
-    @Test
-    public void worksWithAnonymousClasses() {
-        this.data.setTargetTests(predicateFor(AnonymousClassTest.class));
-        this.data.setTargetClasses(predicateFor("com.example.AnonymousClass*"));
-        setMutators(Mutator.INCREMENTS);
-        createAndRun();
-        verifyResults(KILLED, KILLED);
-    }
-
-    /**
-     * @author iirekm@gmail.com
-     */
-    @Test
-    public void worksWithJava8LambdaExpressions() {
-        this.data.setTargetTests(predicateFor(Java8LambdaExpressionTest.class));
-        this.data.setTargetClasses(predicateFor("com.example.Java8LambdaExpression*"));
-        setMutators(Mutator.INCREMENTS);
-        createAndRun();
-        verifyResults(KILLED, KILLED);
-    }
-
-  private void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration());
-  }
-
-  private void createAndRun(final Configuration configuration) {
-    final JavaAgent agent = new JarCreatingJarFinder();
-    try {
-
-      this.data.setConfiguration(configuration);
-      final CoverageOptions coverageOptions = this.data.createCoverageOptions();
-      final LaunchOptions launchOptions = new LaunchOptions(agent, new DefaultJavaExecutableLocator(),
-          this.data.getJvmArgs());
-
-      final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
-          new True<ClassPathRoot>());
-      final ProjectClassPaths cps = new ProjectClassPaths(
-          this.data.getClassPath(), this.data.createClassesFilter(), pf);
-
-      final Timings timings = new Timings();
-      final CodeSource code = new CodeSource(cps, coverageOptions
-          .getPitConfig().testClassIdentifier());
-
-      final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-          null, coverageOptions, launchOptions, code,
-          new NullCoverageExporter(), timings, false);
-
-      final HistoryStore history = new NullHistoryStore();
-
-      final MutationStrategies strategies = new MutationStrategies(
-          new GregorEngineFactory(), history, coverageDatabase,
-          listenerFactory(), null);
-
-      final MutationCoverage testee = new MutationCoverage(strategies, null,
-          code, this.data, new SettingsFactory(this.data), timings);
-
-      testee.runReport();
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    } finally {
-      agent.close();
-    }
-  }
 
   private static void copy(final InputStream in, final OutputStream out)
       throws IOException {
@@ -480,15 +381,5 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
-  private void setMutators(final Mutator mutator) {
-    this.data.setMutators(FCollection.map(Arrays.asList(mutator), asString()));
-  }
 
-  private F<Mutator, String> asString() {
-    return new F<Mutator, String>() {
-      public String apply(final Mutator a) {
-        return a.name();
-      }
-    };
-  }
 }

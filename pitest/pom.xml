@@ -293,12 +293,6 @@
 			<version>0.9.0</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-code-samples</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 
 </project>

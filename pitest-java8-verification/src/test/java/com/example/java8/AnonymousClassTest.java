@@ -1,6 +1,8 @@
-package com.example;
+package com.example.java8;
 
 import org.junit.Test;
+
+import com.example.java8.AnonymousClass;
 
 import static org.junit.Assert.assertEquals;
 

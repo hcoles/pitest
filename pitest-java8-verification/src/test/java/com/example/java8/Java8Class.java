@@ -1,10 +1,10 @@
-package com.example;
+package com.example.java8;
 
 /**
  * @author iirekm@gmail.com
  */
-public interface Java8Interface {
-    default int foo() {
+public class Java8Class {
+    public int foo() {
         int i = 1;
         i++;
         i++;

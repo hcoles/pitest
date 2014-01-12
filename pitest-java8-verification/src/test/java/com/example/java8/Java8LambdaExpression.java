@@ -1,4 +1,4 @@
-package com.example;
+package com.example.java8;
 
 /**
  * @author iirekm@gmail.com

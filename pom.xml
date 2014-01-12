@@ -50,7 +50,7 @@
         <module>pitest-html-report</module> 
 	<module>pitest-maven-verification</module>
         <module>pitest-groovy-verification</module>
-        <module>pitest-code-samples</module>
+        <module>pitest-java8-verification</module>
     </modules>
 
     <!-- common dependencies used in all subprojects -->
