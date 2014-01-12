@@ -51,6 +51,7 @@ import org.pitest.functional.predicate.True;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
@@ -61,7 +62,6 @@ import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
-import org.pitest.testng.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
@@ -393,7 +393,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   private void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration());
+    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
   }
 
   private void createAndRun(final Configuration configuration) {

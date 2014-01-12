@@ -14,13 +14,52 @@
  */
 package org.pitest.junit;
 
+import org.junit.experimental.categories.Category;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestClassIdentifier;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
+  private TestGroupConfig config;
+
+  public JUnitTestClassIdentifier(TestGroupConfig config) {
+
+    this.config = config;
+  }
+
   public boolean isATestClass(final ClassInfo a) {
     return TestInfo.isWithinATestClass(a);
+  }
+
+  public boolean isIncluded(ClassInfo a) {
+    List<String> included = config.getIncludedGroups();
+    return included.isEmpty() || !Collections.disjoint(included, getCategories(a));
+  }
+
+  public boolean isExcluded(ClassInfo a) {
+    List<String> excluded = config.getExcludedGroups();
+    return !excluded.isEmpty() && !Collections.disjoint(excluded, getCategories(a));
+  }
+
+  private List<String> getCategories(ClassInfo a) {
+    List<String> categories = new ArrayList<String>();
+    try {
+      if (a.hasAnnotation(Category.class)) {
+        Class<?> targetClass = Class.forName(a.getName().asJavaName());
+        Category annotation = targetClass.getAnnotation(Category.class);
+        for(Class category: annotation.value()) {
+          categories.add(category.getName());
+        }
+      }
+      return categories;
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Cannot find class " + a, e);
+    }
   }
 
 }

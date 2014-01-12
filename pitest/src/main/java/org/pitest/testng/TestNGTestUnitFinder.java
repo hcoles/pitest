@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.functional.FCollection;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
 import org.pitest.testapi.TestUnit;
