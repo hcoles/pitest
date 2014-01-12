@@ -21,10 +21,6 @@ import java.util.concurrent.Callable;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.pitest.functional.SideEffect2;
-import org.pitest.testapi.Description;
-import org.pitest.testapi.ResultCollector;
-import org.pitest.util.IsolationUtils;
 
 public class ForeignClassLoaderCustomRunnerExecutor implements Callable<List<String>> {
 

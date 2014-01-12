@@ -22,7 +22,6 @@ import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.foreignclassloader.Events;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.PitError;
 import org.pitest.util.Unchecked;
 import org.testng.ITestListener;
 import org.testng.TestNG;

@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static org.objectweb.asm.Opcodes.POP;
-
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
