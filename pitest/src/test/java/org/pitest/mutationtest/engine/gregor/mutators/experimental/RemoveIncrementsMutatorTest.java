@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -44,20 +45,31 @@ public class RemoveIncrementsMutatorTest extends MutatorTestBase {
   }
 
   @Test
+  public void shouldProvideAMeaningfulName() {
+    assertEquals("REMOVE_INCREMENTS_MUTATOR",
+        RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR.getName());
+  }
+  
+  @Test
   public void shouldRemoveArgumentsToIInc() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(HasIncrement.class);
     assertEquals(1, actual.size());
     final Mutant mutant = getFirstMutant(actual);
     assertMutantCallableReturns(new HasIncrement(), mutant, "1");
   }
-  
-  
+
+  private static class HasNoIncrements implements Callable<String> {
+
+    public String call() throws Exception {
+      return "foo";
+    }
+
+  }
+
   @Test
-  public void shouldRecordCorrectLineNumberForMutations() {
-    final Collection<MutationDetails> actual = findMutationsFor(HasIncrement.class);
-    assertEquals(1, actual.size());
-    final MutationDetails first = actual.iterator().next();
-    assertEquals(37, first.getLineNumber());
+  public void shouldCreateNoMutationsWhenNoIncrementsPresent() {
+    final Collection<MutationDetails> actual = findMutationsFor(HasNoIncrements.class);
+    assertThat(actual).isEmpty();
   }
 
 }
