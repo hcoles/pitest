@@ -14,15 +14,13 @@
  */
 package org.pitest.classinfo;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.coverage.codeassist.BridgeMethodFilter;
 import org.pitest.coverage.codeassist.MethodFilteringAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
@@ -34,7 +32,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     this.classInfo = classInfo;
   }
 
-  public final static ClassInfoBuilder getClassInfo(final ClassName name,
+  public static ClassInfoBuilder getClassInfo(final ClassName name,
       final byte[] bytes, final long hash) {
     final ClassReader reader = new ClassReader(bytes);
     final ClassVisitor writer = new NullVisitor();
@@ -81,7 +79,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       final boolean visible) {
     final String type = desc.substring(1, desc.length() - 1);
     this.classInfo.registerAnnotation(type);
-    return super.visitAnnotation(desc, visible);
+    return new ClassAnnotationValueVisitor(this.classInfo, new ClassName(type));
   }
 
   @Override
@@ -89,17 +87,63 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
 
-    return new InfoMethodVisitor(this.classInfo, methodVisitor, name, desc);
+    return new InfoMethodVisitor(this.classInfo, methodVisitor);
 
   }
 
+  private static class ClassAnnotationValueVisitor extends AnnotationVisitor {
+    private ClassInfoBuilder classInfo;
+    private ClassName annotation;
+
+    public ClassAnnotationValueVisitor(ClassInfoBuilder classInfo, ClassName annotation) {
+      super(Opcodes.ASM4, null);
+      this.classInfo = classInfo;
+      this.annotation = annotation;
+    }
+
+    @Override
+    public void visit(String name, Object value) {
+      if (name.equals("value")) {
+        classInfo.registerClassAnnotationValue(annotation, simplify(value));
+      }
+      super.visit(name, value);
+    }
+
+    @Override
+    public AnnotationVisitor visitArray(String name) {
+      if (name.equals("value")) {
+        final List<Object> arrayValue = new ArrayList<Object>();
+
+        return new AnnotationVisitor(Opcodes.ASM4, null) {
+          @Override
+          public void visit(String name, Object value) {
+            arrayValue.add(simplify(value));
+            super.visit(name, value);
+          }
+
+          @Override
+          public void visitEnd() {
+            classInfo.registerClassAnnotationValue(annotation, arrayValue.toArray());
+          }
+        };
+      }
+      return super.visitArray(name);
+    }
+
+    private Object simplify(Object value) {
+      Object newValue = value;
+      if (value instanceof Type) {
+        newValue = ((Type) value).getClassName();
+      }
+      return newValue;
+    }
+  }
 }
 
 class InfoMethodVisitor extends MethodVisitor {
   private final ClassInfoBuilder classInfo;
 
-  public InfoMethodVisitor(final ClassInfoBuilder classInfo,
-      final MethodVisitor writer, final String name, final String methodDesc) {
+  public InfoMethodVisitor(final ClassInfoBuilder classInfo, final MethodVisitor writer) {
     super(Opcodes.ASM4, writer);
     this.classInfo = classInfo;
   }
