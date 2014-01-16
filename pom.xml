@@ -53,7 +53,7 @@
     
        <profiles>
         <profile>
-            <id>prejava8</id>
+            <id>java8</id>
             <!-- can only verify java 8 when running with java 8. Would be preferable to allways make
                  this check using maven toolchains, but need to see if cloudbees can support this -->
             <activation>
@@ -64,11 +64,11 @@
             </modules>
         </profile>
         <profile>
-            <id>java8</id>
+            <id>prejava8</id>
             <!-- java 8 compatible release of powermock is not yet available, so disable
                  the maven verification checks when building with java8 for now-->
             <activation>
-                <jdk>[1.5,1.6,1.7,1.8)</jdk>
+                <jdk>[1.5,1.6,1.7]</jdk>
             </activation>
             <modules>
 	            <module>pitest-maven-verification</module>
@@ -197,6 +197,8 @@
 
     <!-- versions of libraries which are used in different projects or which are used for few artifacts -->
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <ant.version>1.8.3</ant.version>
         <hamcrest.version>1.3.RC2</hamcrest.version>
         <junit.version>4.10</junit.version>
