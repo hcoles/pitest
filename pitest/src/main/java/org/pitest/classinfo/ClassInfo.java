@@ -17,6 +17,7 @@ package org.pitest.classinfo;
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
@@ -34,6 +35,7 @@ public class ClassInfo {
   private final ClassPointer          superClass;
   private final Collection<ClassName> annotations;
   private final String                sourceFile;
+  private final Map<ClassName, Object> classAnnotationValues;
 
   public ClassInfo(final ClassPointer superClass,
       final ClassPointer outerClass, final ClassInfoBuilder builder) {
@@ -45,6 +47,7 @@ public class ClassInfo {
     this.annotations = FCollection.map(builder.annotations,
         ClassName.stringToClassName());
     this.sourceFile = builder.sourceFile;
+    this.classAnnotationValues = builder.classAnnotationValues;
   }
 
   public int getNumberOfCodeLines() {
@@ -93,6 +96,10 @@ public class ClassInfo {
 
   public boolean hasAnnotation(final ClassName annotation) {
     return this.annotations.contains(annotation);
+  }
+
+  public Object getClassAnnotationValue(final ClassName annotation) {
+    return this.classAnnotationValues.get(annotation);
   }
 
   public boolean descendsFrom(final Class<?> clazz) {
