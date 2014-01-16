@@ -263,11 +263,11 @@ public class OptionsParser {
 
     this.includedGroupsSpec = parserAccepts(INCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("TestNG groups to include");
+        .describedAs("TestNG groups/JUnit categories to include");
 
     this.excludedGroupsSpec = parserAccepts(EXCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("TestNG groups to include");
+        .describedAs("TestNG groups/JUnit categories to include");
 
     this.mutationUnitSizeSpec = parserAccepts(MUTATION_UNIT_SIZE)
         .withRequiredArg()

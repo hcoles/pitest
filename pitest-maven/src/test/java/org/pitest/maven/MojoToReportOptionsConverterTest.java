@@ -218,19 +218,19 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
   public void testParsesTestGroupsToExclude() {
-    final ReportOptions actual = parseConfig("<excludedTestNGGroups><value>foo</value><value>bar</value></excludedTestNGGroups>");
+    final ReportOptions actual = parseConfig("<excludedGroups><value>foo</value><value>bar</value></excludedGroups>");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getExcludedGroups());
   }
 
   public void testParsesTestGroupsToInclude() {
-    final ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    final ReportOptions actual = parseConfig("<includedGroups><value>foo</value><value>bar</value></includedGroups>");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }
 
   public void testMaintainsOrderOfClassPath() {
-    final ReportOptions actual = parseConfig("<includedTestNGGroups><value>foo</value><value>bar</value></includedTestNGGroups>");
+    final ReportOptions actual = parseConfig("<includedGroups><value>foo</value><value>bar</value></includedGroups>");
     assertEquals(this.classPath, actual.getClassPathElements());
   }
 

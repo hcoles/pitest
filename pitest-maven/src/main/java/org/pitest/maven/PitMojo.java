@@ -190,18 +190,18 @@ public class PitMojo extends AbstractMojo {
   private boolean               timestampedReports;
 
   /**
-   * TestNG Groups to exclude
+   * TestNG Groups/JUnit Categories to exclude
    * 
-   * @parameter expression="${excludedTestNGGroups}"
+   * @parameter expression="${excludedGroups}"
    */
-  private ArrayList<String>          excludedTestNGGroups;
+  private ArrayList<String> excludedGroups;
 
   /**
-   * TestNG Groups to include
+   * TestNG Groups/JUnit Categories to include
    * 
-   * @parameter expression="${includedTestNGGroups}"
+   * @parameter expression="${includedGroups}"
    */
-  private ArrayList<String>          includedTestNGGroups;
+  private ArrayList<String> includedGroups;
 
   /**
    * Maximum number of mutations to include in a single analysis unit.
@@ -409,12 +409,12 @@ public class PitMojo extends AbstractMojo {
     return this.failWhenNoMutations;
   }
 
-  public List<String> getExcludedTestNGGroups() {
-    return this.excludedTestNGGroups;
+  public List<String> getExcludedGroups() {
+    return this.excludedGroups;
   }
 
-  public List<String> getIncludedTestNGGroups() {
-    return this.includedTestNGGroups;
+  public List<String> getIncludedGroups() {
+    return this.includedGroups;
   }
 
   public int getMutationUnitSize() {

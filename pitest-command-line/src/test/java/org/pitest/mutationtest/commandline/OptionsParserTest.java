@@ -297,7 +297,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfExcludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs(
-        "--excludedTestNGGroups", "foo,bar");
+        "--excludedGroups", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getExcludedGroups());
   }
@@ -305,7 +305,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfIncludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs(
-        "--includedTestNGGroups", "foo,bar");
+        "--includedGroups", "foo,bar");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }

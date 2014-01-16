@@ -200,11 +200,11 @@ public class PitestTask extends Task { // NO_UCD (test only)
     setOption(ConfigOption.CODE_PATHS, glob);
   }
 
-  public void setIncludedTestNGGroups(final String value) {
+  public void setIncludedGroups(final String value) {
     this.setOption(ConfigOption.INCLUDED_GROUPS, value);
   }
 
-  public void setExcludedTestNGGroups(final String value) {
+  public void setExcludedGroups(final String value) {
     this.setOption(ConfigOption.EXCLUDED_GROUPS, value);
   }
 

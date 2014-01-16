@@ -129,8 +129,8 @@ public class MojoToReportOptionsConverter {
 
   private void setTestType(final ReportOptions data) {
     final TestGroupConfig conf = new TestGroupConfig(
-        this.mojo.getExcludedTestNGGroups(),
-        this.mojo.getIncludedTestNGGroups());
+        this.mojo.getExcludedGroups(),
+        this.mojo.getIncludedGroups());
     final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
         new ClassPathByteArraySource(data.getClassPath()));
 

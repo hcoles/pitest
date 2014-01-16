@@ -117,13 +117,13 @@ public enum ConfigOption {
    */
   CODE_PATHS("mutableCodePaths"),
   /**
-   * TestNG groups to include
+   * TestNG groups/JUnit categories to include
    */
-  INCLUDED_GROUPS("includedTestNGGroups"),
+  INCLUDED_GROUPS("includedGroups"),
   /**
-   * TestNG groups to exclude
+   * TestNG groupsJUnit categories to exclude
    */
-  EXCLUDED_GROUPS("excludedTestNGGroups"),
+  EXCLUDED_GROUPS("excludedGroups"),
   /**
    * Maximum number of mutations to include within a single unit of analysis.
    */
