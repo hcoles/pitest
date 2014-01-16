@@ -15,6 +15,7 @@ import org.pitest.execute.StaticConfiguration;
 import org.pitest.execute.UnGroupedStrategy;
 import org.pitest.execute.containers.UnContainer;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 
@@ -23,7 +24,7 @@ import com.example.spock.ParametrizedSpockTest;
 
 public class TestJUnitConfigurationForSpock {
   
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(new TestGroupConfig());
   private Pitest                             pitest;
   private Container                          container;
 

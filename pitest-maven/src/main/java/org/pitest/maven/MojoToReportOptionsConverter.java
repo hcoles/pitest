@@ -29,7 +29,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.testng.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 
@@ -129,8 +129,8 @@ public class MojoToReportOptionsConverter {
 
   private void setTestType(final ReportOptions data) {
     final TestGroupConfig conf = new TestGroupConfig(
-        this.mojo.getExcludedTestNGGroups(),
-        this.mojo.getIncludedTestNGGroups());
+        this.mojo.getExcludedGroups(),
+        this.mojo.getIncludedGroups());
     final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
         new ClassPathByteArraySource(data.getClassPath()));
 

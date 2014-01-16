@@ -22,6 +22,7 @@ import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
@@ -29,8 +30,14 @@ import org.pitest.testapi.TestUnitFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
+  private final TestGroupConfig config;
+
   private static final Pattern VERSION_PATTERN = Pattern
                                                    .compile("(\\d+)\\.(\\d+).*");
+
+  public JUnitCompatibleConfiguration(TestGroupConfig config) {
+    this.config = config;
+  }
 
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
@@ -44,7 +51,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   public TestClassIdentifier testClassIdentifier() {
-    return new JUnitTestClassIdentifier();
+    return new JUnitTestClassIdentifier(this.config);
   }
 
   public Option<PitHelpError> verifyEnvironment() {

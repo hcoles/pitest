@@ -29,6 +29,7 @@ import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
@@ -192,14 +193,6 @@ public class CoverageProcessSystemTest {
         .contains(coverageFor(TesteeWithMultipleLines.class)));
   }
 
-  protected void printCoverage(final FunctionalList<CoverageResult> coveredClasses) {
-    for (final CoverageResult i : coveredClasses) {
-      for (final ClassStatistics j : i.getCoverage()) {
-        System.out.println(j);
-      }
-    }
-  }
-
   @Test
   public void shouldCalculateCoverageForSmallMethodThatThrowsException()
       throws IOException, InterruptedException, ExecutionException {
@@ -286,7 +279,7 @@ public class CoverageProcessSystemTest {
       throws IOException, InterruptedException, ExecutionException {
 
     final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(), true, -1);
+        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
 
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
 

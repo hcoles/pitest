@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.Option;
+import org.pitest.testapi.TestGroupConfig;
 
 public class TestNGConfigurationTest {
 

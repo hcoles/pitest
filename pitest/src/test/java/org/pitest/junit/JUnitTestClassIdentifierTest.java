@@ -18,32 +18,47 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class JUnitTestClassIdentifierTest {
 
   private JUnitTestClassIdentifier testee;
   private Repository               classRepostory;
+  private List<String>             excludedGroups = new ArrayList<String>();
+  private List<String>             includedGroups = new ArrayList<String>();
 
   @Before
   public void setUp() {
-    this.testee = new JUnitTestClassIdentifier();
+    TestGroupConfig groupConfig = new TestGroupConfig(excludedGroups, includedGroups);
+    this.testee = new JUnitTestClassIdentifier(groupConfig);
     this.classRepostory = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()));
   }
 
-  static class JUnit3 extends TestCase {
+  @Test
+  public void shouldNotRecogniseNonTestClassesAsTests() {
+    assertFalse(this.testee.isATestClass(find(java.lang.String.class)));
+  }
 
+  static class JUnit3 extends TestCase {
   }
 
   @Test
   public void shouldRecogniseJUnit3ClassesAsTests() {
-    this.testee.isATestClass(find(TestCase.class));
+    assertTrue(this.testee.isATestClass(find(JUnit3.class)));
   }
 
   static abstract class AbstractJUnit3 extends TestCase {
@@ -52,7 +67,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldRecogniseAbstractJUnit3ClassesAsTests() {
-    this.testee.isATestClass(find(AbstractJUnit3.class));
+    assertTrue(this.testee.isATestClass(find(AbstractJUnit3.class)));
   }
 
   @RunWith(Suite.class)
@@ -62,7 +77,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldRecogniseClassesWithRunWithAnnotationsAsTests() {
-    this.testee.isATestClass(find(HasRunWith.class));
+    assertTrue(this.testee.isATestClass(find(HasRunWith.class)));
   }
 
   private static class HasTestAnnotation {
@@ -78,12 +93,12 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldRecogniseClassesWithJUnit4AnnotationsAsTests() {
-    this.testee.isATestClass(find(HasTestAnnotation.class));
+    assertTrue(this.testee.isATestClass(find(HasTestAnnotation.class)));
   }
 
   @Test
   public void shouldRecogniseNestedClassesWithTestsAsTestsClasses() {
-    this.testee.isATestClass(find(HasTestAnnotation.Nested.class));
+    assertTrue(this.testee.isATestClass(find(HasTestAnnotation.Nested.class)));
   }
 
   private static class DescendentOfTest extends HasTestAnnotation {
@@ -92,7 +107,58 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldRecogniseDecendentsOfTestsAsTestsClasses() {
-    this.testee.isATestClass(find(DescendentOfTest.class));
+    assertTrue(this.testee.isATestClass(find(DescendentOfTest.class)));
+  }
+
+  private interface AlphaTests {}
+  private interface BetaTests {}
+  private interface GammaTests {}
+
+  private class NoCategoryTest extends HasTestAnnotation {}
+
+  @Category(AlphaTests.class)
+  private class AlphaCategoryTest extends HasTestAnnotation {}
+
+  @Category(BetaTests.class)
+  private class BetaCategoryTest extends HasTestAnnotation {}
+
+  @Category({BetaTests.class, GammaTests.class})
+  private class TwoCategoryTest extends HasTestAnnotation {}
+
+  @Test
+  public void noIncludedCategoriesMeansIncludeEverything() {
+    includedGroups.clear();
+    assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+
+  @Test
+  public void shouldOnlyIncludeTestsInIncludedCategories() {
+    includedGroups.add(BetaTests.class.getName());
+    assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+
+  @Test
+  public void noExcludedCategoriesMeansExcludeNothing() {
+    excludedGroups.clear();
+    assertFalse(this.testee.isExcluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(AlphaCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(BetaCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(TwoCategoryTest.class)));
+  }
+
+  @Test
+  public void shouldOnlyExcludeTestsInExcludedCategories() {
+    excludedGroups.add(BetaTests.class.getName());
+    assertFalse(this.testee.isExcluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isExcluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isExcluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isExcluded(find(TwoCategoryTest.class)));
   }
 
   private ClassInfo find(final Class<?> clazz) {

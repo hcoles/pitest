@@ -17,6 +17,7 @@ package org.pitest.testng;
 import java.util.Collections;
 import java.util.List;
 
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.foreignclassloader.Events;
@@ -39,7 +40,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
-  private final TestGroupConfig              config;
+  private final TestGroupConfig config;
 
   public TestNGTestUnit(
       final ClassLoaderDetectionStrategy classloaderDetection,

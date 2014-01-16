@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.testng;
+package org.pitest.testapi;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +28,10 @@ public class TestGroupConfig {
         : Collections.<String> emptyList());
     this.includedGroups = (includedGroups != null ? includedGroups
         : Collections.<String> emptyList());
+  }
+
+  public TestGroupConfig() {
+    this(null, null);
   }
 
   public List<String> getExcludedGroups() {

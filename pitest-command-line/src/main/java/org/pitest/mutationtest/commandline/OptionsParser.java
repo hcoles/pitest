@@ -70,11 +70,11 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
 import org.pitest.project.ProjectConfigurationParserFactory;
-import org.pitest.testng.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -263,11 +263,11 @@ public class OptionsParser {
 
     this.includedGroupsSpec = parserAccepts(INCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("TestNG groups to include");
+        .describedAs("TestNG groups/JUnit categories to include");
 
     this.excludedGroupsSpec = parserAccepts(EXCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("TestNG groups to include");
+        .describedAs("TestNG groups/JUnit categories to include");
 
     this.mutationUnitSizeSpec = parserAccepts(MUTATION_UNIT_SIZE)
         .withRequiredArg()

@@ -24,13 +24,13 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.Configuration;
-import org.pitest.testng.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 
 public class ConfigurationFactory {
 
   private final ClassByteArraySource source;
-  private final TestGroupConfig      config;
+  private final TestGroupConfig config;
 
   public ConfigurationFactory(final TestGroupConfig config,
       final ClassByteArraySource source) {
@@ -44,7 +44,7 @@ public class ConfigurationFactory {
 
     if (classRepository.fetchClass(
         ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
-      configs.add(new JUnitCompatibleConfiguration());
+      configs.add(new JUnitCompatibleConfiguration(this.config));
     }
 
     if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG"))

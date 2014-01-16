@@ -1,6 +1,7 @@
 package org.pitest.classpath;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
-import org.pitest.classpath.CodeSource;
 import org.pitest.functional.Option;
 import org.pitest.testapi.TestClassIdentifier;
 
@@ -61,8 +61,30 @@ public class CodeSourceTest {
   }
 
   @Test
-  public void shouldIdentifyAllTestCodeOnTestPath() {
+  public void shouldIdentifyTestClassesOnTestPath() {
     when(this.testIdentifer.isATestClass(this.foo)).thenReturn(true);
+    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(true);
+    when(this.classPath.test()).thenReturn(
+        Arrays.asList(this.foo.getName(), this.bar.getName()));
+
+    assertEquals(Arrays.asList(this.foo), this.testee.getTests());
+  }
+
+  @Test
+  public void shouldOnlyIdentifyIncludedTestClassesOnTestPath() {
+    when(this.testIdentifer.isATestClass(any(ClassInfo.class))).thenReturn(true);
+    when(this.testIdentifer.isIncluded(foo)).thenReturn(true);
+    when(this.classPath.test()).thenReturn(
+        Arrays.asList(this.foo.getName(), this.bar.getName()));
+
+    assertEquals(Arrays.asList(this.foo), this.testee.getTests());
+  }
+
+  @Test
+  public void shouldNotIdentifyExcludedTestClassesOnTestPath() {
+    when(this.testIdentifer.isATestClass(any(ClassInfo.class))).thenReturn(true);
+    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(true);
+    when(this.testIdentifer.isExcluded(this.bar)).thenReturn(true);
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
 
@@ -101,7 +123,7 @@ public class CodeSourceTest {
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
     when(this.repository.hasClass(new ClassName("com.example.Foo")))
         .thenReturn(false);
-    assertEquals(Option.none(), this.testee.findTestee("com.example.TestFoo"));
+    assertEquals(Option.<ClassName>none(), this.testee.findTestee("com.example.TestFoo"));
   }
 
   @Test

@@ -39,7 +39,7 @@ import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.testng.TestGroupConfig;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
@@ -367,8 +367,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     verifyResults(KILLED);
   }
-
-
 
   private static void copy(final InputStream in, final OutputStream out)
       throws IOException {

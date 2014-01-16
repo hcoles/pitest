@@ -36,6 +36,7 @@ import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
@@ -91,7 +92,7 @@ public abstract class ReportTestBase {
   }
   
   protected void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration());
+    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
   }
 
   protected void createAndRun(final Configuration configuration) {

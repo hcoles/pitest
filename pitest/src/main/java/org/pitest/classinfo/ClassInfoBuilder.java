@@ -14,7 +14,9 @@
  */
 package org.pitest.classinfo;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 class ClassInfoBuilder {
@@ -26,6 +28,7 @@ class ClassInfoBuilder {
   String             sourceFile;
   final Set<Integer> codeLines   = new HashSet<Integer>();
   final Set<String>  annotations = new HashSet<String>();
+  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>();
 
   public void registerCodeLine(final int line) {
     this.codeLines.add(line);
@@ -33,5 +36,9 @@ class ClassInfoBuilder {
 
   public void registerAnnotation(final String annotation) {
     this.annotations.add(annotation);
+  }
+
+  public void registerClassAnnotationValue(final ClassName annotation, final Object value) {
+    classAnnotationValues.put(annotation, value);
   }
 }

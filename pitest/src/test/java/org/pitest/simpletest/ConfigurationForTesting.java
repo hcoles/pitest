@@ -12,10 +12,7 @@ import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
-import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
-import org.pitest.testapi.TestSuiteFinder;
-import org.pitest.testapi.TestUnitFinder;
+import org.pitest.testapi.*;
 
 public class ConfigurationForTesting implements Configuration {
 
@@ -35,7 +32,7 @@ public class ConfigurationForTesting implements Configuration {
       }
     }
 
-  };
+  }
 
   public TestUnitFinder testUnitFinder() {
 
@@ -57,12 +54,11 @@ public class ConfigurationForTesting implements Configuration {
   }
 
   public TestClassIdentifier testClassIdentifier() {
-    return new TestClassIdentifier() {
+    return new BaseTestClassIdentifier() {
 
       public boolean isATestClass(final ClassInfo a) {
         return a.hasAnnotation(TestAnnotationForTesting.class);
       }
-
     };
   }
 

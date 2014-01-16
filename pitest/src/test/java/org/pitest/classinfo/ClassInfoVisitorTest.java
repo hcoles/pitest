@@ -14,15 +14,19 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.pitest.coverage.codeassist.ClassUtils;
 import org.pitest.coverage.codeassist.samples.Bridge.HasBridgeMethod;
 import org.pitest.coverage.codeassist.samples.HasDefaultConstructor;
 import org.pitest.coverage.codeassist.samples.NoDefaultConstructor;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static org.junit.Assert.*;
 
 public class ClassInfoVisitorTest {
 
@@ -76,8 +80,65 @@ public class ClassInfoVisitorTest {
     assertEquals("String.java", actual.sourceFile);
   }
 
+  @Test
+  public void shouldRecordClassAnnotationValues() throws ClassNotFoundException {
+    final String sampleName = HasSimpleValue.class.getName();
+    ClassInfoBuilder actual = getClassInfo(sampleName, ClassUtils.classAsBytes(sampleName));
+
+    assertEquals(1, actual.classAnnotationValues.size());
+    Object expectedValue = "blah";
+    Object actualValue = actual.classAnnotationValues.get(ClassName.fromClass(SimpleValue.class));
+    assertEquals(expectedValue, actualValue);
+  }
+
+  @Test
+  public void shouldRecordClassAnnotationArrayValues() throws ClassNotFoundException {
+    final String sampleName = HasStringValues.class.getName();
+    ClassInfoBuilder actual = getClassInfo(sampleName, ClassUtils.classAsBytes(sampleName));
+
+    assertEquals(1, actual.classAnnotationValues.size());
+    Object[] expectedStrings = {"this", "that"};
+    Object[] actualStrings = (Object[]) actual.classAnnotationValues.get(ClassName.fromClass(StringValues.class));
+    assertArrayEquals(expectedStrings, actualStrings);
+  }
+
+  @Test
+  public void shouldStoreTypeArrayValuesAsClassNames() throws ClassNotFoundException {
+    final String sampleName = HasCategory.class.getName();
+    ClassInfoBuilder actual = getClassInfo(sampleName, ClassUtils.classAsBytes(sampleName));
+
+    assertEquals(1, actual.classAnnotationValues.size());
+    Object[] expectedCategoryNames = {First.class.getName(), Second.class.getName()};
+    Object[] actualCategoryNames = (Object[]) actual.classAnnotationValues.get(ClassName.fromClass(Category.class));
+    assertArrayEquals(expectedCategoryNames, actualCategoryNames);
+  }
+
   private ClassInfoBuilder getClassInfo(final String name, final byte[] bytes) {
     return ClassInfoVisitor.getClassInfo(new ClassName(name), bytes, 0);
   }
 
+  @Target(TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  private @interface SimpleValue {
+    String value();
+  }
+
+  @SimpleValue("blah")
+  private class HasSimpleValue{}
+
+  @Target(TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  private @interface StringValues {
+    String[] value();
+  }
+
+  @StringValues({"this", "that"})
+  private class HasStringValues{}
+
+  private interface First{}
+  private interface Second{}
+
+  @Category({First.class, Second.class})
+  private class HasCategory{}
 }
+

@@ -219,17 +219,17 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldPassIncludedTestNGGroupsOptionToJavaTask() {
-    this.pitestTask.setIncludedTestNGGroups("foo");
+  public void shouldPassIncludedGroupsOptionToJavaTask() {
+    this.pitestTask.setIncludedGroups("foo");
     this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--includedTestNGGroups=foo");
+    verify(this.arg).setValue("--includedGroups=foo");
   }
 
   @Test
-  public void shouldPassExcludedTestNGGroupsOptionToJavaTask() {
-    this.pitestTask.setExcludedTestNGGroups("foo");
+  public void shouldPassExcludedGroupsOptionToJavaTask() {
+    this.pitestTask.setExcludedGroups("foo");
     this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--excludedTestNGGroups=foo");
+    verify(this.arg).setValue("--excludedGroups=foo");
   }
 
   @Test
