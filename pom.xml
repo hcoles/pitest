@@ -68,7 +68,7 @@
             <!-- java 8 compatible release of powermock is not yet available, so disable
                  the maven verification checks when building with java8 for now-->
             <activation>
-                <jdk>[1.5,1.6,1.7]</jdk>
+                <jdk>[1.5,1.8)</jdk>
             </activation>
             <modules>
 	            <module>pitest-maven-verification</module>
