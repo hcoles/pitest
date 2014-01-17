@@ -27,8 +27,8 @@ class ClassInfoBuilder {
   String             superClass;
   String             sourceFile;
   final Set<Integer> codeLines   = new HashSet<Integer>();
-  final Set<String>  annotations = new HashSet<String>();
-  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>();
+  final Set<String>  annotations = new HashSet<String>(0);
+  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>(0);
 
   public void registerCodeLine(final int line) {
     this.codeLines.add(line);
@@ -41,4 +41,5 @@ class ClassInfoBuilder {
   public void registerClassAnnotationValue(final ClassName annotation, final Object value) {
     classAnnotationValues.put(annotation, value);
   }
+
 }
