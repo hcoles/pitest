@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
+
 pitest
 ======
 
