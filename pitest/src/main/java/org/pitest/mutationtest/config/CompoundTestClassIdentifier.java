@@ -36,24 +36,12 @@ public class CompoundTestClassIdentifier implements TestClassIdentifier {
     return FCollection.contains(this.children, isIncludedClass(a));
   }
 
-  public boolean isExcluded(ClassInfo a) {
-    return FCollection.contains(this.children, isExcludedClass(a));}
 
   private F<TestClassIdentifier, Boolean> isIncludedClass(final ClassInfo classInfo) {
     return new F<TestClassIdentifier, Boolean>() {
 
       public Boolean apply(final TestClassIdentifier a) {
         return a.isIncluded(classInfo);
-      }
-
-    };
-  }
-
-  private F<TestClassIdentifier, Boolean> isExcludedClass(final ClassInfo classInfo) {
-    return new F<TestClassIdentifier, Boolean>() {
-
-      public Boolean apply(final TestClassIdentifier a) {
-        return a.isExcluded(classInfo);
       }
 
     };

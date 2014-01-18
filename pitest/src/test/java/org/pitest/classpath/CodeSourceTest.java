@@ -5,6 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -83,12 +84,11 @@ public class CodeSourceTest {
   @Test
   public void shouldNotIdentifyExcludedTestClassesOnTestPath() {
     when(this.testIdentifer.isATestClass(any(ClassInfo.class))).thenReturn(true);
-    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(true);
-    when(this.testIdentifer.isExcluded(this.bar)).thenReturn(true);
+    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(false);
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
 
-    assertEquals(Arrays.asList(this.foo), this.testee.getTests());
+    assertEquals(Collections.emptyList(), this.testee.getTests());
   }
 
   @Test

@@ -22,6 +22,4 @@ public interface TestClassIdentifier {
 
   public boolean isIncluded(ClassInfo a);
 
-  public boolean isExcluded(ClassInfo a);
-
 }

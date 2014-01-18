@@ -26,10 +26,9 @@ import java.util.List;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
-  private TestGroupConfig config;
+  private final TestGroupConfig config;
 
   public JUnitTestClassIdentifier(TestGroupConfig config) {
-
     this.config = config;
   }
 
@@ -38,11 +37,15 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
   }
 
   public boolean isIncluded(ClassInfo a) {
+    return isIncludedCategory(a) & !isExcludedCategory(a);
+  }
+  
+  private boolean isIncludedCategory(ClassInfo a) {
     List<String> included = config.getIncludedGroups();
     return included.isEmpty() || !Collections.disjoint(included, Arrays.asList(getCategories(a)));
   }
 
-  public boolean isExcluded(ClassInfo a) {
+  private boolean isExcludedCategory(ClassInfo a) {
     List<String> excluded = config.getExcludedGroups();
     return !excluded.isEmpty() && !Collections.disjoint(excluded, Arrays.asList(getCategories(a)));
   }

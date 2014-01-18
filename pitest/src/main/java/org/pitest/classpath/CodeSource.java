@@ -56,7 +56,7 @@ public class CodeSource implements ClassInfoSource {
   @SuppressWarnings("unchecked")
   public List<ClassInfo> getTests() {
     return flatMap(this.classPath.test(), nameToClassInfo()).filter(
-        and(isWithinATestClass(), isIncludedClass(), not(isExcludedClass()), not(ClassInfo.matchIfAbstract())));
+        and(isWithinATestClass(), isIncludedClass(), not(ClassInfo.matchIfAbstract())));
   }
 
   public ClassPath getClassPath() {
@@ -93,7 +93,6 @@ public class CodeSource implements ClassInfoSource {
 
   private F<ClassInfo, Boolean> isIncludedClass() {
     return new F<ClassInfo, Boolean>() {
-
       public Boolean apply(final ClassInfo a) {
         return CodeSource.this.testIdentifier.isIncluded(a);
       }
@@ -101,15 +100,5 @@ public class CodeSource implements ClassInfoSource {
     };
 
   }
-
-  private F<ClassInfo, Boolean> isExcludedClass() {
-    return new F<ClassInfo, Boolean>() {
-
-      public Boolean apply(final ClassInfo a) {
-        return CodeSource.this.testIdentifier.isExcluded(a);
-      }
-
-    };
-
-  }
+  
 }

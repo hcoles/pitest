@@ -126,7 +126,7 @@ public class JUnitTestClassIdentifierTest {
   private class TwoCategoryTest extends HasTestAnnotation {}
 
   @Test
-  public void noIncludedCategoriesMeansIncludeEverything() {
+  public void shouldIncludeEverythingWhenNoCategoriesSpecified() {
     includedGroups.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
@@ -144,21 +144,21 @@ public class JUnitTestClassIdentifierTest {
   }
 
   @Test
-  public void noExcludedCategoriesMeansExcludeNothing() {
+  public void shouldNotExcludeWhenNoCategoriesSpecified() {
     excludedGroups.clear();
-    assertFalse(this.testee.isExcluded(find(NoCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(AlphaCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(BetaCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
   }
 
   @Test
   public void shouldOnlyExcludeTestsInExcludedCategories() {
     excludedGroups.add(BetaTests.class.getName());
-    assertFalse(this.testee.isExcluded(find(NoCategoryTest.class)));
-    assertFalse(this.testee.isExcluded(find(AlphaCategoryTest.class)));
-    assertTrue(this.testee.isExcluded(find(BetaCategoryTest.class)));
-    assertTrue(this.testee.isExcluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(TwoCategoryTest.class)));
   }
 
   private ClassInfo find(final Class<?> clazz) {
