@@ -49,6 +49,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.Mutater;
@@ -188,10 +189,12 @@ public class MutationCoverageReportTest {
 
   private CombinedStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
-        new GregorEngineFactory(), this.history, this.coverage,this.listenerFactory,
-        output).with(this.mutationFactory).with(this.verifier);
+        new GregorEngineFactory(), this.history, this.coverage,
+        this.listenerFactory, output).with(this.mutationFactory).with(
+        this.verifier);
 
-    this.testee = new MutationCoverage(strategies, null, this.code, this.data, new SettingsFactory(this.data),
+    this.testee = new MutationCoverage(strategies, null, this.code, this.data,
+        new SettingsFactory(this.data, PluginServices.makeForContextLoader()),
         new Timings());
     try {
       return this.testee.runReport();

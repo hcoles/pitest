@@ -33,6 +33,8 @@ public class PitMojo extends AbstractMojo {
   
   protected final Predicate<Artifact> filter;
   
+  protected final PluginServices plugins;
+  
   // Concrete List types declared for all fields to work around maven 2 bug
 
   /**
@@ -267,23 +269,26 @@ public class PitMojo extends AbstractMojo {
   protected final GoalStrategy  goalStrategy;
 
   public PitMojo() {
-    this(new RunPitStrategy(), new DependencyFilter());
+    this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
+        PitMojo.class.getClassLoader())), new PluginServices(
+        PitMojo.class.getClassLoader()));
   }
 
-  public PitMojo(final GoalStrategy strategy, Predicate<Artifact> filter) {
+  public PitMojo(final GoalStrategy strategy, Predicate<Artifact> filter, PluginServices plugins) {
     this.goalStrategy = strategy;
     this.filter = filter;
+    this.plugins = plugins;
   }
 
   public final void execute() throws MojoExecutionException,
       MojoFailureException {
     if (shouldRun()) {
       
-      for ( ToolClasspathPlugin each  : PluginServices.findToolClasspathPlugins() ) {
+      for ( ToolClasspathPlugin each  : plugins.findToolClasspathPlugins() ) {
         this.getLog().info("Found plugin : " + each.description());
       }
       
-      for ( ClientClasspathPlugin each  : PluginServices.findClientClasspathPlugins() ) {
+      for ( ClientClasspathPlugin each  : plugins.findClientClasspathPlugins() ) {
         this.getLog().info("Found shared classpath plugin : " + each.description());
       }
       
@@ -320,7 +325,7 @@ public class PitMojo extends AbstractMojo {
 
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins));
   }
 
   protected File detectBaseDir() {

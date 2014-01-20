@@ -35,6 +35,9 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.config.PluginServices;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
@@ -48,7 +51,11 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   @Mock
   protected Predicate<Artifact> filter;
+  
+  @Mock
+  protected PluginServices plugins;
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -57,6 +64,8 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         ClassPath.getClassPathElementsAsFiles(), fileToString()));
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");
+    when(this.plugins.findToolClasspathPlugins()).thenReturn(Collections.emptyList());
+    when(this.plugins.findClientClasspathPlugins()).thenReturn(Collections.emptyList());
   }
 
   private F<File, String> fileToString() {
@@ -86,8 +95,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   }
 
   protected PitMojo createPITMojo(final String config) throws Exception {
-
-    final PitMojo pitMojo = new PitMojo(this.executionStrategy, filter);
+    final PitMojo pitMojo = new PitMojo(this.executionStrategy, filter, plugins);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }

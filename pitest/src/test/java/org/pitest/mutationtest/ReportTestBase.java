@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.PathFilter;
@@ -24,6 +23,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
@@ -46,13 +46,14 @@ public abstract class ReportTestBase {
   protected MetaDataExtractor metaDataExtractor;
   protected ReportOptions     data;
 
+  private PluginServices plugins;
+  
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
     this.metaDataExtractor = new MetaDataExtractor();
+    this.plugins = PluginServices.makeForContextLoader();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    // this.data.setMutators(Mutator.DEFAULTS.asCollection());
   }
 
   protected MutationResultListenerFactory listenerFactory() {
@@ -124,7 +125,7 @@ public abstract class ReportTestBase {
           listenerFactory(), null);
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
-          code, this.data, new SettingsFactory(this.data), timings);
+          code, this.data, new SettingsFactory(this.data, plugins), timings);
 
       testee.runReport();
     } catch (final IOException e) {

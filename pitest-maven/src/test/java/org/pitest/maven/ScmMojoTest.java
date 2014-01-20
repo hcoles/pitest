@@ -21,6 +21,7 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.mockito.Mock;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 
 public class ScmMojoTest extends BasePitMojoTest {
@@ -42,7 +43,7 @@ public class ScmMojoTest extends BasePitMojoTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    this.testee = new ScmMojo(this.executionStrategy, this.manager, filter);
+    this.testee = new ScmMojo(this.executionStrategy, this.manager, filter, plugins);
     this.testee.setScmRootDir(new File("foo"));
     when(this.project.getBuild()).thenReturn(this.build);
     when(this.build.getSourceDirectory()).thenReturn("foo");
@@ -90,7 +91,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     setFileWithStatus(ScmFileStatus.ADDED);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   private void setFileWithStatus(final ScmFileStatus status)
@@ -106,7 +107,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     setFileWithStatus(ScmFileStatus.MODIFIED);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   public void testUnknownAndDeletedClassesAreNotMutationTested()
@@ -119,7 +120,7 @@ public class ScmMojoTest extends BasePitMojoTest {
                 "foo/bar/Bar.java", ScmFileStatus.UNKNOWN))));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   public void testCanOverrideInspectedStatus() throws Exception {
@@ -130,7 +131,7 @@ public class ScmMojoTest extends BasePitMojoTest {
         createPomWithConfiguration("<include><value>DELETED</value><value>UNKNOWN</value></include>"));
     this.testee.execute();
     verify(this.executionStrategy, times(1)).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   public void testDoesNotAnalysePomProjects() throws Exception {
@@ -139,7 +140,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     when(this.project.getPackaging()).thenReturn("pom");
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   private void setupConnection() {

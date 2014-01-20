@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.config.PluginServices;
 
 @Category(SystemTest.class)
 public class DependencyFilterIT {
@@ -36,7 +37,7 @@ public class DependencyFilterIT {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new DependencyFilter();
+    this.testee = new DependencyFilter(PluginServices.makeForContextLoader());
   }
 
   @Test

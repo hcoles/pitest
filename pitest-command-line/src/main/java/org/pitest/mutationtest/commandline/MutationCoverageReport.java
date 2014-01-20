@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.commandline;
 
 import org.pitest.coverage.CoverageSummary;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.AnalysisResult;
@@ -29,7 +30,8 @@ public class MutationCoverageReport {
 
   public static void main(final String args[]) {
 
-    final OptionsParser parser = new OptionsParser(new PluginFilter());
+    final PluginServices plugins = PluginServices.makeForContextLoader();
+    final OptionsParser parser = new OptionsParser(new PluginFilter(plugins));
     final ParseResult pr = parser.parse(args);
 
     if (!pr.isOk()) {
@@ -38,7 +40,7 @@ public class MutationCoverageReport {
     } else {
       final ReportOptions data = pr.getOptions();
       
-      final CombinedStatistics stats = runReport(data);
+      final CombinedStatistics stats = runReport(data, plugins);
       throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(), data.getCoverageThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(), data.getMutationThreshold());
     }
@@ -63,10 +65,10 @@ public class MutationCoverageReport {
     }
   }
 
-  private static CombinedStatistics runReport(final ReportOptions data) {
+  private static CombinedStatistics runReport(final ReportOptions data, PluginServices plugins) {
 
     final EntryPoint e = new EntryPoint();
-    final AnalysisResult result = e.execute(null, data);
+    final AnalysisResult result = e.execute(null, data, plugins);
     if (result.getError().hasSome()) {
       throw Unchecked.translateCheckedException(result.getError().value());
     }

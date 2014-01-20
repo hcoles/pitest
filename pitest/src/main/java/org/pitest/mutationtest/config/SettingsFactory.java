@@ -26,9 +26,11 @@ import org.pitest.util.StringUtil;
 public class SettingsFactory {
 
   private final ReportOptions options;
+  private final PluginServices plugins;
 
-  public SettingsFactory(final ReportOptions options) {
+  public SettingsFactory(final ReportOptions options, final PluginServices plugins) {
     this.options = options;
+    this.plugins = plugins;
   }
 
   public ResultOutputStrategy getOutputStrategy() {
@@ -44,7 +46,7 @@ public class SettingsFactory {
   }
 
   public MutationEngineFactory createEngine() {
-    for (final MutationEngineFactory each : PluginServices
+    for (final MutationEngineFactory each : plugins
         .findMutationEngines()) {
       if (each.name().equals(this.options.getMutationEngine())) {
         return each;
@@ -67,13 +69,13 @@ public class SettingsFactory {
   }
 
   public MutationGrouperFactory getMutationGrouper() {
-    final Collection<? extends MutationGrouperFactory> groupers = PluginServices
+    final Collection<? extends MutationGrouperFactory> groupers = plugins
         .findGroupers();
     return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
   }
 
   private Iterable<MutationResultListenerFactory> findListeners() {
-    final Iterable<? extends MutationResultListenerFactory> listeners = PluginServices
+    final Iterable<? extends MutationResultListenerFactory> listeners = plugins
         .findListeners();
     final Collection<MutationResultListenerFactory> matches = FCollection
         .filter(listeners, nameMatches(this.options.getOutputFormats()));
@@ -102,13 +104,13 @@ public class SettingsFactory {
   }
 
   public MutationFilterFactory createMutationFilter() {
-    final Collection<? extends MutationFilterFactory> filters = PluginServices
+    final Collection<? extends MutationFilterFactory> filters = plugins
         .findFilters();
     return new CompoundFilterFactory(filters);
   }
 
   public TestPrioritiserFactory getTestPrioritiser() {
-    final Collection<? extends TestPrioritiserFactory> testPickers = PluginServices
+    final Collection<? extends TestPrioritiserFactory> testPickers = plugins
         .findTestPrioritisers();
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }

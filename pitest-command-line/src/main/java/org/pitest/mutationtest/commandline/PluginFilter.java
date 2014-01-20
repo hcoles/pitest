@@ -12,8 +12,8 @@ public class PluginFilter implements Predicate<String>{
   
   private final Set<String> includedClassPathElement = new HashSet<String>();
   
-  public PluginFilter() {
-    FCollection.mapTo(PluginServices.findClientClasspathPlugins(), classToLocation(), includedClassPathElement);  
+  public PluginFilter(PluginServices plugin) {
+    FCollection.mapTo(plugin.findClientClasspathPlugins(), classToLocation(), includedClassPathElement);  
   }
 
   private static F<Object, String> classToLocation() {

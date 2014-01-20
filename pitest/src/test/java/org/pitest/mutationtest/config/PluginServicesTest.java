@@ -11,20 +11,22 @@ import org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactor
 import org.pitest.mutationtest.report.csv.CSVReportFactory;
 
 public class PluginServicesTest {
+  
+  private final PluginServices testee = PluginServices.makeForContextLoader();
 
   @Test
   public void shouldListDefaultEngineAsClientClasspathPlugin() {
-    assertTrue(FCollection.contains(PluginServices.findClientClasspathPlugins(), theClass(GregorEngineFactory.class)));
+    assertTrue(FCollection.contains(testee.findClientClasspathPlugins(), theClass(GregorEngineFactory.class)));
   }
 
   @Test
   public void shouldListCSVReportAsToolClasspathPlugin() {
-    assertTrue(FCollection.contains(PluginServices.findToolClasspathPlugins(), theClass(CSVReportFactory.class)));
+    assertTrue(FCollection.contains(testee.findToolClasspathPlugins(), theClass(CSVReportFactory.class)));
   }
   
   @Test
   public void shouldListDefaultMutationFilterAsToolClasspathPlugin() {
-    assertTrue(FCollection.contains(PluginServices.findToolClasspathPlugins(), theClass(LimitNumberOfMutationsPerClassFilterFactory.class)));
+    assertTrue(FCollection.contains(testee.findToolClasspathPlugins(), theClass(LimitNumberOfMutationsPerClassFilterFactory.class)));
   }
   
   private static F<Object, Boolean> theClass(final Class<?> clss) {

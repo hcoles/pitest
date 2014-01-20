@@ -14,6 +14,7 @@ import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
@@ -37,8 +38,8 @@ public class EntryPoint {
    *          big mess of configuration options
    * 
    */
-  public AnalysisResult execute(final File baseDir, final ReportOptions data) {
-    final SettingsFactory settings = new SettingsFactory(data);
+  public AnalysisResult execute(final File baseDir, final ReportOptions data, final PluginServices plugins) {
+    final SettingsFactory settings = new SettingsFactory(data, plugins);
     return execute(baseDir, data, settings);
   }
 

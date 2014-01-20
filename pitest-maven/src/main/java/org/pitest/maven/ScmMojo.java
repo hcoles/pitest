@@ -22,6 +22,7 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
@@ -78,8 +79,8 @@ public class ScmMojo extends PitMojo {
   private File        scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
-      final ScmManager manager, Predicate<Artifact> filter) {
-    super(executionStrategy, filter);
+      final ScmManager manager, Predicate<Artifact> filter, PluginServices plugins) {
+    super(executionStrategy, filter, plugins);
     this.manager = manager;
   }
 
@@ -103,7 +104,7 @@ public class ScmMojo extends PitMojo {
     final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data));
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins));
 
   }
 

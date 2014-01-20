@@ -12,6 +12,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.mockito.Mockito;
 import org.pitest.coverage.CoverageSummary;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
@@ -33,7 +34,7 @@ public class PitMojoTest extends BasePitMojoTest {
     this.testee.getProject().setBuild(build);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class), any(PluginServices.class));
   }
 
   public void testDoesNotAnalysePomProjects() throws Exception {
@@ -41,7 +42,7 @@ public class PitMojoTest extends BasePitMojoTest {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class));
+        any(ReportOptions.class),  any(PluginServices.class));
   }
 
   public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
@@ -99,7 +100,7 @@ public class PitMojoTest extends BasePitMojoTest {
     final CombinedStatistics cs = new CombinedStatistics(stats,sum);
     when(
         this.executionStrategy.execute(any(File.class),
-            any(ReportOptions.class))).thenReturn(cs);
+            any(ReportOptions.class), any(PluginServices.class))).thenReturn(cs);
   }
 
 }

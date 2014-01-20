@@ -17,11 +17,13 @@ public class SettingsFactoryTest {
 
   private final ReportOptions options = new ReportOptions();
 
+  private final PluginServices plugins = PluginServices.makeForContextLoader();
+
   private SettingsFactory     testee;
 
   @Before
   public void setUp() {
-    this.testee = new SettingsFactory(this.options);
+    this.testee = new SettingsFactory(this.options, plugins);
   }
 
   @Test

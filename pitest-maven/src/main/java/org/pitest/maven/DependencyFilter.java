@@ -29,9 +29,8 @@ public class DependencyFilter implements Predicate<Artifact> {
 
   private final Set<GroupIdPair> groups = new HashSet<GroupIdPair>();
 
-  public DependencyFilter() {
-
-    final Iterable<? extends ClientClasspathPlugin> runtimePlugins = PluginServices
+  public DependencyFilter(PluginServices plugins) {
+    final Iterable<? extends ClientClasspathPlugin> runtimePlugins = plugins
         .findClientClasspathPlugins();
     FCollection.mapTo(runtimePlugins, artifactToPair(), this.groups);
   }
