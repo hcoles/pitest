@@ -55,7 +55,14 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     if (categoryArray == null) {
       return new String[]{};
     }
-    return Arrays.copyOf(categoryArray, categoryArray.length, String[].class);
+    return copyArray(categoryArray);
   }
+  
+  private String[] copyArray(Object[] original) {
+    String[] copy = new String[original.length];
+    System.arraycopy(original, 0, copy, 0, original.length);
+    return copy;
+  }
+  
 
 }
