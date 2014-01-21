@@ -15,6 +15,13 @@
 
 	<build>
 		<plugins>
+		    <!-- Don't deploy to Maven Central -->
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
