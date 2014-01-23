@@ -62,6 +62,10 @@ public class CodeSource implements ClassInfoSource {
   public ClassPath getClassPath() {
     return this.classPath.getClassPath();
   }
+  
+  public ProjectClassPaths getProjectPaths() {
+    return this.classPath;
+  }
 
   public Option<ClassName> findTestee(final String className) {
     final TestToClassMapper mapper = new TestToClassMapper(this.classRepository);
