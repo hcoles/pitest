@@ -29,6 +29,7 @@ import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.Option;
 import org.pitest.process.JavaAgent;
 import org.pitest.util.FileUtil;
+import org.pitest.util.PitError;
 import org.pitest.util.Unchecked;
 
 import sun.pitest.CodeCoverageStore;
@@ -113,8 +114,14 @@ public class JarCreatingJarFinder implements JavaAgent {
     jos.closeEntry();
   }
 
-  private byte[] classBytes(final String className) throws IOException {
-    return this.classByteSource.getBytes(className).value();
+  private byte[] classBytes(final String className) {
+    final Option<byte[]> bytes = this.classByteSource.getBytes(className);
+
+    if (bytes.hasSome()) {
+        return bytes.value();
+    }
+
+    throw new PitError("Unable to load class content for " + className);
   }
 
   public void close() {

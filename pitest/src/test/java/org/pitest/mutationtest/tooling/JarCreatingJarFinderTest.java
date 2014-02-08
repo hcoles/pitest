@@ -29,13 +29,15 @@ import java.util.jar.Manifest;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
-import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
+import org.pitest.util.PitError;
 
 public class JarCreatingJarFinderTest {
 
@@ -43,6 +45,9 @@ public class JarCreatingJarFinderTest {
 
   @Mock
   private ClassByteArraySource byteSource;
+
+  @Rule
+  public final ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void setUp() {
@@ -106,6 +111,15 @@ public class JarCreatingJarFinderTest {
   public void shouldAddPITToTheBootClassPath() throws IOException {
     final String actual = getGeneratedManifestAttribute(JarCreatingJarFinder.BOOT_CLASSPATH);
     assertTrue(!actual.equals(""));
+  }
+
+  @Test
+  public void shouldFailOnUnreadableRessources() throws IOException {
+      thrown.expect(PitError.class);
+
+      when(this.byteSource.getBytes(anyString())).thenReturn(Option.<byte[]>none());
+
+      this.testee.getJarLocation();
   }
 
   private void assertGeneratedManifestEntryEquals(final String key,
