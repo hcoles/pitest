@@ -15,11 +15,15 @@
 package org.pitest.classpath;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
+import org.pitest.util.Log;
 
 public class ClassPathByteArraySource implements ClassByteArraySource {
+
+  private final static Logger LOG   = Log.getLogger();
 
   private final ClassPath classPath;
 
@@ -35,6 +39,7 @@ public class ClassPathByteArraySource implements ClassByteArraySource {
     try {
       return Option.some(this.classPath.getClassData(classname));
     } catch (final IOException e) {
+      LOG.fine("Could not read class " + classname + ":"  + e.getMessage());
       return Option.none();
     }
   }
