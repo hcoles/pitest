@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.33-SNAPSHOT</version>
+		<version>0.33</version>
 	</parent>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
@@ -193,7 +193,7 @@
 			            <configuration>
 			               <dependencyDefinition>
 			                   show allResults
-			                   check absenceOfPackageCycles > 1 in org.pitest.*
+			                   check absenceOfPackageCycles &gt; 1 in org.pitest.*
 			               </dependencyDefinition>
 			            </configuration>
 					</execution>
