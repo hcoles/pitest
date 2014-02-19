@@ -181,8 +181,8 @@
 			</plugin>
 			<plugin>
 			    <groupId>org.pitest</groupId>
-			    <artifactId>classycle</artifactId>
-			    <version>0.2</version>
+			    <artifactId>classycle-maven-plugin</artifactId>
+			    <version>0.4</version>
 			    <executions>
 					<execution>
 						<id>verify</id>
