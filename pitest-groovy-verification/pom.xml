@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>0.33</version>
+		<version>0.34-SNAPSHOT</version>
 	</parent>
 	<artifactId>pitest-groovy-verification</artifactId>
 	<packaging>jar</packaging>
