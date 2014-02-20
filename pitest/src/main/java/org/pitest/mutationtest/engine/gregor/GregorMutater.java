@@ -50,18 +50,21 @@ class GregorMutater implements Mutater {
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
   private final Set<String>               loggingClasses = new HashSet<String>();
   private final InlinedCodeFilter         inlinedCodeDetector;
+  private final TryWithResourcesFilter    tryWithResourcesFilter;
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators,
       final Collection<String> loggingClasses,
-      final InlinedCodeFilter inlinedCodeDetector) {
+      final InlinedCodeFilter inlinedCodeDetector,
+      final TryWithResourcesFilter tryWithResourcesFilter) {
     this.filter = filter;
     this.mutators.addAll(mutators);
     this.byteSource = byteSource;
     this.loggingClasses.addAll(FCollection.map(loggingClasses,
         classNameToJVMClassName()));
     this.inlinedCodeDetector = inlinedCodeDetector;
+    this.tryWithResourcesFilter = tryWithResourcesFilter;
   }
 
   public FunctionalList<MutationDetails> findMutations(
@@ -96,7 +99,8 @@ class GregorMutater implements Mutater {
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    return this.inlinedCodeDetector.process(context.getCollectedMutations());
+    Collection<MutationDetails> processed = this.inlinedCodeDetector.process(context.getCollectedMutations());
+    return tryWithResourcesFilter.filter(context, processed);
   }
 
   private PremutationClassInfo performPreScan(final byte[] classToMutate) {
