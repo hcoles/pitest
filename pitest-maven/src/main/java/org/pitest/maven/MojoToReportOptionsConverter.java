@@ -56,6 +56,8 @@ public class MojoToReportOptionsConverter {
 
     addOwnDependenciesToClassPath(classPath);
 
+    classPath.addAll(this.mojo.getAdditionalClasspathElements());
+
     return parseReportOptions(classPath);
 
   }

@@ -249,6 +249,14 @@ public class PitMojo extends AbstractMojo {
   private String                mutationEngine;
 
   /**
+   * List of additional classpath entries to use when looking for tests and mutable code.
+   * These will be used in addition to the classpath with which PIT is launched.
+   *
+   * @parameter expression="${additionalClasspathElements}"
+   */
+  private ArrayList<String> additionalClasspathElements;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -464,6 +472,10 @@ public class PitMojo extends AbstractMojo {
 
   public void setJavaExecutable(String javaExecutable) {
     this.jvm = javaExecutable;
+  }
+
+  public List<String> getAdditionalClasspathElements() {
+    return additionalClasspathElements;
   }
 
 }
