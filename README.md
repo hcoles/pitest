@@ -10,6 +10,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 0.34-SNAPSHOT
+
+* Support additionalClasspathElements property in maven plugin
+
 ### 0.33
 
 * Move to Github
