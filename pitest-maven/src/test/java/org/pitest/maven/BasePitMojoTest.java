@@ -116,6 +116,9 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
     setVariableValueToObject(pitMojo, "project", this.project);
 
+    ArrayList<String> elements = new ArrayList<String>();
+    setVariableValueToObject(pitMojo, "additionalClasspathElements", elements);
+
   }
 
 }
