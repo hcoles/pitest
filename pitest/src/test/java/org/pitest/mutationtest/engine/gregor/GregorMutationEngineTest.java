@@ -38,7 +38,7 @@ public class GregorMutationEngineTest {
         Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH);
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         True.<MethodInfo> all(), Collections.<String> emptyList(), mutators,
-        new NoInlinedCodeDetection());
+        new NoInlinedCodeDetection(), new MutatorTestBase.NoOpTryWithResourcesFilter());
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),

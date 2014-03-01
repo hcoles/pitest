@@ -62,7 +62,7 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), filteredClasses(), filter());
+        Arrays.asList(mutators), filteredClasses(), inlinedCodeFilter(), tryWithResourcesFilter());
   }
 
   private Collection<String> filteredClasses() {
@@ -73,7 +73,7 @@ public abstract class MutatorTestBase {
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(source, filter, mutators,
-        filteredClasses(), filter());
+        filteredClasses(), inlinedCodeFilter(), tryWithResourcesFilter());
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -85,11 +85,15 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses, filter());
+        mutators, loggingClasses, inlinedCodeFilter(), tryWithResourcesFilter());
   }
 
-  private final InlinedCodeFilter filter() {
+  private InlinedCodeFilter inlinedCodeFilter() {
     return new NoInlinedCodeDetection();
+  }
+
+  private TryWithResourcesFilter tryWithResourcesFilter() {
+    return new NoOpTryWithResourcesFilter();
   }
 
   protected void createTesteeWith(
@@ -255,4 +259,11 @@ public abstract class MutatorTestBase {
     };
   }
 
+  public static class NoOpTryWithResourcesFilter extends TryWithResourcesFilter {
+
+    @Override
+    public Collection<MutationDetails> filter(Context context, Collection<MutationDetails> mutations) {
+      return mutations;
+    }
+  }
 }

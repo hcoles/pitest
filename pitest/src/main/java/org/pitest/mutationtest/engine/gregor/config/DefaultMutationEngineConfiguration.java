@@ -20,6 +20,7 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationEngineConfiguration;
+import org.pitest.mutationtest.engine.gregor.TryWithResourcesFilter;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public class DefaultMutationEngineConfiguration implements
@@ -29,15 +30,18 @@ public class DefaultMutationEngineConfiguration implements
   private final Collection<String>                         doNotMutate;
   private final Collection<? extends MethodMutatorFactory> mutators;
   private final InlinedCodeFilter                          inlinedCodeDetector;
+  private final TryWithResourcesFilter                     tryWithResourcesFilter;
 
   public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
-      final InlinedCodeFilter inlinedCodeDetector) {
+      final InlinedCodeFilter inlinedCodeDetector,
+      final TryWithResourcesFilter tryWithResourcesFilter) {
     this.methodFilter = filter;
     this.doNotMutate = loggingClasses;
     this.mutators = mutators;
     this.inlinedCodeDetector = inlinedCodeDetector;
+    this.tryWithResourcesFilter = tryWithResourcesFilter;
   }
 
   public Collection<? extends MethodMutatorFactory> mutators() {
@@ -54,6 +58,10 @@ public class DefaultMutationEngineConfiguration implements
 
   public InlinedCodeFilter inlinedCodeDetector() {
     return this.inlinedCodeDetector;
+  }
+
+  public TryWithResourcesFilter tryWithResourcesFilter() {
+    return this.tryWithResourcesFilter;
   }
 
 }
