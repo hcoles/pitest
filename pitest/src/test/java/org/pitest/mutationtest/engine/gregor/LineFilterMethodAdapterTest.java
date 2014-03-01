@@ -34,14 +34,14 @@ public class LineFilterMethodAdapterTest extends MethodDecoratorTest {
 
   @Test
   public void shouldDisableMutationsWhenEncountersExcludedLine() {
-    when(this.classInfo.isLoggingLine(1)).thenReturn(true);
+    when(this.classInfo.isLineToAvoid(1)).thenReturn(true);
     this.testee.visitLineNumber(1, this.label);
     verify(this.context).disableMutations(anyString());
   }
 
   @Test
   public void shouldEnableMutationsWhenEncountersANonExcludedLine() {
-    when(this.classInfo.isLoggingLine(1)).thenReturn(false);
+    when(this.classInfo.isLineToAvoid(1)).thenReturn(false);
     this.testee.visitLineNumber(1, this.label);
     verify(this.context).enableMutatations(anyString());
   }

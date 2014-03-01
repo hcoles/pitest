@@ -342,15 +342,6 @@ public class TestGregorMutater extends MutatorTestBase {
         .size());
   }
 
-  @Test
-  public void shouldMarkMutationsAsWithinFinallyBlockWhenWithinTryWithResourcesBlock() {
-    createTesteeWith(new ResourceFolderByteArraySource(),
-        True.<MethodInfo> all(), Mutator.VOID_METHOD_CALLS.asCollection());
-    final Collection<MutationDetails> actualDetails = findMutationsFor("Java7TryWithResources");
-    assertEquals(2, FCollection.filter(actualDetails, isInFinallyBlock())
-        .size());
-  }
-  
   public static class HasTwoMutableMethods {
     public int a() {
       return 1;

@@ -63,8 +63,7 @@ public class TestTryWithResources extends MutatorTestBase {
                 True.<MethodInfo>all(),
                 Mutator.DEFAULTS.asCollection(),
                 Collections.<String>emptyList(),
-                inlinedCodeDetector,
-                new TryWithResourcesFilter());
+                inlinedCodeDetector);
     }
 
     private void testWithExpected(String expected, String className) {

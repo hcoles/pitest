@@ -29,6 +29,4 @@ public interface MutationEngineConfiguration {
 
   InlinedCodeFilter inlinedCodeDetector();
 
-  TryWithResourcesFilter tryWithResourcesFilter();
-
 }

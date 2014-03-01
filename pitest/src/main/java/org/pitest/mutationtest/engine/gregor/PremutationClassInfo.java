@@ -5,15 +5,15 @@ import java.util.Set;
 
 public class PremutationClassInfo {
 
-  private final Set<Integer> loggingLines = new HashSet<Integer>();
+  private final Set<Integer> linesToAvoid = new HashSet<Integer>();
 
-  public void registerLoggingLine(final int lineNumber) {
-    this.loggingLines.add(lineNumber);
+  public void registerLineToAvoid(final int lineNumber) {
+    this.linesToAvoid.add(lineNumber);
 
   }
 
-  public boolean isLoggingLine(final int line) {
-    return this.loggingLines.contains(line);
+  public boolean isLineToAvoid(final int line) {
+    return this.linesToAvoid.contains(line);
   }
 
 }

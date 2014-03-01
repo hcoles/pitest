@@ -62,7 +62,7 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), filteredClasses(), inlinedCodeFilter(), tryWithResourcesFilter());
+        Arrays.asList(mutators), filteredClasses(), inlinedCodeFilter());
   }
 
   private Collection<String> filteredClasses() {
@@ -73,7 +73,7 @@ public abstract class MutatorTestBase {
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(source, filter, mutators,
-        filteredClasses(), inlinedCodeFilter(), tryWithResourcesFilter());
+        filteredClasses(), inlinedCodeFilter());
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -85,15 +85,11 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses, inlinedCodeFilter(), tryWithResourcesFilter());
+        mutators, loggingClasses, inlinedCodeFilter());
   }
 
   private InlinedCodeFilter inlinedCodeFilter() {
     return new NoInlinedCodeDetection();
-  }
-
-  private TryWithResourcesFilter tryWithResourcesFilter() {
-    return new NoOpTryWithResourcesFilter();
   }
 
   protected void createTesteeWith(
@@ -257,13 +253,5 @@ public abstract class MutatorTestBase {
         return a.getDescription().contains(value);
       }
     };
-  }
-
-  public static class NoOpTryWithResourcesFilter extends TryWithResourcesFilter {
-
-    @Override
-    public Collection<MutationDetails> filter(Context context, Collection<MutationDetails> mutations) {
-      return mutations;
-    }
   }
 }

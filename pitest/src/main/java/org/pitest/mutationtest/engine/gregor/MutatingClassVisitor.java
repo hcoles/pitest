@@ -69,16 +69,11 @@ class MutatingClassVisitor extends ClassVisitor {
         .withMethodName(methodName).withMethodDescriptor(methodDescriptor);
 
     if (this.filter.apply(info)) {
-      return this.findGeneratedFinallyBlocks(methodVisitor, info);
+      return  this.visitMethodForMutation(info, methodVisitor);
     } else {
       return methodVisitor;
     }
 
-  }
-
-  private MethodVisitor findGeneratedFinallyBlocks(MethodVisitor methodVisitor, MethodInfo info) {
-    MethodVisitor mutationVisitor = this.visitMethodForMutation(info, methodVisitor);
-    return new TryWithResourcesMethodVisitor(context, mutationVisitor);
   }
 
   private MethodVisitor visitMethodForMutation(final MethodInfo methodInfo,
