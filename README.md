@@ -13,6 +13,7 @@ Read all about it at http://pitest.org
 ### 0.34-SNAPSHOT
 
 * Support additionalClasspathElements property in maven plugin
+* Do not mutate java 7 try with resources (thanks @artspb)
 
 ### 0.33
 
