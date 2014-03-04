@@ -113,7 +113,8 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
     try {
       return new ZipFile(this.file);
     } catch (final IOException ex) {
-      throw Unchecked.translateCheckedException(ex);
+      throw Unchecked.translateCheckedException(ex.getMessage() + " (" + this.file + ")",
+    		  ex);
     }
   }
 
