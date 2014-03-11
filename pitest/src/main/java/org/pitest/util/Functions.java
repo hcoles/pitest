@@ -68,10 +68,11 @@ public abstract class Functions {
           return Option.<Class<?>> some(clazz);
         } catch (final ClassNotFoundException e) {
           LOG.warning("Could not load " + className
-              + " (ClassNotFoundException)");
+              + " (ClassNotFoundException: " + e.getMessage() + ")");
           return Option.none();
         } catch (final NoClassDefFoundError e) {
-          LOG.warning("Could not load " + className + " (NoClassDefFoundError)");
+          LOG.warning("Could not load " + className
+        		  + " (NoClassDefFoundError: " + e.getMessage() + ")");
           return Option.none();
         } catch (final LinkageError e) {
           LOG.warning("Could not load " + className + " " + e.getMessage());
