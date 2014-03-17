@@ -184,7 +184,6 @@ public class Pitest {
       }
     };
     final Thread feederThread = new Thread(feeder);
-    feederThread.setDaemon(true);
     feederThread.start();
     return feederThread;
   }
