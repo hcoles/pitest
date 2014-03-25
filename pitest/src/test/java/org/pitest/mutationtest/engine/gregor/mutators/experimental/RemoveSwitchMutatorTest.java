@@ -16,6 +16,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.Callable;
 
@@ -225,11 +226,6 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldNotTouchIt() throws Exception {
-    final Mutant mutant = null;
-    try {
-      getFirstMutant(HasFewerLabelsWithDefault.class);
-    } catch (AssertionError ae) {
-      // Expect no mutant error from test base.
-    }
+    assertNoMutants(HasFewerLabelsWithDefault.class);
   }
 }

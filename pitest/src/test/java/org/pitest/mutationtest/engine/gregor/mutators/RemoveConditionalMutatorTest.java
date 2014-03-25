@@ -395,10 +395,4 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertNoMutants(HasIF_ICMPLT.class);
   }
 
-  private void assertNoMutants(final Class<?> mutee) {
-    final Collection<MutationDetails> actual = findMutationsFor(mutee);
-    assertTrue(actual.isEmpty());
-
-  }
-
 }
