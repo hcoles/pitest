@@ -16,8 +16,8 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class RemoveSwitchMutator implements MethodMutatorFactory {
   //EXPERIMENTAL_REMOVE_SWITCH_MUTATOR;
-  int key = 0;
-  public RemoveSwitchMutator(int i) {
+  final int key;
+  public RemoveSwitchMutator(final int i) {
      key = i;
   }
 
@@ -27,7 +27,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
   }
 
   public String getGloballyUniqueId() {
-    return this.getClass().getName();
+    return this.getClass().getName() + "_" + key;
   }
 
   public String getName() {
