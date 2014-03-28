@@ -16,7 +16,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.Callable;
 
