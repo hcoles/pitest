@@ -106,6 +106,11 @@ public abstract class MutatorTestBase {
     assertEquals(expected, mutateAndCall(unmutated, mutant));
   }
 
+  protected void assertNoMutants(final Class<?> mutee) {
+    final Collection<MutationDetails> actual = findMutationsFor(mutee);
+    assertTrue(actual.isEmpty());
+  }
+
   protected <T> T mutateAndCall(final Callable<T> unmutated, final Mutant mutant) {
     try {
       final ClassLoader loader = createClassLoader(mutant);
