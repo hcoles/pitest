@@ -1,15 +1,12 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class RemoveConditionalMutatorTest extends MutatorTestBase {

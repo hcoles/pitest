@@ -36,7 +36,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 
 public enum Mutator implements Iterable<MethodMutatorFactory> {
 
