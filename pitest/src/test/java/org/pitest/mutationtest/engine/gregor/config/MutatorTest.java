@@ -14,12 +14,10 @@
  */
 package org.pitest.mutationtest.engine.gregor.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -30,27 +28,25 @@ public class MutatorTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void shouldFlattenToGroupingsToCollectionsOfMethodMutatorFactories() {
-    assertEquals(Arrays.asList(MathMutator.MATH_MUTATOR,
-        InvertNegsMutator.INVERT_NEGS_MUTATOR), Mutator.asCollection(
-        Mutator.MATH, Mutator.INVERT_NEGS));
+  public void shouldReturnRequestedMutators() {
+    assertThat(parseStrings("MATH", "INVERT_NEGS").containsAll(
+        Arrays.asList(MathMutator.MATH_MUTATOR,
+            InvertNegsMutator.INVERT_NEGS_MUTATOR)));
   }
 
   @Test
-  public void shouldIncludeAllMutatorsWhenAllRequested() {
-    final Set<MethodMutatorFactory> expected = new HashSet<MethodMutatorFactory>();
-    for (final Mutator each : Mutator.values()) {
-      expected.addAll(Mutator.asCollection(each));
-    }
-    assertTrue(expected.containsAll(Mutator.asCollection(Mutator.ALL)));
-    assertTrue(Mutator.asCollection(Mutator.ALL).containsAll(expected));
+  public void shouldNotCreateDuplicatesWhenRequestedDirectly() {
+    assertThat(parseStrings("MATH", "MATH")).hasSize(1);
   }
 
   @Test
-  public void shouldIncludeBothInvertConditionalsAndRemoveConditionalsInStrongerSetting() {
-    assertTrue(Mutator.STRONGER.asCollection().containsAll(
-        Mutator.asCollection(Mutator.REMOVE_CONDITIONALS,
-            Mutator.NEGATE_CONDITIONALS)));
+  public void shouldNotCreateDuplicatesWhenRequestedViaGroup() {
+    assertThat(parseStrings("MATH", "DEFAULTS")).hasSameSizeAs(
+        parseStrings("DEFAULTS"));
+  }
+  
+  private Collection<MethodMutatorFactory> parseStrings(final String... s) {
+    return Mutator.fromStrings(Arrays.asList(s));
   }
 
 }

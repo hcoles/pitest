@@ -61,7 +61,7 @@ public class TestTryWithResources extends MutatorTestBase {
     private void createEngine(InlinedCodeFilter inlinedCodeDetector) {
         this.engine = new GregorMutater(new ResourceFolderByteArraySource(),
                 True.<MethodInfo>all(),
-                Mutator.DEFAULTS.asCollection(),
+                Mutator.defaults(),
                 Collections.<String>emptyList(),
                 inlinedCodeDetector);
     }

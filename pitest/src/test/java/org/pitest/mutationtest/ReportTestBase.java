@@ -18,8 +18,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -27,7 +25,6 @@ import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
@@ -135,16 +132,9 @@ public abstract class ReportTestBase {
     }
   }
   
-  protected void setMutators(final Mutator mutator) {
-    this.data.setMutators(FCollection.map(Arrays.asList(mutator), asString()));
+  protected void setMutators(final String mutator) {
+    this.data.setMutators(Arrays.asList(mutator));
   }
 
-  private F<Mutator, String> asString() {
-    return new F<Mutator, String>() {
-      public String apply(final Mutator a) {
-        return a.name();
-      }
-    };
-  }
 
 }

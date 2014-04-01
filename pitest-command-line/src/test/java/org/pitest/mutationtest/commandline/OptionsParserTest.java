@@ -18,7 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class OptionsParserTest {
 
@@ -93,9 +95,9 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfMutationOperators() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
-        Mutator.CONDITIONALS_BOUNDARY.name() + "," + Mutator.MATH.name());
-    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(),
-        Mutator.MATH.name()), actual.getMutators());
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.name() + "," + MathMutator.MATH_MUTATOR.name());
+    assertEquals(Arrays.asList(ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.name(),
+        MathMutator.MATH_MUTATOR.name()), actual.getMutators());
   }
 
   @Test

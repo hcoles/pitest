@@ -38,7 +38,6 @@ import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -117,7 +116,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test(expected = PitHelpError.class)
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
-    setMutators(Mutator.MATH);
+    setMutators("MATH");
     this.data
         .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
@@ -139,7 +138,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
-    setMutators(Mutator.RETURN_VALS);
+    setMutators("RETURN_VALS");
     this.data
         .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
@@ -283,7 +282,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldMarkChildJVMCrashesAsRunErrors() {
-    setMutators(Mutator.NEGATE_CONDITIONALS);
+    setMutators("NEGATE_CONDITIONALS");
     this.data.setTargetClasses(predicateFor(CrashesJVMWhenMutated.class));
     this.data
         .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
@@ -295,7 +294,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldCombineAndKillInlinedMutationsInFinallyBlocks() {
-    setMutators(Mutator.INCREMENTS);
+    setMutators("INCREMENTS");
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
     this.data.setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
     this.data.setDetectInlinedCode(true);
@@ -306,7 +305,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldUseTestsDefinedInASuppliedJUnitThreeSuite() {
-    setMutators(Mutator.RETURN_VALS);
+    setMutators("RETURN_VALS");
     this.data.setTargetClasses(predicateFor(CoveredByJUnitThreeSuite.class));
     this.data.setTargetTests(predicateFor(JUnitThreeSuite.class));
     this.data.setVerbose(true);
@@ -317,7 +316,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldReportCombinedCoveredButNotTestedMutationsInFinallyBlocksAsSurvived() {
-    setMutators(Mutator.INCREMENTS);
+    setMutators("INCREMENTS");
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
     this.data
         .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
@@ -329,7 +328,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
-    setMutators(Mutator.RETURN_VALS);
+    setMutators("RETURN_VALS");
     this.data
         .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
     this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
@@ -342,7 +341,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldKillMutationsWhenMutationsPreventsConstructionOfTestClass() {
-    setMutators(Mutator.RETURN_VALS);
+    setMutators("RETURN_VALS");
 
     this.data
         .setTargetClasses(predicateFor(com.example.mutatablecodeintest.Mutee.class));
@@ -356,7 +355,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   
   @Test
   public void shouldKillMutationsWhenKillingTestClassContainsAnIgnoreOnAnotherMethod() {
-    setMutators(Mutator.RETURN_VALS);
+    setMutators("RETURN_VALS");
 
     this.data
         .setTargetClasses(predicateFor(com.example.testhasignores.Mutee.class));

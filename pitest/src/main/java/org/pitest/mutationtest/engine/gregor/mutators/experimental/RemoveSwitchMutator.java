@@ -1,5 +1,8 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -15,11 +18,20 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
  */
 public class RemoveSwitchMutator implements MethodMutatorFactory {
   //EXPERIMENTAL_REMOVE_SWITCH_MUTATOR;
-  final int key;
+  private final int key;
+  
   public RemoveSwitchMutator(final int i) {
      key = i;
   }
 
+  public static Iterable<MethodMutatorFactory> makeMutators() {
+    List<MethodMutatorFactory> variations = new ArrayList<MethodMutatorFactory>();
+    for (int i = 0; i != 100; i++ ) {
+      variations.add(new RemoveSwitchMutator(i) );
+    }
+    return variations;
+  }
+  
   public MethodVisitor create(final Context context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new RemoveSwitchMethodVisitor(context, methodVisitor);

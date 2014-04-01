@@ -68,7 +68,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
     if ((mutators != null) && !mutators.isEmpty()) {
       return Mutator.fromStrings(mutators);
     } else {
-      return Mutator.DEFAULTS.asCollection();
+      return Mutator.defaults();
     }
 
   }

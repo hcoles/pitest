@@ -139,7 +139,7 @@ public class TestMutationTesting {
   @Test
   public void shouldKillAllCoveredMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyResults(KILLED);
   }
 
@@ -163,7 +163,7 @@ public class TestMutationTesting {
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
     run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -184,7 +184,7 @@ public class TestMutationTesting {
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
     run(NoMutations.class, NoMutationsTest.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyResults();
   }
 
@@ -194,7 +194,7 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
-    run(ThreeMutations.class, NoTests.class, Mutator.RETURN_VALS.asCollection());
+    run(ThreeMutations.class, NoTests.class, Mutator.byName("RETURN_VALS"));
     verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
@@ -228,7 +228,7 @@ public class TestMutationTesting {
   @Test(timeout = 30000)
   public void shouldDetectAndEscapeFromInfiniteLoopsCausedByMutations() {
     run(InfiniteLoop.class, InfiniteLoopTest.class,
-        Mutator.INCREMENTS.asCollection());
+        Mutator.byName("INCREMENTS"));
     verifyResults(KILLED, TIMED_OUT);
   }
 
@@ -247,7 +247,7 @@ public class TestMutationTesting {
     // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutationOnly.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyResults(KILLED);
   }
 
@@ -295,7 +295,7 @@ public class TestMutationTesting {
   @Test(timeout = 30000)
   public void shouldRecoverFromOutOfMemoryError() {
     run(EatsMemoryWhenMutated.class, EatsMemoryTest.class,
-        Mutator.INCREMENTS.asCollection());
+        Mutator.byName("INCREMENTS"));
     verifyResults(KILLED, MEMORY_ERROR);
   }
 
@@ -304,7 +304,7 @@ public class TestMutationTesting {
     // see http://code.google.com/p/pitestrunner/issues/detail?id=17 for full
     // description of this issue
     run(MutationsInNestedClasses.class, MutationsInNestedClassesTest.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyResults(SURVIVED, SURVIVED);
   }
 
@@ -312,7 +312,7 @@ public class TestMutationTesting {
   @Ignore("too brittle")
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        Mutator.RETURN_VALS.asCollection());
+        Mutator.byName("RETURN_VALS"));
     verifyLineNumbers(111);
   }
 

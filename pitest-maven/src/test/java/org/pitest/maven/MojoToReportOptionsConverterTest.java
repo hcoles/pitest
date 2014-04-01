@@ -27,7 +27,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.util.Unchecked;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
@@ -77,12 +76,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testParsesListOfMutationOperators() {
     final String xml = "<mutators>" + //
-        "                      <param>CONDITIONALS_BOUNDARY</param>" + //
-        "                      <param>MATH</param>" + //
+        "                      <param>foo</param>" + //
+        "                      <param>bar</param>" + //
         "                  </mutators>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList(Mutator.CONDITIONALS_BOUNDARY.name(),
-        Mutator.MATH.name()), actual.getMutators());
+    assertEquals(Arrays.asList("foo","bar"), actual.getMutators());
   }
 
   public void testParsersMutateStaticInitializersFlag() {

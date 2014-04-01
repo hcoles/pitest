@@ -34,8 +34,8 @@ public class GregorMutationEngineTest {
 
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
-    final Collection<MethodMutatorFactory> mutators = Mutator.asCollection(
-        Mutator.CONDITIONALS_BOUNDARY, Mutator.MATH);
+    final Collection<MethodMutatorFactory> mutators = 
+        Mutator.fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH"));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         True.<MethodInfo> all(), Collections.<String> emptyList(), mutators,
         new NoInlinedCodeDetection());
