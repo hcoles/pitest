@@ -51,7 +51,7 @@ public class VerifyJava8IT extends ReportTestBase {
   public void worksWithJava8Bytecode() {
       this.data.setTargetTests(predicateFor(Java8ClassTest.class));
       this.data.setTargetClasses(predicateFor("com.example.java8.Java8Class*"));
-      setMutators(Mutator.INCREMENTS);
+      setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
   }
@@ -63,7 +63,7 @@ public class VerifyJava8IT extends ReportTestBase {
   public void worksWithJava8DefaultInterfaceMethods() {
       this.data.setTargetTests(predicateFor(Java8InterfaceTest.class));
       this.data.setTargetClasses(predicateFor("com.example.java8.Java8Interface*"));
-      setMutators(Mutator.INCREMENTS);
+      setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
   }
@@ -77,7 +77,7 @@ public class VerifyJava8IT extends ReportTestBase {
   public void worksWithAnonymousClasses() {
       this.data.setTargetTests(predicateFor(AnonymousClassTest.class));
       this.data.setTargetClasses(predicateFor("com.example.java8.AnonymousClass*"));
-      setMutators(Mutator.INCREMENTS);
+      setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
   }
@@ -89,7 +89,7 @@ public class VerifyJava8IT extends ReportTestBase {
   public void worksWithJava8LambdaExpressions() {
       this.data.setTargetTests(predicateFor(Java8LambdaExpressionTest.class));
       this.data.setTargetClasses(predicateFor("com.example.java8.Java8LambdaExpression*"));
-      setMutators(Mutator.INCREMENTS);
+      setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
   }
