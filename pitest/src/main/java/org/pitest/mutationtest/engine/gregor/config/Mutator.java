@@ -38,6 +38,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -116,9 +117,12 @@ public final class Mutator {
 
     /**
      * Removes conditional statements so that guarded statements always execute
+     * The EQUAL version ignores LT,LE,GT,GE, which is the default behavior,
+     * ORDER version mutates only those.
      */
-    add("REMOVE_CONDITIONALS",
-        RemoveConditionalMutator.REMOVE_CONDITIONALS_MUTATOR);
+
+    addGroup("REMOVE_CONDITIONALS",
+        RemoveConditionalMutator.makeMutators());
 
     /**
      * Experimental mutator that removed assignments to member variables.
@@ -140,7 +144,7 @@ public final class Mutator {
   }
 
   private static Collection<MethodMutatorFactory> stronger() {
-    return combine(defaults(),group(RemoveConditionalMutator.REMOVE_CONDITIONALS_MUTATOR, new SwitchMutator()));
+    return combine(defaults(),group(new RemoveConditionalMutator(Choice.EQUAL, false), new SwitchMutator()));
   }
 
   private static Collection<MethodMutatorFactory> combine(
