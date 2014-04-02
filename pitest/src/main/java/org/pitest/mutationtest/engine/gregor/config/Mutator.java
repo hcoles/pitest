@@ -121,8 +121,11 @@ public final class Mutator {
      * ORDER version mutates only those.
      */
 
-    addGroup("REMOVE_CONDITIONALS",
-        RemoveConditionalMutator.makeMutators());
+    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL, true));
+    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(Choice.EQUAL, false));
+    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(Choice.ORDER, true));
+    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(Choice.ORDER, false));
+    addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
 
     /**
      * Experimental mutator that removed assignments to member variables.
