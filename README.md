@@ -12,8 +12,12 @@ Read all about it at http://pitest.org
 
 ### 0.34-SNAPSHOT
 
-* Support additionalClasspathElements property in maven plugin
-* Do not mutate java 7 try with resources (thanks @artspb)
+* Upgrade to ASM 5.0.2
+* Fix for #114 - fails to run for java 8 when -parameters flag is set
+* #99 Support additionalClasspathElements property in maven plugin (thanks artspb)
+* #98 Do not mutate java 7 try with resources (thanks @artspb)
+* #109 extended remove conditional mutator (thanks @vrthra)
+
 
 ### 0.33
 
@@ -22,8 +26,8 @@ Read all about it at http://pitest.org
 * Partial support for JUnit categories (thanks to "chrisr")
 * New Remove Increments Mutator (thanks to Rahul Gopinath)
 * Minor logging improvements (thanks to Kyle Rogers aka Stephan Penndorf)
-* Fix for issue 92 - broken maven 2 support
-* Fix for issue 75 - incorrectly ignored tests in classes with both @Ignore and @BeforeClass / @AfterClass
+* Fix for #92 - broken maven 2 support
+* Fix for #75 - incorrectly ignored tests in classes with both @Ignore and @BeforeClass / @AfterClass
 
 ### 0.32
 
@@ -44,7 +48,7 @@ Note, setup for Ant based projects changes in this release. See [ant setup](http
 
 * Maven 2 compatibility restored
 * Much faster line coverage calculation
-* Fix for issue 78 - Error when PowerMockito test stores mock as member
+* Fix for #78 - Error when PowerMockito test stores mock as member
 
 This release also changes a number of internal implementation details, some of which may be of interest/importance to those maintaining tools that
 integrate with PIT.
@@ -57,8 +61,8 @@ A new class (org.pitest.mutationtest.tooling.EntryPoint) has been introduced tha
 
 * Support for parametrized [Spock](http://code.google.com/p/spock/) tests
 * Support for [JUnitParams](http://code.google.com/p/junitparams/) tests
-* Fix for issue 73 - JUnit parameterised tests calling mutee during setup failing during mutation phase
-* Fix to issue 63 - ant task fails when empty options supplied
+* Fix for #73 - JUnit parameterised tests calling mutee during setup failing during mutation phase
+* Fix to #63 - ant task fails when empty options supplied
 * Ability to override maven options from command line
 * Ability to fail a build if it does not achieve a given mutation score
 * Performance improvement when tests use @BeforeClass or @AfterClass annotations
@@ -75,8 +79,8 @@ A new class (org.pitest.mutationtest.tooling.EntryPoint) has been introduced tha
 * Improved Java 7 support
 * Upgrade of ASM from 3.3 to 4
 * Fix for concurrency issues during coverage collection
-* Fix for issue 53 - problems with snapshot junit versions
-* Fix for issue 59 - duplicate dependencies set via maven
+* Fix for #53 - problems with snapshot junit versions
+* Fix for #59 - duplicate dependencies set via maven
 
 
 ### 0.28
@@ -84,17 +88,17 @@ A new class (org.pitest.mutationtest.tooling.EntryPoint) has been introduced tha
 * Inlined finally block detection (--detectInlinedCode)
 * New experimental switch statement mutator (contributed by Chris Rimmer)
 * Do not mutate Groovy classes
-* Fix for issue 33 - set user.dir to match surefire
-* Fix for issue 43 - optionally suppress timestamped folders (--timestampedReports=true/false)
-* Fix for issue 44 - concurrent modification exception when gathering coverage
-* Fix for issue 46 - incorrect setting of flags by ant task
+* Fix for #33 - set user.dir to match surefire
+* Fix for #43 - optionally suppress timestamped folders (--timestampedReports=true/false)
+* Fix for #44 - concurrent modification exception when gathering coverage
+* Fix for #46 - incorrect setting of flags by ant task
 * Smaller memory footprint for main process
 * Faster coverage gathering for large codebases
 * Faster classpath scanning for large codebases
 * Support for JUnit 3 suite methods
 * Fixes for incorrect detection of JUnit 3 tests
 
-**Known issue** - Fix for issue 33 may not resolve issue for maven 2 users.
+**Known issue** - Fix for #33 may not resolve issue for maven 2 users.
 
 Detection of Groovy code has not yet been tested with Groovy 2 which may generate substantially different
 byte code to earlier versions.
@@ -105,8 +109,8 @@ byte code to earlier versions.
 * Now avoids mutating assert statements
 * Removed inScopeClasses option - use targetClasses and targetTests instead
 * Fix for 100% CPU usage when child JVM crashes
-* Fix for issues 35/38 - experimental member variable mutator now corrects stack
-* Fix for issue 39 - order of classpath elements now maintained when running from maven
+* Fix for #35 #38 - experimental member variable mutator now corrects stack
+* Fix for #39 - order of classpath elements now maintained when running from maven
 
 **Upgrading users may need to modify their build due to removal of the inScopeClasses parameter**
 
@@ -114,10 +118,10 @@ byte code to earlier versions.
 
 * Ant support
 * New experimental mutator for member variables 
-* Fix for issues 12/27 - no longer hangs when code under test launches non daemon threads
-* Fix for issue 26 - now warns when no test library found on classpath
-* Fix for issue 30 - now errors if mutated classes have no line or source debug
-* Fix for issue 32 - now correctly handles of JUnit assumptions 
+* Fix for #12 #27 - no longer hangs when code under test launches non daemon threads
+* Fix for #26 - now warns when no test library found on classpath
+* Fix for #30 - now errors if mutated classes have no line or source debug
+* Fix for #32 - now correctly handles of JUnit assumptions 
 
 **Known issue** - The new member variable mutator may cause errors in synchronized errors. The mutator is
 however disabled by default, and the generated errors are correctly handled by PIT.
@@ -141,7 +145,7 @@ however disabled by default, and the generated errors are correctly handled by P
 
 * JMockit support
 * Option to output results in XML or CSV
-* Fix for [issue 11](http://code.google.com/p/pitestrunner/issues/detail?id=11)
+* Fix for #11
 * Improved INLINE_CONSTS mutator
 
 ### 0.23
@@ -151,7 +155,7 @@ however disabled by default, and the generated errors are correctly handled by P
 ### 0.22
 
 * Upgrade of Xstream to 1.4.1 to enable OpenJDK 7 support
-* Fix for issue 5 - corruption of newline character in child processes
+* Fix for #5 - corruption of newline character in child processes
 * Ability to set child process launch arguments
 
 ### 0.21
