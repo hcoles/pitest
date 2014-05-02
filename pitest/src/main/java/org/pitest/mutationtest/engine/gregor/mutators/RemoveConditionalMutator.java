@@ -18,8 +18,8 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   // ORDER : Mutate only Ordering operators
   public enum Choice {EQUAL, ORDER}
 
-  final Choice kind;
-  final boolean replaceWith; // Default is true
+  private final Choice kind;
+  private final boolean replaceWith; // Default is true
 
   public RemoveConditionalMutator(final Choice c, final boolean rc) {
     kind = c;
