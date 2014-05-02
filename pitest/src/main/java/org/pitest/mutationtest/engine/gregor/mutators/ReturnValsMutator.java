@@ -84,7 +84,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
         mv.visitTypeInsn(Opcodes.NEW, "java/lang/RuntimeException");
         mv.visitInsn(Opcodes.DUP);
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/RuntimeException",
-            "<init>", "()V");
+            "<init>", "()V", false);
         mv.visitInsn(Opcodes.ATHROW);
         mv.visitLabel(l1);
         mv.visitInsn(Opcodes.ACONST_NULL);

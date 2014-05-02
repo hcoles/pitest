@@ -21,7 +21,7 @@ import org.objectweb.asm.Opcodes;
 public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
 
   public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0) {
-    super(Opcodes.ASM4, arg0);
+    super(Opcodes.ASM5, arg0);
   }
 
   @Override
@@ -38,18 +38,18 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
   private final static String INTERCEPTOR_CLASS = classToName(JavassistInterceptor.class);
 
   public JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv) {
-    super(Opcodes.ASM4, mv);
+    super(Opcodes.ASM5, mv);
   }
 
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
-      final String name, final String desc) {
+      final String name, final String desc, boolean itf) {
     if ((opcode == Opcodes.INVOKEINTERFACE)
         && owner.equals("javassist/ClassPath") && name.equals("openClassfile")) {
       this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, INTERCEPTOR_CLASS, name,
-          "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;");
+          "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", itf);
     } else {
-      this.mv.visitMethodInsn(opcode, owner, name, desc);
+      this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
     }
 
   }

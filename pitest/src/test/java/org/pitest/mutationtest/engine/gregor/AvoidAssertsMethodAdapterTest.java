@@ -77,7 +77,7 @@ public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
   @Test
   public void shouldDisableMutationsForCodeSettingWhenAssertionDisabledFlagIsSetInStaticInitializer() {
     this.testee.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class",
-        "desiredAssertionStatus", "()Z");
+        "desiredAssertionStatus", "()Z", true);
     verify(this.context).disableMutations(anyString());
     this.testee
         .visitFieldInsn(
@@ -110,8 +110,8 @@ public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
   @Override
   @Test
   public void shouldForwardVisitMethodInsnToChild() {
-    this.testee.visitMethodInsn(1, "foo", "bar", "far");
-    verify(this.mv).visitMethodInsn(1, "foo", "bar", "far");
+    this.testee.visitMethodInsn(1, "foo", "bar", "far", true);
+    verify(this.mv).visitMethodInsn(1, "foo", "bar", "far", true);
   }
 
   @Override

@@ -149,8 +149,8 @@ public abstract class MethodDecoratorTest {
 
   @Test
   public void shouldForwardVisitMethodInsnToChild() {
-    getTesteeVisitor().visitMethodInsn(1, "a", "b", "c");
-    verify(this.mv).visitMethodInsn(1, "a", "b", "c");
+    getTesteeVisitor().visitMethodInsn(1, "a", "b", "c", false);
+    verify(this.mv).visitMethodInsn(1, "a", "b", "c", false);
   }
 
   @Test

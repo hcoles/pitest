@@ -35,7 +35,7 @@ class MutatingClassVisitor extends ClassVisitor {
       final Context context, final F<MethodInfo, Boolean> filter,
       final PremutationClassInfo classInfo,
       final Collection<MethodMutatorFactory> mutators) {
-    super(Opcodes.ASM4, delegateClassVisitor);
+    super(Opcodes.ASM5, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
     this.methodMutators.addAll(mutators);

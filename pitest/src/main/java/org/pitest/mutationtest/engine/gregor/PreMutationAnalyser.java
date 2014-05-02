@@ -15,7 +15,7 @@ public class PreMutationAnalyser extends ClassVisitor {
   private final Set<String>          loggingClasses;
 
   public PreMutationAnalyser(final Set<String> loggingClasses) {
-    super(Opcodes.ASM4);
+    super(Opcodes.ASM5);
     this.loggingClasses = loggingClasses;
   }
 

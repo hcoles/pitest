@@ -69,7 +69,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
       final int classId, final MethodVisitor writer, final int access,
       final String name, final String desc, final int numberOfLines,
       final int probeOffset) {
-    super(Opcodes.ASM4, writer, access, name, desc);
+    super(Opcodes.ASM5, writer, access, name, desc);
 
     this.methodVisitor = writer;
     this.classId = classId;
@@ -119,7 +119,7 @@ public class CoverageMethodVisitor extends AdviceAdapter {
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
         CodeCoverageStore.CLASS_NAME, CodeCoverageStore.PROBE_METHOD_NAME,
-        "(II[Z)V");
+        "(II[Z)V", false);
   }
 
   @Override

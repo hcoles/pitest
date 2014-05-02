@@ -136,7 +136,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
     private ReturnValuesMethodVisitor(final Context context,
         final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
-      super(Opcodes.ASM4, delegateVisitor);
+      super(Opcodes.ASM5, delegateVisitor);
       this.context = context;
       this.methodInfo = methodInfo;
     }
@@ -149,7 +149,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
         super.visitMethodInsn(Opcodes.INVOKESTATIC,
             OBJECT_MUTATION_METHOD.getClassName(),
             OBJECT_MUTATION_METHOD.getMethodName(),
-            OBJECT_MUTATION_METHOD.getMethodDescriptor());
+            OBJECT_MUTATION_METHOD.getMethodDescriptor(), false);
         super.visitTypeInsn(Opcodes.CHECKCAST, returnType.getInternalName());
       }
       super.visitInsn(Opcodes.ARETURN);

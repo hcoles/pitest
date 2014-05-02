@@ -24,7 +24,7 @@ public class LineTrackingMethodVisitor extends MethodVisitor {
 
   public LineTrackingMethodVisitor(final Context context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM4, delegateMethodVisitor);
+    super(Opcodes.ASM5, delegateMethodVisitor);
     this.context = context;
   }
 

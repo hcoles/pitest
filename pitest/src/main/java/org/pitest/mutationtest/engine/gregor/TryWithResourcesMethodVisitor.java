@@ -87,7 +87,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
      * @param mv      to delegate method calls
      */
     public TryWithResourcesMethodVisitor(final PremutationClassInfo context) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.context = context;
     }
 
@@ -111,11 +111,11 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
     }
 
     @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (opcode == Opcodes.INVOKEVIRTUAL && ("close".equals(name) || "addSuppressed".equals(name))) {
             opcodesStack.add(opcode);
         }
-        super.visitMethodInsn(opcode, owner, name, desc);
+        super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
 
     @Override

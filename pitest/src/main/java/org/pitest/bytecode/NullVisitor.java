@@ -25,13 +25,13 @@ import org.objectweb.asm.Opcodes;
 public class NullVisitor extends ClassVisitor {
 
   public NullVisitor() {
-    super(Opcodes.ASM4);
+    super(Opcodes.ASM5);
   }
 
   public static class NullAnnotationVisitor extends AnnotationVisitor {
 
     NullAnnotationVisitor() {
-      super(Opcodes.ASM4);
+      super(Opcodes.ASM5);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class NullVisitor extends ClassVisitor {
   public static class NullMethodVisitor extends MethodVisitor {
 
     NullMethodVisitor() {
-      super(Opcodes.ASM4);
+      super(Opcodes.ASM5);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class NullVisitor extends ClassVisitor {
   @Override
   public FieldVisitor visitField(final int arg0, final String arg1,
       final String arg2, final String arg3, final Object arg4) {
-    return new FieldVisitor(Opcodes.ASM4) {
+    return new FieldVisitor(Opcodes.ASM5) {
 
       @Override
       public AnnotationVisitor visitAnnotation(final String arg0,

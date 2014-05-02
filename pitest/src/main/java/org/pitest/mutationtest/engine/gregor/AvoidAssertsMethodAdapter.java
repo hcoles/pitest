@@ -32,19 +32,19 @@ public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
   public AvoidAssertsMethodAdapter(final Context context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM4, delegateMethodVisitor);
+    super(Opcodes.ASM5, delegateMethodVisitor);
     this.context = context;
   }
 
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
-      final String name, final String desc) {
+      final String name, final String desc, boolean itf) {
 
     if ((opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/Class".equals(owner)
         && "desiredAssertionStatus".equals(name)) {
       this.context.disableMutations(DISABLE_REASON);
     }
-    super.visitMethodInsn(opcode, owner, name, desc);
+    super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
 
   @Override

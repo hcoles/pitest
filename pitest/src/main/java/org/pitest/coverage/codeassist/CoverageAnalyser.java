@@ -1,6 +1,7 @@
 package org.pitest.coverage.codeassist;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -22,7 +23,7 @@ public class CoverageAnalyser extends MethodNode {
       final int probeOffset, final MethodVisitor mv, final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
-    super(access, name, desc, signature, exceptions);
+    super(Opcodes.ASM5,access, name, desc, signature, exceptions);
     this.mv = mv;
     this.lineTracker = lineTracker;
     this.classId = classId;
