@@ -37,7 +37,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
     public MemberVariableVisitor(final Context context,
         final MethodVisitor delegateVisitor) {
-      super(Opcodes.ASM4, delegateVisitor);
+      super(Opcodes.ASM5, delegateVisitor);
       this.context = context;
     }
 
@@ -68,8 +68,8 @@ public class MemberVariableMutator implements MethodMutatorFactory {
      */
     @Override
     public void visitMethodInsn(final int opcode, final String owner,
-        final String name, final String desc) {
-      super.visitMethodInsn(opcode, owner, name, desc);
+        final String name, final String desc, boolean itf) {
+      super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
 
     private boolean shouldMutate(final String fieldName) {

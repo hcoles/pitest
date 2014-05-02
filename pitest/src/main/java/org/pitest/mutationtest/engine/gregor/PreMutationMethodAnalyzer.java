@@ -17,19 +17,19 @@ public class PreMutationMethodAnalyzer extends MethodVisitor {
 
   public PreMutationMethodAnalyzer(final Set<String> loggingClasses,
       final PremutationClassInfo classInfo) {
-    super(Opcodes.ASM4, new TryWithResourcesMethodVisitor(classInfo));
+    super(Opcodes.ASM5, new TryWithResourcesMethodVisitor(classInfo));
     this.classInfo = classInfo;
     this.loggingClasses = loggingClasses;
   }
 
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
-      final String name, final String desc) {
+      final String name, final String desc, boolean itf) {
 
     if (FCollection.contains(this.loggingClasses, matches(owner))) {
       this.classInfo.registerLineToAvoid(this.currentLineNumber);
     }
-    super.visitMethodInsn(opcode, owner, name, desc);
+    super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
 
   private static F<String, Boolean> matches(final String owner) {

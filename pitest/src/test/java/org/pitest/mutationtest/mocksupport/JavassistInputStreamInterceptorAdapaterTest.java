@@ -24,32 +24,32 @@ public class JavassistInputStreamInterceptorAdapaterTest {
 
   @Test
   public void shouldNotInterceptNormalInvokeInterfaceCalls() {
-    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far");
+    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far", false);
     verify(this.mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar",
-        "far");
+        "far",false);
   }
 
   @Test
   public void shouldNotInterceptNormalInvokeStaticCalls() {
-    this.testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
-    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far");
+    this.testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far", false);
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far", false);
   }
 
   @Test
   public void shouldNotInterceptCallsToMethodsCalledOpenClassFileNotInJavaAssist() {
     this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo",
-        "openClassfile", "far");
+        "openClassfile", "far", false);
     verify(this.mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo",
-        "openClassfile", "far");
+        "openClassfile", "far", false);
   }
 
   @Test
   public void shouldInterceptCallsToOpenClassFileInJavaAssist() {
     this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "javassist/ClassPath",
-        "openClassfile", "far");
+        "openClassfile", "far", false);
     verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC,
         "org/pitest/mutationtest/mocksupport/JavassistInterceptor",
         "openClassfile",
-        "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;");
+        "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", false);
   }
 }

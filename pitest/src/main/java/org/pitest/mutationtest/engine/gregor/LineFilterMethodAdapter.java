@@ -14,7 +14,7 @@ class LineFilterMethodAdapter extends MethodVisitor {
   public LineFilterMethodAdapter(final Context context,
       final PremutationClassInfo classInfo,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM4, delegateMethodVisitor);
+    super(Opcodes.ASM5, delegateMethodVisitor);
     this.context = context;
     this.classInfo = classInfo;
   }

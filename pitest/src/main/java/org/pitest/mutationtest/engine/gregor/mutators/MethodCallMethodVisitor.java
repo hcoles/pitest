@@ -58,7 +58,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
       final Context context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
-    super(Opcodes.ASM4, writer);
+    super(Opcodes.ASM5, writer);
     this.factory = factory;
     this.filter = filter;
     this.context = context;
@@ -67,11 +67,11 @@ class MethodCallMethodVisitor extends MethodVisitor {
 
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
-      final String name, final String desc) {
+      final String name, final String desc, boolean itf) {
 
     if (!this.filter.apply(name, desc)
         || isCallToSuperOrOwnConstructor(name, owner)) {
-      this.mv.visitMethodInsn(opcode, owner, name, desc);
+      this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
     } else {
       final MutationIdentifier newId = this.context.registerMutation(
           this.factory, "removed call to " + owner + "::" + name);
@@ -83,7 +83,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
         putReturnValueOnStack(desc, name);
 
       } else {
-        this.mv.visitMethodInsn(opcode, owner, name, desc);
+        this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
       }
     }
 

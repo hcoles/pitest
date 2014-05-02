@@ -46,7 +46,7 @@ class IncrementsMethodVisitor extends MethodVisitor {
 
   public IncrementsMethodVisitor(final MethodMutatorFactory factory,
       final Context context, final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM4, delegateMethodVisitor);
+    super(Opcodes.ASM5, delegateMethodVisitor);
     this.factory = factory;
     this.context = context;
   }

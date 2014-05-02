@@ -27,7 +27,7 @@ public class SimpleCoverageVisitor extends MethodVisitor {
   public SimpleCoverageVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,
       final String name, final String desc, final int probeOffset) {
-    super(Opcodes.ASM4, writer);
+    super(Opcodes.ASM5, writer);
 
     this.methodVisitor = writer;
     this.classId = classId;
@@ -43,7 +43,7 @@ public class SimpleCoverageVisitor extends MethodVisitor {
     this.methodVisitor.visitLdcInsn(this.probeCount + this.probeOffset);
 
     this.methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC,
-        CodeCoverageStore.CLASS_NAME, "visitSingleProbe", "(II)V");
+        CodeCoverageStore.CLASS_NAME, "visitSingleProbe", "(II)V", false);
 
     this.probeCount++;
 
