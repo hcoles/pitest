@@ -47,7 +47,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
     if ((opcode == Opcodes.INVOKEINTERFACE)
         && owner.equals("javassist/ClassPath") && name.equals("openClassfile")) {
       this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, INTERCEPTOR_CLASS, name,
-          "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", itf);
+          "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", false);
     } else {
       this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
     }
