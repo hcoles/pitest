@@ -48,7 +48,6 @@
         <module>pitest-ant</module>
         <module>pitest-command-line</module>    
         <module>pitest-html-report</module> 
-        <module>pitest-groovy-verification</module>
         <module>pitest-maven-verification</module>
     </modules>
     
@@ -62,8 +61,19 @@
             </activation>
             <modules>
                 <module>pitest-java8-verification</module>
+                <module>pitest-groovy-verification</module>
             </modules>
         </profile>
+        <profile>
+            <id>java7</id>
+            <!-- Exclude Groovy verification for 1.6 as it has 7+ dependencies  -->
+            <activation>
+                <jdk>1.7</jdk>
+            </activation>
+            <modules>
+                <module>pitest-groovy-verification</module>
+            </modules>
+        </profile>   
         <profile>
             <id>release-sign-artifacts</id>
             <activation>

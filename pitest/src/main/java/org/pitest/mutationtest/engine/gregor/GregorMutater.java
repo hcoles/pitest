@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.pitest.bytecode.FrameOptions;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
@@ -120,7 +121,7 @@ class GregorMutater implements Mutater {
 
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ComputeClassWriter(this.byteSource,
-        this.computeCache, ClassWriter.COMPUTE_FRAMES);
+        this.computeCache, FrameOptions.pickFlags(bytes.value()));
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(), classInfo, FCollection.filter(this.mutators,
             isMutatorFor(id)));
