@@ -197,9 +197,22 @@ public class CoverageDataTest {
     when(this.code.getCode()).thenReturn(classes);
 
     assertEquals(Arrays.asList(barClass),
-        this.testee.getClassesForFile("bar.java"));
+        this.testee.getClassesForFile("bar.java", ""));
   }
-  
+
+  @Test
+  public void shouldMatchPackageWhenFindingSources() {
+    final ClassName foo1 = ClassName.fromString("a.b.c.foo");
+    final ClassName foo2 = ClassName.fromString("d.e.f.foo");
+    final ClassInfo foo1Class = ClassInfoMother.make(foo1, "foo.java");
+    final ClassInfo foo2Class = ClassInfoMother.make(foo2, "foo.java");
+    final Collection<ClassInfo> classes = Arrays.asList(foo1Class, foo2Class);
+    when(this.code.getCode()).thenReturn(classes);
+
+    assertEquals(Arrays.asList(foo1Class),
+        this.testee.getClassesForFile("foo.java", "a.b.c"));
+  }
+
   @Test
   public void shouldIncludeAllCoveredLinesInCoverageSummary() {
     this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
