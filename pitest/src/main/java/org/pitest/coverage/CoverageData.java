@@ -232,14 +232,16 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
-  public Collection<ClassInfo> getClassesForFile(final String sourceFile) {
-    return FCollection.filter(this.code.getCode(), isInSourceFile(sourceFile));
+  public Collection<ClassInfo> getClassesForFile(final String sourceFile, String packageName) {
+    return FCollection.filter(this.code.getCode(), matchesSourceAndPackage(sourceFile, packageName));
   }
 
-  private static F<ClassInfo, Boolean> isInSourceFile(final String sourceFile) {
+  private static F<ClassInfo, Boolean> matchesSourceAndPackage(final String sourceFile,
+    final String packageName) {
     return new F<ClassInfo, Boolean>() {
       public Boolean apply(final ClassInfo a) {
-        return a.getSourceFileName().equals(sourceFile);
+        return a.getSourceFileName().equals(sourceFile) &&
+            a.getName().getPackage().asJavaName().equals(packageName);
       }
     };
   }
