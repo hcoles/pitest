@@ -10,8 +10,9 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 0.34-SNAPSHOT
+### 1.0.0
 
+* Switch version numbering scheme
 * Upgrade to ASM 5.0.2
 * Fix for #114 - fails to run for java 8 when -parameters flag is set
 * #99 Support additionalClasspathElements property in maven plugin (thanks artspb)
