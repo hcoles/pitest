@@ -30,9 +30,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.functional.F2;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 class MethodCallMethodVisitor extends MethodVisitor {
 
@@ -40,7 +40,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
 
   private final F2<String, String, Boolean> filter;
   private final MethodMutatorFactory        factory;
-  private final Context                     context;
+  private final MutationContext                     context;
   private final MethodInfo                  methodInfo;
 
   static {
@@ -55,7 +55,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
   }
 
   public MethodCallMethodVisitor(final MethodInfo methodInfo,
-      final Context context, final MethodVisitor writer,
+      final MutationContext context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
     super(Opcodes.ASM5, writer);

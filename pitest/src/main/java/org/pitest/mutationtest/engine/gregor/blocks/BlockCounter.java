@@ -7,5 +7,5 @@ public interface BlockCounter {
   void registerFinallyBlockStart();
 
   void registerFinallyBlockEnd();
-
+  
 }

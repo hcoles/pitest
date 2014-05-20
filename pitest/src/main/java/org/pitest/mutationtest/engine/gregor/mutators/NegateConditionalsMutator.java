@@ -20,15 +20,15 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
   NEGATE_CONDITIONALS_MUTATOR;
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ConditionalMethodVisitor(this, context, methodVisitor);
   }
@@ -78,7 +78,7 @@ class ConditionalMethodVisitor extends AbstractJumpMutator {
   }
 
   public ConditionalMethodVisitor(final MethodMutatorFactory factory,
-      final Context context, final MethodVisitor delegateMethodVisitor) {
+      final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }
 

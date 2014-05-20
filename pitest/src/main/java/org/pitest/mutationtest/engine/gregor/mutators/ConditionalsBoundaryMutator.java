@@ -20,15 +20,15 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum ConditionalsBoundaryMutator implements MethodMutatorFactory {
 
   CONDITIONALS_BOUNDARY_MUTATOR;
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ConditionalsBoundaryMethodVisitor(this, context, methodVisitor);
   }
@@ -64,7 +64,7 @@ class ConditionalsBoundaryMethodVisitor extends AbstractJumpMutator {
   }
 
   public ConditionalsBoundaryMethodVisitor(final MethodMutatorFactory factory,
-      final Context context, final MethodVisitor delegateMethodVisitor) {
+      final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }
 

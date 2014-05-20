@@ -18,9 +18,9 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.util.PitError;
 
 /**
@@ -34,9 +34,9 @@ import org.pitest.util.PitError;
 public class InlineConstantMutator implements MethodMutatorFactory {
 
   private final class InlineConstantVisitor extends MethodVisitor {
-    private final Context context;
+    private final MutationContext context;
 
-    public InlineConstantVisitor(final Context context,
+    public InlineConstantVisitor(final MutationContext context,
         final MethodVisitor delegateVisitor) {
       super(Opcodes.ASM5, delegateVisitor);
       this.context = context;
@@ -284,7 +284,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
   }
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new InlineConstantVisitor(context, methodVisitor);
   }

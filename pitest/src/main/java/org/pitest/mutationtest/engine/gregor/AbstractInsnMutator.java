@@ -23,11 +23,11 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public abstract class AbstractInsnMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
-  private final Context              context;
+  private final MutationContext              context;
   private final MethodInfo           methodInfo;
 
   public AbstractInsnMutator(final MethodMutatorFactory factory,
-      final MethodInfo methodInfo, final Context context,
+      final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
     super(Opcodes.ASM5, delegateMethodVisitor);
     this.factory = factory;

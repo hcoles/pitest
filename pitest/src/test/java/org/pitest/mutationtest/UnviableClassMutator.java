@@ -20,15 +20,15 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 public class UnviableClassMutator implements MethodMutatorFactory {
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new UnviableClassMethodVisitor(this, methodInfo, context,
         methodVisitor);
@@ -47,7 +47,7 @@ public class UnviableClassMutator implements MethodMutatorFactory {
 class UnviableClassMethodVisitor extends AbstractInsnMutator {
 
   public UnviableClassMethodVisitor(final MethodMutatorFactory factory,
-      final MethodInfo methodInfo, final Context context,
+      final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
     super(factory, methodInfo, context, writer);
   }

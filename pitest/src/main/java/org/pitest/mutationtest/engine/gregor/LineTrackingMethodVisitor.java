@@ -20,9 +20,9 @@ import org.objectweb.asm.Opcodes;
 
 public class LineTrackingMethodVisitor extends MethodVisitor {
 
-  private final Context context;
+  private final MutationContext context;
 
-  public LineTrackingMethodVisitor(final Context context,
+  public LineTrackingMethodVisitor(final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
     super(Opcodes.ASM5, delegateMethodVisitor);
     this.context = context;

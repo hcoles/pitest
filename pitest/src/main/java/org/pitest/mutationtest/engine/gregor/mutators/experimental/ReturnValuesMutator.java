@@ -20,9 +20,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 /**
  * The <code>ReturnValuesMutator</code> mutates the return values of method
@@ -131,10 +131,10 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
     private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
 
-    private final Context       context;
+    private final MutationContext       context;
     private final MethodInfo    methodInfo;
 
-    private ReturnValuesMethodVisitor(final Context context,
+    private ReturnValuesMethodVisitor(final MutationContext context,
         final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
       super(Opcodes.ASM5, delegateVisitor);
       this.context = context;
@@ -312,7 +312,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     return SINGLETON_REPLACER.replaceObjectInstance(object, clazz);
   }
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ReturnValuesMethodVisitor(context, methodInfo, methodVisitor);
   }

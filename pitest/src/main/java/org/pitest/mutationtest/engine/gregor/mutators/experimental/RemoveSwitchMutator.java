@@ -7,9 +7,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 /**
  * Remove switch statements. We get an array of labels to jump to, plus a
@@ -32,7 +32,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     return variations;
   }
   
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new RemoveSwitchMethodVisitor(context, methodVisitor);
   }
@@ -52,9 +52,9 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
 
   private final class RemoveSwitchMethodVisitor extends MethodVisitor {
 
-    private final Context context;
+    private final MutationContext context;
 
-    public RemoveSwitchMethodVisitor(final Context context,
+    public RemoveSwitchMethodVisitor(final MutationContext context,
         final MethodVisitor methodVisitor) {
       super(Opcodes.ASM5, methodVisitor);
       this.context = context;

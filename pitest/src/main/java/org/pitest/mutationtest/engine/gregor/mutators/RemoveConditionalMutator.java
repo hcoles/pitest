@@ -2,13 +2,14 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public class RemoveConditionalMutator implements MethodMutatorFactory {
 
@@ -38,7 +39,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
     return variations;
   }
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new RemoveConditionalMethodVisitor(this, context, methodVisitor);
   }
@@ -54,11 +55,11 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   private final class RemoveConditionalMethodVisitor extends MethodVisitor {
 
     private static final String        DESCRIPTION = "removed conditional";
-    private final Context              context;
+    private final MutationContext              context;
     private final MethodMutatorFactory factory;
 
     public RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
-        final Context context, final MethodVisitor delegateMethodVisitor) {
+        final MutationContext context, final MethodVisitor delegateMethodVisitor) {
       super(Opcodes.ASM5, delegateMethodVisitor);
       this.context = context;
       this.factory = factory;

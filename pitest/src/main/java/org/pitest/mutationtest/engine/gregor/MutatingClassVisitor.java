@@ -21,18 +21,21 @@ import java.util.Set;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
 class MutatingClassVisitor extends ClassVisitor {
 
   private final F<MethodInfo, Boolean>    filter;
-  private final Context                   context;
+  private final ClassContext                   context;
   private final Set<MethodMutatorFactory> methodMutators = new HashSet<MethodMutatorFactory>();
   private final PremutationClassInfo      classInfo;
 
   public MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
-      final Context context, final F<MethodInfo, Boolean> filter,
+      final ClassContext context, final F<MethodInfo, Boolean> filter,
       final PremutationClassInfo classInfo,
       final Collection<MethodMutatorFactory> mutators) {
     super(Opcodes.ASM5, delegateClassVisitor);
@@ -60,7 +63,11 @@ class MutatingClassVisitor extends ClassVisitor {
   public MethodVisitor visitMethod(final int access, final String methodName,
       final String methodDescriptor, final String signature,
       final String[] exceptions) {
-    this.context.registerMethod(methodName, methodDescriptor);
+       
+    MethodMutationContext methodContext = new MethodMutationContext(context, Location.location(
+        ClassName.fromString(context.getClassInfo().getName()),
+        MethodName.fromString(methodName), methodDescriptor));
+    
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
         methodDescriptor, signature, exceptions);
 
@@ -69,48 +76,48 @@ class MutatingClassVisitor extends ClassVisitor {
         .withMethodName(methodName).withMethodDescriptor(methodDescriptor);
 
     if (this.filter.apply(info)) {
-      return  this.visitMethodForMutation(info, methodVisitor);
+      return  this.visitMethodForMutation(methodContext, info, methodVisitor);
     } else {
       return methodVisitor;
     }
 
   }
 
-  private MethodVisitor visitMethodForMutation(final MethodInfo methodInfo,
+  private MethodVisitor visitMethodForMutation(MethodMutationContext methodContext, final MethodInfo methodInfo,
       final MethodVisitor methodVisitor) {
 
     MethodVisitor next = methodVisitor;
     for (final MethodMutatorFactory each : this.methodMutators) {
-      next = each.create(this.context, methodInfo, next);
+      next = each.create(methodContext, methodInfo, next);
     }
 
-    return wrapWithDecorators(wrapWithFilters(next));
+    return wrapWithDecorators(methodContext,wrapWithFilters(methodContext, next));
   }
 
-  private MethodVisitor wrapWithDecorators(final MethodVisitor mv) {
-    return wrapWithBlockTracker(wrapWithLineTracker(mv));
+  private MethodVisitor wrapWithDecorators(MethodMutationContext methodContext, final MethodVisitor mv) {
+    return wrapWithBlockTracker(methodContext, wrapWithLineTracker(methodContext,mv));
   }
 
-  private MethodVisitor wrapWithBlockTracker(final MethodVisitor mv) {
-    return new BlockTrackingMethodDecorator(this.context, mv);
+  private MethodVisitor wrapWithBlockTracker(MethodMutationContext methodContext, final MethodVisitor mv) {
+    return new BlockTrackingMethodDecorator(methodContext, mv);
   }
 
-  private MethodVisitor wrapWithLineTracker(final MethodVisitor mv) {
-    return new LineTrackingMethodVisitor(this.context, mv);
+  private MethodVisitor wrapWithLineTracker(MethodMutationContext methodContext, final MethodVisitor mv) {
+    return new LineTrackingMethodVisitor(methodContext, mv);
   }
 
-  private MethodVisitor wrapWithFilters(final MethodVisitor wrappedMethodVisitor) {
-    return wrapWithLineFilter(wrapWithAssertFilter(wrappedMethodVisitor));
+  private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,final MethodVisitor wrappedMethodVisitor) {
+    return wrapWithLineFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
   }
 
-  private MethodVisitor wrapWithAssertFilter(
+  private MethodVisitor wrapWithAssertFilter(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
-    return new AvoidAssertsMethodAdapter(this.context, wrappedMethodVisitor);
+    return new AvoidAssertsMethodAdapter(methodContext, wrappedMethodVisitor);
   }
 
-  private MethodVisitor wrapWithLineFilter(
+  private MethodVisitor wrapWithLineFilter(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
-    return new LineFilterMethodAdapter(this.context, this.classInfo,
+    return new LineFilterMethodAdapter(methodContext, this.classInfo,
         wrappedMethodVisitor);
   }
 

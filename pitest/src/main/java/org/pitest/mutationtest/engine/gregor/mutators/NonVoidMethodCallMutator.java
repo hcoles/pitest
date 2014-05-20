@@ -17,15 +17,15 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.functional.F2;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum NonVoidMethodCallMutator implements MethodMutatorFactory {
 
   NON_VOID_METHOD_CALL_MUTATOR;
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
         this, nonVoidMethods());

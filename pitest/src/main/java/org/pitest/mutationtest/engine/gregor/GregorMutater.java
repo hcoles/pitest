@@ -68,7 +68,7 @@ class GregorMutater implements Mutater {
   public FunctionalList<MutationDetails> findMutations(
       final ClassName classToMutate) {
 
-    final Context context = new Context();
+    final ClassContext context = new ClassContext();
     context.setTargetMutation(Option.<MutationIdentifier> none());
     return GregorMutater.this.byteSource.getBytes(classToMutate.asInternalName())
         .flatMap(findMutations(context));
@@ -76,7 +76,7 @@ class GregorMutater implements Mutater {
   }
 
   private F<byte[], Iterable<MutationDetails>> findMutations(
-      final Context context) {
+      final ClassContext context) {
     return new F<byte[], Iterable<MutationDetails>>() {
       public Iterable<MutationDetails> apply(final byte[] bytes) {
         return findMutationsForBytes(context, bytes);
@@ -86,7 +86,7 @@ class GregorMutater implements Mutater {
   }
 
   private Collection<MutationDetails> findMutationsForBytes(
-      final Context context, final byte[] classToMutate) {
+      final ClassContext context, final byte[] classToMutate) {
 
     final PremutationClassInfo classInfo = performPreScan(classToMutate);
 
@@ -111,7 +111,7 @@ class GregorMutater implements Mutater {
 
   public Mutant getMutation(final MutationIdentifier id) {
 
-    final Context context = new Context();
+    final ClassContext context = new ClassContext();
     context.setTargetMutation(Option.some(id));
 
     final Option<byte[]> bytes = this.byteSource.getBytes(id.getClassName()

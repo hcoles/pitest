@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 public abstract class AbstractJumpMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
-  private final Context              context;
+  private final MutationContext              context;
 
   public static class Substitution {
     public Substitution(final int newCode, final String description) {
@@ -37,7 +37,7 @@ public abstract class AbstractJumpMutator extends MethodVisitor {
   }
 
   public AbstractJumpMutator(final MethodMutatorFactory factory,
-      final Context context, final MethodVisitor writer) {
+      final MutationContext context, final MethodVisitor writer) {
     super(Opcodes.ASM5, writer);
     this.factory = factory;
     this.context = context;

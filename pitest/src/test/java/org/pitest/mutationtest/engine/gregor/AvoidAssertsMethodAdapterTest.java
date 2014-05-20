@@ -16,7 +16,7 @@ import org.pitest.bytecode.MethodDecoratorTest;
 public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
 
   @Mock
-  private Context                   context;
+  private MethodMutationContext                   context;
 
   @Mock
   private Label                     label;

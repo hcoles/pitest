@@ -19,9 +19,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.Context;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 /**
  * The <code>MemberVariableMutator</code> is a mutator that mutates assignments
@@ -33,9 +33,9 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   private final class MemberVariableVisitor extends MethodVisitor {
 
-    private final Context context;
+    private final MutationContext context;
 
-    public MemberVariableVisitor(final Context context,
+    public MemberVariableVisitor(final MutationContext context,
         final MethodVisitor delegateVisitor) {
       super(Opcodes.ASM5, delegateVisitor);
       this.context = context;
@@ -81,7 +81,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   }
 
-  public MethodVisitor create(final Context context,
+  public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MemberVariableVisitor(context, methodVisitor);
   }

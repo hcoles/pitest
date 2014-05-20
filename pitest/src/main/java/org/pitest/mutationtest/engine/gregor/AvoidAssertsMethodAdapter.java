@@ -26,11 +26,11 @@ public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
   private final static String DISABLE_REASON = "ASSERTS";
 
-  private final Context       context;
+  private final MutationContext       context;
   private boolean             assertBlockStarted;
   private Label               destination;
 
-  public AvoidAssertsMethodAdapter(final Context context,
+  public AvoidAssertsMethodAdapter(final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
     super(Opcodes.ASM5, delegateMethodVisitor);
     this.context = context;
