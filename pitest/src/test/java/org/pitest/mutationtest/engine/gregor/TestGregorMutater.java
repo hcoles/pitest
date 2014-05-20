@@ -348,18 +348,20 @@ public class TestGregorMutater extends MutatorTestBase {
     }
 
     public int a(int i) {
+      if ( i > 2) {
+        System.out.println(i);
+      }
       return 1;
     }
   }
   
   @Test
-  public void shouldScopeMutationIndexesByMethod() {
+  public void shouldScopeMutationIndexesByInstructionCounter() {
     createTesteeWith(Mutator.byName("RETURN_VALS"));
     final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
     assertEquals(2, actualDetails.size());
-    assertEquals(0,actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(0,actualDetails.get(1).getId().getFirstIndex());
-    assertFalse(actualDetails.get(0).getId().equals(actualDetails.get(1).getId()));
+    assertEquals(3,actualDetails.get(0).getId().getFirstIndex());
+    assertEquals(13,actualDetails.get(1).getId().getFirstIndex());
   }
 
   

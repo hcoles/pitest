@@ -25,6 +25,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
+import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodVisitor;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
 class MutatingClassVisitor extends ClassVisitor {
@@ -86,7 +87,8 @@ class MutatingClassVisitor extends ClassVisitor {
   private MethodVisitor visitMethodForMutation(MethodMutationContext methodContext, final MethodInfo methodInfo,
       final MethodVisitor methodVisitor) {
 
-    MethodVisitor next = methodVisitor;
+    MethodVisitor next = new InstructionTrackingMethodVisitor(methodVisitor,
+        methodContext);
     for (final MethodMutatorFactory each : this.methodMutators) {
       next = each.create(methodContext, methodInfo, next);
     }

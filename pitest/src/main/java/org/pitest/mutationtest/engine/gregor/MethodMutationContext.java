@@ -1,9 +1,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.pitest.functional.FunctionalList;
@@ -11,15 +9,17 @@ import org.pitest.functional.MutableList;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
-class MethodMutationContext implements MutationContext {
+class MethodMutationContext implements MutationContext, InstructionCounter {
 
   private final ClassContext                    classContext;
   private final Location                        location;
 
-  private final Map<String, Integer>            mutatorIndexes                 = new HashMap<String, Integer>();
-  private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
 
+  private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
+  private int                         instructionIndex;
+  
   private int                                   lastLineNumber;
   private final Set<String>                     mutationFindingDisabledReasons = new HashSet<String>();
 
@@ -35,26 +35,15 @@ class MethodMutationContext implements MutationContext {
     final MutationDetails details = new MutationDetails(newId,
         this.classContext.getFileName(), description, this.lastLineNumber,
         this.classContext.getCurrentBlock(),
-        this.classContext.isWithinFinallyBlock(), false);
+        this.classContext.isWithinFinallyBlock(), false); 
     registerMutation(details);
     return newId;
   }
 
   private MutationIdentifier getNextMutationIdentifer(
       final MethodMutatorFactory factory, final String className) {
-    final int index = getAndIncrementIndex(factory);
-    return new MutationIdentifier(this.location, index,
+    return new MutationIdentifier(this.location, instructionIndex,
         factory.getGloballyUniqueId());
-  }
-
-  private int getAndIncrementIndex(final MethodMutatorFactory factory) {
-    Integer index = this.mutatorIndexes.get(factory.getGloballyUniqueId());
-    if (index == null) {
-      index = 0;
-    }
-    this.mutatorIndexes.put(factory.getGloballyUniqueId(), (index + 1));
-    return index;
-
   }
 
   private void registerMutation(final MutationDetails details) {
@@ -102,6 +91,15 @@ class MethodMutationContext implements MutationContext {
 
   public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
+  }
+
+  public void increment() {
+    this.instructionIndex =     this.instructionIndex + 1;
+    
+  }
+
+  public int currentInstructionCount() {
+    return this.instructionIndex;
   }
 
 }
