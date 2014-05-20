@@ -1,11 +1,8 @@
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.MutableList;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -13,15 +10,13 @@ import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 class MethodMutationContext implements MutationContext, InstructionCounter {
 
-  private final ClassContext                    classContext;
-  private final Location                        location;
+  private final ClassContext classContext;
+  private final Location     location;
 
+  private int                instructionIndex;
 
-  private final FunctionalList<MutationDetails> mutations                      = new MutableList<MutationDetails>();
-  private int                         instructionIndex;
-  
-  private int                                   lastLineNumber;
-  private final Set<String>                     mutationFindingDisabledReasons = new HashSet<String>();
+  private int                lastLineNumber;
+  private final Set<String>  mutationFindingDisabledReasons = new HashSet<String>();
 
   MethodMutationContext(final ClassContext classContext, final Location location) {
     this.classContext = classContext;
@@ -35,14 +30,14 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
     final MutationDetails details = new MutationDetails(newId,
         this.classContext.getFileName(), description, this.lastLineNumber,
         this.classContext.getCurrentBlock(),
-        this.classContext.isWithinFinallyBlock(), false); 
+        this.classContext.isWithinFinallyBlock(), false);
     registerMutation(details);
     return newId;
   }
 
   private MutationIdentifier getNextMutationIdentifer(
       final MethodMutatorFactory factory, final String className) {
-    return new MutationIdentifier(this.location, instructionIndex,
+    return new MutationIdentifier(this.location, this.instructionIndex,
         factory.getGloballyUniqueId());
   }
 
@@ -58,10 +53,6 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
 
   public void registerCurrentLine(final int line) {
     this.lastLineNumber = line;
-  }
-
-  public Collection<MutationDetails> getCollectedMutations() {
-    return this.mutations;
   }
 
   public void registerNewBlock() {
@@ -94,8 +85,8 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   }
 
   public void increment() {
-    this.instructionIndex =     this.instructionIndex + 1;
-    
+    this.instructionIndex = this.instructionIndex + 1;
+
   }
 
   public int currentInstructionCount() {

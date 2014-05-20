@@ -1,6 +1,5 @@
 package org.pitest.coverage.codeassist;
 
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -26,9 +25,8 @@ public class LocalVariableCoverageMethodVisitor extends AdviceAdapter {
    */
   private final Label         handler    = new Label();
 
-  int                         probeCount = 0;
-  int                         locals[];                // locals = new
-                                                        // ArrayList<Integer>();
+  private int                 probeCount = 0;
+  private int                 locals[];
 
   public LocalVariableCoverageMethodVisitor(final LineTracker lineTracker,
       final int classId, final MethodVisitor writer, final int access,

@@ -16,11 +16,6 @@ public class ProjectConfigurationParserException extends Exception {
     super(message);
   }
 
-  public ProjectConfigurationParserException(final String message,
-      final Throwable cause) {
-    super(message, cause);
-  }
-
   public ProjectConfigurationParserException(final Throwable cause) {
     super(cause);
   }

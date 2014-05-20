@@ -17,13 +17,11 @@ package org.pitest.util;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.WeakHashMap;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.core.util.Base64Encoder;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
@@ -119,12 +117,6 @@ public abstract class IsolationUtils {
     XSTREAM_INSTANCE.marshal(o, new CompactWriter(writer));
 
     return writer.toString();
-  }
-
-  public static String decodeTransportString(final String encodedXml)
-      throws IOException {
-    final Base64Encoder encoder = new Base64Encoder();
-    return new String(encoder.decode(encodedXml), "UTF-8");
   }
 
   public static Object fromXml(final String xml) {

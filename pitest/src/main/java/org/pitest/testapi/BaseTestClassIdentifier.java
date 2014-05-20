@@ -7,8 +7,5 @@ public abstract class BaseTestClassIdentifier implements TestClassIdentifier {
   public boolean isIncluded(ClassInfo a) {
     return true;
   }
-
-  public boolean isExcluded(ClassInfo a) {
-    return false;
-  }
+  
 }
