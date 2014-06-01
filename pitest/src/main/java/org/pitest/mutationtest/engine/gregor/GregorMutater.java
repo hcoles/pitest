@@ -43,7 +43,7 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 import org.pitest.util.ComputeClassWriter;
 
-class GregorMutater implements Mutater {
+public class GregorMutater implements Mutater {
 
   private final Map<String, String>       computeCache   = new HashMap<String, String>();
   private final Predicate<MethodInfo>     filter;

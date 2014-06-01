@@ -76,6 +76,11 @@ public class CodeSource implements ClassInfoSource {
     return FCollection.flatMap(classes, nameToClassInfo());
   }
 
+  // not used but keep to allow plugins to query bytecode
+  public Option<byte[]> fetchClassBytes(final ClassName clazz) {
+    return this.classRepository.querySource(clazz);
+  }
+  
   public Option<ClassInfo> fetchClass(final ClassName clazz) {
     return this.classRepository.fetchClass(clazz);
   }

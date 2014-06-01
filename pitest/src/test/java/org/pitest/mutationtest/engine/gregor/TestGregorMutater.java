@@ -360,8 +360,8 @@ public class TestGregorMutater extends MutatorTestBase {
     createTesteeWith(Mutator.byName("RETURN_VALS"));
     final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
     assertEquals(2, actualDetails.size());
-    assertEquals(3,actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(13,actualDetails.get(1).getId().getFirstIndex());
+    assertEquals(4,actualDetails.get(0).getId().getFirstIndex());
+    assertEquals(14,actualDetails.get(1).getId().getFirstIndex());
   }
 
   

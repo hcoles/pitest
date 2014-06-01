@@ -74,7 +74,7 @@ public class Repository implements ClassInfoSource {
     }
   }
 
-  private Option<byte[]> querySource(final ClassName name) {
+  public Option<byte[]> querySource(final ClassName name) {
     if (this.unknownClasses.contains(name)) {
       return Option.none();
     }

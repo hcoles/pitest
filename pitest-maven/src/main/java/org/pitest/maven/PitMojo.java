@@ -290,6 +290,7 @@ public class PitMojo extends AbstractMojo {
 
   public final void execute() throws MojoExecutionException,
       MojoFailureException {
+    
     if (shouldRun()) {
       
       for ( ToolClasspathPlugin each  : plugins.findToolClasspathPlugins() ) {

@@ -2,6 +2,7 @@ package org.pitest.classpath;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -136,6 +137,12 @@ public class CodeSourceTest {
         .asList(ClassName.fromString("Foo"), ClassName.fromString("Unknown"))));
   }
 
+  @Test
+  public void shouldAllowClientsToRetrieveBytecode() {
+    this.testee.fetchClassBytes(ClassName.fromString("Foo"));
+    verify(this.repository).querySource(ClassName.fromString("Foo"));
+  }
+  
   private ClassInfo makeClassInfo(final String name) {
     final ClassInfo ci = ClassInfoMother.make(name);
     when(this.repository.fetchClass(ClassName.fromString(name))).thenReturn(

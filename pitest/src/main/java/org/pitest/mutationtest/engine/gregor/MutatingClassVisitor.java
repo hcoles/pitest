@@ -84,16 +84,17 @@ class MutatingClassVisitor extends ClassVisitor {
 
   }
 
-  private MethodVisitor visitMethodForMutation(MethodMutationContext methodContext, final MethodInfo methodInfo,
+  private MethodVisitor visitMethodForMutation(
+      MethodMutationContext methodContext, final MethodInfo methodInfo,
       final MethodVisitor methodVisitor) {
 
-    MethodVisitor next = new InstructionTrackingMethodVisitor(methodVisitor,
-        methodContext);
+    MethodVisitor next = methodVisitor;
     for (final MethodMutatorFactory each : this.methodMutators) {
       next = each.create(methodContext, methodInfo, next);
     }
 
-    return wrapWithDecorators(methodContext,wrapWithFilters(methodContext, next));
+    return new InstructionTrackingMethodVisitor(wrapWithDecorators(
+        methodContext, wrapWithFilters(methodContext, next)), methodContext);
   }
 
   private MethodVisitor wrapWithDecorators(MethodMutationContext methodContext, final MethodVisitor mv) {
