@@ -115,6 +115,13 @@ public class PitMojo extends AbstractMojo {
   private int                   threads;
 
   /**
+   * Does the current module need to be skipped
+   * 
+   * @parameter default-value="false" expression="${skip}"
+   */
+  private boolean               skip;
+
+  /**
    * Mutate static initializers
    * 
    * @parameter default-value="false" expression="${mutateStaticInitializers}"
@@ -459,7 +466,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected boolean shouldRun() {
-    return !this.project.getPackaging().equalsIgnoreCase("pom");
+    return !this.project.getPackaging().equalsIgnoreCase("pom") && !skip;
   }
 
   public String getMutationEngine() {
