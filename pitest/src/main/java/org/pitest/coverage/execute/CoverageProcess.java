@@ -8,6 +8,7 @@ import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.SideEffect1;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
+import org.pitest.util.ExitCode;
 
 public class CoverageProcess {
 
@@ -29,9 +30,9 @@ public class CoverageProcess {
     this.process.start();
   }
 
-  public void waitToDie() throws InterruptedException {
+  public ExitCode waitToDie() throws InterruptedException {
     try {
-      this.crt.waitToFinish();
+      return this.crt.waitToFinish();
     } finally {
       this.process.destroy();
     }
