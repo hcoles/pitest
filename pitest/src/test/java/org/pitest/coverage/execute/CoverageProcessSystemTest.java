@@ -1,10 +1,23 @@
 package org.pitest.coverage.execute;
 
-import java.io.*;
-import java.util.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import com.example.coverage.execute.samples.simple.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -19,11 +32,11 @@ import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.ExitCode;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
@@ -35,9 +48,12 @@ import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import com.example.coverage.execute.samples.simple.Testee;
+import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
+import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
+import com.example.coverage.execute.samples.simple.Tests;
+import com.example.coverage.execute.samples.simple.TestsForMultilineCoverage;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
