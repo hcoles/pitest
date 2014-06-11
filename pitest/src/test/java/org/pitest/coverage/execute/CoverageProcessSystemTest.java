@@ -1,10 +1,13 @@
 package org.pitest.coverage.execute;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -29,11 +32,12 @@ import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
+import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.ExitCode;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
 
@@ -265,6 +269,42 @@ public class CoverageProcessSystemTest {
     assertFalse(coveredClasses.contains(failingTest()));
   }
 
+  @Test
+  public void shouldFailWithExitCode() throws Exception {
+    final SideEffect1<CoverageResult> noOpHandler = new SideEffect1<CoverageResult>() {
+      public void apply(final CoverageResult a) {}
+    };
+
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
+        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+    final LaunchOptions lo = new LaunchOptions(agent);
+    final SocketFinder sf = new SocketFinder();
+    final CoverageProcess process = new CoverageProcess(
+        ProcessArgs.withClassPath(classPathWithoutJUnit()).andLaunchOptions(lo),
+        sa,
+        sf.getNextAvailableServerSocket(),
+        Arrays.asList(TestsForMultilineCoverage.class.getName()),
+        noOpHandler
+    );
+    process.start();
+
+    final ExitCode exitCode = process.waitToDie();
+
+    assertThat(exitCode, is(ExitCode.UNKNOWN_ERROR));
+  }
+
+  private ClassPath classPathWithoutJUnit() {
+    FunctionalList<File> cpWithoutJUnit = FCollection.filter(ClassPath.getClassPathElementsAsFiles(), new F<File, Boolean>() {
+      public Boolean apply(File file) {
+        return !file.getName().contains("junit");
+      }
+    });
+
+    return new ClassPath(cpWithoutJUnit);
+  }
+
+
   private F<CoverageResult, Boolean> failingTest() {
     return new F<CoverageResult, Boolean>() {
 
@@ -278,11 +318,13 @@ public class CoverageProcessSystemTest {
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
       throws IOException, InterruptedException, ExecutionException {
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
-
     final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
 
+    runCoverageProcess(test, coveredClasses);
+    return coveredClasses;
+  }
+
+  private void runCoverageProcess(final Class<?> test, final FunctionalList<CoverageResult> coveredClasses) throws IOException, InterruptedException {
     final SideEffect1<CoverageResult> handler = new SideEffect1<CoverageResult>() {
 
       public void apply(final CoverageResult a) {
@@ -290,23 +332,28 @@ public class CoverageProcessSystemTest {
       }
 
     };
-    
 
-
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
+        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
-    final LaunchOptions lo = new LaunchOptions(agent);
-    final SocketFinder sf = new SocketFinder();
-    final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(new ClassPath()).andLaunchOptions(lo), sa,
-        sf.getNextAvailableServerSocket(), Arrays.asList(test.getName()),
-        handler);
-    process.start();
-    process.waitToDie();
-    agent.close();
-    return coveredClasses;
+    try {
+      final LaunchOptions lo = new LaunchOptions(agent);
+      final SocketFinder sf = new SocketFinder();
+      final CoverageProcess process = new CoverageProcess(ProcessArgs
+          .withClassPath(new ClassPath()).andLaunchOptions(lo), sa,
+          sf.getNextAvailableServerSocket(), Arrays.asList(test.getName()),
+          handler
+      );
+      process.start();
+
+      final ExitCode exitCode = process.waitToDie();
+      assertThat(exitCode, is(ExitCode.OK));
+    } finally {
+      agent.close();
+    }
   }
 
-  private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
+    private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
     return new F<CoverageResult, Boolean>() {
 
       public Boolean apply(final CoverageResult a) {

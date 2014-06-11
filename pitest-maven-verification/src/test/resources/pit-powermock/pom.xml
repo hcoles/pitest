@@ -67,7 +67,6 @@
 	<properties>
 		<junit.version>4.8.1</junit.version>	
 		<powermock.version>1.5.4</powermock.version>
-        <pit.version>0.33-SNAPSHOT</pit.version>
 	</properties>
 
 </project>
