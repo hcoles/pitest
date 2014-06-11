@@ -40,8 +40,6 @@
 	
 	<properties>
 		<junit.version>4.8.1</junit.version>
-		
-	
 	</properties>
 	<modules>
 	   <module>pit-33-setUserDir-subModule</module>

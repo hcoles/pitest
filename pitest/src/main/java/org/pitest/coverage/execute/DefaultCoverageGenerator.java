@@ -38,7 +38,9 @@ import org.pitest.help.PitHelpError;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.Configuration;
+import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
+import org.pitest.util.PitError;
 import org.pitest.util.SocketFinder;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
@@ -124,7 +126,15 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
         socket, filteredTests, handler);
 
     process.start();
-    process.waitToDie();
+
+    ExitCode exitCode = process.waitToDie();
+
+    if(!exitCode.isOk()) {
+      LOG.severe("Coverage generator Slave exited abnormally due to " + exitCode);
+      throw new PitError("Coverage generation slave exited abnormally!");
+    } else {
+      LOG.fine("Coverage generator Slave exited ok");
+    }
   }
 
   private static F<ClassInfo, String> classInfoToName() {
