@@ -54,8 +54,8 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.DefaultTestPrioritiser;
 import org.pitest.mutationtest.build.DefaultGrouper;
+import org.pitest.mutationtest.build.DefaultTestPrioritiser;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
@@ -346,8 +346,9 @@ public class TestMutationTesting {
       final JavaAgent agent,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
-    data.setConfiguration(this.config);
-    final CoverageOptions coverageOptions = data.createCoverageOptions();
+    //data.setConfiguration(this.config);
+    final CoverageOptions coverageOptions = createCoverageOptions(data);
+    
     final LaunchOptions launchOptions = new LaunchOptions(agent,
         new DefaultJavaExecutableLocator(), data.getJvmArgs());
 
@@ -395,6 +396,12 @@ public class TestMutationTesting {
         .createMutationTestUnits(codeClasses);
 
     this.pit.run(this.container, tus);
+  }
+
+  private CoverageOptions createCoverageOptions(ReportOptions data) {
+    return new CoverageOptions(data.getTargetClassesFilter(),
+         this.config, data.isVerbose(),
+        data.getDependencyAnalysisMaxDistance());
   }
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {

@@ -1,16 +1,21 @@
 package org.pitest.mutationtest.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
+import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
+import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 
 public class SettingsFactoryTest {
@@ -26,6 +31,11 @@ public class SettingsFactoryTest {
     this.testee = new SettingsFactory(this.options, plugins);
   }
 
+  @Test
+  public void shouldReturnTheLegacyTestFrameworkPluginWhenNoOtherOnClasspath() {
+    assertTrue(testee.getTestFrameworkPlugin() != null);
+  }
+  
   @Test
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
     this.options.setExportLineCoverage(false);
@@ -75,4 +85,30 @@ public class SettingsFactoryTest {
     this.options.setJavaExecutable("foo");
     assertEquals("foo",testee.getJavaExecutable().javaExecutable());
   }
+  
+  @Test
+  public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
+    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
+        .singleton("java/Integer")));
+    final CoverageOptions actual = this.testee.createCoverageOptions();
+    assertFalse(actual.getFilter().apply("java/Integer"));
+  }
+
+  @Test
+  public void shouldNotAllowUserToCalculateCoverageForCoverageImplementation() {
+    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
+        .singleton("/org/pitest/coverage")));
+    final CoverageOptions actual = this.testee.createCoverageOptions();
+    assertFalse(actual.getFilter().apply("org/pitest/coverage"));
+  }
+  
+
+  @Test(expected = PitHelpError.class)
+  public void shouldNotAllowUserToMakePITMutateItself() {
+    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
+        .singleton("org.pitest.*")));
+    this.testee.createCoverageOptions();
+  }
+
+  
 }

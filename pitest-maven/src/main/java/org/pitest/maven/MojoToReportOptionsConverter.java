@@ -23,11 +23,9 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -110,7 +108,7 @@ public class MojoToReportOptionsConverter {
 
     data.addOutputFormats(determineOutputFormats());
 
-    setTestType(data);
+    setTestGroups(data);
 
     data.setMutationUnitSize(this.mojo.getMutationUnitSize());
     data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
@@ -129,16 +127,11 @@ public class MojoToReportOptionsConverter {
     return this.mojo.isFailWhenNoMutations();
   }
 
-  private void setTestType(final ReportOptions data) {
+  private void setTestGroups(final ReportOptions data) {
     final TestGroupConfig conf = new TestGroupConfig(
         this.mojo.getExcludedGroups(),
         this.mojo.getIncludedGroups());
-    final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
-        new ClassPathByteArraySource(data.getClassPath()));
-
     data.setGroupConfig(conf);
-    data.setConfiguration(configFactory.createConfiguration());
-
   }
 
   private void addOwnDependenciesToClassPath(final List<String> classPath) {

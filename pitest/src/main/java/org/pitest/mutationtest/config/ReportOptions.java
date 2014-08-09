@@ -34,7 +34,6 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.execute.Pitest;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -47,7 +46,6 @@ import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
-import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.ResultOutputStrategy;
@@ -69,7 +67,7 @@ public class ReportOptions {
                                                                                 "org.slf4j",
                                                                                 "org.apache.commons.logging");
 
-  private Configuration                  config;
+//  private Configuration                  config;
   private Collection<Predicate<String>>  targetClasses;
   private Collection<Predicate<String>>  excludedMethods                = Collections
                                                                             .emptyList();
@@ -370,25 +368,6 @@ public class ReportOptions {
     this.failWhenNoMutations = failWhenNoMutations;
   }
 
-  @SuppressWarnings("unchecked")
-  public CoverageOptions createCoverageOptions() {
-    return new CoverageOptions(Prelude.and(this.getTargetClassesFilter(),
-        not(commonClasses())), this.config, this.isVerbose(),
-        this.getDependencyAnalysisMaxDistance());
-  }
-
-  private static F<String, Boolean> commonClasses() {
-    return new F<String, Boolean>() {
-      public Boolean apply(final String name) {
-        return name.startsWith("java") || name.startsWith("sun/")
-            || name.startsWith("org/junit") || name.startsWith("junit")
-            || name.startsWith("org/pitest/coverage")
-            || name.startsWith("org/pitest/reloc")
-            || name.startsWith("org/pitest/boot");
-      }
-
-    };
-  }
 
   public ProjectClassPaths getMutationClassPaths() {
 
@@ -423,9 +402,6 @@ public class ReportOptions {
     this.codePaths = codePaths;
   }
 
-  public void setConfiguration(final Configuration configuration) {
-    this.config = configuration;
-  }
 
   public void setGroupConfig(final TestGroupConfig groupConfig) {
     this.groupConfig = groupConfig;
@@ -564,7 +540,7 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [config=" + this.config + ", targetClasses="
+    return "ReportOptions [targetClasses="
         + this.targetClasses + ", excludedMethods=" + this.excludedMethods
         + ", excludedClasses=" + this.excludedClasses + ", codePaths="
         + this.codePaths + ", reportDir=" + this.reportDir

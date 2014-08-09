@@ -75,7 +75,7 @@ public class EntryPoint {
     final MutationResultListenerFactory reportFactory = settings
         .createListener();
 
-    final CoverageOptions coverageOptions = data.createCoverageOptions();
+    final CoverageOptions coverageOptions = settings.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja,
         settings.getJavaExecutable(), data.getJvmArgs());
     final ProjectClassPaths cps = data.getMutationClassPaths();

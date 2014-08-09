@@ -97,8 +97,7 @@ public abstract class ReportTestBase {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
 
-      this.data.setConfiguration(configuration);
-      final CoverageOptions coverageOptions = this.data.createCoverageOptions();
+      final CoverageOptions coverageOptions = createCoverageOptions(configuration);
       final LaunchOptions launchOptions = new LaunchOptions(agent, new DefaultJavaExecutableLocator(),
           this.data.getJvmArgs());
 
@@ -132,6 +131,12 @@ public abstract class ReportTestBase {
     }
   }
   
+  private CoverageOptions createCoverageOptions(Configuration configuration) {
+    return new CoverageOptions(data.getTargetClassesFilter(),
+         configuration, data.isVerbose(),
+        data.getDependencyAnalysisMaxDistance());
+  }
+
   protected void setMutators(final String mutator) {
     this.data.setMutators(Arrays.asList(mutator));
   }

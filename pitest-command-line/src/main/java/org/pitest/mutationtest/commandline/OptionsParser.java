@@ -63,18 +63,16 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.classpath.ClassPath;
-import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.config.ConfigurationFactory;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.project.ProjectConfigurationException;
 import org.pitest.project.ProjectConfigurationParser;
 import org.pitest.project.ProjectConfigurationParserException;
 import org.pitest.project.ProjectConfigurationParserFactory;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
 
@@ -385,7 +383,7 @@ public class OptionsParser {
 
     setClassPath(userArgs, data);
 
-    setTestConfiguration(userArgs, data);
+    setTestGroups(userArgs, data);
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
 
     if (userArgs.has("?")) {
@@ -408,16 +406,14 @@ public class OptionsParser {
     data.setClassPathElements(elements);
   }
 
-  private void setTestConfiguration(final OptionSet userArgs,
+  private void setTestGroups(final OptionSet userArgs,
       final ReportOptions data) {
     final TestGroupConfig conf = new TestGroupConfig(
         this.excludedGroupsSpec.values(userArgs),
         this.includedGroupsSpec.values(userArgs));
-    final ConfigurationFactory configFactory = new ConfigurationFactory(conf,
-        new ClassPathByteArraySource(data.getClassPath()));
 
     data.setGroupConfig(conf);
-    data.setConfiguration(configFactory.createConfiguration());
+
   }
 
   /**

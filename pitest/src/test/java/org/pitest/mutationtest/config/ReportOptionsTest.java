@@ -16,14 +16,8 @@ package org.pitest.mutationtest.config;
 
 import static org.junit.Assert.assertFalse;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.help.PitHelpError;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.util.Glob;
 
 public class ReportOptionsTest {
   private ReportOptions testee;
@@ -31,29 +25,6 @@ public class ReportOptionsTest {
   @Before
   public void setUp() {
     this.testee = new ReportOptions();
-  }
-
-  @Test
-  public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
-    this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("java/Integer")));
-    final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("java/Integer"));
-  }
-
-  @Test
-  public void shouldNotAllowUserToCalculateCoverageForCoverageImplementation() {
-    this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("/org/pitest/coverage")));
-    final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("org/pitest/coverage"));
-  }
-
-  @Test(expected = PitHelpError.class)
-  public void shouldNotAllowUserToMakePITMutateItself() {
-    this.testee.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("org.pitest.*")));
-    this.testee.createCoverageOptions();
   }
 
   @Test

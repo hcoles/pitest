@@ -11,6 +11,7 @@ import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
+import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.ServiceLoader;
 
@@ -46,8 +47,13 @@ public class PluginServices {
   public Iterable<? extends ClientClasspathPlugin> findClientClasspathPlugins() {
     final List<ClientClasspathPlugin> l = new ArrayList<ClientClasspathPlugin>();
     l.addAll(findMutationEngines());
+    l.addAll(findTestFrameworkPlugins());
     l.addAll(nullPlugins());
     return l;
+  }
+  
+  Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
+	return ServiceLoader.load(TestPluginFactory.class, loader);  
   }
   
   Collection<? extends MutationGrouperFactory> findGroupers() {

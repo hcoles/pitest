@@ -27,7 +27,7 @@ import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 
-public class ConfigurationFactory {
+class ConfigurationFactory {
 
   private final ClassByteArraySource source;
   private final TestGroupConfig config;
