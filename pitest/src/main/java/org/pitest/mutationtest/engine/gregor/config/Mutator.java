@@ -28,6 +28,8 @@ import java.util.TreeSet;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
@@ -211,7 +213,11 @@ public final class Mutator {
   private static F<String, Iterable<MethodMutatorFactory>> fromString() {
     return new F<String, Iterable<MethodMutatorFactory>>() {
       public Iterable<MethodMutatorFactory> apply(final String a) {
-        return mutators.get(a);
+        Iterable<MethodMutatorFactory> i = mutators.get(a);
+        if (i == null) {
+            throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
+        }
+        return i;
       }
     };
   }

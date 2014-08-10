@@ -31,7 +31,9 @@ public enum Help {
   NO_TEST_LIBRARY(
       "No test library found on classpath. PIT requires either JUnit 4 (but can run JUnit 3 tests) or TestNG"), //
   BAD_FILTER(
-      "The supplied filter would cause PIT to try and mutate itself. This will lead to many wasted hours of confusion and debugging. You have better things to do with your life so please don't do this again.");
+      "The supplied filter would cause PIT to try and mutate itself. This will lead to many wasted hours of confusion and debugging. You have better things to do with your life so please don't do this again."), //
+  UNKNOWN_MUTATOR(
+      "Mutator or group %s is unknown. Check PIT configuration and try again.");
 
   private final static String URL = "http://pitest.org";
   private final String        text;
