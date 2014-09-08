@@ -89,7 +89,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean runnerCannotBeSplit(final Runner runner) {
     final String runnerName = runner.getClass().getName();
     return runnerName.equals("junitparams.JUnitParamsRunner")
-        || runnerName.startsWith("org.spockframework.runtime.Sputnik");
+        || runnerName.startsWith("org.spockframework.runtime.Sputnik")
+        || runnerName.startsWith("com.insightfullogic.lambdabehave");
   }
 
   private boolean isJUnitThreeSuiteMethodNotForOwnClass(final Runner runner,
