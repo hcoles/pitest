@@ -36,12 +36,6 @@
         </developer>
     </developers>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-    
     <modules>
         <module>pitest-maven</module>
         <module>pitest</module>
@@ -125,7 +119,8 @@
     </dependencies>
 
     <build>
-        <!-- specification of versions of all plugins used in any module
+	
+    <!-- specification of versions of all plugins used in any module
         also common configuration is specified there
         (but module-specific stuff is specified in other pom.xml files) -->
         <pluginManagement>
@@ -193,7 +188,16 @@
         </pluginManagement>
     </build>
 
-
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
     <!-- versions of libraries which are used in different projects or which are used for few artifacts -->
     <properties>
