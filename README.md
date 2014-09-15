@@ -10,6 +10,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.0.1-SNAPSHOT
+
+* Change scheme for identifying mutants (see https://github.com/hcoles/pitest/issues/125)
+* Support alternate test apis via plugin system
+* Report error when supplied mutator name does not match (thanks artspb)
+* Report exit codes from coverage child process (thanks KyleRogers)
+
+Please note that any stored history files or sonar results are invalidated by this release.
+
 ### 1.0.0
 
 * Switch version numbering scheme

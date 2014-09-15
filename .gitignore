@@ -1,3 +1,4 @@
+*.swp
 .project
 .settings
 target/
