@@ -40,7 +40,10 @@ import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
-
+    
+  @SuppressWarnings("rawtypes")
+  private final static Option<Class> classRule = findClassRuleClass();
+  
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
@@ -81,13 +84,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   @SuppressWarnings("unchecked")
   private boolean hasClassRuleAnnotations(Class<?> clazz, Set<Method> methods) {
-    try {
-      Class annotation = Class.forName("org.junit.ClassRule");
-      return hasAnnotation(methods, annotation) || hasAnnotation(Reflection.publicFields(clazz), annotation);
-    }
-    catch (ClassNotFoundException e) {
+    if (classRule.hasNone()) {
       return false;
     }
+    
+    return hasAnnotation(methods, classRule.value()) || hasAnnotation(Reflection.publicFields(clazz), classRule.value());
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
@@ -153,6 +154,15 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private Filter createFilterFor(final Description description) {
     return new DescriptionFilter(description.toString());
+  }
+  
+  @SuppressWarnings("rawtypes")
+  private static Option<Class> findClassRuleClass() {
+    try {
+      return Option.<Class>some(Class.forName("org.junit.ClassRule"));
+    } catch(ClassNotFoundException ex) {
+      return Option.none();
+    }
   }
 
 }
