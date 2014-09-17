@@ -16,6 +16,7 @@ Read all about it at http://pitest.org
 * Support alternate test apis via plugin system
 * Report error when supplied mutator name does not match (thanks artspb)
 * Report exit codes from coverage child process (thanks KyleRogers)
+* Treat JUnit tests with ClassRule annotation as one unit (thanks devmop)
 
 Please note that any stored history files or sonar results are invalidated by this release.
 
