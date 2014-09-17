@@ -25,10 +25,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jmock.MockObjectTestCase;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -231,6 +230,48 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithAfterClass() {
     final Collection<TestUnit> actual = findWithTestee(HasAfterClassAnnotation.class);
+    assertEquals(1, actual.size());
+  }
+
+  public static class ClassRuleMethod {
+
+    @ClassRule
+    public static TestRule rule() {
+      return new ExternalResource() {};
+    }
+
+    @Test
+    public void testOne() {
+    }
+
+    @Test
+    public void testTwo() {
+    }
+  }
+
+  @Test
+  public void shouldCreateSingleAtomicUnitWhenAnyMethodAnnotatedWithClassRule() throws Exception {
+    final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
+    assertEquals(1, actual.size());
+  }
+
+  public static class ClassRuleField {
+
+    @ClassRule
+    public static TestRule rule = new ExternalResource() {};
+
+    @Test
+    public void testOne() {
+    }
+
+    @Test
+    public void testTwo() {
+    }
+  }
+
+  @Test
+  public void shouldCreateSingleAtomicUnitWhenAnyFieldAnnotatedWithClassRule() throws Exception {
+    final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
     assertEquals(1, actual.size());
   }
 

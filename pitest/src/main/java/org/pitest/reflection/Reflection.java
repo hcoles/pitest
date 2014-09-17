@@ -14,6 +14,7 @@
  */
 package org.pitest.reflection;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -41,6 +42,14 @@ public abstract class Reflection {
     return ms;
   }
 
+  public static Set<Field> publicFields(final Class<?> clazz) {
+    final Set<Field> fields = new LinkedHashSet<Field>();
+    if (clazz != null) {
+      fields.addAll(Arrays.asList(clazz.getFields()));
+    }
+    return fields;
+  }
+
   public static Set<Method> allMethods(final Class<?> c) {
     final Set<Method> methods = new LinkedHashSet<Method>();
     if (c != null) {
@@ -64,5 +73,4 @@ public abstract class Reflection {
     return publicMethod(clazz, p);
 
   }
-
 }

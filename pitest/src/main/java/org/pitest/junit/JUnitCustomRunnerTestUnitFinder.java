@@ -15,6 +15,7 @@
 package org.pitest.junit;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
@@ -73,11 +74,23 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean shouldTreatAsOneUnit(final Class<?> clazz, final Runner runner) {
     final Set<Method> methods = Reflection.allMethods(clazz);
     return runnerCannotBeSplit(runner)
-        || hasAnnotation(methods, BeforeClass.class)
-        || hasAnnotation(methods, AfterClass.class);
+            || hasAnnotation(methods, BeforeClass.class)
+            || hasAnnotation(methods, AfterClass.class)
+            || hasClassRuleAnnotations(clazz, methods);
   }
 
-  private boolean hasAnnotation(final Set<Method> methods,
+  @SuppressWarnings("unchecked")
+  private boolean hasClassRuleAnnotations(Class<?> clazz, Set<Method> methods) {
+    try {
+      Class annotation = Class.forName("org.junit.ClassRule");
+      return hasAnnotation(methods, annotation) || hasAnnotation(Reflection.publicFields(clazz), annotation);
+    }
+    catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
+
+  private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
       final Class<? extends Annotation> annotation) {
     return FCollection.contains(methods, IsAnnotatedWith.instance(annotation));
   }
