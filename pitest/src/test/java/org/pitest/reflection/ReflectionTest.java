@@ -16,6 +16,7 @@ package org.pitest.reflection;
 
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -24,13 +25,15 @@ import org.junit.Test;
 public class ReflectionTest {
 
   static class Parent {
+    public int first;
     public void foo() {
 
     }
   }
 
   static class Child extends Parent {
-
+    public int second;
+    public static int third;
   }
 
   @Test
@@ -40,4 +43,24 @@ public class ReflectionTest {
     assertTrue(actual.contains(expected));
   }
 
+  @Test
+  public void publicFieldsReturnsFieldsDeclaredInParent() throws Exception {
+    final Set<Field> actual = Reflection.publicFields(Child.class);
+    final Field expected = Parent.class.getField("first");
+    assertTrue(actual.contains(expected));
+  }
+
+  @Test
+  public void publicFieldsReturnsFieldsDeclaredInChild() throws Exception {
+    final Set<Field> actual = Reflection.publicFields(Child.class);
+    final Field expected = Child.class.getField("second");
+    assertTrue(actual.contains(expected));
+  }
+
+  @Test
+  public void publicFieldsReturnsStaticFields() throws Exception {
+    final Set<Field> actual = Reflection.publicFields(Child.class);
+    final Field expected = Child.class.getField("third");
+    assertTrue(actual.contains(expected));
+  }
 }

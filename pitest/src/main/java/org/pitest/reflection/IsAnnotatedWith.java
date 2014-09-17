@@ -15,6 +15,7 @@
 package org.pitest.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
 import org.pitest.functional.predicate.Predicate;
@@ -23,7 +24,7 @@ import org.pitest.functional.predicate.Predicate;
  * @author henry
  * 
  */
-public class IsAnnotatedWith implements Predicate<Method> {
+public class IsAnnotatedWith implements Predicate<AccessibleObject> {
 
   private final Class<? extends Annotation> clazz;
 
@@ -35,7 +36,7 @@ public class IsAnnotatedWith implements Predicate<Method> {
     this.clazz = clazz;
   }
 
-  public Boolean apply(final Method a) {
+  public Boolean apply(final AccessibleObject a) {
     return a.isAnnotationPresent(this.clazz);
   }
 
