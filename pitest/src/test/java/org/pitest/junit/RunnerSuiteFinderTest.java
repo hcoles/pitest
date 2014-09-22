@@ -1,8 +1,7 @@
 package org.pitest.junit;
 
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -122,8 +121,7 @@ public class RunnerSuiteFinderTest {
 
   private void assertContains(final Collection<Class<?>> expected,
       final Collection<Class<?>> actual) {
-    assertThat(actual,
-        hasItems(expected.toArray(new Class<?>[expected.size()])));
+    assertThat(actual).containsAll(expected);
   }
 
 }

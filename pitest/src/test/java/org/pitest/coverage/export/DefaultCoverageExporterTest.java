@@ -1,7 +1,6 @@
 package org.pitest.coverage.export;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -39,10 +38,10 @@ public class DefaultCoverageExporterTest {
   @Test
   public void shouldWriteValidXMLDocumentWhenNoCoverage() {
     this.testee.recordCoverage(Collections.<LineCoverage> emptyList());
-    assertThat(this.out.toString(),
-        containsString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
-    assertThat(this.out.toString(), containsString("<coverage>"));
-    assertThat(this.out.toString(), containsString("</coverage>"));
+    String actual = this.out.toString();
+	assertThat(actual).contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    assertThat(actual).contains("<coverage>");
+    assertThat(actual).contains("</coverage>");
   }
 
   @Test
@@ -54,16 +53,11 @@ public class DefaultCoverageExporterTest {
             "Test4")));
     this.testee.recordCoverage(coverage);
 
-    assertThat(this.out.toString(),
-        containsString("<line classname='Foo' number='1'>"));
-    assertThat(this.out.toString(),
-        containsString("<line classname='Bar' number='2'>"));
-    assertThat(
-        this.out.toString(),
-        containsString("<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>"));
-    assertThat(
-        this.out.toString(),
-        containsString("<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>"));
+    String actual = this.out.toString();
+	assertThat(actual).contains("<line classname='Foo' number='1'>");
+    assertThat(actual).contains("<line classname='Bar' number='2'>");
+    assertThat(actual).contains("<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>");
+    assertThat(actual).contains("<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>");
   }
 
 }

@@ -15,10 +15,8 @@
  */
 package org.pitest;
 
-import static org.hamcrest.core.IsNot.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,16 +66,10 @@ public class PitMojoIT {
     this.verifier.executeGoal("test");
     this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
     final String actual = readResults(testDir);
-    assertThat(
-        actual,
-        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>"));
-    assertThat(
-        actual,
-        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>"));
-    assertThat(
-        actual,
-        containsString("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>"));
-    assertThat(actual, not(containsString("status='RUN_ERROR'")));
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>");
+    assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
   private String readResults(File testDir) throws FileNotFoundException,

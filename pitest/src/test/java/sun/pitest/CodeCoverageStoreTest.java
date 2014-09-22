@@ -14,12 +14,10 @@
  */
 package sun.pitest;
 
-import static org.hamcrest.core.IsNot.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collection;
@@ -37,9 +35,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.SideEffect2;
-
-import sun.pitest.CodeCoverageStore;
-import sun.pitest.InvokeReceiver;
 
 public class CodeCoverageStoreTest {
 
@@ -102,10 +97,8 @@ public class CodeCoverageStoreTest {
         false, true });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(
-        actual,
-        hasItems(CodeCoverageStore.encode(classId, 10),
-            CodeCoverageStore.encode(classId, 42)));
+    assertThat(actual).contains(CodeCoverageStore.encode(classId, 10),
+            CodeCoverageStore.encode(classId, 42));
   }
 
   @Test
@@ -120,10 +113,9 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.visitProbes(barId, 0, new boolean[] { true });
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(
-        actual,
-        hasItems(CodeCoverageStore.encode(barId, 11),
-            CodeCoverageStore.encode(fooId, 20)));
+    assertThat(actual).contains(CodeCoverageStore.encode(barId, 11),
+                CodeCoverageStore.encode(fooId, 20));
+
   }
 
   @Test
@@ -411,15 +403,14 @@ public class CodeCoverageStoreTest {
   private void assertHitsLine(final int classId, final int... i) {
     final Collection<Long> actual = CodeCoverageStore.getHits();
     for (final int probe : i) {
-      assertThat(actual, hasItems(CodeCoverageStore.encode(classId, probe)));
+      assertThat(actual).contains(CodeCoverageStore.encode(classId, probe));
     }
   }
 
   private void assertDoesNotHitLine(final int classId, final int... i) {
     final Collection<Long> actual = CodeCoverageStore.getHits();
     for (final int probe : i) {
-      assertThat(actual,
-          not(hasItems(CodeCoverageStore.encode(classId, probe))));
+      assertThat(actual).doesNotContain(CodeCoverageStore.encode(classId, probe));
     }
   }
 

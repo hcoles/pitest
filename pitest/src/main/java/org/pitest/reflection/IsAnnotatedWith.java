@@ -16,7 +16,6 @@ package org.pitest.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
 
 import org.pitest.functional.predicate.Predicate;
 

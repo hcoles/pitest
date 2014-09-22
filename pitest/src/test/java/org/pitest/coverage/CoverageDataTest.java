@@ -17,9 +17,8 @@ package org.pitest.coverage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -184,7 +183,7 @@ public class CoverageDataTest {
         1));
     final LineCoverage actual = this.testee.createLineCoverage().get(0);
     assertEquals(fooLine1, actual.getClassLine());
-    assertThat(actual.getTests(), hasItems("fooTest", "fooTest2"));
+    assertThat(actual.getTests()).contains("fooTest", "fooTest2");
   }
 
   @Test

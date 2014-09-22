@@ -40,6 +40,7 @@ public class IgnoreCoreClassesTest {
     assertIgnored(Integer.class);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void shouldIgnoreLegacyJUnitClasses() {
     assertIgnored(junit.framework.Assert.class);

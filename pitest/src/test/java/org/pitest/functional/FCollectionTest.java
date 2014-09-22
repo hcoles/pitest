@@ -5,9 +5,8 @@ package org.pitest.functional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,7 +171,7 @@ public class FCollectionTest {
     this.is = Arrays.asList(1, 2, 3);
     final List<List<Integer>> actual = FCollection.splitToLength(3, this.is);
     assertEquals(1, actual.size());
-    assertThat(actual.get(0), hasItems(1, 2, 3));
+    assertThat(actual.get(0)).contains(1, 2, 3);
   }
 
   @Test
@@ -180,8 +179,8 @@ public class FCollectionTest {
     this.is = Arrays.asList(1, 2, 3);
     final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
     assertEquals(2, actual.size());
-    assertThat(actual.get(0), hasItems(1, 2));
-    assertThat(actual.get(1), hasItems(3));
+    assertThat(actual.get(0)).contains(1, 2);
+    assertThat(actual.get(1)).contains(3);
   }
 
   @Test
@@ -189,9 +188,9 @@ public class FCollectionTest {
     this.is = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
     final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
     assertEquals(6, actual.size());
-    assertThat(actual.get(0), hasItems(1, 2));
-    assertThat(actual.get(1), hasItems(3, 4));
-    assertThat(actual.get(5), hasItems(11));
+    assertThat(actual.get(0)).contains(1, 2);
+    assertThat(actual.get(1)).contains(3, 4);
+    assertThat(actual.get(5)).contains(11);
   }
 
   @Test

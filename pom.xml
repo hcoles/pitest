@@ -97,26 +97,26 @@
     </profiles>
 
     <!-- common dependencies used in all subprojects -->
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-	<dependency>
-	    <groupId>org.easytesting</groupId>
-	    <artifactId>fest-assert-core</artifactId>
-	    <version>2.0M7</version>
-	    <scope>test</scope>
-	</dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>1.6.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
     <build>
 	
@@ -130,8 +130,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.4</version>
                     <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                     </configuration>
                 </plugin>
                 <plugin>
