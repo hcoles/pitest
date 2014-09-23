@@ -10,7 +10,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.0.1-SNAPSHOT
+### 1.1.0
 
 * Change scheme for identifying mutants (see https://github.com/hcoles/pitest/issues/125)
 * Support alternate test apis via plugin system
