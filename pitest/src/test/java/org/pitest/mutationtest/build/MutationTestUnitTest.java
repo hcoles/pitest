@@ -90,7 +90,7 @@ public class MutationTestUnitTest {
   }
 
   private void addMutation() {
-    this.mutations.add(new MutationDetails(aMutationId(), null, null, 0, 0));
+    this.mutations.add(new MutationDetails(aMutationId().build(), null, null, 0, 0));
   }
 
 }

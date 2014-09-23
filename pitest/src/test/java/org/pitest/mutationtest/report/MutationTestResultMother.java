@@ -33,7 +33,7 @@ public class MutationTestResultMother {
   }
 
   public static MutationDetails createDetails(final String sourceFile) {
-    return new MutationDetails(aMutationId(), sourceFile, "desc", 42, 0);
+    return new MutationDetails(aMutationId().build(), sourceFile, "desc", 42, 0);
   }
 
   public static MutationMetaData createMetaData(final MutationResult... mrs) {

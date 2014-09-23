@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.execute;
 
 import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ public class DefaultReporterTest {
 
   @Test
   public void shouldSendMutationIdentifierToOutputStream() throws IOException {
-    final MutationIdentifier mi = new MutationIdentifier(aLocation(), 0, "foo");
+    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo").build();
     this.testee.describe(mi);
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DESCRIBE, is.readByte());
@@ -40,7 +40,7 @@ public class DefaultReporterTest {
 
   @Test
   public void shouldSendDetectionStatus() throws IOException {
-    final MutationIdentifier mi = new MutationIdentifier(aLocation(), 0, "foo");
+    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo").build();
     final MutationStatusTestPair ms = new MutationStatusTestPair(2,
         DetectionStatus.KILLED, "foo");
     this.testee.report(mi, ms);

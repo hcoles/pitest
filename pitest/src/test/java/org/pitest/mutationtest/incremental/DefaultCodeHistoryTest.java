@@ -45,7 +45,7 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnNoneWhenNoMatchingHistoricResultExists() {
-    final MutationIdentifier id = aMutationId();
+    final MutationIdentifier id = aMutationId().build();
     final Option<MutationStatusTestPair> actual = this.testee
         .getPreviousResult(id);
     assertEquals(Option.none(), actual);
@@ -53,7 +53,7 @@ public class DefaultCodeHistoryTest {
 
   @Test
   public void shouldReturnHistoricResultWhenOneExists() {
-    final MutationIdentifier id = aMutationId();
+    final MutationIdentifier id = aMutationId().build();
     final MutationStatusTestPair expected = new MutationStatusTestPair(0,
         DetectionStatus.KILLED, "foo");
     this.results.put(id, expected);

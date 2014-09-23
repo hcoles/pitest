@@ -73,7 +73,7 @@ public class LimitNumberOfMutationPerClassFilterTest {
   }
 
   private MutationIdentifier makeId(final int id) {
-    return aMutationId().withIndex(id);
+    return aMutationId().withIndex(id).build();
   }
 
 }

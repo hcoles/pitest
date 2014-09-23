@@ -51,18 +51,6 @@ public class MutationIdentifier implements Comparable<MutationIdentifier> {
     return this.indexes.iterator().next();
   }
 
-  public MutationIdentifier withLocation(final Location location) {
-    return new MutationIdentifier(location, this.indexes, this.mutator);
-  }
-
-  public MutationIdentifier withMutator(final String mutator) {
-    return new MutationIdentifier(this.location, this.indexes, mutator);
-  }
-
-  public MutationIdentifier withIndex(final int id) {
-    return new MutationIdentifier(this.location, id, this.mutator);
-  }
-
   @Override
   public String toString() {
     return "MutationIdentifier [location=" + this.location + ", indexes="

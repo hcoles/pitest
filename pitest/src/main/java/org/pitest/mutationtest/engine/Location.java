@@ -50,24 +50,6 @@ public class Location implements Comparable<Location> {
     return this.methodDesc;
   }
 
-  public Location with(final ClassName clazz) {
-    return newLocation(clazz, this.method, this.methodDesc);
-  }
-
-  public Location withMethod(final String method) {
-    return newLocation(this.clazz, MethodName.fromString(method),
-        this.methodDesc);
-  }
-
-  public Location withClass(final String clazz) {
-    return newLocation(ClassName.fromString(clazz), this.method,
-        this.methodDesc);
-  }
-
-  public Location withMethodDesc(final String desc) {
-    return newLocation(this.clazz, this.method, desc);
-  }
-
   protected Location newLocation(final ClassName clazz,
       final MethodName method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);

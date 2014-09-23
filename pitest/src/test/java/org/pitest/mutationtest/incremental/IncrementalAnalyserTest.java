@@ -140,7 +140,7 @@ public class IncrementalAnalyserTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id =  aMutationId().withLocation(aLocation().withMethod(method));
+    final MutationIdentifier id =  aMutationId().withLocation(aLocation().withMethod(method)).build();
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

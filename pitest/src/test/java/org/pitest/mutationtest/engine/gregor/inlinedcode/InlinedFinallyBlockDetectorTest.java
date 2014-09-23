@@ -96,7 +96,7 @@ public class InlinedFinallyBlockDetectorTest {
 
   private MutationIdentifier makeId(final Set<Integer> indexes,
       final String mutator) {
-    return new MutationIdentifier(aLocation(), indexes, mutator);
+    return new MutationIdentifier(aLocation().build(), indexes, mutator);
   }
 
 }

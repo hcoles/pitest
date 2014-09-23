@@ -4,6 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -160,9 +161,11 @@ public class MutationTestWorkerTest {
   }
 
   public MutationDetails makeMutant(final String clazz, final int index) {
-    final MutationDetails md = new MutationDetails(new MutationIdentifier(
-        aLocation().withClass(clazz), index, "mutator"), "sourceFile", "desc",
-         42, 0);
+    MutationIdentifier id = aMutationId()
+        .withLocation(aLocation().withClass(ClassName.fromString(clazz)))
+        .withIndex(index).withMutator("mutator").build();
+    final MutationDetails md = new MutationDetails(id, "sourceFile", "desc",
+        42, 0);
 
     when(this.mutater.getMutation(md.getId())).thenReturn(
         new Mutant(md, new byte[0]));

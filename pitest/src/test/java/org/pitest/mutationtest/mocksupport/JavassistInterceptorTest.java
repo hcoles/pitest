@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.StreamUtil;
@@ -29,7 +30,9 @@ public class JavassistInterceptorTest {
   public void setUp() {
     this.interceptedClass = new AClassWithAOpenClassFileMethod();
     final byte[] bytes = "replaced".getBytes();
-    this.mutant = new Mutant(new MutationDetails(aMutationId().withLocation(aLocation().withClass("match")), "foo", "foo", 0, 0), bytes);
+    this.mutant = new Mutant(new MutationDetails(aMutationId().withLocation(
+        aLocation().withClass(ClassName.fromString("match"))).build(), "foo",
+        "foo", 0, 0), bytes);
   }
 
   @Test

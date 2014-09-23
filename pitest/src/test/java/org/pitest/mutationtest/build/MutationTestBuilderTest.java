@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.LocationMother;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.NullAnalyser;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -23,6 +22,8 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
+
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 public class MutationTestBuilderTest {
 
@@ -113,7 +114,7 @@ public class MutationTestBuilderTest {
   }
 
   public static MutationDetails createDetails(String clazz) {
-    return new MutationDetails(aMutationId().withLocation(LocationMother.aLocation().with(ClassName.fromString(clazz))), "", "desc", 42, 0);
+    return new MutationDetails(aMutationId().withLocation(aLocation(clazz)).build(), "", "desc", 42, 0);
   }
   
 }

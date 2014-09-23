@@ -96,8 +96,8 @@ public class MutationSourceTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(aLocation().with(
-        this.foo).withMethod(method), 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation().withClass(
+        this.foo).withMethod(method).build(), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

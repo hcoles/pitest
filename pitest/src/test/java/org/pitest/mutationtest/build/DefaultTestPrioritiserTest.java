@@ -94,7 +94,8 @@ public class DefaultTestPrioritiserTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(aLocation().with(foo).withMethod(method), 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation()
+        .withClass(foo).withMethod(method).build(), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 
