@@ -1,6 +1,8 @@
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
+import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +14,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class MutationMetaDataTest {
 
@@ -25,26 +26,30 @@ public class MutationMetaDataTest {
     
     MutationMetaData testee = new MutationMetaData(Arrays.asList(a,b,c,d));
     Collection<ClassMutationResults> actual = testee.toClassResults();
-    assertEquals(2,actual.size());
+    
+    assertThat(actual).hasSize(2);
+    
     Iterator<ClassMutationResults> it = actual.iterator();
     ClassMutationResults first = it.next();
-    assertEquals(ClassName.fromString("Bar"),first.getMutatedClass());
-    assertEquals(1,first.getMutations().size());
     ClassMutationResults second = it.next();
-    assertEquals(ClassName.fromString("Foo"),second.getMutatedClass());
-    assertEquals(3,second.getMutations().size());
+    
+    assertThat(first.getMutatedClass()).isEqualTo(ClassName.fromString("Bar"));
+    assertThat(first.getMutations()).hasSize(1);
+
+    assertThat(second.getMutatedClass()).isEqualTo(ClassName.fromString("Foo"));
+    assertThat(second.getMutations()).hasSize(3);
+
   }
 
   @Test
   public void shouldNotCreateEmptyClassResultsObjects() {
     MutationMetaData testee = new MutationMetaData(Collections.<MutationResult>emptyList());
-    assertEquals(0,testee.toClassResults().size());
+    assertThat(testee.toClassResults()).isEmpty();
   }
   
   private MutationResult makeResult(String clazz, String method) {
     Location location = Location.location(ClassName.fromString(clazz), MethodName.fromString(method), "()V");
-    MutationIdentifier id =  new MutationIdentifier(location,1,"mutator");
-    MutationDetails md = new MutationDetails(id, "file", "desc", 42, 0);
+    MutationDetails md = aMutationDetail().withId(aMutationId().withLocation(location)).build();
     final MutationResult mr = new MutationResult(md, new MutationStatusTestPair(0,
             DetectionStatus.KILLED));
     return mr;

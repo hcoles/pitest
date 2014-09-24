@@ -179,8 +179,7 @@ public class MutationCoverageReportTest {
   public void shouldReportMutationsFoundWhenSomeDetected() {
     this.data.setFailWhenNoMutations(false);
     final ClassName foo = ClassName.fromString("foo");
-    when(this.mutater.findMutations(foo)).thenReturn(
-        Arrays.asList(MutationDetailsMother.makeMutation()));
+    when(this.mutater.findMutations(foo)).thenReturn(MutationDetailsMother.aMutationDetail().build(1));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(foo));
     final CombinedStatistics actual = createAndRunTestee();

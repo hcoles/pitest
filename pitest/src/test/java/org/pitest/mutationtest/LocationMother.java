@@ -14,6 +14,7 @@ public class LocationMother {
   public interface MutationIdentifierBuilder extends
       SequenceBuilder<MutationIdentifier> {
 
+    MutationIdentifierBuilder withLocation(Location location);
     MutationIdentifierBuilder withLocation(Builder<Location> location);
 
     MutationIdentifierBuilder withIndex(int index);
@@ -61,7 +62,6 @@ public class LocationMother {
         return Location.location(b._Class(),
             MethodName.fromString(b._Method()), b._MethodDescription());
       }
-
     };
   }
 
@@ -76,7 +76,6 @@ public class LocationMother {
       public MutationIdentifier generate(MutationIdentifierBuilder b) {
         return new MutationIdentifier(b._Location(), b._Index(), b._Mutator());
       }
-
     };
   }
 }
