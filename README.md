@@ -10,6 +10,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.1.1-SNAPSHOT
+
+* End support for running on Java 5 (java 5 bytecode still supported)
+
 ### 1.1.0
 
 * Change scheme for identifying mutants (see https://github.com/hcoles/pitest/issues/125)
