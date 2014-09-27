@@ -41,7 +41,6 @@ import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Functions;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -131,7 +130,7 @@ public class MutationTestSlave {
       final ClassLoader loader, final Collection<ClassName> testClasses,
       final Configuration pitConfig) {
     final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
-        Functions.nameToClass(loader));
+        ClassName.nameToClass(loader));
     return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig,
         new UnGroupedStrategy(), tcs);
   }

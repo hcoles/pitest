@@ -29,6 +29,7 @@ import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
+import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
@@ -78,7 +79,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final Collection<ClassInfo> tests = this.code.getTests();
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
-      final CoverageData coverage = new CoverageData(this.code);
+      final CoverageData coverage = new CoverageData(this.code, new LineMapper(code));
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
       gatherCoverageData(tests, coverage);
@@ -90,7 +91,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
       verifyBuildSuitableForMutationTesting(coverage);
 
-      this.exporter.recordCoverage(coverage.createLineCoverage());
+      this.exporter.recordCoverage(coverage.createCoverage());
 
       return coverage;
 

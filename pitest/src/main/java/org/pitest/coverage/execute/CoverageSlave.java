@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -37,7 +36,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Functions;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
 
@@ -141,7 +139,7 @@ public class CoverageSlave {
       final CoverageOptions paramsFromParent, final List<ClassName> classes) {
     final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
         paramsFromParent.getPitConfig(), new UnGroupedStrategy(),
-        FCollection.flatMap(classes, Functions.nameToClass()));
+        FCollection.flatMap(classes, ClassName.nameToClass()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }

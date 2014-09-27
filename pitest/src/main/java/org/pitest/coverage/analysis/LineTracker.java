@@ -1,4 +1,4 @@
-package org.pitest.coverage.codeassist;
+package org.pitest.coverage.analysis;
 
 interface LineTracker {
 

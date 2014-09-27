@@ -6,40 +6,39 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.pitest.coverage.ClassStatistics;
-import org.pitest.coverage.CoverageResult;
+import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.MethodName;
 
 public class CoverageResultTest {
 
   private CoverageResult testee;
 
   @Test
-  public void shouldCalculateCorrectNumberOfCoveredLinesWhenNoneCovered() {
+  public void shouldCalculateCorrectNumberOfCoveredBlocksWhenNoneCovered() {
     this.testee = new CoverageResult(null, 0, true,
-        Collections.<ClassStatistics> emptyList());
-    assertEquals(0, this.testee.getNumberOfCoveredLines());
+        Collections.<BlockLocation> emptyList());
+    assertEquals(0, this.testee.getNumberOfCoveredBlocks());
   }
 
   @Test
-  public void shouldCalculateCorrectNumberOfCoveredLinesWhenOneClassHasCoverage() {
+  public void shouldCalculateCorrectNumberOfCoveredBlocksWhenOneClassHasCoverage() {
     this.testee = new CoverageResult(null, 0, true,
-        Collections.singletonList(makeCoverage("foo", 42, 43)));
-    assertEquals(2, this.testee.getNumberOfCoveredLines());
+        Collections.singletonList(makeCoverage("foo", 1)));
+    assertEquals(1, this.testee.getNumberOfCoveredBlocks());
   }
 
   @Test
-  public void shouldCalculateCorrectNumberOfCoveredLinesWhenMultiplesClassesHaveCoverage() {
+  public void shouldCalculateCorrectNumberOfCoveredBlocksWhenMultiplesClassesHaveCoverage() {
     this.testee = new CoverageResult(null, 0, true, Arrays.asList(
-        makeCoverage("foo", 42), makeCoverage("bar", 42, 43)));
-    assertEquals(3, this.testee.getNumberOfCoveredLines());
+        makeCoverage("foo", 42), makeCoverage("bar", 42)));
+    assertEquals(2, this.testee.getNumberOfCoveredBlocks());
   }
 
-  private ClassStatistics makeCoverage(final String name, final int... lines) {
-    final ClassStatistics cs = new ClassStatistics(name);
-    for (final int i : lines) {
-      cs.registerLineVisit(i);
-    }
-    return cs;
+  private BlockLocation makeCoverage(final String name, final int block) {
+    Location l = Location.location(ClassName.fromString(name), MethodName.fromString("amethod"), "methodDesc");
+    final BlockLocation bl = new BlockLocation(l,block);
+    return bl;
   }
 
 }

@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.ClassWriter;
+import org.pitest.coverage.CoverageClassVisitor;
 
 import sun.pitest.CodeCoverageStore;
 import sun.pitest.InvokeReceiver;
@@ -36,14 +36,13 @@ public class CoverageClassVisitorTest {
 
   @Test
   public void shouldRegisterProbesWithCodeCoverageStore() {
-    this.testee.registerLine(2);
-    this.testee.registerLine(12);
+    this.testee.registerProbes(6);
     this.testee.visitEnd();
 
     CodeCoverageStore.visitProbes(this.classId, 0,
-        new boolean[] { false, true });
+        new boolean[] { false, false, true, false, false, false, false });
 
-    assertEquals(Arrays.asList(CodeCoverageStore.encode(this.classId, 12)),
+    assertEquals(Arrays.asList(CodeCoverageStore.encode(this.classId, 2)),
         CodeCoverageStore.getHits());
 
   }

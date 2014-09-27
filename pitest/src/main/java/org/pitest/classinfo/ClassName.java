@@ -15,10 +15,16 @@
 package org.pitest.classinfo;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import org.pitest.functional.F;
+import org.pitest.functional.Option;
+import org.pitest.util.IsolationUtils;
+import org.pitest.util.Log;
 
 public final class ClassName implements Serializable, Comparable<ClassName> {
+  
+  private final static Logger LOG = Log.getLogger();
 
   private static final long serialVersionUID = 1L;
 
@@ -83,14 +89,45 @@ public final class ClassName implements Serializable, Comparable<ClassName> {
 
   public static F<String, ClassName> stringToClassName() {
     return new F<String, ClassName>() {
-
       public ClassName apply(final String clazz) {
         return ClassName.fromString(clazz);
+      }
+    };
+  }
+
+  public static F<ClassName, Option<Class<?>>> nameToClass() {
+    return nameToClass(IsolationUtils.getContextClassLoader());
+  }
+  
+  public static F<ClassName, Option<Class<?>>> nameToClass(
+      final ClassLoader loader) {
+    return new F<ClassName, Option<Class<?>>>() {
+
+      public Option<Class<?>> apply(final ClassName className) {
+        try {
+          final Class<?> clazz = Class.forName(className.asJavaName(), false,
+              loader);
+          return Option.<Class<?>> some(clazz);
+        } catch (final ClassNotFoundException e) {
+          LOG.warning("Could not load " + className
+              + " (ClassNotFoundException: " + e.getMessage() + ")");
+          return Option.none();
+        } catch (final NoClassDefFoundError e) {
+          LOG.warning("Could not load " + className
+              + " (NoClassDefFoundError: " + e.getMessage() + ")");
+          return Option.none();
+        } catch (final LinkageError e) {
+          LOG.warning("Could not load " + className + " " + e.getMessage());
+          return Option.none();
+        } catch (final SecurityException e) {
+          LOG.warning("Could not load " + className + " " + e.getMessage());
+          return Option.none();
+        }
       }
 
     };
   }
-
+  
   @Override
   public int hashCode() {
     final int prime = 31;

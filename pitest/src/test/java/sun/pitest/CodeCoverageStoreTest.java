@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http:www.apache.org/licenses/LICENSE-2.0 
  * 
  * Unless required by applicable law or agreed to in writing, 
  * software distributed under the License is distributed on an "AS IS" BASIS, 
@@ -88,40 +88,9 @@ public class CodeCoverageStoreTest {
   }
 
   @Test
-  public void shouldReturnRegisteredHitsWhenSingleClassCovered() {
-    final int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore
-        .registerClassProbes(classId, new int[] { 10, 20, 30, 42 });
-
-    CodeCoverageStore.visitProbes(classId, 0, new boolean[] { true, false,
-        false, true });
-
-    final Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(actual).contains(CodeCoverageStore.encode(classId, 10),
-            CodeCoverageStore.encode(classId, 42));
-  }
-
-  @Test
-  public void shouldReturnRegisteredHitsWhenMultipleClassesCovered() {
-    final int fooId = CodeCoverageStore.registerClass("foo");
-    final int barId = CodeCoverageStore.registerClass("bar");
-    CodeCoverageStore.registerClassProbes(fooId, new int[] { 13, 20, 30, 42 });
-    CodeCoverageStore.registerClassProbes(barId, new int[] { 11 });
-
-    CodeCoverageStore.visitProbes(fooId, 0, new boolean[] { false, true, false,
-        false });
-    CodeCoverageStore.visitProbes(barId, 0, new boolean[] { true });
-
-    final Collection<Long> actual = CodeCoverageStore.getHits();
-    assertThat(actual).contains(CodeCoverageStore.encode(barId, 11),
-                CodeCoverageStore.encode(fooId, 20));
-
-  }
-
-  @Test
   public void shouldClearHitCountersWhenReset() {
     final int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(classId, new int[] { 10 });
+    CodeCoverageStore.registerClassProbes(classId, 1);
 
     CodeCoverageStore.visitProbes(classId, 0, new boolean[] { true });
     CodeCoverageStore.reset();
@@ -135,7 +104,7 @@ public class CodeCoverageStoreTest {
       throws InterruptedException, ExecutionException {
 
     CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(0, new int[1000]);
+    CodeCoverageStore.registerClassProbes(0, 1);
 
     final Callable<ConcurrentModificationException> read = makeReader();
 
@@ -362,8 +331,7 @@ public class CodeCoverageStoreTest {
   private void ascendingPermuation(final int size,
       final SideEffect2<Integer, boolean[]> function) {
     final int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(classId, new int[] { 0, 1, 2, 3, 4,
-        5, 6, 7, 8, 9, 10, 11, 12, 13, 14 });
+    CodeCoverageStore.registerClassProbes(classId, 15);
     final boolean[] probes = new boolean[size];
 
     function.apply(classId, probes);
@@ -384,8 +352,7 @@ public class CodeCoverageStoreTest {
   private void descendingPermutation(final int size,
       final SideEffect2<Integer, boolean[]> function) {
     final int classId = CodeCoverageStore.registerClass("foo");
-    CodeCoverageStore.registerClassProbes(classId, new int[] { 0, 1, 2, 3, 4,
-        5, 6, 7, 8, 9, 10, 11, 12, 13, 14 });
+    CodeCoverageStore.registerClassProbes(classId, 15);
     final boolean[] probes = new boolean[size];
 
     for (int i = probes.length - 1; i != 0; i--) {
@@ -462,3 +429,4 @@ public class CodeCoverageStoreTest {
   }
 
 }
+

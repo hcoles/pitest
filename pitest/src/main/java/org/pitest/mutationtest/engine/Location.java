@@ -69,7 +69,7 @@ public class Location implements Comparable<Location> {
   }
 
   @Override
-  public boolean equals(final Object obj) {
+  public boolean equals(final Object obj) {    
     if (this == obj) {
       return true;
     }

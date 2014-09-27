@@ -31,6 +31,7 @@ import org.pitest.bytecode.FrameOptions;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
@@ -41,7 +42,6 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
-import org.pitest.util.ComputeClassWriter;
 
 public class GregorMutater implements Mutater {
 

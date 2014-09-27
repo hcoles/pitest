@@ -14,15 +14,10 @@
  */
 package org.pitest.util;
 
-import java.util.logging.Logger;
-
-import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
-import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 
 public abstract class Functions {
-  private final static Logger LOG = Log.getLogger();
 
   public static F<String, String> classNameToJVMClassName() {
     return new F<String, String>() {
@@ -51,39 +46,6 @@ public abstract class Functions {
       }
     };
 
-  }
-
-  public static F<ClassName, Option<Class<?>>> nameToClass() {
-    return nameToClass(IsolationUtils.getContextClassLoader());
-  }
-
-  public static F<ClassName, Option<Class<?>>> nameToClass(
-      final ClassLoader loader) {
-    return new F<ClassName, Option<Class<?>>>() {
-
-      public Option<Class<?>> apply(final ClassName className) {
-        try {
-          final Class<?> clazz = Class.forName(className.asJavaName(), false,
-              loader);
-          return Option.<Class<?>> some(clazz);
-        } catch (final ClassNotFoundException e) {
-          LOG.warning("Could not load " + className
-              + " (ClassNotFoundException: " + e.getMessage() + ")");
-          return Option.none();
-        } catch (final NoClassDefFoundError e) {
-          LOG.warning("Could not load " + className
-        		  + " (NoClassDefFoundError: " + e.getMessage() + ")");
-          return Option.none();
-        } catch (final LinkageError e) {
-          LOG.warning("Could not load " + className + " " + e.getMessage());
-          return Option.none();
-        } catch (final SecurityException e) {
-          LOG.warning("Could not load " + className + " " + e.getMessage());
-          return Option.none();
-        }
-      }
-
-    };
   }
 
   public static Predicate<String> startsWith(final String filter) {

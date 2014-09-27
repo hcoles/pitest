@@ -9,10 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
+import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.coverage.codeassist.CoverageClassVisitor;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.util.ComputeClassWriter;
 
 import sun.pitest.CodeCoverageStore;
 

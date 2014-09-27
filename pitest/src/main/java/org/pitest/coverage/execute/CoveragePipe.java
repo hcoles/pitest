@@ -3,7 +3,6 @@ package org.pitest.coverage.execute;
 import java.io.OutputStream;
 import java.util.Collection;
 
-
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.testapi.Description;
 import org.pitest.util.ExitCode;
@@ -30,7 +29,7 @@ public class CoveragePipe implements CoverageReceiver {
 
     this.dos.writeByte(Id.OUTCOME);
     this.dos.write(description);
-    this.dos.writeLong(hits.size());
+    this.dos.writeInt(hits.size());
     for (final Long each : hits) {
       this.dos.writeLong(each);
     }
@@ -52,5 +51,16 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos.writeString(className);
 
   }
+
+  public synchronized void registerProbes(int classId, String methodName, String methodDesc,
+      int firstProbe, int lastProbe) {
+    this.dos.writeByte(Id.PROBES);
+    this.dos.writeInt(classId);
+    this.dos.writeString(methodName);
+    this.dos.writeString(methodDesc);
+    this.dos.writeInt(firstProbe);
+    this.dos.writeInt(lastProbe);
+  }
+
 
 }

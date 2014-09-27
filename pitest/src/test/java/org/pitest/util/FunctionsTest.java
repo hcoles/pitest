@@ -19,8 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Option;
 
 public class FunctionsTest {
 
@@ -28,18 +26,6 @@ public class FunctionsTest {
   public void classToNameShouldReturnClassName() {
     assertEquals(String.class.getName(),
         Functions.classToName().apply(String.class));
-  }
-
-  @Test
-  public void nameToClassShouldReturnClassWhenKnownToLoader() {
-    assertEquals(Option.some(String.class),
-        Functions.nameToClass().apply(new ClassName("java.lang.String")));
-  }
-
-  @Test
-  public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
-    assertEquals(Option.none(),
-        Functions.nameToClass().apply(new ClassName("org.unknown.Unknown")));
   }
 
   @Test

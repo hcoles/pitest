@@ -17,6 +17,7 @@ package org.pitest.util;
 public abstract class Id {
   public final static byte DESCRIBE = 1;
   public final static byte REPORT   = 2;
+  public final static byte PROBES    = 4;
   public final static byte OUTCOME  = 16;
   public final static byte CLAZZ    = 32;
   public final static byte DONE     = 64;

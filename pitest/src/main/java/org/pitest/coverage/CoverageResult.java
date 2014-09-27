@@ -3,8 +3,6 @@ package org.pitest.coverage;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.pitest.functional.F2;
-import org.pitest.functional.FCollection;
 import org.pitest.testapi.Description;
 
 public class CoverageResult implements Serializable {
@@ -13,15 +11,15 @@ public class CoverageResult implements Serializable {
 
   private final Description                 testUnitDescription;
   private final int                         executionTime;
-  private final Collection<ClassStatistics> coverage;
+  private final Collection<BlockLocation> visitedBlocks;
   private final boolean                     greenSuite;
 
   public CoverageResult(final Description testUnitDescription,
       final int executionTime, final boolean greenSuite,
-      final Collection<ClassStatistics> coverage) {
+      final Collection<BlockLocation> visitedBlocks) {
     this.testUnitDescription = testUnitDescription;
     this.executionTime = executionTime;
-    this.coverage = coverage;
+    this.visitedBlocks = visitedBlocks;
     this.greenSuite = greenSuite;
   }
 
@@ -33,32 +31,23 @@ public class CoverageResult implements Serializable {
     return this.executionTime;
   }
 
-  public Collection<ClassStatistics> getCoverage() {
-    return this.coverage;
+  public Collection<BlockLocation> getCoverage() {
+    return this.visitedBlocks;
   }
 
   public boolean isGreenTest() {
     return this.greenSuite;
   }
-
-  public int getNumberOfCoveredLines() {
-    return FCollection.fold(classStatisticsToLineCount(), 0, this.coverage);
-  }
-
-  private static F2<Integer, ClassStatistics, Integer> classStatisticsToLineCount() {
-    return new F2<Integer, ClassStatistics, Integer>() {
-      public Integer apply(final Integer a, final ClassStatistics b) {
-        return a + b.getUniqueVisitedLines().size();
-      }
-
-    };
+  
+  public int getNumberOfCoveredBlocks() {
+    return this.visitedBlocks.size();
   }
 
   @Override
   public String toString() {
     return "CoverageResult [testUnitDescription=" + this.testUnitDescription
         + ", executionTime=" + this.executionTime + ", coverage="
-        + this.coverage + ", greenSuite=" + this.greenSuite + "]";
+        + this.visitedBlocks + ", greenSuite=" + this.greenSuite + "]";
   }
 
 }

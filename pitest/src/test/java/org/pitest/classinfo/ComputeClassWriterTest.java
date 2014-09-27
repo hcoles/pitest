@@ -1,4 +1,4 @@
-package org.pitest.util;
+package org.pitest.classinfo;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,9 @@ import java.util.HashMap;
 
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.util.IsolationUtils;
 
 public class ComputeClassWriterTest {
 

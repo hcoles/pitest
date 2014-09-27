@@ -15,37 +15,34 @@
  * See the License for the specific language governing permissions and limitations under the License. 
  */
 
-package org.pitest.coverage.codeassist;
+package org.pitest.coverage;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.BridgeMethodFilter;
+import org.pitest.classinfo.MethodFilteringAdapter;
+import org.pitest.coverage.analysis.CoverageAnalyser;
 
 import sun.pitest.CodeCoverageStore;
 
 /**
  * Instruments a class with probes on each line
  */
-public class CoverageClassVisitor extends MethodFilteringAdapter implements
-    LineTracker {
+public class CoverageClassVisitor extends MethodFilteringAdapter  {
   private final int           classId;
 
-  /**
-   * List of line numbers - index of the array is the probeid.
-   */
-  private final List<Integer> probesToLines = new ArrayList<Integer>();
+  private int probeCount  = 0;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
     this.classId = classId;
   }
 
-  public void registerLine(final int line) {
-    this.probesToLines.add(line);
+  public void registerProbes(final int number) {
+    this.probeCount = probeCount + number;
   }
 
   @Override
@@ -53,15 +50,14 @@ public class CoverageClassVisitor extends MethodFilteringAdapter implements
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
 
-    return new CoverageAnalyser(this, this.classId, this.probesToLines.size(),
+    return new CoverageAnalyser(this,this.classId, probeCount,
         methodVisitor, access, name, desc, signature, exceptions);
 
   }
 
   @Override
   public void visitEnd() {
-    CodeCoverageStore.registerClassProbes(this.classId,
-        convertToPrimitiveArray(this.probesToLines));
+    CodeCoverageStore.registerClassProbes(this.classId,this.probeCount);
   }
 
   public static int[] convertToPrimitiveArray(final List<Integer> integers) {

@@ -1,4 +1,4 @@
-package org.pitest.coverage.codeassist;
+package org.pitest.coverage.analysis;
 
 
 import org.objectweb.asm.Label;

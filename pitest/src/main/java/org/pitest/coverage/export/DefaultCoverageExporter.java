@@ -7,8 +7,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.CoverageExporter;
-import org.pitest.coverage.LineCoverage;
+import org.pitest.mutationtest.engine.Location;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
 
@@ -23,11 +24,11 @@ public class DefaultCoverageExporter implements CoverageExporter {
     this.outputStrategy = outputStrategy;
   }
 
-  public void recordCoverage(final Collection<LineCoverage> coverage) {
+  public void recordCoverage(final Collection<BlockCoverage> coverage) {
     final Writer out = this.outputStrategy
         .createWriterForFile("linecoverage.xml");
     writeHeader(out);
-    for (final LineCoverage each : coverage) {
+    for (final BlockCoverage each : coverage) {
       writeLineCoverage(each, out);
     }
 
@@ -39,10 +40,11 @@ public class DefaultCoverageExporter implements CoverageExporter {
     write(out, "<coverage>\n");
   }
 
-  private void writeLineCoverage(final LineCoverage each, final Writer out) {
-    write(out, "<line classname='"
-        + each.getClassLine().getClassName().asJavaName() + "'" + " number='"
-        + each.getClassLine().getLineNumber() + "'>");
+  private void writeLineCoverage(final BlockCoverage each, final Writer out) {
+    Location l = each.getBlock().getLocation();
+    write(out, "<block classname='"
+        + l.getClassName().asJavaName() + "'" + " method='"
+        + l.getMethodName() + "' number='" + each.getBlock().getBlock() + "'>");
     write(out, "<tests>\n");
     final List<String> ts = new ArrayList<String>(each.getTests());
     Collections.sort(ts);
@@ -50,7 +52,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
       write(out, "<test name='" + test + "'/>\n");
     }
     write(out, "</tests>\n");
-    write(out, "</line>\n");
+    write(out, "</block>\n");
   }
 
   private void writeFooterAndClose(final Writer out) {

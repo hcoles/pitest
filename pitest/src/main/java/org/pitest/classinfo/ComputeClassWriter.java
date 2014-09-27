@@ -29,14 +29,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pitest.util;
+package org.pitest.classinfo;
 
 import java.util.Map;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.pitest.classinfo.ClassByteArraySource;
 
 /**
  * A ClassWriter that computes the common super class of two classes without

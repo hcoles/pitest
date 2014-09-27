@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.pitest.functional.Option;
 
 public class ClassNameTest {
 
@@ -136,6 +137,18 @@ public class ClassNameTest {
   public void shouldTreatDifferentClassesAsNotEqual() {
     assertFalse(ClassName.fromString("org/example/Foo").equals(
         ClassName.fromString("org.example.Bar")));
+  }
+  
+  @Test
+  public void nameToClassShouldReturnClassWhenKnownToLoader() {
+    assertEquals(Option.some(String.class),
+        ClassName.nameToClass().apply(new ClassName("java.lang.String")));
+  }
+
+  @Test
+  public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
+    assertEquals(Option.none(),
+        ClassName.nameToClass().apply(new ClassName("org.unknown.Unknown")));
   }
 
 }

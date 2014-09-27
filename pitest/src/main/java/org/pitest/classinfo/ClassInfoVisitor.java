@@ -16,8 +16,6 @@ package org.pitest.classinfo;
 
 import org.objectweb.asm.*;
 import org.pitest.bytecode.NullVisitor;
-import org.pitest.coverage.codeassist.BridgeMethodFilter;
-import org.pitest.coverage.codeassist.MethodFilteringAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

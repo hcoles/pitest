@@ -51,9 +51,6 @@ public final class CodeCoverageStore {
   // investigated
   private final static Map<Integer, boolean[]> classHits               = new ConcurrentHashMap<Integer, boolean[]>();
 
-  // encoded classid/methodid map to array of line numbers indexed by probe
-  // index
-  private final static Map<Integer, int[]>     classProbeToLineMapping = new ConcurrentHashMap<Integer, int[]>();
 
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
@@ -80,11 +77,11 @@ public final class CodeCoverageStore {
   }
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // /
-  // / Overloaded special case implementations for methods with 1 to N probes.
+  // 
+  // Overloaded special case implementations for methods with 1 to N probes.
   // Allows probes to be implemented as
-  // / local variables and the loop in the array based version to be unrolled.
-  // /
+  // local variables and the loop in the array based version to be unrolled.
+  // 
 
   public static void visitProbes(final int classId, final int offset,
       final boolean p0) { // NO_UCD
@@ -564,7 +561,7 @@ public final class CodeCoverageStore {
   }
 
   public synchronized static Collection<Long> getHits() {
-    final Collection<Long> lineHits = new ArrayList<Long>();
+    final Collection<Long> blockHits = new ArrayList<Long>();
     for (final Entry<Integer, boolean[]> each : classHits.entrySet()) {
       final boolean[] bs = each.getValue();
       // first entry tracks if class has been visited at all
@@ -572,14 +569,14 @@ public final class CodeCoverageStore {
         continue;
       }
       final int classId = each.getKey();
-      final int[] mapping = classProbeToLineMapping.get(classId);
+     // final int[] mapping = classProbeToBlockMapping.get(classId);
       for (int probeId = 1; probeId != bs.length; probeId++) {
         if (bs[probeId]) {
-          lineHits.add(encode(classId, mapping[probeId - 1]));
+          blockHits.add(encode(classId, probeId - 1));
         }
       }
     }
-    return lineHits;
+    return blockHits;
   }
 
   public static int registerClass(final String className) {
@@ -587,7 +584,11 @@ public final class CodeCoverageStore {
     invokeQueue.registerClass(id, className);
     return id;
   }
-
+  
+  public static void registerMethod(final int clazz, final String methodName, final String methodDesc, final int firstProbe, final int lastProbe) {
+    invokeQueue.registerProbes(clazz, methodName, methodDesc, firstProbe, lastProbe);
+  }
+  
   private synchronized static int nextId() {
     return classId++;
   }
@@ -604,15 +605,12 @@ public final class CodeCoverageStore {
     return ((long) classId << 32) | line;
   }
 
-  public static void registerClassProbes(final int classId,
-      final int[] probeToLines) {
-    classHits.put(classId, new boolean[probeToLines.length + 1]);
-    classProbeToLineMapping.put(classId, probeToLines);
+  public static void registerClassProbes(final int classId, int probeCount) {
+    classHits.put(classId, new boolean[probeCount + 1]);
   }
 
   public static void resetAllStaticState() {
     classHits.clear();
-    classProbeToLineMapping.clear();
   }
 
 }

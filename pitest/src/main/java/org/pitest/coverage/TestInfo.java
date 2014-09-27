@@ -24,16 +24,16 @@ public class TestInfo {
   private final String            definingClass;
   
   private final int               time;
-  private final int               linesCovered;
+  private final int               blocks;
   private final Option<ClassName> testee;
 
   public TestInfo(final String definingClass, final String name,
-      final int time, final Option<ClassName> testee, final int linesCovered) {
+      final int time, final Option<ClassName> testee, final int blocksCovered) {
     this.definingClass = internIfNotNull(definingClass);
     this.name = name;
     this.time = time;
     this.testee = testee;
-    this.linesCovered = linesCovered;
+    this.blocks = blocksCovered;
   }
 
   private String internIfNotNull(final String string) {
@@ -51,8 +51,8 @@ public class TestInfo {
     return this.time;
   }
 
-  public int getNumberOfLinesCovered() {
-    return this.linesCovered;
+  public int getNumberOfBlocksCovered() {
+    return this.blocks;
   }
 
   @Override

@@ -45,7 +45,7 @@ public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
   }
 
   private int weightFor(final TestInfo ti) {
-    return weightForDirectHit(ti) - (ti.getNumberOfLinesCovered() / 10);
+    return weightForDirectHit(ti) - (ti.getNumberOfBlocksCovered() / 10);
   }
 
   private int weightForDirectHit(final TestInfo arg0) {
