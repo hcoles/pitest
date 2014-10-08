@@ -255,6 +255,13 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${additionalClasspathElements}"
    */
   private ArrayList<String> additionalClasspathElements;
+  
+  /**
+   * When set indicates that analysis of this project should be skipped
+   * 
+   * @parameter default-value="false"
+   */
+  private boolean skip;
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -460,7 +467,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected boolean shouldRun() {
-    return !this.project.getPackaging().equalsIgnoreCase("pom");
+    return !skip && !this.project.getPackaging().equalsIgnoreCase("pom");
   }
 
   public String getMutationEngine() {

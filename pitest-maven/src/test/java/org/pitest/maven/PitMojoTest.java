@@ -44,6 +44,13 @@ public class PitMojoTest extends BasePitMojoTest {
     verify(this.executionStrategy, never()).execute(any(File.class),
         any(ReportOptions.class),  any(PluginServices.class));
   }
+  
+  public void testDoesNotAnalyseProjectsWithSkipFlagSet() throws Exception {
+    this.testee = createPITMojo(createPomWithConfiguration("<skip>true</skip>"));
+    this.testee.execute();
+    verify(this.executionStrategy, never()).execute(any(File.class),
+        any(ReportOptions.class),  any(PluginServices.class));
+  }
 
   public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
       throws Exception {

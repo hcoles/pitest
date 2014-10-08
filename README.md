@@ -14,6 +14,7 @@ Read all about it at http://pitest.org
 
 * Block based coverage (fixes 79/131)
 * End support for running on Java 5 (java 5 bytecode still supported)
+* Skip flag for maven modules (#106)
 
 ### 1.1.0
 
