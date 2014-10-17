@@ -59,6 +59,17 @@ public class PitMojoIT {
     final String secondRun = readCoverage(testDir);
     assertEquals(firstRun, secondRun);
   }
+  
+  @Test
+  public void shouldWorkWithTestNG() throws Exception {
+    final File testDir = prepare("/pit-testng");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>Covered.java</sourceFile>");
+    assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
 
   @Test
   public void shouldWorkWithPowerMock() throws Exception {
