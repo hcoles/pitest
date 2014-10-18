@@ -70,6 +70,20 @@ public class PitMojoIT {
     assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>Covered.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
+  
+  @Test
+  public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
+    final File testDir = prepare("/pit-junit-categories");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    final String coverage = readCoverage(testDir);
+    assertThat(coverage).doesNotContain("NotCovered");
+    assertThat(coverage).contains("Covered");
+    assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>NotCovered.java</sourceFile>");
+    assertThat(actual).doesNotContain("<mutation detected='true' status='KILLED'><sourceFile>NotCovered.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+  }
 
   @Test
   public void shouldWorkWithPowerMock() throws Exception {
