@@ -20,8 +20,10 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
+import static java.util.Arrays.asList;
 import static org.pitest.mutationtest.engine.gregor.mutators.ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator.REPLACE_METHOD_WITH_PARAMETER_OF_SAME_TYPE_AS_RETURN_VALUE_MUTATOR;
 
 public class ReplaceMethodWithParameterOfSameTypeAsReturnValueMutatorTest
@@ -167,4 +169,22 @@ public class ReplaceMethodWithParameterOfSameTypeAsReturnValueMutatorTest
       return int1 + int2;
     }
   }
+
+  @Test
+  public void alsoReplaceCallToMethodWhenReturnValueIsNotUsed()
+      throws Exception {
+    Mutant mutant = getFirstMutant(ReturnValueNotUsed.class);
+    assertMutantCallableReturns(new ReturnValueNotUsed(), mutant, false);
+  }
+
+  private class ReturnValueNotUsed implements Callable<Boolean> {
+    private List<String> aList = asList("xyz");
+
+    @Override
+    public Boolean call() throws Exception {
+      aList.set(0, "will not be present in list in mutated version");
+      return aList.contains("will not be present in list in mutated version");
+    }
+  }
+
 }
