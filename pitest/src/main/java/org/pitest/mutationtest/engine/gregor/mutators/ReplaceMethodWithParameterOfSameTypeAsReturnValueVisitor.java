@@ -44,23 +44,35 @@ class ReplaceMethodWithParameterOfSameTypeAsReturnValueVisitor
       final String name, final String desc, boolean itf) {
     if (hasParameterMatchingTheReturnType(desc)) {
       final MutationIdentifier newId = this.context.registerMutation(
-          this.factory, "replaced call to " + owner + "::" + name + " with parameter");
+          this.factory,
+          "replaced call to " + owner + "::" + name + " with parameter");
       if (context.shouldMutate(newId)) {
-        final Type returnType = Type.getReturnType(desc);
-        final Type[] argTypes = Type.getArgumentTypes(desc);
-        for (int i = argTypes.length - 1; i >= 0; i--) {
-          final Type argumentType = argTypes[i];
-          if (argumentType.equals(returnType)) {
-            return;
-          } else {
-            popParameter(argumentType);
-          }
-        }
+        replaceMethodCallWithParameterMatchingTheReturnType(
+            Type.getArgumentTypes(desc), Type.getReturnType(desc)
+        );
       } else {
         this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
       }
     } else {
       this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
+    }
+  }
+
+  private boolean hasParameterMatchingTheReturnType(String desc) {
+    final Type returnType = Type.getReturnType(desc);
+    final Type[] argTypes = Type.getArgumentTypes(desc);
+    return asList(argTypes).contains(returnType);
+  }
+
+  private void replaceMethodCallWithParameterMatchingTheReturnType(
+      Type[] argTypes, Type returnType) {
+    for (int i = argTypes.length - 1; i >= 0; i--) {
+      final Type argumentType = argTypes[i];
+      if (argumentType.equals(returnType)) {
+        return;
+      } else {
+        popParameter(argumentType);
+      }
     }
   }
 
@@ -70,12 +82,6 @@ class ReplaceMethodWithParameterOfSameTypeAsReturnValueVisitor
     } else {
       this.mv.visitInsn(POP);
     }
-  }
-
-  private boolean hasParameterMatchingTheReturnType(String desc) {
-    final Type returnType = Type.getReturnType(desc);
-    final Type[] argTypes = Type.getArgumentTypes(desc);
-    return asList(argTypes).contains(returnType);
   }
 
 }
