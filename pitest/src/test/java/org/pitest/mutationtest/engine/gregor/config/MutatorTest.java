@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 
 public class MutatorTest {
 
@@ -53,6 +53,6 @@ public class MutatorTest {
   @Test
   public void allContainsReplaceMethodMutator() throws Exception {
     assertThat(Mutator.all()).contains(
-        ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator.REPLACE_METHOD_WITH_PARAMETER_OF_SAME_TYPE_AS_RETURN_VALUE_MUTATOR);
+        ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
   }
 }

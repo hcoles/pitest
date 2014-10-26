@@ -45,14 +45,14 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  *   }
  * </pre>
  */
-public enum ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator
+public enum ArgumentPropagationMutator
     implements MethodMutatorFactory {
 
-  REPLACE_METHOD_WITH_PARAMETER_OF_SAME_TYPE_AS_RETURN_VALUE_MUTATOR;
+  ARGUMENT_PROPAGATION_MUTATOR;
 
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ReplaceMethodWithParameterOfSameTypeAsReturnValueVisitor(
+    return new ArgumentPropagationVisitor(
         context, methodVisitor, this);
   }
 

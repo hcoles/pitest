@@ -25,15 +25,14 @@ import static java.util.Arrays.asList;
 import static org.objectweb.asm.Opcodes.POP;
 import static org.objectweb.asm.Opcodes.POP2;
 
-class ReplaceMethodWithParameterOfSameTypeAsReturnValueVisitor
+class ArgumentPropagationVisitor
     extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
   private final MutationContext      context;
 
-  public ReplaceMethodWithParameterOfSameTypeAsReturnValueVisitor(
-      final MutationContext context, final MethodVisitor writer,
-      final MethodMutatorFactory factory) {
+  public ArgumentPropagationVisitor(final MutationContext context,
+      final MethodVisitor writer, final MethodMutatorFactory factory) {
     super(Opcodes.ASM5, writer);
     this.factory = factory;
     this.context = context;

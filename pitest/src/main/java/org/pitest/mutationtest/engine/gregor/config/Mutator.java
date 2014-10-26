@@ -41,7 +41,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
-import org.pitest.mutationtest.engine.gregor.mutators.ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -139,8 +139,8 @@ public final class Mutator {
     add("EXPERIMENTAL_SWITCH",
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
 
-    add("REPLACE_METHOD_WITH_PARAMETER_OF_SAME_TYPE_AS_RETURN_VALUE_MUTATOR",
-        ReplaceMethodWithParameterOfSameTypeAsReturnValueMutator.REPLACE_METHOD_WITH_PARAMETER_OF_SAME_TYPE_AS_RETURN_VALUE_MUTATOR);
+    add("ARGUMENT_PROPAGATION",
+        ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
