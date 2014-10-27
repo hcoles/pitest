@@ -16,6 +16,7 @@ Read all about it at http://pitest.org
 * End support for running on Java 5 (java 5 bytecode still supported)
 * Skip flag for maven modules (#106)
 * Stop declaring TestNG as a dependency 
+* New parameter propagation mutator (thanks UrsMetz)
 
 ### 1.1.0
 
