@@ -20,19 +20,21 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import static java.util.Arrays.asList;
 import static org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR;
 
-public class ArgumentPropagationMutatorTest
-    extends MutatorTestBase {
+public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToUseReplaceMethodWithParameterOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(mutateOnlyCallMethod(),
-        ARGUMENT_PROPAGATION_MUTATOR);
+    createTesteeWith(mutateOnlyCallMethod(), ARGUMENT_PROPAGATION_MUTATOR);
   }
 
   @Test
@@ -103,7 +105,7 @@ public class ArgumentPropagationMutatorTest
   }
 
   @Test
-  public void doesNotMutationMethodThatReturnsDifferentType() throws Exception {
+  public void shouldNotMutateMethodThatReturnsDifferentType() throws Exception {
     assertNoMutants(ReturnsDifferentType.class);
   }
 
@@ -116,9 +118,8 @@ public class ArgumentPropagationMutatorTest
   @Test
   public void continuesUntilMatchingArgumentTypeIsFound() throws Exception {
     Mutant mutant = getFirstMutant(OnlyFirstArgumentHasMatchingType.class);
-    assertMutantCallableReturns(
-        new OnlyFirstArgumentHasMatchingType("abc", new Object(), 3), mutant,
-        "abc");
+    assertMutantCallableReturns(new OnlyFirstArgumentHasMatchingType("abc",
+        new Object(), 3), mutant, "abc");
   }
 
   private class OnlyFirstArgumentHasMatchingType implements Callable<String> {
@@ -184,6 +185,67 @@ public class ArgumentPropagationMutatorTest
     public Boolean call() throws Exception {
       aList.set(0, "will not be present in list in mutated version");
       return aList.contains("will not be present in list in mutated version");
+    }
+  }
+
+  @Test
+  public void shouldReplaceMethodsReturningArraysMatchingParameterType()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(HasArrayMethod.class);
+    String[] expected = { "1", "2" };
+    String[] actual = mutateAndCall(new HasArrayMethod(), mutant);
+    assertThat(actual).containsExactly(expected);
+  }
+
+  private static class HasArrayMethod implements Callable<String[]> {
+
+    public String[] delegate(final String[] ss) {
+      return new String[] {};
+    }
+
+    public String[] call() throws Exception {
+      String[] s = { "1", "2" };
+      return delegate(s);
+    }
+  }
+
+  @Test
+  public void shouldNotReplaceMethodsReturningArraysOfUnmatchedType()
+      throws Exception {
+    assertNoMutants(HasArrayMethodOfDifferentType.class);
+  }
+
+  private static class HasArrayMethodOfDifferentType implements
+      Callable<String[]> {
+
+    public String[] delegate(final Integer[] ss) {
+      return new String[] {};
+    }
+
+    public String[] call() throws Exception {
+      Integer[] s = { 1, 2 };
+      return delegate(s);
+    }
+  }
+
+  @Test
+  public void willSubstituteCollectionsOfDifferentTypesDueToTypeErasure()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(HasListMethod.class);
+    List<String> expected = Collections.emptyList();
+    List<String> actual = mutateAndCall(new HasListMethod(), mutant);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  private static class HasListMethod implements Callable<List<String>> {
+
+    public List<String> delegate(final List<Integer> is) {
+      return Arrays.asList(new String[] { "foo", "bar" });
+    }
+
+    public List<String> call() throws Exception {
+      List<Integer> s = Collections.emptyList();
+      return delegate(s);
     }
   }
 

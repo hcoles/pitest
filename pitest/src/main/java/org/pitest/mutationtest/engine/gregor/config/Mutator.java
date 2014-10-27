@@ -136,10 +136,16 @@ public final class Mutator {
     add("EXPERIMENTAL_MEMBER_VARIABLE",
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
 
+    /**
+     * Experimental mutator that swaps labels in switch statements
+     */
     add("EXPERIMENTAL_SWITCH",
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
 
-    add("ARGUMENT_PROPAGATION",
+    /**
+     * Experimental mutator that replaces method call with one of its parameters of matching type
+     */
+    add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
