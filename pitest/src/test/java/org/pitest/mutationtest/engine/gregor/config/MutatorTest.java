@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 
 public class MutatorTest {
 
@@ -49,4 +50,9 @@ public class MutatorTest {
     return Mutator.fromStrings(Arrays.asList(s));
   }
 
+  @Test
+  public void allContainsReplaceMethodMutator() throws Exception {
+    assertThat(Mutator.all()).contains(
+        ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
+  }
 }
