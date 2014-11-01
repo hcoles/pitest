@@ -10,7 +10,9 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.1-SNAPSHOT
+### 1.1.2-SNAPSHOT
+
+### 1.1.1
 
 * Block based coverage (fixes 79/131)
 * End support for running on Java 5 (java 5 bytecode still supported)
