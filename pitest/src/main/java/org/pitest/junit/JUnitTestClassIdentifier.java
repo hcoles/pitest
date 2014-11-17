@@ -37,7 +37,7 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
   }
 
   public boolean isIncluded(ClassInfo a) {
-    return isIncludedCategory(a) & !isExcludedCategory(a);
+    return isIncludedCategory(a) && !isExcludedCategory(a);
   }
   
   private boolean isIncludedCategory(ClassInfo a) {

@@ -20,63 +20,82 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
+import com.example.coverage.execute.samples.simple.LastLineOfContructorCheck;
+import com.example.coverage.execute.samples.simple.OneBlock;
+import com.example.coverage.execute.samples.simple.ThreeBlocks;
+import com.example.coverage.execute.samples.simple.ThreeMultiLineBlocks;
+
 @RunWith(MockitoJUnitRunner.class)
 public class LineMapperTest {
-  
+
   @Mock
   CodeSource source;
+
+  @Test
+  public void shouldMapAllLinesWhenMethodContainsSingleBlock() throws Exception {
+    Map<BlockLocation, Set<Integer>> actual = analyse(OneBlock.class);
+
+    Location l = Location.location(ClassName.fromClass(OneBlock.class),
+        MethodName.fromString("foo"), "()I");
+    BlockLocation bl = new BlockLocation(l, 0);
+
+    assertThat(actual.get(bl)).containsOnly(5);
+
+  }
+
+  @Test
+  public void shouldMapAllLinesWhenMethodContainsThreeBlocks() throws Exception {
+    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks.class);
+
+    Location l = Location.location(ClassName.fromClass(ThreeBlocks.class),
+        MethodName.fromString("foo"), "(I)I");
+
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(5);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(6);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(8);
+  }
+
+  @Test
+  public void shouldMapAllLinesWhenMethodContainsThreeMultiLineBlocks() throws Exception {
+    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeMultiLineBlocks.class);
+
+    Location l = Location.location(ClassName.fromClass(ThreeMultiLineBlocks.class),
+        MethodName.fromString("foo"), "(I)I");
+
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(5,6);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(7,8);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).contains(10,11);
+  }
   
-  static class OneBlock {
-    int foo() {
-      return 1;
-    }
+  @Test
+  public void shouldMapLinesWhenLinesSpanBlocks() throws Exception {
+
+    Map<BlockLocation, Set<Integer>> actual = analyse(com.example.LineNumbersSpanBlocks.class);
+    Location l = Location.location(
+        ClassName.fromClass(com.example.LineNumbersSpanBlocks.class),
+        MethodName.fromString("foo"), "(I)I");
+
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(11);
   }
+  
+  @Test
+  public void shouldIncludeLastLinesConstructorsInBlock()  throws Exception  {
+    Map<BlockLocation, Set<Integer>> actual = analyse(LastLineOfContructorCheck.class);
+    Location l = Location.location(ClassName.fromClass(LastLineOfContructorCheck.class),
+        MethodName.fromString("<init>"), "()V");
 
-	@Test
-	public void shouldMapAllLinesWhenMethodContainsSingleBlock() throws Exception {
-	  Map<BlockLocation, Set<Integer>> actual = analyse(OneBlock.class);
-
-	  Location l = Location.location(ClassName.fromClass(OneBlock.class), MethodName.fromString("foo"), "()I");
-	  BlockLocation bl = new BlockLocation(l,0);
-	  
-	  assertThat(actual.get(bl)).containsOnly(31);
-	  
-	}
-	
-  static class ThreeBlocks {
-    int foo(int i) {
-      if (i > 30 ) {
-        return 1;
-      }
-      return 2;
-    }
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(6);
   }
-	
-	 @Test
-	  public void shouldMapAllLinesWhenMethodContainsThreeBlocks() throws Exception {
-	    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks.class);
-
-	    Location l = Location.location(ClassName.fromClass(ThreeBlocks.class), MethodName.fromString("foo"), "(I)I");
-	    
-	    assertThat(actual.get( BlockLocation.blockLocation(l,0))).containsOnly(48);
-      assertThat(actual.get( BlockLocation.blockLocation(l,1))).containsOnly(49);
-      assertThat(actual.get( BlockLocation.blockLocation(l,2))).containsOnly(51);
-	  }
-	 
-	 @Test
-	 public void shouldMapLinesWhenLinesSpanBlocks() throws Exception {
-	   
-     Map<BlockLocation, Set<Integer>> actual = analyse(com.example.LineNumbersSpanBlocks.class);
-     Location l = Location.location(ClassName.fromClass(com.example.LineNumbersSpanBlocks.class), MethodName.fromString("foo"), "(I)I");
-
-     assertThat(actual.get(BlockLocation.blockLocation(l,2))).containsOnly(11);
-	 }
 
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
-    when(source.fetchClassBytes(any(ClassName.class))).thenReturn(Option.some(ClassUtils.classAsBytes(clazz)));
-	  LineMap testee = new LineMapper(source);
-	  return testee.mapLines(ClassName.fromClass(clazz));
+    when(source.fetchClassBytes(any(ClassName.class))).thenReturn(
+        Option.some(ClassUtils.classAsBytes(clazz)));
+    LineMap testee = new LineMapper(source);
+    return testee.mapLines(ClassName.fromClass(clazz));
   }
+  
+
+  
 
 }

@@ -26,6 +26,8 @@ import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
 public class ControlFlowAnalyser {
+  
+  private static int LIKELY_NUMBER_OF_LINES_PER_BLOCK = 7;
 
   public List<Block> analyze(MethodNode mn) {
     List<Block> blocks = new ArrayList<Block>(mn.instructions.size());
@@ -37,26 +39,28 @@ public class ControlFlowAnalyser {
     // so possibly useless, but here for now. Because fear.
     addtryCatchBoundaries(mn,jumpTargets);
 
-    Set<Integer> blockLines = new HashSet<Integer>(10);
+    Set<Integer> blockLines = smallSet();
     int lastLine = Integer.MIN_VALUE;
     
     final int lastInstruction = mn.instructions.size() - 1;
     
     int blockStart = 0;
     for (int i = 0; i != mn.instructions.size(); i++ ) {
+
       AbstractInsnNode ins = mn.instructions.get(i);
-      
+
       if (ins instanceof LineNumberNode){
     	  LineNumberNode lnn = (LineNumberNode) ins;
-    	  lastLine = lnn.line;
+    	  blockLines.add(lnn.line);
+       lastLine = lnn.line;
       } else if (jumpTargets.contains(ins) && blockStart != i) {
         blocks.add(new Block(blockStart, i - 1,blockLines));
         blockStart = i;
-        blockLines = new HashSet<Integer>(10);
+        blockLines = smallSet();
       } else if (endsBlock(ins)) {
         blocks.add(new Block(blockStart, i,blockLines));
         blockStart = i + 1;
-        blockLines = new HashSet<Integer>(10);
+        blockLines = smallSet();
       } else if ( lastLine != Integer.MIN_VALUE && isInstruction(ins)) {
         blockLines.add(lastLine);
       }
@@ -72,6 +76,10 @@ public class ControlFlowAnalyser {
 
     return blocks;
 
+  }
+  
+  private static HashSet<Integer> smallSet() {
+    return new HashSet<Integer>(LIKELY_NUMBER_OF_LINES_PER_BLOCK);
   }
 
   private boolean isInstruction(AbstractInsnNode ins) {
