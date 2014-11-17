@@ -10,7 +10,9 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.2-SNAPSHOT
+### 1.1.2
+
+* Fix for #150 - line coverage under reported
 
 ### 1.1.1
 
