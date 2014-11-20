@@ -14,6 +14,9 @@
  */
 package org.pitest.mutationtest.engine;
 
+/**
+ * A fully generated mutant
+ */
 public final class Mutant {
 
   private final MutationDetails details;
@@ -24,10 +27,18 @@ public final class Mutant {
     this.bytes = bytes;
   }
 
+  /**
+   * Returns a data relating to the mutant
+   * @return A MutationDetails object
+   */
   public MutationDetails getDetails() {
     return this.details;
   }
 
+  /**
+   * Returns a byte array containing the mutant class
+   * @return A byte array
+   */
   public byte[] getBytes() {
     return this.bytes;
   }

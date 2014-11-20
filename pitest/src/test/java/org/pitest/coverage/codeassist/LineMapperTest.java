@@ -87,6 +87,26 @@ public class LineMapperTest {
     assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(6);
   }
 
+  @Test
+  public void shouldI()  throws Exception  {
+    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks2.class);
+    Location l = Location.location(ClassName.fromClass(ThreeBlocks2.class),
+        MethodName.fromString("foo"), "(I)I");
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(103);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(104);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(106);
+  }
+
+  
+  static class ThreeBlocks2 {
+    int foo(int i) {
+      if (i > 30 ) {
+        return 1;
+      }
+      return 2;
+    }
+  }
+  
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
     when(source.fetchClassBytes(any(ClassName.class))).thenReturn(

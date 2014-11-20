@@ -18,10 +18,24 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassByteArraySource;
 
+/**
+ * A mutation engine acts as a factory for mutaters capable of creating
+ * mutant classes.
+ */
 public interface MutationEngine {
 
+  /**
+   * Create a mutator using the given ClassByteArraySource as the source 
+   * of unmated classes
+   * @param source the source to use to retrieve unmated classes
+   * @return a Mutater
+   */
   public Mutater createMutator(ClassByteArraySource source);
 
+  /**
+   * Returns a list of mutation operations this engine can perform
+   * @return a list of mutator names
+   */
   public Collection<String> getMutatorNames();
 
 }

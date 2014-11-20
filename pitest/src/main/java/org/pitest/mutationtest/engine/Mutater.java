@@ -18,10 +18,23 @@ import java.util.List;
 
 import org.pitest.classinfo.ClassName;
 
+/**
+ * Generates mutants 
+ */
 public interface Mutater {
 
+  /**
+   * Creates a mutant matching the given MutationIdentifier
+   * @param id the mutant to create
+   * @return a Mutant
+   */
   public Mutant getMutation(MutationIdentifier id);
 
+  /**
+   * Scans for possible mutants in the given class
+   * @param classToMutate the class to scan for mutants
+   * @return a list of possible mutants
+   */
   public List<MutationDetails> findMutations(ClassName classToMutate);
 
 }
