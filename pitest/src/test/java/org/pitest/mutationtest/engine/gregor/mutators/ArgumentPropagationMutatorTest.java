@@ -20,20 +20,19 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR;
 
 public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
   @Before
-  public void setupEngineToUseReplaceMethodWithParameterOfSameTypeAsReturnValueMutator() {
+  public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
     createTesteeWith(mutateOnlyCallMethod(), ARGUMENT_PROPAGATION_MUTATOR);
   }
 
@@ -95,8 +94,8 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       this.arg = arg;
     }
 
-    public long delegate(long parameter) {
-      return 22L + parameter;
+    public long delegate(long argument) {
+      return 22L + argument;
     }
 
     public String call() throws Exception {
@@ -189,7 +188,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceMethodsReturningArraysMatchingParameterType()
+  public void shouldReplaceMethodsReturningArraysMatchingArgumentType()
       throws Exception {
     final Mutant mutant = getFirstMutant(HasArrayMethod.class);
     String[] expected = { "1", "2" };
@@ -249,4 +248,115 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
     }
   }
 
+  @Test
+  public void shouldReplaceInstanceMethodCallThatIsUsedAsArgumentForCallToOtherObject()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(
+        CallsOtherObjectWithResultOfInstanceMethod.class);
+    MyListener listener = new MyListener();
+    assertMutantCallableReturns(
+        new CallsOtherObjectWithResultOfInstanceMethod("lowercase", listener),
+        mutant, "lowercase");
+  }
+
+  private class CallsOtherObjectWithResultOfInstanceMethod
+      implements Callable<String> {
+    private String     arg;
+    private MyListener listener;
+
+    public CallsOtherObjectWithResultOfInstanceMethod(String arg,
+        MyListener listener) {
+      this.arg = arg;
+      this.listener = listener;
+    }
+
+    private String delegate(String aString) {
+      return aString.toUpperCase();
+    }
+
+    public String call() throws Exception {
+      listener.call(delegate(arg));
+      return listener.getCalledWith();
+    }
+  }
+
+  @Test
+  public void shouldReplaceStaticMethodCallThatIsUsedAsArgumentForCallToOtherObject()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(
+        CallsOtherObjectWithResultOfStaticMethod.class);
+    MyListener listener = new MyListener();
+    assertMutantCallableReturns(
+        new CallsOtherObjectWithResultOfStaticMethod("lowercase", listener),
+        mutant, "lowercase");
+  }
+
+  private static class CallsOtherObjectWithResultOfStaticMethod
+      implements Callable<String> {
+    private String     arg;
+    private MyListener listener;
+
+    public CallsOtherObjectWithResultOfStaticMethod(String arg,
+        MyListener listener) {
+      this.arg = arg;
+      this.listener = listener;
+    }
+
+    private static String delegate(int i, String aString, long l) {
+      return aString.toUpperCase();
+    }
+
+    public String call() throws Exception {
+      listener.call(delegate(3, arg, 5L));
+      return listener.getCalledWith();
+    }
+  }
+
+  @Test
+  public void shouldReplaceInstanceMethodCallWithSeveralArgumentsThatIsUsedAsArgumentForCallToOtherObject()
+      throws Exception {
+    final Mutant mutant = getFirstMutant(
+        CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments.class);
+    MyListener listener = new MyListener();
+    assertMutantCallableReturns(
+        new CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments(
+            "lowercase", listener),
+        mutant, "lowercase");
+
+  }
+
+  private static class CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments
+      implements Callable<String> {
+    private String     arg;
+    private MyListener listener;
+
+    public CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments(
+        String arg,
+        MyListener listener) {
+      this.arg = arg;
+      this.listener = listener;
+    }
+
+    private String delegate(int i, double aDouble, Object object, String aString,
+        long l) {
+      return aString.toUpperCase();
+    }
+
+    public String call() throws Exception {
+      listener.call(delegate(3, 4.2D, new Object(), arg, 5L));
+      return listener.getCalledWith();
+    }
+  }
+
+  private static class MyListener {
+    private String calledWith = "not called";
+
+    public void call(String text) {
+      calledWith = text;
+    }
+
+    public String getCalledWith() {
+      return calledWith;
+    }
+  }
 }
