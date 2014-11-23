@@ -10,6 +10,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.1.3-SNAPSHOT
+
+* Fix for #153 - SCM plugin broken for maven 2
+
 ### 1.1.2
 
 * Fix for #150 - line coverage under reported
