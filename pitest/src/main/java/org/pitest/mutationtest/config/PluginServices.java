@@ -30,6 +30,7 @@ public class PluginServices {
   /**
    * Lists all plugin classes that must be present on the classpath of the
    * controlling process only.
+   * @return list of plugins
    */
   public Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
     final List<ToolClasspathPlugin> l = new ArrayList<ToolClasspathPlugin>();

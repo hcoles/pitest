@@ -93,10 +93,10 @@ public final class MutationIdentifier implements Comparable<MutationIdentifier> 
    * @param id the MutationIdentifier to match
    * @return true if the MutationIdentifier matches otherwise false
    */
-  public boolean matches(final MutationIdentifier newId) {
-    return this.location.equals(newId.location)
-        && this.mutator.equals(newId.mutator)
-        && this.indexes.contains(newId.getFirstIndex());
+  public boolean matches(final MutationIdentifier id) {
+    return this.location.equals(id.location)
+        && this.mutator.equals(id.mutator)
+        && this.indexes.contains(id.getFirstIndex());
   }
 
   /**
