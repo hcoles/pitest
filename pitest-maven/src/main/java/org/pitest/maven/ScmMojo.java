@@ -52,7 +52,7 @@ public class ScmMojo extends PitMojo {
    * 
    * @parameter expression="${include}"
    */
-  private Set<String> include;
+  private HashSet<String> include;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
