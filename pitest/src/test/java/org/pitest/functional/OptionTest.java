@@ -26,7 +26,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
+import org.pitest.functional.Option.None;
+import org.pitest.functional.Option.Some;
 import org.pitest.functional.prelude.Prelude;
 
 public class OptionTest {
@@ -143,4 +147,11 @@ public class OptionTest {
     assertTrue(Option.some(FOO).contains(isEqualTo(FOO)));
   }
 
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(Some.class).verify();
+    EqualsVerifier.forClass(None.class).verify();        
+  } 
+  
+  
 }

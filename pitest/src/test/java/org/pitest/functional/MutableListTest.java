@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.prelude.Prelude;
@@ -208,4 +210,9 @@ public class MutableListTest {
     this.testee.addAll(Arrays.asList(2, 4, 6, 8));
     assertEquals(Arrays.asList(4, 6), this.testee.subList(1, 3));
   }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(MutableList.class).verify();
+  } 
 }

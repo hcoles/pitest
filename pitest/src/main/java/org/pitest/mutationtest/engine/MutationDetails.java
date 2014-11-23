@@ -26,7 +26,7 @@ import org.pitest.util.StringUtil;
 /**
  * Captures all data relating to a mutant.
  */
-public class MutationDetails {
+public final class MutationDetails {
 
   private final MutationIdentifier  id;
   private final String              filename;

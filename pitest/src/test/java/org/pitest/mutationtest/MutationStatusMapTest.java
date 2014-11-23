@@ -1,8 +1,8 @@
 package org.pitest.mutationtest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -10,25 +10,26 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.pitest.mutationtest.LocationMother.MutationIdentifierBuilder;
 import org.pitest.mutationtest.engine.MutationDetails;
 
+import static org.pitest.mutationtest.engine.MutationDetailsMother.*;
+import static org.pitest.mutationtest.LocationMother.*;
 
 public class MutationStatusMapTest {
 
   private MutationStatusMap testee;
 
-  @Mock
   private MutationDetails   details;
 
-  @Mock
   private MutationDetails   detailsTwo;
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
     this.testee = new MutationStatusMap();
+    MutationIdentifierBuilder id = aMutationId().withIndex(1);
+    details = aMutationDetail().withId(id.withIndex(1)).build();
+    detailsTwo = aMutationDetail().withId(id.withIndex(2)).build();
   }
 
   @Test

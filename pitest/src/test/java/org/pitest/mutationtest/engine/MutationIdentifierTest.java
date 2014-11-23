@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 
 public class MutationIdentifierTest {
@@ -115,4 +117,9 @@ public class MutationIdentifierTest {
     
   }
     
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(MutationIdentifier.class).verify();
+  }  
+  
 }

@@ -14,7 +14,7 @@
  */
 package org.pitest.dependency;
 
-class DependencyAccess {
+final class DependencyAccess {
 
   static class Member implements Comparable<Member> {
     private final String owner;

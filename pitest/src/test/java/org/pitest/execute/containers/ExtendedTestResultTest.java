@@ -15,9 +15,9 @@
 package   org.pitest.execute.containers;
 
 import static org.junit.Assert.assertEquals;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
-import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.functional.Option;
 import org.pitest.testapi.MetaData;
 
@@ -45,5 +45,10 @@ public class ExtendedTestResultTest {
     final ExtendedTestResult testee = new ExtendedTestResult(null, null);
     assertEquals(Option.none(), testee.getValue(MetaData.class));
   }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(ExtendedTestResult.class).withRedefinedSuperclass().verify();
+  } 
 
 }

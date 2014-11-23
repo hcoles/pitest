@@ -70,7 +70,7 @@ public class TestInfoTest {
   public void isWithinATestClassShouldReturnTrueForNestedClassesWithinATest() {
     assertTrue(TestInfo.isWithinATestClass(fetchClass(Nested.class)));
   }
-
+  
   private ClassInfo fetchClass(final Class<?> clazz) {
     return this.repository.fetchClass(clazz).value();
   }

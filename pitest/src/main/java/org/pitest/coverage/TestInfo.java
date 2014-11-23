@@ -18,7 +18,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 
-public class TestInfo {
+public final class TestInfo {
 
   private final String            name;
   private final String            definingClass;

@@ -2,7 +2,7 @@ package org.pitest.classinfo;
 
 import java.math.BigInteger;
 
-public class HierarchicalClassId {
+public final class HierarchicalClassId {
 
   private final ClassIdentifier classId;
   private final String          hierarchicalHash;

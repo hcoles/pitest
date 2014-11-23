@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 import org.pitest.functional.Option;
 
@@ -150,5 +152,10 @@ public class ClassNameTest {
     assertEquals(Option.none(),
         ClassName.nameToClass().apply(new ClassName("org.unknown.Unknown")));
   }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(ClassName.class).verify();
+  } 
 
 }

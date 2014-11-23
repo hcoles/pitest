@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 
@@ -21,6 +23,11 @@ public class LocationTest {
     List<Location> ls = Arrays.asList(a,b,c,d);
     Collections.sort(ls);
     assertEquals(Arrays.asList(a,c,d,b),ls);
+  }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(Location.class).verify();
   }
 
 }

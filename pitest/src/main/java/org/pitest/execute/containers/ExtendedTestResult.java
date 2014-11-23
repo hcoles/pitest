@@ -23,7 +23,7 @@ import org.pitest.testapi.MetaData;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnitState;
 
-public class ExtendedTestResult extends TestResult {
+public final class ExtendedTestResult extends TestResult {
 
   private final Map<Class<? extends MetaData>, Object> values = new HashMap<Class<? extends MetaData>, Object>(
                                                                   1);

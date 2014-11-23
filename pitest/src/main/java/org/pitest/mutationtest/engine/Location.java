@@ -20,7 +20,7 @@ import org.pitest.classinfo.ClassName;
  * The co-ordinates of a method within a class.
  * 
  */
-public class Location implements Comparable<Location> {
+public final class Location implements Comparable<Location> {
 
   private final ClassName  clazz;
   private final MethodName method;

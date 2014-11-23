@@ -40,7 +40,6 @@ public class CompoundTestClassIdentifierTest {
   @Mock
   private TestClassIdentifier         secondChild;
 
-  @Mock
   private ClassInfo                   clazz;
 
   @Before

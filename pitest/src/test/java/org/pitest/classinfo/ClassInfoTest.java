@@ -104,8 +104,7 @@ public class ClassInfoTest {
     makeTestee();
     assertTrue(ClassInfo.matchIfAbstract().apply(this.testee));
   }
-
-
+  
   private void makeTestee() {
     this.testee = new ClassInfo(null, null, this.data);
   }

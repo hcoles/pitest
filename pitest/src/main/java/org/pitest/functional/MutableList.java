@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class MutableList<A> implements FunctionalList<A> {
+public final class MutableList<A> implements FunctionalList<A> {
 
   private final List<A> impl;
 

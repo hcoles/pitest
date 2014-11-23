@@ -22,7 +22,7 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 
-public class MultipleTestGroup extends AbstractTestUnit {
+public final class MultipleTestGroup extends AbstractTestUnit {
 
   private final List<TestUnit> children;
 
