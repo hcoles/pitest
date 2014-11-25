@@ -14,13 +14,12 @@
  */
 package org.pitest.testapi;
 
-import org.pitest.functional.Option;
 
 /**
  * @author henry
  * 
  */
-public class TestResult {
+public final class TestResult {
 
   private final Description   description;
 
@@ -48,10 +47,6 @@ public class TestResult {
 
   public Description getDescription() {
     return this.description;
-  }
-
-  public <T extends MetaData> Option<T> getValue(final Class<T> type) {
-    return Option.none();
   }
 
   @Override

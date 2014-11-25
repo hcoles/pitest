@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +48,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
         .getAllowedTime(this.executionTime);
 
     final FutureTask<?> future = createFutureForChildTestUnit(loader, rc);
-    executeFutureWithTimeOut(maxTime, future);
+    executeFutureWithTimeOut(maxTime, future, rc);
     if (!future.isDone()) {
       this.timeOutSideEffect.apply();
     }
@@ -57,7 +56,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
   }
 
   private void executeFutureWithTimeOut(final long maxTime,
-      final FutureTask<?> future) {
+      final FutureTask<?> future, final ResultCollector rc) {
     try {
       future.get(maxTime, TimeUnit.MILLISECONDS);
     } catch (final TimeoutException ex) {
@@ -71,8 +70,8 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
   private FutureTask<?> createFutureForChildTestUnit(final ClassLoader loader,
       final ResultCollector rc) {
-    final FutureTask<?> future = new FutureTask<Object>(createCallableForChild(
-        loader, rc));
+    final FutureTask<?> future = new FutureTask<Object>(createRunnable(loader,
+        rc), null);
     final Thread thread = new Thread(future);
     thread.setDaemon(true);
     thread.setName("mutationTestThread");
@@ -80,18 +79,20 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
     return future;
   }
 
-  private Callable<Object> createCallableForChild(final ClassLoader loader,
+  private Runnable createRunnable(final ClassLoader loader,
       final ResultCollector rc) {
-    return new Callable<Object>() {
+    return new Runnable() {
 
-      public Object call() throws Exception {
-        child().execute(
-            loader,
-            new TimingMetaDataResultCollector(rc,
-                MutationTimeoutDecorator.this.executionTime));
-        return null;
+      @Override
+      public void run() {
+        try {
+          child().execute(
+              loader,rc);
+        } catch (final Throwable ex) {
+          rc.notifyEnd(child().getDescription(), ex);
+        }
+
       }
-
     };
   }
 

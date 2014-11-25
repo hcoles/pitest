@@ -15,7 +15,6 @@
 package org.pitest.testapi.execute;
 
 import org.pitest.testapi.Description;
-import org.pitest.testapi.MetaData;
 import org.pitest.testapi.ResultCollector;
 
 public class ExitingResultCollector implements ResultCollector {
@@ -39,18 +38,16 @@ public class ExitingResultCollector implements ResultCollector {
     return this.hadFailure;
   }
 
-  public void notifyEnd(final Description description, final Throwable t,
-      final MetaData... data) {
-    this.child.notifyEnd(description, t, data);
+  public void notifyEnd(final Description description, final Throwable t) {
+    this.child.notifyEnd(description, t);
     if (t != null) {
       this.hadFailure = true;
     }
 
   }
 
-  public void notifyEnd(final Description description, final MetaData... data) {
-    this.child.notifyEnd(description, data);
-
+  public void notifyEnd(final Description description) {
+    this.child.notifyEnd(description);
   }
 
 }

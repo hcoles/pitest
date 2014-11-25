@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.execute.ResultType;
@@ -29,8 +30,7 @@ public class ResultTypeTest {
   @Mock
   private TestListener listener;
 
-  @Mock
-  private TestResult   result;
+  private TestResult   result = new TestResult(new Description("foo"), null);
 
   @Before
   public void setUp() {
