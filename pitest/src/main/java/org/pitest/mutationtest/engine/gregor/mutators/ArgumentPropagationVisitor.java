@@ -21,9 +21,10 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+import java.util.Arrays;
+
 import static java.util.Arrays.asList;
-import static org.objectweb.asm.Opcodes.POP;
-import static org.objectweb.asm.Opcodes.POP2;
+import static org.objectweb.asm.Opcodes.*;
 
 class ArgumentPropagationVisitor
     extends MethodVisitor {
@@ -41,13 +42,14 @@ class ArgumentPropagationVisitor
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc, boolean itf) {
-    if (hasParameterMatchingTheReturnType(desc)) {
+    if (hasArgumentMatchingTheReturnType(desc)) {
       final MutationIdentifier newId = this.context.registerMutation(
           this.factory,
-          "replaced call to " + owner + "::" + name + " with parameter");
+          "replaced call to " + owner + "::" + name + " with argument");
       if (context.shouldMutate(newId)) {
-        replaceMethodCallWithParameterMatchingTheReturnType(
-            Type.getArgumentTypes(desc), Type.getReturnType(desc)
+        Type returnType = Type.getReturnType(desc);
+        replaceMethodCallWithArgumentHavingSameTypeAsReturnValue(
+            Type.getArgumentTypes(desc), returnType, opcode
         );
       } else {
         this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
@@ -57,29 +59,88 @@ class ArgumentPropagationVisitor
     }
   }
 
-  private boolean hasParameterMatchingTheReturnType(String desc) {
-    final Type returnType = Type.getReturnType(desc);
-    final Type[] argTypes = Type.getArgumentTypes(desc);
-    return asList(argTypes).contains(returnType);
+  private boolean hasArgumentMatchingTheReturnType(String desc) {
+    return findLastIndexOfArgumentWithSameTypeAsReturnValue(
+        Type.getArgumentTypes(desc), Type.getReturnType(desc)) > -1;
   }
 
-  private void replaceMethodCallWithParameterMatchingTheReturnType(
-      Type[] argTypes, Type returnType) {
-    for (int i = argTypes.length - 1; i >= 0; i--) {
-      final Type argumentType = argTypes[i];
-      if (argumentType.equals(returnType)) {
-        return;
-      } else {
-        popParameter(argumentType);
-      }
+  private void replaceMethodCallWithArgumentHavingSameTypeAsReturnValue(
+      Type[] argTypes, Type returnType, int opcode) {
+    int indexOfPropagatedArgument = findLastIndexOfArgumentWithSameTypeAsReturnValue(argTypes,
+        returnType);
+    popArgumentsBeforePropagatedArgument(argTypes, indexOfPropagatedArgument);
+    popArgumentsFollowingThePropagated(argTypes, returnType,
+        indexOfPropagatedArgument);
+    removeThisFromStackIfNotStatic(returnType, opcode);
+  }
+
+  private int findLastIndexOfArgumentWithSameTypeAsReturnValue(Type[] argTypes,
+      Type returnType) {
+    return asList(argTypes).lastIndexOf(returnType);
+  }
+
+  private void popArgumentsBeforePropagatedArgument(Type[] argTypes,
+      int indexOfPropagatedArgument) {
+    Type[] argumentTypesBeforeNewReturnValue = Arrays
+        .copyOfRange(argTypes, indexOfPropagatedArgument + 1, argTypes.length);
+    popArguments(argumentTypesBeforeNewReturnValue);
+  }
+
+  private void popArguments(Type[] argumentTypes) {
+    for (int i = argumentTypes.length - 1; i >= 0; i--) {
+      popArgument(argumentTypes[i]);
     }
   }
 
-  private void popParameter(Type argumentType) {
+  private void popArgumentsFollowingThePropagated(Type[] argTypes,
+      Type returnType, int indexOfPropagatedArgument) {
+    Type[] argsFollowing = Arrays
+        .copyOfRange(argTypes, 0, indexOfPropagatedArgument);
+    for (int j = argsFollowing.length - 1; j >= 0; j--) {
+      swap(this.mv, returnType, argsFollowing[j]);
+      popArgument(argsFollowing[j]);
+    }
+  }
+
+  private void removeThisFromStackIfNotStatic(Type returnType, int opcode) {
+    if (isNotStatic(opcode)) {
+      swap(this.mv, returnType, Type.getType(Object.class));
+      this.mv.visitInsn(POP);
+    }
+  }
+
+  private void popArgument(Type argumentType) {
     if (argumentType.getSize() != 1) {
       this.mv.visitInsn(POP2);
     } else {
       this.mv.visitInsn(POP);
+    }
+  }
+
+  private static boolean isNotStatic(final int opcode) {
+    return INVOKESTATIC != opcode;
+  }
+
+  // based on: http://stackoverflow.com/a/11359551
+  private static void swap(MethodVisitor mv, Type stackTop, Type belowTop) {
+    if (stackTop.getSize() == 1) {
+      if (belowTop.getSize() == 1) {
+        // Top = 1, below = 1
+        mv.visitInsn(SWAP);
+      } else {
+        // Top = 1, below = 2
+        mv.visitInsn(DUP_X2);
+        mv.visitInsn(POP);
+      }
+    } else {
+      if (belowTop.getSize() == 1) {
+        // Top = 2, below = 1
+        mv.visitInsn(DUP2_X1);
+      } else {
+        // Top = 2, below = 2
+        mv.visitInsn(DUP2_X2);
+      }
+      mv.visitInsn(POP2);
     }
   }
 
