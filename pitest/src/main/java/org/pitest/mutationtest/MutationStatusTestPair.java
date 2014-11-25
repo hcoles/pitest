@@ -16,7 +16,7 @@ package org.pitest.mutationtest;
 
 import org.pitest.functional.Option;
 
-public class MutationStatusTestPair {
+public final class MutationStatusTestPair {
 
   private final int             numberOfTestsRun;
   private final DetectionStatus status;

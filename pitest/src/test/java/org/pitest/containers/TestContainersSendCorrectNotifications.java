@@ -27,16 +27,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.Container;
-import org.pitest.execute.DefaultStaticConfig;
-import org.pitest.execute.Pitest;
-import org.pitest.execute.StaticConfiguration;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+import org.pitest.testapi.execute.Container;
+import org.pitest.testapi.execute.DefaultStaticConfig;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.testapi.execute.StaticConfiguration;
+import org.pitest.testapi.execute.containers.UnContainer;
 
 @RunWith(Parameterized.class)
 public class TestContainersSendCorrectNotifications {

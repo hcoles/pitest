@@ -12,11 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.testapi.execute;
 
-package org.pitest.execute.containers;
+import java.util.List;
 
-public interface ClassLoaderFactory {
+import org.pitest.testapi.TestResult;
 
-  public ClassLoader get();
+public interface ResultSource {
+
+  public boolean resultsAvailable();
+
+  public List<TestResult> getAvailableResults();
 
 }

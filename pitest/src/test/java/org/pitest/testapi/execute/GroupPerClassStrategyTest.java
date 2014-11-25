@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -25,10 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.GroupPerClassStrategy;
-import org.pitest.execute.MultipleTestGroup;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.GroupPerClassStrategy;
+import org.pitest.testapi.execute.MultipleTestGroup;
 
 public class GroupPerClassStrategyTest {
 

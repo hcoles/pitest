@@ -17,11 +17,11 @@ package org.pitest.mutationtest.tooling;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassByteArraySource;
@@ -33,12 +33,6 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
-import org.pitest.execute.Container;
-import org.pitest.execute.DefaultStaticConfig;
-import org.pitest.execute.Pitest;
-import org.pitest.execute.containers.BaseThreadPoolContainer;
-import org.pitest.execute.containers.ClassLoaderFactory;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
@@ -48,6 +42,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
@@ -57,14 +52,13 @@ import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
-import org.pitest.testapi.TestUnit;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
@@ -130,13 +124,13 @@ public class MutationCoverage {
         this.data.getLoggingClasses(), this.data.getMutators(),
         this.data.isDetectInlinedCode());
 
-    final DefaultStaticConfig staticConfig = createConfig(t0, coverageData,
+    final List<MutationResultListener> config = createConfig(t0, coverageData,
         stats, engine);
 
     history().initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final List<? extends TestUnit> tus = buildMutationTests(coverageData,
+    final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData,
         engine);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
@@ -150,9 +144,9 @@ public class MutationCoverage {
     LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB)
         + " mb");
 
-    final Pitest pit = new Pitest(staticConfig);
+    final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(numberOfThreads(),config);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
-    pit.run(createContainer(), tus);
+    mae.run(tus);
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(t0));
@@ -163,13 +157,17 @@ public class MutationCoverage {
         coverageData.createSummary());
 
   }
+  
+  private int numberOfThreads() {
+    return Math.max(1, this.data.getNumberOfThreads());
+  }
 
-  private DefaultStaticConfig createConfig(final long t0,
+  private List<MutationResultListener> createConfig(final long t0,
       final CoverageDatabase coverageData,
       final MutationStatisticsListener stats, final MutationEngine engine) {
-    final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
+    final List<MutationResultListener> ls = new ArrayList<MutationResultListener>();
 
-    staticConfig.addTestListener(MutationResultAdapter.adapt(stats));
+    ls.add(stats);
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
@@ -178,16 +176,13 @@ public class MutationCoverage {
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(args);
 
-    staticConfig.addTestListener(MutationResultAdapter
-        .adapt(mutationReportListener));
-    staticConfig.addTestListener(MutationResultAdapter
-        .adapt(new HistoryListener(history())));
+    ls.add(mutationReportListener);
+    ls.add(new HistoryListener(history()));
 
     if (!this.data.isVerbose()) {
-      staticConfig.addTestListener(MutationResultAdapter
-          .adapt(new SpinnerListener(System.out)));
+      ls.add(new SpinnerListener(System.out));
     }
-    return staticConfig;
+    return ls;
   }
 
   private void recordClassPath(final CoverageDatabase coverageData) {
@@ -233,7 +228,7 @@ public class MutationCoverage {
     }
   }
 
-  private List<? extends TestUnit> buildMutationTests(
+  private List<MutationAnalysisUnit> buildMutationTests(
       final CoverageDatabase coverageData, final MutationEngine engine) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
@@ -266,7 +261,7 @@ public class MutationCoverage {
     return settings.createMutationFilter();
   }
 
-  private void checkMutationsFound(final List<? extends TestUnit> tus) {
+  private void checkMutationsFound(final List<MutationAnalysisUnit> tus) {
     if (tus.isEmpty()) {
       if (this.data.shouldFailWhenNoMutations()) {
         throw new PitHelpError(Help.NO_MUTATIONS_FOUND);
@@ -276,26 +271,6 @@ public class MutationCoverage {
     }
   }
 
-  private Container createContainer() {
-    if (this.data.getNumberOfThreads() > 1) {
-      return new BaseThreadPoolContainer(this.data.getNumberOfThreads(),
-          classLoaderFactory(), Executors.defaultThreadFactory()) {
-      };
-    } else {
-      return new UnContainer();
-    }
-  }
-
-  private ClassLoaderFactory classLoaderFactory() {
-    final ClassLoader loader = IsolationUtils.getContextClassLoader();
-    return new ClassLoaderFactory() {
-
-      public ClassLoader get() {
-        return loader;
-      }
-
-    };
-  }
 
   private String timeSpan(final long t0) {
     return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";

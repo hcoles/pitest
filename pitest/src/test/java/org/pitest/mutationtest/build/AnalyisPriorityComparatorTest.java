@@ -7,9 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.mutationtest.build.AnalysisPriorityComparator;
-import org.pitest.testapi.Description;
-import org.pitest.testapi.ResultCollector;
+import org.pitest.mutationtest.MutationMetaData;
 
 public class AnalyisPriorityComparatorTest {
 
@@ -38,14 +36,6 @@ public class AnalyisPriorityComparatorTest {
   private MutationAnalysisUnit unit(final int count) {
     return new MutationAnalysisUnit() {
 
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
-
-      }
-
-      public Description getDescription() {
-        return null;
-      }
-
       public int priority() {
         return count;
       }
@@ -53,6 +43,11 @@ public class AnalyisPriorityComparatorTest {
       @Override
       public String toString() {
         return "" + count;
+      }
+
+      @Override
+      public MutationMetaData call() throws Exception {
+        return null;
       }
 
     };

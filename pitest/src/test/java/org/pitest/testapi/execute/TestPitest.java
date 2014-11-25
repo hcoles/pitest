@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -13,12 +13,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+import org.pitest.testapi.execute.Container;
+import org.pitest.testapi.execute.DefaultStaticConfig;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.testapi.execute.containers.UnContainer;
 
 /**
  * @author henry

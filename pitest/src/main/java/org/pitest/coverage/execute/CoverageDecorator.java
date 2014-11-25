@@ -19,10 +19,10 @@ import java.lang.management.ThreadMXBean;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.execute.ExitingResultCollector;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.ExitingResultCollector;
 import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {

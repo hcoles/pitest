@@ -12,23 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
+package org.pitest.testapi.execute;
 
-package org.pitest.execute;
+import java.util.Collections;
+import java.util.List;
 
+import org.pitest.testapi.GroupingStrategy;
 import org.pitest.testapi.TestUnit;
 
-public interface Container {
+public class GroupPerClassStrategy implements GroupingStrategy {
 
-  public final int BUFFER_SIZE = 6000;
-
-  public void submit(TestUnit c);
-
-  public void shutdownWhenProcessingComplete();
-
-  public void setMaxThreads(int maxThreads);
-
-  public ResultSource getResultSource();
-
-  public boolean awaitCompletion();
+  public List<? extends TestUnit> group(final Class<?> c,
+      final List<TestUnit> testUnitsFromClass) {
+    return Collections.singletonList(new MultipleTestGroup(testUnitsFromClass));
+  }
 
 }

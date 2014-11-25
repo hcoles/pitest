@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -30,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.MultipleTestGroup;
 import org.pitest.util.IsolationUtils;
 
 public class MultipleTestGroupTest {

@@ -24,13 +24,6 @@ import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPath;
-import org.pitest.execute.Container;
-import org.pitest.execute.DefaultStaticConfig;
-import org.pitest.execute.ExitingResultCollector;
-import org.pitest.execute.MultipleTestGroup;
-import org.pitest.execute.Pitest;
-import org.pitest.execute.containers.ConcreteResultCollector;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.functional.F3;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -40,6 +33,13 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.Container;
+import org.pitest.testapi.execute.DefaultStaticConfig;
+import org.pitest.testapi.execute.ExitingResultCollector;
+import org.pitest.testapi.execute.MultipleTestGroup;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.testapi.execute.containers.ConcreteResultCollector;
+import org.pitest.testapi.execute.containers.UnContainer;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 

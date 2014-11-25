@@ -21,9 +21,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.testapi.MetaData;
 
-public class MutationMetaData implements MetaData {
+public final class MutationMetaData {
 
   private final List<MutationResult> mutations;
 

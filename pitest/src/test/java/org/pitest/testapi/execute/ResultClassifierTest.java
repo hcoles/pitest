@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,8 @@ import org.pitest.DescriptionMother;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnitState;
+import org.pitest.testapi.execute.DefaultResultClassifier;
+import org.pitest.testapi.execute.ResultType;
 
 /**
  * @author henry

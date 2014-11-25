@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import static org.mockito.Mockito.verify;
 
@@ -20,9 +20,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.ResultType;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+import org.pitest.testapi.execute.ResultType;
 
 public class ResultTypeTest {
 

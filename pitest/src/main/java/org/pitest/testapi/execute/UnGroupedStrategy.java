@@ -12,16 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package org.pitest.execute;
+package org.pitest.testapi.execute;
 
 import java.util.List;
 
-import org.pitest.testapi.TestResult;
+import org.pitest.testapi.GroupingStrategy;
+import org.pitest.testapi.TestUnit;
 
-public interface ResultSource {
+public class UnGroupedStrategy implements GroupingStrategy {
 
-  public boolean resultsAvailable();
-
-  public List<TestResult> getAvailableResults();
+  public List<? extends TestUnit> group(final Class<?> c,
+      final List<TestUnit> testUnitsFromClass) {
+    return testUnitsFromClass;
+  }
 
 }

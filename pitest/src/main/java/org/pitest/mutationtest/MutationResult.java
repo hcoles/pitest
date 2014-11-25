@@ -17,7 +17,7 @@ package org.pitest.mutationtest;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public class MutationResult {
+public final class MutationResult {
 
   private final MutationDetails        details;
   private final MutationStatusTestPair status;

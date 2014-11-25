@@ -18,13 +18,10 @@ import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
 
-import org.pitest.DescriptionMother;
-import org.pitest.execute.containers.ExtendedTestResult;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.testapi.TestResult;
 
 public class MutationTestResultMother {
 
@@ -44,9 +41,5 @@ public class MutationTestResultMother {
     return new ClassMutationResults(Arrays.asList(mrs));
   }
   
-  public static TestResult createResult(final MutationMetaData md) {
-    return new ExtendedTestResult(
-        DescriptionMother.createEmptyDescription("foo"), null, md);
-  }
   
 }

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and limitations under the License. 
  */
-package   org.pitest.execute.containers;
+package   org.pitest.testapi.execute.containers;
 
 import static org.junit.Assert.assertEquals;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -20,6 +20,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 import org.pitest.functional.Option;
 import org.pitest.testapi.MetaData;
+import org.pitest.testapi.execute.containers.ExtendedTestResult;
 
 public class ExtendedTestResultTest {
 

@@ -34,12 +34,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.execute.Container;
-import org.pitest.execute.DefaultStaticConfig;
-import org.pitest.execute.Pitest;
-import org.pitest.execute.StaticConfiguration;
-import org.pitest.execute.UnGroupedStrategy;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
@@ -48,6 +42,12 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.Container;
+import org.pitest.testapi.execute.DefaultStaticConfig;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.testapi.execute.StaticConfiguration;
+import org.pitest.testapi.execute.UnGroupedStrategy;
+import org.pitest.testapi.execute.containers.UnContainer;
 
 import com.example.JUnitParamsTest;
 

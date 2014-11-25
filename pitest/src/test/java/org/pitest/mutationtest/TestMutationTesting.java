@@ -46,10 +46,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.execute.Container;
-import org.pitest.execute.DefaultStaticConfig;
-import org.pitest.execute.Pitest;
-import org.pitest.execute.containers.UnContainer;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
@@ -67,9 +63,9 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
-import org.pitest.mutationtest.tooling.MutationResultAdapter;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
@@ -86,9 +82,7 @@ import com.example.MutationsInNestedClassesTest;
 @Category(SystemTest.class)
 public class TestMutationTesting {
 
-  private Pitest              pit;
-  private Container           container;
-  private DefaultStaticConfig staticConfig;
+  private MutationAnalysisExecutor              mae;
   private Configuration       config;
 
   private MetaDataExtractor   metaDataExtractor;
@@ -98,11 +92,7 @@ public class TestMutationTesting {
     MockitoAnnotations.initMocks(this);
     this.config = new ConfigurationForTesting();
     this.metaDataExtractor = new MetaDataExtractor();
-    this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig();
-    this.staticConfig.addTestListener(MutationResultAdapter
-        .adapt(this.metaDataExtractor));
-    this.pit = new Pitest(this.staticConfig);
+    this.mae = new MutationAnalysisExecutor(1,Collections.<MutationResultListener>singletonList(metaDataExtractor));
   }
 
   public static class NoMutations {
@@ -395,7 +385,7 @@ public class TestMutationTesting {
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);
 
-    this.pit.run(this.container, tus);
+    this.mae.run(tus);
   }
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {

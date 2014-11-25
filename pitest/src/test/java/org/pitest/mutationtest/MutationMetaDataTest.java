@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
@@ -45,6 +47,11 @@ public class MutationMetaDataTest {
   public void shouldNotCreateEmptyClassResultsObjects() {
     MutationMetaData testee = new MutationMetaData(Collections.<MutationResult>emptyList());
     assertThat(testee.toClassResults()).isEmpty();
+  }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(MutationMetaData.class).verify();
   }
   
   private MutationResult makeResult(String clazz, String method) {

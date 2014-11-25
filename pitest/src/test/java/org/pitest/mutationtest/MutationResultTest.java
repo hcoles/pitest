@@ -15,6 +15,7 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
 import org.pitest.mutationtest.DetectionStatus;
@@ -42,6 +43,11 @@ public class MutationResultTest {
     this.testee = new MutationResult(null, new MutationStatusTestPair(1,
         DetectionStatus.TIMED_OUT));
     assertEquals("TIMED_OUT", this.testee.getStatusDescription());
+  }
+  
+  @Test
+  public void shouldObeyHashcodeEqualsContract() {
+    EqualsVerifier.forClass(MutationResult.class).verify();
   }
 
 }
