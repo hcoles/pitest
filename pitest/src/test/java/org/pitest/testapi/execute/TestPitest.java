@@ -144,9 +144,9 @@ public class TestPitest {
   };
 
   @Test
-  public void shouldReportErrorWhenExceptionThrownAndNoExpectationSet() {
+  public void shouldReportFailureWhenExceptionThrownAndNoExpectationSet() {
     run(UnexpectedExceptionThrown.class);
-    verify(this.listener).onTestError(any(TestResult.class));
+    verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
   public static class WrongExceptionThrown {
@@ -157,9 +157,9 @@ public class TestPitest {
   };
 
   @Test
-  public void shouldReportErrorWhenThrownExceptionDifferentFromExpectedException() {
+  public void shouldReportFailureWhenThrownExceptionDifferentFromExpectedException() {
     run(WrongExceptionThrown.class);
-    verify(this.listener).onTestError(any(TestResult.class));
+    verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
   public static class SubclassOfExpectedExceptionThrown {

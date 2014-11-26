@@ -14,9 +14,6 @@
  */
 package org.pitest.testapi.execute;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.pitest.testapi.TestResult;
 import org.pitest.util.PitError;
 
@@ -25,13 +22,6 @@ import org.pitest.util.PitError;
  * 
  */
 class DefaultResultClassifier implements ResultClassifier {
-
-  private final Set<String> assertionTypes = new LinkedHashSet<String>();
-
-  public DefaultResultClassifier() {
-    this.assertionTypes.add("java.lang.AssertionError");
-    this.assertionTypes.add("junit.framework.AssertionFailedError");
-  }
 
   public ResultType classify(final TestResult result) {
 
@@ -50,12 +40,7 @@ class DefaultResultClassifier implements ResultClassifier {
 
   private ResultType classifyFinishedTest(final TestResult result) {
     if (result.getThrowable() != null) {
-      if (this.assertionTypes.contains(result.getThrowable().getClass()
-          .getName())) {
         return ResultType.FAIL;
-      } else {
-        return ResultType.ERROR;
-      }
     } else {
       return ResultType.PASS;
     }

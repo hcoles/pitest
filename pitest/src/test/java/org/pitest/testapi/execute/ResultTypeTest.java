@@ -50,12 +50,6 @@ public class ResultTypeTest {
   }
 
   @Test
-  public void shouldCallOnTestErrorOnListenerWhenTypeIsError() {
-    callListenerFunction(ResultType.ERROR);
-    verify(this.listener).onTestError(this.result);
-  }
-
-  @Test
   public void shouldCallOnTestSkippedOnListenerWhenTypeIsSkipped() {
     callListenerFunction(ResultType.SKIPPED);
     verify(this.listener).onTestSkipped(this.result);

@@ -53,10 +53,10 @@ public class ResultClassifierTest {
   }
 
   @Test
-  public void shouldClassifyThrowablesAtErrors() {
+  public void shouldClassifyThrowablesAsFailed() {
     final ResultType actual = this.testee.classify(new TestResult(
         this.description, new NullPointerException(), TestUnitState.FINISHED));
-    assertEquals(ResultType.ERROR, actual);
+    assertEquals(ResultType.FAIL, actual);
   }
 
   @Test

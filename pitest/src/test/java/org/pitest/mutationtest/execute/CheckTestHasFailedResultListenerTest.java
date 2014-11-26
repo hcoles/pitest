@@ -49,21 +49,10 @@ public class CheckTestHasFailedResultListenerTest {
     assertEquals(DetectionStatus.KILLED, this.testee.status());
   }
 
-  @Test
-  public void shouldReturnDetectionStatusOfKilledWhenEncountersError() {
-    this.testee.onTestError(new TestResult(this.description, null));
-    assertEquals(DetectionStatus.KILLED, this.testee.status());
-  }
 
   @Test
   public void shouldRecordDescriptionOfLastFailingTest() {
     this.testee.onTestFailure(new TestResult(this.description, null));
-    assertEquals(Option.some(this.description), this.testee.lastFailingTest());
-  }
-
-  @Test
-  public void shouldRecordDescriptionOfLastErroringTest() {
-    this.testee.onTestError(new TestResult(this.description, null));
     assertEquals(Option.some(this.description), this.testee.lastFailingTest());
   }
 

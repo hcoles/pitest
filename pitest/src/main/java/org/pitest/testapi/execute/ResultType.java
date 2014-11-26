@@ -37,12 +37,6 @@ public enum ResultType {
     }
   }),
 
-  ERROR(new ResultToListenerSideEffect() {
-    public SideEffect1<TestListener> apply(final TestResult a) {
-      return error(a);
-    }
-  }),
-
   SKIPPED(new ResultToListenerSideEffect() {
     public SideEffect1<TestListener> apply(final TestResult a) {
       return skipped(a);
@@ -89,14 +83,6 @@ public enum ResultType {
     return new SideEffect1<TestListener>() {
       public void apply(final TestListener a) {
         a.onTestSkipped(result);
-      }
-    };
-  }
-
-  public static SideEffect1<TestListener> error(final TestResult result) {
-    return new SideEffect1<TestListener>() {
-      public void apply(final TestListener a) {
-        a.onTestError(result);
       }
     };
   }

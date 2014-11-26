@@ -25,16 +25,9 @@ public class CheckTestHasFailedResultListener implements TestListener {
   private Option<Description> lastFailingTest = Option.none();
   private int                 testsRun        = 0;
 
-  public void onTestError(final TestResult tr) {
-    recordFailingTest(tr);
-  }
-
-  private void recordFailingTest(final TestResult tr) {
-    this.lastFailingTest = Option.some(tr.getDescription());
-  }
 
   public void onTestFailure(final TestResult tr) {
-    recordFailingTest(tr);
+    this.lastFailingTest = Option.some(tr.getDescription());
   }
 
   public void onTestSkipped(final TestResult tr) {
@@ -43,7 +36,6 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   public void onTestStart(final Description d) {
     this.testsRun++;
-
   }
 
   public void onTestSuccess(final TestResult tr) {

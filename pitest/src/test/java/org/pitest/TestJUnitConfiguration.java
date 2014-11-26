@@ -165,20 +165,6 @@ public class TestJUnitConfiguration {
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
 
-  static class HideFromJunit2 {
-    public static class JUnit4TestWithWrongExpectations {
-      @Test(expected = FileNotFoundException.class)
-      public void testOne() throws FileNotFoundException {
-        throw new IndexOutOfBoundsException();
-      }
-    }
-  }
-
-  @Test
-  public void shouldReportErrorForTestsThatThrowWrongException() {
-    run(HideFromJunit2.JUnit4TestWithWrongExpectations.class);
-    verify(this.listener).onTestError(any(TestResult.class));
-  }
 
   public static class SimpleJUnit3Test extends TestCase {
     public void testOne() {
@@ -288,7 +274,7 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldTimeTestsOut() {
     run(TestWithTimeout.class);
-    verify(this.listener).onTestError(any(TestResult.class));
+    verify(this.listener).onTestFailure(any(TestResult.class));
   }
 
   @RunWith(Parameterized.class)
@@ -351,8 +337,7 @@ public class TestJUnitConfiguration {
   public void shouldRunTestsCreatedByCustomRunners() {
     run(HideFromJUnit8.TheoriesTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
-    // failing theories are actually errors
-    verify(this.listener, times(2)).onTestError(any(TestResult.class));
+    verify(this.listener, times(2)).onTestFailure(any(TestResult.class));
   }
 
   static abstract class HideFromJUnit9 {

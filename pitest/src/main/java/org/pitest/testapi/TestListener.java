@@ -26,8 +26,6 @@ public interface TestListener {
 
   public void onTestFailure(TestResult tr);
 
-  public void onTestError(TestResult tr);
-
   public void onTestSkipped(TestResult tr);
 
   public void onTestSuccess(TestResult tr);
