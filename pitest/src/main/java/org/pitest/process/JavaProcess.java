@@ -106,6 +106,7 @@ public class JavaProcess {
 
   private static Predicate<String> isEnvironmentSetting() {
     return new Predicate<String>() {
+      @Override
       public Boolean apply(final String a) {
         return a.startsWith("-D");
       }
@@ -115,6 +116,7 @@ public class JavaProcess {
   private static Predicate<String> isJavaAgentParam() {
     return new Predicate<String>() {
 
+      @Override
       public Boolean apply(final String a) {
         return a.toLowerCase().startsWith("-javaagent");
       }
@@ -131,14 +133,28 @@ public class JavaProcess {
 
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
         mainClass, programArgs);
+    
+    // IBM jdk adds this, thereby breaking everything
+    removeClassPathProperties(cmd);
+    
     final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
     processBuilder.directory(workingDirectory);
+    
     final Map<String, String> env = processBuilder.environment();
-
     env.put("CLASSPATH", initialClassPath);
+    
     final Process process = processBuilder.start();
 
     return new JavaProcess(process, systemOutHandler, sysErrHandler);
+  }
+
+  private static void removeClassPathProperties(List<String> cmd) {
+    for (int i = cmd.size() - 1; i >= 0; i--) {
+      if (cmd.get(i).startsWith("-Djava.class.path")) {
+        cmd.remove(i);
+      }
+
+    }
   }
 
 }
