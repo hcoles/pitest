@@ -15,20 +15,13 @@
 
 package org.pitest.testapi.execute;
 
+import java.util.List;
+
+import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 
 public interface Container {
 
-  public final int BUFFER_SIZE = 6000;
-
-  public void submit(TestUnit c);
-
-  public void shutdownWhenProcessingComplete();
-
-  public void setMaxThreads(int maxThreads);
-
-  public ResultSource getResultSource();
-
-  public boolean awaitCompletion();
+  public List<TestResult> execute(TestUnit c);
 
 }

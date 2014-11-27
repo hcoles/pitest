@@ -14,19 +14,18 @@
  */
 package org.pitest.testapi.execute.containers;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Collection;
 
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnitState;
-import org.pitest.util.Unchecked;
 
 public final class ConcreteResultCollector implements ResultCollector {
 
-  private final BlockingQueue<TestResult> feedback;
+  private final Collection<TestResult> feedback;
 
-  public ConcreteResultCollector(final BlockingQueue<TestResult> feedback) {
+  public ConcreteResultCollector(final Collection<TestResult> feedback) {
     this.feedback = feedback;
   }
 
@@ -47,12 +46,7 @@ public final class ConcreteResultCollector implements ResultCollector {
   }
 
   private void put(final TestResult tr) {
-    try {
-      this.feedback.put(tr);
-    } catch (final InterruptedException e) {
-      Unchecked.translateCheckedException(e);
-    }
-
+      this.feedback.add(tr);
   }
 
   public boolean shouldExit() {

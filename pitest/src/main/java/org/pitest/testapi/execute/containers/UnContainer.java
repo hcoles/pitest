@@ -17,52 +17,19 @@ package org.pitest.testapi.execute.containers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.ResultSource;
 import org.pitest.util.IsolationUtils;
 
 public class UnContainer implements Container {
 
-  protected final BlockingQueue<TestResult> feedbackQueue = new ArrayBlockingQueue<TestResult>(
-                                                              BUFFER_SIZE);
-
-  public void setMaxThreads(final int maxThreads) {
-    // ignore
-  }
-
-  public void shutdownWhenProcessingComplete() {
-    // ignore
-  }
-
-  public void submit(final TestUnit group) {
-    final ConcreteResultCollector rc = new ConcreteResultCollector(
-        this.feedbackQueue);
+  public List<TestResult> execute(final TestUnit group) {
+    List<TestResult> results = new ArrayList<TestResult>(12);
+    final ConcreteResultCollector rc = new ConcreteResultCollector(results);
     group.execute(IsolationUtils.getContextClassLoader(), rc);
-  }
-
-  public boolean awaitCompletion() {
-    return true;
-  }
-
-  public ResultSource getResultSource() {
-    return new ResultSource() {
-
-      public List<TestResult> getAvailableResults() {
-        final List<TestResult> results = new ArrayList<TestResult>();
-        UnContainer.this.feedbackQueue.drainTo(results);
-        return results;
-      }
-
-      public boolean resultsAvailable() {
-        return !UnContainer.this.feedbackQueue.isEmpty();
-      }
-
-    };
+    return results;
   }
 
 }

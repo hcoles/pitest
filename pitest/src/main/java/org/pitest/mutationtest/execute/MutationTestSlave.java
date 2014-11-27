@@ -37,8 +37,7 @@ import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
-import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.UnGroupedStrategy;
+import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
@@ -131,8 +130,8 @@ public class MutationTestSlave {
       final Configuration pitConfig) {
     final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
         ClassName.nameToClass(loader));
-    return Pitest.findTestUnitsForAllSuppliedClasses(pitConfig,
-        new UnGroupedStrategy(), tcs);
+    FindTestUnits finder = new FindTestUnits(pitConfig);
+    return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }
 
   @SuppressWarnings("unchecked")

@@ -24,7 +24,6 @@ import java.util.List;
 import org.pitest.coverage.CoverageReceiver;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.testapi.execute.containers.UnContainer;
 
@@ -48,11 +47,8 @@ public class CoverageWorker implements Runnable {
       Collections.sort(decoratedTests, testComparator());
 
       final Container c = new UnContainer();
-      final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
 
-      staticConfig.addTestListener(new ErrorListener());
-
-      final Pitest pit = new Pitest(staticConfig);
+      final Pitest pit = new Pitest(Collections.singletonList(new ErrorListener()));
       pit.run(c, decoratedTests);
 
     } catch (final Exception ex) {

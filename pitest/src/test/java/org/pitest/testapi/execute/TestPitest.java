@@ -7,20 +7,17 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.simpletest.ConfigurationForTesting;
 import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
-import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
-import org.pitest.testapi.execute.Pitest;
 import org.pitest.testapi.execute.containers.UnContainer;
 
 /**
@@ -35,15 +32,15 @@ public class TestPitest {
 
   @Mock
   private TestListener        listener;
-  private DefaultStaticConfig staticConfig;
+  @Mock
+  private TestListener        listener2;
+
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig();
-    this.staticConfig.getTestListeners().add(this.listener);
-    this.testee = new Pitest(this.staticConfig);
+    this.testee = new Pitest(Arrays.asList(listener,listener2));
   }
 
   public static class PassingTest {
@@ -55,8 +52,6 @@ public class TestPitest {
 
   @Test
   public void shouldNotifyAllListenersOfRunStart() {
-    final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.staticConfig.addTestListener(listener2);
     run(PassingTest.class);
     verify(this.listener).onRunStart();
     verify(listener2).onRunStart();
@@ -64,8 +59,6 @@ public class TestPitest {
 
   @Test
   public void shouldNotifyAllListenersOfTestStart() {
-    final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.staticConfig.addTestListener(listener2);
     run(PassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
     verify(listener2).onTestStart(any(Description.class));
@@ -73,17 +66,13 @@ public class TestPitest {
 
   @Test
   public void shouldNotifyAllListenersOfTestSuccess() {
-    final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.staticConfig.addTestListener(listener2);
     run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
     verify(listener2).onTestSuccess(any(TestResult.class));
   }
 
   @Test
-  public void shouldNotifyAllListenersOfRunEnd() {
-    final TestListener listener2 = Mockito.mock(TestListener.class);
-    this.staticConfig.addTestListener(listener2);
+  public void shouldNotifyAllListenersOfRunEnd() {;
     run(PassingTest.class);
     verify(this.listener).onRunEnd();
     verify(listener2).onRunEnd();

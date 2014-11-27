@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,9 +34,7 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
 import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.StaticConfiguration;
 import org.pitest.testapi.execute.containers.UnContainer;
 
 @RunWith(Parameterized.class)
@@ -48,7 +47,6 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private final ContainerFactory  containerFactory;
-  private StaticConfiguration     staticConfig;
   private Pitest                  pit;
 
   @Mock
@@ -79,9 +77,7 @@ public class TestContainersSendCorrectNotifications {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.config = new ConfigurationForTesting();
-    this.staticConfig = new DefaultStaticConfig();
-    this.staticConfig.getTestListeners().add(this.listener);
-    this.pit = new Pitest(this.staticConfig);
+    this.pit = new Pitest(Collections.singletonList(listener));
   }
 
   public static class OnePassingTest {

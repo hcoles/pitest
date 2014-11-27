@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -37,16 +38,14 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Description;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
+import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.StaticConfiguration;
-import org.pitest.testapi.execute.UnGroupedStrategy;
 import org.pitest.testapi.execute.containers.UnContainer;
 
 import com.example.JUnitParamsTest;
@@ -59,15 +58,14 @@ public class TestJUnitConfiguration {
 
   @Mock
   private TestListener                       listener;
-  private StaticConfiguration                staticConfig;
+
 
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig(new UnGroupedStrategy());
-    this.staticConfig.getTestListeners().add(this.listener);
-    this.pitest = new Pitest(this.staticConfig);
+    
+    this.pitest = new Pitest(Collections.singletonList(this.listener));
   }
 
   public static class SimpleJUnit4Test {
@@ -408,9 +406,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldSplitTestInSuitesIntoSeperateUnitsWhenUsingNonStandardSuiteRunners() {
-    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new UnGroupedStrategy(),
-        Arrays.<Class<?>> asList(CustomSuite.class));
+    final List<TestUnit> actual = find(CustomSuite.class);
 
     System.out.println(actual);
 
@@ -538,9 +534,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldDetectTestInJUnitThreeSuiteMethods() {
-    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new UnGroupedStrategy(),
-        Arrays.<Class<?>> asList(JUnit3SuiteMethod.class));
+    final List<TestUnit> actual = find(JUnit3SuiteMethod.class);
     assertEquals(2, actual.size());
   }
 
@@ -558,9 +552,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldFindTestsInClassWithASuiteMethod() {
-    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new UnGroupedStrategy(),
-        Arrays.<Class<?>> asList(OwnSuiteMethod.class));
+    final List<TestUnit> actual = find(OwnSuiteMethod.class);
     assertEquals(1, actual.size());
   }
 
@@ -576,9 +568,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotFindTestsInJUnit3TestsWithoutASuitableConstructor() {
-    final List<TestUnit> actual = Pitest.findTestUnitsForAllSuppliedClasses(
-        this.testee, new UnGroupedStrategy(),
-        Arrays.<Class<?>> asList(NoSuitableConstructor.class));
+    final List<TestUnit> actual = find(NoSuitableConstructor.class);
     assertEquals(0, actual.size());
   }
 
@@ -620,4 +610,9 @@ public class TestJUnitConfiguration {
     this.pitest.run(this.container, this.testee, clazz);
   }
 
+  private List<TestUnit> find(Class<?> clazz) {
+    FindTestUnits finder = new FindTestUnits(this.testee);
+    return finder.findTestUnitsForAllSuppliedClasses(Arrays.<Class<?>>asList(clazz));
+  }
+  
 }

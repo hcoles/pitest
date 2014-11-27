@@ -33,8 +33,7 @@ import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.testapi.TestUnit;
-import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.UnGroupedStrategy;
+import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
@@ -137,9 +136,8 @@ public class CoverageSlave {
 
   private static List<TestUnit> discoverTests(
       final CoverageOptions paramsFromParent, final List<ClassName> classes) {
-    final List<TestUnit> tus = Pitest.findTestUnitsForAllSuppliedClasses(
-        paramsFromParent.getPitConfig(), new UnGroupedStrategy(),
-        FCollection.flatMap(classes, ClassName.nameToClass()));
+    FindTestUnits finder = new FindTestUnits(paramsFromParent.getPitConfig());
+    final List<TestUnit> tus = finder.findTestUnitsForAllSuppliedClasses(   FCollection.flatMap(classes, ClassName.nameToClass()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }

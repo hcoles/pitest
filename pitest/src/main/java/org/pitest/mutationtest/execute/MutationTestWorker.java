@@ -17,6 +17,7 @@ package org.pitest.mutationtest.execute;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +34,9 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
+import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
 import org.pitest.testapi.execute.ExitingResultCollector;
 import org.pitest.testapi.execute.MultipleTestGroup;
 import org.pitest.testapi.execute.Pitest;
@@ -158,10 +159,12 @@ public class MutationTestWorker {
   private static Container createNewContainer(final ClassLoader activeloader) {
     final Container c = new UnContainer() {
       @Override
-      public void submit(final TestUnit group) {
+      public List<TestResult> execute(final TestUnit group) {
+        List<TestResult> results = new ArrayList<TestResult>();
         final ExitingResultCollector rc = new ExitingResultCollector(
-            new ConcreteResultCollector(this.feedbackQueue));
+            new ConcreteResultCollector(results));
         group.execute(activeloader, rc);
+        return results;
       }
     };
     return c;
@@ -190,10 +193,7 @@ public class MutationTestWorker {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final DefaultStaticConfig staticConfig = new DefaultStaticConfig();
-      staticConfig.addTestListener(listener);
-
-      final Pitest pit = new Pitest(staticConfig);
+      final Pitest pit = new Pitest(Collections.singletonList(listener));
       pit.run(c, createEarlyExitTestGroup(tests));
 
       return createStatusTestPair(listener);

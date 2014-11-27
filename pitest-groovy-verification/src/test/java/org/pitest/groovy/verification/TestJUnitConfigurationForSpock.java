@@ -4,15 +4,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.DefaultStaticConfig;
 import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.StaticConfiguration;
-import org.pitest.testapi.execute.UnGroupedStrategy;
 import org.pitest.testapi.execute.containers.UnContainer;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.TestGroupConfig;
@@ -30,15 +28,12 @@ public class TestJUnitConfigurationForSpock {
 
   @Mock
   private TestListener                       listener;
-  private StaticConfiguration                staticConfig;
 
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.staticConfig = new DefaultStaticConfig(new UnGroupedStrategy());
-    this.staticConfig.getTestListeners().add(this.listener);
-    this.pitest = new Pitest(this.staticConfig);
+    this.pitest = new Pitest(Collections.singletonList(this.listener));
   }
 
   @Test
