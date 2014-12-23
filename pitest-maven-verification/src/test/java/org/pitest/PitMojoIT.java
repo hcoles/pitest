@@ -97,6 +97,15 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
+  @Test
+  public void shouldCorrectlyTargetTestsWhenMultipleBlocksIncludeALine() throws Exception{
+    final File testDir = prepare("/pit-158-coverage");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
+  }
+  
   private String readResults(File testDir) throws FileNotFoundException,
       IOException {
     File coverage = new File(testDir.getAbsoluteFile() + File.separator

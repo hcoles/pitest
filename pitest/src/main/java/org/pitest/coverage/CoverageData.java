@@ -41,290 +41,294 @@ import org.pitest.util.Log;
 
 public class CoverageData implements CoverageDatabase {
 
-	private final static Logger LOG = Log.getLogger();
+  private final static Logger                                 LOG           = Log
+                                                                                .getLogger();
 
-	// We calculate block coverage, but everything currently runs on line coverage. Ugly mess of maps below should go when
-	// api changed to work via blocks
-	private final Map<BlockLocation, Set<TestInfo>> blockCoverage = new LinkedHashMap<BlockLocation, Set<TestInfo>>();
-	private final Map<BlockLocation, Set<Integer>> blocksToLines = new LinkedHashMap<BlockLocation, Set<Integer>>();
-	private final Map<ClassName,Map<ClassLine, Set<TestInfo>>> lineCoverage = new LinkedHashMap<ClassName,Map<ClassLine, Set<TestInfo>>>();
+  // We calculate block coverage, but everything currently runs on line
+  // coverage. Ugly mess of maps below should go when
+  // api changed to work via blocks
+  private final Map<BlockLocation, Set<TestInfo>>             blockCoverage = new LinkedHashMap<BlockLocation, Set<TestInfo>>();
+  private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<BlockLocation, Set<Integer>>();
+  private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<ClassName, Map<ClassLine, Set<TestInfo>>>();
 
-	private final CodeSource code;
-	
-	private final LineMap lm;
+  private final CodeSource                                    code;
 
-	private boolean hasFailedTest = false;
+  private final LineMap                                       lm;
 
-	public CoverageData(final CodeSource code, final LineMap lm) {
-		this.code = code;
-		this.lm = lm;
-	}
+  private boolean                                             hasFailedTest = false;
 
-	public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-		final Collection<TestInfo> result = getTestsForClassName(
-				classLine.getClassName()).get(classLine);
-		if (result == null) {
-			return Collections.emptyList();
-		} else {
-			return result;
-		}
-	}
+  public CoverageData(final CodeSource code, final LineMap lm) {
+    this.code = code;
+    this.lm = lm;
+  }
 
-	public boolean allTestsGreen() {
-		return !this.hasFailedTest;
-	}
+  public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
+    final Collection<TestInfo> result = getTestsForClassName(
+        classLine.getClassName()).get(classLine);
+    if (result == null) {
+      return Collections.emptyList();
+    } else {
+      return result;
+    }
+  }
 
-	public Collection<ClassInfo> getClassInfo(
-			final Collection<ClassName> classes) {
-		return this.code.getClassInfo(classes);
-	}
+  public boolean allTestsGreen() {
+    return !this.hasFailedTest;
+  }
 
-	public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
-		return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
-	}
+  public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
+    return this.code.getClassInfo(classes);
+  }
 
-	public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-		final Set<TestInfo> tis = new TreeSet<TestInfo>(new TestInfoNameComparator());
-		tis.addAll(FCollection.filter(this.blockCoverage.entrySet(),
-				isFor(clazz)).flatMap(toTests()));
-		return tis;
-	}
+  public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
+    return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
+  }
 
+  public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
+    final Set<TestInfo> tis = new TreeSet<TestInfo>(
+        new TestInfoNameComparator());
+    tis.addAll(FCollection.filter(this.blockCoverage.entrySet(), isFor(clazz))
+        .flatMap(toTests()));
+    return tis;
+  }
 
-	public void calculateClassCoverage(final CoverageResult cr) {
+  public void calculateClassCoverage(final CoverageResult cr) {
 
-	    checkForFailedTest(cr);
-	    final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
-	        cr.getExecutionTime(), cr.getNumberOfCoveredBlocks());
-	    for ( BlockLocation each : cr.getCoverage() ) {
-	      addTestsToBlockMap(ti, each);   
-	    }
-	}
+    checkForFailedTest(cr);
+    final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
+        cr.getExecutionTime(), cr.getNumberOfCoveredBlocks());
+    for (BlockLocation each : cr.getCoverage()) {
+      addTestsToBlockMap(ti, each);
+    }
+  }
 
   private void addTestsToBlockMap(final TestInfo ti, BlockLocation each) {
     Set<TestInfo> tests = this.blockCoverage.get(each);
-    if ( tests == null ) {
+    if (tests == null) {
       tests = new TreeSet<TestInfo>(new TestInfoNameComparator());
       blockCoverage.put(each, tests);
     }
     tests.add(ti);
   }
 
+  public BigInteger getCoverageIdForClass(final ClassName clazz) {
+    final Map<ClassLine, Set<TestInfo>> coverage = getTestsForClassName(clazz);
+    if (coverage.isEmpty()) {
+      return BigInteger.ZERO;
+    }
 
-	public BigInteger getCoverageIdForClass(final ClassName clazz) {
-		final Map<ClassLine, Set<TestInfo>> coverage = getTestsForClassName(clazz);
-		if (coverage.isEmpty()) {
-			return BigInteger.ZERO;
-		}
+    return generateCoverageNumber(coverage);
+  }
 
-		return generateCoverageNumber(coverage);
-	}
+  public List<BlockCoverage> createCoverage() {
+    return FCollection.map(this.blockCoverage.entrySet(), toBlockCoverage());
+  }
 
-	public List<BlockCoverage> createCoverage() {
-	  return FCollection.map(this.blockCoverage.entrySet(), toBlockCoverage());  
-	}
-	
-  private static F<Entry<BlockLocation, Set<TestInfo>>,BlockCoverage> toBlockCoverage() {
-    return new  F<Entry<BlockLocation, Set<TestInfo>>,BlockCoverage> () {
+  private static F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
+    return new F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage>() {
       @Override
       public BlockCoverage apply(Entry<BlockLocation, Set<TestInfo>> a) {
-        return new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),TestInfo.toName()));
-      } 
+        return new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
+            TestInfo.toName()));
+      }
     };
   }
 
   public Collection<ClassInfo> getClassesForFile(final String sourceFile,
-			String packageName) {
-		return FCollection.filter(this.code.getCode(),
-				matchesSourceAndPackage(sourceFile, packageName));
-	}
-	
+      String packageName) {
+    return FCollection.filter(this.code.getCode(),
+        matchesSourceAndPackage(sourceFile, packageName));
+  }
 
-	public CoverageSummary createSummary() {
-		return new CoverageSummary(numberOfLines(), coveredLines());
-	}
+  public CoverageSummary createSummary() {
+    return new CoverageSummary(numberOfLines(), coveredLines());
+  }
 
+  private BigInteger generateCoverageNumber(
+      final Map<ClassLine, Set<TestInfo>> coverage) {
+    BigInteger coverageNumber = BigInteger.ZERO;
+    final Set<ClassName> testClasses = new HashSet<ClassName>();
+    FCollection.flatMapTo(coverage.values(), testsToClassName(), testClasses);
 
-	private BigInteger generateCoverageNumber(
-			final Map<ClassLine, Set<TestInfo>> coverage) {
-		BigInteger coverageNumber = BigInteger.ZERO;
-		final Set<ClassName> testClasses = new HashSet<ClassName>();
-		FCollection.flatMapTo(coverage.values(), testsToClassName(),
-				testClasses);
+    for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
+      coverageNumber = coverageNumber.add(each.getDeepHash());
+    }
 
-		for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
-			coverageNumber = coverageNumber.add(each.getDeepHash());
-		}
+    return coverageNumber;
+  }
 
-		return coverageNumber;
-	}
+  private F<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
+    return new F<Set<TestInfo>, Iterable<ClassName>>() {
+      public Iterable<ClassName> apply(final Set<TestInfo> a) {
+        return FCollection.map(a, TestInfo.toDefiningClassName());
+      }
+    };
+  }
 
-	private F<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
-		return new F<Set<TestInfo>, Iterable<ClassName>>() {
-			public Iterable<ClassName> apply(final Set<TestInfo> a) {
-				return FCollection.map(a, TestInfo.toDefiningClassName());
-			}
-		};
-	}
+  private static F<ClassInfo, Boolean> matchesSourceAndPackage(
+      final String sourceFile, final String packageName) {
+    return new F<ClassInfo, Boolean>() {
+      public Boolean apply(final ClassInfo a) {
+        return a.getSourceFileName().equals(sourceFile)
+            && a.getName().getPackage().asJavaName().equals(packageName);
+      }
+    };
+  }
 
+  private Collection<ClassName> allClasses() {
+    Set<ClassName> classes = new LinkedHashSet<ClassName>();
+    FCollection.mapTo(this.blockCoverage.keySet(), toClass(), classes);
+    return classes;
+  }
 
+  private static F<BlockLocation, ClassName> toClass() {
+    return new F<BlockLocation, ClassName>() {
 
-	private static F<ClassInfo, Boolean> matchesSourceAndPackage(
-			final String sourceFile, final String packageName) {
-		return new F<ClassInfo, Boolean>() {
-			public Boolean apply(final ClassInfo a) {
-				return a.getSourceFileName().equals(sourceFile)
-						&& a.getName().getPackage().asJavaName()
-								.equals(packageName);
-			}
-		};
-	}
-	
-	private Collection<ClassName> allClasses() {
-		Set<ClassName> classes = new LinkedHashSet<ClassName>();
-	    FCollection.mapTo(this.blockCoverage.keySet(), toClass(), classes);
-	    return classes;
-	}
+      public ClassName apply(BlockLocation a) {
+        return a.getLocation().getClassName();
+      }
 
+    };
+  }
 
-	private static F<BlockLocation, ClassName> toClass() {
-		return new  F<BlockLocation, ClassName>() {
+  private int numberOfLines() {
+    return FCollection.fold(numberLines(), 0,
+        this.code.getClassInfo(allClasses()));
+  }
 
-			public ClassName apply(BlockLocation a) {
-				return a.getLocation().getClassName();
-			}
-			
-		};
-	}
+  private int coveredLines() {
+    return FCollection.fold(numberCoveredLines(), 0, allClasses());
+  }
 
-	private int numberOfLines() {
-		return FCollection.fold(numberLines(), 0,
-				this.code.getClassInfo(allClasses()));
-	}
+  private F2<Integer, ClassInfo, Integer> numberLines() {
+    return new F2<Integer, ClassInfo, Integer>() {
 
-	private int coveredLines() {
-		return FCollection.fold(numberCoveredLines(), 0,
-				allClasses());
-	}
+      public Integer apply(final Integer a, final ClassInfo clazz) {
+        return a + clazz.getNumberOfCodeLines();
+      }
 
-	private F2<Integer, ClassInfo, Integer> numberLines() {
-		return new F2<Integer, ClassInfo, Integer>() {
+    };
+  }
 
-			public Integer apply(final Integer a, final ClassInfo clazz) {
-				return a + clazz.getNumberOfCodeLines();
-			}
+  private void checkForFailedTest(final CoverageResult cr) {
+    if (!cr.isGreenTest()) {
+      recordTestFailure();
+      LOG.warning(cr.getTestUnitDescription()
+          + " did not pass without mutation.");
+    }
+  }
 
-		};
-	}
-	
+  private TestInfo createTestInfo(final Description description,
+      final int executionTime, final int linesCovered) {
+    final Option<ClassName> testee = this.code.findTestee(description
+        .getFirstTestClass());
+    return new TestInfo(description.getFirstTestClass(),
+        description.getQualifiedName(), executionTime, testee, linesCovered);
+  }
 
-	private void checkForFailedTest(final CoverageResult cr) {
-		if (!cr.isGreenTest()) {
-			recordTestFailure();
-			LOG.warning(cr.getTestUnitDescription()
-					+ " did not pass without mutation.");
-		}
-	}
+  private F2<Integer, ClassName, Integer> numberCoveredLines() {
+    return new F2<Integer, ClassName, Integer>() {
 
+      public Integer apply(final Integer a, final ClassName clazz) {
+        return a + getNumberOfCoveredLines(clazz);
+      }
 
-	private TestInfo createTestInfo(final Description description,
-			final int executionTime, final int linesCovered) {
-		final Option<ClassName> testee = this.code.findTestee(description
-				.getFirstTestClass());
-		return new TestInfo(description.getFirstTestClass(),
-				description.getQualifiedName(), executionTime, testee,
-				linesCovered);
-	}
+    };
+  }
 
-	private F2<Integer, ClassName, Integer> numberCoveredLines() {
-		return new F2<Integer, ClassName, Integer>() {
+  private int getNumberOfCoveredLines(final ClassName clazz) {
+    final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
+    if (map != null) {
+      return map.size();
+    } else {
+      return 0;
+    }
 
-			public Integer apply(final Integer a, final ClassName clazz) {
-				return a + getNumberOfCoveredLines(clazz);
-			}
+  }
 
-		};
-	}
+  private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
+      final ClassName clazz) {
+    // Use any test that provided some coverage of the class
+    // This fails to consider tests that only accessed a static variable
+    // of the class in question as this does not register as coverage.
+    Map<ClassLine, Set<TestInfo>> map = this.lineCoverage.get(clazz);
+    if (map != null) {
+      return map;
+    }
 
-	private int getNumberOfCoveredLines(final ClassName clazz) {
-		final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
-		if (map != null) {
-			return map.size();
-		} else {
-			return 0;
-		}
+    return convertBlockCoverageToLineCoverageForClass(clazz);
 
-	}
+  }
 
-	private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
-			final ClassName clazz) {
-		// Use any test that provided some coverage of the class
-		// This fails to consider tests that only accessed a static variable
-		// of the class in question as this does not register as coverage.
-	  Map<ClassLine, Set<TestInfo>> map = this.lineCoverage.get(clazz);
-	  if ( map != null ) {
-	    return map;
-	  }
-	  
-	  return convertBlockCoverageToLineCoverageForClass(clazz);
-				
-	}
-	
-	private Map<ClassLine, Set<TestInfo>> convertBlockCoverageToLineCoverageForClass(
+  private Map<ClassLine, Set<TestInfo>> convertBlockCoverageToLineCoverageForClass(
       ClassName clazz) {
-    List<Entry<BlockLocation, Set<TestInfo>>> tests = FCollection.filter(this.blockCoverage.entrySet(),
-        isFor(clazz));
-    
-    Map<ClassLine, Set<TestInfo>> linesToTests =  new LinkedHashMap<ClassLine, Set<TestInfo>>(0);
-    
-    for ( Entry<BlockLocation, Set<TestInfo>> each : tests ) {
+    List<Entry<BlockLocation, Set<TestInfo>>> tests = FCollection.filter(
+        this.blockCoverage.entrySet(), isFor(clazz));
+
+    Map<ClassLine, Set<TestInfo>> linesToTests = new LinkedHashMap<ClassLine, Set<TestInfo>>(
+        0);
+
+    for (Entry<BlockLocation, Set<TestInfo>> each : tests) {
       for (int line : getLinesForBlock(each.getKey())) {
-        linesToTests.put(new ClassLine(clazz, line), each.getValue());
+        Set<TestInfo> tis = getLineTestSet(clazz, linesToTests, each, line);
+        tis.addAll(each.getValue());
       }
     }
-    
+
     lineCoverage.put(clazz, linesToTests);
     return linesToTests;
   }
 
+  private Set<TestInfo> getLineTestSet(ClassName clazz,
+      Map<ClassLine, Set<TestInfo>> linesToTests,
+      Entry<BlockLocation, Set<TestInfo>> each, int line) {
+    ClassLine cl = new ClassLine(clazz, line);
+    Set<TestInfo> tis = linesToTests.get(cl);
+    if (tis == null) {
+      tis = new TreeSet<TestInfo>(new TestInfoNameComparator());
+      tis.addAll(each.getValue());
+      linesToTests.put(new ClassLine(clazz, line), tis);
+    }
+    return tis;
+  }
+
   private Set<Integer> getLinesForBlock(BlockLocation bl) {
-		Set<Integer>  lines = this.blocksToLines.get(bl);
-		if ( lines == null ) {
-		  calculateLinesForBlocks(bl.getLocation().getClassName());
-		  lines = this.blocksToLines.get(bl);
-	    if ( lines == null ) {
-	      lines = Collections.emptySet();
-	    }
-		}
-		
-		return lines;
-	}
+    Set<Integer> lines = this.blocksToLines.get(bl);
+    if (lines == null) {
+      calculateLinesForBlocks(bl.getLocation().getClassName());
+      lines = this.blocksToLines.get(bl);
+      if (lines == null) {
+        lines = Collections.emptySet();
+      }
+    }
 
-	private void calculateLinesForBlocks(ClassName className) {
-		Map<BlockLocation, Set<Integer>> lines = lm.mapLines(className);
-		blocksToLines.putAll(lines);
-	}
+    return lines;
+  }
 
-	private void recordTestFailure() {
-		this.hasFailedTest = true;
-	}
-	
-	private F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>> toTests() {
-		return new F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>>() {
-			public Iterable<TestInfo> apply(
-					Entry<BlockLocation, Set<TestInfo>> a) {
-				return a.getValue();
-			}
-		};
-	}
+  private void calculateLinesForBlocks(ClassName className) {
+    Map<BlockLocation, Set<Integer>> lines = lm.mapLines(className);
+    blocksToLines.putAll(lines);
+  }
 
-	private final Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
-			final ClassName clazz) {
-		return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
-			public Boolean apply(Entry<BlockLocation, Set<TestInfo>> a) {
-				return a.getKey().isFor(clazz);
-			}
-		};
-	}
+  private void recordTestFailure() {
+    this.hasFailedTest = true;
+  }
+
+  private F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>> toTests() {
+    return new F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>>() {
+      public Iterable<TestInfo> apply(Entry<BlockLocation, Set<TestInfo>> a) {
+        return a.getValue();
+      }
+    };
+  }
+
+  private final Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
+      final ClassName clazz) {
+    return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
+      public Boolean apply(Entry<BlockLocation, Set<TestInfo>> a) {
+        return a.getKey().isFor(clazz);
+      }
+    };
+  }
 
 }
