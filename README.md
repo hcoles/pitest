@@ -1,4 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/hcoles/pitest.png?label=ready)](https://waffle.io/hcoles/pitest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
 [![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
 
 pitest
