@@ -1,10 +1,5 @@
 package org.pitest.maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,6 +14,11 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Goal which runs a coverage mutation report
@@ -264,6 +264,12 @@ public class PitMojo extends AbstractMojo {
   private boolean skip;
 
   /**
+   * honors common skipTests flag in a maven run
+   * @parameter default-value="false"
+   */
+  private boolean skipTests;
+
+  /**
    * <i>Internal</i>: Project to interact with.
    * 
    * @parameter expression="${project}"
@@ -467,7 +473,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected boolean shouldRun() {
-    return !skip && !this.project.getPackaging().equalsIgnoreCase("pom");
+    return !skip && !skipTests && !this.project.getPackaging().equalsIgnoreCase("pom");
   }
 
   public String getMutationEngine() {
