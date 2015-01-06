@@ -208,6 +208,7 @@
     <!-- versions of libraries which are used in different projects or which are used for few artifacts -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <asm.version>5.0.3</asm.version>
         <ant.version>1.8.3</ant.version>
