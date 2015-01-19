@@ -10,6 +10,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.1.4-SNAPSHOT
+
+* Issue #157   - Support maven -DskipTests flag (thanks lkwg82)
+* Fix for #163 - Should not include test tree in coverage threshold
+
 ### 1.1.3
 
 * Fix for #158 - Tests incorrectly excluded from mutants
