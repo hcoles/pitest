@@ -27,7 +27,7 @@ import org.pitest.testapi.execute.Container;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.testapi.execute.containers.UnContainer;
 
-public class CoverageWorker implements Runnable {
+public class CoverageWorker {
 
   private final CoveragePipe   pipe;
   private final List<TestUnit> tests;
