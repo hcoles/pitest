@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -176,19 +175,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private Collection<ClassName> allClasses() {
-    Set<ClassName> classes = new LinkedHashSet<ClassName>();
-    FCollection.mapTo(this.blockCoverage.keySet(), toClass(), classes);
-    return classes;
-  }
-
-  private static F<BlockLocation, ClassName> toClass() {
-    return new F<BlockLocation, ClassName>() {
-
-      public ClassName apply(BlockLocation a) {
-        return a.getLocation().getClassName();
-      }
-
-    };
+    return this.code.getCodeUnderTestNames();
   }
 
   private int numberOfLines() {

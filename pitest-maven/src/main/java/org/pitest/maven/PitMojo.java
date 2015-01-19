@@ -326,11 +326,13 @@ public class PitMojo extends AbstractMojo {
   }
 
   private void throwErrorIfCoverageBelowThreshold(
-      CoverageSummary coverageSummary)      throws MojoFailureException {
+      CoverageSummary coverageSummary) throws MojoFailureException {
     if ((this.coverageThreshold != 0)
         && (coverageSummary.getCoverage() < this.coverageThreshold)) {
       throw new MojoFailureException("Line coverage of "
-          + coverageSummary.getCoverage() + " is below threshold of "
+          + coverageSummary.getCoverage() + "("
+          + coverageSummary.getNumberOfCoveredLines() + "/"
+          + coverageSummary.getNumberOfLines() + ") is below threshold of "
           + this.coverageThreshold);
     }
   }

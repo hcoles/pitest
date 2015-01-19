@@ -41,6 +41,7 @@ public class MutationCoverageReport {
       final ReportOptions data = pr.getOptions();
       
       final CombinedStatistics stats = runReport(data, plugins);
+            
       throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(), data.getCoverageThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(), data.getMutationThreshold());
     }
@@ -50,7 +51,7 @@ public class MutationCoverageReport {
   private static void throwErrorIfScoreBelowCoverageThreshold(
       CoverageSummary stats, int threshold) {
     if ((threshold != 0) && (stats.getCoverage() < threshold)) {
-      throw new RuntimeException("Mutation score of "
+      throw new RuntimeException("Line coverage of "
           + stats.getCoverage() + " is below threshold of "
           + threshold);
     }

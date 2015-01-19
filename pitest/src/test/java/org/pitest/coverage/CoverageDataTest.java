@@ -233,6 +233,7 @@ public class CoverageDataTest {
   public void shouldIncludeAllCoveredLinesInCoverageSummary() {
     
     BlockLocationBuilder block = aBlockLocation();
+    when(this.code.getCodeUnderTestNames()).thenReturn(Collections.singleton(block.build().getLocation().getClassName()));
     when(lm.mapLines(any(ClassName.class))).thenReturn(makeCoverageMapForBlock(block, 1,2,3,4));
  
     CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(block.build(1));
