@@ -46,7 +46,6 @@ public class MutationDetailsMother {
   private static Generator<MutationDetailsBuilder, MutationDetails> seed() {
     return new Generator<MutationDetailsBuilder, MutationDetails>() {
 
-      @Override
       public MutationDetails generate(MutationDetailsBuilder b) {
         MutationDetails md = new MutationDetails(b._Id(), b._Filename(),
             b._Description(), b._LineNumber(), b._Block(),

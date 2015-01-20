@@ -45,7 +45,6 @@ public class AnalyisPriorityComparatorTest {
         return "" + count;
       }
 
-      @Override
       public MutationMetaData call() throws Exception {
         return null;
       }

@@ -83,7 +83,6 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
       final ResultCollector rc) {
     return new Runnable() {
 
-      @Override
       public void run() {
         try {
           child().execute(

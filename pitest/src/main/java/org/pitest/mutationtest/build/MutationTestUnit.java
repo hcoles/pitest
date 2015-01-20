@@ -47,7 +47,6 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     this.workerFactory = workerFactor;
   }
 
-  @Override
   public MutationMetaData call() throws Exception {
     final MutationStatusMap mutations = new MutationStatusMap();
 
@@ -129,7 +128,6 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     return this.config;
   }
 
-  @Override
   public int priority() {
     return this.availableMutations.size();
   }

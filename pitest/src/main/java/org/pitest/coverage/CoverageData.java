@@ -125,7 +125,6 @@ public class CoverageData implements CoverageDatabase {
 
   private static F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
     return new F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage>() {
-      @Override
       public BlockCoverage apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
             TestInfo.toName()));

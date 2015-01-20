@@ -85,7 +85,6 @@ public class Pitest {
 
   private void signalRunStartToAllListeners() {
     FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
-      @Override
       public void apply(final TestListener a) {
         a.onRunStart();
       }
@@ -94,7 +93,6 @@ public class Pitest {
 
   private void signalRunEndToAllListeners() {
     FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
-      @Override
       public void apply(final TestListener a) {
         a.onRunEnd();
       }

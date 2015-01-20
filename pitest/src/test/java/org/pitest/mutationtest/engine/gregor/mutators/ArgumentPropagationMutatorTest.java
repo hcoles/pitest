@@ -133,7 +133,6 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       this.aLong = aLong;
     }
 
-    @Override
     public String call() throws Exception {
       return aMethod(aString, anObject, aLong);
     }
@@ -159,7 +158,6 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       this.int2 = j;
     }
 
-    @Override
     public String call() throws Exception {
       String anInt = "3";
       return String.valueOf(aMethod(int1, anInt, int2));
@@ -180,7 +178,6 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   private class ReturnValueNotUsed implements Callable<Boolean> {
     private List<String> aList = asList("xyz");
 
-    @Override
     public Boolean call() throws Exception {
       aList.set(0, "will not be present in list in mutated version");
       return aList.contains("will not be present in list in mutated version");

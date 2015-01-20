@@ -18,7 +18,6 @@ public class KnownStatusMutationTestUnit implements
     this.mutations = mutations;
   }
 
-  @Override
   public MutationMetaData call() throws Exception {
     LOG.fine("Using historic results for " + this.mutations.size()
         + " mutations");
