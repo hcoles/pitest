@@ -154,8 +154,4 @@ public class ClassPath {
         new ClassPathRoot[0]));
   }
   
-  public CompoundClassPathRoot asRoot() {
-    return this.root;
-  }
-
 }

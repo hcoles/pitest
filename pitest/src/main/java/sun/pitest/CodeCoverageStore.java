@@ -59,7 +59,7 @@ public final class CodeCoverageStore {
   private CodeCoverageStore() {
   }
 
-  public static void visitSingleProbe(final int classId, final int probe) {
+  public static void visitSingleProbe(final int classId, final int probe) { // NO_UCD
     final boolean[] bs = classHits.get(classId);
     bs[CLASS_HIT_INDEX] = true;
     bs[probe + 1] = true;

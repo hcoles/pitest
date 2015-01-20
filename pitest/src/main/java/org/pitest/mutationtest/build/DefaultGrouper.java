@@ -51,8 +51,4 @@ public class DefaultGrouper implements MutationGrouper {
     };
   }
 
-  public String description() {
-    return "Default grouping";
-  }
-
 }

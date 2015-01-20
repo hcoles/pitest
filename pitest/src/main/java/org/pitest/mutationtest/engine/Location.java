@@ -50,11 +50,6 @@ public final class Location implements Comparable<Location> {
     return this.methodDesc;
   }
 
-  protected Location newLocation(final ClassName clazz,
-      final MethodName method, final String methodDesc) {
-    return new Location(clazz, method, methodDesc);
-  }
-
   @Override
   public int hashCode() {
     final int prime = 31;

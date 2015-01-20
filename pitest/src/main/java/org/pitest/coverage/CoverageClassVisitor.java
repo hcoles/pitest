@@ -17,9 +17,6 @@
 
 package org.pitest.coverage;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.classinfo.BridgeMethodFilter;
@@ -58,15 +55,6 @@ public class CoverageClassVisitor extends MethodFilteringAdapter  {
   @Override
   public void visitEnd() {
     CodeCoverageStore.registerClassProbes(this.classId,this.probeCount);
-  }
-
-  public static int[] convertToPrimitiveArray(final List<Integer> integers) {
-    final int[] ret = new int[integers.size()];
-    final Iterator<Integer> iterator = integers.iterator();
-    for (int i = 0; i < ret.length; i++) {
-      ret[i] = iterator.next().intValue();
-    }
-    return ret;
   }
 
 }
