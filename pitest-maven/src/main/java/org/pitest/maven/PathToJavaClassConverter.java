@@ -26,9 +26,10 @@ class PathToJavaClassConverter implements F<String, Iterable<String>> {
   public Iterable<String> apply(final String a) {
     final File f = new File(a);
     final String modifiedFilePath = f.getAbsolutePath();
+    final String fileName = f.getName();
 
     if (modifiedFilePath.startsWith(this.sourceRoot)
-        && (modifiedFilePath.indexOf('.') != -1)) {
+        && (fileName.indexOf('.') != -1)) {
       return createClassGlobFromFilePath(this.sourceRoot, modifiedFilePath);
     }
     return Collections.emptyList();
