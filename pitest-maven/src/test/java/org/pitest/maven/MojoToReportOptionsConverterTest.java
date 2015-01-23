@@ -19,8 +19,10 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Model;
 import org.mockito.Mockito;
 import org.pitest.functional.predicate.Predicate;
@@ -282,6 +284,24 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesJavaExecutable() {
     final ReportOptions actual = parseConfig("<jvm>foo</jvm>");
     assertEquals("foo", actual.getJavaExecutable());
+  }
+  
+  public void testParsesExcludedClasspathElements() throws DependencyResolutionRequiredException {
+	  final String sep = File.pathSeparator;
+	  
+	  final Set<Artifact> artifacts = new HashSet<Artifact>();
+	  final Artifact dependency = Mockito.mock(Artifact.class);
+	  when(dependency.getGroupId()).thenReturn("group");
+	  when(dependency.getArtifactId()).thenReturn("artifact");
+	  when(dependency.getFile()).thenReturn(new File("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
+	  artifacts.add(dependency);
+	  when(this.project.getArtifacts()).thenReturn(artifacts);
+	  when(this.project.getTestClasspathElements()).thenReturn(Arrays.asList("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
+	  
+	  final ReportOptions actual = parseConfig("<classpathDependencyExcludes>"
+	  		+ "										<param>group:artifact</param>"
+	  		+ "									</classpathDependencyExcludes>");
+	  assertFalse(actual.getClassPathElements().contains("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
   }
 
   private ReportOptions parseConfig(final String xml) {

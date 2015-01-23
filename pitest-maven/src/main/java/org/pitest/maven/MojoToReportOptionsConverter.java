@@ -55,6 +55,14 @@ public class MojoToReportOptionsConverter {
     addOwnDependenciesToClassPath(classPath);
 
     classPath.addAll(this.mojo.getAdditionalClasspathElements());
+    
+    for(Object artifact : this.mojo.getProject().getArtifacts()) {
+    	final Artifact dependency = (Artifact) artifact;
+    	
+    	if(this.mojo.getClasspathDependencyExcludes().contains(dependency.getGroupId() + ":" + dependency.getArtifactId())) {
+    		classPath.remove(dependency.getFile().getPath());
+    	}
+    }
 
     return parseReportOptions(classPath);
 

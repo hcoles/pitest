@@ -257,6 +257,15 @@ public class PitMojo extends AbstractMojo {
   private ArrayList<String> additionalClasspathElements;
   
   /**
+   * List of classpath entries, formatted as "groupId:artifactId", which should not be included
+   * in the classpath when running mutation tests. Modelled after the corresponding
+   * Surefire/Failsafe property.
+   * 
+   * @parameter expression="${classpathDependencyExcludes}"
+   */
+  private ArrayList<String> classpathDependencyExcludes;
+  
+  /**
    * When set indicates that analysis of this project should be skipped
    * 
    * @parameter default-value="false"
@@ -492,6 +501,10 @@ public class PitMojo extends AbstractMojo {
 
   public List<String> getAdditionalClasspathElements() {
     return additionalClasspathElements;
+  }
+  
+  public List<String> getClasspathDependencyExcludes() {
+	  return classpathDependencyExcludes;
   }
 
 }
