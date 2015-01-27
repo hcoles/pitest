@@ -43,7 +43,7 @@ class ConfigurationFactory {
     final Repository classRepository = new Repository(this.source);
 
     if (classRepository.fetchClass(
-        ClassName.fromString("org.junit.runner.Runner")).hasSome()) {
+        ClassName.fromString("org.junit.Test")).hasSome()) {
       configs.add(new JUnitCompatibleConfiguration(this.config));
     }
 

@@ -11,8 +11,10 @@ Read all about it at http://pitest.org
 
 ### 1.1.4-SNAPSHOT
 
-* Issue #157   - Support maven -DskipTests flag (thanks lkwg82)
+* #157         - Support maven -DskipTests flag (thanks lkwg82)
 * Fix for #163 - Should not include test tree in coverage threshold
+* #166         - Allow classpath exclusions for maven plugin (thanks TomRK1089)
+* #155         - Restore Java 5 compatibility
 
 ### 1.1.3
 
@@ -222,7 +224,7 @@ however disabled by default, and the generated errors are correctly handled by P
 
 ## Credits
 
-Pitest is mainly the work of [me](https://twitter.com/0hjc) but had benefited from contributions from many others. 
+Pitest is mainly the work of [me](https://twitter.com/0hjc) but has benefited from contributions from many others. 
 
 Notable contributions not visible [here](https://github.com/hcoles/pitest/graphs/contributors) as they were made before this code was migrated to github include 
 

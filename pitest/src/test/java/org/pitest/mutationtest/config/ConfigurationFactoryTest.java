@@ -49,7 +49,7 @@ public class ConfigurationFactoryTest {
     this.testee = new ConfigurationFactory(this.groupConfig, this.source);
     this.realSource = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
-    when(this.source.getBytes("org.junit.runner.Runner")).thenReturn(
+    when(this.source.getBytes("org.junit.Test")).thenReturn(
         Option.<byte[]> none());
     when(this.source.getBytes("org.testng.TestNG")).thenReturn(
         Option.<byte[]> none());
@@ -104,8 +104,8 @@ public class ConfigurationFactoryTest {
   }
 
   private void putJUnitOnClasspath() {
-    when(this.source.getBytes("org.junit.runner.Runner")).thenReturn(
-        this.realSource.getBytes("org.junit.runner.Runner"));
+    when(this.source.getBytes("org.junit.Test")).thenReturn(
+        this.realSource.getBytes("org.junit.Test"));
   }
 
 }
