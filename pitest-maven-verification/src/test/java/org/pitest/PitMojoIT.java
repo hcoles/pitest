@@ -72,6 +72,18 @@ public class PitMojoIT {
   }
   
   @Test
+  public void shouldWorkWithTestNGAndJMockit() throws Exception {
+    final File testDir = prepare("/pit-testng-jmockit");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>Covered.java</sourceFile>");
+    assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
+  
+  
+  @Test
   public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
     final File testDir = prepare("/pit-junit-categories");
     this.verifier.executeGoal("test");
@@ -105,6 +117,8 @@ public class PitMojoIT {
     final String actual = readResults(testDir);
     assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
   }
+  
+  
   
   private String readResults(File testDir) throws FileNotFoundException,
       IOException {
