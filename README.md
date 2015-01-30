@@ -9,12 +9,17 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.4-SNAPSHOT
+### 1.1.5-SNAPSHOT
+
+nothing yet
+
+### 1.1.4
 
 * #157         - Support maven -DskipTests flag (thanks lkwg82)
 * Fix for #163 - Should not include test tree in coverage threshold
 * #166         - Allow classpath exclusions for maven plugin (thanks TomRK1089)
 * #155         - Restore Java 5 compatibility
+* Fix for #148 - Issue with JMockit + TestNG (thanks estekhin and KyleRogers)
 
 ### 1.1.3
 
