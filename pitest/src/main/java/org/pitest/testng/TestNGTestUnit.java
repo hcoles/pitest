@@ -16,10 +16,11 @@ package org.pitest.testng;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.foreignclassloader.Events;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
@@ -37,6 +38,9 @@ import org.testng.xml.XmlTest;
  * tests.
  */
 public class TestNGTestUnit extends AbstractTestUnit {
+  
+  // needs to be static as jmockit assumes only a single instance per jvm
+  private static final TestNG TESTNG = new TestNG(false);
 
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
@@ -57,38 +61,45 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
-
-    if (this.classloaderDetection.fromDifferentLoader(this.clazz, loader)) {
-      executeInForeignLoader(rc,loader);
-    } else {
-      executeInCurrentLoader(rc);
+    synchronized (TESTNG) {
+      if (this.classloaderDetection.fromDifferentLoader(this.clazz, loader)) {
+        executeInForeignLoader(rc, loader);
+      } else {
+        executeInCurrentLoader(rc);
+      }
     }
   }
 
   private void executeInForeignLoader(ResultCollector rc, ClassLoader loader) {
-    ForeignClassLoaderTestNGExecutor e = new ForeignClassLoaderTestNGExecutor(createSuite());
+    @SuppressWarnings("unchecked")
+    Callable<List<String>> e = (Callable<List<String>>) IsolationUtils
+        .cloneForLoader(new ForeignClassLoaderTestNGExecutor(createSuite()),
+            loader);
     try {
       List<String> q = e.call();
-      Events.applyEvents(q, rc,
-          this.getDescription());
+      Events.applyEvents(q, rc, this.getDescription());
     } catch (Exception ex) {
       throw Unchecked.translateCheckedException(ex);
     }
-    
+
   }
 
   private void executeInCurrentLoader( final ResultCollector rc) {
     final ITestListener listener = new TestNGAdapter(this.clazz,
         this.getDescription(), rc);
-    final TestNG testng = new TestNG(false);
-
+    
     final XmlSuite suite = createSuite();
 
-    testng.setDefaultSuiteName(suite.getName());
-    testng.setXmlSuites(Collections.singletonList(suite));
+    TESTNG.setDefaultSuiteName(suite.getName());
+    TESTNG.setXmlSuites(Collections.singletonList(suite));
 
-    testng.addListener(listener);
-    testng.run();
+    TESTNG.addListener(listener);
+    try {
+      TESTNG.run();
+    } finally {
+      // yes this is hideous
+      TESTNG.getTestListeners().remove(listener);
+    }
   }
 
   private XmlSuite createSuite() {
