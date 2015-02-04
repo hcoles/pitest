@@ -1,13 +1,10 @@
 package org.pitest.coverage;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import org.pitest.testapi.Description;
 
-public class CoverageResult implements Serializable {
-
-  private static final long                 serialVersionUID = 1L;
+public class CoverageResult {
 
   private final Description                 testUnitDescription;
   private final int                         executionTime;

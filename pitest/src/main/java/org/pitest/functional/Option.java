@@ -14,14 +14,11 @@
  */
 package org.pitest.functional;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
-
-  private static final long serialVersionUID = 1L;
+public abstract class Option<T> implements FunctionalIterable<T> {
 
   @SuppressWarnings({ "rawtypes" })
   private final static None NONE             = new None();
@@ -79,8 +76,6 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
   public final static class None<T> extends Option<T> {
 
-    private static final long serialVersionUID = 1L;
-
     private None() {
 
     }
@@ -108,8 +103,6 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   }
 
   public final static class Some<T> extends Option<T> {
-
-    private static final long serialVersionUID = 1L;
 
     private final T           value;
 

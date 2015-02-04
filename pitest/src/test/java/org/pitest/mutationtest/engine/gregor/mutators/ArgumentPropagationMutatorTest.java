@@ -108,7 +108,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
     assertNoMutants(ReturnsDifferentType.class);
   }
 
-  private class ReturnsDifferentType {
+  class ReturnsDifferentType {
     public String aMethodReturningADifferentTypeThanItsArgument(Object arg) {
       return String.valueOf(arg);
     }

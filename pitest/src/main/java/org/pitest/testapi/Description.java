@@ -15,11 +15,8 @@
 
 package org.pitest.testapi;
 
-import java.io.Serializable;
 
-public final class Description implements Serializable {
-
-  private static final long serialVersionUID = 1L;
+public final class Description {
 
   private final String      testClass;
   private final String      name;
