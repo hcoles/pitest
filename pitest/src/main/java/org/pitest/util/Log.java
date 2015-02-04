@@ -63,7 +63,7 @@ public class Log {
 
     @Override
     public String format(final LogRecord record) {
-      final StringBuffer buf = new StringBuffer(180);
+      final StringBuilder buf = new StringBuilder(180);
 
       buf.append(this.dateFormat.format(new Date(record.getMillis())));
       buf.append(" PIT >> ");

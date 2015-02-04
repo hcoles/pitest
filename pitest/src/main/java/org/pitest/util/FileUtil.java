@@ -8,7 +8,7 @@ public class FileUtil {
 
   public static String readToString(final InputStream is)
       throws java.io.IOException {
-    final StringBuffer fileData = new StringBuffer(1000);
+    final StringBuilder fileData = new StringBuilder(1000);
     final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     char[] buf = new char[1024];
     int numRead = 0;

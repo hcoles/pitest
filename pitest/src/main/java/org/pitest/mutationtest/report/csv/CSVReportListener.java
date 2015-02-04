@@ -45,7 +45,7 @@ public class CSVReportListener implements MutationResultListener {
   }
 
   private String makeCsv(final Object... os) {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     for (int i = 0; i != os.length; i++) {
       sb.append(os[i].toString());
       if (i != (os.length - 1)) {
@@ -56,8 +56,7 @@ public class CSVReportListener implements MutationResultListener {
   }
 
   public void runStart() {
-    // TODO Auto-generated method stub
-
+    
   }
 
   public void runEnd() {

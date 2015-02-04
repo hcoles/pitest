@@ -18,7 +18,7 @@ package org.pitest.util;
 public abstract class CommandLineMessage {
 
   public static void report(final String message) {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     sb.append("---------------------------------------------------------------------------------\n");
     sb.append(message + "\n");
     sb.append("---------------------------------------------------------------------------------\n");

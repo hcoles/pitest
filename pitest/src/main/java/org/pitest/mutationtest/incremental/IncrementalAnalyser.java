@@ -38,7 +38,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private static Map<DetectionStatus, Long> createStatusMap() {
     final HashMap<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
     for (final DetectionStatus each : DetectionStatus.values()) {
-      map.put(each, 0l);
+      map.put(each, 0L);
     }
     return map;
   }

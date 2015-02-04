@@ -58,11 +58,11 @@ public class MutationStatistics {
   }
 
   public long getTotalMutations() {
-    return FCollection.fold(addTotals(), 0l, this.mutatorTotalMap.values());
+    return FCollection.fold(addTotals(), 0L, this.mutatorTotalMap.values());
   }
 
   public long getTotalDetectedMutations() {
-    return FCollection.fold(addDetectedTotals(), 0l,
+    return FCollection.fold(addDetectedTotals(), 0L,
         this.mutatorTotalMap.values());
   }
 

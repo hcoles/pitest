@@ -98,13 +98,13 @@ public class Score {
         + this.getTotalDetectedMutations() + " ("
         + this.getPercentageDetected() + "%)");
     int i = 0;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (final StatusCount each : this.counts.values()) {
       sb.append(each + " ");
       i++;
       if ((i % 4) == 0) {
         out.println("> " + sb.toString());
-        sb = new StringBuffer();
+        sb = new StringBuilder();
       }
     }
     out.println("> " + sb.toString());
