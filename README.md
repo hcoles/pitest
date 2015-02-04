@@ -11,7 +11,7 @@ Read all about it at http://pitest.org
 
 ### 1.1.5-SNAPSHOT
 
-nothing yet
+* Fix for #148 - Stackoverflow with TestNG data providers when using JMockit
 
 ### 1.1.4
 
