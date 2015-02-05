@@ -82,17 +82,18 @@ import com.example.MutationsInNestedClassesTest;
 @Category(SystemTest.class)
 public class TestMutationTesting {
 
-  private MutationAnalysisExecutor              mae;
-  private Configuration       config;
+  private MutationAnalysisExecutor mae;
+  private Configuration            config;
 
-  private MetaDataExtractor   metaDataExtractor;
+  private MetaDataExtractor        metaDataExtractor;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.config = new ConfigurationForTesting();
     this.metaDataExtractor = new MetaDataExtractor();
-    this.mae = new MutationAnalysisExecutor(1,Collections.<MutationResultListener>singletonList(metaDataExtractor));
+    this.mae = new MutationAnalysisExecutor(1,
+        Collections.<MutationResultListener> singletonList(metaDataExtractor));
   }
 
   public static class NoMutations {
@@ -173,8 +174,7 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
-    run(NoMutations.class, NoMutationsTest.class,
-        Mutator.byName("RETURN_VALS"));
+    run(NoMutations.class, NoMutationsTest.class, Mutator.byName("RETURN_VALS"));
     verifyResults();
   }
 
@@ -336,9 +336,9 @@ public class TestMutationTesting {
       final JavaAgent agent,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
-    //data.setConfiguration(this.config);
+    // data.setConfiguration(this.config);
     final CoverageOptions coverageOptions = createCoverageOptions(data);
-    
+
     final LaunchOptions launchOptions = new LaunchOptions(agent,
         new DefaultJavaExecutableLocator(), data.getJvmArgs());
 
@@ -371,7 +371,8 @@ public class TestMutationTesting {
     final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     final MutationSource source = new MutationSource(mutationConfig,
-        UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(coverageData), bas);
+        UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(
+            coverageData), bas);
 
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig,
@@ -380,7 +381,7 @@ public class TestMutationTesting {
             .getLocalClassPath());
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, new NullAnalyser(), source, new DefaultGrouper(0));
+        new NullAnalyser(), source, new DefaultGrouper(0));
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);
@@ -389,9 +390,8 @@ public class TestMutationTesting {
   }
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {
-    return new CoverageOptions(data.getTargetClassesFilter(),
-         this.config, data.isVerbose(),
-        data.getDependencyAnalysisMaxDistance());
+    return new CoverageOptions(data.getTargetClassesFilter(), this.config,
+        data.isVerbose(), data.getDependencyAnalysisMaxDistance());
   }
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {

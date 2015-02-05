@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationStatusMap;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -30,19 +29,16 @@ import org.pitest.util.Log;
 
 public class MutationTestUnit implements MutationAnalysisUnit {
 
-  private final static Logger               LOG = Log.getLogger();
+  private static final Logger               LOG = Log.getLogger();
 
-  private final MutationConfig              config;
   private final Collection<MutationDetails> availableMutations;
   private final WorkerFactory               workerFactory;
 
   private final Collection<ClassName>       testClasses;
 
   public MutationTestUnit(final Collection<MutationDetails> availableMutations,
-      final Collection<ClassName> testClasses,
-      final MutationConfig mutationConfig, final WorkerFactory workerFactor) {
+      final Collection<ClassName> testClasses, final WorkerFactory workerFactor) {
     this.availableMutations = availableMutations;
-    this.config = mutationConfig;
     this.testClasses = testClasses;
     this.workerFactory = workerFactor;
   }
@@ -122,10 +118,6 @@ public class MutationTestUnit implements MutationAnalysisUnit {
 
   private MutationMetaData reportResults(final MutationStatusMap mutationsMap) {
     return new MutationMetaData(mutationsMap.createMutationResults());
-  }
-
-  public MutationConfig getMutationConfig() {
-    return this.config;
   }
 
   public int priority() {

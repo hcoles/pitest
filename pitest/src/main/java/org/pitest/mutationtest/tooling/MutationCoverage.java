@@ -251,8 +251,7 @@ public class MutationCoverage {
             .getClassPath().getLocalClassPath());
     
     MutationGrouper grouper = settings.getMutationGrouper().makeFactory(code, data.getNumberOfThreads(), data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        mutationConfig, analyser, source, grouper);
+    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser, source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

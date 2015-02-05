@@ -83,7 +83,6 @@ public enum DetectionStatus {
       return DetectionStatus.MEMORY_ERROR;
     } else if (exitCode.equals(ExitCode.TIMEOUT)) {
       return DetectionStatus.TIMED_OUT;
-
     } else {
       return DetectionStatus.RUN_ERROR;
     }

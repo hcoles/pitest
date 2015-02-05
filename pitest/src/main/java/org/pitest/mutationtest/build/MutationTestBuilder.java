@@ -29,7 +29,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -37,14 +36,13 @@ public class MutationTestBuilder {
 
   private final MutationSource   mutationSource;
   private final MutationAnalyser analyser;
-  private final MutationConfig   mutationConfig;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper grouper;
 
   public MutationTestBuilder(final WorkerFactory workerFactory,
-      final MutationConfig mutationConfig, final MutationAnalyser analyser,
+      final MutationAnalyser analyser,
       final MutationSource mutationSource, final MutationGrouper grouper) {
-    this.mutationConfig = mutationConfig;
+
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.workerFactory = workerFactory;
@@ -115,8 +113,7 @@ public class MutationTestBuilder {
     FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
         uniqueTestClasses);
 
-    return new MutationTestUnit(needAnalysis, uniqueTestClasses,
-        this.mutationConfig, this.workerFactory);
+    return new MutationTestUnit(needAnalysis, uniqueTestClasses, this.workerFactory);
   }
 
   private static F<MutationResult, MutationDetails> resultToDetails() {

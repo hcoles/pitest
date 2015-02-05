@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
@@ -15,33 +16,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.NullAnalyser;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.process.JavaAgent;
-import org.pitest.process.LaunchOptions;
-import org.pitest.testapi.Configuration;
-
-import static org.pitest.mutationtest.LocationMother.aLocation;
 
 public class MutationTestBuilderTest {
 
   private MutationTestBuilder testee;
 
-  private MutationConfig      mutationConfig;
-
-  @Mock
-  private MutationEngine      engine;
-
   @Mock
   private MutationSource      source;
-
-  @Mock
-  private JavaAgent           javaAgent;
-
-  @Mock
-  private Configuration       configuration;
 
   @Mock
   private WorkerFactory       wf;
@@ -49,8 +32,6 @@ public class MutationTestBuilderTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(
-        this.javaAgent));
     makeTesteeWithUnitSizeOf(0);
   }
 
@@ -70,12 +51,13 @@ public class MutationTestBuilderTest {
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
     makeTesteeWithUnitSizeOf(1);
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
-        Arrays.asList(createDetails("foo"), createDetails("foo"), createDetails("foo")));
+        Arrays.asList(createDetails("foo"), createDetails("foo"),
+            createDetails("foo")));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
     assertEquals(3, actual.size());
   }
-  
+
   @Test
   public void shouldCreateNoUnitsWhenNoMutationsFound() {
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
@@ -107,14 +89,15 @@ public class MutationTestBuilderTest {
         .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
     assertEquals(1, actual.size());
   }
-  
+
   private void makeTesteeWithUnitSizeOf(int unitSize) {
-    testee = new MutationTestBuilder(this.wf, this.mutationConfig,
-        new NullAnalyser(), this.source, new DefaultGrouper(unitSize));
+    testee = new MutationTestBuilder(this.wf, new NullAnalyser(), this.source,
+        new DefaultGrouper(unitSize));
   }
 
   public static MutationDetails createDetails(String clazz) {
-    return new MutationDetails(aMutationId().withLocation(aLocation(clazz)).build(), "", "desc", 42, 0);
+    return new MutationDetails(aMutationId().withLocation(aLocation(clazz))
+        .build(), "", "desc", 42, 0);
   }
-  
+
 }
