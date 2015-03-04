@@ -1,5 +1,10 @@
 package org.pitest.maven;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -14,11 +19,6 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Goal which runs a coverage mutation report
@@ -271,6 +271,14 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="false"
    */
   private boolean skip;
+  
+  /**
+   * When set will try and create settings based on surefire configuration. This
+   * may not give the desired result in some circumstances
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean parseSurefireConfig;
 
   /**
    * honors common skipTests flag in a maven run
@@ -357,7 +365,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this, filter).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(), filter).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins));
   }
 
@@ -371,6 +379,7 @@ public class PitMojo extends AbstractMojo {
     return executionProject.getBasedir();
   }
 
+  
   public List<String> getTargetClasses() {
     return this.targetClasses;
   }
@@ -505,6 +514,10 @@ public class PitMojo extends AbstractMojo {
   
   public List<String> getClasspathDependencyExcludes() {
 	  return classpathDependencyExcludes;
+  }
+
+  public boolean isParseSurefireConfig() {
+    return parseSurefireConfig;
   }
 
 }

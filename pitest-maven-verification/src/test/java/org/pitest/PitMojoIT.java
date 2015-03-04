@@ -118,6 +118,14 @@ public class PitMojoIT {
     assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
   }
   
+  @Test
+  public void shouldReadExclusionsFromSurefireConfig() throws Exception {
+    final File testDir = prepare("/pit-surefire-excludes");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>NotCovered.java</sourceFile>");
+  }
   
   
   private String readResults(File testDir) throws FileNotFoundException,

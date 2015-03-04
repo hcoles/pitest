@@ -76,9 +76,9 @@ public class DefaultPITClassloader extends ClassLoader {
 
       public URL nextElement() {
         if (this.element != null) {
-          final URL element = this.element;
+          final URL next = this.element;
           this.element = null;
-          return element;
+          return next;
         }
         throw new NoSuchElementException();
       }
