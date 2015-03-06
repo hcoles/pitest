@@ -18,6 +18,7 @@ public class FileWriterFactory implements WriterFactory {
   }
 
   public PrintWriter create() {
+    this.file.getParentFile().mkdirs();
     try {
       if (this.writer == null) {
         this.writer = new PrintWriter(new OutputStreamWriter(
