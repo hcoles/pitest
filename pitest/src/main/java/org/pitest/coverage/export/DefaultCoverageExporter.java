@@ -11,6 +11,7 @@ import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.util.ResultOutputStrategy;
+import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 /**
@@ -44,7 +45,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
     Location l = each.getBlock().getLocation();
     write(out, "<block classname='"
         + l.getClassName().asJavaName() + "'" + " method='"
-        + l.getMethodName() + "' number='" + each.getBlock().getBlock() + "'>");
+        + StringUtil.escapeBasicHtmlChars(l.getMethodName().name()) + "' number='" + each.getBlock().getBlock() + "'>");
     write(out, "<tests>\n");
     final List<String> ts = new ArrayList<String>(each.getTests());
     Collections.sort(ts);
