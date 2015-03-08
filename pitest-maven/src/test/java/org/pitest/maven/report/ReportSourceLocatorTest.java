@@ -1,6 +1,19 @@
+/*
+ * Copyright 2015 Jason Fehr
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
 package org.pitest.maven.report;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isA;
@@ -12,7 +25,6 @@ import java.io.FileFilter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.pitest.util.PitError;
 
 public class ReportSourceLocatorTest {
@@ -43,9 +55,11 @@ public class ReportSourceLocatorTest {
 	@Test
 	public void testOneSubdirectory() {
 		File mockReportsDir = this.buildMockReportsDirectory();
-		File dummySubDir = new File("");
+		File dummySubDir = mock(File.class);
 
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ dummySubDir });
+		when(mockReportsDir.lastModified()).thenReturn(1L);
+		when(dummySubDir.lastModified()).thenReturn(2L);
 		assertThat(fixture.locate(mockReportsDir), sameInstance(dummySubDir));
 	}
 	
@@ -61,35 +75,7 @@ public class ReportSourceLocatorTest {
 		when(mockSubDir2.lastModified()).thenReturn(1L);
 		
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ mockSubDir0, mockSubDir1, mockSubDir2 });
-		assertThat(fixture.locate(mockReportsDir), sameInstance(mockSubDir2));
-	}
-	
-	@Test
-	/**
-	 * This test is different than a normal unit test.  The issue here is that the ReportSourceLocator class has a static final 
-	 * variable representing the criteria by which a directory is determined to be a timestamped report directory, but there is 
-	 * no way to directly test that the criteria is accurate.  Thus, a regular unit test is executed with the directory matcher 
-	 * being captured and itself tested.
-	 */
-	public void testDirectoryMatched() {
-		ArgumentCaptor<FileFilter> fileFilterCaptor = ArgumentCaptor.forClass(FileFilter.class);
-		File mockReportsDir = this.buildMockReportsDirectory();
-		File dummySubDir = new File("");
-
-		when(mockReportsDir.listFiles(fileFilterCaptor.capture())).thenReturn(new File[]{ dummySubDir });
-		fixture.locate(mockReportsDir);
-		
-		//test condition: directory and name is all numbers
-		assertThat(this.runDirectoryMatcherTest(fileFilterCaptor.getValue(), true, "20150304"), is(true));
-		
-		//test condition: not directory and name is all numbers
-		assertThat(this.runDirectoryMatcherTest(fileFilterCaptor.getValue(), false, "20150304"), is(false));
-		
-		//test condition: directory and name is not all numbers
-		assertThat(this.runDirectoryMatcherTest(fileFilterCaptor.getValue(), true, "abc20150304"), is(false));
-		
-		//test condition: not directory and name is not all numbers
-		assertThat(this.runDirectoryMatcherTest(fileFilterCaptor.getValue(), false, "abc20150304"), is(false));
+		assertThat(fixture.locate(mockReportsDir), sameInstance(mockSubDir1));
 	}
 	
 	@Test(expected = PitError.class)
@@ -119,15 +105,6 @@ public class ReportSourceLocatorTest {
 		when(testFile.isDirectory()).thenReturn(isDirectory);
 		
 		return testFile;
-	}
-	
-	private boolean runDirectoryMatcherTest(FileFilter fileFilter, boolean isDirectory, String directoryName) {
-		File mockDir = mock(File.class);
-		
-		when(mockDir.isDirectory()).thenReturn(isDirectory);
-		when(mockDir.getName()).thenReturn(directoryName);
-		
-		return fileFilter.accept(mockDir);
 	}
 
 }
