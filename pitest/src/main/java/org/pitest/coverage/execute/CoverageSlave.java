@@ -32,6 +32,7 @@ import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.help.PitHelpError;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
@@ -61,15 +62,17 @@ public class CoverageSlave {
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
-      if (paramsFromParent.getPitConfig().verifyEnvironment().hasSome()) {
-        throw paramsFromParent.getPitConfig().verifyEnvironment().value();
-      }
-
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
           s.getOutputStream()));
 
       CodeCoverageStore.init(invokeQueue);
 
+      LOG.info("Checking environment");
+      
+      if (paramsFromParent.getPitConfig().verifyEnvironment().hasSome()) {
+        throw paramsFromParent.getPitConfig().verifyEnvironment().value();
+      }
+      
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
 
@@ -81,7 +84,11 @@ public class CoverageSlave {
 
       worker.run();
 
-    } catch (final Throwable ex) {
+    } catch (PitHelpError phe) {
+      LOG.log(Level.SEVERE, phe.getMessage());
+      exitCode = ExitCode.JUNIT_ISSUE;
+    }
+    catch (final Throwable ex) {
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
       exitCode = ExitCode.UNKNOWN_ERROR;
@@ -89,7 +96,6 @@ public class CoverageSlave {
       if (invokeQueue != null) {
         invokeQueue.end(exitCode);
       }
-
       try {
         if (s != null) {
           s.close();
