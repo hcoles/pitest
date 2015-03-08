@@ -168,7 +168,6 @@ public class MojoToReportOptionsConverter {
   private static F<Plugin, Boolean> hasKey(final String key) {
     return new F<Plugin, Boolean>() {
       public Boolean apply(Plugin a) {
-        System.out.println(a.getKey());
         return a.getKey().equals(key);
       }
     };
