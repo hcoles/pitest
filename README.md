@@ -12,6 +12,9 @@ Read all about it at http://pitest.org
 ### 1.1.5-SNAPSHOT
 
 * Fix for #148 - Stackoverflow with TestNG data providers when using JMockit
+* Fix for #56 - Not reporting junit incompatibilities
+* Fix for #174 - Invalid linecoverage.xml with static initializers 
+* #173 - Read exclusions and groups from maven surefire config
 
 ### 1.1.4
 
