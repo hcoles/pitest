@@ -5,9 +5,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
@@ -15,6 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
+import org.pitest.util.FileUtil;
 import org.pitest.util.PitError;
 
 public class FileWriterFactoryTest {
@@ -33,8 +34,8 @@ public class FileWriterFactoryTest {
 		writer.write("test");
 		writerFactory.close();
 
-		byte[] content = Files.readAllBytes(file.toPath());
-		assertThat(new String(content), equalTo("test"));
+		String content = FileUtil.readToString( new FileInputStream(file) );
+		assertThat(content, equalTo("test"));
 	}
 
 	@Test
@@ -57,8 +58,8 @@ public class FileWriterFactoryTest {
 		writer.write("test");
 		writerFactory.close();
 
-		byte[] content = Files.readAllBytes(file.toPath());
-		assertThat(new String(content), equalTo("test"));
+		String content = FileUtil.readToString( new FileInputStream(file) );
+		assertThat(content, equalTo("test"));
 	}
 	
 }
