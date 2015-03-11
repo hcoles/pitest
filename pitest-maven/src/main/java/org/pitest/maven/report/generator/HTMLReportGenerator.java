@@ -1,4 +1,4 @@
-package org.pitest.maven.report;
+package org.pitest.maven.report.generator;
 
 import java.io.IOException;
 
@@ -22,5 +22,5 @@ public class HTMLReportGenerator implements IReportGenerationStrategy {
 	public String getGeneratorName() {
 		return "HTMLReportGenerator";
 	}
-	
+
 }

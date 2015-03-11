@@ -1,4 +1,4 @@
-package org.pitest.maven.report;
+package org.pitest.maven.report.generator;
 
 import java.io.File;
 import java.util.Locale;

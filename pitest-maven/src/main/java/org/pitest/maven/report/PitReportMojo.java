@@ -23,6 +23,11 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.pitest.maven.report.generator.HTMLReportGenerator;
+import org.pitest.maven.report.generator.IReportGenerationStrategy;
+import org.pitest.maven.report.generator.ReportGenerationContext;
+import org.pitest.maven.report.generator.ReportGenerationResultEnum;
+import org.pitest.maven.report.generator.XMLReportGenerator;
 
 /**
  * Generates a report of the pit mutation testing.

@@ -1,4 +1,4 @@
-package org.pitest.maven.report;
+package org.pitest.maven.report.generator;
 
 public enum ReportGenerationResultEnum {
 
