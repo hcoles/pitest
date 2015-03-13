@@ -42,6 +42,11 @@
             <email>velo dot br at gmail dot com</email>
             <url>about.me/velo</url>
         </contributor>
+        <contributor>
+            <name>Rahul Gopinath</name>
+            <email>rahul@gopinath.org</email>
+            <url>http://rahul.gopinath.org</url>
+        </contributor>
     </contributors>
 
     <modules>
