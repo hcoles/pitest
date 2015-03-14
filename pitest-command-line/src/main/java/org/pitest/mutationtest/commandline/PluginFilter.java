@@ -1,5 +1,8 @@
 package org.pitest.mutationtest.commandline;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,6 +10,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
+import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.util.PitError;
 
 public class PluginFilter implements Predicate<String>{
   
@@ -16,11 +21,21 @@ public class PluginFilter implements Predicate<String>{
     FCollection.mapTo(plugin.findClientClasspathPlugins(), classToLocation(), includedClassPathElement);  
   }
 
-  private static F<Object, String> classToLocation() {
-    return new F<Object, String>() {
-      public String apply(Object a) {
-        return a.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
-      }  
+  private static F<ClientClasspathPlugin, String> classToLocation() {
+    return new F<ClientClasspathPlugin, String>() {
+      public String apply(ClientClasspathPlugin a) {
+        try {
+          return new File(a.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalPath();
+        } catch (final IOException ex) {
+          throw createPitErrorForExceptionOnClass(ex, a);
+        } catch (URISyntaxException ex) {
+          throw createPitErrorForExceptionOnClass(ex, a);
+        }
+      }
+
+      private PitError createPitErrorForExceptionOnClass(Exception ex, ClientClasspathPlugin clazz) {
+        return new PitError("Error getting location of class " + clazz, ex);
+      }
     };
   }
 

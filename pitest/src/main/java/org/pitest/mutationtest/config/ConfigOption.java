@@ -104,7 +104,7 @@ public enum ConfigOption {
    */
   PROJECT_FILE("configFile"),
   /**
-   * Classpath entries to ahalyse. Although classes on the laucnh classpath will also be
+   * Classpath entries to analyse. Although classes on the launch classpath will also be
    * analysed, this is the preferred place to specify the code to analyse
    */
   CLASSPATH("classPath"),
