@@ -22,9 +22,9 @@ public class HTMLReportGenerator implements IReportGenerationStrategy {
 
 	public ReportGenerationResultEnum generate(ReportGenerationContext context) {
 		try {
-			context.getLogger().info(this.getClass().getSimpleName() + " using directory [" + context.getReportsDirectory() + "] as directory containing the html report");
-			context.getLogger().info(this.getClass().getSimpleName() + " using directory [" + context.getSiteDirectory() + "] as directory that is the destination of the site report");
-			FileUtils.copyDirectory(context.getReportsDirectory(), context.getSiteDirectory());
+			context.getLogger().debug("HTMLReportGenerator using directory [" + context.getReportsDataDirectory() + "] as directory containing the html report");
+			context.getLogger().debug("HTMLReportGenerator using directory [" + context.getSiteDirectory() + "] as directory that is the destination of the site report");
+			FileUtils.copyDirectory(context.getReportsDataDirectory(), context.getSiteDirectory());
 		} catch (IOException e) {
 			context.getLogger().warn(e);
 			return ReportGenerationResultEnum.FAILURE;

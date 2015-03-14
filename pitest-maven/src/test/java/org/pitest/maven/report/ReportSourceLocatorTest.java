@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.FileFilter;
 
+import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.util.PitError;
@@ -30,10 +31,12 @@ import org.pitest.util.PitError;
 public class ReportSourceLocatorTest {
 
 	private ReportSourceLocator fixture;
+	private Log mockLog;
 	
 	@Before
 	public void setUp() {
 		fixture = new ReportSourceLocator();
+		mockLog = mock(Log.class);
 	}
 	
 	@Test(expected = PitError.class)
@@ -41,7 +44,7 @@ public class ReportSourceLocatorTest {
 		File mockReportsDir = this.buildMockReportsDirectory();
 		
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(null);
-		fixture.locate(mockReportsDir);
+		fixture.locate(mockReportsDir, mockLog);
 	}
 	
 	@Test
@@ -49,7 +52,7 @@ public class ReportSourceLocatorTest {
 		File mockReportsDir = this.buildMockReportsDirectory();
 		
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[0]);
-		assertThat(fixture.locate(mockReportsDir), sameInstance(mockReportsDir));
+		assertThat(fixture.locate(mockReportsDir, mockLog), sameInstance(mockReportsDir));
 	}
 	
 	@Test
@@ -60,7 +63,7 @@ public class ReportSourceLocatorTest {
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ dummySubDir });
 		when(mockReportsDir.lastModified()).thenReturn(1L);
 		when(dummySubDir.lastModified()).thenReturn(2L);
-		assertThat(fixture.locate(mockReportsDir), sameInstance(dummySubDir));
+		assertThat(fixture.locate(mockReportsDir, mockLog), sameInstance(dummySubDir));
 	}
 	
 	@Test
@@ -75,22 +78,22 @@ public class ReportSourceLocatorTest {
 		when(mockSubDir2.lastModified()).thenReturn(1L);
 		
 		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ mockSubDir0, mockSubDir1, mockSubDir2 });
-		assertThat(fixture.locate(mockReportsDir), sameInstance(mockSubDir1));
+		assertThat(fixture.locate(mockReportsDir, mockLog), sameInstance(mockSubDir1));
 	}
 	
 	@Test(expected = PitError.class)
 	public void testNotDirectory() {
-		fixture.locate(this.buildMockReportsDirectory(true, true, false));
+		fixture.locate(this.buildMockReportsDirectory(true, true, false), mockLog);
 	}
 	
 	@Test(expected = PitError.class)
 	public void testNotReadable() {
-		fixture.locate(this.buildMockReportsDirectory(true, false, true));
+		fixture.locate(this.buildMockReportsDirectory(true, false, true), mockLog);
 	}
 	
 	@Test(expected = PitError.class)
 	public void testNotExists() {
-		fixture.locate(this.buildMockReportsDirectory(false, true, true));
+		fixture.locate(this.buildMockReportsDirectory(false, true, true), mockLog);
 	}
 	
 	private File buildMockReportsDirectory() {

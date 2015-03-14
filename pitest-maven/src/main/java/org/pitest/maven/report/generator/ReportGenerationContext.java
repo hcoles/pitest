@@ -26,7 +26,7 @@ public class ReportGenerationContext {
 
 	private Locale locale;
 	private Sink sink;
-	private File reportsDirectory;
+	private File reportsDataDirectory;
 	private File siteDirectory;
 	private Log logger;
 	
@@ -34,10 +34,10 @@ public class ReportGenerationContext {
 		
 	}
 	
-	public ReportGenerationContext(Locale locale, Sink sink, File reportsDirectory, File siteDirectory, Log logger) {
+	public ReportGenerationContext(Locale locale, Sink sink, File reportsDataDirectory, File siteDirectory, Log logger) {
 		this.locale = locale;
 		this.sink = sink;
-		this.reportsDirectory = reportsDirectory;
+		this.reportsDataDirectory = reportsDataDirectory;
 		this.siteDirectory = siteDirectory;
 		this.logger = logger;
 	}
@@ -56,11 +56,11 @@ public class ReportGenerationContext {
 		this.sink = sink;
 	}
 	
-	public File getReportsDirectory() {
-		return reportsDirectory;
+	public File getReportsDataDirectory() {
+		return reportsDataDirectory;
 	}
-	public void setReportsDirectory(File reportsDirectory) {
-		this.reportsDirectory = reportsDirectory;
+	public void setReportsDataDirectory(File reportsDataDirectory) {
+		this.reportsDataDirectory = reportsDataDirectory;
 	}
 	
 	public File getSiteDirectory() {

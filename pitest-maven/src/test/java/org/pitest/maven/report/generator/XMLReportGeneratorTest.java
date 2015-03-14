@@ -17,16 +17,20 @@ package org.pitest.maven.report.generator;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
+import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 
 public class XMLReportGeneratorTest {
 
+	private Log mockLogger;
 	private XMLReportGenerator fixture;
 	
 	@Before
 	public void setUp() {
+		mockLogger = mock(Log.class);
 		fixture = new XMLReportGenerator();
 	}
 	
@@ -37,7 +41,7 @@ public class XMLReportGeneratorTest {
 	
 	@Test
 	public void testNotExecuted() {
-		assertThat(fixture.generate(null), sameInstance(ReportGenerationResultEnum.NOT_EXECUTED));
+		assertThat(fixture.generate(new ReportGenerationContext(null, null, null, null, this.mockLogger)), sameInstance(ReportGenerationResultEnum.NOT_EXECUTED));
 	}
 
 }

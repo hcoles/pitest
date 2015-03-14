@@ -15,19 +15,15 @@
 package org.pitest.maven.report;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.pitest.maven.report.generator.HTMLReportGenerator;
-import org.pitest.maven.report.generator.IReportGenerationStrategy;
 import org.pitest.maven.report.generator.ReportGenerationContext;
-import org.pitest.maven.report.generator.ReportGenerationResultEnum;
-import org.pitest.maven.report.generator.XMLReportGenerator;
+import org.pitest.maven.report.generator.ReportGenerationManager;
+import org.pitest.util.PitError;
 
 /**
  * Generates a report of the pit mutation testing.
@@ -37,6 +33,8 @@ import org.pitest.maven.report.generator.XMLReportGenerator;
  */
 public class PitReportMojo extends AbstractMavenReport {
 
+	private static final String SITE_REPORTS_FOLDER = "pit-reports";
+	
 	//TODO what about the exportLineCoverage option?
 	//TODO add getters and setters for each field
 	
@@ -55,32 +53,43 @@ public class PitReportMojo extends AbstractMavenReport {
     private MavenProject project;
     
     /**
-     * When set indicates that analysis of this project should be skipped
+     * When set indicates that generation of the site report should be skipped.
      * 
      * @parameter default-value="false"
      */
     private boolean skip;
     
     /**
-     * Base directory where all reports are written to.
+     * Base directory where all pit reports are written to by the mutationCoverage goal.  If 
+     * timestampedReports is true (the default), then the actual reports will be contained in a 
+     * subdirectory within this directory.  If timestampedReports is false, the actual reports 
+     * will be in this directory. 
      * 
      * @parameter default-value="${project.build.directory}/pit-reports"
      *            expression="${reportsDirectory}"
      */
     private File reportsDirectory;
     
+    private ReportGenerationManager reportGenerationManager;
+    
+    public PitReportMojo() {
+    	super();
+    	
+    	this.reportGenerationManager = new ReportGenerationManager();
+    }
+    
 	public String getOutputName() {
-		return "pitest/index";
+		return SITE_REPORTS_FOLDER + File.separator + "index";
 	}
 
 	public String getName(Locale locale) {
-		//TODO internationalize this
-		return "Pitest Report";
+		//TODO internationalize this (and test it)
+		return "PIT Test Report";
 	}
 
 	public String getDescription(Locale locale) {
-		//TODO internationalize this
-		return "Report of the pitest coverage";
+		//TODO internationalize this (and test it)
+		return "Report of the pit test coverage";
 	}
 
 	@Override
@@ -100,31 +109,27 @@ public class PitReportMojo extends AbstractMavenReport {
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
-		this.getLog().warn("PitReportMojo - starting");
+		this.getLog().debug("PitReportMojo - starting");
 		
 		if(!this.reportsDirectory.exists()){
-			throw new RuntimeException("could not find reports directory [" + this.reportsDirectory + "]");
+			throw new PitError("could not find reports directory [" + this.reportsDirectory + "]");
 		}
 		
 		if(!this.reportsDirectory.canRead()){
-			throw new RuntimeException("reports directory [" + this.reportsDirectory + "] not readable");
+			throw new PitError("reports directory [" + this.reportsDirectory + "] not readable");
 		}
 		
 		if(!this.reportsDirectory.isDirectory()){
-			throw new RuntimeException("reports directory [" + this.reportsDirectory + "] is actually a file, it must be a directory");
+			throw new PitError("reports directory [" + this.reportsDirectory + "] is actually a file, it must be a directory");
 		}
 		
-		this.executeReportGenerators(
-				Arrays.asList(new XMLReportGenerator(), new HTMLReportGenerator()), 
-				new ReportGenerationContext(locale, this.getSink(), this.reportsDirectory, new File(this.getReportOutputDirectory() + File.separator + "pitest"), this.getLog())
-		);
+		this.reportGenerationManager.generateSiteReport(this.buildReportGenerationContext(locale));
 		
-		this.getLog().warn("PitReportMojo - ending");
+		this.getLog().debug("PitReportMojo - ending");
 	}
 	
 	@Override
 	public boolean canGenerateReport() {
-		//TODO update to log if report will not be generated
 		return !skip;
 	}
 	
@@ -132,29 +137,16 @@ public class PitReportMojo extends AbstractMavenReport {
 	    return true;
 	}
 	
-	private void executeReportGenerators(List<IReportGenerationStrategy> generators, ReportGenerationContext context) {
-		ReportGenerationResultEnum result;
-		boolean successfulExecution = false;
-		
-		this.getLog().info("starting execution of report generators");
-		this.getLog().info("using report generation context: " + context);
-		
-		for(IReportGenerationStrategy generator : generators){
-			this.getLog().info("starting report generator " + generator.getGeneratorName());
-			result = generator.generate(context);
-			this.getLog().info("result of report generator was: " + result.toString());
-			if(result == ReportGenerationResultEnum.SUCCESS){
-				successfulExecution = true;
-				break;
-			}
-			this.getLog().info("starting report generator " + generator.getGeneratorName());
-		}
-		
-		if(!successfulExecution){
-			throw new RuntimeException("no report generators executed successfully");
-		}
-		
-		this.getLog().info("finished execution of report generators");
+	public boolean isSkip() {
+		return skip;
+	}
+
+	public File getReportsDirectory() {
+		return reportsDirectory;
+	}
+
+	private ReportGenerationContext buildReportGenerationContext(Locale locale) {
+		return new ReportGenerationContext(locale, this.getSink(), reportsDirectory, new File(this.getReportOutputDirectory().getAbsolutePath() + File.separator + SITE_REPORTS_FOLDER), this.getLog());
 	}
 	
 }

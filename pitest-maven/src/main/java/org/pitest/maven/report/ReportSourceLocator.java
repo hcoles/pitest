@@ -23,11 +23,12 @@ import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.CanWriteFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.maven.plugin.logging.Log;
 import org.pitest.util.PitError;
 
 /**
- * Determines the directory where the most recent PIT reports are located.  If timestampedReports is set to true, then the latest 
- * reports directory is located.  If timestampedReports is set to false, then 
+ * Determines the directory where the most recent PIT reports are actually located since the 
+ * value of the timestamedReports parameter could impact where the reports are stored.
  * 
  * @author jasonmfehr
  */
@@ -49,10 +50,11 @@ public class ReportSourceLocator {
 	 * 
 	 * @param reportsDirectory {@link File} representing the directory where non-timestamped reports were written if the plugin's configuration has 
 	 *                         timestampedReports set to true;
+	 * @param log {@link Log} plugin logger for logging debug messages
 	 *                         
 	 * @return {@link File} representing the directory where the latest PIT reports are located
 	 */
-	public File locate(File reportsDirectory) {
+	public File locate(File reportsDirectory, Log log) {
 		if(!reportsDirectory.exists()){
 			throw new PitError("could not find reports directory [" + reportsDirectory + "]");
 		}
@@ -65,26 +67,30 @@ public class ReportSourceLocator {
 			throw new PitError("reports directory [" + reportsDirectory + "] is actually a file, it must be a directory");
 		}
 		
-		return executeLocator(reportsDirectory);
+		return executeLocator(reportsDirectory, log);
 	}
 	
-	private File executeLocator(File reportsDirectory) {
+	private File executeLocator(File reportsDirectory, Log log) {
 		File[] subdirectories = reportsDirectory.listFiles(TIMESTAMPED_REPORTS_FILE_FILTER);
 		File latest = reportsDirectory;
 
+		log.debug("ReportSourceLocator starting search in directory [" + reportsDirectory.getAbsolutePath() + "]");
 		
 		if(subdirectories != null){
 			LastModifiedFileComparator c = new LastModifiedFileComparator();
 			
 			for(File f : subdirectories){
+				log.debug("comparing directory [" + f.getAbsolutePath() + "] with the current latest directory of [" + latest.getAbsolutePath() + "]");
 				if(c.compare(latest, f) < 0){
 					latest = f;
+					log.debug("directory [" + f.getAbsolutePath() + "] is now the latest");
 				}
 			}
 		}else{
 			throw new PitError("could not list files in directory [" + reportsDirectory.getAbsolutePath() + "] because of an unknown I/O error");
 		}
 		
+		log.debug("ReportSourceLocator determined directory [" + latest.getAbsolutePath() + "] is the directory containing the latest pit reports");
 		return latest;
 	}
 

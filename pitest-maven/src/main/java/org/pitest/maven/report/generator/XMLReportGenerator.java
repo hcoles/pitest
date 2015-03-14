@@ -18,6 +18,7 @@ package org.pitest.maven.report.generator;
 public class XMLReportGenerator implements IReportGenerationStrategy {
 
 	public ReportGenerationResultEnum generate(ReportGenerationContext context) {
+		context.getLogger().debug("XMLReportGenerator not yet implemented");
 		return ReportGenerationResultEnum.NOT_EXECUTED;
 	}
 	

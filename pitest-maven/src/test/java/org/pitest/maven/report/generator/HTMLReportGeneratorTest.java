@@ -58,7 +58,6 @@ public class HTMLReportGeneratorTest {
 		
 		sourceFile1 = new File(sourceFolder, "file1.txt");
 		sourceFile1.createNewFile();
-		System.out.println(sourceFile0.getAbsolutePath());
 		
 		assertThat(fixture.generate(new ReportGenerationContext(null, null, sourceFile0.getParentFile(), destFolder, mockLogger)), sameInstance(ReportGenerationResultEnum.SUCCESS));
 		assertThat(sourceFolder.listFiles().length, is(2));
