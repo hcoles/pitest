@@ -63,7 +63,6 @@ import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
@@ -397,10 +396,10 @@ public class OptionsParser {
 
     final List<String> elements = new ArrayList<String>();
     if (data.isIncludeLaunchClasspath()) {
-      elements.addAll(Arrays.asList(ClassPath.getClassPathElements()));
+      elements.addAll(ClassPath.getClassPathElementsAsPaths());
     } else {
-      elements.addAll(FArray.filter(ClassPath.getClassPathElements(),
-          dependencyFilter));
+      elements.addAll(FCollection.filter(ClassPath.getClassPathElementsAsPaths(),
+              dependencyFilter));
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
@@ -413,7 +412,6 @@ public class OptionsParser {
         this.includedGroupsSpec.values(userArgs));
 
     data.setGroupConfig(conf);
-
   }
 
   /**

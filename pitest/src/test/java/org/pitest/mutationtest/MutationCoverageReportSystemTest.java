@@ -248,7 +248,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
       
       List<String> cp = new ArrayList<String>();
-      cp.addAll(Arrays.asList(ClassPath.getClassPathElements()));
+      cp.addAll(ClassPath.getClassPathElementsAsPaths());
       cp.add(location);
       
       this.data.setClassPathElements(cp);

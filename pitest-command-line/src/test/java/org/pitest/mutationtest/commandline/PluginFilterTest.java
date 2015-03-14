@@ -9,23 +9,28 @@ import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.report.html.HtmlReportFactory;
 import org.pitest.util.IsolationUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class PluginFilterTest {
 
   private PluginFilter testee = new PluginFilter(new PluginServices(
                                   IsolationUtils.getContextClassLoader()));
 
   @Test
-  public void shouldExcludeHtmlReportPlugin() {
-    String pluginLocation = HtmlReportFactory.class.getProtectionDomain()
-        .getCodeSource().getLocation().getFile();
+  public void shouldExcludeHtmlReportPlugin() throws Exception {
+    String pluginLocation = getClassLocationAsCanonicalPath(HtmlReportFactory.class);
     assertFalse(testee.apply(pluginLocation));
   }
 
   @Test
-  public void shouldIncludeMutationEngine() {
-    String pluginLocation = GregorMutationEngine.class.getProtectionDomain()
-        .getCodeSource().getLocation().getFile();
+  public void shouldIncludeMutationEngine() throws Exception {
+    String pluginLocation = getClassLocationAsCanonicalPath(GregorMutationEngine.class);
     assertTrue(testee.apply(pluginLocation));
   }
 
+  private String getClassLocationAsCanonicalPath(Class clazz) throws URISyntaxException, IOException {
+    return new File(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalPath();
+  }
 }

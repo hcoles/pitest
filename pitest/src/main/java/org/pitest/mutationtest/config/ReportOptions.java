@@ -565,7 +565,8 @@ public class ReportOptions {
         + this.exportLineCoverage + ", mutationThreshold="
         + this.mutationThreshold + ", coverageThreshold="
         + this.coverageThreshold + ", mutationEngine=" + this.mutationEngine
-        + ", javaExecutable=" + this.javaExecutable + "]";
+        + ", javaExecutable=" + this.javaExecutable + ", includeLaunchClasspath="
+        + this.includeLaunchClasspath + "]";
   }
 
 }
