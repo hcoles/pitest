@@ -37,7 +37,7 @@ import org.pitest.util.StreamUtil;
 
 public class ClassPath {
 
-  private final static Logger       LOG   = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   private final CompoundClassPathRoot root;
 
@@ -116,26 +116,46 @@ public class ClassPath {
     }
   }
 
+  public static Collection<String> getClassPathElementsAsPaths() {
+    final Set<String> filesAsString = new LinkedHashSet<String>();
+    FCollection.mapTo(getClassPathElementsAsFiles(), fileToString(), filesAsString);
+    return filesAsString;
+  }
+
+  private static F<File, String> fileToString() {
+    return new F<File, String>() {
+      public String apply(File file) {
+          return file.getPath();
+      }
+    };
+  }
+
   public static Collection<File> getClassPathElementsAsFiles() {
-
-    final String[] elements = getClassPathElements();
-
     final Set<File> us = new LinkedHashSet<File>();
-    for (final String each : elements) {
-      us.add(new File(each));
-    }
+    FCollection.mapTo(getClassPathElementsAsAre(), stringToCanonicalFile(), us);
     return us;
+  }
 
+  private static F<String, File> stringToCanonicalFile() {
+    return new F<String, File>() {
+      public File apply(String fileAsString) {
+        try {
+          return new File(fileAsString).getCanonicalFile();
+        } catch (final IOException ex) {
+          throw new PitError("Error transforming classpath element " + fileAsString, ex);
+        }
+      }
+    };
   }
 
   /** FIXME move somewhere common */
-  public static String[] getClassPathElements() {
+  private static List<String> getClassPathElementsAsAre() {
     final String classPath = System.getProperty("java.class.path");
     final String separator = File.pathSeparator;
     if (classPath != null) {
-      return classPath.split(separator);
+      return Arrays.asList(classPath.split(separator));
     } else {
-      return new String[0];
+      return new ArrayList<String>();
     }
 
   }

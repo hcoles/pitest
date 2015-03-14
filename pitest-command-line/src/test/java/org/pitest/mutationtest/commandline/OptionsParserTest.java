@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.commandline;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -35,17 +36,21 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class OptionsParserTest {
 
+  private static final String JAVA_CLASS_PATH_PROPERTY = "java.class.path";
+
   private OptionsParser testee;
   
   @Mock
   private Predicate<String> filter;
-  
+
 
   @Before
   public void setUp() {
@@ -420,7 +425,41 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=true");
     assertTrue(actual.isIncludeLaunchClasspath());
   }
-  
+
+  @Test
+  public void shouldHandleNotCanonicalLaunchClasspathElements() {
+    final String oldClasspath = System.getProperty(JAVA_CLASS_PATH_PROPERTY);
+    try {
+      //given
+      final PluginServices plugins = PluginServices.makeForContextLoader();
+      this.testee = new OptionsParser(new PluginFilter(plugins));
+      //and
+      System.setProperty(JAVA_CLASS_PATH_PROPERTY, getNonCanonicalGregorEngineClassPath());
+      //when
+      final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=false");
+      //then
+      assertThat(actual.getClassPath().findClasses(gregorClass())).hasSize(1);
+    } finally {
+      System.setProperty(JAVA_CLASS_PATH_PROPERTY, oldClasspath);
+    }
+  }
+
+  private String getNonCanonicalGregorEngineClassPath() {
+    final String gregorEngineClassPath = GregorMutationEngine.class.getProtectionDomain()
+            .getCodeSource().getLocation().getFile();
+    final int lastOccurrenceOfFileSeparator = gregorEngineClassPath.lastIndexOf(File.separator);
+    return new StringBuilder(gregorEngineClassPath).replace(lastOccurrenceOfFileSeparator,
+            lastOccurrenceOfFileSeparator + 1, File.separator + "." + File.separator).toString();
+  }
+
+  private Predicate<String> gregorClass() {
+    return new Predicate<String>() {
+      public Boolean apply(String s) {
+        return GregorMutationEngine.class.getName().equals(s);
+      }
+    };
+  }
+
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
     final List<String> a = new ArrayList<String>();
