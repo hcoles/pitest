@@ -30,7 +30,7 @@ public class PluginFilterTest {
     assertTrue(testee.apply(pluginLocation));
   }
 
-  private String getClassLocationAsCanonicalPath(Class clazz) throws URISyntaxException, IOException {
+  private String getClassLocationAsCanonicalPath(Class<?> clazz) throws URISyntaxException, IOException {
     return new File(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalPath();
   }
 }
