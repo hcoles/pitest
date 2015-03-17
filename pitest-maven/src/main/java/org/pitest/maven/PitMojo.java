@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -19,6 +22,9 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 /**
  * Goal which runs a coverage mutation report
@@ -30,7 +36,15 @@ import org.pitest.plugin.ToolClasspathPlugin;
  * @phase integration-test
  */
 public class PitMojo extends AbstractMojo {
-  
+
+  static {
+    SLF4JBridgeHandler.removeHandlersForRootLogger();
+    SLF4JBridgeHandler.install();
+    Logger.getLogger("PIT").addHandler(new SLF4JBridgeHandler());
+
+    SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+  }
+
   protected final Predicate<Artifact> filter;
   
   protected final PluginServices plugins;
