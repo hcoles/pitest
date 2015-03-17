@@ -185,6 +185,7 @@ public class MojoToReportOptionsConverter {
 
   private void addOwnDependenciesToClassPath(final List<String> classPath) {
     for (final Artifact dependency : filteredDependencies()) {
+      log.info("Adding " + dependency.getGroupId() + ":" + dependency.getArtifactId() + " to SUT classpath");
       classPath.add(dependency.getFile().getAbsolutePath());
     }
   }

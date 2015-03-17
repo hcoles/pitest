@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.apache.maven.artifact.Artifact;
@@ -36,14 +34,6 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
  * @phase integration-test
  */
 public class PitMojo extends AbstractMojo {
-
-  static {
-    SLF4JBridgeHandler.removeHandlersForRootLogger();
-    SLF4JBridgeHandler.install();
-    Logger.getLogger("PIT").addHandler(new SLF4JBridgeHandler());
-
-    SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-  }
 
   protected final Predicate<Artifact> filter;
   
@@ -295,11 +285,17 @@ public class PitMojo extends AbstractMojo {
   private boolean parseSurefireConfig;
 
   /**
-   * honors common skipTests flag in a maven run
+   * honours common skipTests flag in a maven run
    * @parameter default-value="false"
    */
   private boolean skipTests;
 
+  /**
+   * Use slf4j for logging
+   * @parameter default-value="false" expression="${useSlf4j}"
+   */
+  private boolean useSlf4j;
+  
   /**
    * <i>Internal</i>: Project to interact with.
    * 
@@ -335,6 +331,8 @@ public class PitMojo extends AbstractMojo {
   public final void execute() throws MojoExecutionException,
       MojoFailureException {
     
+    switchLogging();
+    
     if (shouldRun()) {
       
       for ( ToolClasspathPlugin each  : plugins.findToolClasspathPlugins() ) {
@@ -353,6 +351,15 @@ public class PitMojo extends AbstractMojo {
 
     } else {
       this.getLog().info("Skipping project");
+    }
+  }
+
+  private void switchLogging() {
+    if (useSlf4j) {
+      SLF4JBridgeHandler.removeHandlersForRootLogger();
+      SLF4JBridgeHandler.install();
+      Logger.getLogger("PIT").addHandler(new SLF4JBridgeHandler());      
+      SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
     }
   }
 
