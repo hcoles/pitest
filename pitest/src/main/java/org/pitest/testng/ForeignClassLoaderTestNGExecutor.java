@@ -9,7 +9,7 @@ import org.testng.ITestListener;
 import org.testng.TestNG;
 import org.testng.xml.XmlSuite;
 
-public class ForeignClassLoaderTestNGExecutor implements Callable<List<String>>{
+public class ForeignClassLoaderTestNGExecutor implements Callable<List<String>> {
   
   private final XmlSuite suite;
   

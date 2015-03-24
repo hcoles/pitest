@@ -53,86 +53,86 @@ class MathMethodVisitor extends AbstractInsnMutator {
     super(factory, methodInfo, context, writer);
   }
 
-  private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();
+  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
 
   static {
-    mutations.put(Opcodes.IADD, new InsnSubstitution(Opcodes.ISUB,
+    MUTATIONS.put(Opcodes.IADD, new InsnSubstitution(Opcodes.ISUB,
         "Replaced integer addition with subtraction"));
-    mutations.put(Opcodes.ISUB, new InsnSubstitution(Opcodes.IADD,
+    MUTATIONS.put(Opcodes.ISUB, new InsnSubstitution(Opcodes.IADD,
         "Replaced integer subtraction with addition"));
-    mutations.put(Opcodes.IMUL, new InsnSubstitution(Opcodes.IDIV,
+    MUTATIONS.put(Opcodes.IMUL, new InsnSubstitution(Opcodes.IDIV,
         "Replaced integer multiplication with division"));
-    mutations.put(Opcodes.IDIV, new InsnSubstitution(Opcodes.IMUL,
+    MUTATIONS.put(Opcodes.IDIV, new InsnSubstitution(Opcodes.IMUL,
         "Replaced integer division with multiplication"));
-    mutations.put(Opcodes.IOR, new InsnSubstitution(Opcodes.IAND,
+    MUTATIONS.put(Opcodes.IOR, new InsnSubstitution(Opcodes.IAND,
         "Replaced bitwise OR with AND"));
-    mutations.put(Opcodes.IAND, new InsnSubstitution(Opcodes.IOR,
+    MUTATIONS.put(Opcodes.IAND, new InsnSubstitution(Opcodes.IOR,
         "Replaced bitwise AND with OR"));
-    mutations.put(Opcodes.IREM, new InsnSubstitution(Opcodes.IMUL,
+    MUTATIONS.put(Opcodes.IREM, new InsnSubstitution(Opcodes.IMUL,
         "Replaced integer modulus with multiplication"));
-    mutations.put(Opcodes.IXOR, new InsnSubstitution(Opcodes.IAND,
+    MUTATIONS.put(Opcodes.IXOR, new InsnSubstitution(Opcodes.IAND,
         "Replaced XOR with AND"));
-    mutations.put(Opcodes.ISHL, new InsnSubstitution(Opcodes.ISHR,
+    MUTATIONS.put(Opcodes.ISHL, new InsnSubstitution(Opcodes.ISHR,
         "Replaced Shift Left with Shift Right"));
-    mutations.put(Opcodes.ISHR, new InsnSubstitution(Opcodes.ISHL,
+    MUTATIONS.put(Opcodes.ISHR, new InsnSubstitution(Opcodes.ISHL,
         "Replaced Shift Right with Shift Left"));
-    mutations.put(Opcodes.IUSHR, new InsnSubstitution(Opcodes.ISHL,
+    MUTATIONS.put(Opcodes.IUSHR, new InsnSubstitution(Opcodes.ISHL,
         "Replaced Unsigned Shift Right with Shift Left"));
 
     // longs
 
-    mutations.put(Opcodes.LADD, new InsnSubstitution(Opcodes.LSUB,
+    MUTATIONS.put(Opcodes.LADD, new InsnSubstitution(Opcodes.LSUB,
         "Replaced long addition with subtraction"));
-    mutations.put(Opcodes.LSUB, new InsnSubstitution(Opcodes.LADD,
+    MUTATIONS.put(Opcodes.LSUB, new InsnSubstitution(Opcodes.LADD,
         "Replaced long subtraction with addition"));
-    mutations.put(Opcodes.LMUL, new InsnSubstitution(Opcodes.LDIV,
+    MUTATIONS.put(Opcodes.LMUL, new InsnSubstitution(Opcodes.LDIV,
         "Replaced long multiplication with division"));
-    mutations.put(Opcodes.LDIV, new InsnSubstitution(Opcodes.LMUL,
+    MUTATIONS.put(Opcodes.LDIV, new InsnSubstitution(Opcodes.LMUL,
         "Replaced long division with multiplication"));
-    mutations.put(Opcodes.LOR, new InsnSubstitution(Opcodes.LAND,
+    MUTATIONS.put(Opcodes.LOR, new InsnSubstitution(Opcodes.LAND,
         "Replaced bitwise OR with AND"));
-    mutations.put(Opcodes.LAND, new InsnSubstitution(Opcodes.LOR,
+    MUTATIONS.put(Opcodes.LAND, new InsnSubstitution(Opcodes.LOR,
         "Replaced bitwise AND with OR"));
-    mutations.put(Opcodes.LREM, new InsnSubstitution(Opcodes.LMUL,
+    MUTATIONS.put(Opcodes.LREM, new InsnSubstitution(Opcodes.LMUL,
         "Replaced long modulus with multiplication"));
-    mutations.put(Opcodes.LXOR, new InsnSubstitution(Opcodes.LAND,
+    MUTATIONS.put(Opcodes.LXOR, new InsnSubstitution(Opcodes.LAND,
         "Replaced XOR with AND"));
-    mutations.put(Opcodes.LSHL, new InsnSubstitution(Opcodes.LSHR,
+    MUTATIONS.put(Opcodes.LSHL, new InsnSubstitution(Opcodes.LSHR,
         "Replaced Shift Left with Shift Right"));
-    mutations.put(Opcodes.LSHR, new InsnSubstitution(Opcodes.LSHL,
+    MUTATIONS.put(Opcodes.LSHR, new InsnSubstitution(Opcodes.LSHL,
         "Replaced Shift Right with Shift Left"));
-    mutations.put(Opcodes.LUSHR, new InsnSubstitution(Opcodes.LSHL,
+    MUTATIONS.put(Opcodes.LUSHR, new InsnSubstitution(Opcodes.LSHL,
         "Replaced Unsigned Shift Right with Shift Left"));
 
     // floats
-    mutations.put(Opcodes.FADD, new InsnSubstitution(Opcodes.FSUB,
+    MUTATIONS.put(Opcodes.FADD, new InsnSubstitution(Opcodes.FSUB,
         "Replaced float addition with subtraction"));
-    mutations.put(Opcodes.FSUB, new InsnSubstitution(Opcodes.FADD,
+    MUTATIONS.put(Opcodes.FSUB, new InsnSubstitution(Opcodes.FADD,
         "Replaced float subtraction with addition"));
-    mutations.put(Opcodes.FMUL, new InsnSubstitution(Opcodes.FDIV,
+    MUTATIONS.put(Opcodes.FMUL, new InsnSubstitution(Opcodes.FDIV,
         "Replaced float multiplication with division"));
-    mutations.put(Opcodes.FDIV, new InsnSubstitution(Opcodes.FMUL,
+    MUTATIONS.put(Opcodes.FDIV, new InsnSubstitution(Opcodes.FMUL,
         "Replaced float division with multiplication"));
-    mutations.put(Opcodes.FREM, new InsnSubstitution(Opcodes.FMUL,
+    MUTATIONS.put(Opcodes.FREM, new InsnSubstitution(Opcodes.FMUL,
         "Replaced float modulus with multiplication"));
 
     // doubles
-    mutations.put(Opcodes.DADD, new InsnSubstitution(Opcodes.DSUB,
+    MUTATIONS.put(Opcodes.DADD, new InsnSubstitution(Opcodes.DSUB,
         "Replaced double addition with subtraction"));
-    mutations.put(Opcodes.DSUB, new InsnSubstitution(Opcodes.DADD,
+    MUTATIONS.put(Opcodes.DSUB, new InsnSubstitution(Opcodes.DADD,
         "Replaced double subtraction with addition"));
-    mutations.put(Opcodes.DMUL, new InsnSubstitution(Opcodes.DDIV,
+    MUTATIONS.put(Opcodes.DMUL, new InsnSubstitution(Opcodes.DDIV,
         "Replaced double multiplication with division"));
-    mutations.put(Opcodes.DDIV, new InsnSubstitution(Opcodes.DMUL,
+    MUTATIONS.put(Opcodes.DDIV, new InsnSubstitution(Opcodes.DMUL,
         "Replaced double division with multiplication"));
-    mutations.put(Opcodes.DREM, new InsnSubstitution(Opcodes.DMUL,
+    MUTATIONS.put(Opcodes.DREM, new InsnSubstitution(Opcodes.DMUL,
         "Replaced double modulus with multiplication"));
 
   }
 
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
-    return mutations;
+    return MUTATIONS;
   }
 
 }

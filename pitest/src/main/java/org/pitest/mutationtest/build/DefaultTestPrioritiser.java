@@ -22,10 +22,10 @@ import org.pitest.util.Log;
  */
 public class DefaultTestPrioritiser implements TestPrioritiser {
   
-  private final static Logger         LOG                                  = Log
+  private static final Logger         LOG                                  = Log
       .getLogger();
   
-  private final static int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
+  private static final int            TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
   
   private final CoverageDatabase coverage;
   

@@ -34,10 +34,10 @@ import org.objectweb.asm.MethodVisitor;
  */
 public interface MethodMutatorFactory {
 
-  public MethodVisitor create(final MutationContext context,
+  MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor);
 
-  public String getGloballyUniqueId();
+  String getGloballyUniqueId();
 
   /**
    * Returns a human readable <code>String</code> representation of this
@@ -50,6 +50,6 @@ public interface MethodMutatorFactory {
    * @return a human readable string representation for end-user report
    *         generation.
    */
-  public String getName();
+  String getName();
 
 }

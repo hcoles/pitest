@@ -13,34 +13,37 @@ import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.PitError;
 
-public class PluginFilter implements Predicate<String>{
-  
+public class PluginFilter implements Predicate<String> {
+
   private final Set<String> includedClassPathElement = new HashSet<String>();
-  
-  public PluginFilter(PluginServices plugin) {
-    FCollection.mapTo(plugin.findClientClasspathPlugins(), classToLocation(), includedClassPathElement);  
+
+  public PluginFilter(final PluginServices plugin) {
+    FCollection.mapTo(plugin.findClientClasspathPlugins(), classToLocation(),
+        this.includedClassPathElement);
   }
 
   private static F<ClientClasspathPlugin, String> classToLocation() {
     return new F<ClientClasspathPlugin, String>() {
-      public String apply(ClientClasspathPlugin a) {
+      public String apply(final ClientClasspathPlugin a) {
         try {
-          return new File(a.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalPath();
+          return new File(a.getClass().getProtectionDomain().getCodeSource()
+              .getLocation().toURI()).getCanonicalPath();
         } catch (final IOException ex) {
           throw createPitErrorForExceptionOnClass(ex, a);
-        } catch (URISyntaxException ex) {
+        } catch (final URISyntaxException ex) {
           throw createPitErrorForExceptionOnClass(ex, a);
         }
       }
 
-      private PitError createPitErrorForExceptionOnClass(Exception ex, ClientClasspathPlugin clazz) {
+      private PitError createPitErrorForExceptionOnClass(final Exception ex,
+          final ClientClasspathPlugin clazz) {
         return new PitError("Error getting location of class " + clazz, ex);
       }
     };
   }
 
-  public Boolean apply(String a) {
-    return includedClassPathElement.contains(a);
+  public Boolean apply(final String a) {
+    return this.includedClassPathElement.contains(a);
   }
 
 }

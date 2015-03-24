@@ -14,11 +14,17 @@
  */
 package org.pitest.classinfo;
 
-import org.objectweb.asm.*;
-import org.pitest.bytecode.NullVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.pitest.bytecode.NullVisitor;
 
 public final class ClassInfoVisitor extends MethodFilteringAdapter {
 

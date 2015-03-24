@@ -23,7 +23,7 @@ import org.pitest.util.Log;
 
 public class IncrementalAnalyser implements MutationAnalyser {
 
-  private final static Logger              LOG         = Log.getLogger();
+  private static final Logger              LOG         = Log.getLogger();
 
   private final CodeHistory                history;
   private final CoverageDatabase           coverage;

@@ -11,23 +11,22 @@ import sun.pitest.CodeCoverageStore;
 
 /**
  * Uses local variables as block probes within methods.
- * 
+ *
  * Inserts a finally block the method, posting the probes hits to the code
  * coverage store via specialised methods for each number of probes.
- * 
+ *
  * The range of methods this approach can be applied to is limited by the
  * maximum airty of the overloaded methods on the coverage store.
  */
 class LocalVariableCoverageMethodVisitor extends AbstractCoverageStrategy {
 
-  private int locals[];
+  private int[] locals;
 
-  LocalVariableCoverageMethodVisitor(List<Block> blocks,
-      InstructionCounter counter, final int classId,
+  LocalVariableCoverageMethodVisitor(final List<Block> blocks,
+      final InstructionCounter counter, final int classId,
       final MethodVisitor writer, final int access, final String name,
       final String desc, final int probeOffset) {
-    super(blocks, counter, classId, writer, access, name, desc,
-        probeOffset);
+    super(blocks, counter, classId, writer, access, name, desc, probeOffset);
   }
 
   @Override
@@ -45,7 +44,7 @@ class LocalVariableCoverageMethodVisitor extends AbstractCoverageStrategy {
     pushConstant(1);
     this.mv.visitVarInsn(ISTORE, this.locals[this.probeCount]);
   }
-  
+
   @Override
   protected void generateProbeReportCode() {
 

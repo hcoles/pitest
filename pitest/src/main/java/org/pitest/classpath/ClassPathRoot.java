@@ -24,12 +24,12 @@ import org.pitest.functional.Option;
 
 public interface ClassPathRoot {
 
-  public URL getResource(String name) throws MalformedURLException;
+  URL getResource(String name) throws MalformedURLException;
 
-  public InputStream getData(String name) throws IOException;
+  InputStream getData(String name) throws IOException;
 
-  public Collection<String> classNames();
+  Collection<String> classNames();
 
-  public Option<String> cacheLocation();
+  Option<String> cacheLocation();
 
 }

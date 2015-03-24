@@ -50,7 +50,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator
 
 public final class Mutator {
 
-  private final static Map<String, Iterable<MethodMutatorFactory>> mutators = new LinkedHashMap<String, Iterable<MethodMutatorFactory>>();
+  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<String, Iterable<MethodMutatorFactory>>();
 
   static {
 
@@ -155,7 +155,7 @@ public final class Mutator {
   }
 
   public static Collection<MethodMutatorFactory> all() {
-    return fromStrings(mutators.keySet());
+    return fromStrings(MUTATORS.keySet());
   }
 
   private static Collection<MethodMutatorFactory> stronger() {
@@ -189,17 +189,17 @@ public final class Mutator {
   }
 
   public static Collection<MethodMutatorFactory> byName(final String name) {
-    return FCollection.map(mutators.get(name),
+    return FCollection.map(MUTATORS.get(name),
         Prelude.id(MethodMutatorFactory.class));
   }
 
   private static void add(final String key, final MethodMutatorFactory value) {
-    mutators.put(key, Collections.singleton(value));
+    MUTATORS.put(key, Collections.singleton(value));
   }
 
   private static void addGroup(final String key,
       final Iterable<MethodMutatorFactory> value) {
-    mutators.put(key, value);
+    MUTATORS.put(key, value);
   }
 
   public static Collection<MethodMutatorFactory> fromStrings(
@@ -223,7 +223,7 @@ public final class Mutator {
   private static F<String, Iterable<MethodMutatorFactory>> fromString() {
     return new F<String, Iterable<MethodMutatorFactory>>() {
       public Iterable<MethodMutatorFactory> apply(final String a) {
-        Iterable<MethodMutatorFactory> i = mutators.get(a);
+        Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
         if (i == null) {
             throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
         }

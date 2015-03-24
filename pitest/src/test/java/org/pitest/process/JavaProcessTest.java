@@ -14,7 +14,7 @@ import org.pitest.util.NullJavaAgent;
 
 public class JavaProcessTest {
 
-  private final static int EXIT_CODE = 10;
+  private static final int EXIT_CODE = 10;
 
   public static void main(final String[] args) {
     try {

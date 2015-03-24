@@ -61,14 +61,14 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
     super(factory, methodInfo, context, writer);
   }
 
-  private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();
+  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
 
   static {
-    mutations.put(IRETURN, ireturnMutation());
-    mutations.put(DRETURN, dreturnMutation());
-    mutations.put(FRETURN, freturnMutation());
-    mutations.put(LRETURN, lreturnMutation());
-    mutations.put(ARETURN, areturnMutation());
+    MUTATIONS.put(IRETURN, ireturnMutation());
+    MUTATIONS.put(DRETURN, dreturnMutation());
+    MUTATIONS.put(FRETURN, freturnMutation());
+    MUTATIONS.put(LRETURN, lreturnMutation());
+    MUTATIONS.put(ARETURN, areturnMutation());
   }
 
   private static ZeroOperandMutation areturnMutation() {
@@ -199,7 +199,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
 
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
-    return mutations;
+    return MUTATIONS;
   }
 
 }

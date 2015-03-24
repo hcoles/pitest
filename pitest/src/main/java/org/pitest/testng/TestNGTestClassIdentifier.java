@@ -20,11 +20,11 @@ import org.pitest.functional.Option;
 import org.pitest.testapi.BaseTestClassIdentifier;
 
 public class TestNGTestClassIdentifier extends BaseTestClassIdentifier {
-  private final static ClassName annotationName = new ClassName(
+  private static final ClassName ANNOTATION_NAME = new ClassName(
                                                     "org.testng.annotations.Test");
 
   public boolean isATestClass(final ClassInfo a) {
-    return a.hasAnnotation(annotationName) || isATestClass(a.getSuperClass());
+    return a.hasAnnotation(ANNOTATION_NAME) || isATestClass(a.getSuperClass());
   }
 
   private boolean isATestClass(final Option<ClassInfo> clazz) {

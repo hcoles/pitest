@@ -18,8 +18,8 @@ import org.pitest.functional.Option;
 
 public interface JavaAgent {
 
-  public Option<String> getJarLocation();
+  Option<String> getJarLocation();
 
-  public void close();
+  void close();
 
 }

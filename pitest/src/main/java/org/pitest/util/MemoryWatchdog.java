@@ -25,7 +25,7 @@ import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
 
 public class MemoryWatchdog {
-  // private final static Logger LOG = Log.getLogger();
+  // private static final Logger LOG = Log.getLogger();
 
   public static void addWatchDogToAllPools(final long threshold,
       final NotificationListener listener) {

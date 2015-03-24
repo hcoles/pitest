@@ -31,7 +31,7 @@ import org.pitest.util.PitError;
 
 public class Pitest {
 
-  private final static Logger                LOG   = Log.getLogger();
+  private static final Logger                LOG   = Log.getLogger();
 
   private final List<? extends TestListener> listeners;
 

@@ -30,12 +30,12 @@ public interface MutationEngine {
    * @param source the source to use to retrieve unmated classes
    * @return a Mutater
    */
-  public Mutater createMutator(ClassByteArraySource source);
+  Mutater createMutator(ClassByteArraySource source);
 
   /**
    * Returns a list of mutation operations this engine can perform
    * @return a list of mutator names
    */
-  public Collection<String> getMutatorNames();
+  Collection<String> getMutatorNames();
 
 }

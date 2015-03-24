@@ -47,7 +47,7 @@ import org.pitest.util.Log;
  */
 public class InlinedFinallyBlockDetector implements InlinedCodeFilter {
 
-  private final static Logger LOG = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   public Collection<MutationDetails> process(
       final Collection<MutationDetails> mutations) {

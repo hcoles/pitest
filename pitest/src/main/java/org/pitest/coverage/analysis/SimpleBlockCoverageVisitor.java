@@ -79,7 +79,7 @@ public class SimpleBlockCoverageVisitor extends MethodVisitor {
   @Override
   public void visitFieldInsn(final int opcode, final String owner,
       final String name, final String desc) {
-    insertProbeIfAppropriate();;
+    insertProbeIfAppropriate();
     super.visitFieldInsn(opcode, owner, name, desc);
   }
 

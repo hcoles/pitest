@@ -16,13 +16,13 @@ package org.pitest.testapi;
 
 public interface ResultCollector {
 
-  public void notifyEnd(Description description, Throwable t);
+  void notifyEnd(Description description, Throwable t);
 
-  public void notifyEnd(Description description);
+  void notifyEnd(Description description);
 
-  public void notifyStart(final Description description);
+  void notifyStart(final Description description);
 
-  public void notifySkipped(final Description description);
+  void notifySkipped(final Description description);
 
-  public boolean shouldExit();
+  boolean shouldExit();
 }

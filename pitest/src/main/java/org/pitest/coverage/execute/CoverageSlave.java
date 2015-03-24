@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ import sun.pitest.CodeCoverageStore;
 
 public class CoverageSlave {
 
-  private final static Logger LOG = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   public static void main(final String[] args) {
 
@@ -68,11 +68,11 @@ public class CoverageSlave {
       CodeCoverageStore.init(invokeQueue);
 
       LOG.info("Checking environment");
-      
+
       if (paramsFromParent.getPitConfig().verifyEnvironment().hasSome()) {
         throw paramsFromParent.getPitConfig().verifyEnvironment().value();
       }
-      
+
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
 
@@ -84,11 +84,10 @@ public class CoverageSlave {
 
       worker.run();
 
-    } catch (PitHelpError phe) {
+    } catch (final PitHelpError phe) {
       LOG.log(Level.SEVERE, phe.getMessage());
       exitCode = ExitCode.JUNIT_ISSUE;
-    }
-    catch (final Throwable ex) {
+    } catch (final Throwable ex) {
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
       exitCode = ExitCode.UNKNOWN_ERROR;
@@ -121,7 +120,7 @@ public class CoverageSlave {
 
   private static List<TestUnit> getTestsFromParent(
       final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
-      throws IOException {
+          throws IOException {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 
@@ -130,7 +129,7 @@ public class CoverageSlave {
     final DependencyFilter filter = new DependencyFilter(
         new DependencyExtractor(new ClassPathByteArraySource(),
             paramsFromParent.getDependencyAnalysisMaxDistance()),
-        paramsFromParent.getFilter());
+            paramsFromParent.getFilter());
     final List<TestUnit> filteredTus = filter
         .filterTestsByDependencyAnalysis(tus);
 
@@ -142,8 +141,11 @@ public class CoverageSlave {
 
   private static List<TestUnit> discoverTests(
       final CoverageOptions paramsFromParent, final List<ClassName> classes) {
-    FindTestUnits finder = new FindTestUnits(paramsFromParent.getPitConfig());
-    final List<TestUnit> tus = finder.findTestUnitsForAllSuppliedClasses(   FCollection.flatMap(classes, ClassName.nameToClass()));
+    final FindTestUnits finder = new FindTestUnits(
+        paramsFromParent.getPitConfig());
+    final List<TestUnit> tus = finder
+        .findTestUnitsForAllSuppliedClasses(FCollection.flatMap(classes,
+            ClassName.nameToClass()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }

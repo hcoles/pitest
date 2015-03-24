@@ -43,7 +43,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   protected static final String      CAN_SET_NATIVE_METHOD = "Can-Set-Native-Method-Prefix";
   protected static final String      BOOT_CLASSPATH        = "Boot-Class-Path";
 
-  private final static String        AGENT_CLASS_NAME      = HotSwapAgent.class
+  private static final String        AGENT_CLASS_NAME      = HotSwapAgent.class
                                                                .getName();
 
   private Option<String>             location              = Option.none();

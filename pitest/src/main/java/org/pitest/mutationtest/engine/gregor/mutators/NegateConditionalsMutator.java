@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,34 +46,34 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 class ConditionalMethodVisitor extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "negated conditional";
-  private final static Map<Integer, Substitution> mutations   = new HashMap<Integer, Substitution>();
+  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<Integer, Substitution>();
 
   static {
-    mutations.put(Opcodes.IFEQ, new Substitution(Opcodes.IFNE, DESCRIPTION));
-    mutations.put(Opcodes.IFNE, new Substitution(Opcodes.IFEQ, DESCRIPTION));
-    mutations.put(Opcodes.IFLE, new Substitution(Opcodes.IFGT, DESCRIPTION));
-    mutations.put(Opcodes.IFGE, new Substitution(Opcodes.IFLT, DESCRIPTION));
-    mutations.put(Opcodes.IFGT, new Substitution(Opcodes.IFLE, DESCRIPTION));
-    mutations.put(Opcodes.IFLT, new Substitution(Opcodes.IFGE, DESCRIPTION));
-    mutations.put(Opcodes.IFNULL, new Substitution(Opcodes.IFNONNULL,
+    MUTATIONS.put(Opcodes.IFEQ, new Substitution(Opcodes.IFNE, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFNE, new Substitution(Opcodes.IFEQ, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFGT, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFLT, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFLE, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFGE, DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFNULL, new Substitution(Opcodes.IFNONNULL,
         DESCRIPTION));
-    mutations.put(Opcodes.IFNONNULL, new Substitution(Opcodes.IFNULL,
+    MUTATIONS.put(Opcodes.IFNONNULL, new Substitution(Opcodes.IFNULL,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPNE, new Substitution(Opcodes.IF_ICMPEQ,
+    MUTATIONS.put(Opcodes.IF_ICMPNE, new Substitution(Opcodes.IF_ICMPEQ,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPEQ, new Substitution(Opcodes.IF_ICMPNE,
+    MUTATIONS.put(Opcodes.IF_ICMPEQ, new Substitution(Opcodes.IF_ICMPNE,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPGT,
+    MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPGT,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPLT,
+    MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPLT,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPLE,
+    MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPLE,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPGE,
+    MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPGE,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ACMPEQ, new Substitution(Opcodes.IF_ACMPNE,
+    MUTATIONS.put(Opcodes.IF_ACMPEQ, new Substitution(Opcodes.IF_ACMPNE,
         DESCRIPTION));
-    mutations.put(Opcodes.IF_ACMPNE, new Substitution(Opcodes.IF_ACMPEQ,
+    MUTATIONS.put(Opcodes.IF_ACMPNE, new Substitution(Opcodes.IF_ACMPEQ,
         DESCRIPTION));
   }
 
@@ -84,7 +84,7 @@ class ConditionalMethodVisitor extends AbstractJumpMutator {
 
   @Override
   protected Map<Integer, Substitution> getMutations() {
-    return mutations;
+    return MUTATIONS;
   }
 
 }

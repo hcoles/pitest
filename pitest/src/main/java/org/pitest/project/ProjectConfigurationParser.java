@@ -19,6 +19,6 @@ public interface ProjectConfigurationParser {
    * @return a new ReportOptions instance, configured based on the provided
    *         resource.
    */
-  public ReportOptions loadProject(String project)
+  ReportOptions loadProject(String project)
       throws ProjectConfigurationParserException, ProjectConfigurationException;
 }

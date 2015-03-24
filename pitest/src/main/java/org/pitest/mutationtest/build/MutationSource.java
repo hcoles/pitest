@@ -29,7 +29,7 @@ import org.pitest.util.Log;
 
 public class MutationSource {
 
-  private final static Logger         LOG                                  = Log
+  private static final Logger         LOG                                  = Log
                                                                                .getLogger();
 
   private final MutationConfig        mutationConfig;

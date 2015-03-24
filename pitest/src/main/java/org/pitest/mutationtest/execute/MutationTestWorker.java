@@ -51,7 +51,7 @@ public class MutationTestWorker {
                                                                       .getLogger();
 
   // micro optimise debug logging
-  private final static boolean                              DEBUG = LOG
+  private static final boolean                              DEBUG = LOG
                                                                       .isLoggable(Level.FINE);
 
   private final Mutater                                     mutater;

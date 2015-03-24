@@ -35,7 +35,7 @@ public enum Help {
   UNKNOWN_MUTATOR(
       "Mutator or group %s is unknown. Check PIT configuration and try again.");
 
-  private final static String URL = "http://pitest.org";
+  private static final String URL = "http://pitest.org";
   private final String        text;
 
   private Help(final String text) {

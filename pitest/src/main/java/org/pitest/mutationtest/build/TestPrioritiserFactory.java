@@ -6,6 +6,6 @@ import org.pitest.plugin.ToolClasspathPlugin;
 
 public interface TestPrioritiserFactory extends ToolClasspathPlugin {
 
-  public TestPrioritiser makeTestPrioritiser(CodeSource code, CoverageDatabase coverage);
+  TestPrioritiser makeTestPrioritiser(CodeSource code, CoverageDatabase coverage);
   
 }

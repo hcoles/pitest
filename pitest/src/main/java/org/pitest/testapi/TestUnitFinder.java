@@ -19,6 +19,6 @@ import java.util.List;
 
 public interface TestUnitFinder {
 
-  public List<TestUnit> findTestUnits(final Class<?> clazz);
+  List<TestUnit> findTestUnits(final Class<?> clazz);
 
 }

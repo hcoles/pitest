@@ -60,7 +60,7 @@ import org.pitest.util.Unchecked;
  */
 public class ReportOptions {
 
-  public final static Collection<String> LOGGING_CLASSES                = Arrays
+  public static final Collection<String> LOGGING_CLASSES                = Arrays
                                                                             .asList(
                                                                                 "java.util.logging",
                                                                                 "org.apache.log4j",

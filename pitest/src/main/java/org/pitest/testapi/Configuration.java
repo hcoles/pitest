@@ -20,12 +20,12 @@ import org.pitest.help.PitHelpError;
 
 public interface Configuration {
 
-  public TestUnitFinder testUnitFinder();
+  TestUnitFinder testUnitFinder();
 
-  public TestSuiteFinder testSuiteFinder();
+  TestSuiteFinder testSuiteFinder();
 
-  public TestClassIdentifier testClassIdentifier();
+  TestClassIdentifier testClassIdentifier();
 
-  public Option<PitHelpError> verifyEnvironment();
+  Option<PitHelpError> verifyEnvironment();
 
 }

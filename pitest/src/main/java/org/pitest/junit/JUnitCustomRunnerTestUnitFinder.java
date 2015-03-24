@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,10 +40,10 @@ import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
-    
+
   @SuppressWarnings("rawtypes")
-  private final static Option<Class> classRule = findClassRuleClass();
-  
+  private static final Option<Class> CLASS_RULE = findClassRuleClass();
+
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
@@ -71,24 +71,26 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean isAJUnitThreeErrorOrWarning(final Runner runner) {
     return !runner.getDescription().getChildren().isEmpty()
         && runner.getDescription().getChildren().get(0).getClassName()
-            .startsWith("junit.framework.TestSuite");
+        .startsWith("junit.framework.TestSuite");
   }
 
   private boolean shouldTreatAsOneUnit(final Class<?> clazz, final Runner runner) {
     final Set<Method> methods = Reflection.allMethods(clazz);
     return runnerCannotBeSplit(runner)
-            || hasAnnotation(methods, BeforeClass.class)
-            || hasAnnotation(methods, AfterClass.class)
-            || hasClassRuleAnnotations(clazz, methods);
+        || hasAnnotation(methods, BeforeClass.class)
+        || hasAnnotation(methods, AfterClass.class)
+        || hasClassRuleAnnotations(clazz, methods);
   }
 
   @SuppressWarnings("unchecked")
-  private boolean hasClassRuleAnnotations(Class<?> clazz, Set<Method> methods) {
-    if (classRule.hasNone()) {
+  private boolean hasClassRuleAnnotations(final Class<?> clazz,
+      final Set<Method> methods) {
+    if (CLASS_RULE.hasNone()) {
       return false;
     }
-    
-    return hasAnnotation(methods, classRule.value()) || hasAnnotation(Reflection.publicFields(clazz), classRule.value());
+
+    return hasAnnotation(methods, CLASS_RULE.value())
+        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.value());
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
@@ -155,12 +157,12 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private Filter createFilterFor(final Description description) {
     return new DescriptionFilter(description.toString());
   }
-  
+
   @SuppressWarnings("rawtypes")
   private static Option<Class> findClassRuleClass() {
     try {
-      return Option.<Class>some(Class.forName("org.junit.ClassRule"));
-    } catch(ClassNotFoundException ex) {
+      return Option.<Class> some(Class.forName("org.junit.ClassRule"));
+    } catch (final ClassNotFoundException ex) {
       return Option.none();
     }
   }

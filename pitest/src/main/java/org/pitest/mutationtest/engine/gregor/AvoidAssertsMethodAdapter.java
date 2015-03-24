@@ -24,7 +24,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
-  private final static String DISABLE_REASON = "ASSERTS";
+  private static final String DISABLE_REASON = "ASSERTS";
 
   private final MutationContext       context;
   private boolean             assertBlockStarted;

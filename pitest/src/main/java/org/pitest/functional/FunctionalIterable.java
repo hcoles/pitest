@@ -19,16 +19,16 @@ import java.util.List;
 
 public interface FunctionalIterable<A> extends Iterable<A> {
 
-  public void forEach(final SideEffect1<A> e);
+  void forEach(final SideEffect1<A> e);
 
-  public <B> List<B> map(final F<A, B> f);
+  <B> List<B> map(final F<A, B> f);
 
-  public <B> void mapTo(final F<A, B> f, final Collection<? super B> bs);
+  <B> void mapTo(final F<A, B> f, final Collection<? super B> bs);
 
-  public <B> List<B> flatMap(final F<A, ? extends Iterable<B>> f);
+  <B> List<B> flatMap(final F<A, ? extends Iterable<B>> f);
 
-  public List<A> filter(final F<A, Boolean> predicate);
+  List<A> filter(final F<A, Boolean> predicate);
 
-  public boolean contains(final F<A, Boolean> predicate);
+  boolean contains(final F<A, Boolean> predicate);
 
 }

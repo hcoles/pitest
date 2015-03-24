@@ -36,7 +36,7 @@ public class Score {
   private static Map<DetectionStatus, StatusCount> createMap() {
     final Map<DetectionStatus, StatusCount> map = new LinkedHashMap<DetectionStatus, StatusCount>();
     for (final DetectionStatus each : DetectionStatus.values()) {
-      map.put(each, new StatusCount(each, 0l));
+      map.put(each, new StatusCount(each, 0L));
     }
     return map;
   }
@@ -51,11 +51,11 @@ public class Score {
   }
 
   public long getTotalMutations() {
-    return FCollection.fold(addTotals(), 0l, this.counts.values());
+    return FCollection.fold(addTotals(), 0L, this.counts.values());
   }
 
   public long getTotalDetectedMutations() {
-    return FCollection.fold(addTotals(), 0l,
+    return FCollection.fold(addTotals(), 0L,
         FCollection.filter(this.counts.values(), isDetected()));
   }
 

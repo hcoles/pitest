@@ -2,7 +2,7 @@ package org.pitest.mutationtest.tooling;
 
 import org.pitest.functional.Option;
 
-public class AnalysisResult {
+public final class AnalysisResult {
 
   private final Option<CombinedStatistics> statistics;
   private final Option<Exception>          error;

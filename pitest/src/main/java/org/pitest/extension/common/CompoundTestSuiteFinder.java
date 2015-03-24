@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.pitest.testapi.TestSuiteFinder;
 
-public class CompoundTestSuiteFinder implements TestSuiteFinder {
+public final class CompoundTestSuiteFinder implements TestSuiteFinder {
 
   private final Collection<TestSuiteFinder> children;
 

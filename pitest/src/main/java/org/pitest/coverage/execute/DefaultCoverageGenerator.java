@@ -48,7 +48,7 @@ import org.pitest.util.Unchecked;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
-  private final static Logger    LOG = Log.getLogger();
+  private static final Logger    LOG = Log.getLogger();
 
   private final CoverageOptions  coverageOptions;
   private final LaunchOptions    launchOptions;
@@ -79,7 +79,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final Collection<ClassInfo> tests = this.code.getTests();
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
-      final CoverageData coverage = new CoverageData(this.code, new LineMapper(code));
+      final CoverageData coverage = new CoverageData(this.code, new LineMapper(
+          code));
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
       gatherCoverageData(tests, coverage);
@@ -132,9 +133,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     if (exitCode == ExitCode.JUNIT_ISSUE) {
       LOG.severe("Error generating coverage. Please check that your classpath contains JUnit 4.6 or above.");
-      throw new PitError("Coverage generation slave exited abnormally. Please check the classpath.");
-    } else if(!exitCode.isOk()) {
-      LOG.severe("Coverage generator Slave exited abnormally due to " + exitCode);
+      throw new PitError(
+          "Coverage generation slave exited abnormally. Please check the classpath.");
+    } else if (!exitCode.isOk()) {
+      LOG.severe("Coverage generator Slave exited abnormally due to "
+          + exitCode);
       throw new PitError("Coverage generation slave exited abnormally!");
     } else {
       LOG.fine("Coverage generator Slave exited ok");

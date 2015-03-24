@@ -65,7 +65,7 @@ import org.pitest.util.Timings;
 
 public class MutationCoverage {
 
-  private final static int           MB  = 1024 * 1024;
+  private static final int           MB  = 1024 * 1024;
 
   private static final Logger        LOG = Log.getLogger();
   private final ReportOptions        data;

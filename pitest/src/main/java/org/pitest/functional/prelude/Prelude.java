@@ -33,27 +33,27 @@ import org.pitest.functional.predicate.Predicate;
  */
 public abstract class Prelude {
 
-  public final static <A> And<A> and(final F<A, Boolean>... ps) {
+  public static final <A> And<A> and(final F<A, Boolean>... ps) {
     return new And<A>(Arrays.asList(ps));
   }
 
-  public final static <A> And<A> and(final Iterable<? extends F<A, Boolean>> ps) {
+  public static final <A> And<A> and(final Iterable<? extends F<A, Boolean>> ps) {
     return new And<A>(ps);
   }
 
-  public final static <A> Not<A> not(final F<A, Boolean> p) {
+  public static final <A> Not<A> not(final F<A, Boolean> p) {
     return new Not<A>(p);
   }
 
-  public final static <A> Or<A> or(final Predicate<A>... ps) {
+  public static final <A> Or<A> or(final Predicate<A>... ps) {
     return new Or<A>(Arrays.asList(ps));
   }
 
-  public final static <A> Or<A> or(final Iterable<Predicate<A>> ps) {
+  public static final <A> Or<A> or(final Iterable<Predicate<A>> ps) {
     return new Or<A>(ps);
   }
 
-  public final static <A> SideEffect1<A> accumulateTo(
+  public static final <A> SideEffect1<A> accumulateTo(
       final Collection<A> collection) {
     return new SideEffect1<A>() {
 
@@ -74,7 +74,7 @@ public abstract class Prelude {
     };
   }
 
-  public final static <A> F<A, A> id() {
+  public static final <A> F<A, A> id() {
     return new F<A, A>() {
       public A apply(final A a) {
         return a;
@@ -82,24 +82,24 @@ public abstract class Prelude {
     };
   }
 
-  public final static <A> F<A, A> id(final Class<A> type) {
+  public static final <A> F<A, A> id(final Class<A> type) {
     return id();
   }
 
-  public final static <T> SideEffect1<T> print() {
+  public static final <T> SideEffect1<T> print() {
     return printTo(System.out);
   }
 
-  public final static <T> SideEffect1<T> print(final Class<T> type) {
+  public static final <T> SideEffect1<T> print(final Class<T> type) {
     return print();
   }
 
-  public final static <T> SideEffect1<T> printTo(final Class<T> type,
+  public static final <T> SideEffect1<T> printTo(final Class<T> type,
       final PrintStream stream) {
     return printTo(stream);
   }
 
-  public final static <T> SideEffect1<T> printTo(final PrintStream stream) {
+  public static final <T> SideEffect1<T> printTo(final PrintStream stream) {
     return new SideEffect1<T>() {
       public void apply(final T a) {
         stream.print(a);

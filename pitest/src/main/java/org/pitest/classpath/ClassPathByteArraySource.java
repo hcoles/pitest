@@ -23,7 +23,7 @@ import org.pitest.util.Log;
 
 public class ClassPathByteArraySource implements ClassByteArraySource {
 
-  private final static Logger LOG   = Log.getLogger();
+  private static final Logger LOG   = Log.getLogger();
 
   private final ClassPath classPath;
 

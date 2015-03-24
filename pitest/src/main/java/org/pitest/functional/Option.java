@@ -21,7 +21,7 @@ import java.util.Iterator;
 public abstract class Option<T> implements FunctionalIterable<T> {
 
   @SuppressWarnings({ "rawtypes" })
-  private final static None NONE             = new None();
+  private static final None NONE             = new None();
 
   private Option() {
   }
@@ -74,7 +74,7 @@ public abstract class Option<T> implements FunctionalIterable<T> {
     return !hasSome();
   }
 
-  public final static class None<T> extends Option<T> {
+  public static final class None<T> extends Option<T> {
 
     private None() {
 
@@ -102,7 +102,7 @@ public abstract class Option<T> implements FunctionalIterable<T> {
 
   }
 
-  public final static class Some<T> extends Option<T> {
+  public static final class Some<T> extends Option<T> {
 
     private final T           value;
 

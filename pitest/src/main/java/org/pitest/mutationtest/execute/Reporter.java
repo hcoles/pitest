@@ -22,11 +22,11 @@ import org.pitest.util.ExitCode;
 
 public interface Reporter {
 
-  public void describe(MutationIdentifier i) throws IOException;
+  void describe(MutationIdentifier i) throws IOException;
 
-  public void report(MutationIdentifier i,
-      MutationStatusTestPair mutationDetected) throws IOException;
+  void report(MutationIdentifier i, MutationStatusTestPair mutationDetected)
+      throws IOException;
 
-  public void done(ExitCode exitCode);
+  void done(ExitCode exitCode);
 
 }

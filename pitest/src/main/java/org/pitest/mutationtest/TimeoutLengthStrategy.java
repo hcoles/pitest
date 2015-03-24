@@ -17,6 +17,6 @@ package org.pitest.mutationtest;
 
 public interface TimeoutLengthStrategy {
 
-  public long getAllowedTime(long normalDuration);
+  long getAllowedTime(long normalDuration);
 
 }

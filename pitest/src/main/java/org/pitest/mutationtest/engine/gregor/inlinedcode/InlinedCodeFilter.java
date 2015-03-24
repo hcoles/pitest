@@ -6,7 +6,6 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public interface InlinedCodeFilter {
 
-  public Collection<MutationDetails> process(
-      Collection<MutationDetails> mutations);
+  Collection<MutationDetails> process(Collection<MutationDetails> mutations);
 
 }

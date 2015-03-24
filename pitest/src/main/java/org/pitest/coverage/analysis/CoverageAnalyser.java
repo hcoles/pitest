@@ -14,22 +14,22 @@ import sun.pitest.CodeCoverageStore;
 /**
  * Need to count the number of blocks in the method. Storing method as a tree
  * enables a second scan by the instrumenting visitor
- * 
+ *
  */
 public class CoverageAnalyser extends MethodNode {
 
-  private static final int    MAX_SUPPORTED_LOCAL_PROBES = 15;
+  private static final int           MAX_SUPPORTED_LOCAL_PROBES = 15;
 
   private final CoverageClassVisitor parent;
-  private final int           classId;
-  private final MethodVisitor mv;
-  private final int           probeOffset;
+  private final int                  classId;
+  private final MethodVisitor        mv;
+  private final int                  probeOffset;
 
-  public CoverageAnalyser( CoverageClassVisitor parent, final int classId,
+  public CoverageAnalyser(final CoverageClassVisitor parent, final int classId,
       final int probeOffset, final MethodVisitor mv, final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
-    super(Opcodes.ASM5,access, name, desc, signature, exceptions);
+    super(Opcodes.ASM5, access, name, desc, signature, exceptions);
     this.mv = mv;
     this.parent = parent;
     this.classId = classId;
@@ -39,12 +39,11 @@ public class CoverageAnalyser extends MethodNode {
   @Override
   public void visitEnd() {
     final List<Block> blocks = findRequriedProbeLocations();
-    
-    parent.registerProbes(blocks.size());
-    int blockCount = blocks.size();
-    CodeCoverageStore.registerMethod(this.classId,this.name,this.desc, probeOffset, probeOffset + blocks.size() -1 );
-    
-    
+
+    this.parent.registerProbes(blocks.size());
+    final int blockCount = blocks.size();
+    CodeCoverageStore.registerMethod(this.classId, this.name, this.desc,
+        this.probeOffset, (this.probeOffset + blocks.size()) - 1);
 
     // according to the jvm spec
     // "There must never be an uninitialized class instance in a local variable in code protected by an exception handler"
@@ -53,26 +52,31 @@ public class CoverageAnalyser extends MethodNode {
     // able to meet this guarantee for constructors. Although they appear to
     // work, they are rejected by the
     // java 7 verifier - hence fall back to a simple but slow approach.
-    DefaultInstructionCounter counter = new DefaultInstructionCounter();
-    
+    final DefaultInstructionCounter counter = new DefaultInstructionCounter();
 
     if ((blockCount == 1) || this.name.equals("<init>")) {
-      accept(new InstructionTrackingMethodVisitor(new SimpleBlockCoverageVisitor(blocks, counter, this.classId, this.mv,
-          this.access, this.name, this.desc, this.probeOffset), counter));
-    } else if ((blockCount <= MAX_SUPPORTED_LOCAL_PROBES)
-        && (blockCount >= 1)) {
-      accept(new InstructionTrackingMethodVisitor(new LocalVariableCoverageMethodVisitor(blocks, counter, this.classId, this.mv,
-          this.access, this.name, this.desc, this.probeOffset), counter));
+      accept(new InstructionTrackingMethodVisitor(
+          new SimpleBlockCoverageVisitor(blocks, counter, this.classId,
+              this.mv, this.access, this.name, this.desc, this.probeOffset),
+          counter));
+    } else if ((blockCount <= MAX_SUPPORTED_LOCAL_PROBES) && (blockCount >= 1)) {
+      accept(new InstructionTrackingMethodVisitor(
+          new LocalVariableCoverageMethodVisitor(blocks, counter, this.classId,
+              this.mv, this.access, this.name, this.desc, this.probeOffset),
+          counter));
     } else {
-      // for now fall back to the naive implementation - could instead use array passing version
-      accept(new InstructionTrackingMethodVisitor(new ArrayProbeCoverageMethodVisitor(blocks, counter, this.classId, this.mv,
-          this.access, this.name, this.desc, this.probeOffset), counter));
+      // for now fall back to the naive implementation - could instead use array
+      // passing version
+      accept(new InstructionTrackingMethodVisitor(
+          new ArrayProbeCoverageMethodVisitor(blocks, counter, this.classId,
+              this.mv, this.access, this.name, this.desc, this.probeOffset),
+          counter));
     }
 
   }
 
   private List<Block> findRequriedProbeLocations() {
-    ControlFlowAnalyser cfa = new ControlFlowAnalyser();
-    return     cfa.analyze(this);
+    final ControlFlowAnalyser cfa = new ControlFlowAnalyser();
+    return cfa.analyze(this);
   }
 }

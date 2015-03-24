@@ -25,7 +25,7 @@ import org.pitest.functional.SideEffect1;
 
 public class CommunicationThread {
 
-  private final static Logger                     LOG = Log.getLogger();
+  private static final Logger                     LOG = Log.getLogger();
 
   private final SideEffect1<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;

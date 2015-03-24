@@ -20,10 +20,10 @@ import java.util.logging.Logger;
 
 public class SocketFinder {
 
-  private final static Logger LOG             = Log.getLogger();
+  private static final Logger LOG             = Log.getLogger();
 
-  private final static int    MIN_PORT_NUMBER = 8091;
-  private final static int    MAX_PORT_NUMBER = 9000;
+  private static final int    MIN_PORT_NUMBER = 8091;
+  private static final int    MAX_PORT_NUMBER = 9000;
 
   private int                 lastPortNumber  = MIN_PORT_NUMBER;
 

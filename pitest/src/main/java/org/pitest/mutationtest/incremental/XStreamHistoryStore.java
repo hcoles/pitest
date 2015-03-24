@@ -35,7 +35,7 @@ public class XStreamHistoryStore implements HistoryStore {
   private static final Logger                                   LOG               = Log
                                                                                       .getLogger();
 
-  private final static XStream                                  XSTREAM_INSTANCE  = configureXStream();
+  private static final XStream                                  XSTREAM_INSTANCE  = configureXStream();
 
   private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
