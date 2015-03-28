@@ -127,6 +127,16 @@ public class PitMojoIT {
     assertThat(actual).contains("<mutation detected='false' status='NO_COVERAGE'><sourceFile>NotCovered.java</sourceFile>");
   }
   
+  @Test
+  public void shouldWorkWithGWTMockito() throws Exception {
+    final File testDir = prepare("/pit-183-gwtmockito");
+    this.verifier.executeGoal("test");
+    this.verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+    final String actual = readResults(testDir);
+    assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyWidget.java</sourceFile>");
+    assertThat(actual).contains("<mutation detected='false' status='SURVIVED'><sourceFile>MyWidget.java</sourceFile>");
+    assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
   
   private String readResults(File testDir) throws FileNotFoundException,
       IOException {

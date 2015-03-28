@@ -14,6 +14,8 @@
  */
 package org.pitest.mutationtest.config;
 
+import java.io.Serializable;
+
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
@@ -175,13 +177,13 @@ public enum ConfigOption {
   JVM_PATH("jvmPath");
 
   private final String text;
-  private final Object defaultValue;
+  private final Serializable defaultValue;
 
   ConfigOption(final String text) {
     this(text, null);
   }
 
-  ConfigOption(final String text, final Object defaultValue) {
+  ConfigOption(final String text, final Serializable defaultValue) {
     this.text = text;
     this.defaultValue = defaultValue;
   }

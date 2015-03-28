@@ -106,7 +106,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     final String runnerName = runner.getClass().getName();
     return runnerName.equals("junitparams.JUnitParamsRunner")
         || runnerName.startsWith("org.spockframework.runtime.Sputnik")
-        || runnerName.startsWith("com.insightfullogic.lambdabehave");
+        || runnerName.startsWith("com.insightfullogic.lambdabehave")
+        || runnerName.startsWith("com.google.gwtmockito.GwtMockitoTestRunner");
   }
 
   private boolean isJUnitThreeSuiteMethodNotForOwnClass(final Runner runner,
