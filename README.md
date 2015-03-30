@@ -9,7 +9,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.5-SNAPSHOT
+### 1.1.6-SNAPSHOT
+
+Nothing yet
+
+### 1.1.5
 
 * Fix for #148 - Stackoverflow with TestNG data providers when using JMockit
 * Fix for #56 - Not reporting junit incompatibilities
