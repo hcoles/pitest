@@ -19,6 +19,7 @@ Nothing yet
 * Fix for #56 - Not reporting junit incompatibilities
 * Fix for #174 - Invalid linecoverage.xml with static initializers 
 * Fix for #183 - Can't run GWTMockito tests
+* Fix for #179 - Broken `includeLaunchClasspath=false` on Windows
 * #173 - Read exclusions and groups from maven surefire config
 
 ### 1.1.4
