@@ -101,10 +101,7 @@ public enum ConfigOption {
    * Formats in which to output results
    */
   OUTPUT_FORMATS("outputFormats"),
-  /**
-   * External config file path
-   */
-  PROJECT_FILE("configFile"),
+
   /**
    * Classpath entries to analyse. Although classes on the launch classpath will also be
    * analysed, this is the preferred place to specify the code to analyse

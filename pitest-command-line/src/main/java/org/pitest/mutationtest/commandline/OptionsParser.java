@@ -37,7 +37,6 @@ import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
-import static org.pitest.mutationtest.config.ConfigOption.PROJECT_FILE;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
@@ -67,10 +66,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.project.ProjectConfigurationException;
-import org.pitest.project.ProjectConfigurationParser;
-import org.pitest.project.ProjectConfigurationParserException;
-import org.pitest.project.ProjectConfigurationParserFactory;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Unchecked;
@@ -99,7 +94,6 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
   private final OptionSpec<String>                   outputFormatSpec;
-  private final OptionSpec<String>                   projectFileSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
@@ -126,9 +120,6 @@ public class OptionsParser {
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
 
-    this.projectFileSpec = parserAccepts(PROJECT_FILE).withRequiredArg()
-        .ofType(String.class)
-        .describedAs("The name of the config file to use.");
 
     this.targetClassesSpec = parserAccepts(TARGET_CLASSES)
         .withRequiredArg()
@@ -305,20 +296,14 @@ public class OptionsParser {
   }
 
   public ParseResult parse(final String[] args) {
-
     final ReportOptions data = new ReportOptions();
     try {
       final OptionSet userArgs = this.parser.parse(args);
+      return parseCommandLine(data, userArgs);
 
-      if (userArgs.has(this.projectFileSpec)) {
-        return loadProjectFile(userArgs);
-      } else {
-        return parseCommandLine(data, userArgs);
-      }
     } catch (final OptionException uoe) {
       return new ParseResult(data, uoe.getLocalizedMessage());
     }
-
   }
 
   /**
@@ -412,33 +397,6 @@ public class OptionsParser {
         this.includedGroupsSpec.values(userArgs));
 
     data.setGroupConfig(conf);
-  }
-
-  /**
-   * Creates a new ParseResult object, using the project file specified by the
-   * user on the command line.
-   * 
-   * @param userArgs
-   *          the OptionSet that contains all of the command line arguments.
-   * @return a correctly instantiated ParseResult using the project file to load
-   *         arguments.
-   */
-  private ParseResult loadProjectFile(final OptionSet userArgs) {
-    try {
-      final ProjectConfigurationParser configParser = ProjectConfigurationParserFactory
-          .createParser();
-
-      final ReportOptions loaded = configParser.loadProject(userArgs
-          .valueOf(this.projectFileSpec));
-
-      return new ParseResult(loaded, null);
-    } catch (final ProjectConfigurationParserException e) {
-      return new ParseResult(new ReportOptions(), "Project File ERROR: "
-          + e.getMessage() + ".");
-    } catch (final ProjectConfigurationException e) {
-      return new ParseResult(new ReportOptions(), "Project File ERROR: "
-          + e.getMessage() + ".");
-    }
   }
 
   public void printHelp() {

@@ -11,7 +11,7 @@ Read all about it at http://pitest.org
 
 ### 1.1.6-SNAPSHOT
 
-Nothing yet
+* #184 - Remove undocumented project file feature
 
 ### 1.1.5
 
