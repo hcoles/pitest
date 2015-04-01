@@ -72,12 +72,14 @@ public class ReportSourceLocatorTest {
 		File mockSubDir0 = mock(File.class);
 		File mockSubDir1 = mock(File.class);
 		File mockSubDir2 = mock(File.class);
+		File mockSubDir3 = mock(File.class);
 		
 		when(mockSubDir0.lastModified()).thenReturn(2L);
 		when(mockSubDir1.lastModified()).thenReturn(3L);
 		when(mockSubDir2.lastModified()).thenReturn(1L);
+		when(mockSubDir3.lastModified()).thenReturn(3L);
 		
-		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ mockSubDir0, mockSubDir1, mockSubDir2 });
+		when(mockReportsDir.listFiles(isA(FileFilter.class))).thenReturn(new File[]{ mockSubDir0, mockSubDir1, mockSubDir2, mockSubDir3 });
 		assertThat(fixture.locate(mockReportsDir, mockLog), sameInstance(mockSubDir1));
 	}
 	

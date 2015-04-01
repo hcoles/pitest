@@ -25,5 +25,9 @@ public class XMLReportGenerator implements IReportGenerationStrategy {
 	public String getGeneratorName() {
 		return "XMLReportGenerator";
 	}
+	
+	public String getGeneratorDataFormat() {
+		return "XML";
+	}
 
 }

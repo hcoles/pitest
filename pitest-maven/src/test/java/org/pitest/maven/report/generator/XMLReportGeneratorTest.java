@@ -14,10 +14,13 @@
  */
 package org.pitest.maven.report.generator;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+
+import java.util.Arrays;
 
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -25,6 +28,8 @@ import org.junit.Test;
 
 public class XMLReportGeneratorTest {
 
+	private static final String XML_SOURCE_DATA_FORMAT = "XML";
+	
 	private Log mockLogger;
 	private XMLReportGenerator fixture;
 	
@@ -41,7 +46,12 @@ public class XMLReportGeneratorTest {
 	
 	@Test
 	public void testNotExecuted() {
-		assertThat(fixture.generate(new ReportGenerationContext(null, null, null, null, this.mockLogger)), sameInstance(ReportGenerationResultEnum.NOT_EXECUTED));
+		assertThat(fixture.generate(new ReportGenerationContext(null, null, null, null, this.mockLogger, Arrays.asList(XML_SOURCE_DATA_FORMAT))), sameInstance(ReportGenerationResultEnum.NOT_EXECUTED));
+	}
+	
+	@Test
+	public void testSourceDataFormat() {
+		assertThat(fixture.getGeneratorDataFormat(), equalTo(XML_SOURCE_DATA_FORMAT));
 	}
 
 }

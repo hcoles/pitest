@@ -15,6 +15,7 @@
 package org.pitest.maven.report.generator;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -29,17 +30,19 @@ public class ReportGenerationContext {
 	private File reportsDataDirectory;
 	private File siteDirectory;
 	private Log logger;
+	private List<String> sourceDataFormats;
 	
 	public ReportGenerationContext() {
 		
 	}
 	
-	public ReportGenerationContext(Locale locale, Sink sink, File reportsDataDirectory, File siteDirectory, Log logger) {
+	public ReportGenerationContext(Locale locale, Sink sink, File reportsDataDirectory, File siteDirectory, Log logger, List<String> sourceDataFormats) {
 		this.locale = locale;
 		this.sink = sink;
 		this.reportsDataDirectory = reportsDataDirectory;
 		this.siteDirectory = siteDirectory;
 		this.logger = logger;
+		this.sourceDataFormats = sourceDataFormats;
 	}
 
 	public Locale getLocale() {
@@ -77,6 +80,13 @@ public class ReportGenerationContext {
 		this.logger = logger;
 	}
 	
+	public List<String> getSourceDataFormats() {
+		return sourceDataFormats;
+	}
+	public void setSourceDataFormats(List<String> sourceDataFormats) {
+		this.sourceDataFormats = sourceDataFormats;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

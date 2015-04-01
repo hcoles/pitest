@@ -20,5 +20,6 @@ public interface IReportGenerationStrategy {
 
 	public ReportGenerationResultEnum generate(ReportGenerationContext context);
 	public String getGeneratorName();
+	public String getGeneratorDataFormat();
 	
 }

@@ -36,5 +36,9 @@ public class HTMLReportGenerator implements IReportGenerationStrategy {
 	public String getGeneratorName() {
 		return "HTMLReportGenerator";
 	}
+	
+	public String getGeneratorDataFormat() {
+		return "HTML";
+	}
 
 }

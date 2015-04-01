@@ -14,11 +14,14 @@
  */
 package org.pitest.maven.report.generator;
 
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +48,7 @@ public class ReportGenerationManagerTest {
 	@Mock private Log log;
 	@Mock private File reportsDataDirectory;
 	@Mock private File siteDirectory;
+	@Mock private File locatedReportsDataDirectory; 
 	
 	@InjectMocks private ReportGenerationManager fixture;
 	
@@ -55,7 +59,11 @@ public class ReportGenerationManagerTest {
 		this.reportGenerationStrategyList.add(htmlGenerator);
 		this.fixture.reportGenerationStrategyList = this.reportGenerationStrategyList;
 		
-		this.generationContext = new ReportGenerationContext(Locale.ENGLISH, null, this.reportsDataDirectory, this.siteDirectory, this.log);
+		this.generationContext = new ReportGenerationContext(Locale.ENGLISH, null, this.reportsDataDirectory, this.siteDirectory, this.log, Arrays.asList("XML", "HTML"));
+		
+		when(this.reportLocator.locate(this.reportsDataDirectory, this.log)).thenReturn(this.locatedReportsDataDirectory);
+		when(this.xmlGenerator.getGeneratorDataFormat()).thenReturn("XML");
+		when(this.htmlGenerator.getGeneratorDataFormat()).thenReturn("HTML");
 	}
 	
 	@Test
@@ -66,6 +74,7 @@ public class ReportGenerationManagerTest {
 		
 		verify(this.xmlGenerator).generate(this.generationContext);
 		verifyZeroInteractions(this.htmlGenerator);
+		this.assertLocatedReportsDirectory();
 	}
 	
 	@Test
@@ -77,6 +86,7 @@ public class ReportGenerationManagerTest {
 		
 		verify(this.xmlGenerator).generate(this.generationContext);
 		verify(this.htmlGenerator).generate(this.generationContext);
+		this.assertLocatedReportsDirectory();
 	}
 	
 	@Test(expected = PitError.class)
@@ -85,6 +95,7 @@ public class ReportGenerationManagerTest {
 		when(this.htmlGenerator.generate(this.generationContext)).thenReturn(ReportGenerationResultEnum.NOT_EXECUTED);
 		
 		this.fixture.generateSiteReport(this.generationContext);
+		this.assertLocatedReportsDirectory();
 	}
 	
 	@Test
@@ -96,6 +107,7 @@ public class ReportGenerationManagerTest {
 		
 		verify(this.xmlGenerator).generate(this.generationContext);
 		verify(this.htmlGenerator).generate(this.generationContext);
+		this.assertLocatedReportsDirectory();
 	}
 	
 	@Test(expected = PitError.class)
@@ -104,6 +116,17 @@ public class ReportGenerationManagerTest {
 		when(this.htmlGenerator.generate(this.generationContext)).thenReturn(ReportGenerationResultEnum.FAILURE);
 		
 		this.fixture.generateSiteReport(this.generationContext);
+		this.assertLocatedReportsDirectory();
+	}
+	
+	@Test(expected = PitError.class)
+	public void testNoGeneratorsFound() {
+		this.generationContext.setSourceDataFormats(Arrays.asList("foo"));
+		this.fixture.generateSiteReport(this.generationContext);
+	}
+	
+	private void assertLocatedReportsDirectory() {
+		assertThat(this.generationContext.getReportsDataDirectory(), sameInstance(this.locatedReportsDataDirectory));
 	}
 
 }

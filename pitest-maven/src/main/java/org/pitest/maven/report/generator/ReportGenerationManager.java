@@ -14,7 +14,7 @@
  */
 package org.pitest.maven.report.generator;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pitest.maven.report.ReportSourceLocator;
@@ -28,7 +28,7 @@ public class ReportGenerationManager {
 	public ReportGenerationManager() {
 		this.reportLocator = new ReportSourceLocator();
 		
-		this.reportGenerationStrategyList = new LinkedList<IReportGenerationStrategy>();
+		this.reportGenerationStrategyList = new ArrayList<IReportGenerationStrategy>();
     	this.reportGenerationStrategyList.add(new XMLReportGenerator());
     	this.reportGenerationStrategyList.add(new HTMLReportGenerator());
 	}
@@ -42,10 +42,10 @@ public class ReportGenerationManager {
 		context.getLogger().debug("starting execution of report generators");
 		context.getLogger().debug("using report generation context: " + context);
 		
-		for(IReportGenerationStrategy generator : this.reportGenerationStrategyList){
-			context.getLogger().debug("starting report generator [" + generator.getGeneratorName() + "]");
-			result = generator.generate(context);
-			context.getLogger().debug("result of report generator [" + generator.getGeneratorName() + "] was [" + result.toString() + "]");
+		for(String dataFormat : context.getSourceDataFormats()){
+			context.getLogger().debug("starting report generator for source data format [" + dataFormat + "]");
+			result = this.locateReportGenerationStrategy(dataFormat).generate(context);
+			context.getLogger().debug("result of report generator for source data format [" + dataFormat + "] was [" + result.toString() + "]");
 			if(result == ReportGenerationResultEnum.SUCCESS){
 				successfulExecution = true;
 				break;
@@ -57,6 +57,16 @@ public class ReportGenerationManager {
 		}
 		
 		context.getLogger().debug("finished execution of report generators");
+	}
+	
+	private IReportGenerationStrategy locateReportGenerationStrategy(String sourceDataFormat) {
+		for(IReportGenerationStrategy strategy : this.reportGenerationStrategyList){
+			if(sourceDataFormat.equalsIgnoreCase(strategy.getGeneratorDataFormat())){
+				return strategy;
+			}
+		}
+		
+		throw new PitError("Could not locate report generator for data source [" + sourceDataFormat + "]");
 	}
 	
 }

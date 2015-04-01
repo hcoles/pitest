@@ -14,6 +14,7 @@
  */
 package org.pitest.maven.report.generator;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -30,6 +32,8 @@ import org.junit.rules.TemporaryFolder;
 
 public class HTMLReportGeneratorTest {
 
+	private static final String HTML_SOURCE_DATA_FORMAT = "HTML";
+	
 	@Rule public TemporaryFolder tempFolder = new TemporaryFolder();
 	
 	private Log mockLogger;
@@ -59,14 +63,19 @@ public class HTMLReportGeneratorTest {
 		sourceFile1 = new File(sourceFolder, "file1.txt");
 		sourceFile1.createNewFile();
 		
-		assertThat(fixture.generate(new ReportGenerationContext(null, null, sourceFile0.getParentFile(), destFolder, mockLogger)), sameInstance(ReportGenerationResultEnum.SUCCESS));
+		assertThat(fixture.generate(new ReportGenerationContext(null, null, sourceFile0.getParentFile(), destFolder, mockLogger, Arrays.asList(HTML_SOURCE_DATA_FORMAT))), sameInstance(ReportGenerationResultEnum.SUCCESS));
 		assertThat(sourceFolder.listFiles().length, is(2));
 		assertThat(destFolder.listFiles().length, is(2));
 	}
 	
 	@Test
 	public void testCopyFails() {
-		assertThat(fixture.generate(new ReportGenerationContext(null, null, new File("foo"), new File("bar"), mockLogger)), sameInstance(ReportGenerationResultEnum.FAILURE));
+		assertThat(fixture.generate(new ReportGenerationContext(null, null, new File("foo"), new File("bar"), mockLogger, Arrays.asList(HTML_SOURCE_DATA_FORMAT))), sameInstance(ReportGenerationResultEnum.FAILURE));
+	}
+	
+	@Test
+	public void testSourceDataFormat() {
+		assertThat(fixture.getGeneratorDataFormat(), equalTo(HTML_SOURCE_DATA_FORMAT));
 	}
 	
 }
