@@ -55,8 +55,8 @@ public class ReportGenerationManagerTest {
 	@Before
 	public void setUp() {
 		this.reportGenerationStrategyList = new LinkedList<IReportGenerationStrategy>();
-		this.reportGenerationStrategyList.add(xmlGenerator);
-		this.reportGenerationStrategyList.add(htmlGenerator);
+		this.reportGenerationStrategyList.add(this.xmlGenerator);
+		this.reportGenerationStrategyList.add(this.htmlGenerator);
 		this.fixture.reportGenerationStrategyList = this.reportGenerationStrategyList;
 		
 		this.generationContext = new ReportGenerationContext(Locale.ENGLISH, null, this.reportsDataDirectory, this.siteDirectory, this.log, Arrays.asList("XML", "HTML"));
