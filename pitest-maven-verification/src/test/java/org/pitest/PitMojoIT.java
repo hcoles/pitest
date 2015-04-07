@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.maven.it.VerificationException;
@@ -118,6 +119,37 @@ public class PitMojoIT {
     assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
   }
   
+  @Test
+  public void shouldSkipSiteReportGeneration() throws Exception {
+    final File testDir = prepare("/pit-site-skip");
+    final File siteParentDir = this.buildFile(testDir, "target", "site");
+    
+    this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    
+    assertThat(this.buildFile(siteParentDir, "pit-reports").exists()).isEqualTo(false);
+    assertThat(this.buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
+  }
+  
+  //TODO clean up file building
+  @Test
+  public void shouldGenerateSiteReportWithNonTimestampedHtmlReport() throws Exception {
+    final File testDir = prepare("/pit-site-non-timestamped");
+    final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+    final String pitReportSiteIndexHtml;
+    final String pitReportIndexHtml;
+    
+    this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    
+    assertThat(pitReportSiteDir.exists()).isEqualTo(true);
+
+    pitReportSiteIndexHtml = FileUtil.readToString(new FileInputStream(this.buildFile(pitReportSiteDir, "index.html")));
+    pitReportIndexHtml = FileUtil.readToString(new FileInputStream(this.buildFile(testDir, "target", "pit-reports", "index.html")));
+    assertThat(pitReportSiteIndexHtml).isEqualTo(pitReportIndexHtml);
+  }
+  
+  //TODO create a test that generates two timestamped reports and ensures the latest is copied
+  //TODO create a test that generates both timestamped and non-timestamped reports and ensures the latest is copied
+  
   
   
   private String readResults(File testDir) throws FileNotFoundException,
@@ -167,6 +199,16 @@ public class PitMojoIT {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  private File buildFile(File base, String... pathParts) {
+	  StringBuilder path = new StringBuilder(base.getAbsolutePath());
+	  
+	  for(String part : pathParts){
+		  path.append(File.separator).append(part);
+	  }
+	  
+	  return new File(path.toString());
   }
 
 }
