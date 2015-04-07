@@ -119,6 +119,9 @@ public class PitMojoIT {
     assertThat(actual).contains("<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
   }
   
+  /*
+   * Verifies that configuring report generation to be skipped does actually prevent the site report from being generated.
+   */
   @Test
   public void shouldSkipSiteReportGeneration() throws Exception {
     final File testDir = prepare("/pit-site-skip");
@@ -130,7 +133,9 @@ public class PitMojoIT {
     assertThat(this.buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
   }
   
-  //TODO clean up file building
+  /*
+   * Verifies that running PIT with timestampedReports set to false will correctly copy the HTML report to the site reports directory.
+   */
   @Test
   public void shouldGenerateSiteReportWithNonTimestampedHtmlReport() throws Exception {
     final File testDir = prepare("/pit-site-non-timestamped");
@@ -147,7 +152,33 @@ public class PitMojoIT {
     assertThat(pitReportSiteIndexHtml).isEqualTo(pitReportIndexHtml);
   }
   
-  //TODO create a test that generates two timestamped reports and ensures the latest is copied
+  /*
+   * Verifies that, when multiple timestamped PIT reports have been generated, only the latest report is copied to the site reports directory. 
+   */
+  @Test
+  public void shouldCopyLatestTimestampedReport() throws Exception {
+    final File testDir = prepare("/pit-site-multiple-timestamped");
+    final File pitReportDir = this.buildFile(testDir, "target", "pit-reports");
+    final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+    final String[] run1;
+    
+    this.verifier.setLogFileName("log1.txt");
+    this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    run1 = pitReportDir.list();
+    assertThat(run1.length).isEqualTo(1);
+    assertThat(this.buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile()).isEqualTo(true);
+    
+    //PIT timestamps reports to the minute which means it is possible to generate the same timestamped report twice, 
+    //this sleep ensures that will not happen
+    Thread.sleep(61000);
+    
+    this.verifier.setLogFileName("log2.txt");
+    this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    assertThat(pitReportDir.list().length).isEqualTo(2);
+    
+    assertThat(new File(pitReportSiteDir, "first_marker.dat").exists()).isEqualTo(false);
+  }
+  
   //TODO create a test that generates both timestamped and non-timestamped reports and ensures the latest is copied
   
   
