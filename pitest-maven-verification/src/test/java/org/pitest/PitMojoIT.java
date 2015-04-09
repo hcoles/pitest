@@ -21,11 +21,17 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.FileUtils;
@@ -33,6 +39,7 @@ import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.Test;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.util.FileUtil;
+import org.pitest.util.PitError;
 
 /**
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -169,8 +176,17 @@ public class PitMojoIT {
     assertThat(this.buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile()).isEqualTo(true);
     
     //PIT timestamps reports to the minute which means it is possible to generate the same timestamped report twice, 
-    //this sleep ensures that will not happen
-    Thread.sleep(61000);
+    //this code ensures that will not happen
+    int loopCount = 0;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+    while(dateFormat.format(new Date()).equals(run1[0])){
+    	if(loopCount > 65){
+    		throw new PitError("integration test is stuck in an infinite loop");
+    	}
+    	
+    	Thread.sleep(1000);
+    	loopCount++;
+    }
     
     this.verifier.setLogFileName("log2.txt");
     this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
@@ -178,9 +194,66 @@ public class PitMojoIT {
     
     assertThat(new File(pitReportSiteDir, "first_marker.dat").exists()).isEqualTo(false);
   }
-  
-  //TODO create a test that generates both timestamped and non-timestamped reports and ensures the latest is copied
-  
+
+  /*
+   * Verifies that in the case where pit has generated reports with both timestampedReports=true and timestampedReports=false, 
+   * the latest report run is copied and no timestamped report subdirectories are copied
+   */
+  @Test
+  public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
+	  final FilenameFilter timestampedDirFilter = new RegexFileFilter("^\\d+$");
+	  final File testDir = prepare("/pit-site-combined");
+	  final File pitReportDir = this.buildFile(testDir, "target", "pit-reports");
+	  final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+	  final List originalCliOptions;
+	  final File run1Dir;
+	  final File run2Dir;
+	  File run3Dir;
+	  
+	  originalCliOptions = new ArrayList(this.verifier.getCliOptions());
+	  
+	  //first run, create a timestamped report
+	  this.verifier.setLogFileName("log1.txt");
+	  this.verifier.getCliOptions().add("-DtimestampedReports=true");
+	  this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
+	  run1Dir = pitReportDir.listFiles()[0];
+	  new File(run1Dir, "first.dat").createNewFile();
+	  
+	  //second run, create a non-timestamped report
+	  this.verifier.setLogFileName("log2.txt");
+	  this.verifier.getCliOptions().add("-DtimestampedReports=false");
+	  this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
+	  run2Dir = pitReportDir;
+	  new File(run2Dir, "second.dat").createNewFile();
+	  
+	  //third run, create a timestamped report
+	  run3Dir = null;
+	  this.verifier.setLogFileName("log3.txt");
+	  this.verifier.getCliOptions().add("-DtimestampedReports=true");
+	  this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
+	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
+	  for(File f : pitReportDir.listFiles(timestampedDirFilter)){
+		  if(!f.equals(run1Dir)){
+			  run3Dir = f;
+			  break;
+		  }
+	  }
+	  new File(run3Dir, "third.dat").createNewFile();
+	  
+	  //run the site lifecycle last so that the third.dat file has a chance to be created before the sire generation happens
+	  this.verifier.setLogFileName("log4.txt");
+	  this.verifier.executeGoal("site");
+	  
+	  //assert that the third run (a timestamped report) is the report in the site/pit-reports directory
+	  assertThat(new File(pitReportSiteDir, "third.dat").exists()).isTrue();
+	  
+	  //assert that no timestamped report subdirectories were copied into the site/pit-reports directory
+	  //comparing to an empty array is better than checking the array length because a failure in this assert 
+	  //will list the files that were found instead of just the number of files that were found
+	  assertThat(pitReportSiteDir.list(timestampedDirFilter)).isEqualTo(new String[0]);
+  }
   
   
   private String readResults(File testDir) throws FileNotFoundException,
