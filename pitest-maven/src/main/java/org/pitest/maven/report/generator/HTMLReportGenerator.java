@@ -14,17 +14,22 @@
  */
 package org.pitest.maven.report.generator;
 
+import java.io.FileFilter;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 
 public class HTMLReportGenerator implements IReportGenerationStrategy {
 
+	protected static final FileFilter EXCLUDE_TIMESTAMPED_REPORTS_DIRECTORIES = new NotFileFilter(new RegexFileFilter("^\\d+$"));
+	
 	public ReportGenerationResultEnum generate(ReportGenerationContext context) {
 		try {
 			context.getLogger().debug("HTMLReportGenerator using directory [" + context.getReportsDataDirectory() + "] as directory containing the html report");
 			context.getLogger().debug("HTMLReportGenerator using directory [" + context.getSiteDirectory() + "] as directory that is the destination of the site report");
-			FileUtils.copyDirectory(context.getReportsDataDirectory(), context.getSiteDirectory());
+			FileUtils.copyDirectory(context.getReportsDataDirectory(), context.getSiteDirectory(), EXCLUDE_TIMESTAMPED_REPORTS_DIRECTORIES);
 		} catch (IOException e) {
 			context.getLogger().warn(e);
 			return ReportGenerationResultEnum.FAILURE;
