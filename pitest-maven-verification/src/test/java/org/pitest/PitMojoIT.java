@@ -147,8 +147,10 @@ public class PitMojoIT {
   public void shouldGenerateSiteReportWithNonTimestampedHtmlReport() throws Exception {
     final File testDir = prepare("/pit-site-non-timestamped");
     final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+    final File siteProjectReportsIndex = this.buildFile(testDir, "target", "site", "project-reports.html");
     final String pitReportSiteIndexHtml;
     final String pitReportIndexHtml;
+    final String projectReportsHtml;
     
     this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
     
@@ -157,6 +159,10 @@ public class PitMojoIT {
     pitReportSiteIndexHtml = FileUtil.readToString(new FileInputStream(this.buildFile(pitReportSiteDir, "index.html")));
     pitReportIndexHtml = FileUtil.readToString(new FileInputStream(this.buildFile(testDir, "target", "pit-reports", "index.html")));
     assertThat(pitReportSiteIndexHtml).isEqualTo(pitReportIndexHtml);
+    
+    //assert that the expected report name/description was written to the site project report's index.html file
+	projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
+	assertThat(projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>")).isTrue();
   }
   
   /*
@@ -253,6 +259,21 @@ public class PitMojoIT {
 	  //comparing to an empty array is better than checking the array length because a failure in this assert 
 	  //will list the files that were found instead of just the number of files that were found
 	  assertThat(pitReportSiteDir.list(timestampedDirFilter)).isEqualTo(new String[0]);
+  }
+  
+  /*
+   * verifies that the pit site report's name and description can be customized in the site's project reports index.html file
+   */
+  @Test
+  public void shouldOverwriteReportNameDescription() throws Exception {
+	  final File testDir = prepare("/pit-site-custom-report-name-description");
+	  final File siteProjectReportsIndex = this.buildFile(testDir, "target", "site", "project-reports.html");
+	  final String projectReportsHtml;
+	  
+	  this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+	  
+	  projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
+	  assertThat(projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>")).isTrue();
   }
 
   @Test

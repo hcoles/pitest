@@ -22,51 +22,51 @@ import org.pitest.util.PitError;
 
 public class ReportGenerationManager {
 
-	protected ReportSourceLocator reportLocator;
-	protected List<IReportGenerationStrategy> reportGenerationStrategyList;
-	
-	public ReportGenerationManager() {
-		this.reportLocator = new ReportSourceLocator();
-		
-		this.reportGenerationStrategyList = new ArrayList<IReportGenerationStrategy>();
-    	this.reportGenerationStrategyList.add(new XMLReportGenerator());
-    	this.reportGenerationStrategyList.add(new HTMLReportGenerator());
-	}
-	
-	public void generateSiteReport(ReportGenerationContext context) {
-		ReportGenerationResultEnum result;
-		boolean successfulExecution = false;
-		
-		context.setReportsDataDirectory(this.reportLocator.locate(context.getReportsDataDirectory(), context.getLogger()));
-		
-		context.getLogger().debug("starting execution of report generators");
-		context.getLogger().debug("using report generation context: " + context);
-		
-		for(String dataFormat : context.getSourceDataFormats()){
-			context.getLogger().debug("starting report generator for source data format [" + dataFormat + "]");
-			result = this.locateReportGenerationStrategy(dataFormat).generate(context);
-			context.getLogger().debug("result of report generator for source data format [" + dataFormat + "] was [" + result.toString() + "]");
-			if(result == ReportGenerationResultEnum.SUCCESS){
-				successfulExecution = true;
-				break;
-			}
-		}
-		
-		if(!successfulExecution){
-			throw new PitError("no report generators executed successfully");
-		}
-		
-		context.getLogger().debug("finished execution of report generators");
-	}
-	
-	private IReportGenerationStrategy locateReportGenerationStrategy(String sourceDataFormat) {
-		for(IReportGenerationStrategy strategy : this.reportGenerationStrategyList){
-			if(sourceDataFormat.equalsIgnoreCase(strategy.getGeneratorDataFormat())){
-				return strategy;
-			}
-		}
-		
-		throw new PitError("Could not locate report generator for data source [" + sourceDataFormat + "]");
-	}
-	
+    protected ReportSourceLocator reportLocator;
+    protected List<IReportGenerationStrategy> reportGenerationStrategyList;
+    
+    public ReportGenerationManager() {
+        this.reportLocator = new ReportSourceLocator();
+        
+        this.reportGenerationStrategyList = new ArrayList<IReportGenerationStrategy>();
+        this.reportGenerationStrategyList.add(new XMLReportGenerator());
+        this.reportGenerationStrategyList.add(new HTMLReportGenerator());
+    }
+    
+    public void generateSiteReport(ReportGenerationContext context) {
+        ReportGenerationResultEnum result;
+        boolean successfulExecution = false;
+        
+        context.setReportsDataDirectory(this.reportLocator.locate(context.getReportsDataDirectory(), context.getLogger()));
+        
+        context.getLogger().debug("starting execution of report generators");
+        context.getLogger().debug("using report generation context: " + context);
+        
+        for (String dataFormat : context.getSourceDataFormats()) {
+            context.getLogger().debug("starting report generator for source data format [" + dataFormat + "]");
+            result = this.locateReportGenerationStrategy(dataFormat).generate(context);
+            context.getLogger().debug("result of report generator for source data format [" + dataFormat + "] was [" + result.toString() + "]");
+            if (result == ReportGenerationResultEnum.SUCCESS) {
+                successfulExecution = true;
+                break;
+            }
+        }
+        
+        if (!successfulExecution) {
+            throw new PitError("no report generators executed successfully");
+        }
+        
+        context.getLogger().debug("finished execution of report generators");
+    }
+    
+    private IReportGenerationStrategy locateReportGenerationStrategy(String sourceDataFormat) {
+        for (IReportGenerationStrategy strategy : this.reportGenerationStrategyList) {
+            if (sourceDataFormat.equalsIgnoreCase(strategy.getGeneratorDataFormat())) {
+                return strategy;
+            }
+        }
+        
+        throw new PitError("Could not locate report generator for data source [" + sourceDataFormat + "]");
+    }
+    
 }

@@ -18,8 +18,8 @@ package org.pitest.maven.report.generator;
 
 public interface IReportGenerationStrategy {
 
-	public ReportGenerationResultEnum generate(ReportGenerationContext context);
-	public String getGeneratorName();
-	public String getGeneratorDataFormat();
-	
+    ReportGenerationResultEnum generate(ReportGenerationContext context);
+    String getGeneratorName();
+    String getGeneratorDataFormat();
+    
 }

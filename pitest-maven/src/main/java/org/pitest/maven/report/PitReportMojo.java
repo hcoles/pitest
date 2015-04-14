@@ -34,8 +34,8 @@ import org.pitest.util.PitError;
  */
 public class PitReportMojo extends AbstractMavenReport {
 
-	private static final String SITE_REPORTS_FOLDER = "pit-reports";
-	
+    private static final String SITE_REPORTS_FOLDER = "pit-reports";
+    
     /**
      * @component
      * @required
@@ -80,87 +80,101 @@ public class PitReportMojo extends AbstractMavenReport {
      */
     private List<String> sourceDataFormats;
     
+    /**
+     * Determines the name of the report that is displayed under the site's Project Reports section
+     * 
+     * @parameter default-value="PIT Test Report"
+     *            expression="${pit.report.name}"
+     */
+    private String siteReportName;
+    
+    /**
+     * Determines the description of the report that is displayed under the description of the site's Project Reports section
+     * 
+     * @parameter default-value="Report of the pit test coverage"
+     *            expression="${pit.report.description}"
+     */
+    private String siteReportDescription;
+    
     private ReportGenerationManager reportGenerationManager;
     
     public PitReportMojo() {
-    	super();
-    	
-    	this.reportGenerationManager = new ReportGenerationManager();
+        super();
+        
+        this.reportGenerationManager = new ReportGenerationManager();
     }
     
-	public String getOutputName() {
-		return SITE_REPORTS_FOLDER + File.separator + "index";
-	}
+    public String getOutputName() {
+        return SITE_REPORTS_FOLDER + File.separator + "index";
+    }
 
-	public String getName(Locale locale) {
-		//TODO internationalize this (and test it)
-		return "PIT Test Report";
-	}
+    public String getName(Locale locale) {
+        return this.siteReportName;
+    }
 
-	public String getDescription(Locale locale) {
-		//TODO internationalize this (and test it)
-		return "Report of the pit test coverage";
-	}
+    public String getDescription(Locale locale) {
+        return this.siteReportDescription;
+    }
 
-	@Override
-	protected Renderer getSiteRenderer() {
-		return this.siteRenderer;
-	}
+    @Override
+    protected Renderer getSiteRenderer() {
+        return this.siteRenderer;
+    }
 
-	@Override
-	protected String getOutputDirectory() {
-		return this.reportsDirectory.getAbsolutePath();
-	}
+    @Override
+    protected String getOutputDirectory() {
+        return this.reportsDirectory.getAbsolutePath();
+    }
 
-	@Override
-	protected MavenProject getProject() {
-		return this.project;
-	}
+    @Override
+    protected MavenProject getProject() {
+        return this.project;
+    }
 
-	@Override
-	protected void executeReport(Locale locale) throws MavenReportException {
-		this.getLog().debug("PitReportMojo - starting");
-		
-		if(!this.reportsDirectory.exists()){
-			throw new PitError("could not find reports directory [" + this.reportsDirectory + "]");
-		}
-		
-		if(!this.reportsDirectory.canRead()){
-			throw new PitError("reports directory [" + this.reportsDirectory + "] not readable");
-		}
-		
-		if(!this.reportsDirectory.isDirectory()){
-			throw new PitError("reports directory [" + this.reportsDirectory + "] is actually a file, it must be a directory");
-		}
-		
-		this.reportGenerationManager.generateSiteReport(this.buildReportGenerationContext(locale));
-		
-		this.getLog().debug("PitReportMojo - ending");
-	}
-	
-	@Override
-	public boolean canGenerateReport() {
-		return !skip;
-	}
-	
-	public boolean isExternalReport() {
-	    return true;
-	}
-	
-	public boolean isSkip() {
-		return skip;
-	}
+    @Override
+    protected void executeReport(Locale locale) throws MavenReportException {
+        this.getLog().debug("PitReportMojo - starting");
+        
+        if (!this.reportsDirectory.exists()) {
+            throw new PitError("could not find reports directory [" + this.reportsDirectory + "]");
+        }
+        
+        if (!this.reportsDirectory.canRead()) {
+            throw new PitError("reports directory [" + this.reportsDirectory + "] not readable");
+        }
+        
+        if (!this.reportsDirectory.isDirectory()) {
+            throw new PitError("reports directory [" + this.reportsDirectory + "] is actually a file, it must be a directory");
+        }
+        
+        this.reportGenerationManager.generateSiteReport(this.buildReportGenerationContext(locale));
+        
+        this.getLog().debug("PitReportMojo - ending");
+    }
+    
+    @Override
+    public boolean canGenerateReport() {
+        return !skip;
+    }
+    
+    public boolean isExternalReport() {
+        return true;
+    }
+    
+    public boolean isSkip() {
+        return skip;
+    }
 
-	public File getReportsDirectory() {
-		return reportsDirectory;
-	}
-	
-	public List<String> getSourceDataFormats() {
-		return this.sourceDataFormats;
-	}
+    public File getReportsDirectory() {
+        return reportsDirectory;
+    }
+    
+    public List<String> getSourceDataFormats() {
+        return this.sourceDataFormats;
+    }
 
-	private ReportGenerationContext buildReportGenerationContext(Locale locale) {
-		return new ReportGenerationContext(locale, this.getSink(), reportsDirectory, new File(this.getReportOutputDirectory().getAbsolutePath() + File.separator + SITE_REPORTS_FOLDER), this.getLog(), this.getSourceDataFormats());
-	}
-	
+    private ReportGenerationContext buildReportGenerationContext(Locale locale) {
+        return new ReportGenerationContext(locale, this.getSink(), reportsDirectory, new File(this.getReportOutputDirectory().getAbsolutePath() + File.separator + SITE_REPORTS_FOLDER), this.getLog(), this.getSourceDataFormats());
+    }
+    
 }
