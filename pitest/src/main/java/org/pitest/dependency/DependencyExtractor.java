@@ -43,7 +43,7 @@ import org.pitest.util.Functions;
 import org.pitest.util.Log;
 
 public class DependencyExtractor {
-  private final static Logger        LOG = Log.getLogger();
+  private static final Logger        LOG = Log.getLogger();
   private final int                  depth;
   private final ClassByteArraySource classToBytes;
 

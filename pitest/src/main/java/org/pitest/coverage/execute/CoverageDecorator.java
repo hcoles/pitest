@@ -27,7 +27,7 @@ import org.pitest.util.Log;
 
 public class CoverageDecorator extends TestUnitDecorator {
 
-  private final static Logger    LOG     = Log.getLogger();
+  private static final Logger    LOG     = Log.getLogger();
 
   private final CoverageReceiver invokeQueue;
   private final ThreadMXBean     threads = ManagementFactory.getThreadMXBean();

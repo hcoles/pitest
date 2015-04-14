@@ -22,7 +22,7 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.Unchecked;
 
-public class JavassistInterceptor {
+public final class JavassistInterceptor {
 
   private JavassistInterceptor() {
 

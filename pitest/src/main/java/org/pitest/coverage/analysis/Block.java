@@ -7,7 +7,8 @@ public final class Block {
   private final int          lastInstruction;
   private final Set<Integer> lines;
 
-  public Block(int firstInstruction, int lastInstruction, Set<Integer> lines) {
+  public Block(final int firstInstruction, final int lastInstruction,
+      final Set<Integer> lines) {
     this.firstInstruction = firstInstruction;
     this.lastInstruction = lastInstruction;
     this.lines = lines;
@@ -17,39 +18,44 @@ public final class Block {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + firstInstruction;
-    result = prime * result + lastInstruction;
+    result = (prime * result) + this.firstInstruction;
+    result = (prime * result) + this.lastInstruction;
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    Block other = (Block) obj;
-    if (firstInstruction != other.firstInstruction)
+    }
+    final Block other = (Block) obj;
+    if (this.firstInstruction != other.firstInstruction) {
       return false;
-    if (lastInstruction != other.lastInstruction)
+    }
+    if (this.lastInstruction != other.lastInstruction) {
       return false;
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "Block [firstInstruction=" + firstInstruction + ", lastInstruction="
-        + lastInstruction + "]";
+    return "Block [firstInstruction=" + this.firstInstruction
+        + ", lastInstruction=" + this.lastInstruction + "]";
   }
 
-  public boolean firstInstructionIs(int ins) {
+  public boolean firstInstructionIs(final int ins) {
     return this.firstInstruction == ins;
   }
 
   public Set<Integer> getLines() {
-    return lines;
+    return this.lines;
   }
 
 }

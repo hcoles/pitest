@@ -36,7 +36,7 @@ import org.pitest.mutationtest.report.MutationTestResultMother;
 
 public class XStreamHistoryStoreTest {
 
-  private final static String COV           = BigInteger.TEN.toString(16);
+  private static final String COV           = BigInteger.TEN.toString(16);
 
   private XStreamHistoryStore testee;
 

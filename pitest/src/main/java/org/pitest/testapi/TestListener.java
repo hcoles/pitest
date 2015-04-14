@@ -20,16 +20,16 @@ package org.pitest.testapi;
  */
 public interface TestListener {
 
-  public void onRunStart();
+  void onRunStart();
 
-  public void onTestStart(Description d);
+  void onTestStart(Description d);
 
-  public void onTestFailure(TestResult tr);
+  void onTestFailure(TestResult tr);
 
-  public void onTestSkipped(TestResult tr);
+  void onTestSkipped(TestResult tr);
 
-  public void onTestSuccess(TestResult tr);
+  void onTestSuccess(TestResult tr);
 
-  public void onRunEnd();
+  void onRunEnd();
 
 }

@@ -21,7 +21,7 @@ import org.pitest.util.Unchecked;
 
 public class MutationAnalysisExecutor {
 
-  private final static Logger                LOG = Log.getLogger();
+  private static final Logger                LOG = Log.getLogger();
 
   private final List<MutationResultListener> listeners;
   private final ThreadPoolExecutor           executor;

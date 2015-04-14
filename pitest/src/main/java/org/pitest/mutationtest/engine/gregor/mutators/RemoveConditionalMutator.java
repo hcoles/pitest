@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -13,26 +13,28 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public class RemoveConditionalMutator implements MethodMutatorFactory {
 
-  //REMOVE_CONDITIONALS_MUTATOR;
+  // REMOVE_CONDITIONALS_MUTATOR;
 
   // EQUAL : Mutate only equality operators
   // ORDER : Mutate only Ordering operators
-  public enum Choice {EQUAL, ORDER}
+  public enum Choice {
+    EQUAL, ORDER
+  }
 
-  private final Choice kind;
+  private final Choice  kind;
   private final boolean replaceWith; // Default is true
 
   public RemoveConditionalMutator(final Choice c, final boolean rc) {
-    kind = c;
-    replaceWith = rc;
+    this.kind = c;
+    this.replaceWith = rc;
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
-    List<MethodMutatorFactory> variations = new ArrayList<MethodMutatorFactory>();
-    Choice [] allChoices = {Choice.EQUAL, Choice.ORDER};
-    boolean [] arrWith = {true, false};
-    for (Choice c : allChoices) {
-      for (boolean b : arrWith) {
+    final List<MethodMutatorFactory> variations = new ArrayList<MethodMutatorFactory>();
+    final Choice[] allChoices = { Choice.EQUAL, Choice.ORDER };
+    final boolean[] arrWith = { true, false };
+    for (final Choice c : allChoices) {
+      for (final boolean b : arrWith) {
         variations.add(new RemoveConditionalMutator(c, b));
       }
     }
@@ -45,17 +47,19 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   }
 
   public String getGloballyUniqueId() {
-    return this.getClass().getName() + "_" + kind + "_" + (replaceWith ? "IF" : "ELSE");
+    return this.getClass().getName() + "_" + this.kind + "_"
+        + (this.replaceWith ? "IF" : "ELSE");
   }
 
   public String getName() {
-    return "REMOVE_CONDITIONALS_" + kind + "_" + (replaceWith ? "IF" : "ELSE") + "_MUTATOR";
+    return "REMOVE_CONDITIONALS_" + this.kind + "_"
+        + (this.replaceWith ? "IF" : "ELSE") + "_MUTATOR";
   }
 
   private final class RemoveConditionalMethodVisitor extends MethodVisitor {
 
     private static final String        DESCRIPTION = "removed conditional";
-    private final MutationContext              context;
+    private final MutationContext      context;
     private final MethodMutatorFactory factory;
 
     public RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
@@ -74,7 +78,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
         if (this.context.shouldMutate(newId)) {
           emptyStack(opcode);
-          if (!replaceWith) {
+          if (!RemoveConditionalMutator.this.replaceWith) {
             super.visitJumpInsn(Opcodes.GOTO, label);
           }
         } else {
@@ -88,46 +92,46 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
     private void emptyStack(final int opcode) {
       switch (opcode) {
-        // EQUAL
-        case Opcodes.IF_ICMPNE:
-        case Opcodes.IF_ICMPEQ:
-        case Opcodes.IF_ACMPEQ:
-        case Opcodes.IF_ACMPNE:
+      // EQUAL
+      case Opcodes.IF_ICMPNE:
+      case Opcodes.IF_ICMPEQ:
+      case Opcodes.IF_ACMPEQ:
+      case Opcodes.IF_ACMPNE:
         // ORDER
-        case Opcodes.IF_ICMPGE:
-        case Opcodes.IF_ICMPGT:
-        case Opcodes.IF_ICMPLE:
-        case Opcodes.IF_ICMPLT:
-          super.visitInsn(Opcodes.POP2);
-          break;
-        default:
-          super.visitInsn(Opcodes.POP);
+      case Opcodes.IF_ICMPGE:
+      case Opcodes.IF_ICMPGT:
+      case Opcodes.IF_ICMPLE:
+      case Opcodes.IF_ICMPLT:
+        super.visitInsn(Opcodes.POP2);
+        break;
+      default:
+        super.visitInsn(Opcodes.POP);
       }
 
     }
 
     private boolean canMutate(final int opcode) {
       switch (opcode) {
-        case Opcodes.IFLE:
-        case Opcodes.IFGE:
-        case Opcodes.IFGT:
-        case Opcodes.IFLT:
-        case Opcodes.IF_ICMPGE:
-        case Opcodes.IF_ICMPGT:
-        case Opcodes.IF_ICMPLE:
-        case Opcodes.IF_ICMPLT:
-          return (kind == Choice.ORDER);
-        case Opcodes.IFEQ:
-        case Opcodes.IFNE:
-        case Opcodes.IFNONNULL:
-        case Opcodes.IFNULL:
-        case Opcodes.IF_ICMPNE:
-        case Opcodes.IF_ICMPEQ:
-        case Opcodes.IF_ACMPEQ:
-        case Opcodes.IF_ACMPNE:
-          return (kind == Choice.EQUAL);
-        default:
-          return false;
+      case Opcodes.IFLE:
+      case Opcodes.IFGE:
+      case Opcodes.IFGT:
+      case Opcodes.IFLT:
+      case Opcodes.IF_ICMPGE:
+      case Opcodes.IF_ICMPGT:
+      case Opcodes.IF_ICMPLE:
+      case Opcodes.IF_ICMPLT:
+        return (RemoveConditionalMutator.this.kind == Choice.ORDER);
+      case Opcodes.IFEQ:
+      case Opcodes.IFNE:
+      case Opcodes.IFNONNULL:
+      case Opcodes.IFNULL:
+      case Opcodes.IF_ICMPNE:
+      case Opcodes.IF_ICMPEQ:
+      case Opcodes.IF_ACMPEQ:
+      case Opcodes.IF_ACMPNE:
+        return (RemoveConditionalMutator.this.kind == Choice.EQUAL);
+      default:
+        return false;
       }
     }
 

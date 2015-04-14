@@ -7,6 +7,6 @@ import org.pitest.classinfo.ClassName;
 
 public interface LineMap {
 
-  public Map<BlockLocation, Set<Integer>> mapLines(ClassName clazz);
+  Map<BlockLocation, Set<Integer>> mapLines(ClassName clazz);
 
 }

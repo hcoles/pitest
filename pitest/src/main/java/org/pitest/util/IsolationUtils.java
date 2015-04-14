@@ -26,10 +26,10 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public abstract class IsolationUtils {
 
-  private final static XStream                           XSTREAM_INSTANCE          = new XStream(
+  private static final XStream                           XSTREAM_INSTANCE          = new XStream(
                                                                                        new PitXmlDriver());
-  private final static WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
-  private final static ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
+  private static final WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
+  private static final ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
 
                                                                                      public boolean fromDifferentLoader(
                                                                                          final Class<?> clazz,

@@ -20,6 +20,6 @@ package org.pitest.functional;
  */
 public interface SideEffect {
 
-  public void apply();
+  void apply();
 
 }

@@ -22,6 +22,6 @@ import org.pitest.testapi.TestUnit;
 
 public interface Container {
 
-  public List<TestResult> execute(TestUnit c);
+  List<TestResult> execute(TestUnit c);
 
 }

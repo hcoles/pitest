@@ -7,7 +7,7 @@ import org.pitest.mutationtest.MutationResultListener;
 
 public class SpinnerListener implements MutationResultListener {
 
-  private final static String[] SPINNER_CHARS = new String[] { "\u0008/",
+  private static final String[] SPINNER_CHARS = new String[] { "\u0008/",
       "\u0008-", "\u0008\\", "\u0008|"       };
 
   private final PrintStream     out;

@@ -20,7 +20,7 @@ import org.pitest.mutationtest.MutationResult;
 class ResultComparator implements Comparator<MutationResult>, Serializable {
 
   private static final long serialVersionUID = 1L;
-  private final static EnumMap<DetectionStatus,Integer> RANK = new EnumMap<DetectionStatus,Integer>(DetectionStatus.class);
+  private static final EnumMap<DetectionStatus,Integer> RANK = new EnumMap<DetectionStatus,Integer>(DetectionStatus.class);
   
   static {
     RANK.put(KILLED, 4);

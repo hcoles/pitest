@@ -9,6 +9,6 @@ import org.pitest.mutationtest.MutationMetaData;
  */
 public interface MutationAnalysisUnit extends Callable<MutationMetaData> {
 
-  public int priority();
+  int priority();
   
 }

@@ -30,7 +30,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  *
  * <p>
  * Replacements for primitive types are simple. Replacements of object
- * references are handled by {@link ObjectReferenceReplacer}. Those replacements
+ * references are handled by ObjectReferenceReplacer. Those replacements
  * can get more complex.
  * </p>
  * 

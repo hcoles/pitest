@@ -28,13 +28,13 @@ public interface Mutater {
    * @param id the mutant to create
    * @return a Mutant
    */
-  public Mutant getMutation(MutationIdentifier id);
+  Mutant getMutation(MutationIdentifier id);
 
   /**
    * Scans for possible mutants in the given class
    * @param classToMutate the class to scan for mutants
    * @return a list of possible mutants
    */
-  public List<MutationDetails> findMutations(ClassName classToMutate);
+  List<MutationDetails> findMutations(ClassName classToMutate);
 
 }

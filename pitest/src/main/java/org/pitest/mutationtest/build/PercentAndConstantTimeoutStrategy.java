@@ -19,8 +19,8 @@ import org.pitest.mutationtest.TimeoutLengthStrategy;
 
 public class PercentAndConstantTimeoutStrategy implements TimeoutLengthStrategy {
 
-  public final static float DEFAULT_FACTOR   = 1.25f;
-  public final static long  DEFAULT_CONSTANT = 4000;
+  public static final float DEFAULT_FACTOR   = 1.25f;
+  public static final long  DEFAULT_CONSTANT = 4000;
 
   private final float       percent;
   private final long        constant;

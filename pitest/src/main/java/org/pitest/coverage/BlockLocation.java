@@ -4,65 +4,71 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 
 public final class BlockLocation {
-  
+
   private final Location location;
-  private final int block;
-  
-  public BlockLocation(Location location, int block) {
+  private final int      block;
+
+  public BlockLocation(final Location location, final int block) {
     this.location = location;
     this.block = block;
   }
 
-  public static BlockLocation blockLocation(Location location, int block) {
-    return new BlockLocation(location,block);
+  public static BlockLocation blockLocation(final Location location,
+      final int block) {
+    return new BlockLocation(location, block);
   }
-  
-  public boolean isFor(ClassName clazz) {
+
+  public boolean isFor(final ClassName clazz) {
     return this.location.getClassName().equals(clazz);
   }
-  
+
   public int getBlock() {
-    return block;
+    return this.block;
   }
-  
+
   public Location getLocation() {
-	  return this.location;
+    return this.location;
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + block;
-    result = prime * result + ((location == null) ? 0 : location.hashCode());
+    result = (prime * result) + this.block;
+    result = (prime * result)
+        + ((this.location == null) ? 0 : this.location.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    BlockLocation other = (BlockLocation) obj;
-    if (block != other.block)
+    }
+    final BlockLocation other = (BlockLocation) obj;
+    if (this.block != other.block) {
       return false;
-    if (location == null) {
-      if (other.location != null)
+    }
+    if (this.location == null) {
+      if (other.location != null) {
         return false;
-    } else if (!location.equals(other.location))
+      }
+    } else if (!this.location.equals(other.location)) {
       return false;
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "BlockLocation [location=" + location + ", block=" + block + "]";
+    return "BlockLocation [location=" + this.location + ", block=" + this.block
+        + "]";
   }
-
-
-  
 
 }

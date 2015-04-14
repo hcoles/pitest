@@ -14,16 +14,23 @@
  */
 package org.pitest.maven;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
@@ -34,6 +41,19 @@ import org.pitest.util.Unchecked;
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   private MojoToReportOptionsConverter testee;
+  private SurefireConfigConverter surefireConverter;
+  
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    Plugin surefire = new Plugin();
+    surefire.setGroupId("org.apache.maven.plugins");
+    surefire.setArtifactId("maven-surefire-plugin");
+    surefireConverter = Mockito.mock(SurefireConfigConverter.class);
+    List<Plugin> mavenPlugins = Collections.singletonList(surefire);
+    when(this.project.getBuildPlugins()).thenReturn(mavenPlugins);
+  }
+
 
   public void testsParsesReportDir() {
     final ReportOptions actual = parseConfig("<reportsDirectory>Foo</reportsDirectory>");
@@ -303,6 +323,16 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 	  		+ "									</classpathDependencyExcludes>");
 	  assertFalse(actual.getClassPathElements().contains("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
   }
+  
+  public void testParsesSurefireConfigWhenFlagSet() {
+    parseConfig("<parseSurefireConfig>true</parseSurefireConfig>");
+    verify(surefireConverter).update(any(ReportOptions.class), any(Xpp3Dom.class));
+  }
+  
+  public void testIgnoreSurefireConfigWhenFlagNotSet() {
+    parseConfig("<parseSurefireConfig>false</parseSurefireConfig>");
+    verify(surefireConverter, never()).update(any(ReportOptions.class), any(Xpp3Dom.class));
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {
@@ -310,7 +340,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
       final PitMojo mojo = createPITMojo(pom);
       @SuppressWarnings("unchecked")
       Predicate<Artifact> filter = Mockito.mock(Predicate.class);
-      this.testee = new MojoToReportOptionsConverter(mojo, filter);
+      when(surefireConverter.update(any(ReportOptions.class), any(Xpp3Dom.class))).then(returnsFirstArg());
+      this.testee = new MojoToReportOptionsConverter(mojo, surefireConverter,filter);
       final ReportOptions actual = this.testee.convert();
       return actual;
     } catch (final Exception ex) {

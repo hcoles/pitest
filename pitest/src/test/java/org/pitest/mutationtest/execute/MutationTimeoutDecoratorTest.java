@@ -47,7 +47,7 @@ public class MutationTimeoutDecoratorTest {
   @Mock
   private ResultCollector          rc;
 
-  private final static long        NORMAL_EXECUTION = 1;
+  private static final long        NORMAL_EXECUTION = 1;
 
   @Before
   public void setUp() {

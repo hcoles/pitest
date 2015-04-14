@@ -5,7 +5,7 @@
     <organization><name>org.pitest</name></organization>
     <artifactId>pitest-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.6-SNAPSHOT</version>
     <name>pitest-parent</name>
     <url>http://pitest.org</url>
     <description>Mutation testing system for java - parent project</description>
@@ -35,6 +35,19 @@
             <email>henry@pitest.org</email>
         </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>Marvin H Froeder</name>
+            <email>velo dot br at gmail dot com</email>
+            <url>about.me/velo</url>
+        </contributor>
+        <contributor>
+            <name>Rahul Gopinath</name>
+            <email>rahul@gopinath.org</email>
+            <url>http://rahul.gopinath.org</url>
+        </contributor>
+    </contributors>
 
     <modules>
         <module>pitest-maven</module>
@@ -125,6 +138,26 @@
 	</dependencies>
 
     <build>
+	<plugins>
+	       <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+   <version>2.9.1</version>
+    <executions>
+        <execution>
+        <id>checkstyle</id>
+        <phase>validate</phase>
+        <goals>
+            <goal>check</goal>
+        </goals>
+        <configuration>
+            <failOnViolation>true</failOnViolation>
+            <configLocation>checkstyle.xml</configLocation>
+        </configuration>
+        </execution>
+    </executions>
+    </plugin>
+        </plugins>
 	
     <!-- specification of versions of all plugins used in any module
         also common configuration is specified there

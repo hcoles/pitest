@@ -41,7 +41,7 @@ import org.pitest.util.Unchecked;
 
 public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
-  private final static Logger                LOG = Log.getLogger();
+  private static final Logger                LOG = Log.getLogger();
 
   private final ClassLoaderDetectionStrategy loaderDetection;
   private final Class<?>                     clazz;

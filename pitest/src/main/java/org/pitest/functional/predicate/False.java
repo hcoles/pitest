@@ -20,7 +20,7 @@ package org.pitest.functional.predicate;
  */
 public class False<A> implements Predicate<A> {
 
-  private final static False<?> INSTANCE = new False<Object>();
+  private static final False<?> INSTANCE = new False<Object>();
 
   @SuppressWarnings("unchecked")
   public static <A> False<A> instance() {

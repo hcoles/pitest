@@ -26,7 +26,7 @@ import org.pitest.mutationtest.SourceLocator;
 
 public class SmartSourceLocator implements SourceLocator {
 
-  private final static int                MAX_DEPTH = 4;
+  private static final int                MAX_DEPTH = 4;
 
   private final Collection<SourceLocator> children;
 

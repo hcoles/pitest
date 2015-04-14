@@ -48,13 +48,13 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
 class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   private static final String                            MESSAGE   = "removed negation";
-  private final static Map<Integer, ZeroOperandMutation> mutations = new HashMap<Integer, ZeroOperandMutation>();
+  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
 
   static {
-    mutations.put(Opcodes.INEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
-    mutations.put(Opcodes.DNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
-    mutations.put(Opcodes.FNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
-    mutations.put(Opcodes.LNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
+    MUTATIONS.put(Opcodes.INEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
+    MUTATIONS.put(Opcodes.DNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
+    MUTATIONS.put(Opcodes.FNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
+    MUTATIONS.put(Opcodes.LNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
   }
 
   public InvertNegsMethodVisitor(final MethodMutatorFactory factory,
@@ -65,7 +65,7 @@ class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
-    return mutations;
+    return MUTATIONS;
   }
 
 }

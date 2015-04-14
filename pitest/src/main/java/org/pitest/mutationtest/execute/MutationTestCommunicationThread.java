@@ -31,7 +31,7 @@ import org.pitest.util.SafeDataOutputStream;
 
 public class MutationTestCommunicationThread extends CommunicationThread {
 
-  private final static Logger LOG = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   private static class SendData implements SideEffect1<SafeDataOutputStream> {
     private final SlaveArguments arguments;

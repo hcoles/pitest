@@ -40,7 +40,7 @@ import org.pitest.util.Log;
 
 public class CoverageData implements CoverageDatabase {
 
-  private final static Logger                                 LOG           = Log
+  private static final Logger                                 LOG           = Log
                                                                                 .getLogger();
 
   // We calculate block coverage, but everything currently runs on line
@@ -308,7 +308,7 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
-  private final Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
+  private Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
       final ClassName clazz) {
     return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
       public Boolean apply(Entry<BlockLocation, Set<TestInfo>> a) {

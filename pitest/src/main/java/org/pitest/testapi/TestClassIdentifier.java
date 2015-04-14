@@ -18,8 +18,8 @@ import org.pitest.classinfo.ClassInfo;
 
 public interface TestClassIdentifier {
 
-  public boolean isATestClass(ClassInfo a);
+  boolean isATestClass(ClassInfo a);
 
-  public boolean isIncluded(ClassInfo a);
+  boolean isIncluded(ClassInfo a);
 
 }

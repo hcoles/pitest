@@ -23,9 +23,9 @@ public interface MutationEngineConfiguration {
 
   Collection<? extends MethodMutatorFactory> mutators();
 
-  public Predicate<MethodInfo> methodFilter();
+  Predicate<MethodInfo> methodFilter();
 
-  public Collection<String> doNotMutateCallsTo();
+  Collection<String> doNotMutateCallsTo();
 
   InlinedCodeFilter inlinedCodeDetector();
 

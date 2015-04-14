@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import org.pitest.functional.SideEffect1;
 
 public class StreamMonitor extends Thread implements Monitor {
-  private final static Logger       LOG = Log.getLogger();
+  private static final Logger       LOG = Log.getLogger();
 
   private final byte[]              buf = new byte[256];
   private final InputStream         in;

@@ -17,40 +17,40 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
 public class LineMapper implements LineMap {
-	
-	private final CodeSource source;
-	
-	public LineMapper(CodeSource source) {
-		this.source = source;
-	}
 
-	public Map<BlockLocation, Set<Integer>> mapLines(ClassName clazz) {
-		ControlFlowAnalyser cfa = new ControlFlowAnalyser();
+  private final CodeSource source;
 
-	   Map<BlockLocation, Set<Integer>> map = new HashMap<BlockLocation, Set<Integer>>();
-	   
-		    Option<byte[]> maybeBytes = source.fetchClassBytes(clazz);
-		    // classes generated at runtime eg by mocking frameworks
-		    // will be instrumented but not available on the classpath
-		    for ( byte[] bytes : maybeBytes ) {
-	        ClassReader cr=new ClassReader(bytes);
-	        ClassNode classNode=new ClassNode();
-	        
-	        //ClassNode is a ClassVisitor
-	        cr.accept(classNode, ClassReader.EXPAND_FRAMES);
-	          for ( Object m : classNode.methods ) {
-	          MethodNode mn = (MethodNode) m;
-	          Location l = Location.location(clazz, MethodName.fromString(mn.name),mn.desc);
-	          List<Block> blocks = cfa.analyze(mn);
-	          for ( int i = 0; i != blocks.size(); i ++ ) {
-	            BlockLocation bl = new BlockLocation(l,i);
-	            map.put(bl, blocks.get(i).getLines());
-	          }
-	              
-	        }
-		    }
-		
-		return map;
-	}
-	
+  public LineMapper(final CodeSource source) {
+    this.source = source;
+  }
+
+  public Map<BlockLocation, Set<Integer>> mapLines(final ClassName clazz) {
+    final ControlFlowAnalyser cfa = new ControlFlowAnalyser();
+
+    final Map<BlockLocation, Set<Integer>> map = new HashMap<BlockLocation, Set<Integer>>();
+
+    final Option<byte[]> maybeBytes = this.source.fetchClassBytes(clazz);
+    // classes generated at runtime eg by mocking frameworks
+    // will be instrumented but not available on the classpath
+    for (final byte[] bytes : maybeBytes) {
+      final ClassReader cr = new ClassReader(bytes);
+      final ClassNode classNode = new ClassNode();
+
+      cr.accept(classNode, ClassReader.EXPAND_FRAMES);
+      for (final Object m : classNode.methods) {
+        final MethodNode mn = (MethodNode) m;
+        final Location l = Location.location(clazz,
+            MethodName.fromString(mn.name), mn.desc);
+        final List<Block> blocks = cfa.analyze(mn);
+        for (int i = 0; i != blocks.size(); i++) {
+          final BlockLocation bl = new BlockLocation(l, i);
+          map.put(bl, blocks.get(i).getLines());
+        }
+
+      }
+    }
+
+    return map;
+  }
+
 }

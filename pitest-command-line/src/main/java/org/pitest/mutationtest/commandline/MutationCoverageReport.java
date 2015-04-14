@@ -28,7 +28,7 @@ import org.pitest.util.Unchecked;
  */
 public class MutationCoverageReport {
 
-  public static void main(final String args[]) {
+  public static void main(final String[] args) {
 
     final PluginServices plugins = PluginServices.makeForContextLoader();
     final OptionsParser parser = new OptionsParser(new PluginFilter(plugins));

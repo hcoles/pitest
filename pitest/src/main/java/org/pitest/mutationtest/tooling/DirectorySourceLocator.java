@@ -83,7 +83,7 @@ public class DirectorySourceLocator implements SourceLocator {
     };
   }
 
-  private final Option<Reader> locate(final String fileName) {
+  private Option<Reader> locate(final String fileName) {
     final File f = new File(this.root + File.separator + fileName);
     return this.fileToReader.apply(f);
   }

@@ -43,7 +43,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   protected static final String      CAN_SET_NATIVE_METHOD = "Can-Set-Native-Method-Prefix";
   protected static final String      BOOT_CLASSPATH        = "Boot-Class-Path";
 
-  private final static String        AGENT_CLASS_NAME      = HotSwapAgent.class
+  private static final String        AGENT_CLASS_NAME      = HotSwapAgent.class
                                                                .getName();
 
   private Option<String>             location              = Option.none();
@@ -89,7 +89,7 @@ public class JarCreatingJarFinder implements JavaAgent {
       global.put(Attributes.Name.MANIFEST_VERSION, "1.0");
     }
     final File mylocation = new File(location);
-    global.putValue(BOOT_CLASSPATH, getBoothClassPath(mylocation));
+    global.putValue(BOOT_CLASSPATH, getBootClassPath(mylocation));
     global.putValue(PREMAIN_CLASS, AGENT_CLASS_NAME);
     global.putValue(CAN_REDEFINE_CLASSES, "true");
     global.putValue(CAN_SET_NATIVE_METHOD, "true");
@@ -101,7 +101,7 @@ public class JarCreatingJarFinder implements JavaAgent {
     jos.close();
   }
 
-  private String getBoothClassPath(final File mylocation) {
+  private String getBootClassPath(final File mylocation) {
     return mylocation.getAbsolutePath().replace('\\', '/');
   }
 

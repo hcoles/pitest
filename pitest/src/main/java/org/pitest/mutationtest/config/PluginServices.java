@@ -16,13 +16,13 @@ import org.pitest.util.IsolationUtils;
 import org.pitest.util.ServiceLoader;
 
 public class PluginServices {
-  
+
   private final ClassLoader loader;
-  
+
   public PluginServices(ClassLoader loader) {
     this.loader = loader;
   }
-  
+
   public static PluginServices makeForContextLoader() {
     return new PluginServices(IsolationUtils.getContextClassLoader());
   }
@@ -30,6 +30,7 @@ public class PluginServices {
   /**
    * Lists all plugin classes that must be present on the classpath of the
    * controlling process only.
+   * 
    * @return list of plugins
    */
   public Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
@@ -52,15 +53,15 @@ public class PluginServices {
     l.addAll(nullPlugins());
     return l;
   }
-  
+
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
-	return ServiceLoader.load(TestPluginFactory.class, loader);  
+    return ServiceLoader.load(TestPluginFactory.class, loader);
   }
-  
+
   Collection<? extends MutationGrouperFactory> findGroupers() {
     return ServiceLoader.load(MutationGrouperFactory.class, loader);
   }
- 
+
   Collection<? extends MutationFilterFactory> findFilters() {
     return ServiceLoader.load(MutationFilterFactory.class, loader);
   }
@@ -76,11 +77,9 @@ public class PluginServices {
   Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
     return ServiceLoader.load(TestPrioritiserFactory.class, loader);
   }
-  
+
   private Collection<ClientClasspathPlugin> nullPlugins() {
     return ServiceLoader.load(ClientClasspathPlugin.class, loader);
   }
 
-
-  
 }

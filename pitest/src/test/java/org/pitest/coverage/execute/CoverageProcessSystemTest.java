@@ -318,7 +318,7 @@ public class CoverageProcessSystemTest {
 
     final ExitCode exitCode = process.waitToDie();
 
-    assertThat(exitCode, is(ExitCode.UNKNOWN_ERROR));
+    assertThat(exitCode, is(ExitCode.JUNIT_ISSUE));
   }
 
   private ClassPath classPathWithoutJUnit() {

@@ -14,6 +14,8 @@
  */
 package org.pitest.mutationtest.config;
 
+import java.io.Serializable;
+
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
@@ -99,12 +101,9 @@ public enum ConfigOption {
    * Formats in which to output results
    */
   OUTPUT_FORMATS("outputFormats"),
+
   /**
-   * External config file path
-   */
-  PROJECT_FILE("configFile"),
-  /**
-   * Classpath entries to ahalyse. Although classes on the laucnh classpath will also be
+   * Classpath entries to analyse. Although classes on the launch classpath will also be
    * analysed, this is the preferred place to specify the code to analyse
    */
   CLASSPATH("classPath"),
@@ -175,13 +174,13 @@ public enum ConfigOption {
   JVM_PATH("jvmPath");
 
   private final String text;
-  private final Object defaultValue;
+  private final Serializable defaultValue;
 
   ConfigOption(final String text) {
     this(text, null);
   }
 
-  ConfigOption(final String text, final Object defaultValue) {
+  ConfigOption(final String text, final Serializable defaultValue) {
     this.text = text;
     this.defaultValue = defaultValue;
   }

@@ -30,8 +30,8 @@ import org.pitest.mutationtest.build.TestInfoPriorisationComparator;
 
 public class TestInfoPriorisationComparatorTest {
 
-  private final static String            TARGET         = "target";
-  private final static int               TIME_WEIGHTING = 1000;
+  private static final String            TARGET         = "target";
+  private static final int               TIME_WEIGHTING = 1000;
 
   private TestInfoPriorisationComparator testee;
 
