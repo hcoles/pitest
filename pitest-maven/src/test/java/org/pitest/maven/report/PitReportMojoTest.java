@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -69,6 +70,8 @@ public class PitReportMojoTest {
 	@Test
 	public void testGenerateReport() throws Exception {
 		ReportGenerationContext actualContext;
+
+		this.reflectionSetSiteReportDir("pit-reports");
 		
 		setupMocks(true, true, true);
 		when(this.reportsDirectory.getAbsolutePath()).thenReturn("abspath");
@@ -89,6 +92,12 @@ public class PitReportMojoTest {
 		when(this.reportsDirectory.exists()).thenReturn(reportsDirectoryExists);
 		when(this.reportsDirectory.canRead()).thenReturn(reportsDirectoryReadable);
 		when(this.reportsDirectory.isDirectory()).thenReturn(reportsDirectoryIsDirectory);
+	}
+	
+	private void reflectionSetSiteReportDir(String value) throws Exception {
+		Field f = this.fixture.getClass().getDeclaredField("siteReportDirectory");
+		f.setAccessible(true);
+		f.set(this.fixture, value);
 	}
 	
 }

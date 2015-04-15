@@ -262,18 +262,22 @@ public class PitMojoIT {
   }
   
   /*
-   * verifies that the pit site report's name and description can be customized in the site's project reports index.html file
+   * verifies that overriding defaults has the expected results
    */
   @Test
-  public void shouldOverwriteReportNameDescription() throws Exception {
-	  final File testDir = prepare("/pit-site-custom-report-name-description");
+  public void shouldCorrectlyHandleOverrides() throws Exception {
+	  final File testDir = prepare("/pit-site-custom-config");
 	  final File siteProjectReportsIndex = this.buildFile(testDir, "target", "site", "project-reports.html");
+	  final File expectedSiteReportDir = this.buildFile(testDir, "target", "site", "foobar");
+	  final File defaultSiteReportDir = this.buildFile(testDir, "target", "site", "pit-reports");
 	  final String projectReportsHtml;
 	  
 	  this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 	  
 	  projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
-	  assertThat(projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>")).isTrue();
+	  assertThat(projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>")).isTrue();
+	  assertThat(expectedSiteReportDir.exists()).isTrue();
+	  assertThat(defaultSiteReportDir.exists()).isFalse();
   }
 
   @Test

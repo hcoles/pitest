@@ -34,7 +34,7 @@ import org.pitest.util.PitError;
  */
 public class PitReportMojo extends AbstractMavenReport {
 
-    private static final String SITE_REPORTS_FOLDER = "pit-reports";
+    //private static final String SITE_REPORTS_FOLDER = "pit-reports";
     
     /**
      * @component
@@ -96,6 +96,16 @@ public class PitReportMojo extends AbstractMavenReport {
      */
     private String siteReportDescription;
     
+    /**
+     * Specifies the directory under ${project.build.directory}/site where the pit reports will be written.  The value 
+     * of this parameter will be relative to ${project.build.directory}/site.  For example, if this parameter is set to 
+     * "foo", then the pit reports will be located in ${project.build.directory}/site/foo.
+     * 
+     * @parameter default-value="${project.build.directory}/site/pit-reports"
+     *            expression="${pit.report.outputdir}"
+     */
+    private String siteReportDirectory;
+    
     private ReportGenerationManager reportGenerationManager;
     
     public PitReportMojo() {
@@ -105,7 +115,7 @@ public class PitReportMojo extends AbstractMavenReport {
     }
     
     public String getOutputName() {
-        return SITE_REPORTS_FOLDER + File.separator + "index";
+        return this.siteReportDirectory + File.separator + "index";
     }
 
     public String getName(Locale locale) {
@@ -174,7 +184,7 @@ public class PitReportMojo extends AbstractMavenReport {
     }
 
     private ReportGenerationContext buildReportGenerationContext(Locale locale) {
-        return new ReportGenerationContext(locale, this.getSink(), reportsDirectory, new File(this.getReportOutputDirectory().getAbsolutePath() + File.separator + SITE_REPORTS_FOLDER), this.getLog(), this.getSourceDataFormats());
+        return new ReportGenerationContext(locale, this.getSink(), reportsDirectory, new File(this.getReportOutputDirectory().getAbsolutePath() + File.separator + this.siteReportDirectory), this.getLog(), this.getSourceDataFormats());
     }
     
 }
