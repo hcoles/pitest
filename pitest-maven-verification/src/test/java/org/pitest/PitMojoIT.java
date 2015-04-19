@@ -173,7 +173,9 @@ public class PitMojoIT {
     final File testDir = prepare("/pit-site-multiple-timestamped");
     final File pitReportDir = this.buildFile(testDir, "target", "pit-reports");
     final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+    boolean secondMarkerCreated = false;
     final String[] run1;
+    final String[] run2;
     
     this.verifier.setLogFileName("log1.txt");
     this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
@@ -194,62 +196,82 @@ public class PitMojoIT {
     	loopCount++;
     }
     
-    this.verifier.setLogFileName("log2.txt");
-    this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-    assertThat(pitReportDir.list().length).isEqualTo(2);
+    this.verifier.setLogFileName("log2-pit.txt");
+    this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
+    
+    //create a marker file to ensure the latest pit report is copied over
+    run2 = pitReportDir.list();
+    assertThat(run2.length).isEqualTo(2);
+    for (String s : run2) {
+    	if (!s.equals(run1[0])) {
+    		assertThat(this.buildFile(pitReportDir, s, "second_marker.dat").createNewFile()).isEqualTo(true);
+    		secondMarkerCreated = true;
+    		break;
+    	}
+    }
+    assertThat(secondMarkerCreated).isTrue();
+    
+    this.verifier.setLogFileName("log2-site.txt");
+    this.verifier.executeGoal("site");
     
     assertThat(new File(pitReportSiteDir, "first_marker.dat").exists()).isEqualTo(false);
+    assertThat(new File(pitReportSiteDir, "second_marker.dat").exists()).isEqualTo(true);
   }
 
   /*
    * Verifies that in the case where pit has generated reports with both timestampedReports=true and timestampedReports=false, 
    * the latest report run is copied and no timestamped report subdirectories are copied
    */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
   public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
 	  final FilenameFilter timestampedDirFilter = new RegexFileFilter("^\\d+$");
 	  final File testDir = prepare("/pit-site-combined");
 	  final File pitReportDir = this.buildFile(testDir, "target", "pit-reports");
 	  final File pitReportSiteDir = this.buildFile(testDir, "target", "site", "pit-reports");
+	  boolean thirdMarkerCreated = false;
 	  final List originalCliOptions;
 	  final File run1Dir;
-	  final File run2Dir;
-	  File run3Dir;
 	  
 	  originalCliOptions = new ArrayList(this.verifier.getCliOptions());
 	  
-	  //first run, create a timestamped report
+	  //first run -- create a timestamped report
 	  this.verifier.setLogFileName("log1.txt");
 	  this.verifier.getCliOptions().add("-DtimestampedReports=true");
 	  this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
+	  
+	  //first run -- create the "first.dat" marker file in the new timestamped reports directory
 	  run1Dir = pitReportDir.listFiles()[0];
 	  new File(run1Dir, "first.dat").createNewFile();
 	  
-	  //second run, create a non-timestamped report
+	  //second run -- create a non-timestamped report
 	  this.verifier.setLogFileName("log2.txt");
 	  this.verifier.getCliOptions().add("-DtimestampedReports=false");
 	  this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
-	  run2Dir = pitReportDir;
-	  new File(run2Dir, "second.dat").createNewFile();
 	  
-	  //third run, create a timestamped report
-	  run3Dir = null;
-	  this.verifier.setLogFileName("log3.txt");
+	  //second run -- create the "second.dat" marker file in the target/pit-reports directory (since the second run is a non-timestamped report)
+	  new File(pitReportDir, "second.dat").createNewFile();
+	  
+	  //third run -- create a timestamped report
+	  this.verifier.setLogFileName("log3-pit.txt");
 	  this.verifier.getCliOptions().add("-DtimestampedReports=true");
 	  this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
 	  this.verifier.setCliOptions(new ArrayList(originalCliOptions));
-	  for(File f : pitReportDir.listFiles(timestampedDirFilter)){
-		  if(!f.equals(run1Dir)){
-			  run3Dir = f;
+	  
+	  //third run -- create the "third.dat" marker file in the new timestamped reports directory
+	  for (File f : pitReportDir.listFiles(timestampedDirFilter)) {
+		  if (!f.equals(run1Dir)) {
+			  new File(f, "third.dat").createNewFile();
+			  thirdMarkerCreated = true;
 			  break;
 		  }
 	  }
-	  new File(run3Dir, "third.dat").createNewFile();
+	  assertThat(thirdMarkerCreated).isTrue();
 	  
-	  //run the site lifecycle last so that the third.dat file has a chance to be created before the sire generation happens
-	  this.verifier.setLogFileName("log4.txt");
+	  //run the site lifecycle last so that the third.dat file has a chance to be created before the site generation happens
+	  this.verifier.setLogFileName("log3-site.txt");
 	  this.verifier.executeGoal("site");
 	  
 	  //assert that the third run (a timestamped report) is the report in the site/pit-reports directory
@@ -352,7 +374,7 @@ public class PitMojoIT {
   private File buildFile(File base, String... pathParts) {
 	  StringBuilder path = new StringBuilder(base.getAbsolutePath());
 	  
-	  for(String part : pathParts){
+	  for (String part : pathParts) {
 		  path.append(File.separator).append(part);
 	  }
 	  

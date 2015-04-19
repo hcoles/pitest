@@ -97,11 +97,11 @@ public class PitReportMojo extends AbstractMavenReport {
     private String siteReportDescription;
     
     /**
-     * Specifies the directory under ${project.build.directory}/site where the pit reports will be written.  The value 
-     * of this parameter will be relative to ${project.build.directory}/site.  For example, if this parameter is set to 
-     * "foo", then the pit reports will be located in ${project.build.directory}/site/foo.
+     * Specifies the directory under ${project.reporting.outputDirectory} where the pit reports will be written.  The value 
+     * of this parameter will be relative to ${project.reporting.outputDirectory}.  For example, if this parameter is set to 
+     * "foo", then the pit reports will be located in ${project.reporting.outputDirectory}/foo.
      * 
-     * @parameter default-value="${project.build.directory}/site/pit-reports"
+     * @parameter default-value="pit-reports"
      *            expression="${pit.report.outputdir}"
      */
     private String siteReportDirectory;
