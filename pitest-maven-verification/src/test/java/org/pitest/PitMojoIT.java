@@ -17,6 +17,8 @@ package org.pitest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,7 +164,7 @@ public class PitMojoIT {
     
     //assert that the expected report name/description was written to the site project report's index.html file
 	projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
-	assertThat(projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>")).isTrue();
+	assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
   }
   
   /*
@@ -181,20 +183,9 @@ public class PitMojoIT {
     this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
     run1 = pitReportDir.list();
     assertThat(run1.length).isEqualTo(1);
-    assertThat(this.buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile()).isEqualTo(true);
+    assertTrue("first marker file not created", this.buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile());
     
-    //PIT timestamps reports to the minute which means it is possible to generate the same timestamped report twice, 
-    //this code ensures that will not happen
-    int loopCount = 0;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
-    while(dateFormat.format(new Date()).equals(run1[0])){
-    	if(loopCount > 65){
-    		throw new PitError("integration test is stuck in an infinite loop");
-    	}
-    	
-    	Thread.sleep(1000);
-    	loopCount++;
-    }
+    this.waitUntilNextMinute(run1[0]);
     
     this.verifier.setLogFileName("log2-pit.txt");
     this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
@@ -209,7 +200,7 @@ public class PitMojoIT {
     		break;
     	}
     }
-    assertThat(secondMarkerCreated).isTrue();
+    assertTrue("second marker file not created", secondMarkerCreated);
     
     this.verifier.setLogFileName("log2-site.txt");
     this.verifier.executeGoal("site");
@@ -255,6 +246,7 @@ public class PitMojoIT {
 	  new File(pitReportDir, "second.dat").createNewFile();
 	  
 	  //third run -- create a timestamped report
+	  this.waitUntilNextMinute(run1Dir.getName());
 	  this.verifier.setLogFileName("log3-pit.txt");
 	  this.verifier.getCliOptions().add("-DtimestampedReports=true");
 	  this.verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
@@ -268,14 +260,14 @@ public class PitMojoIT {
 			  break;
 		  }
 	  }
-	  assertThat(thirdMarkerCreated).isTrue();
+	  assertTrue("third marker file not created", thirdMarkerCreated);
 	  
 	  //run the site lifecycle last so that the third.dat file has a chance to be created before the site generation happens
 	  this.verifier.setLogFileName("log3-site.txt");
 	  this.verifier.executeGoal("site");
 	  
 	  //assert that the third run (a timestamped report) is the report in the site/pit-reports directory
-	  assertThat(new File(pitReportSiteDir, "third.dat").exists()).isTrue();
+	  assertTrue("did not find expected marker file third.dat in site directory", new File(pitReportSiteDir, "third.dat").exists()); 
 	  
 	  //assert that no timestamped report subdirectories were copied into the site/pit-reports directory
 	  //comparing to an empty array is better than checking the array length because a failure in this assert 
@@ -297,9 +289,9 @@ public class PitMojoIT {
 	  this.verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 	  
 	  projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
-	  assertThat(projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>")).isTrue();
-	  assertThat(expectedSiteReportDir.exists()).isTrue();
-	  assertThat(defaultSiteReportDir.exists()).isFalse();
+	  assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
+	  assertTrue("expected site report directory [" + expectedSiteReportDir + "] does not exist but should exist", expectedSiteReportDir.exists());
+	  assertFalse("expected default site report directory [" + defaultSiteReportDir + "] exists but should not exist since the report location parameter was overridden", defaultSiteReportDir.exists());
   }
 
   @Test
@@ -379,6 +371,28 @@ public class PitMojoIT {
 	  }
 	  
 	  return new File(path.toString());
+  }
+  
+  /**
+   * PIT timestamps reports to the minute which means it is possible to generate the same timestamped report twice.  
+   * This function ensures that will not happen by waiting until the minute after the specified date time.
+   * 
+   * @param startDateTime date time {@link String} in the format "yyyyMMddHHmm", this function will wait until a minute after this date time
+   * @throws Exception if this function waits more than 65 seconds or if there is an {@link InterruptedException} during the Thread.sleep
+   */
+  private void waitUntilNextMinute(String startDateTime) throws Exception {
+	// 
+    //this code ensures that will not happen
+    int loopCount = 0;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+    while(dateFormat.format(new Date()).equals(startDateTime)){
+    	if(loopCount > 65){
+    		throw new PitError("integration test is stuck in an infinite loop");
+    	}
+    	
+    	Thread.sleep(1000);
+    	loopCount++;
+    }
   }
 
 }
