@@ -30,7 +30,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.pitest.maven.report.ReportSourceLocator;
@@ -40,7 +39,7 @@ import org.pitest.util.PitError;
 public class ReportGenerationManagerTest {
 
 	private ReportGenerationContext generationContext;
-	private List<IReportGenerationStrategy> reportGenerationStrategyList;
+	private List<ReportGenerationStrategy> reportGenerationStrategyList;
 	
 	@Mock private ReportSourceLocator reportLocator;
 	@Mock private XMLReportGenerator xmlGenerator;
@@ -50,14 +49,15 @@ public class ReportGenerationManagerTest {
 	@Mock private File siteDirectory;
 	@Mock private File locatedReportsDataDirectory; 
 	
-	@InjectMocks private ReportGenerationManager fixture;
+	private ReportGenerationManager fixture;
 	
 	@Before
 	public void setUp() {
-		this.reportGenerationStrategyList = new LinkedList<IReportGenerationStrategy>();
+		this.reportGenerationStrategyList = new LinkedList<ReportGenerationStrategy>();
 		this.reportGenerationStrategyList.add(this.xmlGenerator);
 		this.reportGenerationStrategyList.add(this.htmlGenerator);
-		this.fixture.reportGenerationStrategyList = this.reportGenerationStrategyList;
+		
+		fixture = new ReportGenerationManager(this.reportLocator, this.reportGenerationStrategyList);
 		
 		this.generationContext = new ReportGenerationContext(Locale.ENGLISH, null, this.reportsDataDirectory, this.siteDirectory, this.log, Arrays.asList("XML", "HTML"));
 		

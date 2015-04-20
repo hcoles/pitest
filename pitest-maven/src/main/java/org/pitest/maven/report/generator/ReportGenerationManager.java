@@ -14,23 +14,25 @@
  */
 package org.pitest.maven.report.generator;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.pitest.maven.report.ReportSourceLocator;
 import org.pitest.util.PitError;
 
+
 public class ReportGenerationManager {
 
-    protected ReportSourceLocator reportLocator;
-    protected List<IReportGenerationStrategy> reportGenerationStrategyList;
+    private final ReportSourceLocator reportLocator;
+    private final List<ReportGenerationStrategy> reportGenerationStrategyList;
     
     public ReportGenerationManager() {
-        this.reportLocator = new ReportSourceLocator();
-        
-        this.reportGenerationStrategyList = new ArrayList<IReportGenerationStrategy>();
-        this.reportGenerationStrategyList.add(new XMLReportGenerator());
-        this.reportGenerationStrategyList.add(new HTMLReportGenerator());
+        this(new ReportSourceLocator(), Arrays.asList(new XMLReportGenerator(), new HTMLReportGenerator()));
+    }
+    
+    public ReportGenerationManager(final ReportSourceLocator reportLocator, final List<ReportGenerationStrategy> reportGenerationStrategyList) {
+        this.reportLocator = reportLocator;
+        this.reportGenerationStrategyList = reportGenerationStrategyList;
     }
     
     public void generateSiteReport(ReportGenerationContext context) {
@@ -59,8 +61,8 @@ public class ReportGenerationManager {
         context.getLogger().debug("finished execution of report generators");
     }
     
-    private IReportGenerationStrategy locateReportGenerationStrategy(String sourceDataFormat) {
-        for (IReportGenerationStrategy strategy : this.reportGenerationStrategyList) {
+    private ReportGenerationStrategy locateReportGenerationStrategy(String sourceDataFormat) {
+        for (ReportGenerationStrategy strategy : this.reportGenerationStrategyList) {
             if (sourceDataFormat.equalsIgnoreCase(strategy.getGeneratorDataFormat())) {
                 return strategy;
             }

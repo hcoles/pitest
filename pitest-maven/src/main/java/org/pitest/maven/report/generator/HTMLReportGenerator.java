@@ -21,7 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 
-public class HTMLReportGenerator implements IReportGenerationStrategy {
+public class HTMLReportGenerator implements ReportGenerationStrategy {
 
     protected static final FileFilter EXCLUDE_TIMESTAMPED_REPORTS_DIRECTORIES = new NotFileFilter(new RegexFileFilter("^\\d+$"));
     

@@ -16,7 +16,7 @@ package org.pitest.maven.report.generator;
 
 
 
-public interface IReportGenerationStrategy {
+public interface ReportGenerationStrategy {
 
     ReportGenerationResultEnum generate(ReportGenerationContext context);
     String getGeneratorName();
