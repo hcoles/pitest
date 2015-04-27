@@ -7,6 +7,7 @@ public class AnonymousClass {
     public int foo() {
         final int[] result = new int[1];
         Runnable r = new Runnable() {
+            @Override
             public void run() {
                 int i = 1;
                 i++;
