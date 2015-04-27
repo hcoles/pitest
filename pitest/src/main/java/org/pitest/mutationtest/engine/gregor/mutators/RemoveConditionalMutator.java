@@ -18,7 +18,14 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   // EQUAL : Mutate only equality operators
   // ORDER : Mutate only Ordering operators
   public enum Choice {
-    EQUAL, ORDER
+    EQUAL("equality"), ORDER("comparison");
+    private String desc;
+    Choice(String desc) {
+      this.desc = desc;
+    }
+    String description() {
+      return desc;
+    }
   }
 
   private final Choice  kind;
@@ -43,7 +50,9 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new RemoveConditionalMethodVisitor(this, context, methodVisitor);
+    return new RemoveConditionalMethodVisitor(this, context, methodVisitor,
+        "removed conditional - replaced " + this.kind.description() + " check with "
+            + this.replaceWith);
   }
 
   public String getGloballyUniqueId() {
@@ -58,15 +67,16 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
   private final class RemoveConditionalMethodVisitor extends MethodVisitor {
 
-    private static final String        DESCRIPTION = "removed conditional";
+    private final String               description;
     private final MutationContext      context;
     private final MethodMutatorFactory factory;
 
     public RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
-        final MutationContext context, final MethodVisitor delegateMethodVisitor) {
+        final MutationContext context, final MethodVisitor delegateMethodVisitor, String description) {
       super(Opcodes.ASM5, delegateMethodVisitor);
       this.context = context;
       this.factory = factory;
+      this.description = description;
     }
 
     @Override
@@ -74,7 +84,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
       if (canMutate(opcode)) {
         final MutationIdentifier newId = this.context.registerMutation(
-            this.factory, DESCRIPTION);
+            this.factory, description);
 
         if (this.context.shouldMutate(newId)) {
           emptyStack(opcode);
