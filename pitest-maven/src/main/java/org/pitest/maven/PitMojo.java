@@ -332,7 +332,7 @@ public class PitMojo extends AbstractMojo {
     this.plugins = plugins;
   }
 
-  public final void execute() throws MojoExecutionException,
+  public void execute() throws MojoExecutionException,
   MojoFailureException {
 
     switchLogging();
