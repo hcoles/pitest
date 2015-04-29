@@ -276,6 +276,20 @@ public class PitMojoIT {
   }
   
   /*
+   * Verifies that the build fails when running the report goal without first running the mutationCoverage goal
+   */
+  @Test
+  public void shouldFailIfNoReportAvailable() throws Exception {
+	  prepare("/pit-site-reportonly");
+	  
+	  try{
+		  this.verifier.executeGoals(Arrays.asList("clean", "test", "site"));
+	  }catch(VerificationException e){
+		  assertThat(e.getMessage()).containsSequence("[ERROR] Failed to execute goal org.apache.maven.plugins:maven-site-plugin:", ":site (default-site) on project pit-site-reportonly: Execution default-site of goal org.apache.maven.plugins:maven-site-plugin:", ":site failed: could not find reports directory", "pit-site-reportonly/target/pit-reports");
+	  }
+  }
+  
+  /*
    * verifies that overriding defaults has the expected results
    */
   @Test

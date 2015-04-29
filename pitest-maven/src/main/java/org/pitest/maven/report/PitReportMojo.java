@@ -76,7 +76,7 @@ public class PitReportMojo extends AbstractMavenReport {
      * outputFormats parameter of the mutationCoverage goal.
      * 
      * @parameter default-value="HTML"
-     *            expression="${sourceDataFormats}"
+     *            expression="${pit.report.sourceDataFormats}"
      */
     private List<String> sourceDataFormats;
     
