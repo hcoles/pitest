@@ -3,4 +3,4 @@ jdk:
   - openjdk6
   - oraclejdk7
   - oraclejdk8 
-script: travis_wait mvn clean verify
+script: mvn clean verify
