@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -47,7 +48,21 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
     assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
   }
+  
+  @Test
+  public void shouldDescribeReplacementOfEqualityChecksWithTrue() {
+    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
+    final Mutant mutant = getFirstMutant(HasIFEQ.class);
+    assertThat(mutant.getDetails().getDescription()).contains("equality check with true");
+  }
 
+  @Test
+  public void shouldDescribeReplacementOfEqualityChecksWithFalse() {
+    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
+    final Mutant mutant = getFirstMutant(HasIFEQ.class);
+    assertThat(mutant.getDetails().getDescription()).contains("equality check with false");
+  }
+  
   @Test
   public void shouldReplaceIFEQ_EQUAL_F() throws Exception {
     createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
@@ -56,6 +71,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
     assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
   }
+  
 
   @Test
   public void shouldNotReplaceIFEQ_ORDER_T() throws Exception {
@@ -439,6 +455,21 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFLE(0), mutant, expected);
   }
 
+  @Test
+  public void shouldDescribeReplacementOfOrderCheckWithTrue() throws Exception {
+    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
+    final Mutant mutant = getFirstMutant(HasIFLE.class);
+    assertThat(mutant.getDetails().getDescription()).contains(" comparison check with true");
+  }
+  
+  @Test
+  public void shouldDescribeReplacementOfOrderCheckWithFalse() throws Exception {
+    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
+    final Mutant mutant = getFirstMutant(HasIFLE.class);
+    assertThat(mutant.getDetails().getDescription()).contains(" comparison check with false");
+  }
+
+  
   static class HasIFGE implements Callable<String> {
     private final int i;
 

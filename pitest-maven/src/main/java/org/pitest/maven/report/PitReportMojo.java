@@ -114,17 +114,14 @@ public class PitReportMojo extends AbstractMavenReport {
         this.reportGenerationManager = new ReportGenerationManager();
     }
     
-    @Override
     public String getOutputName() {
         return this.siteReportDirectory + File.separator + "index";
     }
 
-    @Override
     public String getName(Locale locale) {
         return this.siteReportName;
     }
 
-    @Override
     public String getDescription(Locale locale) {
         return this.siteReportDescription;
     }
@@ -170,6 +167,7 @@ public class PitReportMojo extends AbstractMavenReport {
         return !skip;
     }
     
+    @Override
     public boolean isExternalReport() {
         return true;
     }
