@@ -137,6 +137,10 @@ public class MojoToReportOptionsConverter {
     data.setMutationEngine(this.mojo.getMutationEngine());
     data.setJavaExecutable(this.mojo.getJavaExecutable());
 
+    if (this.mojo.getPluginProperties() != null) {
+      data.setPluginProperties(this.mojo.getPluginProperties());
+    }
+
     return data;
   }
 

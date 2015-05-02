@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
@@ -119,6 +120,8 @@ public class ReportOptions {
   private String                         javaExecutable;
 
   private boolean                        includeLaunchClasspath         = true;
+
+  private Properties                     pluginProperties               = new Properties();
 
   public boolean isVerbose() {
     return this.verbose;
@@ -538,6 +541,10 @@ public class ReportOptions {
     return this.includeLaunchClasspath;
   }
 
+  public Properties getPluginProperties() { return this.pluginProperties; }
+
+  public void setPluginProperties(final Properties pluginProperties) { this.pluginProperties = pluginProperties; }
+
   @Override
   public String toString() {
     return "ReportOptions [targetClasses="
@@ -566,7 +573,8 @@ public class ReportOptions {
         + this.mutationThreshold + ", coverageThreshold="
         + this.coverageThreshold + ", mutationEngine=" + this.mutationEngine
         + ", javaExecutable=" + this.javaExecutable + ", includeLaunchClasspath="
-        + this.includeLaunchClasspath + "]";
+        + this.includeLaunchClasspath + ", pluginProperties="
+            + this.pluginProperties + "]";
   }
 
 }

@@ -171,7 +171,7 @@ public class MutationCoverage {
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            this.data.getSourceDirs()), engine, t0);
+            this.data.getSourceDirs()), engine, t0, this.data.getPluginProperties());
 
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(args);
