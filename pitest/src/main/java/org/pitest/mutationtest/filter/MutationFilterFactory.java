@@ -17,8 +17,11 @@ package org.pitest.mutationtest.filter;
 import org.pitest.classpath.CodeSource;
 import org.pitest.plugin.ToolClasspathPlugin;
 
+import java.util.Properties;
+
 public interface MutationFilterFactory extends ToolClasspathPlugin {
 
-  MutationFilter createFilter(CodeSource source, int maxMutationsPerClass);
+  MutationFilter createFilter(CodeSource source, int maxMutationsPerClass, Properties pluginProperties
+  );
   
 }
