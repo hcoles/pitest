@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.apache.maven.artifact.Artifact;
@@ -317,6 +318,13 @@ public class PitMojo extends AbstractMojo {
    */
   private Map<String, Artifact>       pluginArtifactMap;
 
+  /**
+   * Properties passed in for pit plugins
+   *
+   * @parameter expression="${pluginProperties}"
+   */
+  private Properties                  pluginProperties;
+
   protected final GoalStrategy        goalStrategy;
 
   public PitMojo() {
@@ -549,5 +557,7 @@ public class PitMojo extends AbstractMojo {
   public boolean isParseSurefireConfig() {
     return this.parseSurefireConfig;
   }
+
+  public Properties getPluginProperties() { return this.pluginProperties; }
 
 }

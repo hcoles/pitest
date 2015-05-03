@@ -4,6 +4,8 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.util.ResultOutputStrategy;
 
+import java.util.Properties;
+
 /**
  * Data passed to the listener MutationResultListener factories for use when
  * constructing listeners.
@@ -15,15 +17,17 @@ public class ListenerArguments {
   private final long                 startTime;
   private final SourceLocator        locator;
   private final MutationEngine       engine;
+  private final Properties           pluginProperties;
 
   public ListenerArguments(final ResultOutputStrategy outputStrategy,
       final CoverageDatabase coverage, final SourceLocator locator,
-      final MutationEngine engine, final long startTime) {
+      final MutationEngine engine, final long startTime, final Properties pluginProperties) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
     this.startTime = startTime;
     this.engine = engine;
+    this.pluginProperties = pluginProperties;
   }
 
   public ResultOutputStrategy getOutputStrategy() {
@@ -46,4 +50,5 @@ public class ListenerArguments {
     return this.engine;
   }
 
+  public Properties getPluginProperties() { return this.pluginProperties; }
 }

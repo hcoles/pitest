@@ -171,7 +171,7 @@ public class MutationCoverage {
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            this.data.getSourceDirs()), engine, t0);
+            this.data.getSourceDirs()), engine, t0, this.data.getPluginProperties());
 
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(args);
@@ -236,10 +236,10 @@ public class MutationCoverage {
     
     ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
     
-    TestPrioritiser testPrioritiser = settings.getTestPrioritiser().makeTestPrioritiser(code, coverageData);
+    TestPrioritiser testPrioritiser = settings.getTestPrioritiser().makeTestPrioritiser(code, coverageData, data.getPluginProperties());
     
     final MutationSource source = new MutationSource(mutationConfig,
-        makeFilter().createFilter(code, data.getMaxMutationsPerClass()), testPrioritiser, bas);
+        makeFilter().createFilter(code, data.getMaxMutationsPerClass(), data.getPluginProperties()), testPrioritiser, bas);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
