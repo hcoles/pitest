@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
-import org.pitest.mutationtest.config.CompoundListenerFactory;
 
 public class CompoundListenerFactoryTest {
 
@@ -53,10 +53,10 @@ public class CompoundListenerFactoryTest {
     final MutationResultListener listenerOne = mock(MutationResultListener.class);
     final MutationResultListener listenerTwo = mock(MutationResultListener.class);
     when(
-        this.firstChild.getListener(any(ListenerArguments.class))).thenReturn(listenerOne);
+        this.firstChild.getListener(any(Properties.class),any(ListenerArguments.class))).thenReturn(listenerOne);
     when(
-        this.secondChild.getListener(any(ListenerArguments.class))).thenReturn(listenerTwo);
-    this.testee.getListener(null).runStart();
+        this.secondChild.getListener(any(Properties.class),any(ListenerArguments.class))).thenReturn(listenerTwo);
+    this.testee.getListener(null,null).runStart();
     verify(listenerOne, times(1)).runStart();
     verify(listenerTwo, times(1)).runStart();
   }

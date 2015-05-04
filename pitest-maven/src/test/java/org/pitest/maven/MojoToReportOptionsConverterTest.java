@@ -333,6 +333,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     parseConfig("<parseSurefireConfig>false</parseSurefireConfig>");
     verify(surefireConverter, never()).update(any(ReportOptions.class), any(Xpp3Dom.class));
   }
+  
+  public void testParsesCustomProperties() {
+    final ReportOptions actual = parseConfig("<configuration><foo>foo</foo><bar>bar</bar></configuration>");
+    assertEquals("foo", actual.getFreeFormProperties().get("foo"));
+    assertEquals("bar", actual.getFreeFormProperties().get("bar"));
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {

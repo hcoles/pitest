@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -136,6 +137,7 @@ public class MojoToReportOptionsConverter {
     data.setExportLineCoverage(this.mojo.isExportLineCoverage());
     data.setMutationEngine(this.mojo.getMutationEngine());
     data.setJavaExecutable(this.mojo.getJavaExecutable());
+    data.setFreeFormProperties(createPluginProperties());
 
     return data;
   }
@@ -251,5 +253,14 @@ public class MojoToReportOptionsConverter {
   private boolean hasValue(final Collection<?> collection) {
     return (collection != null) && !collection.isEmpty();
   }
+  
+  private Properties createPluginProperties() {
+    Properties p = new Properties();
+    if (mojo.getPluginProperties() != null) {
+    p.putAll(mojo.getPluginProperties());
+    }
+    return p;
+  }
+  
 
 }

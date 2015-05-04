@@ -174,7 +174,7 @@ public class MutationCoverage {
             this.data.getSourceDirs()), engine, t0);
 
     final MutationResultListener mutationReportListener = this.strategies
-        .listenerFactory().getListener(args);
+        .listenerFactory().getListener(data.getFreeFormProperties(), args);
 
     ls.add(mutationReportListener);
     ls.add(new HistoryListener(history()));
@@ -233,13 +233,15 @@ public class MutationCoverage {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
-    
+
     ClassByteArraySource bas = new ClassPathByteArraySource(data.getClassPath());
-    
-    TestPrioritiser testPrioritiser = settings.getTestPrioritiser().makeTestPrioritiser(code, coverageData);
-    
+
+    TestPrioritiser testPrioritiser = settings.getTestPrioritiser()
+        .makeTestPrioritiser(data.getFreeFormProperties(), code, coverageData);
+
     final MutationSource source = new MutationSource(mutationConfig,
-        makeFilter().createFilter(code, data.getMaxMutationsPerClass()), testPrioritiser, bas);
+        makeFilter().createFilter(data.getFreeFormProperties(), code,
+            data.getMaxMutationsPerClass()), testPrioritiser, bas);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
@@ -249,9 +251,12 @@ public class MutationCoverage {
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
-    
-    MutationGrouper grouper = settings.getMutationGrouper().makeFactory(code, data.getNumberOfThreads(), data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser, source, grouper);
+
+    MutationGrouper grouper = settings.getMutationGrouper().makeFactory(
+        data.getFreeFormProperties(), code, data.getNumberOfThreads(),
+        data.getMutationUnitSize());
+    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser,
+        source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

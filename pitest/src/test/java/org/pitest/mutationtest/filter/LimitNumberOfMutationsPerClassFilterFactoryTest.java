@@ -10,16 +10,16 @@ public class LimitNumberOfMutationsPerClassFilterFactoryTest {
 
   @Test
   public void shouldFilterWhenNumberOfMutationsPerClassGreaterThanThanZero() {
-    assertTrue(testee.createFilter(null, 1) instanceof LimitNumberOfMutationPerClassFilter);
+    assertTrue(testee.createFilter(null, null, 1) instanceof LimitNumberOfMutationPerClassFilter);
   }
   
   @Test
   public void shouldNotFilterWhenNumberOfMutationsPerClassIsZero() {
-    assertTrue(testee.createFilter(null, 0) instanceof UnfilteredMutationFilter);
+    assertTrue(testee.createFilter(null, null, 0) instanceof UnfilteredMutationFilter);
   }
 
   @Test
   public void shouldNotFilterWhenNumberOfMutationsPerClassLessThanZero() {
-    assertTrue(testee.createFilter(null, -1) instanceof UnfilteredMutationFilter);
+    assertTrue(testee.createFilter(null, null, -1) instanceof UnfilteredMutationFilter);
   }
 }

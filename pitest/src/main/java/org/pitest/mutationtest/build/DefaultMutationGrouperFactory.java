@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.build;
 
+import java.util.Properties;
+
 import org.pitest.classpath.CodeSource;
 
 public class DefaultMutationGrouperFactory implements MutationGrouperFactory {
@@ -8,8 +10,8 @@ public class DefaultMutationGrouperFactory implements MutationGrouperFactory {
     return "Default mutation grouping";
   }
 
-  public MutationGrouper makeFactory(CodeSource codeSource,
-      int numberOfThreads, int unitSize) {
+  public MutationGrouper makeFactory(final Properties props,
+      final CodeSource codeSource, final int numberOfThreads, final int unitSize) {
     return new DefaultGrouper(unitSize);
   }
 

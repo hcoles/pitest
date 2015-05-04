@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -66,42 +68,42 @@ import org.pitest.util.Unchecked;
 
 public class MutationCoverageReportTest {
 
-  private MutationCoverage       testee;
+  private MutationCoverage              testee;
 
-  private ReportOptions          data;
-  
-  @Mock
-  private MutationResultListenerFactory        listenerFactory;
+  private ReportOptions                 data;
 
   @Mock
-  private MutationResultListener listener;
+  private MutationResultListenerFactory listenerFactory;
 
   @Mock
-  private CoverageDatabase       coverageDb;
+  private MutationResultListener        listener;
 
   @Mock
-  private CoverageGenerator      coverage;
+  private CoverageDatabase              coverageDb;
 
   @Mock
-  private CodeSource             code;
+  private CoverageGenerator             coverage;
 
   @Mock
-  private HistoryStore           history;
+  private CodeSource                    code;
 
   @Mock
-  private MutationEngineFactory  mutationFactory;
+  private HistoryStore                  history;
 
   @Mock
-  private BuildVerifier          verifier;
+  private MutationEngineFactory         mutationFactory;
 
   @Mock
-  private MutationEngine         engine;
+  private BuildVerifier                 verifier;
 
   @Mock
-  private Mutater                mutater;
-  
+  private MutationEngine                engine;
+
   @Mock
-  private ResultOutputStrategy output;
+  private Mutater                       mutater;
+
+  @Mock
+  private ResultOutputStrategy          output;
 
   @Before
   public void setUp() {
@@ -110,7 +112,8 @@ public class MutationCoverageReportTest {
     this.data.setSourceDirs(Collections.<File> emptyList());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
     when(
-        this.listenerFactory.getListener(any(ListenerArguments.class))).thenReturn(this.listener);
+        this.listenerFactory.getListener(Matchers.<Properties> any(),
+            any(ListenerArguments.class))).thenReturn(this.listener);
     mockMutationEngine();
   }
 
@@ -179,7 +182,8 @@ public class MutationCoverageReportTest {
   public void shouldReportMutationsFoundWhenSomeDetected() {
     this.data.setFailWhenNoMutations(false);
     final ClassName foo = ClassName.fromString("foo");
-    when(this.mutater.findMutations(foo)).thenReturn(MutationDetailsMother.aMutationDetail().build(1));
+    when(this.mutater.findMutations(foo)).thenReturn(
+        MutationDetailsMother.aMutationDetail().build(1));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(foo));
     final CombinedStatistics actual = createAndRunTestee();

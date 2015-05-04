@@ -3,6 +3,7 @@ package org.pitest.mutationtest.filter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 import org.pitest.classpath.CodeSource;
 import org.pitest.functional.F;
@@ -20,16 +21,16 @@ public class CompoundFilterFactory implements MutationFilterFactory {
     return null;
   }
 
-  public MutationFilter createFilter(CodeSource source, int maxMutationsPerClass) {
-    List<MutationFilter> filters = FCollection.map(children, toFilter(source, maxMutationsPerClass));
+  public MutationFilter createFilter(Properties props, CodeSource source, int maxMutationsPerClass) {
+    List<MutationFilter> filters = FCollection.map(children, toFilter(props, source, maxMutationsPerClass));
     return new CompoundMutationFilter(filters);
   }
 
-  private static F<MutationFilterFactory, MutationFilter> toFilter(final CodeSource source,
+  private static F<MutationFilterFactory, MutationFilter> toFilter(final Properties props, final CodeSource source,
       final int maxMutationsPerClass) {
     return new  F<MutationFilterFactory, MutationFilter> () {
       public MutationFilter apply(MutationFilterFactory a) {
-       return a.createFilter(source, maxMutationsPerClass);
+       return a.createFilter(props, source, maxMutationsPerClass);
       }
       
     };

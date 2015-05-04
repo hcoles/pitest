@@ -14,13 +14,16 @@
  */
 package org.pitest.mutationtest.report.csv;
 
+import java.util.Properties;
+
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 
 public class CSVReportFactory implements MutationResultListenerFactory {
 
-  public MutationResultListener getListener(final ListenerArguments args) {
+  public MutationResultListener getListener(Properties props,
+      final ListenerArguments args) {
     return new CSVReportListener(args.getOutputStrategy());
   }
 

@@ -1,18 +1,20 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.config;
+
+import java.util.Properties;
 
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -29,17 +31,18 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
     this.children = children;
   }
 
-  public MutationResultListener getListener(final ListenerArguments args) {
+  public MutationResultListener getListener(final Properties props,
+      final ListenerArguments args) {
     return new CompoundTestListener(FCollection.map(this.children,
-        factoryToListener(args)));
+        factoryToListener(props, args)));
   }
 
   private F<MutationResultListenerFactory, MutationResultListener> factoryToListener(
-      final ListenerArguments args) {
+      final Properties props, final ListenerArguments args) {
     return new F<MutationResultListenerFactory, MutationResultListener>() {
 
       public MutationResultListener apply(final MutationResultListenerFactory a) {
-        return a.getListener(args);
+        return a.getListener(props, args);
       }
 
     };

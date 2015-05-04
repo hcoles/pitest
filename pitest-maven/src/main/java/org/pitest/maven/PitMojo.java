@@ -298,6 +298,16 @@ public class PitMojo extends AbstractMojo {
    * @parameter default-value="false" expression="${useSlf4j}"
    */
   private boolean                     useSlf4j;
+  
+  /**
+   * Configuration properties.
+   * 
+   * Value pairs may be used by pitest plugins.
+   * 
+   * @parameter
+   */
+  private Map<String, String> configuration;
+
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -316,7 +326,7 @@ public class PitMojo extends AbstractMojo {
    * @readonly
    */
   private Map<String, Artifact>       pluginArtifactMap;
-
+  
   protected final GoalStrategy        goalStrategy;
 
   public PitMojo() {
@@ -548,6 +558,10 @@ public class PitMojo extends AbstractMojo {
 
   public boolean isParseSurefireConfig() {
     return this.parseSurefireConfig;
+  }
+  
+  public Map<String, String> getPluginProperties() {
+    return configuration;
   }
 
 }

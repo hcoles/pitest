@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
@@ -67,7 +68,6 @@ public class ReportOptions {
                                                                                 "org.slf4j",
                                                                                 "org.apache.commons.logging");
 
-//  private Configuration                  config;
   private Collection<Predicate<String>>  targetClasses;
   private Collection<Predicate<String>>  excludedMethods                = Collections
                                                                             .emptyList();
@@ -119,6 +119,8 @@ public class ReportOptions {
   private String                         javaExecutable;
 
   private boolean                        includeLaunchClasspath         = true;
+
+  private Properties                     properties;
 
   public boolean isVerbose() {
     return this.verbose;
@@ -537,6 +539,14 @@ public class ReportOptions {
   public boolean isIncludeLaunchClasspath() {
     return this.includeLaunchClasspath;
   }
+  
+  public Properties getFreeFormProperties() {
+    return properties;
+  }
+
+  public void setFreeFormProperties(Properties props) {
+    this.properties = props;
+  }
 
   @Override
   public String toString() {
@@ -568,5 +578,6 @@ public class ReportOptions {
         + ", javaExecutable=" + this.javaExecutable + ", includeLaunchClasspath="
         + this.includeLaunchClasspath + "]";
   }
+
 
 }

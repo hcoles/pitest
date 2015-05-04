@@ -15,21 +15,25 @@
 
 package org.pitest.mutationtest.report.html;
 
+import java.util.Properties;
+
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 
 public class HtmlReportFactory implements MutationResultListenerFactory {
 
-  public MutationResultListener getListener(ListenerArguments args) {
-    return new MutationHtmlReportListener(args.getCoverage(), args.getOutputStrategy(), args.getEngine().getMutatorNames(),
+  public MutationResultListener getListener(Properties props,
+      ListenerArguments args) {
+    return new MutationHtmlReportListener(args.getCoverage(),
+        args.getOutputStrategy(), args.getEngine().getMutatorNames(),
         args.getLocator());
   }
 
   public String name() {
     return "HTML";
   }
-  
+
   public String description() {
     return "Default html report plugin";
   }

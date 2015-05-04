@@ -14,11 +14,13 @@
  */
 package org.pitest.mutationtest.filter;
 
+import java.util.Properties;
+
 import org.pitest.classpath.CodeSource;
 import org.pitest.plugin.ToolClasspathPlugin;
 
 public interface MutationFilterFactory extends ToolClasspathPlugin {
 
-  MutationFilter createFilter(CodeSource source, int maxMutationsPerClass);
+  MutationFilter createFilter(Properties props, CodeSource source, int maxMutationsPerClass);
   
 }

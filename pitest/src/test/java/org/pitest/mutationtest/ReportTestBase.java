@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.pitest.classpath.ClassPathRoot;
@@ -43,8 +44,8 @@ public abstract class ReportTestBase {
   protected MetaDataExtractor metaDataExtractor;
   protected ReportOptions     data;
 
-  private PluginServices plugins;
-  
+  private PluginServices      plugins;
+
   @Before
   public void setUp() {
     this.metaDataExtractor = new MetaDataExtractor();
@@ -55,7 +56,8 @@ public abstract class ReportTestBase {
 
   protected MutationResultListenerFactory listenerFactory() {
     return new MutationResultListenerFactory() {
-      public MutationResultListener getListener(ListenerArguments args) {
+      public MutationResultListener getListener(Properties props,
+          ListenerArguments args) {
         return ReportTestBase.this.metaDataExtractor;
       }
 
@@ -88,7 +90,7 @@ public abstract class ReportTestBase {
   protected Collection<Predicate<String>> predicateFor(final Class<?> clazz) {
     return predicateFor(clazz.getName());
   }
-  
+
   protected void createAndRun() {
     createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
   }
@@ -98,8 +100,8 @@ public abstract class ReportTestBase {
     try {
 
       final CoverageOptions coverageOptions = createCoverageOptions(configuration);
-      final LaunchOptions launchOptions = new LaunchOptions(agent, new DefaultJavaExecutableLocator(),
-          this.data.getJvmArgs());
+      final LaunchOptions launchOptions = new LaunchOptions(agent,
+          new DefaultJavaExecutableLocator(), this.data.getJvmArgs());
 
       final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
           new True<ClassPathRoot>());
@@ -130,16 +132,14 @@ public abstract class ReportTestBase {
       agent.close();
     }
   }
-  
+
   private CoverageOptions createCoverageOptions(Configuration configuration) {
-    return new CoverageOptions(data.getTargetClassesFilter(),
-         configuration, data.isVerbose(),
-        data.getDependencyAnalysisMaxDistance());
+    return new CoverageOptions(data.getTargetClassesFilter(), configuration,
+        data.isVerbose(), data.getDependencyAnalysisMaxDistance());
   }
 
   protected void setMutators(final String mutator) {
     this.data.setMutators(Arrays.asList(mutator));
   }
-
 
 }
