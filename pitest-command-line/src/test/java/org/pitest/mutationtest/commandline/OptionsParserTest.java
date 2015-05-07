@@ -44,6 +44,8 @@ import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class OptionsParserTest {
 
+  private static final String JAVA_PATH_SEPARATOR = "/";
+
   private static final String JAVA_CLASS_PATH_PROPERTY = "java.class.path";
 
   private OptionsParser testee;
@@ -447,9 +449,9 @@ public class OptionsParserTest {
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class.getProtectionDomain()
             .getCodeSource().getLocation().getFile();
-    final int lastOccurrenceOfFileSeparator = gregorEngineClassPath.lastIndexOf(File.separator);
+    final int lastOccurrenceOfFileSeparator = gregorEngineClassPath.lastIndexOf(JAVA_PATH_SEPARATOR);
     return new StringBuilder(gregorEngineClassPath).replace(lastOccurrenceOfFileSeparator,
-            lastOccurrenceOfFileSeparator + 1, File.separator + "." + File.separator).toString();
+            lastOccurrenceOfFileSeparator + 1, JAVA_PATH_SEPARATOR + "." + JAVA_PATH_SEPARATOR).toString();
   }
 
   private Predicate<String> gregorClass() {
