@@ -415,7 +415,7 @@ public class PitMojo extends AbstractMojo {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(), this.filter).convert();
     return Option.some(this.goalStrategy.execute(detectBaseDir(), data,
-        this.plugins));
+        this.plugins,this.environmentVariables));
   }
 
   protected File detectBaseDir() {

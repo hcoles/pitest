@@ -8,6 +8,7 @@ import org.pitest.util.NullJavaAgent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -34,7 +35,8 @@ public class WrappingProcessTest {
     LaunchOptions launchOptions = new LaunchOptions(
         NullJavaAgent.instance(),
         new DefaultJavaExecutableLocator(),
-        Collections.<String>emptyList());
+        Collections.<String>emptyList(),
+        new HashMap<String, String>());
 
     ProcessArgs processArgs = ProcessArgs.withClassPath(new ClassPath().getLocalClassPath())
         .andBaseDir(new File(System.getProperty("user.dir")))

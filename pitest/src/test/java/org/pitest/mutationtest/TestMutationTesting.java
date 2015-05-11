@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,21 +14,8 @@
  */
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.DetectionStatus.KILLED;
-import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
-import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
-import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
-import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
-import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import com.example.MutationsInNestedClasses;
+import com.example.MutationsInNestedClassesTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -50,13 +37,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.DefaultGrouper;
-import org.pitest.mutationtest.build.DefaultTestPrioritiser;
-import org.pitest.mutationtest.build.MutationAnalysisUnit;
-import org.pitest.mutationtest.build.MutationSource;
-import org.pitest.mutationtest.build.MutationTestBuilder;
-import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.build.WorkerFactory;
+import org.pitest.mutationtest.build.*;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -76,8 +57,10 @@ import org.pitest.util.Functions;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
 
-import com.example.MutationsInNestedClasses;
-import com.example.MutationsInNestedClassesTest;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.DetectionStatus.*;
 
 @Category(SystemTest.class)
 public class TestMutationTesting {
@@ -340,7 +323,7 @@ public class TestMutationTesting {
     final CoverageOptions coverageOptions = createCoverageOptions(data);
 
     final LaunchOptions launchOptions = new LaunchOptions(agent,
-        new DefaultJavaExecutableLocator(), data.getJvmArgs());
+        new DefaultJavaExecutableLocator(), data.getJvmArgs(),new HashMap<String, String>());
 
     final PathFilter pf = new PathFilter(
         Prelude.not(new DefaultDependencyPathPredicate()),

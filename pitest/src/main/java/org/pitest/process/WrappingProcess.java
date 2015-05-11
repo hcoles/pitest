@@ -21,6 +21,7 @@ public class WrappingProcess {
   private final int port;
   private final ProcessArgs processArgs;
   private final Class<?> slaveClass;
+
   private JavaProcess process;
 
   public WrappingProcess(int port, ProcessArgs args, Class<?> slaveClass) {
@@ -41,7 +42,8 @@ public class WrappingProcess {
 
     configureProcessBuilder(processBuilder,
         processArgs.getWorkingDir(),
-        processArgs.getLaunchClassPath());
+        processArgs.getLaunchClassPath(),
+        processArgs.getEnvironmentVariables());
 
     Process process = processBuilder.start();
     this.process = new JavaProcess(process,
@@ -51,10 +53,14 @@ public class WrappingProcess {
 
   private void configureProcessBuilder(ProcessBuilder processBuilder,
                                        File workingDirectory,
-                                       String initialClassPath) {
+                                       String initialClassPath, Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
-    Map<String, String> env = processBuilder.environment();
-    env.put("CLASSPATH", initialClassPath);
+    Map<String, String> environment = processBuilder.environment();
+    environment.put("CLASSPATH", initialClassPath);
+
+    for (Map.Entry<String,String> entry:environmentVariables.entrySet()) {
+      environment.put(entry.getKey(), entry.getValue());
+    }
   }
 
   public void destroy() {

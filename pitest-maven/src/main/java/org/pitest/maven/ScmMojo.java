@@ -1,13 +1,5 @@
 package org.pitest.maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.scm.ScmException;
@@ -26,15 +18,24 @@ import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Goal which runs a coverage mutation report only for files that have been
  * modified or introduced locally based on the source control configured in
  * maven.
- * 
+ *
  * @goal scmMutationCoverage
- * 
+ *
  * @requiresDependencyResolution test
- * 
+ *
  * @phase integration-test
  */
 public class ScmMojo extends PitMojo {
@@ -47,9 +48,9 @@ public class ScmMojo extends PitMojo {
   /**
    * List of scm status to include. Names match those defined by the maven scm
    * plugin.
-   * 
+   *
    * Common values include ADDED,MODIFIED (the defaults) & UNKNOWN.
-   * 
+   *
    * @parameter expression="${include}"
    */
   private HashSet<String> include;
@@ -57,14 +58,14 @@ public class ScmMojo extends PitMojo {
   /**
    * Connection type to use when querying scm for changed files. Can either be
    * "connection" or "developerConnection".
-   * 
+   *
    * @parameter default-value="connection" expression="${connectionType}"
    */
   private String      connectionType;
 
   /**
    * Project basedir
-   * 
+   *
    * @parameter expression="${basedir}"
    * @required
    */
@@ -73,7 +74,7 @@ public class ScmMojo extends PitMojo {
   /**
    * Base of scm root. For a multi module project this is probably the parent
    * project.
-   * 
+   *
    * @parameter expression="${project.parent.basedir}"
    */
   private File        scmRootDir;
@@ -104,7 +105,7 @@ public class ScmMojo extends PitMojo {
     final ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins));
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
 
   }
 
@@ -210,7 +211,7 @@ public class ScmMojo extends PitMojo {
   public void setScmRootDir(final File scmRootDir) {
     this.scmRootDir = scmRootDir;
   }
-  
+
   /**
    * A bug in maven 2 requires that all list fields
    * declare a concrete list type
