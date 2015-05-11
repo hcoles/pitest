@@ -1,11 +1,5 @@
 package org.pitest.maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -21,8 +15,14 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Goal which runs a coverage mutation report
@@ -287,26 +287,35 @@ public class PitMojo extends AbstractMojo {
 
   /**
    * honours common skipTests flag in a maven run
-   * 
+   *
    * @parameter default-value="false"
    */
   private boolean                     skipTests;
 
   /**
    * Use slf4j for logging
-   * 
+   *
    * @parameter default-value="false" expression="${useSlf4j}"
    */
   private boolean                     useSlf4j;
-  
+
   /**
    * Configuration properties.
-   * 
+   *
    * Value pairs may be used by pitest plugins.
-   * 
+   *
    * @parameter
    */
   private Map<String, String> configuration;
+
+  /**
+   * environment configuration
+   *
+   * Value pairs may be used by pitest plugins.
+   *
+   * @parameter
+   */
+  private Map<String, String> environmentVariables = new HashMap<String, String>();
 
 
   /**
@@ -326,7 +335,7 @@ public class PitMojo extends AbstractMojo {
    * @readonly
    */
   private Map<String, Artifact>       pluginArtifactMap;
-  
+
   protected final GoalStrategy        goalStrategy;
 
   public PitMojo() {
@@ -559,9 +568,12 @@ public class PitMojo extends AbstractMojo {
   public boolean isParseSurefireConfig() {
     return this.parseSurefireConfig;
   }
-  
+
   public Map<String, String> getPluginProperties() {
     return configuration;
   }
 
+  public Map<String, String> getEnvironmentVariables() {
+    return environmentVariables;
+  }
 }
