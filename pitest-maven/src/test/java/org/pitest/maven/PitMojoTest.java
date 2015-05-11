@@ -98,14 +98,14 @@ public class PitMojoTest extends BasePitMojoTest {
     }
   }
 
-  public void testConfigureEnvironmentVariable()
-      throws Exception {
-    this.testee = createPITMojo(createPomWithConfiguration("\n" +
+  public void testConfigureEnvironmentVariable() throws Exception {
+
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n" +
         "                    <environmentVariables>\n" +
         "                        <DISPLAY>:20</DISPLAY>\n" +
         "                    </environmentVariables>"));
 
-    assertEquals(System.getenv("DISPLAY"),":20");
+    assertEquals(mojo.getEnvironmentVariables().get("DISPLAY"),":20");
   }
 
   private void setupCoverage(long mutationScore, int lines, int linesCovered) throws MojoExecutionException {
