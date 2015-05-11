@@ -1,16 +1,16 @@
 package org.pitest.process;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.pitest.classpath.ClassPath;
+import org.pitest.functional.SideEffect1;
+import org.pitest.util.NullJavaAgent;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.junit.Test;
-import org.pitest.classpath.ClassPath;
-import org.pitest.functional.SideEffect1;
-import org.pitest.util.NullJavaAgent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JavaProcessTest {
 
@@ -31,7 +31,7 @@ public class JavaProcessTest {
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
       InterruptedException {
     DefaultJavaExecutableLocator je = new DefaultJavaExecutableLocator();
-    final JavaProcess jp = JavaProcess.launch(
+    JavaProcess jp = JavaProcess.launch(
         new File(System.getProperty("user.dir")), je.javaExecutable(), nullHandler(), nullHandler(),
         Collections.<String> emptyList(), JavaProcessTest.class,
         Collections.<String> emptyList(), NullJavaAgent.instance(),
