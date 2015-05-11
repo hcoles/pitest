@@ -1,10 +1,5 @@
 package org.pitest.maven;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -12,6 +7,11 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Extracts configuration from surefire plugin and create pitest equivalents
@@ -44,7 +44,7 @@ public class SurefireConfigConverter {
       String[] parts = groups.getValue().split(" ");
       return Arrays.asList(parts);
     } else {
-      return Collections.<String> emptyList();
+      return Collections.emptyList();
     }
   }
 
@@ -74,7 +74,7 @@ public class SurefireConfigConverter {
       return result;
     }
 
-    return Collections.<String> emptyList();
+    return Collections.emptyList();
   }
 
 }
