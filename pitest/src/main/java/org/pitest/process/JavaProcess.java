@@ -14,23 +14,9 @@
  */
 package org.pitest.process;
 
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Monitor;
 import org.pitest.util.StreamMonitor;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.pitest.functional.prelude.Prelude.or;
 
 public class JavaProcess {
 
@@ -45,9 +31,6 @@ public class JavaProcess {
 
     out = new StreamMonitor(process.getInputStream(), sysoutHandler);
     err = new StreamMonitor(process.getErrorStream(), syserrHandler);
-    out.requestStart();
-    err.requestStart();
-
   }
 
   public void destroy() {
@@ -69,91 +52,6 @@ public class JavaProcess {
       return false;
     } catch (IllegalThreadStateException e) {
       return true;
-    }
-  }
-
-  private static List<String> createLaunchArgs( String javaProcess,
-                                                JavaAgent agentJarLocator,
-                                                List<String> args,
-                                                Class<?> mainClass,
-                                                List<String> programArgs) {
-
-    List<String> cmd = new ArrayList<String>();
-    cmd.add(javaProcess);
-    cmd.addAll(args);
-
-    addPITJavaAgent(agentJarLocator, cmd);
-    addLaunchJavaAgents(cmd);
-
-    cmd.add(mainClass.getName());
-    cmd.addAll(programArgs);
-    return cmd;
-  }
-
-  private static void addPITJavaAgent(JavaAgent agentJarLocator, List<String> cmd) {
-    Option<String> jarLocation = agentJarLocator.getJarLocation();
-    for (String each : jarLocation) {
-      cmd.add("-javaagent:" + each);
-    }
-  }
-
-  private static void addLaunchJavaAgents(List<String> cmd) {
-    RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-    @SuppressWarnings("unchecked")
-    FunctionalList<String> agents = FCollection.filter(
-        rt.getInputArguments(), or(isJavaAgentParam(), isEnvironmentSetting()));
-    cmd.addAll(agents);
-  }
-
-  private static Predicate<String> isEnvironmentSetting() {
-    return new Predicate<String>() {
-      public Boolean apply(String a) {
-        return a.startsWith("-D");
-      }
-    };
-  }
-
-  private static Predicate<String> isJavaAgentParam() {
-    return new Predicate<String>() {
-      public Boolean apply(final String a) {
-        return a.toLowerCase().startsWith("-javaagent");
-      }
-
-    };
-  }
-
-  public static JavaProcess launch(File workingDirectory,
-                                   String javaProc,
-                                   SideEffect1<String> systemOutHandler,
-                                   SideEffect1<String> sysErrHandler,
-                                   List<String> args,
-                                   Class<?> mainClass,
-                                   List<String> programArgs,
-                                   JavaAgent javaAgent,
-                                   String initialClassPath)
-      throws IOException {
-
-    List<String> cmd = createLaunchArgs(javaProc, javaAgent, args,
-        mainClass, programArgs);
-
-    // IBM jdk adds this, thereby breaking everything
-    removeClassPathProperties(cmd);
-
-    ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-    processBuilder.directory(workingDirectory);
-
-    Map<String, String> env = processBuilder.environment();
-    env.put("CLASSPATH", initialClassPath);
-
-    Process process = processBuilder.start();
-    return new JavaProcess(process, systemOutHandler, sysErrHandler);
-  }
-
-  private static void removeClassPathProperties(List<String> cmd) {
-    for (int i = cmd.size() - 1; i >= 0; i--) {
-      if (cmd.get(i).startsWith("-Djava.class.path")) {
-        cmd.remove(i);
-      }
     }
   }
 
