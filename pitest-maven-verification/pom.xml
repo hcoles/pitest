@@ -33,7 +33,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<parallel>methods</parallel>
-					<threadCount>2</threadCount>
+					<threadCountMethods>1</threadCountMethods>
 				</configuration>
 				<executions>
 					<execution>
@@ -56,22 +56,22 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.9</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>2.0.9</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
-			<version>2.0.9</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-toolchain</artifactId>
-			<version>2.0.9</version>
+			<version>${maven.version}</version>
 		</dependency>
 
 		<!-- test dependencies -->
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-verifier</artifactId>
-			<version>1.2</version>
+			<version>${maven-verifier}</version>
 			<scope>test</scope>
 		</dependency>
 
