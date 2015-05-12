@@ -146,25 +146,25 @@
 	</dependencies>
 
     <build>
-	<plugins>
-	       <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-   <version>2.9.1</version>
-    <executions>
-        <execution>
-        <id>checkstyle</id>
-        <phase>validate</phase>
-        <goals>
-            <goal>check</goal>
-        </goals>
-        <configuration>
-            <failOnViolation>true</failOnViolation>
-            <configLocation>checkstyle.xml</configLocation>
-        </configuration>
-        </execution>
-    </executions>
-    </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.15</version>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <failOnViolation>true</failOnViolation>
+                            <configLocation>checkstyle.xml</configLocation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
     <!-- specification of versions of all plugins used in any module
