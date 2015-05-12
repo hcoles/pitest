@@ -17,6 +17,7 @@
 		    <!-- Don't deploy to Maven Central -->
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
