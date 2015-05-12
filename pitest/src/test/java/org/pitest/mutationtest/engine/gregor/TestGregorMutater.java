@@ -1,27 +1,18 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-import java.util.List;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -38,6 +29,12 @@ import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
+
+import java.util.Collection;
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 
 public class TestGregorMutater extends MutatorTestBase {
 
@@ -354,17 +351,17 @@ public class TestGregorMutater extends MutatorTestBase {
       return 1;
     }
   }
-  
+
   @Test
   public void shouldScopeMutationIndexesByInstructionCounter() {
     createTesteeWith(Mutator.byName("RETURN_VALS"));
     final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
     assertEquals(2, actualDetails.size());
     assertEquals(4,actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(14,actualDetails.get(1).getId().getFirstIndex()); // differs by target? 
+    assertEquals(15,actualDetails.get(1).getId().getFirstIndex()); // differs by target?
   }
 
-  
+
   private static F<MutationDetails, Boolean> isInFinallyBlock() {
     return new F<MutationDetails, Boolean>() {
       public Boolean apply(final MutationDetails a) {

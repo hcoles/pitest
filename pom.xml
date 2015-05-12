@@ -22,7 +22,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
+
     <issueManagement>
         <url>https://github.com/hcoles/pitest/issues</url>
         <system>GitHub</system>
@@ -53,11 +53,11 @@
         <module>pitest-maven</module>
         <module>pitest</module>
         <module>pitest-ant</module>
-        <module>pitest-command-line</module>    
-        <module>pitest-html-report</module> 
+        <module>pitest-command-line</module>
+        <module>pitest-html-report</module>
         <module>pitest-maven-verification</module>
     </modules>
-    
+
        <profiles>
         <profile>
             <id>java8</id>
@@ -80,7 +80,7 @@
             <modules>
                 <module>pitest-groovy-verification</module>
             </modules>
-        </profile>   
+        </profile>
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -157,8 +157,30 @@
         </execution>
     </executions>
     </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>animal-sniffer-maven-plugin</artifactId>
+            <version>1.14</version>
+            <executions>
+                <execution>
+                    <id>enforce-java-api-compatibility</id>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                    <configuration>
+                        <signature>
+                            <groupId>org.codehaus.mojo.signature</groupId>
+                            <artifactId>java16</artifactId>
+                            <version>1.1</version>
+                        </signature>
+                        <skip>false</skip>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
         </plugins>
-	
+
     <!-- specification of versions of all plugins used in any module
         also common configuration is specified there
         (but module-specific stuff is specified in other pom.xml files) -->
@@ -169,8 +191,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.4</version>
                     <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                     </configuration>
                 </plugin>
                 <plugin>
