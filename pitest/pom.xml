@@ -217,8 +217,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<!-- 1.4.4 and 1.4.5 seems to have an issue with java 8 -->
-			<version>1.4.2</version>
+			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -253,7 +252,7 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>3.1</version>
+			<version>3.3.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -284,13 +283,13 @@
 		<dependency>
 			<groupId>pl.pragmatists</groupId>
 			<artifactId>JUnitParams</artifactId>
-			<version>0.9.0</version>
+			<version>1.0.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>nl.jqno.equalsverifier</groupId>
 		    <artifactId>equalsverifier</artifactId>
-		    <version>1.5</version>
+		    <version>1.7.2</version>
 		    <scope>test</scope>
 		</dependency>
 
