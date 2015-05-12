@@ -11,7 +11,7 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -33,7 +33,7 @@ public class PitMojoTest extends BasePitMojoTest {
     this.testee.getProject().setBuild(build);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
-        any(ReportOptions.class), any(PluginServices.class),new HashMap<String, String>());
+        any(ReportOptions.class), any(PluginServices.class),any(Map.class));
   }
 
   public void testDoesNotAnalysePomProjects() throws Exception {
@@ -41,14 +41,14 @@ public class PitMojoTest extends BasePitMojoTest {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class),  any(PluginServices.class),new HashMap<String, String>());
+        any(ReportOptions.class),  any(PluginServices.class),any(Map.class));
   }
 
   public void testDoesNotAnalyseProjectsWithSkipFlagSet() throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<skip>true</skip>"));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class),  any(PluginServices.class),new HashMap<String, String>());
+        any(ReportOptions.class),  any(PluginServices.class),any(Map.class));
   }
 
   public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
@@ -116,7 +116,7 @@ public class PitMojoTest extends BasePitMojoTest {
     final CombinedStatistics cs = new CombinedStatistics(stats,sum);
     when(
         this.executionStrategy.execute(any(File.class),
-            any(ReportOptions.class), any(PluginServices.class),new HashMap<String, String>())).thenReturn(cs);
+            any(ReportOptions.class), any(PluginServices.class),any(Map.class))).thenReturn(cs);
   }
 
 }
