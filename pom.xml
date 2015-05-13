@@ -22,7 +22,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
+
     <issueManagement>
         <url>https://github.com/hcoles/pitest/issues</url>
         <system>GitHub</system>
@@ -53,11 +53,15 @@
         <module>pitest-maven</module>
         <module>pitest</module>
         <module>pitest-ant</module>
-        <module>pitest-command-line</module>    
-        <module>pitest-html-report</module> 
+        <module>pitest-command-line</module>
+        <module>pitest-html-report</module>
         <module>pitest-maven-verification</module>
     </modules>
-    
+
+    <prerequisites>
+        <maven>3</maven>
+    </prerequisites>
+
        <profiles>
         <profile>
             <id>java8</id>
@@ -80,7 +84,7 @@
             <modules>
                 <module>pitest-groovy-verification</module>
             </modules>
-        </profile>   
+        </profile>
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -158,7 +162,7 @@
     </executions>
     </plugin>
         </plugins>
-	
+
     <!-- specification of versions of all plugins used in any module
         also common configuration is specified there
         (but module-specific stuff is specified in other pom.xml files) -->
