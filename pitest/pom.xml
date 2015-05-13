@@ -61,14 +61,6 @@
 
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.12</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.surefire</groupId>
-						<artifactId>surefire-junit47</artifactId>
-						<version>2.12</version>
-					</dependency>
-				</dependencies>
 				<configuration>
 
 					<!-- for PowerMockAgentTest -javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -->
@@ -149,6 +141,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
 				<executions>
 					<execution>
 						<id>javadoc</id>
@@ -161,6 +154,7 @@
 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
@@ -169,9 +163,9 @@
 						</goals>
 						<configuration>
 							<target>
-								<!--Workaround copied from https://github.com/orfjackal/jumi for 
-									issue with maven-shade-plugin There appears to be some stale state from previous 
-									executions of the Shade plugin, which manifest themselves as "We have a duplicate" 
+								<!--Workaround copied from https://github.com/orfjackal/jumi for
+									issue with maven-shade-plugin There appears to be some stale state from previous
+									executions of the Shade plugin, which manifest themselves as "We have a duplicate"
 									warnings on build and also as some classes not being updated on build. -->
 								<delete file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
 							</target>
@@ -223,8 +217,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<!-- 1.4.4 and 1.4.5 seems to have an issue with java 8 -->
-			<version>1.4.2</version>
+			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -259,7 +252,7 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>3.1</version>
+			<version>3.3.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -290,13 +283,13 @@
 		<dependency>
 			<groupId>pl.pragmatists</groupId>
 			<artifactId>JUnitParams</artifactId>
-			<version>0.9.0</version>
+			<version>1.0.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>nl.jqno.equalsverifier</groupId>
 		    <artifactId>equalsverifier</artifactId>
-		    <version>1.5</version>
+		    <version>1.7.2</version>
 		    <scope>test</scope>
 		</dependency>
 
