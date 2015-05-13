@@ -309,9 +309,9 @@ public class PitMojoIT {
     File expectedSiteReportDir = buildFile(testDir, "target", "site", "foobar");
     File defaultSiteReportDir = buildFile(testDir, "target", "site", "pit-reports");
 
-    verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 
-    String projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
+    String projectReportsHtml = FileUtils.readFileToString(siteProjectReportsIndex);
     assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
     assertTrue("expected site report directory [" + expectedSiteReportDir + "] does not exist but should exist", expectedSiteReportDir.exists());
     assertFalse("expected default site report directory [" + defaultSiteReportDir + "] exists but should not exist since the report location parameter was overridden", defaultSiteReportDir.exists());
