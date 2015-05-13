@@ -152,7 +152,7 @@ public class PitMojoIT {
     File testDir = prepare("/pit-site-skip");
     File siteParentDir = buildFile(testDir, "target", "site");
 
-    verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 
     assertThat(buildFile(siteParentDir, "pit-reports").exists()).isEqualTo(false);
     assertThat(buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
@@ -167,7 +167,7 @@ public class PitMojoIT {
     File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
     File siteProjectReportsIndex = buildFile(testDir, "target", "site", "project-reports.html");
 
-    verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 
     assertThat(pitReportSiteDir.exists()).isEqualTo(true);
 
@@ -189,8 +189,9 @@ public class PitMojoIT {
     File pitReportDir = buildFile(testDir, "target", "pit-reports");
     File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
 
+    LOGGER.info("first run");
     verifier.setLogFileName("log1.txt");
-    verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
     String[] run1 = pitReportDir.list();
     assertThat(run1.length).isEqualTo(1);
     assertTrue("first marker file not created", buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile());
@@ -213,6 +214,7 @@ public class PitMojoIT {
     }
     assertTrue("second marker file not created", secondMarkerCreated);
 
+    LOGGER.info("second run");
     verifier.setLogFileName("log2-site.txt");
     verifier.executeGoal("site");
 
@@ -235,16 +237,18 @@ public class PitMojoIT {
 
 	  List originalCliOptions = new ArrayList(verifier.getCliOptions());
 
+      LOGGER.info("first run");
 	  //first run -- create a timestamped report
 	  verifier.setLogFileName("log1.txt");
 	  verifier.getCliOptions().add("-DtimestampedReports=true");
-	  verifier.executeGoals(Arrays.asList("clean", "test", "org.pitest:pitest-maven:mutationCoverage", "site"));
+	  verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 	  verifier.setCliOptions(new ArrayList(originalCliOptions));
 
 	  //first run -- create the "first.dat" marker file in the new timestamped reports directory
 	  File run1Dir = pitReportDir.listFiles()[0];
 	  new File(run1Dir, "first.dat").createNewFile();
 
+      LOGGER.info("second run");
 	  //second run -- create a non-timestamped report
 	  verifier.setLogFileName("log2.txt");
 	  verifier.getCliOptions().add("-DtimestampedReports=false");
@@ -254,8 +258,10 @@ public class PitMojoIT {
 	  //second run -- create the "second.dat" marker file in the target/pit-reports directory (since the second run is a non-timestamped report)
 	  new File(pitReportDir, "second.dat").createNewFile();
 
-    //third run -- create a timestamped report
-	  waitUntilNextMinute(run1Dir.getName());
+      //third run -- create a timestamped report
+    waitUntilNextMinute(run1Dir.getName());
+
+      LOGGER.info("third run");
 	  verifier.setLogFileName("log3-pit.txt");
 	  verifier.getCliOptions().add("-DtimestampedReports=true");
 	  verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
@@ -292,7 +298,7 @@ public class PitMojoIT {
 	  prepare("/pit-site-reportonly");
 
 	  try{
-		  verifier.executeGoal("site");
+        verifier.executeGoal("site");
           fail("should fail");
 	  }catch(VerificationException e){
 		  assertThat(e.getMessage()).containsSequence("[ERROR] Failed to execute goal org.apache.maven.plugins:maven-site-plugin:", ":site (default-site) on project pit-site-reportonly: Execution default-site of goal org.apache.maven.plugins:maven-site-plugin:", ":site failed: could not find reports directory", "pit-site-reportonly/target/pit-reports");
@@ -402,7 +408,8 @@ public class PitMojoIT {
    * @throws Exception if this function waits more than 65 seconds or if there is an {@link InterruptedException} during the Thread.sleep
    */
   private void waitUntilNextMinute(String startDateTime) throws Exception {
-	//
+    LOGGER.info("wait for next minute");
+
     //this code ensures that will not happen
     int loopCount = 0;
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
