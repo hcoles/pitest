@@ -42,7 +42,9 @@
 					<outputFormats><value>HTML</value></outputFormats>
 					<maxMutationsPerClass>1</maxMutationsPerClass>
 					<targetClasses><param>com.example*</param></targetClasses>
-					<mutators><mutator>NEGATE_CONDITIONALS</mutator></mutators>
+					<mutators>
+						<mutator>NEGATE_CONDITIONALS</mutator>
+					</mutators>
 					<verbose>true</verbose>
 				</configuration>
 			</plugin>
