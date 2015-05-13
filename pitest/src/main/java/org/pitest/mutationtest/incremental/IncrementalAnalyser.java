@@ -42,8 +42,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
     return map;
   }
 
-  public Collection<MutationResult> analyse(
-      Collection<MutationDetails> mutation) {
+  public Collection<MutationResult> analyse(Collection<MutationDetails> mutation) {
 
     List<MutationResult> mutationResultSet = new ArrayList<MutationResult>(mutation.size());
     for (MutationDetails mutationDetails : mutation) {
@@ -58,7 +57,6 @@ public class IncrementalAnalyser implements MutationAnalyser {
     logTotals(preAnalysed);
 
     return mutationResultSet;
-
   }
 
   private static void logTotals(Map<DetectionStatus, Long> preAnalysed) {
@@ -67,7 +65,6 @@ public class IncrementalAnalyser implements MutationAnalyser {
         LOG.fine("Incremental analysis set " + entry.getValue() + " mutations to a status of " + entry.getKey());
       }
     }
-
   }
 
   private MutationResult analyseFromHistory(MutationDetails mutationDetails, MutationStatusTestPair mutationStatusTestPair) {
@@ -137,5 +134,4 @@ public class IncrementalAnalyser implements MutationAnalyser {
       preAnalysed.put(status, count + 1);
     }
   }
-
 }
