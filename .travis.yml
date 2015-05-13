@@ -1,6 +1,24 @@
 language: java
+
 jdk:
   - openjdk6
   - oraclejdk7
-  - oraclejdk8 
-script: mvn clean verify
+  - oraclejdk8
+
+env:
+  global:
+  # taken first download mirror from http://maven.apache.org/
+    - BASEURL=http://mirror.softaculous.com/apache/maven/maven-3/VERSION/binaries/apache-maven-VERSION-bin.tar.gz
+    - FILE=apache-maven-VERSION-bin.tar.gz
+    - DIR=apache-maven-VERSION/bin
+  matrix:
+    - VERSION=3.3.3
+    - VERSION=3.2.5
+    - VERSION=3.1.1
+    - VERSION=3.0.5
+
+script:
+  - wget $(echo -n $BASEURL | sed -e 's#VERSION#'$VERSION'#g')
+  - tar -xvzf $(echo -n $FILE | sed -e 's#VERSION#'$VERSION'#')
+  - export PATH=$(echo -n $DIR | sed -e 's#VERSION#'$VERSION'#'):$PATH
+  - mvn clean verify
