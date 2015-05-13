@@ -9,7 +9,7 @@
 
 	<!-- Checks that each Java package has a Javadoc file used for commenting. -->
 	<!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
-	<!-- <module name="JavadocPackage"> <property name="allowLegacy" value="true"/> 
+	<!-- <module name="JavadocPackage"> <property name="allowLegacy" value="true"/>
 		</module> -->
 
 	<!-- Checks whether files end with a new line. -->
@@ -29,7 +29,7 @@
 		<property name="eachLine" value="true" />
 	</module>
 
-	<!-- <module name="RegexpSingleline"> <property name="format" value="\s+$"/> 
+	<!-- <module name="RegexpSingleline"> <property name="format" value="\s+$"/>
 		<property name="message" value="Line has trailing spaces."/> </module> -->
 
 	<module name="TreeWalker">
@@ -38,7 +38,7 @@
 
 		<!-- Checks for Javadoc comments. -->
 		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
-		<!-- <module name="JavadocMethod"/> <module name="JavadocType"/> <module 
+		<!-- <module name="JavadocMethod"/> <module name="JavadocType"/> <module
 			name="JavadocVariable"/> <module name="JavadocStyle"/> -->
 
 
@@ -116,7 +116,6 @@
 		<!-- Checks for common coding problems -->
 		<!-- See http://checkstyle.sf.net/config_coding.html -->
 		<!-- <module name="AvoidInlineConditionals"/> -->
-		<module name="DoubleCheckedLocking" />
 		<module name="EmptyStatement" />
 		<module name="EqualsHashCode" />
 		<!-- <module name="HiddenField"/> -->

@@ -23,7 +23,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-		    
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -62,7 +62,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
+				<version>1.9.1</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
