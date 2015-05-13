@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,8 @@ import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
+
+import java.util.HashMap;
 
 /**
  * Entry point for command line interface
@@ -39,9 +41,9 @@ public class MutationCoverageReport {
       System.out.println(">>>> " + pr.getErrorMessage().value());
     } else {
       final ReportOptions data = pr.getOptions();
-      
+
       final CombinedStatistics stats = runReport(data, plugins);
-            
+
       throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(), data.getCoverageThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(), data.getMutationThreshold());
     }
@@ -66,10 +68,10 @@ public class MutationCoverageReport {
     }
   }
 
-  private static CombinedStatistics runReport(final ReportOptions data, PluginServices plugins) {
+  private static CombinedStatistics runReport(ReportOptions data, PluginServices plugins) {
 
-    final EntryPoint e = new EntryPoint();
-    final AnalysisResult result = e.execute(null, data, plugins);
+    EntryPoint e = new EntryPoint();
+    AnalysisResult result = e.execute(null, data, plugins,new HashMap<String, String>());
     if (result.getError().hasSome()) {
       throw Unchecked.translateCheckedException(result.getError().value());
     }

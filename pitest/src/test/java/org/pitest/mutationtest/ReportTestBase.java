@@ -1,15 +1,5 @@
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.junit.Before;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
@@ -38,6 +28,12 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public abstract class ReportTestBase {
 
@@ -101,7 +97,7 @@ public abstract class ReportTestBase {
 
       final CoverageOptions coverageOptions = createCoverageOptions(configuration);
       final LaunchOptions launchOptions = new LaunchOptions(agent,
-          new DefaultJavaExecutableLocator(), this.data.getJvmArgs());
+          new DefaultJavaExecutableLocator(), this.data.getJvmArgs(),new HashMap<String, String>());
 
       final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
           new True<ClassPathRoot>());

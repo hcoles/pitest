@@ -1,9 +1,5 @@
 package org.pitest.mutationtest.tooling;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
@@ -24,28 +20,35 @@ import org.pitest.process.LaunchOptions;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Map;
+
 public class EntryPoint {
 
   /**
    * Convenient entry point for tools to run mutation analysis.
-   * 
+   *
    * The big grab bag of config stored in ReportOptions must be setup correctly
    * first.
-   * 
-   * @param baseDir
+   *  @param baseDir
    *          directory from which analysis will be run
    * @param data
-   *          big mess of configuration options
-   * 
+   * @param environmentVariables
+   *
    */
-  public AnalysisResult execute(final File baseDir, final ReportOptions data, final PluginServices plugins) {
-    final SettingsFactory settings = new SettingsFactory(data, plugins);
-    return execute(baseDir, data, settings);
+  public AnalysisResult execute(File baseDir,
+                                ReportOptions data,
+                                PluginServices plugins,
+                                Map<String, String> environmentVariables) {
+    SettingsFactory settings = new SettingsFactory(data, plugins);
+    return execute(baseDir, data, settings,environmentVariables);
   }
 
   /**
    * Entry point for tools with tool specific behaviour
-   * 
+   *
    * @param baseDir
    *          directory from which analysis will be run
    * @param data
@@ -54,8 +57,10 @@ public class EntryPoint {
    *          factory for various strategies. Override default to provide tool
    *          specific behaviours
    */
-  public AnalysisResult execute(final File baseDir, final ReportOptions data,
-      final SettingsFactory settings) {
+  public AnalysisResult execute(File baseDir,
+                                ReportOptions data,
+                                SettingsFactory settings,
+                                Map<String, String> environmentVariables) {
 
     final ClassPath cp = data.getClassPath();
 
@@ -76,8 +81,7 @@ public class EntryPoint {
         .createListener();
 
     final CoverageOptions coverageOptions = settings.createCoverageOptions();
-    final LaunchOptions launchOptions = new LaunchOptions(ja,
-        settings.getJavaExecutable(), data.getJvmArgs());
+    final LaunchOptions launchOptions = new LaunchOptions(ja,settings.getJavaExecutable(), data.getJvmArgs(),environmentVariables);
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
