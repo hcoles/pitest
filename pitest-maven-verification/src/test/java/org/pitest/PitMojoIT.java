@@ -292,7 +292,8 @@ public class PitMojoIT {
 	  prepare("/pit-site-reportonly");
 
 	  try{
-		  verifier.executeGoals(Arrays.asList("clean", "test", "site"));
+		  verifier.executeGoal("site");
+          fail("should fail");
 	  }catch(VerificationException e){
 		  assertThat(e.getMessage()).containsSequence("[ERROR] Failed to execute goal org.apache.maven.plugins:maven-site-plugin:", ":site (default-site) on project pit-site-reportonly: Execution default-site of goal org.apache.maven.plugins:maven-site-plugin:", ":site failed: could not find reports directory", "pit-site-reportonly/target/pit-reports");
 	  }
