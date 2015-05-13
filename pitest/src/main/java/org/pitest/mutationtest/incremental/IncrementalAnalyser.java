@@ -70,30 +70,30 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   }
 
-  private MutationResult analyseFromHistory(MutationDetails each, MutationStatusTestPair mutationStatusTestPair) {
+  private MutationResult analyseFromHistory(MutationDetails mutationDetails, MutationStatusTestPair mutationStatusTestPair) {
 
-    ClassName clazz = each.getClassName();
+    ClassName clazz = mutationDetails.getClassName();
 
     if (history.hasClassChanged(clazz)) {
-      return analyseFromScratch(each);
+      return analyseFromScratch(mutationDetails);
     }
 
     DetectionStatus detectionStatus = mutationStatusTestPair.getStatus();
 
     if (detectionStatus == DetectionStatus.TIMED_OUT) {
-      return makeResult(each, DetectionStatus.TIMED_OUT);
+      return makeResult(mutationDetails, DetectionStatus.TIMED_OUT);
     }
 
-    if ((detectionStatus == DetectionStatus.KILLED) && killingTestHasNotChanged(each, mutationStatusTestPair)) {
-      return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair.getKillingTest().value());
+    if ((detectionStatus == DetectionStatus.KILLED) && killingTestHasNotChanged(mutationDetails, mutationStatusTestPair)) {
+      return makeResult(mutationDetails, DetectionStatus.KILLED, mutationStatusTestPair.getKillingTest().value());
     }
 
     if ((detectionStatus == DetectionStatus.SURVIVED)
             && !history.hasCoverageChanged(clazz, coverage.getCoverageIdForClass(clazz))) {
-      return makeResult(each, DetectionStatus.SURVIVED);
+      return makeResult(mutationDetails, DetectionStatus.SURVIVED);
     }
 
-    return analyseFromScratch(each);
+    return analyseFromScratch(mutationDetails);
   }
 
   private boolean killingTestHasNotChanged(MutationDetails mutationDetails, MutationStatusTestPair mutationStatusTestPair) {
