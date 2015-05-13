@@ -33,6 +33,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<parallel>methods</parallel>
+					<threadCountMethods>1</threadCountMethods>
 					<parallelTestsTimeoutForcedInSeconds>180</parallelTestsTimeoutForcedInSeconds>
 				</configuration>
 				<executions>
