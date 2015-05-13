@@ -326,6 +326,7 @@ public class PitMojoIT {
   @Test
   public void shouldReadExclusionsFromSurefireConfig() throws Exception {
     File testDir = prepare("/pit-surefire-excludes");
+    verifier.addCliOption("-DskipTests");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 

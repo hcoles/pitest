@@ -41,12 +41,17 @@
 				<artifactId>pitest-maven</artifactId>
 				<version>${pit.version}</version>
 				<configuration>
-	                            <exportLineCoverage>true</exportLineCoverage>
-				    <outputFormats><value>XML</value></outputFormats>
-				    <maxMutationsPerClass>6</maxMutationsPerClass>
-				    <timestampedReports>false</timestampedReports>
-				    <verbose>true</verbose>
-				</configuration>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    <outputFormats>
+                        <value>XML</value>
+                    </outputFormats>
+                    <maxMutationsPerClass>1</maxMutationsPerClass>
+                    <timestampedReports>false</timestampedReports>
+                    <mutators>
+                        <mutator>NEGATE_CONDITIONALS</mutator>
+                    </mutators>
+                    <verbose>true</verbose>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>
