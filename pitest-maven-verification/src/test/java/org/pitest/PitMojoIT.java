@@ -150,10 +150,10 @@ public class PitMojoIT {
   @Test
   public void shouldSkipSiteReportGeneration() throws Exception {
     File testDir = prepare("/pit-site-skip");
-    File siteParentDir = buildFile(testDir, "target", "site");
 
     verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
 
+    File siteParentDir = buildFile(testDir, "target", "site");
     assertThat(buildFile(siteParentDir, "pit-reports").exists()).isEqualTo(false);
     assertThat(buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
   }
@@ -299,7 +299,7 @@ public class PitMojoIT {
 
 	  try{
         verifier.executeGoal("site");
-          fail("should fail");
+        fail("should fail");
 	  }catch(VerificationException e){
 		  assertThat(e.getMessage()).containsSequence("[ERROR] Failed to execute goal org.apache.maven.plugins:maven-site-plugin:", ":site (default-site) on project pit-site-reportonly: Execution default-site of goal org.apache.maven.plugins:maven-site-plugin:", ":site failed: could not find reports directory", "pit-site-reportonly/target/pit-reports");
 	  }
