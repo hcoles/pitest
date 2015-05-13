@@ -277,6 +277,7 @@
         <powermock.version>1.5.3-SNAPSHOT</powermock.version>
         <surefire.version>2.17</surefire.version>
         <testng.version>6.1.1</testng.version>
+        <slf4j.version>1.7.12</slf4j.version>
 
         <maven.failsafe-plugin.version>${surefire.version}</maven.failsafe-plugin.version>
         <maven.surefire-plugin.version>${surefire.version}</maven.surefire-plugin.version>

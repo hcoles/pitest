@@ -33,7 +33,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<parallel>methods</parallel>
-					<threadCountMethods>1</threadCountMethods>
+					<parallelTestsTimeoutForcedInSeconds>180</parallelTestsTimeoutForcedInSeconds>
 				</configuration>
 				<executions>
 					<execution>
@@ -72,6 +72,25 @@
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-toolchain</artifactId>
 			<version>${maven.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-nop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 		<!-- test dependencies -->
