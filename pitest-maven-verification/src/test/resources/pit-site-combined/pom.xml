@@ -40,14 +40,15 @@
 				<version>${pit.version}</version>
 				<configuration>
 					<outputFormats><value>HTML</value></outputFormats>
-					<maxMutationsPerClass>6</maxMutationsPerClass>
+					<maxMutationsPerClass>1</maxMutationsPerClass>
 					<targetClasses><param>com.example*</param></targetClasses>
+					<mutators><mutator>NEGATE_CONDITIONALS</mutator></mutators>
 					<verbose>true</verbose>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
     <reporting>
         <plugins>
             <plugin>
