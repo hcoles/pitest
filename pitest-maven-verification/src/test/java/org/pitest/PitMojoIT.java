@@ -370,6 +370,7 @@ public class PitMojoIT {
     verifier.setAutoclean(false);
     verifier.setDebug(true);
     verifier.getCliOptions().add("-Dpit.version=" + VERSION);
+    verifier.getCliOptions().add("-Dthreads=" + (Runtime.getRuntime().availableProcessors()) );
 
     // just for debugging, this hangs in case of error
     // because the exception tries to read the log file and fails (of course)
