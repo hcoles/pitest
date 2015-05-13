@@ -13,17 +13,21 @@ import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 public class IncrementalAnalyser implements MutationAnalyser {
 
-  private final static Logger        LOG         = Log.getLogger();
+  private final static Logger              LOG         = Log.getLogger();
 
-  private CodeHistory                history;
-  private CoverageDatabase           coverage;
-  private Map<DetectionStatus, Long> preAnalysed = createStatusMap();
+  private final CodeHistory                history;
+  private final CoverageDatabase           coverage;
+  private final Map<DetectionStatus, Long> preAnalysed = createStatusMap();
 
   public IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage) {
     this.history = history;
