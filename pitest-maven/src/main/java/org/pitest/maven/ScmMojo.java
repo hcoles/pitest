@@ -92,36 +92,36 @@ public class ScmMojo extends PitMojo {
 
   @Override
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
-    targetClasses = findModifiedClassNames();
+    setTargetClasses(findModifiedClassNames());
 
-    if (targetClasses.isEmpty()) {
+    if (getTargetClasses().isEmpty()) {
       getLog().info("No locally modified files found - nothing to mutation test");
       return Option.none();
     }
 
     logClassNames();
     defaultTargetTestsToGroupNameIfNoValueSet();
-    ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
+    ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),getFilter()).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
+    return Option.some(goalStrategy.execute(detectBaseDir(), data, getPlugins(),new HashMap<String, String>()));
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
     if (getTargetTests() == null) {
-      targetTests = Collections.singletonList(getProject().getGroupId() + "*");
+      setTargetTests(Collections.singletonList(getProject().getGroupId() + "*"));
     }
   }
 
   private void logClassNames() {
-    for (String each : targetClasses) {
+    for (String each : getTargetClasses()) {
       getLog().info("Will mutate locally changed class " + each);
     }
   }
 
   private List<String> findModifiedClassNames() throws MojoExecutionException {
 
-    File sourceRoot = new File(project.getBuild().getSourceDirectory());
+    File sourceRoot = new File(getProject().getBuild().getSourceDirectory());
 
     List<String> modifiedPaths = findModifiedPaths();
     PathToJavaClassConverter converter = new PathToJavaClassConverter(sourceRoot.getAbsolutePath());
@@ -171,16 +171,16 @@ public class ScmMojo extends PitMojo {
 
   private String getSCMConnection() throws MojoExecutionException {
 
-    if (project.getScm() == null) {
+    if (getProject().getScm() == null) {
       throw new MojoExecutionException("No SCM Connection configured.");
     }
 
-    String scmConnection = project.getScm().getConnection();
+    String scmConnection = getProject().getScm().getConnection();
     if ("connection".equalsIgnoreCase(connectionType) && StringUtils.isNotEmpty(scmConnection)) {
       return scmConnection;
     }
 
-    String scmDeveloper = project.getScm().getDeveloperConnection();
+    String scmDeveloper = getProject().getScm().getDeveloperConnection();
     if ("developerconnection".equalsIgnoreCase(connectionType) && StringUtils.isNotEmpty(scmDeveloper)) {
       return scmDeveloper;
     }
