@@ -1,6 +1,5 @@
 package org.pitest.maven;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -13,8 +12,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
@@ -77,18 +74,6 @@ public class ScmMojo extends PitMojo {
    * @parameter expression="${project.parent.basedir}"
    */
   private File        scmRootDir;
-
-  public ScmMojo( RunPitStrategy executionStrategy,
-                  ScmManager manager,
-                  Predicate<Artifact> filter,
-                  PluginServices plugins) {
-    super(executionStrategy, filter, plugins);
-    this.manager = manager;
-  }
-
-  public ScmMojo() {
-
-  }
 
   @Override
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
@@ -186,13 +171,5 @@ public class ScmMojo extends PitMojo {
     }
 
     throw new MojoExecutionException("SCM Connection is not set.");
-  }
-
-  public void setConnectionType(String connectionType) {
-    this.connectionType = connectionType;
-  }
-
-  public void setScmRootDir(File scmRootDir) {
-    this.scmRootDir = scmRootDir;
   }
 }

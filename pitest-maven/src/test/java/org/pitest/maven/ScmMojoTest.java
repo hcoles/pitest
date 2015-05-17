@@ -45,8 +45,13 @@ public class ScmMojoTest extends BasePitMojoTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    testee = new ScmMojo(executionStrategy, manager, filter, plugins);
-    testee.setScmRootDir(new File("foo"));
+    testee = new ScmMojo();
+    ReflectionUtils.setVariableValueInObject(testee,"goalStrategy",executionStrategy);
+    ReflectionUtils.setVariableValueInObject(testee,"filter",filter);
+    ReflectionUtils.setVariableValueInObject(testee,"plugins",plugins);
+    ReflectionUtils.setVariableValueInObject(testee,"manager",manager);
+
+    ReflectionUtils.setVariableValueInObject(testee,"scmRootDir",new File("foo"));
 
     Set<String> includeScmStatuses = new HashSet<String>();
     includeScmStatuses.add("ADDED");
@@ -78,7 +83,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     String devUrl = "devcon";
     when(scm.getDeveloperConnection()).thenReturn(devUrl);
     setupToReturnNoModifiedFiles();
-    testee.setConnectionType("developerconnection");
+    ReflectionUtils.setVariableValueInObject(testee,"connectionType","developerconnection");
     testee.execute();
     verify(manager).makeScmRepository(devUrl);
 
@@ -89,7 +94,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     String url = "prodcon";
     when(scm.getConnection()).thenReturn(url);
     setupToReturnNoModifiedFiles();
-    testee.setConnectionType("connection");
+    ReflectionUtils.setVariableValueInObject(testee, "connectionType","connection");
     testee.execute();
     verify(manager).makeScmRepository(url);
 
@@ -158,9 +163,9 @@ public class ScmMojoTest extends BasePitMojoTest {
         any(ReportOptions.class), any(PluginServices.class),anyMap());
   }
 
-  private void setupConnection() {
+  private void setupConnection() throws IllegalAccessException {
     when(scm.getConnection()).thenReturn("url");
-    testee.setConnectionType("connection");
+    ReflectionUtils.setVariableValueInObject(testee,"connectionType","connection");
   }
 
   private void setupToReturnNoModifiedFiles() throws ScmException {
