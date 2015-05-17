@@ -20,7 +20,6 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,9 +50,9 @@ public class ScmMojo extends PitMojo {
    *
    * Common values include ADDED,MODIFIED (the defaults) & UNKNOWN.
    *
-   * @parameter expression="${include}"
+   * @parameter expression="${include}" default-value="ADDED,MODIFIED"
    */
-  private HashSet<String> include;
+  private Set<String> include;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
@@ -110,7 +109,7 @@ public class ScmMojo extends PitMojo {
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
     if (getTargetTests() == null) {
-      targetTests = Collections.singletonList(this.getProject().getGroupId() + "*");
+      targetTests = Collections.singletonList(getProject().getGroupId() + "*");
     }
   }
 
@@ -150,18 +149,15 @@ public class ScmMojo extends PitMojo {
   }
 
   private Set<ScmFileStatus> makeStatusSet() {
-    if ((include == null) || include.isEmpty()) {
-      return new HashSet<ScmFileStatus>(Arrays.asList(ScmStatus.ADDED.getStatus(), ScmStatus.MODIFIED.getStatus()));
-    }
-    Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
-    FCollection.mapTo(include, stringToMavenScmStatus(), s);
-    return s;
+    Set<ScmFileStatus> scmFileStatuses = new HashSet<ScmFileStatus>();
+    FCollection.mapTo(include, stringToMavenScmStatus(), scmFileStatuses);
+    return scmFileStatuses;
   }
 
   private static F<String, ScmFileStatus> stringToMavenScmStatus() {
     return new F<String, ScmFileStatus>() {
-      public ScmFileStatus apply(String a) {
-        return ScmStatus.valueOf(a.toUpperCase()).getStatus();
+      public ScmFileStatus apply(String status) {
+        return ScmStatus.valueOf(status.toUpperCase()).getStatus();
       }
     };
   }
