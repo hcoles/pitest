@@ -79,8 +79,10 @@ public class ScmMojo extends PitMojo {
    */
   private File        scmRootDir;
 
-  public ScmMojo(final RunPitStrategy executionStrategy,
-      final ScmManager manager, Predicate<Artifact> filter, PluginServices plugins) {
+  public ScmMojo( RunPitStrategy executionStrategy,
+                  ScmManager manager,
+                  Predicate<Artifact> filter,
+                  PluginServices plugins) {
     super(executionStrategy, filter, plugins);
     this.manager = manager;
   }
@@ -91,124 +93,111 @@ public class ScmMojo extends PitMojo {
 
   @Override
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
+    targetClasses = makeConcreteList(findModifiedClassNames());
 
-    this.targetClasses = makeConcreteList(findModifiedClassNames());
-
-    if (this.targetClasses.isEmpty()) {
-      this.getLog().info(
-          "No locally modified files found - nothing to mutation test");
+    if (targetClasses.isEmpty()) {
+      getLog().info("No locally modified files found - nothing to mutation test");
       return Option.none();
     }
 
     logClassNames();
     defaultTargetTestsToGroupNameIfNoValueSet();
-    final ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
+    ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
-
+    return Option.some(goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
-    if (this.getTargetTests() == null) {
-      this.targetTests = makeConcreteList(Collections.singletonList(this.getProject()
+    if (getTargetTests() == null) {
+      targetTests = makeConcreteList(Collections.singletonList(this.getProject()
           .getGroupId() + "*"));
     }
   }
 
   private void logClassNames() {
-    for (final String each : this.targetClasses) {
-      this.getLog().info("Will mutate locally changed class " + each);
+    for (String each : targetClasses) {
+      getLog().info("Will mutate locally changed class " + each);
     }
   }
 
   private List<String> findModifiedClassNames() throws MojoExecutionException {
 
-    final File sourceRoot = new File(this.project.getBuild()
-        .getSourceDirectory());
+    File sourceRoot = new File(project.getBuild().getSourceDirectory());
 
-    final List<String> modifiedPaths = findModifiedPaths();
-    return FCollection.flatMap(modifiedPaths, new PathToJavaClassConverter(
-        sourceRoot.getAbsolutePath()));
-
+    List<String> modifiedPaths = findModifiedPaths();
+    PathToJavaClassConverter converter = new PathToJavaClassConverter(sourceRoot.getAbsolutePath());
+    return FCollection.flatMap(modifiedPaths,converter);
   }
 
   private List<String> findModifiedPaths() throws MojoExecutionException {
     try {
-      final Set<ScmFileStatus> statusToInclude = makeStatusSet();
-      final List<String> modifiedPaths = new ArrayList<String>();
-      final ScmRepository repository = this.manager
-          .makeScmRepository(getSCMConnection());
-      final File scmRoot = scmRoot();
-      this.getLog().info("Scm root dir is " + scmRoot);
-      final StatusScmResult status = this.manager.status(repository,
-          new ScmFileSet(scmRoot));
+      Set<ScmFileStatus> statusToInclude = makeStatusSet();
+      List<String> modifiedPaths = new ArrayList<String>();
+      ScmRepository repository = manager.makeScmRepository(getSCMConnection());
+      File scmRoot = scmRoot();
+      getLog().info("Scm root dir is " + scmRoot);
+      StatusScmResult status = manager.status(repository,new ScmFileSet(scmRoot));
 
-      for (final ScmFile file : status.getChangedFiles()) {
+      for (ScmFile file : status.getChangedFiles()) {
         if (statusToInclude.contains(file.getStatus())) {
           modifiedPaths.add(file.getPath());
         }
       }
       return modifiedPaths;
-    } catch (final ScmException e) {
+    } catch (ScmException e) {
       throw new MojoExecutionException("Error while querying scm", e);
     }
-
   }
 
   private Set<ScmFileStatus> makeStatusSet() {
-    if ((this.include == null) || this.include.isEmpty()) {
-      return new HashSet<ScmFileStatus>(Arrays.asList(
-          ScmStatus.ADDED.getStatus(), ScmStatus.MODIFIED.getStatus()));
+    if ((include == null) || include.isEmpty()) {
+      return new HashSet<ScmFileStatus>(Arrays.asList(ScmStatus.ADDED.getStatus(), ScmStatus.MODIFIED.getStatus()));
     }
-    final Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
-    FCollection.mapTo(this.include, stringToMavenScmStatus(), s);
+    Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
+    FCollection.mapTo(include, stringToMavenScmStatus(), s);
     return s;
   }
 
   private static F<String, ScmFileStatus> stringToMavenScmStatus() {
     return new F<String, ScmFileStatus>() {
-      public ScmFileStatus apply(final String a) {
+      public ScmFileStatus apply(String a) {
         return ScmStatus.valueOf(a.toUpperCase()).getStatus();
       }
-
     };
   }
 
   private File scmRoot() {
-    if (this.scmRootDir != null) {
-      return this.scmRootDir;
+    if (scmRootDir != null) {
+      return scmRootDir;
     }
-    return this.basedir;
+    return basedir;
   }
 
   private String getSCMConnection() throws MojoExecutionException {
 
-    if (this.project.getScm() == null) {
+    if (project.getScm() == null) {
       throw new MojoExecutionException("No SCM Connection configured.");
     }
 
-    final String scmConnection = this.project.getScm().getConnection();
-    if ("connection".equalsIgnoreCase(this.connectionType)
-        && StringUtils.isNotEmpty(scmConnection)) {
+    String scmConnection = project.getScm().getConnection();
+    if ("connection".equalsIgnoreCase(connectionType) && StringUtils.isNotEmpty(scmConnection)) {
       return scmConnection;
     }
 
-    final String scmDeveloper = this.project.getScm().getDeveloperConnection();
-    if ("developerconnection".equalsIgnoreCase(this.connectionType)
-        && StringUtils.isNotEmpty(scmDeveloper)) {
+    String scmDeveloper = project.getScm().getDeveloperConnection();
+    if ("developerconnection".equalsIgnoreCase(connectionType) && StringUtils.isNotEmpty(scmDeveloper)) {
       return scmDeveloper;
     }
 
     throw new MojoExecutionException("SCM Connection is not set.");
-
   }
 
-  public void setConnectionType(final String connectionType) {
+  public void setConnectionType(String connectionType) {
     this.connectionType = connectionType;
   }
 
-  public void setScmRootDir(final File scmRootDir) {
+  public void setScmRootDir(File scmRootDir) {
     this.scmRootDir = scmRootDir;
   }
 
