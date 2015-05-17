@@ -47,7 +47,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetClasses}"
    *
    */
-  protected ArrayList<String>         targetClasses;
+  protected List<String>         targetClasses;
 
   /**
    * Tests to run
@@ -55,7 +55,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetTests}"
    *
    */
-  protected ArrayList<String>         targetTests;
+  protected List<String>         targetTests;
 
   /**
    * Methods not to mutate
