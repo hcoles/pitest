@@ -245,7 +245,6 @@ public class MutationCoverage {
                                                       data.getMaxMutationsPerClass());
     MutationSource source = new MutationSource(mutationConfig, filter, testPrioritiser, bas);
 
-    MutationAnalyser analyser = new IncrementalAnalyser(new DefaultCodeHistory(code, history()), coverageData);
 
     PercentAndConstantTimeoutStrategy timeoutStrategy = new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
                                                                                               data.getTimeoutConstant());
@@ -261,6 +260,7 @@ public class MutationCoverage {
                                                                          data.getNumberOfThreads(),
                                                                          data.getMutationUnitSize());
 
+    MutationAnalyser analyser = new IncrementalAnalyser(new DefaultCodeHistory(code, history()), coverageData);
     MutationTestBuilder builder = new MutationTestBuilder(workerFactory, analyser, source, grouper);
 
     return builder.createMutationTestUnits(code.getCodeUnderTestNames());
