@@ -529,7 +529,7 @@ public class PitMojo extends AbstractMojo {
     return exportLineCoverage;
   }
 
-  protected boolean shouldRun() {
+  private boolean shouldRun() {
     return !skip && !skipTests && !project.getPackaging().equalsIgnoreCase("pom");
   }
 
@@ -563,5 +563,9 @@ public class PitMojo extends AbstractMojo {
 
   public Map<String, String> getEnvironmentVariables() {
     return environmentVariables;
+  }
+
+  public GoalStrategy getGoalStrategy() {
+    return goalStrategy;
   }
 }
