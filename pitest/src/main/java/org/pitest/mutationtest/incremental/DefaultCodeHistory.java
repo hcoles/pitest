@@ -9,16 +9,11 @@ import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.util.Log;
 
 import java.math.BigInteger;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DefaultCodeHistory implements CodeHistory {
-
-  private static final Logger LOG = Log.getLogger();
 
   private final ClassInfoSource                                 code;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults;
@@ -48,11 +43,7 @@ public class DefaultCodeHistory implements CodeHistory {
     }
 
     Option<ClassInfo> current = code.fetchClass(className);
-    boolean changed = !current.value().getHierarchicalId().equals(historic.getId());
-    if (changed) {
-        LOG.log(Level.WARNING,"class changed [" + className + "] : " + current.value().getId().getHash());
-    }
-    return changed;
+    return !current.value().getHierarchicalId().equals(historic.getId());
   }
 
   public boolean hasCoverageChanged(ClassName className,
