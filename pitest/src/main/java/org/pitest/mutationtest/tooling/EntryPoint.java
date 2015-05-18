@@ -12,6 +12,7 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
@@ -80,7 +81,8 @@ public class EntryPoint {
                                                                       timings,
                                                                       !data.isVerbose());
 
-    HistoryStore history = new XStreamHistoryStore(data.createHistoryWriter(),
+    WriterFactory historyWriter = data.createHistoryWriter();
+    HistoryStore history = new XStreamHistoryStore(historyWriter,
                                                    data.createHistoryReader());
 
     MutationResultListenerFactory reportFactory = settings.createListener();
@@ -105,7 +107,7 @@ public class EntryPoint {
     } finally {
       javaAgent.close();
       javaAgentFinder.close();
-      data.createHistoryWriter().close();
+      historyWriter.close();
     }
   }
 }
