@@ -47,7 +47,8 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetClasses}"
    *
    */
-  private List<String>         targetClasses;
+  // need to stay concrete type for maven 2 compatibility
+  private ArrayList<String>         targetClasses;
 
   /**
    * Tests to run
@@ -578,7 +579,11 @@ public class PitMojo extends AbstractMojo {
   }
 
   public void setTargetClasses(List<String> targetClasses) {
-    this.targetClasses = targetClasses;
+    if ( targetClasses instanceof ArrayList) {
+      this.targetClasses = (ArrayList<String>) targetClasses;
+    } else {
+      throw new IllegalArgumentException("targetClasses must be ArrayList for the sake of maven 2 compatibility");
+    }
   }
 
   public void setTargetTests(List<String> targetTests) {
