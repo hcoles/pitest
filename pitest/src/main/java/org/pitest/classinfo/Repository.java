@@ -23,10 +23,11 @@ import java.util.Set;
 
 public class Repository implements ClassInfoSource {
 
-  private final HashFunction              hashFunction;
   private final Map<ClassName, ClassInfo> knownClasses   = new HashMap<ClassName, ClassInfo>();
   private final Set<ClassName>            unknownClasses = new HashSet<ClassName>();
-  private final ClassByteArraySource      source;
+
+  private final ClassByteArraySource source;
+  private final HashFunction         hashFunction;
 
   public Repository(ClassByteArraySource source) {
     this(source, new AddlerHash());
@@ -41,8 +42,7 @@ public class Repository implements ClassInfoSource {
     return knownClasses.containsKey(name) || querySource(name).hasSome();
   }
 
-  public Option<ClassInfo> fetchClass(Class<?> clazz) { // NO_UCD (test
-                                                              // only)
+  public Option<ClassInfo> fetchClass(Class<?> clazz) { // NO_UCD (test only)
     ClassName name = new ClassName(clazz.getName());
     return fetchClass(name);
   }
@@ -63,8 +63,8 @@ public class Repository implements ClassInfoSource {
   private Option<ClassInfo> nameToClassInfo(ClassName name) {
     Option<byte[]> bytes = querySource(name);
     if (bytes.hasSome()) {
-      ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
-          bytes.value(), hashFunction.hash(bytes.value()));
+      long hash = hashFunction.hash(bytes.value());
+      ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name, bytes.value(), hash);
       return contructClassInfo(classData);
     } else {
       return Option.none();
@@ -93,8 +93,7 @@ public class Repository implements ClassInfoSource {
     if (clazz == null) {
       return new DefaultClassPointer(null);
     } else {
-      ClassInfo alreadyResolved = knownClasses.get(ClassName
-          .fromString(clazz));
+      ClassInfo alreadyResolved = knownClasses.get(ClassName.fromString(clazz));
       if (alreadyResolved != null) {
         return new DefaultClassPointer(alreadyResolved);
       } else {

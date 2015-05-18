@@ -9,5 +9,4 @@ public class AddlerHash implements HashFunction {
     adler.update(value);
     return adler.getValue();
   }
-
 }
