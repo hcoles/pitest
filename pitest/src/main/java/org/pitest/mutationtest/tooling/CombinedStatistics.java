@@ -14,10 +14,10 @@ public class CombinedStatistics {
   }
 
   public MutationStatistics getMutationStatistics() {
-    return this.mutationStatistics;
+    return mutationStatistics;
   }
 
   public CoverageSummary getCoverageSummary() {
-    return this.coverageSummary;
+    return coverageSummary;
   }
 }

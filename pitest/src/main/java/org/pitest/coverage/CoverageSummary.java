@@ -8,22 +8,20 @@ public final class CoverageSummary {
   private final int numberOfLines;
   private final int numberOfCoveredLines;
 
-  public CoverageSummary(final int numberOfLines, final int numberOfCoveredLines) {
+  public CoverageSummary(int numberOfLines, int numberOfCoveredLines) {
     this.numberOfLines = numberOfLines;
     this.numberOfCoveredLines = numberOfCoveredLines;
   }
 
   public int getNumberOfLines() {
-    return this.numberOfLines;
+    return numberOfLines;
   }
 
   public int getNumberOfCoveredLines() {
-    return this.numberOfCoveredLines;
+    return numberOfCoveredLines;
   }
 
   public int getCoverage() {
-    return this.numberOfLines == 0 ? 100 : Math
-        .round((100f * this.numberOfCoveredLines) / this.numberOfLines);
+    return numberOfLines == 0 ? 100 : Math.round((100f * numberOfCoveredLines) / numberOfLines);
   }
-
 }
