@@ -89,7 +89,8 @@ public class ScmMojo extends PitMojo {
     ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),getFilter()).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(goalStrategy.execute(detectBaseDir(), data, getPlugins(),new HashMap<String, String>()));
+    return Option.some(goalStrategy.execute(detectBaseDir(), data, getPlugins(),
+                                            new HashMap<String, String>()));
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
@@ -110,7 +111,10 @@ public class ScmMojo extends PitMojo {
 
     List<String> modifiedPaths = findModifiedPaths();
     PathToJavaClassConverter converter = new PathToJavaClassConverter(sourceRoot.getAbsolutePath());
-    return FCollection.flatMap(modifiedPaths,converter);
+
+    ArrayList<String> resultList = new ArrayList<String>();
+    resultList.addAll(FCollection.flatMap(modifiedPaths,converter));
+    return resultList;
   }
 
   private List<String> findModifiedPaths() throws MojoExecutionException {
