@@ -122,7 +122,8 @@ public class MutationCoverage {
     MutationEngine engine = strategies.factory().createEngine(
         data.isMutateStaticInitializers(),
         Prelude.or(data.getExcludedMethods()),
-        data.getLoggingClasses(), data.getMutators(),
+        data.getLoggingClasses(),
+        data.getMutators(),
         data.isDetectInlinedCode());
 
     List<MutationResultListener> config = createConfig(startTime, coverageData, stats, engine);
@@ -130,21 +131,20 @@ public class MutationCoverage {
     history().initialize();
 
     timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, engine);
+    List<MutationAnalysisUnit> analysisUnits = buildMutationTests(coverageData, engine);
     timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
-    LOG.info("Created  " + tus.size() + " mutation test units");
-    checkMutationsFound(tus);
+    LOG.info("Created  " + analysisUnits.size() + " mutation test units");
+    checkMutationsFound(analysisUnits);
 
     recordClassPath(coverageData);
 
-    LOG.fine("Used memory before analysis start "
-        + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
+    LOG.fine("Used memory before analysis start " + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
     LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB) + " mb");
 
     MutationAnalysisExecutor mutationAnalysisExecutor = new MutationAnalysisExecutor(numberOfThreads(),config);
     timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
-    mutationAnalysisExecutor.run(tus);
+    mutationAnalysisExecutor.run(analysisUnits);
     timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
     LOG.info("Completed in " + timeSpan(startTime));
@@ -162,9 +162,9 @@ public class MutationCoverage {
                                                     CoverageDatabase coverageData,
                                                     MutationStatisticsListener stats,
                                                     MutationEngine engine) {
-    List<MutationResultListener> ls = new ArrayList<MutationResultListener>();
+    List<MutationResultListener> mutationResultListeners = new ArrayList<MutationResultListener>();
 
-    ls.add(stats);
+    mutationResultListeners.add(stats);
 
     ListenerArguments args = new ListenerArguments(strategies.output(),
                                                    coverageData,
@@ -172,16 +172,16 @@ public class MutationCoverage {
                                                    engine,
                                                    startTime);
 
-    MutationResultListener mutationReportListener = strategies.listenerFactory()
-        .getListener(data.getFreeFormProperties(), args);
+    MutationResultListener mutationReportListener = strategies.listenerFactory().getListener(
+        data.getFreeFormProperties(), args);
 
-    ls.add(mutationReportListener);
-    ls.add(new HistoryListener(history()));
+    mutationResultListeners.add(mutationReportListener);
+    mutationResultListeners.add(new HistoryListener(history()));
 
     if (!data.isVerbose()) {
-      ls.add(new SpinnerListener(System.out));
+      mutationResultListeners.add(new SpinnerListener(System.out));
     }
-    return ls;
+    return mutationResultListeners;
   }
 
   private void recordClassPath(CoverageDatabase coverageData) {
@@ -240,7 +240,8 @@ public class MutationCoverage {
                                                                     code,
                                                                     coverageData);
 
-    MutationFilter filter = makeFilter().createFilter(freeFormProperties, code,
+    MutationFilter filter = makeFilter().createFilter(freeFormProperties,
+                                                      code,
                                                       data.getMaxMutationsPerClass());
     MutationSource source = new MutationSource(mutationConfig, filter, testPrioritiser, bas);
 
@@ -248,17 +249,19 @@ public class MutationCoverage {
 
     PercentAndConstantTimeoutStrategy timeoutStrategy = new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
                                                                                               data.getTimeoutConstant());
-    WorkerFactory wf = new WorkerFactory(baseDir, coverage().getConfiguration(),
-                                         mutationConfig,
-                                         timeoutStrategy,
-                                         data.isVerbose(),
-                                         data.getClassPath().getLocalClassPath());
+    WorkerFactory workerFactory = new WorkerFactory(baseDir,
+                                                    coverage().getConfiguration(),
+                                                    mutationConfig,
+                                                    timeoutStrategy,
+                                                    data.isVerbose(),
+                                                    data.getClassPath().getLocalClassPath());
 
-    MutationGrouper grouper = settings.getMutationGrouper().makeFactory(freeFormProperties,
-                                                                        code,
-                                                                        data.getNumberOfThreads(),
-                                                                        data.getMutationUnitSize());
-    MutationTestBuilder builder = new MutationTestBuilder(wf, analyser, source, grouper);
+    MutationGrouper grouper = settings.getMutationGrouper().makeFactory( freeFormProperties,
+                                                                         code,
+                                                                         data.getNumberOfThreads(),
+                                                                         data.getMutationUnitSize());
+
+    MutationTestBuilder builder = new MutationTestBuilder(workerFactory, analyser, source, grouper);
 
     return builder.createMutationTestUnits(code.getCodeUnderTestNames());
   }
