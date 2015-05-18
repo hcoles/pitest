@@ -404,7 +404,8 @@ public class PitMojo extends AbstractMojo {
 
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
     ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
-    return Option.some(goalStrategy.execute(detectBaseDir(), data,plugins,environmentVariables));
+    CombinedStatistics statistics = goalStrategy.execute(detectBaseDir(), data, plugins, environmentVariables);
+    return Option.some(statistics);
   }
 
   protected File detectBaseDir() {
