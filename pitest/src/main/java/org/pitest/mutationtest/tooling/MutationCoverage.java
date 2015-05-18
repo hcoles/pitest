@@ -277,9 +277,8 @@ public class MutationCoverage {
     }
   }
 
-
   private String timeSpan(long t0) {
-    return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
+    return ((System.currentTimeMillis() - t0) / 1000) + " seconds";
   }
 
   private CoverageGenerator coverage() {
