@@ -8,8 +8,7 @@ public class CombinedStatistics {
   private final MutationStatistics mutationStatistics;
   private final CoverageSummary    coverageSummary;
 
-  public CombinedStatistics(final MutationStatistics mutationStatistics,
-      final CoverageSummary coverageSummary) {
+  public CombinedStatistics(MutationStatistics mutationStatistics, CoverageSummary coverageSummary) {
     this.mutationStatistics = mutationStatistics;
     this.coverageSummary = coverageSummary;
   }
@@ -21,5 +20,4 @@ public class CombinedStatistics {
   public CoverageSummary getCoverageSummary() {
     return this.coverageSummary;
   }
-
 }
