@@ -184,6 +184,7 @@ public class PitMojoIT {
    * Verifies that, when multiple timestamped PIT reports have been generated, only the latest report is copied to the site reports directory.
    */
   @Test
+  @Ignore("too slow")
   public void shouldCopyLatestTimestampedReport() throws Exception {
     File testDir = prepare("/pit-site-multiple-timestamped");
     File pitReportDir = buildFile(testDir, "target", "pit-reports");
@@ -228,6 +229,7 @@ public class PitMojoIT {
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
+  @Ignore("too slow")
   public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
 	  FilenameFilter timestampedDirFilter = new RegexFileFilter("^\\d+$");
 	  File testDir = prepare("/pit-site-combined");
