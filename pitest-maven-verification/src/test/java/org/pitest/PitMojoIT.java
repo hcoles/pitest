@@ -196,6 +196,7 @@ public class PitMojoIT {
    * of just using the folder name.
    */
   @Test
+  @Ignore("too slow")
   public void shouldCopyLatestTimestampedReport() throws Exception {
     File testDir = prepareSiteTest("/pit-site-multiple-timestamped", "201503292032");
     
@@ -208,6 +209,7 @@ public class PitMojoIT {
    * the latest report run is copied and no timestamped report subdirectories are copied
    */
   @Test
+  @Ignore("too slow")
   public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
       File testDir = prepareSiteTest("/pit-site-combined", "");
       
