@@ -15,26 +15,34 @@
  */
 package org.pitest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
+import org.pitest.support.DirectoriesOnlyWalker;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.util.FileUtil;
-import org.pitest.util.PitError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -149,13 +157,15 @@ public class PitMojoIT {
    */
   @Test
   public void shouldSkipSiteReportGeneration() throws Exception {
-    File testDir = prepare("/pit-site-skip");
-
-    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-
+    File testDir = prepareSiteTest("/pit-site-skip");
     File siteParentDir = buildFile(testDir, "target", "site");
+    
+    verifier.executeGoal("site");
+
+    assertThat(siteParentDir.exists()).isEqualTo(true);
     assertThat(buildFile(siteParentDir, "pit-reports").exists()).isEqualTo(false);
     assertThat(buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
+    assertThat(buildFile(siteParentDir, "project-reports.html").exists()).isEqualTo(false);
   }
 
   /*
@@ -163,131 +173,46 @@ public class PitMojoIT {
    */
   @Test
   public void shouldGenerateSiteReportWithNonTimestampedHtmlReport() throws Exception {
-    File testDir = prepare("/pit-site-non-timestamped");
-    File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
-    File siteProjectReportsIndex = buildFile(testDir, "target", "site", "project-reports.html");
-
-    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-
-    assertThat(pitReportSiteDir.exists()).isEqualTo(true);
-
-    String pitReportSiteIndexHtml = FileUtil.readToString(new FileInputStream(buildFile(pitReportSiteDir, "index.html")));
-    String pitReportIndexHtml = FileUtil.readToString(new FileInputStream(buildFile(testDir, "target", "pit-reports", "index.html")));
-    assertThat(pitReportSiteIndexHtml).isEqualTo(pitReportIndexHtml);
-
-    //assert that the expected report name/description was written to the site project report's index.html file
-	String projectReportsHtml = FileUtil.readToString(new FileInputStream(siteProjectReportsIndex));
-	assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
+    File testDir = prepareSiteTest("/pit-site-non-timestamped");
+    
+    verifier.executeGoal("site");
+    verifyPitReportTest(testDir);
   }
-
+  
   /*
-   * Verifies that, when multiple timestamped PIT reports have been generated, only the latest report is copied to the site reports directory.
+   * Verifies that running PIT with timestampedReports set to true will copy the contents of the latest timestamped report
+   */
+  @Test
+  public void shouldGenerateSiteReportWithTimestampedHtmlReport() throws Exception {
+    File testDir = prepareSiteTest("/pit-site-timestamped", "201505212116");
+    
+    verifier.executeGoal("site");
+    verifyPitReportTest(testDir);
+  }
+  
+  /*
+   * Verifies that, when multiple timestamped PIT reports have been generated, only the latest report is copied to the site reports directory.  
+   * This test sets the earlier directory (201503292032) as the last modified.  This tests to make sure the last modified date is used instead 
+   * of just using the folder name.
    */
   @Test
   public void shouldCopyLatestTimestampedReport() throws Exception {
-    File testDir = prepare("/pit-site-multiple-timestamped");
-    File pitReportDir = buildFile(testDir, "target", "pit-reports");
-    File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
-
-    LOGGER.info("first run");
-    verifier.setLogFileName("log1.txt");
-    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-    String[] run1 = pitReportDir.list();
-    assertThat(run1.length).isEqualTo(1);
-    assertTrue("first marker file not created", buildFile(pitReportDir, run1[0], "first_marker.dat").createNewFile());
-
-    waitUntilNextMinute(run1[0]);
-
-    verifier.setLogFileName("log2-pit.txt");
-    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
-
-    boolean secondMarkerCreated = false;
-    //create a marker file to ensure the latest pit report is copied over
-    String[] run2 = pitReportDir.list();
-    assertThat(run2.length).isEqualTo(2);
-    for (String s : run2) {
-      if (!s.equals(run1[0])) {
-    		assertThat(buildFile(pitReportDir, s, "second_marker.dat").createNewFile()).isEqualTo(true);
-    		secondMarkerCreated = true;
-    		break;
-    	}
-    }
-    assertTrue("second marker file not created", secondMarkerCreated);
-
-    LOGGER.info("second run");
-    verifier.setLogFileName("log2-site.txt");
+    File testDir = prepareSiteTest("/pit-site-multiple-timestamped", "201503292032");
+    
     verifier.executeGoal("site");
-
-    assertThat(new File(pitReportSiteDir, "first_marker.dat").exists()).isEqualTo(false);
-    assertThat(new File(pitReportSiteDir, "second_marker.dat").exists()).isEqualTo(true);
+    verifyPitReportTest(testDir);
   }
 
   /*
    * Verifies that in the case where pit has generated reports with both timestampedReports=true and timestampedReports=false,
    * the latest report run is copied and no timestamped report subdirectories are copied
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
   public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
-	  FilenameFilter timestampedDirFilter = new RegexFileFilter("^\\d+$");
-	  File testDir = prepare("/pit-site-combined");
-	  File pitReportDir = buildFile(testDir, "target", "pit-reports");
-	  File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
-	  boolean thirdMarkerCreated = false;
-
-	  List originalCliOptions = new ArrayList(verifier.getCliOptions());
-
-      LOGGER.info("first run");
-	  //first run -- create a timestamped report
-	  verifier.setLogFileName("log1.txt");
-	  verifier.getCliOptions().add("-DtimestampedReports=true");
-	  verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-	  verifier.setCliOptions(new ArrayList(originalCliOptions));
-
-	  //first run -- create the "first.dat" marker file in the new timestamped reports directory
-	  File run1Dir = pitReportDir.listFiles()[0];
-	  new File(run1Dir, "first.dat").createNewFile();
-
-      LOGGER.info("second run");
-	  //second run -- create a non-timestamped report
-	  verifier.setLogFileName("log2.txt");
-	  verifier.getCliOptions().add("-DtimestampedReports=false");
-	  verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-	  verifier.setCliOptions(new ArrayList(originalCliOptions));
-
-	  //second run -- create the "second.dat" marker file in the target/pit-reports directory (since the second run is a non-timestamped report)
-	  new File(pitReportDir, "second.dat").createNewFile();
-
-      //third run -- create a timestamped report
-    waitUntilNextMinute(run1Dir.getName());
-
-      LOGGER.info("third run");
-	  verifier.setLogFileName("log3-pit.txt");
-	  verifier.getCliOptions().add("-DtimestampedReports=true");
-	  verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage"));
-	  verifier.setCliOptions(new ArrayList(originalCliOptions));
-
-	  //third run -- create the "third.dat" marker file in the new timestamped reports directory
-	  for (File f : pitReportDir.listFiles(timestampedDirFilter)) {
-		  if (!f.equals(run1Dir)) {
-			  new File(f, "third.dat").createNewFile();
-			  thirdMarkerCreated = true;
-			  break;
-		  }
-	  }
-	  assertTrue("third marker file not created", thirdMarkerCreated);
-
-	  //run the site lifecycle last so that the third.dat file has a chance to be created before the site generation happens
-	  verifier.setLogFileName("log3-site.txt");
-	  verifier.executeGoal("site");
-
-	  //assert that the third run (a timestamped report) is the report in the site/pit-reports directory
-	  assertTrue("did not find expected marker file third.dat in site directory", new File(pitReportSiteDir, "third.dat").exists());
-
-	  //assert that no timestamped report subdirectories were copied into the site/pit-reports directory
-	  //comparing to an empty array is better than checking the array length because a failure in this assert
-	  //will list the files that were found instead of just the number of files that were found
-	  assertThat(pitReportSiteDir.list(timestampedDirFilter)).isEqualTo(new String[0]);
+      File testDir = prepareSiteTest("/pit-site-combined", "");
+      
+      verifier.executeGoal("site");
+      verifyPitReportTest(testDir);
   }
 
   /*
@@ -310,17 +235,19 @@ public class PitMojoIT {
    */
   @Test
   public void shouldCorrectlyHandleOverrides() throws Exception {
-    File testDir = prepare("/pit-site-custom-config");
-    File siteProjectReportsIndex = buildFile(testDir, "target", "site", "project-reports.html");
+    File testDir = prepareSiteTest("/pit-site-custom-config");
+    File targetDir = buildFile(testDir, "target");
     File expectedSiteReportDir = buildFile(testDir, "target", "site", "foobar");
-    File defaultSiteReportDir = buildFile(testDir, "target", "site", "pit-reports");
-
-    verifier.executeGoals(Arrays.asList("test", "org.pitest:pitest-maven:mutationCoverage", "site"));
-
-    String projectReportsHtml = FileUtils.readFileToString(siteProjectReportsIndex);
+    
+    FileUtils.moveDirectory(buildFile(targetDir, "pit-reports"), buildFile(targetDir, "new-report-location"));
+    
+    verifier.executeGoal("site");
+    
+    String projectReportsHtml = FileUtils.readFileToString(buildFile(testDir, "target", "site", "project-reports.html"));
     assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
     assertTrue("expected site report directory [" + expectedSiteReportDir + "] does not exist but should exist", expectedSiteReportDir.exists());
-    assertFalse("expected default site report directory [" + defaultSiteReportDir + "] exists but should not exist since the report location parameter was overridden", defaultSiteReportDir.exists());
+    
+    assertFalse("expected default site report directory exists but should not exist since the report location parameter was overridden", buildFile(testDir, "target", "site", "pit-reports").exists());
   }
 
   @Test
@@ -396,32 +323,73 @@ public class PitMojoIT {
 	  StringBuilder path = new StringBuilder(base.getAbsolutePath());
 
 	  for (String part : pathParts) {
-		  path.append(File.separator).append(part);
+	      if(!StringUtils.isBlank(part)) {
+	          path.append(File.separator).append(part);
+	      }
 	  }
 
 	  return new File(path.toString());
   }
-
+  
   /**
-   * PIT timestamps reports to the minute which means it is possible to generate the same timestamped report twice.
-   * This function ensures that will not happen by waiting until the minute after the specified date time.
-   *
-   * @param startDateTime date time {@link String} in the format "yyyyMMddHHmm", this function will wait until a minute after this date time
-   * @throws Exception if this function waits more than 65 seconds or if there is an {@link InterruptedException} during the Thread.sleep
+   * Sets up a test of the reporting mojo simulating multiple runs of mvn install (as in the case where timestampedReports is set to true).  
+   * First calls {@link #prepareSiteTest(String)} then walks all directories starting at target/pit-reports setting their last modified time 
+   * to 0 (epoch time).  Finally, the directory specified in the {@code latestDir} parameter has its last modified time set to {@link System#currentTimeMillis()}.
+   * 
+   * @param testPath {@link String} see {@link #prepareSiteTest(String)}
+   * @param latestDir {@link String} containing the subdirectory of target/pit-reports that should be set as the latest, 
+   *                  pass an empty string to indicate the target/pit-reports directory should be the latest   
+   * 
+   * @return {@link File} representing the temporary folder that was set up for this execution of the test
+   * @throws Exception
    */
-  private void waitUntilNextMinute(String startDateTime) throws Exception {
-    LOGGER.info("wait for next minute");
-
-    //this code ensures that will not happen
-    int loopCount = 0;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
-    while(dateFormat.format(new Date()).equals(startDateTime)){
-    	if(loopCount > 65){
-    		throw new PitError("integration test is stuck in an infinite loop");
-    	}
-
-    	Thread.sleep(1000);
-    	loopCount++;
+  private File prepareSiteTest(String testPath, String latestDir) throws Exception {
+    File testDir = prepareSiteTest(testPath);
+    File testTargetDir = this.buildFile(testDir, "target", "pit-reports"); //location where the target directory would be if a mvn clean install was executed
+    DirectoriesOnlyWalker walker = new DirectoriesOnlyWalker();
+    
+    for(File f : walker.locateDirectories(testTargetDir)) {
+        f.setLastModified(0L);
     }
+    
+    buildFile(testTargetDir, latestDir).setLastModified(System.currentTimeMillis());
+    
+    return testDir;
   }
+  
+  /**
+   * Sets up a test of the reporting mojo by simulating what a mvn clean install would do.  After this function is executed, 
+   * the maven site can be generated by executing the site goal.  
+   * 
+   * The provided {@code testPath} must have this folder structure set up underneath it:  src/test/resources/pit-reports  
+   * The contents of this directory will be moved to the target directory simulating a mvn clean install.   
+   * 
+   * @param testPath {@link String} location of the test to set up, this path is relative to <code>${basedir}/src/test/resources</code>
+   * 
+   * @return {@link File} representing the temporary folder that was set up for this execution of the test
+   * @throws Exception
+   */
+  private File prepareSiteTest(String testPath) throws Exception {
+      File testDir = prepare(testPath); //temporary location where the test will execute
+      File testTargetDir = this.buildFile(testDir, "target", "pit-reports"); //location where the target directory would be if a mvn clean install was executed
+      
+      FileUtils.copyDirectory(buildFile(testDir, "src", "test", "resources", "pit-reports"), testTargetDir);
+      
+      return testDir;
+  }
+  
+  private void verifyPitReportTest(File testDir) throws Exception {
+      File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
+      
+      //assert that the expected pit reports directory exists under the site directory and that the directory contains the correct files
+      assertThat(pitReportSiteDir.exists()).isEqualTo(true);
+      assertThat(this.buildFile(pitReportSiteDir, "marker_expected.txt").exists()).isEqualTo(true);
+      
+      //assert that the expected report name/description was written to the site project report's index.html file
+      String projectReportsHtml = FileUtil.readToString(new FileInputStream(buildFile(testDir, "target", "site", "project-reports.html")));
+      assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
+  }
+  
+
+
 }
