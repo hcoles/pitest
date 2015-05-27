@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
@@ -158,14 +157,14 @@ public class PitMojoIT {
   @Test
   public void shouldSkipSiteReportGeneration() throws Exception {
     File testDir = prepareSiteTest("/pit-site-skip");
-    File siteParentDir = buildFile(testDir, "target", "site");
+    File siteParentDir = buildFilePath(testDir, "target", "site");
     
     verifier.executeGoal("site");
 
-    assertThat(siteParentDir.exists()).isEqualTo(true);
-    assertThat(buildFile(siteParentDir, "pit-reports").exists()).isEqualTo(false);
-    assertThat(buildFile(siteParentDir, "index.html").exists()).isEqualTo(true);
-    assertThat(buildFile(siteParentDir, "project-reports.html").exists()).isEqualTo(false);
+    assertThat(siteParentDir).exists();
+    assertThat(buildFilePath(siteParentDir, "pit-reports")).doesNotExist();
+    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+    assertThat(buildFilePath(siteParentDir, "project-reports.html")).doesNotExist();
   }
 
   /*
@@ -183,7 +182,7 @@ public class PitMojoIT {
    * Verifies that running PIT with timestampedReports set to true will copy the contents of the latest timestamped report
    */
   @Test
-  public void shouldGenerateSiteReportWithTimestampedHtmlReport() throws Exception {
+  public void shouldGenerateSiteReportWithSingleTimestampedHtmlReport() throws Exception {
     File testDir = prepareSiteTest("/pit-site-timestamped", "201505212116");
     
     verifier.executeGoal("site");
@@ -196,7 +195,7 @@ public class PitMojoIT {
    * of just using the folder name.
    */
   @Test
-  public void shouldCopyLatestTimestampedReport() throws Exception {
+  public void shouldCopyLatestTimestampedReportWhenMultipleTimestampedReportsExist() throws Exception {
     File testDir = prepareSiteTest("/pit-site-multiple-timestamped", "201503292032");
     
     verifier.executeGoal("site");
@@ -208,7 +207,7 @@ public class PitMojoIT {
    * the latest report run is copied and no timestamped report subdirectories are copied
    */
   @Test
-  public void shouldCopyLatestTimestampedOrNonTimestampedReport() throws Exception {
+  public void shouldCopyLatestTimestampedOrNonTimestampedReportWhenBothExist() throws Exception {
       File testDir = prepareSiteTest("/pit-site-combined", "");
       
       verifier.executeGoal("site");
@@ -219,7 +218,7 @@ public class PitMojoIT {
    * Verifies that the build fails when running the report goal without first running the mutationCoverage goal
    */
   @Test
-  public void shouldFailIfNoReportAvailable() throws Exception {
+  public void shouldFailIfNoPITReportAvailable() throws Exception {
 	  prepare("/pit-site-reportonly");
 
 	  try{
@@ -236,18 +235,18 @@ public class PitMojoIT {
   @Test
   public void shouldCorrectlyHandleOverrides() throws Exception {
     File testDir = prepareSiteTest("/pit-site-custom-config");
-    File targetDir = buildFile(testDir, "target");
-    File expectedSiteReportDir = buildFile(testDir, "target", "site", "foobar");
+    File targetDir = buildFilePath(testDir, "target");
+    File expectedSiteReportDir = buildFilePath(testDir, "target", "site", "foobar");
     
-    FileUtils.moveDirectory(buildFile(targetDir, "pit-reports"), buildFile(targetDir, "new-report-location"));
+    FileUtils.moveDirectory(buildFilePath(targetDir, "pit-reports"), buildFilePath(targetDir, "new-report-location"));
     
     verifier.executeGoal("site");
     
-    String projectReportsHtml = FileUtils.readFileToString(buildFile(testDir, "target", "site", "project-reports.html"));
-    assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
+    String projectReportsHtmlContents = FileUtils.readFileToString(buildFilePath(testDir, "target", "site", "project-reports.html"));
+    assertTrue("did not find expected anchor tag to pit site report", projectReportsHtmlContents.contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
     assertTrue("expected site report directory [" + expectedSiteReportDir + "] does not exist but should exist", expectedSiteReportDir.exists());
     
-    assertFalse("expected default site report directory exists but should not exist since the report location parameter was overridden", buildFile(testDir, "target", "site", "pit-reports").exists());
+    assertFalse("expected default site report directory exists but should not exist since the report location parameter was overridden", buildFilePath(testDir, "target", "site", "pit-reports").exists());
   }
 
   @Test
@@ -319,13 +318,24 @@ public class PitMojoIT {
     }
   }
 
-  private File buildFile(File base, String... pathParts) {
+  /**
+   * Creates a new {@link File} object building off an existing {@link File} object and appending subfolders.  
+   * 
+   * For example, if this function is called with these arguments:
+   * <code>buildFile(new File("/foo/bar"), "subdir1", "subdir2", "file1.txt");</code>
+   * The returned {@link File} object would represent the path: /foo/bar/subdir1/subdir/file1.txt
+   * 
+   * @param base {@link File} representing the starting location
+   * @param pathParts {@link String} varags containing the subfolders to append to the base, this argument should 
+   *                  contain at least one value and none of its values should be blank or null.
+   * 
+   * @return {@link File}
+   */
+  private File buildFilePath(File base, String... pathParts) {
 	  StringBuilder path = new StringBuilder(base.getAbsolutePath());
 
 	  for (String part : pathParts) {
-	      if(!StringUtils.isBlank(part)) {
-	          path.append(File.separator).append(part);
-	      }
+          path.append(File.separator).append(part);
 	  }
 
 	  return new File(path.toString());
@@ -345,14 +355,14 @@ public class PitMojoIT {
    */
   private File prepareSiteTest(String testPath, String latestDir) throws Exception {
     File testDir = prepareSiteTest(testPath);
-    File testTargetDir = this.buildFile(testDir, "target", "pit-reports"); //location where the target directory would be if a mvn clean install was executed
+    File testTargetDir = this.buildFilePath(testDir, "target", "pit-reports"); //location where the target directory would be if a mvn clean install was executed
     DirectoriesOnlyWalker walker = new DirectoriesOnlyWalker();
     
     for(File f : walker.locateDirectories(testTargetDir)) {
         f.setLastModified(0L);
     }
     
-    buildFile(testTargetDir, latestDir).setLastModified(System.currentTimeMillis());
+    assertThat(buildFilePath(testTargetDir, latestDir).setLastModified(System.currentTimeMillis())).isTrue();
     
     return testDir;
   }
@@ -370,26 +380,23 @@ public class PitMojoIT {
    * @throws Exception
    */
   private File prepareSiteTest(String testPath) throws Exception {
-      File testDir = prepare(testPath); //temporary location where the test will execute
-      File testTargetDir = this.buildFile(testDir, "target", "pit-reports"); //location where the target directory would be if a mvn clean install was executed
+      File tempTestExecutionDir = prepare(testPath);
+      File targetDir = this.buildFilePath(tempTestExecutionDir, "target", "pit-reports");
       
-      FileUtils.copyDirectory(buildFile(testDir, "src", "test", "resources", "pit-reports"), testTargetDir);
+      FileUtils.copyDirectory(buildFilePath(tempTestExecutionDir, "src", "test", "resources", "pit-reports"), targetDir);
       
-      return testDir;
+      return tempTestExecutionDir;
   }
   
   private void verifyPitReportTest(File testDir) throws Exception {
-      File pitReportSiteDir = buildFile(testDir, "target", "site", "pit-reports");
+      File pitReportSiteDir = buildFilePath(testDir, "target", "site", "pit-reports");
       
-      //assert that the expected pit reports directory exists under the site directory and that the directory contains the correct files
-      assertThat(pitReportSiteDir.exists()).isEqualTo(true);
-      assertThat(this.buildFile(pitReportSiteDir, "marker_expected.txt").exists()).isEqualTo(true);
+      assertThat(pitReportSiteDir).exists();
+      assertThat(this.buildFilePath(pitReportSiteDir, "marker_expected.txt")).exists();
       
-      //assert that the expected report name/description was written to the site project report's index.html file
-      String projectReportsHtml = FileUtil.readToString(new FileInputStream(buildFile(testDir, "target", "site", "project-reports.html")));
-      assertTrue("did not find expected anchor tag to pit site report", projectReportsHtml.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
+      String projectReportsHtmlContents = FileUtils.readFileToString(buildFilePath(testDir, "target", "site", "project-reports.html"));
+      
+      assertTrue("did not find expected anchor tag to pit site report", projectReportsHtmlContents.contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
   }
-  
-
 
 }
