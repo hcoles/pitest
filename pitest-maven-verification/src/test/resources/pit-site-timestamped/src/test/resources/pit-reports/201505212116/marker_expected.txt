@@ -1,0 +1,1 @@
+test placeholder file that ensures the correct reporting directory is copied over
