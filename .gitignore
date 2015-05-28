@@ -8,3 +8,4 @@ target/
 .metadata
 .idea
 *.iml
+dependency-reduced-pom.xml
