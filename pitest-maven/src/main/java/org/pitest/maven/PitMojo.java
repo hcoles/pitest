@@ -306,7 +306,7 @@ public class PitMojo extends AbstractMojo {
    *
    * @parameter
    */
-  private Map<String, String> configuration;
+  private Map<String, String> pluginConfiguration;
 
   /**
    * environment configuration
@@ -570,7 +570,7 @@ public class PitMojo extends AbstractMojo {
   }
 
   public Map<String, String> getPluginProperties() {
-    return configuration;
+    return pluginConfiguration;
   }
 
   public Map<String, String> getEnvironmentVariables() {
