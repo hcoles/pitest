@@ -22,6 +22,7 @@ import static org.objectweb.asm.Opcodes.IFNONNULL;
 import static org.objectweb.asm.Opcodes.IFNULL;
 import static org.objectweb.asm.Opcodes.IF_ACMPEQ;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,20 +39,21 @@ import org.objectweb.asm.Opcodes;
  *   if (closeable != null) { // IFNULL
  *     if (localThrowable2 != null) { // IFNULL
  *       try {
- *         closeable.close(); // INVOKEVIRTUAL
+ *         closeable.close(); // INVOKEVIRTUAL or INVOKEINTERFACE
  *       } catch (Throwable x2) {
  *         localThrowable2.addSuppressed(x2); // INVOKEVIRTUAL
  *       }
  *     } else {
- *       closeable.close(); // INVOKEVIRTUAL
+ *       closeable.close(); // INVOKEVIRTUAL or INVOKEINTERFACE
  *     }
  *   }
  * } // ATHROW
  * </code></pre>
- * This class considers that only auto generated code may have such {@link #JAVAC_INS_SEQUENCE}
- * without any line change. Such approach make sense only for <strong>javac compiler</strong>.
+ * This class considers that only auto generated code may have such sequence without any line change.
+ * Such an approach make sense only for <strong>javac compiler</strong>.
  * <p>
- * <strong>Eclipse Java Compiler</strong> as well as <strong>aspectj</strong> have its own opinion how to compile try-with-resources block:
+ * <strong>Eclipse Java Compiler</strong> as well as <strong>aspectj</strong> have its own opinion
+ * how to compile try-with-resources block:
  * <pre><code>
  * } finally {
  *   if (throwable1 == null) { // IFNONNULL
@@ -68,7 +70,7 @@ import org.objectweb.asm.Opcodes;
  */
 class TryWithResourcesMethodVisitor extends MethodVisitor {
 
-  private static final List<Integer> JAVAC_INS_SEQUENCE = Arrays.asList(
+  private static final List<Integer> JAVAC_CLASS_INS_SEQUENCE = Arrays.asList(
       ASTORE, // store throwable
       ALOAD, IFNULL, // closeable != null
       ALOAD, IFNULL, // localThrowable2 != null
@@ -76,6 +78,16 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
       ASTORE, // Throwable x2
       ALOAD, ALOAD, INVOKEVIRTUAL, GOTO, // localThrowable2.addSuppressed(x2)
       ALOAD, INVOKEVIRTUAL, // closeable.close()
+      ALOAD, ATHROW); // throw throwable
+
+  private static final List<Integer> JAVAC_INTERFACE_INS_SEQUENCE = Arrays.asList(
+      ASTORE, // store throwable
+      ALOAD, IFNULL, // closeable != null
+      ALOAD, IFNULL, // localThrowable2 != null
+      ALOAD, INVOKEINTERFACE, GOTO, // closeable.close()
+      ASTORE, // Throwable x2
+      ALOAD, ALOAD, INVOKEVIRTUAL, GOTO, // localThrowable2.addSuppressed(x2)
+      ALOAD, INVOKEINTERFACE, // closeable.close()
       ALOAD, ATHROW); // throw throwable
 
   private static final List<Integer> ECJ_INS_SEQUENCE = Arrays.asList(
@@ -94,8 +106,6 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
   /**
    * @param context
    *          to store detected line numbers
-   * @param mv
-   *          to delegate method calls
    */
   public TryWithResourcesMethodVisitor(final PremutationClassInfo context) {
     super(Opcodes.ASM5);
@@ -124,10 +134,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
   @Override
   public void visitMethodInsn(int opcode, String owner, String name,
       String desc, boolean itf) {
-    if (opcode == Opcodes.INVOKEVIRTUAL
-        && ("close".equals(name) || "addSuppressed".equals(name))) {
-      opcodesStack.add(opcode);
-    }
+    opcodesStack.add(opcode);
     super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
 
@@ -141,7 +148,8 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
   }
 
   private void finishTracking() {
-    if (JAVAC_INS_SEQUENCE.equals(opcodesStack)
+    if (JAVAC_CLASS_INS_SEQUENCE.equals(opcodesStack)
+        || JAVAC_INTERFACE_INS_SEQUENCE.equals(opcodesStack)
         || ECJ_INS_SEQUENCE.equals(opcodesStack)) {
       context.registerLineToAvoid(currentLineNumber);
     }
