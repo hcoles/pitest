@@ -33,7 +33,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Artem Khvastunov <contact@artspb.me>
+ * @author Artem Khvastunov &lt;contact@artspb.me&gt;
  */
 @RunWith(Theories.class)
 public class TestTryWithResources extends MutatorTestBase {
@@ -49,7 +49,8 @@ public class TestTryWithResources extends MutatorTestBase {
             {"3", "TryCatchFinallyExample"},
             {"2", "TryFinallyExample"},
             {"1", "TryWithTwoCloseableExample"},
-            {"1", "TryWithNestedTryExample"}
+            {"1", "TryWithNestedTryExample"},
+            {"1", "TryWithInterfaceExample"}
     };
 
     @Theory
