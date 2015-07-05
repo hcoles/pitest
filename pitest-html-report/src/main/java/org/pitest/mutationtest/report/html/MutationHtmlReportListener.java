@@ -52,6 +52,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final CoverageDatabase          coverage;
   private final Set<String> mutatorNames = new HashSet<String>();
 
+  private String css;
+
   public MutationHtmlReportListener(final CoverageDatabase coverage,
       final ResultOutputStrategy outputStrategy, Collection<String> mutatorNames,
       final SourceLocator... locators) {
@@ -61,13 +63,20 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.mutatorNames.addAll(mutatorNames);
   }
 
+  private synchronized String readCss() throws IOException {
+    if (css == null) {
+      css = FileUtil.readToString(IsolationUtils
+              .getContextClassLoader().getResourceAsStream(
+                      "templates/mutation/style.css"));
+    }
+    return css;
+  }
+
   private void generateAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) {
     try {
 
-      final String css = FileUtil.readToString(IsolationUtils
-          .getContextClassLoader().getResourceAsStream(
-              "templates/mutation/style.css"));
+      final String css = readCss();
 
       final String fileName = mutationMetaData.getPackageName()
           + File.separator + mutationMetaData.getFileName() + ".html";
