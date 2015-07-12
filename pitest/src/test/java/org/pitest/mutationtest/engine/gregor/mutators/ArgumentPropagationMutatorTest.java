@@ -108,9 +108,13 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
     assertNoMutants(ReturnsDifferentType.class);
   }
 
-  class ReturnsDifferentType {
-    public String aMethodReturningADifferentTypeThanItsArgument(Object arg) {
-      return String.valueOf(arg);
+  class ReturnsDifferentType implements Callable<String> {
+    public String call() {
+      return addThreeAndConvertToString(3);
+    }
+
+    private String addThreeAndConvertToString(int argument) {
+      return String.valueOf(3 + argument);
     }
   }
 
