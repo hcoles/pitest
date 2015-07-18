@@ -27,16 +27,13 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  * Mutator for non-void methods whos return type matches
  * the receiver's type that replaces the method call with the receiver.
  * E. g. the method call
- * <p/>
  * <pre>
  *   public int originalMethod() {
  *     String someString = "pit";
  *     return someString.toUpperCase();
  *   }
  * </pre>
- * <p/>
  * is mutated to
- * <p/>
  * <pre>
  *   public int mutatedMethod() {
  *     String someString = "pit";
