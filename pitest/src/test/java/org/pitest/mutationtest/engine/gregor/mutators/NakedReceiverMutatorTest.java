@@ -47,7 +47,7 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotReplaceVoidMethodCall()
+  public void shouldNotMutateVoidMethodCall()
       throws Exception {
     assertNoMutants(HasVoidMethodCall.class);
   }
