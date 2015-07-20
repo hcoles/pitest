@@ -46,28 +46,38 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private final ResultOutputStrategy      outputStrategy;
 
-  private final Collection<SourceLocator> sourceRoots        = new HashSet<SourceLocator>();
+  private final Collection<SourceLocator> sourceRoots;
 
   private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
   private final CoverageDatabase          coverage;
-  private final Set<String> mutatorNames = new HashSet<String>();
+  private final Set<String>               mutatorNames;
+
+  private final String css;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
       final ResultOutputStrategy outputStrategy, Collection<String> mutatorNames,
       final SourceLocator... locators) {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
-    this.sourceRoots.addAll(Arrays.asList(locators));
-    this.mutatorNames.addAll(mutatorNames);
+    this.sourceRoots = new HashSet<SourceLocator>(Arrays.asList(locators));
+    this.mutatorNames = new HashSet<String>(mutatorNames);
+    this.css = loadCss();
+  }
+
+  private String loadCss() {
+    try {
+      return FileUtil.readToString(IsolationUtils
+              .getContextClassLoader().getResourceAsStream(
+                      "templates/mutation/style.css"));
+    } catch (IOException e) {
+      Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
+    }
+    return "";
   }
 
   private void generateAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) {
     try {
-
-      final String css = FileUtil.readToString(IsolationUtils
-          .getContextClassLoader().getResourceAsStream(
-              "templates/mutation/style.css"));
 
       final String fileName = mutationMetaData.getPackageName()
           + File.separator + mutationMetaData.getFileName() + ".html";
