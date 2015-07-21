@@ -1,12 +1,12 @@
 /*
  * Copyright 2012 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,14 +14,6 @@
  */
 
 package org.pitest.coverage.execute;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
@@ -46,9 +38,17 @@ import org.pitest.util.SocketFinder;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
+
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
-  private static final Logger    LOG = Log.getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   private final CoverageOptions  coverageOptions;
   private final LaunchOptions    launchOptions;
@@ -58,10 +58,13 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final CoverageExporter exporter;
   private final boolean          showProgress;
 
-  public DefaultCoverageGenerator(final File workingDir,
-      final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
-      final CodeSource code, final CoverageExporter exporter,
-      final Timings timings, final boolean showProgress) {
+  public DefaultCoverageGenerator(File workingDir,
+                                  CoverageOptions coverageOptions,
+                                  LaunchOptions launchOptions,
+                                  CodeSource code,
+                                  CoverageExporter exporter,
+                                  Timings timings,
+                                  boolean showProgress) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
@@ -73,59 +76,61 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   public CoverageData calculateCoverage() {
     try {
-      final long t0 = System.currentTimeMillis();
+      long startTime = System.currentTimeMillis();
 
-      this.timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
-      final Collection<ClassInfo> tests = this.code.getTests();
-      this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
+      timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
+      Collection<ClassInfo> tests = code.getTests();
+      timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
-      final CoverageData coverage = new CoverageData(this.code, new LineMapper(
-          code));
+      CoverageData coverage = new CoverageData(code, new LineMapper(code));
 
-      this.timings.registerStart(Timings.Stage.COVERAGE);
+      timings.registerStart(Timings.Stage.COVERAGE);
       gatherCoverageData(tests, coverage);
-      this.timings.registerEnd(Timings.Stage.COVERAGE);
+      timings.registerEnd(Timings.Stage.COVERAGE);
 
-      final long time = (System.currentTimeMillis() - t0) / 1000;
+      long time = (System.currentTimeMillis() - startTime) / 1000;
 
       LOG.info("Calculated coverage in " + time + " seconds.");
 
       verifyBuildSuitableForMutationTesting(coverage);
 
-      this.exporter.recordCoverage(coverage.createCoverage());
+      exporter.recordCoverage(coverage.createCoverage());
 
       return coverage;
-
-    } catch (final PitHelpError phe) {
+    } catch (PitHelpError phe) {
       throw phe;
-    } catch (final Exception e) {
+    } catch (Exception e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
 
-  private void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
+  private void verifyBuildSuitableForMutationTesting(CoverageData coverage) {
     if (!coverage.allTestsGreen()) {
       throw new PitHelpError(Help.FAILING_TESTS);
     }
   }
 
-  private void gatherCoverageData(final Collection<ClassInfo> tests,
-      final CoverageData coverage) throws IOException, InterruptedException,
-      ExecutionException {
+  private void gatherCoverageData(Collection<ClassInfo> tests,
+                                  CoverageData coverage)
+      throws IOException, InterruptedException, ExecutionException {
 
-    final List<String> filteredTests = FCollection
-        .map(tests, classInfoToName());
+    List<String> filteredTests = FCollection.map(tests, classInfoToName());
+    SideEffect1<CoverageResult> handler = resultProcessor(coverage);
 
-    final SideEffect1<CoverageResult> handler = resultProcessor(coverage);
+    SocketFinder sf = new SocketFinder();
+    ServerSocket socket = sf.getNextAvailableServerSocket();
 
-    final SocketFinder sf = new SocketFinder();
-    final ServerSocket socket = sf.getNextAvailableServerSocket();
+    ProcessArgs processArgs = ProcessArgs.withClassPath(code.getClassPath())
+                                          .andBaseDir(workingDir)
+                                          .andLaunchOptions(launchOptions)
+                                          .andStderr(logInfo())
+                                          .andStdout(captureStandardOutIfVerbose());
 
-    final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
-        .andLaunchOptions(this.launchOptions).andStderr(logInfo())
-        .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
-        socket, filteredTests, handler);
+    CoverageProcess process = new CoverageProcess( processArgs,
+                                                   coverageOptions,
+                                                   socket,
+                                                   filteredTests,
+                                                   handler);
 
     process.start();
 
@@ -133,11 +138,9 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     if (exitCode == ExitCode.JUNIT_ISSUE) {
       LOG.severe("Error generating coverage. Please check that your classpath contains JUnit 4.6 or above.");
-      throw new PitError(
-          "Coverage generation slave exited abnormally. Please check the classpath.");
+      throw new PitError("Coverage generation slave exited abnormally. Please check the classpath.");
     } else if (!exitCode.isOk()) {
-      LOG.severe("Coverage generator Slave exited abnormally due to "
-          + exitCode);
+      LOG.severe("Coverage generator Slave exited abnormally due to " + exitCode);
       throw new PitError("Coverage generation slave exited abnormally!");
     } else {
       LOG.fine("Coverage generator Slave exited ok");
@@ -146,15 +149,14 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private static F<ClassInfo, String> classInfoToName() {
     return new F<ClassInfo, String>() {
-      public String apply(final ClassInfo a) {
+      public String apply(ClassInfo a) {
         return a.getName().asInternalName();
       }
-
     };
   }
 
   private SideEffect1<String> captureStandardOutIfVerbose() {
-    if (this.coverageOptions.isVerbose()) {
+    if (coverageOptions.isVerbose()) {
       return log();
     } else {
       return Prelude.noSideEffect(String.class);
@@ -163,7 +165,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private SideEffect1<String> logInfo() {
     return new SideEffect1<String>() {
-      public void apply(final String a) {
+      public void apply(String a) {
         LOG.info("SLAVE : " + a);
       }
     };
@@ -171,36 +173,32 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private SideEffect1<String> log() {
     return new SideEffect1<String>() {
-      public void apply(final String a) {
+      public void apply(String a) {
         LOG.fine("SLAVE : " + a);
       }
     };
   }
 
-  private SideEffect1<CoverageResult> resultProcessor(
-      final CoverageData coverage) {
+  private SideEffect1<CoverageResult> resultProcessor(final CoverageData coverage) {
     return new SideEffect1<CoverageResult>() {
-      private final String[] spinner = new String[] { "\u0008/", "\u0008-",
-                                         "\u0008\\", "\u0008|" };
-      int                    i       = 0;
+      private String[] spinner = new String[] { "\u0008/", "\u0008-", "\u0008\\", "\u0008|" };
+      int i = 0;
 
-      public void apply(final CoverageResult cr) {
+      public void apply(CoverageResult cr) {
         coverage.calculateClassCoverage(cr);
-        if (DefaultCoverageGenerator.this.showProgress) {
-          System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
+        if (showProgress) {
+          System.out.printf("%s", spinner[i % spinner.length]);
         }
-        this.i++;
+        i++;
       }
-
     };
   }
 
   public Configuration getConfiguration() {
-    return this.coverageOptions.getPitConfig();
+    return coverageOptions.getPitConfig();
   }
 
   public LaunchOptions getLaunchOptions() {
-    return this.launchOptions;
+    return launchOptions;
   }
-
 }

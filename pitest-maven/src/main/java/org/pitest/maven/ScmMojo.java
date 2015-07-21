@@ -105,7 +105,7 @@ public class ScmMojo extends PitMojo {
     final ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
+    return Option.some(getGoalStrategy().execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
 
   }
 

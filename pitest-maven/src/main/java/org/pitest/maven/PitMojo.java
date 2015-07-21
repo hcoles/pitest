@@ -336,52 +336,47 @@ public class PitMojo extends AbstractMojo {
    */
   private Map<String, Artifact>       pluginArtifactMap;
 
-  protected final GoalStrategy        goalStrategy;
+  private final GoalStrategy        goalStrategy;
 
   public PitMojo() {
-    this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
-        PitMojo.class.getClassLoader())), new PluginServices(
-            PitMojo.class.getClassLoader()));
+    this( new RunPitStrategy(),
+          new DependencyFilter(new PluginServices(PitMojo.class.getClassLoader())),
+          new PluginServices(PitMojo.class.getClassLoader()));
   }
 
-  public PitMojo(final GoalStrategy strategy, final Predicate<Artifact> filter,
-      final PluginServices plugins) {
+  public PitMojo(GoalStrategy strategy, Predicate<Artifact> filter, PluginServices plugins) {
     this.goalStrategy = strategy;
     this.filter = filter;
     this.plugins = plugins;
   }
 
-  public final void execute() throws MojoExecutionException,
-  MojoFailureException {
+  public final void execute() throws MojoExecutionException, MojoFailureException {
 
     switchLogging();
 
     if (shouldRun()) {
 
-      for (final ToolClasspathPlugin each : this.plugins
-          .findToolClasspathPlugins()) {
-        this.getLog().info("Found plugin : " + each.description());
+      for (ToolClasspathPlugin each : plugins.findToolClasspathPlugins()) {
+        getLog().info("Found plugin : " + each.description());
       }
 
-      for (final ClientClasspathPlugin each : this.plugins
-          .findClientClasspathPlugins()) {
-        this.getLog().info(
-            "Found shared classpath plugin : " + each.description());
+      for (ClientClasspathPlugin each : plugins.findClientClasspathPlugins()) {
+        getLog().info("Found shared classpath plugin : " + each.description());
       }
 
-      final Option<CombinedStatistics> result = analyse();
+      Option<CombinedStatistics> result = analyse();
       if (result.hasSome()) {
         throwErrorIfScoreBelowThreshold(result.value().getMutationStatistics());
         throwErrorIfCoverageBelowThreshold(result.value().getCoverageSummary());
       }
 
     } else {
-      this.getLog().info("Skipping project");
+      getLog().info("Skipping project");
     }
   }
 
   private void switchLogging() {
-    if (this.useSlf4j) {
+    if (useSlf4j) {
       SLF4JBridgeHandler.removeHandlersForRootLogger();
       SLF4JBridgeHandler.install();
       Logger.getLogger("PIT").addHandler(new SLF4JBridgeHandler());
@@ -389,39 +384,34 @@ public class PitMojo extends AbstractMojo {
     }
   }
 
-  private void throwErrorIfCoverageBelowThreshold(
-      final CoverageSummary coverageSummary) throws MojoFailureException {
-    if ((this.coverageThreshold != 0)
-        && (coverageSummary.getCoverage() < this.coverageThreshold)) {
+  private void throwErrorIfCoverageBelowThreshold(CoverageSummary coverageSummary) throws MojoFailureException {
+    if ((coverageThreshold != 0) && (coverageSummary.getCoverage() < coverageThreshold)) {
       throw new MojoFailureException("Line coverage of "
           + coverageSummary.getCoverage() + "("
           + coverageSummary.getNumberOfCoveredLines() + "/"
           + coverageSummary.getNumberOfLines() + ") is below threshold of "
-          + this.coverageThreshold);
+          + coverageThreshold);
     }
   }
 
-  private void throwErrorIfScoreBelowThreshold(final MutationStatistics result)
-      throws MojoFailureException {
-    if ((this.mutationThreshold != 0)
-        && (result.getPercentageDetected() < this.mutationThreshold)) {
+  private void throwErrorIfScoreBelowThreshold(MutationStatistics result) throws MojoFailureException {
+    if ((mutationThreshold != 0) && (result.getPercentageDetected() < mutationThreshold)) {
       throw new MojoFailureException("Mutation score of "
           + result.getPercentageDetected() + " is below threshold of "
-          + this.mutationThreshold);
+          + mutationThreshold);
     }
   }
 
   protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
-    final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), this.filter).convert();
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data,
-        this.plugins,this.environmentVariables));
+    ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
+    CombinedStatistics statistics = goalStrategy.execute(detectBaseDir(), data, plugins, environmentVariables);
+    return Option.some(statistics);
   }
 
   protected File detectBaseDir() {
     // execution project doesn't seem to always be available.
     // possibily a maven 2 vs maven 3 issue?
-    final MavenProject executionProject = this.project.getExecutionProject();
+    MavenProject executionProject = project.getExecutionProject();
     if (executionProject == null) {
       return null;
     }
@@ -429,144 +419,143 @@ public class PitMojo extends AbstractMojo {
   }
 
   public List<String> getTargetClasses() {
-    return this.targetClasses;
+    return targetClasses;
   }
 
   public List<String> getTargetTests() {
-    return this.targetTests;
+    return targetTests;
   }
 
   public List<String> getExcludedMethods() {
-    return this.excludedMethods;
+    return excludedMethods;
   }
 
   public List<String> getExcludedClasses() {
-    return this.excludedClasses;
+    return excludedClasses;
   }
 
   public List<String> getAvoidCallsTo() {
-    return this.avoidCallsTo;
+    return avoidCallsTo;
   }
 
   public File getReportsDirectory() {
-    return this.reportsDirectory;
+    return reportsDirectory;
   }
 
   public int getMaxDependencyDistance() {
-    return this.maxDependencyDistance;
+    return maxDependencyDistance;
   }
 
   public int getThreads() {
-    return this.threads;
+    return threads;
   }
 
   public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
+    return mutateStaticInitializers;
   }
 
   public List<String> getMutators() {
-    return this.mutators;
+    return mutators;
   }
 
   public float getTimeoutFactor() {
-    return this.timeoutFactor;
+    return timeoutFactor;
   }
 
   public long getTimeoutConstant() {
-    return this.timeoutConstant;
+    return timeoutConstant;
   }
 
   public int getMaxMutationsPerClass() {
-    return this.maxMutationsPerClass;
+    return maxMutationsPerClass;
   }
 
   public List<String> getJvmArgs() {
-    return this.jvmArgs;
+    return jvmArgs;
   }
 
   public List<String> getOutputFormats() {
-    return this.outputFormats;
+    return outputFormats;
   }
 
   public boolean isVerbose() {
-    return this.verbose;
+    return verbose;
   }
 
   public MavenProject getProject() {
-    return this.project;
+    return project;
   }
 
   public Map<String, Artifact> getPluginArtifactMap() {
-    return this.pluginArtifactMap;
+    return pluginArtifactMap;
   }
 
   public boolean isFailWhenNoMutations() {
-    return this.failWhenNoMutations;
+    return failWhenNoMutations;
   }
 
   public List<String> getExcludedGroups() {
-    return this.excludedGroups;
+    return excludedGroups;
   }
 
   public List<String> getIncludedGroups() {
-    return this.includedGroups;
+    return includedGroups;
   }
 
   public int getMutationUnitSize() {
-    return this.mutationUnitSize;
+    return mutationUnitSize;
   }
 
   public boolean isTimestampedReports() {
-    return this.timestampedReports;
+    return timestampedReports;
   }
 
   public boolean isDetectInlinedCode() {
-    return this.detectInlinedCode;
+    return detectInlinedCode;
   }
 
-  public void setTimestampedReports(final boolean timestampedReports) {
+  public void setTimestampedReports(boolean timestampedReports) {
     this.timestampedReports = timestampedReports;
   }
 
   public File getHistoryOutputFile() {
-    return this.historyOutputFile;
+    return historyOutputFile;
   }
 
   public File getHistoryInputFile() {
-    return this.historyInputFile;
+    return historyInputFile;
   }
 
   public boolean isExportLineCoverage() {
-    return this.exportLineCoverage;
+    return exportLineCoverage;
   }
 
-  protected boolean shouldRun() {
-    return !this.skip && !this.skipTests
-        && !this.project.getPackaging().equalsIgnoreCase("pom");
+  private boolean shouldRun() {
+    return !skip && !skipTests && !project.getPackaging().equalsIgnoreCase("pom");
   }
 
   public String getMutationEngine() {
-    return this.mutationEngine;
+    return mutationEngine;
   }
 
   public String getJavaExecutable() {
-    return this.jvm;
+    return jvm;
   }
 
-  public void setJavaExecutable(final String javaExecutable) {
+  public void setJavaExecutable(String javaExecutable) {
     this.jvm = javaExecutable;
   }
 
   public List<String> getAdditionalClasspathElements() {
-    return this.additionalClasspathElements;
+    return additionalClasspathElements;
   }
 
   public List<String> getClasspathDependencyExcludes() {
-    return this.classpathDependencyExcludes;
+    return classpathDependencyExcludes;
   }
 
   public boolean isParseSurefireConfig() {
-    return this.parseSurefireConfig;
+    return parseSurefireConfig;
   }
 
   public Map<String, String> getPluginProperties() {
@@ -575,5 +564,9 @@ public class PitMojo extends AbstractMojo {
 
   public Map<String, String> getEnvironmentVariables() {
     return environmentVariables;
+  }
+
+  public GoalStrategy getGoalStrategy() {
+    return goalStrategy;
   }
 }

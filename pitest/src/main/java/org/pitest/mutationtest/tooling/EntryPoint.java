@@ -7,7 +7,6 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -22,7 +21,6 @@ import org.pitest.util.Timings;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Map;
 
 public class EntryPoint {
@@ -62,55 +60,54 @@ public class EntryPoint {
                                 SettingsFactory settings,
                                 Map<String, String> environmentVariables) {
 
-    final ClassPath cp = data.getClassPath();
+    ClassPath classPath = data.getClassPath();
 
-    final Option<Reader> reader = data.createHistoryReader();
-    final WriterFactory historyWriter = data.createHistoryWriter();
+    ProjectClassPaths mutationClassPaths = data.getMutationClassPaths();
+    CoverageOptions coverageOptions = settings.createCoverageOptions();
+    CodeSource code = new CodeSource(mutationClassPaths, coverageOptions.getPitConfig().testClassIdentifier());
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
-    final JavaAgent jac = new JarCreatingJarFinder(
-        new ClassPathByteArraySource(cp));
+    JavaAgent javaAgent = new JarCreatingJarFinder(new ClassPathByteArraySource(classPath));
+    KnownLocationJavaAgentFinder javaAgentFinder = new KnownLocationJavaAgentFinder(javaAgent.getJarLocation().value());
+    LaunchOptions launchOptions = new LaunchOptions( javaAgentFinder,settings.getJavaExecutable(),
+                                                     data.getJvmArgs(),environmentVariables);
+    Timings timings = new Timings();
+    CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(baseDir,
+                                                                      coverageOptions,
+                                                                      launchOptions,
+                                                                      code,
+                                                                      settings.createCoverageExporter(),
+                                                                      timings,
+                                                                      !data.isVerbose());
 
-    final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
-        jac.getJarLocation().value());
+    WriterFactory historyWriter = data.createHistoryWriter();
+    HistoryStore history = new XStreamHistoryStore(historyWriter,
+                                                   data.createHistoryReader());
 
-    final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
+    MutationResultListenerFactory reportFactory = settings.createListener();
+    ResultOutputStrategy reportOutput = settings.getOutputStrategy();
+    MutationStrategies strategies = new MutationStrategies( settings.createEngine(),
+                                                            history,
+                                                            coverageDatabase,
+                                                            reportFactory,
+                                                            reportOutput);
 
-    final MutationResultListenerFactory reportFactory = settings
-        .createListener();
-
-    final CoverageOptions coverageOptions = settings.createCoverageOptions();
-    final LaunchOptions launchOptions = new LaunchOptions(ja,settings.getJavaExecutable(), data.getJvmArgs(),environmentVariables);
-    final ProjectClassPaths cps = data.getMutationClassPaths();
-
-    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
-        .testClassIdentifier());
-
-    final Timings timings = new Timings();
-    final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-        baseDir, coverageOptions, launchOptions, code,
-        settings.createCoverageExporter(), timings, !data.isVerbose());
-
-    final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
-
-    final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory,
-        reportOutput);
-
-    final MutationCoverage report = new MutationCoverage(strategies, baseDir,
-        code, data, settings, timings);
+    MutationCoverage report = new MutationCoverage(strategies,
+                                                   baseDir,
+                                                   code,
+                                                   data,
+                                                   settings,
+                                                   timings);
 
     try {
       return AnalysisResult.success(report.runReport());
-    } catch (final IOException e) {
+    } catch (IOException e) {
       return AnalysisResult.fail(e);
     } finally {
-      jac.close();
-      ja.close();
+      javaAgent.close();
+      javaAgentFinder.close();
       historyWriter.close();
     }
-
   }
-
 }

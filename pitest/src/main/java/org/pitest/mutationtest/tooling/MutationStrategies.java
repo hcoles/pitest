@@ -17,18 +17,19 @@ public class MutationStrategies {
   private final MutationEngineFactory         factory;
   private final ResultOutputStrategy          output;
 
-  public MutationStrategies(final MutationEngineFactory factory,
-      final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory,
-      final ResultOutputStrategy output) {
+  public MutationStrategies(MutationEngineFactory factory, HistoryStore history,
+                            CoverageGenerator coverage,
+                            MutationResultListenerFactory listenerFactory,
+                            ResultOutputStrategy output) {
     this(factory, history, coverage, listenerFactory, output,
-        new DefaultBuildVerifier());
+         new DefaultBuildVerifier());
   }
 
-  private MutationStrategies(final MutationEngineFactory factory,
-      final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory,
-      final ResultOutputStrategy output, final BuildVerifier buildVerifier) {
+  private MutationStrategies(MutationEngineFactory factory,
+                             HistoryStore history, CoverageGenerator coverage,
+                             MutationResultListenerFactory listenerFactory,
+                             ResultOutputStrategy output,
+                             BuildVerifier buildVerifier) {
     this.history = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
@@ -38,37 +39,36 @@ public class MutationStrategies {
   }
 
   public HistoryStore history() {
-    return this.history;
+    return history;
   }
 
   public CoverageGenerator coverage() {
-    return this.coverage;
+    return coverage;
   }
 
   public MutationResultListenerFactory listenerFactory() {
-    return this.listenerFactory;
+    return listenerFactory;
   }
 
   public BuildVerifier buildVerifier() {
-    return this.buildVerifier;
+    return buildVerifier;
   }
 
   public MutationEngineFactory factory() {
-    return this.factory;
+    return factory;
   }
 
   public ResultOutputStrategy output() {
-    return this.output;
+    return output;
   }
 
-  public MutationStrategies with(final MutationEngineFactory factory) {
-    return new MutationStrategies(factory, this.history, this.coverage,
-        this.listenerFactory, this.output, this.buildVerifier);
+  public MutationStrategies with(MutationEngineFactory factory) {
+    return new MutationStrategies(factory, history, coverage, listenerFactory,
+                                  output, buildVerifier);
   }
 
-  public MutationStrategies with(final BuildVerifier verifier) {
-    return new MutationStrategies(this.factory, this.history, this.coverage,
-        this.listenerFactory, this.output, verifier);
+  public MutationStrategies with(BuildVerifier verifier) {
+    return new MutationStrategies(factory, history, coverage, listenerFactory,
+                                  output, verifier);
   }
-
 }
