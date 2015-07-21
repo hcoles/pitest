@@ -35,9 +35,9 @@ import java.util.logging.Logger;
  */
 public class PitMojo extends AbstractMojo {
 
-  protected final Predicate<Artifact> filter;
+  private final Predicate<Artifact> filter;
 
-  protected final PluginServices      plugins;
+  private final PluginServices      plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
 
@@ -47,7 +47,8 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetClasses}"
    *
    */
-  protected ArrayList<String>         targetClasses;
+  // need to stay concrete type for maven 2 compatibility
+  private ArrayList<String>         targetClasses;
 
   /**
    * Tests to run
@@ -55,7 +56,7 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${targetTests}"
    *
    */
-  protected ArrayList<String>         targetTests;
+  private List<String>         targetTests;
 
   /**
    * Methods not to mutate
@@ -325,7 +326,7 @@ public class PitMojo extends AbstractMojo {
    * @required
    * @readonly
    */
-  protected MavenProject              project;
+  private MavenProject              project;
 
   /**
    * <i>Internal</i>: Map of plugin artifacts.
@@ -575,5 +576,25 @@ public class PitMojo extends AbstractMojo {
 
   public Map<String, String> getEnvironmentVariables() {
     return environmentVariables;
+  }
+
+  public void setTargetClasses(List<String> targetClasses) {
+    if ( targetClasses instanceof ArrayList) {
+      this.targetClasses = (ArrayList<String>) targetClasses;
+    } else {
+      throw new IllegalArgumentException("targetClasses must be ArrayList for the sake of maven 2 compatibility");
+    }
+  }
+
+  public void setTargetTests(List<String> targetTests) {
+    this.targetTests = targetTests;
+  }
+
+  public PluginServices getPlugins() {
+    return plugins;
+  }
+
+  public Predicate<Artifact> getFilter() {
+    return filter;
   }
 }
