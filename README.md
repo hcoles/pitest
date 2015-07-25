@@ -11,8 +11,9 @@ Read all about it at http://pitest.org
 
 ### 1.1.6-SNAPSHOT
 
-* #10 - Add maven report goal (thanks jasonmfehr) 
+* #10  - Add maven report goal (thanks jasonmfehr) 
 * #184 - Remove undocumented project file feature
+* #219 - Performance improvement for report generation (thanks tobiasbaum) 
 
 ### 1.1.5
 
