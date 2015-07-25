@@ -17,6 +17,7 @@ package org.pitest.mutationtest.commandline;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -445,7 +446,26 @@ public class OptionsParserTest {
       System.setProperty(JAVA_CLASS_PATH_PROPERTY, oldClasspath);
     }
   }
+  
+  @Test
+  public void shouldCreateEmptyPluginPropertiesWhenNoneSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertNotNull(actual.getFreeFormProperties());
+  }
+  
+  @Test
+  public void shouldIncludePluginPropertyValuesWhenSingleKey() {
+    final ReportOptions actual = parseAddingRequiredArgs("-pluginConfiguration=foo=1");
+    assertEquals("1",actual.getFreeFormProperties().getProperty("foo"));
+  }
 
+  @Test
+  public void shouldIncludePluginPropertyValuesWhenMultipleKeys() {
+    final ReportOptions actual = parseAddingRequiredArgs("-pluginConfiguration=foo=1", "-pluginConfiguration=bar=2");
+    assertEquals("1",actual.getFreeFormProperties().getProperty("foo"));
+    assertEquals("2",actual.getFreeFormProperties().getProperty("bar"));
+  }
+  
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class.getProtectionDomain()
             .getCodeSource().getLocation().getFile();

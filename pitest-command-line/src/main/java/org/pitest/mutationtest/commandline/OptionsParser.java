@@ -37,6 +37,7 @@ import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
+import static org.pitest.mutationtest.config.ConfigOption.PLUGIN_CONFIGURATION;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
@@ -53,6 +54,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionException;
@@ -60,6 +62,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
+import joptsimple.util.KeyValuePair;
 
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
@@ -107,7 +110,8 @@ public class OptionsParser {
   private final OptionSpec<String>                   mutationEngine;
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
-
+  private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
+  
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
 
   public OptionsParser(Predicate<String> dependencyFilter) {
@@ -288,6 +292,10 @@ public class OptionsParser {
 
     this.javaExecutable = parserAccepts(JVM_PATH).withRequiredArg()
         .ofType(String.class).describedAs("path to java executable");
+    
+    this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION).withRequiredArg()
+        .ofType(KeyValuePair.class)
+        .describedAs("custom plugin properties");
 
   }
 
@@ -361,6 +369,7 @@ public class OptionsParser {
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
+    data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec.values(userArgs)));
 
     data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)
         && userArgs.valueOf(this.exportLineCoverageSpec));
@@ -397,6 +406,14 @@ public class OptionsParser {
         this.includedGroupsSpec.values(userArgs));
 
     data.setGroupConfig(conf);
+  }
+  
+  private Properties listToProperties(List<KeyValuePair> kvps) {
+    Properties p = new Properties();
+    for ( KeyValuePair kvp : kvps) {
+      p.put(kvp.key, kvp.value);
+    }
+    return p;
   }
 
   public void printHelp() {

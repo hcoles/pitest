@@ -171,7 +171,12 @@ public enum ConfigOption {
   /**
    * Path to executable with which to run tests
    */
-  JVM_PATH("jvmPath");
+  JVM_PATH("jvmPath"),
+  
+  /**
+   * Custom properties for plugins
+   */
+  PLUGIN_CONFIGURATION("pluginConfiguration");
 
   private final String text;
   private final Serializable defaultValue;
