@@ -56,9 +56,13 @@ public class CoverageData implements CoverageDatabase {
 
   private boolean                                             hasFailedTest = false;
 
+  private Option<Map<String, Collection<ClassInfo>>>          classesForFile;
+
   public CoverageData(final CodeSource code, final LineMap lm) {
     this.code = code;
     this.lm = lm;
+    
+    this.classesForFile = Option.none();
   }
 
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
@@ -134,8 +138,21 @@ public class CoverageData implements CoverageDatabase {
 
   public Collection<ClassInfo> getClassesForFile(final String sourceFile,
       String packageName) {
-    return FCollection.filter(this.code.getCode(),
-        matchesSourceAndPackage(sourceFile, packageName));
+    Collection<ClassInfo> value = this.getClassesForFileCache().get(
+            keyFromSourceAndPackage(sourceFile, packageName));
+    if (value == null) {
+      return Collections.<ClassInfo>emptyList();
+    } else {
+      return value;
+    }
+  }
+  
+  private Map<String, Collection<ClassInfo>> getClassesForFileCache() {
+    //cache classes in files for performance; lazy init is needed for mocking in unit tests
+    if (this.classesForFile.hasNone()) {
+      this.classesForFile = Option.some(FCollection.bucket(this.code.getCode(), keyFromClassInfo()));
+    }
+    return this.classesForFile.value();
   }
 
   public CoverageSummary createSummary() {
@@ -163,14 +180,19 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
-  private static F<ClassInfo, Boolean> matchesSourceAndPackage(
-      final String sourceFile, final String packageName) {
-    return new F<ClassInfo, Boolean>() {
-      public Boolean apply(final ClassInfo a) {
-        return a.getSourceFileName().equals(sourceFile)
-            && a.getName().getPackage().asJavaName().equals(packageName);
+  private static F<ClassInfo, String> keyFromClassInfo() {
+      
+    return new F<ClassInfo, String>() {
+      public String apply(final ClassInfo c) {
+        return keyFromSourceAndPackage(c.getSourceFileName(), c.getName().getPackage().asJavaName());
       }
     };
+  }
+
+  private static String keyFromSourceAndPackage(
+      final String sourceFile, final String packageName) {
+      
+    return packageName + " " + sourceFile;
   }
 
   private Collection<ClassName> allClasses() {

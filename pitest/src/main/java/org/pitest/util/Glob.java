@@ -23,14 +23,14 @@ import org.pitest.functional.predicate.Predicate;
 
 public class Glob implements Predicate<String> {
 
-  private final String regex;
+  private final Pattern regex;
 
   public Glob(final String glob) {
-    this.regex = convertGlobToRegex(glob);
+    this.regex = Pattern.compile(convertGlobToRegex(glob));
   }
 
   public boolean matches(final CharSequence seq) {
-    return Pattern.matches(this.regex, seq);
+    return this.regex.matcher(seq).matches();
   }
 
   public static F<String, Predicate<String>> toGlobPredicate() {
@@ -80,7 +80,7 @@ public class Glob implements Predicate<String> {
 
   @Override
   public String toString() {
-    return this.regex;
+    return this.regex.pattern();
   }
 
 }
