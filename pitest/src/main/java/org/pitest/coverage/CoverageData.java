@@ -49,6 +49,7 @@ public class CoverageData implements CoverageDatabase {
   private final Map<BlockLocation, Set<TestInfo>>             blockCoverage = new LinkedHashMap<BlockLocation, Set<TestInfo>>();
   private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<BlockLocation, Set<Integer>>();
   private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<ClassName, Map<ClassLine, Set<TestInfo>>>();
+  private final Map<String, Collection<ClassInfo>>            classesForFile;
 
   private final CodeSource                                    code;
 
@@ -56,15 +57,12 @@ public class CoverageData implements CoverageDatabase {
 
   private boolean                                             hasFailedTest = false;
 
-  private Option<Map<String, Collection<ClassInfo>>>          classesForFile;
-
   public CoverageData(final CodeSource code, final LineMap lm) {
     this.code = code;
     this.lm = lm;
-    
-    this.classesForFile = Option.none();
+    this.classesForFile = FCollection.bucket(this.code.getCode(), keyFromClassInfo());
   }
-
+  
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
     final Collection<TestInfo> result = getTestsForClassName(
         classLine.getClassName()).get(classLine);
@@ -148,11 +146,7 @@ public class CoverageData implements CoverageDatabase {
   }
   
   private Map<String, Collection<ClassInfo>> getClassesForFileCache() {
-    //cache classes in files for performance; lazy init is needed for mocking in unit tests
-    if (this.classesForFile.hasNone()) {
-      this.classesForFile = Option.some(FCollection.bucket(this.code.getCode(), keyFromClassInfo()));
-    }
-    return this.classesForFile.value();
+    return this.classesForFile;
   }
 
   public CoverageSummary createSummary() {

@@ -212,6 +212,8 @@ public class CoverageDataTest {
     final Collection<ClassInfo> classes = Arrays.asList(fooClass, barClass);
     when(this.code.getCode()).thenReturn(classes);
 
+    this.testee = new CoverageData(this.code, lm);
+    
     assertEquals(Arrays.asList(barClass),
         this.testee.getClassesForFile("bar.java", ""));
   }
@@ -225,6 +227,8 @@ public class CoverageDataTest {
     final Collection<ClassInfo> classes = Arrays.asList(foo1Class, foo2Class);
     when(this.code.getCode()).thenReturn(classes);
 
+    this.testee = new CoverageData(this.code, lm);
+    
     assertEquals(Arrays.asList(foo1Class),
         this.testee.getClassesForFile("foo.java", "a.b.c"));
   }
