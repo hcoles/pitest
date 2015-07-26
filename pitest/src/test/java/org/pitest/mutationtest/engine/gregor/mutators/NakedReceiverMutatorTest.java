@@ -22,15 +22,17 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import static java.util.Collections.singletonList;
 import static org.pitest.mutationtest.engine.gregor.mutators.NakedReceiverMutator.NAKED_RECEIVER;
 
 public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(True.<MethodInfo> all(), NAKED_RECEIVER);
+    createTesteeWith(True.<MethodInfo>all(), NAKED_RECEIVER);
   }
 
   @Test
@@ -47,9 +49,17 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotMutateVoidMethodCall()
-      throws Exception {
+  public void shouldNotMutateVoidMethodCall() throws Exception {
     assertNoMutants(HasVoidMethodCall.class);
+  }
+
+  @Test
+  public void willReplaceCallToMethodWithDifferentGenericTypeDueToTypeErasure()
+      throws Exception {
+    Mutant mutant = getFirstMutant(CallsMethodsWithGenericTypes.class);
+    Foo<String> receiver = new Foo<String>("3");
+    assertMutantCallableReturns(new CallsMethodsWithGenericTypes(receiver),
+        mutant, receiver);
   }
 
   private static class HasStringMethodCall implements Callable<String> {
@@ -72,6 +82,30 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   private static class HasVoidMethodCall {
     public void call() throws Exception {
+    }
+  }
+
+  private static class CallsMethodsWithGenericTypes
+      implements Callable<Foo<?>> {
+    private Foo<String> myArg;
+
+    public CallsMethodsWithGenericTypes(Foo<String> myArg) {
+      this.myArg = myArg;
+    }
+
+    public Foo<?> call() {
+      return myArg.returnsFooInteger();
+    }
+  }
+
+  private static class Foo<T> extends ArrayList<T> {
+
+    public Foo(T arg) {
+      super(singletonList(arg));
+    }
+
+    public Foo<Integer> returnsFooInteger() {
+      return new Foo<Integer>(2);
     }
   }
 
