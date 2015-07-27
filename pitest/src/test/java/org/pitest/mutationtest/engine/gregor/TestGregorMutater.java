@@ -361,7 +361,7 @@ public class TestGregorMutater extends MutatorTestBase {
     final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
     assertEquals(2, actualDetails.size());
     assertEquals(4,actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(14,actualDetails.get(1).getId().getFirstIndex()); // differs by target? 
+    assertEquals(15,actualDetails.get(1).getId().getFirstIndex()); // differs by target? 
   }
 
   
