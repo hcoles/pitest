@@ -14,6 +14,7 @@ Read all about it at http://pitest.org
 * #10  - Add maven report goal (thanks jasonmfehr) 
 * #184 - Remove undocumented project file feature
 * #219 - Performance improvement for report generation (thanks tobiasbaum) 
+* #190 - Allow custom properties for plugins
 
 ### 1.1.5
 
