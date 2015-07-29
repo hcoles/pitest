@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.execute.SendData;
 import org.pitest.util.SafeDataOutputStream;
 
 public class SendDataTest {

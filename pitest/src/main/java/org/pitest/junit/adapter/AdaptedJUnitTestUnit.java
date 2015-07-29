@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -135,7 +135,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private void executeInDifferentClassLoader(final ClassLoader loader,
       final ResultCollector rc, final Runner runner)
-      throws IllegalAccessException, InvocationTargetException {
+          throws IllegalAccessException, InvocationTargetException {
 
     // must jump through hoops to run in different class loader
     // when even our framework classes may be duplicated
@@ -144,7 +144,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
         runner);
     @SuppressWarnings("unchecked")
     Callable<List<String>> foreignCe = (Callable<List<String>>) IsolationUtils
-        .cloneForLoader(ce, loader);
+    .cloneForLoader(ce, loader);
 
     try {
       final List<String> q = foreignCe.call();
@@ -157,8 +157,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private void convertStringsToResults(final ResultCollector rc,
       final List<String> q) {
-    Events.applyEvents(q, rc,
-        this.getDescription());
+    Events.applyEvents(q, rc, this.getDescription());
   }
 
   @Override

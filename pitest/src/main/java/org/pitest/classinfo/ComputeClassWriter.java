@@ -1,6 +1,6 @@
 /***
  * Extracted and modified from ASM 4 test suite. Original copyright notice preserved below
- * 
+ *
  * ASM tests
  * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
@@ -40,9 +40,9 @@ import org.objectweb.asm.Opcodes;
 /**
  * A ClassWriter that computes the common super class of two classes without
  * actually loading them with a ClassLoader.
- * 
+ *
  * @author Eric Bruneton
- * 
+ *
  *         Modified to match behaviour of default ClassWriter and cache already
  *         calculated values
  */
@@ -123,7 +123,7 @@ public class ComputeClassWriter extends ClassWriter {
 
   /**
    * Returns the internal names of the ancestor classes of the given type.
-   * 
+   *
    * @param type
    *          the internal name of a class or interface.
    * @param info
@@ -146,7 +146,7 @@ public class ComputeClassWriter extends ClassWriter {
 
   /**
    * Returns true if the given type implements the given interface.
-   * 
+   *
    * @param type
    *          the internal name of a class or interface.
    * @param info
@@ -177,7 +177,7 @@ public class ComputeClassWriter extends ClassWriter {
 
   /**
    * Returns a ClassReader corresponding to the given class or interface.
-   * 
+   *
    * @param type
    *          the internal name of a class or interface.
    * @return the ClassReader corresponding to 'type'.

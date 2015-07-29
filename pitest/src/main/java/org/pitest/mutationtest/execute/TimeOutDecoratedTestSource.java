@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,6 +53,7 @@ public class TimeOutDecoratedTestSource {
   private F<TestInfo, Option<TestUnit>> testToTestUnit() {
     return new F<TestInfo, Option<TestUnit>>() {
 
+      @Override
       public Option<TestUnit> apply(final TestInfo a) {
         final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
             .getName());
@@ -61,7 +62,7 @@ public class TimeOutDecoratedTestSource {
               .<TestUnit> some(new MutationTimeoutDecorator(tu,
                   new TimeOutSystemExitSideEffect(
                       TimeOutDecoratedTestSource.this.r),
-                  TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
+                      TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
         }
         return Option.none();
       }

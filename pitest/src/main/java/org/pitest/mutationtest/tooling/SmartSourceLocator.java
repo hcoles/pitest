@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.tooling;
 
@@ -36,6 +36,7 @@ public class SmartSourceLocator implements SourceLocator {
     childDirs.addAll(roots);
 
     final F<File, SourceLocator> fileToSourceLocator = new F<File, SourceLocator>() {
+      @Override
       public SourceLocator apply(final File a) {
         return new DirectorySourceLocator(a);
       }
@@ -45,6 +46,7 @@ public class SmartSourceLocator implements SourceLocator {
 
   private F<File, Collection<File>> collectChildren(final int depth) {
     return new F<File, Collection<File>>() {
+      @Override
       public Collection<File> apply(final File a) {
         return collectDirectories(a, depth);
       }
@@ -63,6 +65,7 @@ public class SmartSourceLocator implements SourceLocator {
 
   private static Collection<File> listFirstLevelDirectories(final File root) {
     final F<File, Boolean> p = new F<File, Boolean>() {
+      @Override
       public Boolean apply(final File a) {
         return a.isDirectory();
       }
@@ -71,6 +74,7 @@ public class SmartSourceLocator implements SourceLocator {
     return FArray.filter(root.listFiles(), p);
   }
 
+  @Override
   public Option<Reader> locate(final Collection<String> classes,
       final String fileName) {
     for (final SourceLocator each : this.children) {

@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,6 +47,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     this.testMethodFinders.addAll(testMethodFinders);
   }
 
+  @Override
   public List<TestUnit> findTestUnits(final Class<?> testClass) {
     try {
 
@@ -58,9 +59,9 @@ public class BasicTestUnitFinder implements TestUnitFinder {
         for (final TestMethod m : findTestMethods(testClass)) {
           final TestStep step = instantiations.get(instantiation);
           units
-              .add(createTestUnitForInstantiation(step,
-                  getNamePrefix(instantiations.size(), instantiation),
-                  testClass, m));
+          .add(createTestUnitForInstantiation(step,
+              getNamePrefix(instantiations.size(), instantiation),
+              testClass, m));
         }
       }
 
@@ -107,6 +108,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   private F<InstantiationStrategy, Boolean> canInstantiate(final Class<?> clazz) {
     return new F<InstantiationStrategy, Boolean>() {
 
+      @Override
       public Boolean apply(final InstantiationStrategy a) {
         return a.canInstantiate(clazz);
       }
@@ -119,6 +121,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     final EqualitySet<TestMethod> set = new EqualitySet<TestMethod>(
         new SignatureEqualityStrategy());
     final SideEffect1<TestMethod> addToSet = new SideEffect1<TestMethod>() {
+      @Override
       public void apply(final TestMethod a) {
         set.add(a);
       }

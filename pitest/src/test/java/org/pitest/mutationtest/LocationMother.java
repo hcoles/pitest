@@ -12,9 +12,10 @@ import org.pitest.quickbuilder.builders.QB;
 public class LocationMother {
 
   public interface MutationIdentifierBuilder extends
-      SequenceBuilder<MutationIdentifier> {
+  SequenceBuilder<MutationIdentifier> {
 
     MutationIdentifierBuilder withLocation(Location location);
+
     MutationIdentifierBuilder withLocation(Builder<Location> location);
 
     MutationIdentifierBuilder withIndex(int index);
@@ -43,7 +44,7 @@ public class LocationMother {
     String _MethodDescription();
 
   }
-  
+
   public static LocationBuilder aLocation(String clazz) {
     return aLocation().withClass(ClassName.fromString(clazz));
   }
@@ -56,6 +57,7 @@ public class LocationMother {
 
   private static Generator<LocationBuilder, Location> locationSeed() {
     return new Generator<LocationBuilder, Location>() {
+      @Override
       public Location generate(LocationBuilder b) {
         return Location.location(b._Class(),
             MethodName.fromString(b._Method()), b._MethodDescription());
@@ -70,6 +72,7 @@ public class LocationMother {
 
   private static Generator<MutationIdentifierBuilder, MutationIdentifier> idSeed() {
     return new Generator<MutationIdentifierBuilder, MutationIdentifier>() {
+      @Override
       public MutationIdentifier generate(MutationIdentifierBuilder b) {
         return new MutationIdentifier(b._Location(), b._Index(), b._Mutator());
       }

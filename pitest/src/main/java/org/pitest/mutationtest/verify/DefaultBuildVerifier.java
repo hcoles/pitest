@@ -2,13 +2,13 @@ package org.pitest.mutationtest.verify;
 
 /*
  * Copyright 2012 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,7 @@ import org.pitest.help.PitHelpError;
 
 public class DefaultBuildVerifier implements BuildVerifier {
 
+  @Override
   public void verify(final CodeSource code) {
     final Collection<ClassInfo> codeClasses = code.getCode();
     // perform only a weak check for line numbers as
@@ -45,6 +46,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
     return new F<ClassInfo, Boolean>() {
+      @Override
       public Boolean apply(final ClassInfo a) {
         return a.getNumberOfCodeLines() != 0;
       }
@@ -54,6 +56,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   private SideEffect1<ClassInfo> throwErrorIfHasNoSourceFile() {
     return new SideEffect1<ClassInfo>() {
+      @Override
       public void apply(final ClassInfo a) {
         if (a.getSourceFileName() == null) {
           throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());

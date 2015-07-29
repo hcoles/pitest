@@ -21,20 +21,20 @@ public class MutationMetaDataTest {
 
   @Test
   public void shouldPartitionResultsByMutatedClass() {
-    MutationResult a = makeResult("Foo", "a"); 
-    MutationResult b = makeResult("Bar", "a"); 
-    MutationResult c = makeResult("Foo", "b"); 
-    MutationResult d = makeResult("Foo", "c"); 
-    
-    MutationMetaData testee = new MutationMetaData(Arrays.asList(a,b,c,d));
+    MutationResult a = makeResult("Foo", "a");
+    MutationResult b = makeResult("Bar", "a");
+    MutationResult c = makeResult("Foo", "b");
+    MutationResult d = makeResult("Foo", "c");
+
+    MutationMetaData testee = new MutationMetaData(Arrays.asList(a, b, c, d));
     Collection<ClassMutationResults> actual = testee.toClassResults();
-    
+
     assertThat(actual).hasSize(2);
-    
+
     Iterator<ClassMutationResults> it = actual.iterator();
     ClassMutationResults first = it.next();
     ClassMutationResults second = it.next();
-    
+
     assertThat(first.getMutatedClass()).isEqualTo(ClassName.fromString("Bar"));
     assertThat(first.getMutations()).hasSize(1);
 
@@ -45,21 +45,24 @@ public class MutationMetaDataTest {
 
   @Test
   public void shouldNotCreateEmptyClassResultsObjects() {
-    MutationMetaData testee = new MutationMetaData(Collections.<MutationResult>emptyList());
+    MutationMetaData testee = new MutationMetaData(
+        Collections.<MutationResult> emptyList());
     assertThat(testee.toClassResults()).isEmpty();
   }
-  
+
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(MutationMetaData.class).verify();
   }
-  
+
   private MutationResult makeResult(String clazz, String method) {
-    Location location = Location.location(ClassName.fromString(clazz), MethodName.fromString(method), "()V");
-    MutationDetails md = aMutationDetail().withId(aMutationId().withLocation(location)).build();
-    final MutationResult mr = new MutationResult(md, new MutationStatusTestPair(0,
-            DetectionStatus.KILLED));
+    Location location = Location.location(ClassName.fromString(clazz),
+        MethodName.fromString(method), "()V");
+    MutationDetails md = aMutationDetail().withId(
+        aMutationId().withLocation(location)).build();
+    final MutationResult mr = new MutationResult(md,
+        new MutationStatusTestPair(0, DetectionStatus.KILLED));
     return mr;
   }
-  
+
 }

@@ -14,7 +14,7 @@ import org.pitest.bytecode.MethodDecoratorTest;
 public class LineFilterMethodAdapterTest extends MethodDecoratorTest {
 
   @Mock
-  private MethodMutationContext                 context;
+  private MethodMutationContext   context;
 
   @Mock
   private PremutationClassInfo    classInfo;

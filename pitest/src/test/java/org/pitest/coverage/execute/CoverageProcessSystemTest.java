@@ -61,7 +61,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldRecordSomeCoverage() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coverage = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertFalse(coverage.iterator().next().getCoverage().isEmpty());
   }
@@ -84,14 +84,14 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageFor3BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test3", 2);
   }
 
   @Test
   public void shouldCalculateCoverageForConstructors() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TesteeWithComplexConstructorsTest.class);
     assertTrue(coversBlock(coveredClasses, "testHigh", 0));
     assertTrue(coversBlock(coveredClasses, "testHigh", 1));
@@ -104,91 +104,91 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageFor4BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test4", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor5BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test5", 2);
   }
 
   @Test
   public void shouldCalculateCoverageForBlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test6", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor7BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test7", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor8BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test8", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor9BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test9", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor10BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test10", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor11BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test11", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor12BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test12", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor13BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test13", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor14BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test14", 2);
   }
 
   @Test
   public void shouldCalculateCoverageFor15BlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test15", 2);
   }
 
   @Test
   public void shouldCalculateCoverageForLargeBlockMethods() throws IOException,
-      InterruptedException, ExecutionException {
+  InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "testMany", 2);
   }
@@ -216,7 +216,7 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
-        Location.location(throwsException, foo, "()V"), 0))));
+        Location.location(throwsException, this.foo, "()V"), 0))));
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
         Location.location(throwsException,
@@ -233,10 +233,10 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionInFinallyBlockTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, foo, "()V"), 0))));
+        Location.location(clazz, this.foo, "()V"), 0))));
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, foo, "()V"), 1))));
+        Location.location(clazz, this.foo, "()V"), 1))));
   }
 
   @Test
@@ -248,7 +248,7 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionFromLargeMethodTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, foo, "()I"), 0))));
+        Location.location(clazz, this.foo, "()I"), 0))));
 
   }
 
@@ -301,6 +301,7 @@ public class CoverageProcessSystemTest {
   @Test
   public void shouldFailWithExitCode() throws Exception {
     final SideEffect1<CoverageResult> noOpHandler = new SideEffect1<CoverageResult>() {
+      @Override
       public void apply(final CoverageResult a) {
       }
     };
@@ -324,6 +325,7 @@ public class CoverageProcessSystemTest {
   private ClassPath classPathWithoutJUnit() {
     FunctionalList<File> cpWithoutJUnit = FCollection.filter(
         ClassPath.getClassPathElementsAsFiles(), new F<File, Boolean>() {
+          @Override
           public Boolean apply(File file) {
             return !file.getName().contains("junit");
           }
@@ -335,6 +337,7 @@ public class CoverageProcessSystemTest {
   private F<CoverageResult, Boolean> failingTest() {
     return new F<CoverageResult, Boolean>() {
 
+      @Override
       public Boolean apply(final CoverageResult a) {
         return !a.isGreenTest();
       }
@@ -356,6 +359,7 @@ public class CoverageProcessSystemTest {
       InterruptedException {
     final SideEffect1<CoverageResult> handler = new SideEffect1<CoverageResult>() {
 
+      @Override
       public void apply(final CoverageResult a) {
         coveredClasses.add(a);
       }
@@ -384,6 +388,7 @@ public class CoverageProcessSystemTest {
   private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
     return new F<CoverageResult, Boolean>() {
 
+      @Override
       public Boolean apply(final CoverageResult a) {
         return FCollection.contains(a.getCoverage(), resultFor(class1));
       }
@@ -391,6 +396,7 @@ public class CoverageProcessSystemTest {
       private F<BlockLocation, Boolean> resultFor(final Class<?> class1) {
         return new F<BlockLocation, Boolean>() {
 
+          @Override
           public Boolean apply(final BlockLocation a) {
 
             return a.isFor(ClassName.fromClass(class1));
@@ -403,6 +409,7 @@ public class CoverageProcessSystemTest {
 
   private F<CoverageResult, Boolean> coverageFor(final BlockLocation location) {
     return new F<CoverageResult, Boolean>() {
+      @Override
       public Boolean apply(final CoverageResult a) {
         return a.getCoverage().contains(location);
       }
@@ -413,6 +420,7 @@ public class CoverageProcessSystemTest {
 
     return new Predicate<String>() {
 
+      @Override
       public Boolean apply(final String a) {
         return a.contains("Testee") && !a.endsWith("Test");
       }
@@ -424,6 +432,7 @@ public class CoverageProcessSystemTest {
       final int numberOfBlocks) {
     return new F<CoverageResult, Boolean>() {
 
+      @Override
       public Boolean apply(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (a.getNumberOfCoveredBlocks() == numberOfBlocks);
@@ -447,6 +456,7 @@ public class CoverageProcessSystemTest {
   private F<CoverageResult, Boolean> hitsBlock(final String testName,
       final int block) {
     return new F<CoverageResult, Boolean>() {
+      @Override
       public Boolean apply(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (FCollection.contains(a.getCoverage(), hasBlock(block)));
@@ -454,6 +464,7 @@ public class CoverageProcessSystemTest {
 
       private F<BlockLocation, Boolean> hasBlock(final int block) {
         return new F<BlockLocation, Boolean>() {
+          @Override
           public Boolean apply(BlockLocation a) {
             System.out.println(a);
             return a.getBlock() == block;

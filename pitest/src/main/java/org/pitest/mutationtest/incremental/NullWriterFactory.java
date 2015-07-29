@@ -22,10 +22,12 @@ public class NullWriterFactory implements WriterFactory {
     };
   }
 
+  @Override
   public PrintWriter create() {
     return this.pw;
   }
 
+  @Override
   public void close() {
     this.pw.close();
   }

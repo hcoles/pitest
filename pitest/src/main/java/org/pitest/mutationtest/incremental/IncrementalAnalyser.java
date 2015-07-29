@@ -43,6 +43,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
     return map;
   }
 
+  @Override
   public Collection<MutationResult> analyse(
       final Collection<MutationDetails> mutation) {
 
@@ -109,7 +110,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
     final List<ClassName> testClasses = FCollection.filter(allTests,
         testIsCalled(mutationStatusTestPair.getKillingTest().value())).map(
-        TestInfo.toDefiningClassName());
+            TestInfo.toDefiningClassName());
 
     if (testClasses.isEmpty()) {
       return false;
@@ -121,6 +122,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   private static F<TestInfo, Boolean> testIsCalled(final String testName) {
     return new F<TestInfo, Boolean>() {
+      @Override
       public Boolean apply(final TestInfo a) {
         return a.getName().equals(testName);
       }

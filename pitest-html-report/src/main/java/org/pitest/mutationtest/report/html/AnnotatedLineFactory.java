@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,7 @@ public class AnnotatedLineFactory {
     return new F<String, Line>() {
       private int lineNumber = 1;
 
+      @Override
       public Line apply(final String a) {
         final Line l = new Line(this.lineNumber,
             StringUtil.escapeBasicHtmlChars(a), lineCovered(this.lineNumber),
@@ -76,6 +77,7 @@ public class AnnotatedLineFactory {
   private F<MutationResult, Boolean> isAtLineNumber(final int lineNumber) {
     return new F<MutationResult, Boolean>() {
 
+      @Override
       public Boolean apply(final MutationResult result) {
         return result.getDetails().getLineNumber() == lineNumber;
       }
@@ -98,6 +100,7 @@ public class AnnotatedLineFactory {
 
   private boolean isCodeLine(final int line) {
     final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
+      @Override
       public Boolean apply(final ClassInfo a) {
         return a.isCodeLine(line);
       }
@@ -107,6 +110,7 @@ public class AnnotatedLineFactory {
 
   private boolean isLineCovered(final int line) {
     final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
+      @Override
       public Boolean apply(final ClassInfo a) {
         return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
             new ClassLine(a.getName().asInternalName(), line)).isEmpty();

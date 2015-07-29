@@ -7,8 +7,7 @@ import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.Log;
 
-public class KnownStatusMutationTestUnit implements
-    MutationAnalysisUnit {
+public class KnownStatusMutationTestUnit implements MutationAnalysisUnit {
 
   private static final Logger        LOG = Log.getLogger();
 
@@ -18,16 +17,17 @@ public class KnownStatusMutationTestUnit implements
     this.mutations = mutations;
   }
 
+  @Override
   public MutationMetaData call() throws Exception {
     LOG.fine("Using historic results for " + this.mutations.size()
         + " mutations");
     return new MutationMetaData(this.mutations);
-    
+
   }
 
+  @Override
   public int priority() {
     return Integer.MAX_VALUE;
   }
-
 
 }

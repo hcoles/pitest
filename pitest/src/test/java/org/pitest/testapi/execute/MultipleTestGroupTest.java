@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,6 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
-import org.pitest.testapi.execute.MultipleTestGroup;
 import org.pitest.util.IsolationUtils;
 
 public class MultipleTestGroupTest {
@@ -80,6 +79,6 @@ public class MultipleTestGroupTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(MultipleTestGroup.class).verify();
-  } 
-  
+  }
+
 }

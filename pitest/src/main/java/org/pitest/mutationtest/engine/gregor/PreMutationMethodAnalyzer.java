@@ -34,6 +34,7 @@ public class PreMutationMethodAnalyzer extends MethodVisitor {
 
   private static F<String, Boolean> matches(final String owner) {
     return new F<String, Boolean>() {
+      @Override
       public Boolean apply(final String a) {
         return owner.startsWith(a);
       }

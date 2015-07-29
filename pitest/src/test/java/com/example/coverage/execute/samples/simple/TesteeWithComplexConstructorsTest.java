@@ -6,13 +6,12 @@ public class TesteeWithComplexConstructorsTest {
 
   @Test
   public void testLow() {
-   new TesteeWithComplexConstructors(1);
-  }
-  
-  @Test
-  public void testHigh() {
-   new TesteeWithComplexConstructors(100);
+    new TesteeWithComplexConstructors(1);
   }
 
+  @Test
+  public void testHigh() {
+    new TesteeWithComplexConstructors(100);
+  }
 
 }

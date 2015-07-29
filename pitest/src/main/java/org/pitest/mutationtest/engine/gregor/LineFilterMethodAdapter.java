@@ -8,7 +8,7 @@ class LineFilterMethodAdapter extends MethodVisitor {
 
   private static final String        DISABLE_REASON = "AVOIDED_LINE";
 
-  private final MutationContext              context;
+  private final MutationContext      context;
   private final PremutationClassInfo classInfo;
 
   public LineFilterMethodAdapter(final MutationContext context,

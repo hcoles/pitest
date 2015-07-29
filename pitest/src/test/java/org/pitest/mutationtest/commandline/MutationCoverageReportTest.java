@@ -1,16 +1,16 @@
 /*
  * Copyright 2011 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.commandline;
 
@@ -122,9 +122,9 @@ public class MutationCoverageReportTest {
     when(
         this.mutationFactory.createEngine(anyBoolean(), any(Predicate.class),
             anyCollection(), anyCollection(), anyBoolean())).thenReturn(
-        this.engine);
+                this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
-        .thenReturn(this.mutater);
+    .thenReturn(this.mutater);
   }
 
   @Test
@@ -193,8 +193,8 @@ public class MutationCoverageReportTest {
   private CombinedStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
         new GregorEngineFactory(), this.history, this.coverage,
-        this.listenerFactory, output).with(this.mutationFactory).with(
-        this.verifier);
+        this.listenerFactory, this.output).with(this.mutationFactory).with(
+            this.verifier);
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new SettingsFactory(this.data, PluginServices.makeForContextLoader()),

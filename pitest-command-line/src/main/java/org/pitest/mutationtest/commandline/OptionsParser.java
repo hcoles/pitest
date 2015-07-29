@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -111,7 +111,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
   private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
-  
+
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
 
   public OptionsParser(Predicate<String> dependencyFilter) {
@@ -124,14 +124,13 @@ public class OptionsParser {
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
 
-
     this.targetClassesSpec = parserAccepts(TARGET_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma separated list of filters to match against classes to test")
-        .required();
+            .required();
 
     this.avoidCallsSpec = parserAccepts(AVOID_CALLS)
         .withRequiredArg()
@@ -236,7 +235,7 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma separated list of listeners to receive mutation results")
-        .defaultsTo("HTML");
+            .defaultsTo("HTML");
 
     this.additionalClassPathSpec = parserAccepts(CLASSPATH).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
@@ -266,7 +265,7 @@ public class OptionsParser {
         .ofType(Integer.class)
         .describedAs(
             "Maximum number of mutations to include within a single unit of analysis")
-        .defaultsTo(MUTATION_UNIT_SIZE.getDefault(Integer.class));
+            .defaultsTo(MUTATION_UNIT_SIZE.getDefault(Integer.class));
 
     this.historyInputSpec = parserAccepts(HISTORY_INPUT_LOCATION)
         .withRequiredArg().ofType(File.class)
@@ -292,9 +291,9 @@ public class OptionsParser {
 
     this.javaExecutable = parserAccepts(JVM_PATH).withRequiredArg()
         .ofType(String.class).describedAs("path to java executable");
-    
-    this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION).withRequiredArg()
-        .ofType(KeyValuePair.class)
+
+    this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION)
+        .withRequiredArg().ofType(KeyValuePair.class)
         .describedAs("custom plugin properties");
 
   }
@@ -316,7 +315,7 @@ public class OptionsParser {
 
   /**
    * Creates a new ParseResult object using the command line arguments.
-   * 
+   *
    * @param data
    *          the ReportOptions to populate.
    * @param userArgs
@@ -369,7 +368,8 @@ public class OptionsParser {
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
-    data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec.values(userArgs)));
+    data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec
+        .values(userArgs)));
 
     data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)
         && userArgs.valueOf(this.exportLineCoverageSpec));
@@ -392,25 +392,24 @@ public class OptionsParser {
     if (data.isIncludeLaunchClasspath()) {
       elements.addAll(ClassPath.getClassPathElementsAsPaths());
     } else {
-      elements.addAll(FCollection.filter(ClassPath.getClassPathElementsAsPaths(),
-              dependencyFilter));
+      elements.addAll(FCollection.filter(
+          ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
   }
 
-  private void setTestGroups(final OptionSet userArgs,
-      final ReportOptions data) {
+  private void setTestGroups(final OptionSet userArgs, final ReportOptions data) {
     final TestGroupConfig conf = new TestGroupConfig(
         this.excludedGroupsSpec.values(userArgs),
         this.includedGroupsSpec.values(userArgs));
 
     data.setGroupConfig(conf);
   }
-  
+
   private Properties listToProperties(List<KeyValuePair> kvps) {
     Properties p = new Properties();
-    for ( KeyValuePair kvp : kvps) {
+    for (KeyValuePair kvp : kvps) {
       p.put(kvp.key, kvp.value);
     }
     return p;

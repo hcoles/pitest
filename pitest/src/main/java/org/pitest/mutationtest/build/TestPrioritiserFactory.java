@@ -8,6 +8,7 @@ import org.pitest.plugin.ToolClasspathPlugin;
 
 public interface TestPrioritiserFactory extends ToolClasspathPlugin {
 
-  TestPrioritiser makeTestPrioritiser(Properties props, CodeSource code, CoverageDatabase coverage);
-  
+  TestPrioritiser makeTestPrioritiser(Properties props, CodeSource code,
+      CoverageDatabase coverage);
+
 }

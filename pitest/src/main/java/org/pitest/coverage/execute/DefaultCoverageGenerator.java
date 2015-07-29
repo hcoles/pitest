@@ -1,12 +1,12 @@
 /*
  * Copyright 2012 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,6 +71,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     this.showProgress = showProgress;
   }
 
+  @Override
   public CoverageData calculateCoverage() {
     try {
       final long t0 = System.currentTimeMillis();
@@ -80,7 +81,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
       final CoverageData coverage = new CoverageData(this.code, new LineMapper(
-          code));
+          this.code));
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
       gatherCoverageData(tests, coverage);
@@ -146,6 +147,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private static F<ClassInfo, String> classInfoToName() {
     return new F<ClassInfo, String>() {
+      @Override
       public String apply(final ClassInfo a) {
         return a.getName().asInternalName();
       }
@@ -163,6 +165,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private SideEffect1<String> logInfo() {
     return new SideEffect1<String>() {
+      @Override
       public void apply(final String a) {
         LOG.info("SLAVE : " + a);
       }
@@ -171,6 +174,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private SideEffect1<String> log() {
     return new SideEffect1<String>() {
+      @Override
       public void apply(final String a) {
         LOG.fine("SLAVE : " + a);
       }
@@ -181,9 +185,10 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final CoverageData coverage) {
     return new SideEffect1<CoverageResult>() {
       private final String[] spinner = new String[] { "\u0008/", "\u0008-",
-                                         "\u0008\\", "\u0008|" };
+          "\u0008\\", "\u0008|" };
       int                    i       = 0;
 
+      @Override
       public void apply(final CoverageResult cr) {
         coverage.calculateClassCoverage(cr);
         if (DefaultCoverageGenerator.this.showProgress) {
@@ -195,10 +200,12 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     };
   }
 
+  @Override
   public Configuration getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }
 
+  @Override
   public LaunchOptions getLaunchOptions() {
     return this.launchOptions;
   }

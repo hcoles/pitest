@@ -13,10 +13,12 @@ public class HistoryListener implements MutationResultListener {
     this.historyStore = historyStore;
   }
 
+  @Override
   public void runStart() {
 
   }
 
+  @Override
   public void handleMutationResult(final ClassMutationResults metaData) {
     for (final MutationResult each : metaData.getMutations()) {
       this.historyStore.recordResult(each);
@@ -24,6 +26,7 @@ public class HistoryListener implements MutationResultListener {
 
   }
 
+  @Override
   public void runEnd() {
 
   }

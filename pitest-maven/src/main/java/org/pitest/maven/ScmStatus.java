@@ -4,7 +4,7 @@ import org.apache.maven.scm.ScmFileStatus;
 
 /**
  * Maps string to maven ScmFileStatus constants.
- * 
+ *
  * Descriptions copied from maven scm source.
  */
 public enum ScmStatus {

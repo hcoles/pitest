@@ -23,7 +23,7 @@ public class ServiceLoaderTest {
   public void shouldReturnValueWhenServiceFound() throws Exception {
     final Iterable<MutationEngineFactory> actual = ServiceLoader.load(
         MutationEngineFactory.class, Thread.currentThread()
-            .getContextClassLoader());
+        .getContextClassLoader());
     assertTrue(actual.iterator().hasNext());
   }
 

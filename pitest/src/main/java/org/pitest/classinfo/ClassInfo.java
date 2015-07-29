@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,14 +27,14 @@ import org.pitest.functional.Option;
 
 public class ClassInfo {
 
-  private final ClassIdentifier       id;
+  private final ClassIdentifier        id;
 
-  private final int                   access;
-  private final Set<Integer>          codeLines;
-  private final ClassPointer          outerClass;
-  private final ClassPointer          superClass;
-  private final Collection<ClassName> annotations;
-  private final String                sourceFile;
+  private final int                    access;
+  private final Set<Integer>           codeLines;
+  private final ClassPointer           outerClass;
+  private final ClassPointer           superClass;
+  private final Collection<ClassName>  annotations;
+  private final String                 sourceFile;
   private final Map<ClassName, Object> classAnnotationValues;
 
   public ClassInfo(final ClassPointer superClass,
@@ -149,6 +149,7 @@ public class ClassInfo {
 
   public static F<ClassInfo, Boolean> matchIfAbstract() {
     return new F<ClassInfo, Boolean>() {
+      @Override
       public Boolean apply(final ClassInfo a) {
         return a.isAbstract();
       }
@@ -163,6 +164,7 @@ public class ClassInfo {
 
   public static F<ClassInfo, ClassName> toClassName() {
     return new F<ClassInfo, ClassName>() {
+      @Override
       public ClassName apply(final ClassInfo a) {
         return a.getName();
       }
@@ -172,6 +174,7 @@ public class ClassInfo {
 
   public static F<ClassInfo, HierarchicalClassId> toFullClassId() {
     return new F<ClassInfo, HierarchicalClassId>() {
+      @Override
       public HierarchicalClassId apply(final ClassInfo a) {
         return a.getHierarchicalId();
       }

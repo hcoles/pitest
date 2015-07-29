@@ -1,5 +1,16 @@
 package org.pitest.mutationtest;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
 import org.junit.Before;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
@@ -29,12 +40,6 @@ import org.pitest.util.Glob;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-
 public abstract class ReportTestBase {
 
   protected MetaDataExtractor metaDataExtractor;
@@ -52,15 +57,18 @@ public abstract class ReportTestBase {
 
   protected MutationResultListenerFactory listenerFactory() {
     return new MutationResultListenerFactory() {
+      @Override
       public MutationResultListener getListener(Properties props,
           ListenerArguments args) {
         return ReportTestBase.this.metaDataExtractor;
       }
 
+      @Override
       public String name() {
         return null;
       }
 
+      @Override
       public String description() {
         return null;
       }
@@ -97,7 +105,8 @@ public abstract class ReportTestBase {
 
       final CoverageOptions coverageOptions = createCoverageOptions(configuration);
       final LaunchOptions launchOptions = new LaunchOptions(agent,
-          new DefaultJavaExecutableLocator(), this.data.getJvmArgs(),new HashMap<String, String>());
+          new DefaultJavaExecutableLocator(), this.data.getJvmArgs(),
+          new HashMap<String, String>());
 
       final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
           new True<ClassPathRoot>());
@@ -119,7 +128,8 @@ public abstract class ReportTestBase {
           listenerFactory(), null);
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
-          code, this.data, new SettingsFactory(this.data, plugins), timings);
+          code, this.data, new SettingsFactory(this.data, this.plugins),
+          timings);
 
       testee.runReport();
     } catch (final IOException e) {
@@ -130,8 +140,9 @@ public abstract class ReportTestBase {
   }
 
   private CoverageOptions createCoverageOptions(Configuration configuration) {
-    return new CoverageOptions(data.getTargetClassesFilter(), configuration,
-        data.isVerbose(), data.getDependencyAnalysisMaxDistance());
+    return new CoverageOptions(this.data.getTargetClassesFilter(),
+        configuration, this.data.isVerbose(),
+        this.data.getDependencyAnalysisMaxDistance());
   }
 
   protected void setMutators(final String mutator) {

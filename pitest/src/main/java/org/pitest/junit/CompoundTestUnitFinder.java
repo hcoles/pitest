@@ -14,6 +14,7 @@ public class CompoundTestUnitFinder implements TestUnitFinder {
     this.tufs = tufs;
   }
 
+  @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
     for (final TestUnitFinder each : this.tufs) {
       final List<TestUnit> tus = each.findTestUnits(clazz);

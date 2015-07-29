@@ -23,6 +23,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
     this.location = location;
   }
 
+  @Override
   public MutationIdentifier registerMutation(
       final MethodMutatorFactory factory, final String description) {
     final MutationIdentifier newId = getNextMutationIdentifer(factory,
@@ -51,44 +52,54 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
     return !this.mutationFindingDisabledReasons.isEmpty();
   }
 
+  @Override
   public void registerCurrentLine(final int line) {
     this.lastLineNumber = line;
   }
 
+  @Override
   public void registerNewBlock() {
     this.classContext.registerNewBlock();
 
   }
 
+  @Override
   public void registerFinallyBlockStart() {
     this.classContext.registerFinallyBlockStart();
   }
 
+  @Override
   public void registerFinallyBlockEnd() {
     this.classContext.registerFinallyBlockEnd();
   }
 
+  @Override
   public ClassInfo getClassInfo() {
     return this.classContext.getClassInfo();
   }
 
+  @Override
   public boolean shouldMutate(final MutationIdentifier newId) {
     return this.classContext.shouldMutate(newId);
   }
 
+  @Override
   public void disableMutations(final String reason) {
     this.mutationFindingDisabledReasons.add(reason);
   }
 
+  @Override
   public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
   }
 
+  @Override
   public void increment() {
     this.instructionIndex = this.instructionIndex + 1;
 
   }
 
+  @Override
   public int currentInstructionCount() {
     return this.instructionIndex;
   }

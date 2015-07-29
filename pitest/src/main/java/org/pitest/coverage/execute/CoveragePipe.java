@@ -19,10 +19,12 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos = new SafeDataOutputStream(dos);
   }
 
+  @Override
   public synchronized void newTest() {
     CodeCoverageStore.reset();
   }
 
+  @Override
   public synchronized void recordTestOutcome(final Description description,
       final boolean wasGreen, final int executionTime) {
     final Collection<Long> hits = CodeCoverageStore.getHits();
@@ -44,6 +46,7 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos.flush();
   }
 
+  @Override
   public synchronized void registerClass(final int id, final String className) {
 
     this.dos.writeByte(Id.CLAZZ);
@@ -52,8 +55,9 @@ public class CoveragePipe implements CoverageReceiver {
 
   }
 
-  public synchronized void registerProbes(int classId, String methodName, String methodDesc,
-      int firstProbe, int lastProbe) {
+  @Override
+  public synchronized void registerProbes(int classId, String methodName,
+      String methodDesc, int firstProbe, int lastProbe) {
     this.dos.writeByte(Id.PROBES);
     this.dos.writeInt(classId);
     this.dos.writeString(methodName);
@@ -61,6 +65,5 @@ public class CoveragePipe implements CoverageReceiver {
     this.dos.writeInt(firstProbe);
     this.dos.writeInt(lastProbe);
   }
-
 
 }

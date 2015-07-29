@@ -15,15 +15,16 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 public class ForeignClassLoaderAdaptingListener implements ITestListener {
-  
+
   private final List<String> events;
-  private Throwable             error;
-  private boolean               hasHadFailure = false;
-  
+  private Throwable          error;
+  private boolean            hasHadFailure = false;
+
   public ForeignClassLoaderAdaptingListener(List<String> events) {
     this.events = events;
   }
 
+  @Override
   public void onFinish(ITestContext arg0) {
     if (this.error != null) {
       storeAsString(new Fail(this.error));
@@ -32,24 +33,29 @@ public class ForeignClassLoaderAdaptingListener implements ITestListener {
     }
   }
 
+  @Override
   public void onStart(ITestContext arg0) {
-    storeAsString(new Start()); 
+    storeAsString(new Start());
   }
 
+  @Override
   public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
     storeAsString(new TestSuccess(arg0.getMethod().getMethodName()));
   }
 
+  @Override
   public void onTestFailure(ITestResult arg0) {
     this.hasHadFailure = true;
     this.error = arg0.getThrowable();
-    storeAsString(new TestFail(arg0.getMethod().getMethodName(), error));
+    storeAsString(new TestFail(arg0.getMethod().getMethodName(), this.error));
   }
 
+  @Override
   public void onTestSkipped(ITestResult arg0) {
-    storeAsString(new TestSkipped(arg0.getMethod().getMethodName()));   
+    storeAsString(new TestSkipped(arg0.getMethod().getMethodName()));
   }
 
+  @Override
   public void onTestStart(ITestResult result) {
     if (this.hasHadFailure) {
       throw new SkipException("skipping");
@@ -57,64 +63,73 @@ public class ForeignClassLoaderAdaptingListener implements ITestListener {
     storeAsString(new TestStart(result.getMethod().getMethodName()));
   }
 
+  @Override
   public void onTestSuccess(ITestResult arg0) {
-      storeAsString(new TestSuccess(arg0.getMethod().getMethodName()));
+    storeAsString(new TestSuccess(arg0.getMethod().getMethodName()));
   }
-  
+
   private void storeAsString(
       final SideEffect2<ResultCollector, org.pitest.testapi.Description> result) {
     this.events.add(IsolationUtils.toXml(result));
   }
-  
 
 }
 
-class TestStart implements SideEffect2<ResultCollector, org.pitest.testapi.Description> {
-  private String methodName;
-  
+class TestStart implements
+    SideEffect2<ResultCollector, org.pitest.testapi.Description> {
+  private final String methodName;
+
   TestStart(String methodName) {
-   this.methodName = methodName; 
+    this.methodName = methodName;
   }
 
+  @Override
   public void apply(ResultCollector rc, Description d) {
-    rc.notifyStart(new Description(methodName, d.getFirstTestClass()));
+    rc.notifyStart(new Description(this.methodName, d.getFirstTestClass()));
   }
 }
 
-class TestSuccess implements SideEffect2<ResultCollector, org.pitest.testapi.Description> {
-  private String methodName;
-  
+class TestSuccess implements
+    SideEffect2<ResultCollector, org.pitest.testapi.Description> {
+  private final String methodName;
+
   TestSuccess(String methodName) {
-   this.methodName = methodName; 
+    this.methodName = methodName;
   }
 
+  @Override
   public void apply(ResultCollector rc, Description d) {
-    rc.notifyEnd(new Description(methodName, d.getFirstTestClass()));
+    rc.notifyEnd(new Description(this.methodName, d.getFirstTestClass()));
   }
 }
 
-class TestFail implements SideEffect2<ResultCollector, org.pitest.testapi.Description> {
-  private String methodName;
+class TestFail implements
+    SideEffect2<ResultCollector, org.pitest.testapi.Description> {
+  private final String    methodName;
   private final Throwable throwable;
-  
+
   TestFail(String methodName, Throwable throwable) {
-   this.methodName = methodName; 
-   this.throwable = throwable;
+    this.methodName = methodName;
+    this.throwable = throwable;
   }
 
+  @Override
   public void apply(ResultCollector rc, Description d) {
-    rc.notifyEnd(new Description(methodName, d.getFirstTestClass()), throwable);
+    rc.notifyEnd(new Description(this.methodName, d.getFirstTestClass()),
+        this.throwable);
   }
 }
 
-class TestSkipped implements SideEffect2<ResultCollector, org.pitest.testapi.Description> {
-  private String methodName;
-  
+class TestSkipped implements
+    SideEffect2<ResultCollector, org.pitest.testapi.Description> {
+  private final String methodName;
+
   TestSkipped(String methodName) {
-   this.methodName = methodName; 
+    this.methodName = methodName;
   }
 
+  @Override
   public void apply(ResultCollector rc, Description d) {
-    rc.notifySkipped(new Description(methodName, d.getFirstTestClass()));
+    rc.notifySkipped(new Description(this.methodName, d.getFirstTestClass()));
   }
 }

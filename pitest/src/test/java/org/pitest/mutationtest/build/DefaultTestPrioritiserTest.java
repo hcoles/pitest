@@ -26,21 +26,20 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class DefaultTestPrioritiserTest {
 
-  private DefaultTestPrioritiser        testee;
-
-
-  @Mock
-  private CoverageDatabase      coverage;
+  private DefaultTestPrioritiser testee;
 
   @Mock
-  private ClassByteArraySource  source;
+  private CoverageDatabase       coverage;
 
-  private final ClassName       foo = ClassName.fromString("foo");
+  @Mock
+  private ClassByteArraySource   source;
+
+  private final ClassName        foo = ClassName.fromString("foo");
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee =  new DefaultTestPrioritiser(coverage);
+    this.testee = new DefaultTestPrioritiser(this.coverage);
   }
 
   @Test
@@ -56,7 +55,8 @@ public class DefaultTestPrioritiserTest {
   public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
     final List<TestInfo> expected = makeTestInfos(0);
     when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
-    final List<TestInfo> actual = this.testee.assignTests(makeMutation("<clinit>"));
+    final List<TestInfo> actual = this.testee
+        .assignTests(makeMutation("<clinit>"));
     assertEquals(expected, actual);
   }
 
@@ -67,15 +67,17 @@ public class DefaultTestPrioritiserTest {
         unorderedTests);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
 
-    assertEquals(Arrays.asList(1,100,1000,10000), FCollection.map(actual, toTime()));
+    assertEquals(Arrays.asList(1, 100, 1000, 10000),
+        FCollection.map(actual, toTime()));
   }
 
   private F<TestInfo, Integer> toTime() {
     return new F<TestInfo, Integer>() {
+      @Override
       public Integer apply(TestInfo a) {
         return a.getTime();
       }
-      
+
     };
   }
 
@@ -86,6 +88,7 @@ public class DefaultTestPrioritiserTest {
 
   private F<Integer, TestInfo> timeToTestInfo() {
     return new F<Integer, TestInfo>() {
+      @Override
       public TestInfo apply(final Integer a) {
         return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
       }
@@ -95,7 +98,7 @@ public class DefaultTestPrioritiserTest {
 
   private MutationDetails makeMutation(final String method) {
     final MutationIdentifier id = new MutationIdentifier(aLocation()
-        .withClass(foo).withMethod(method).build(), 0, "mutator");
+        .withClass(this.foo).withMethod(method).build(), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

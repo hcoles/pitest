@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jmock.MockObjectTestCase;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
@@ -237,7 +241,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
     @ClassRule
     public static TestRule rule() {
-      return new ExternalResource() {};
+      return new ExternalResource() {
+      };
     }
 
     @Test
@@ -250,7 +255,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   @Test
-  public void shouldCreateSingleAtomicUnitWhenAnyMethodAnnotatedWithClassRule() throws Exception {
+  public void shouldCreateSingleAtomicUnitWhenAnyMethodAnnotatedWithClassRule()
+      throws Exception {
     final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
     assertEquals(1, actual.size());
   }
@@ -258,7 +264,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public static class ClassRuleField {
 
     @ClassRule
-    public static TestRule rule = new ExternalResource() {};
+    public static TestRule rule = new ExternalResource() {
+                                };
 
     @Test
     public void testOne() {
@@ -270,7 +277,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   @Test
-  public void shouldCreateSingleAtomicUnitWhenAnyFieldAnnotatedWithClassRule() throws Exception {
+  public void shouldCreateSingleAtomicUnitWhenAnyFieldAnnotatedWithClassRule()
+      throws Exception {
     final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
     assertEquals(1, actual.size());
   }

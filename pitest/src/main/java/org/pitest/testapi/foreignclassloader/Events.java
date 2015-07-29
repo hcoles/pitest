@@ -8,13 +8,13 @@ import org.pitest.testapi.ResultCollector;
 import org.pitest.util.IsolationUtils;
 
 public class Events {
-  
+
   public static void applyEvents(final List<String> encodedEvents,
       final ResultCollector rc, final Description description) {
     for (final String each : encodedEvents) {
       @SuppressWarnings("unchecked")
       final SideEffect2<ResultCollector, org.pitest.testapi.Description> event = (SideEffect2<ResultCollector, org.pitest.testapi.Description>) IsolationUtils
-          .fromXml(each);
+      .fromXml(each);
       event.apply(rc, description);
     }
 

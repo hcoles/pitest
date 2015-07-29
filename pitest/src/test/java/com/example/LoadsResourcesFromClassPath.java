@@ -11,7 +11,7 @@ public class LoadsResourcesFromClassPath {
         .getResourceAsStream(
             "resource folder with spaces/text in folder with spaces.txt");
     final boolean result = stream != null; // store result to nudge compiler
-                                           // towards single IRETURN
+    // towards single IRETURN
     return result;
   }
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,11 +30,11 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  *
  * <p>
  * Replacements for primitive types are simple. Replacements of object
- * references are handled by ObjectReferenceReplacer. Those replacements
- * can get more complex.
+ * references are handled by ObjectReferenceReplacer. Those replacements can get
+ * more complex.
  * </p>
- * 
- * 
+ *
+ *
  * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
 public class ReturnValuesMutator implements MethodMutatorFactory {
@@ -129,10 +129,10 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
   private final class ReturnValuesMethodVisitor extends MethodVisitor {
 
-    private static final String DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
+    private static final String   DESCRIPTION_MESSAGE_PATTERN = "replaced return of %s value with %s";
 
-    private final MutationContext       context;
-    private final MethodInfo    methodInfo;
+    private final MutationContext context;
+    private final MethodInfo      methodInfo;
 
     private ReturnValuesMethodVisitor(final MutationContext context,
         final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
@@ -161,7 +161,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
      * complicated by the problem of <tt>NaN</tt>s. By default the new value is
      * <code>-(x + 1)</code>, but this doesn't work for <tt>NaN</tt>s. But for a
      * <tt>NaN</tt> <code>x != x</code> is true, and we use this to detect them.
-     * 
+     *
      * @see #mutatePrimitiveFloatReturn()
      */
     private void mutatePrimitiveDoubleReturn() {
@@ -191,7 +191,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
      * complicated by the problem of <tt>NaN</tt>s. By default the new value is
      * <code>-(x + 1)</code>, but this doesn't work for <tt>NaN</tt>s. But for a
      * <tt>NaN</tt> <code>x != x</code> is true, and we use this to detect them.
-     * 
+     *
      * @see #mutatePrimitiveDoubleReturn()
      */
     private void mutatePrimitiveFloatReturn() {
@@ -298,7 +298,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
    * parameter <code>clazz</code> will be the class of the <code>object</code>
    * or one of it's super classes. The returned object must be of type
    * <code>clazz</code> or one of it's child classes.
-   * 
+   *
    * @param object
    *          the object reference to mutate, maybe <code>null</code>.
    * @param clazz
@@ -312,15 +312,18 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     return SINGLETON_REPLACER.replaceObjectInstance(object, clazz);
   }
 
+  @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ReturnValuesMethodVisitor(context, methodInfo, methodVisitor);
   }
 
+  @Override
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }
 
+  @Override
   public String getName() {
     return "EXPERIMENTAL_RETURN_VALUES_MUTATOR";
   }

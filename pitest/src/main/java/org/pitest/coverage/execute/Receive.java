@@ -22,14 +22,15 @@ import sun.pitest.CodeCoverageStore;
 final class Receive implements ReceiveStrategy {
 
   private final Map<Integer, ClassName>     classIdToName = new ConcurrentHashMap<Integer, ClassName>();
-  private final Map<Long, BlockLocation>    probeToBlock = new ConcurrentHashMap<Long, BlockLocation>();
-  
+  private final Map<Long, BlockLocation>    probeToBlock  = new ConcurrentHashMap<Long, BlockLocation>();
+
   private final SideEffect1<CoverageResult> handler;
 
   Receive(final SideEffect1<CoverageResult> handler) {
     this.handler = handler;
   }
 
+  @Override
   public void apply(final byte control, final SafeDataInputStream is) {
     switch (control) {
     case Id.CLAZZ:
@@ -39,7 +40,7 @@ final class Receive implements ReceiveStrategy {
       break;
     case Id.PROBES:
       handleProbes(is);
-      break;   
+      break;
     case Id.OUTCOME:
       handleTestEnd(is);
       break;
@@ -54,10 +55,13 @@ final class Receive implements ReceiveStrategy {
     final String methodSig = is.readString();
     final int first = is.readInt();
     final int last = is.readInt();
-    Location loc = Location.location(classIdToName.get(classId), MethodName.fromString(methodName), methodSig);
-    for (int i = first; i != last + 1; i++) {
-      // nb, convert from classwide id to method scoped index within BlockLocation
-      probeToBlock.put(CodeCoverageStore.encode(classId, i), new BlockLocation(loc,i - first));
+    Location loc = Location.location(this.classIdToName.get(classId),
+        MethodName.fromString(methodName), methodSig);
+    for (int i = first; i != (last + 1); i++) {
+      // nb, convert from classwide id to method scoped index within
+      // BlockLocation
+      this.probeToBlock.put(CodeCoverageStore.encode(classId, i),
+          new BlockLocation(loc, i - first));
     }
   }
 

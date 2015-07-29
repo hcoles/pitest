@@ -17,8 +17,8 @@ import org.pitest.util.IsolationUtils;
 public class InstructionTrackingMethodVisitorTest {
 
   private final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
-                                                    IsolationUtils
-                                                        .getContextClassLoader());
+      IsolationUtils
+      .getContextClassLoader());
 
   private final InstructionCounter   counter    = new DefaultInstructionCounter();
 
@@ -26,7 +26,8 @@ public class InstructionTrackingMethodVisitorTest {
   public void shouldGiveIndexConsistentWithTreeApiForStringEquals() {
     analyse(String.class, "equals");
     final MethodNode tree = makeTree(String.class, "equals");
-    assertEquals(tree.instructions.size(), this.counter.currentInstructionCount());
+    assertEquals(tree.instructions.size(),
+        this.counter.currentInstructionCount());
   }
 
   class HasMethodCallsAndBranches {
@@ -46,7 +47,8 @@ public class InstructionTrackingMethodVisitorTest {
   public void shouldGiveIndexConsistentWithTreeApiWhenMethodCallsPresent() {
     analyse(HasMethodCallsAndBranches.class, "foo");
     final MethodNode tree = makeTree(HasMethodCallsAndBranches.class, "foo");
-    assertEquals(tree.instructions.size(), this.counter.currentInstructionCount());
+    assertEquals(tree.instructions.size(),
+        this.counter.currentInstructionCount());
   }
 
   class HasSwitchStatements {
@@ -74,11 +76,10 @@ public class InstructionTrackingMethodVisitorTest {
   public void shouldGiveIndexConsistentWithTreeApiWhenSwitchStatementsPresent() {
     analyse(HasSwitchStatements.class, "foo");
     final MethodNode tree = makeTree(HasSwitchStatements.class, "foo");
-    assertEquals(tree.instructions.size(), this.counter.currentInstructionCount());
+    assertEquals(tree.instructions.size(),
+        this.counter.currentInstructionCount());
   }
 
-  
-  
   private InstructionTrackingMethodVisitor analyse(final Class<?> clazz,
       final String targetMethod) {
     final ClassReader reader = new ClassReader(this.byteSource.getBytes(
@@ -93,7 +94,7 @@ public class InstructionTrackingMethodVisitorTest {
         ClassName.fromClass(clazz).asJavaName()).value());
     final ClassNode tree = new ClassNode();
     reader.accept(tree, 0);
-    for ( Object m : tree.methods ) {
+    for (Object m : tree.methods) {
       MethodNode mn = (MethodNode) m;
       if (mn.name.equals(name)) {
         return mn;

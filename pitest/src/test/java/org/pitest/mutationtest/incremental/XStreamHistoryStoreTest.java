@@ -47,16 +47,18 @@ public class XStreamHistoryStoreTest {
 
   private final WriterFactory writerFactory = new WriterFactory() {
 
-                                              public PrintWriter create() {
-                                                return new PrintWriter(
-                                                    XStreamHistoryStoreTest.this.output);
-                                              }
+    @Override
+    public PrintWriter create() {
+      return new PrintWriter(
+          XStreamHistoryStoreTest.this.output);
+    }
 
-                                              public void close() {
+    @Override
+    public void close() {
 
-                                              }
+    }
 
-                                            };
+  };
 
   @Before
   public void setUp() {

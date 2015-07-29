@@ -28,7 +28,7 @@ public class CodeSourceTest {
   private Repository          repository;
 
   @Mock
-  private ProjectClassPaths  classPath;
+  private ProjectClassPaths   classPath;
 
   @Mock
   private TestClassIdentifier testIdentifer;
@@ -74,8 +74,9 @@ public class CodeSourceTest {
 
   @Test
   public void shouldOnlyIdentifyIncludedTestClassesOnTestPath() {
-    when(this.testIdentifer.isATestClass(any(ClassInfo.class))).thenReturn(true);
-    when(this.testIdentifer.isIncluded(foo)).thenReturn(true);
+    when(this.testIdentifer.isATestClass(any(ClassInfo.class)))
+        .thenReturn(true);
+    when(this.testIdentifer.isIncluded(this.foo)).thenReturn(true);
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
 
@@ -84,7 +85,8 @@ public class CodeSourceTest {
 
   @Test
   public void shouldNotIdentifyExcludedTestClassesOnTestPath() {
-    when(this.testIdentifer.isATestClass(any(ClassInfo.class))).thenReturn(true);
+    when(this.testIdentifer.isATestClass(any(ClassInfo.class)))
+        .thenReturn(true);
     when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(false);
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
@@ -107,7 +109,7 @@ public class CodeSourceTest {
   @Test
   public void shouldMapTestsPostfixedWithTestToTesteeWhenTesteeExists() {
     when(this.repository.hasClass(new ClassName("com.example.Foo")))
-        .thenReturn(true);
+    .thenReturn(true);
     assertEquals(new ClassName("com.example.Foo"),
         this.testee.findTestee("com.example.FooTest").value());
   }
@@ -115,7 +117,7 @@ public class CodeSourceTest {
   @Test
   public void shouldMapTestsPrefixedWithTestToTesteeWhenTesteeExists() {
     when(this.repository.hasClass(new ClassName("com.example.Foo")))
-        .thenReturn(true);
+    .thenReturn(true);
     assertEquals(new ClassName("com.example.Foo"),
         this.testee.findTestee("com.example.TestFoo").value());
   }
@@ -123,8 +125,9 @@ public class CodeSourceTest {
   @Test
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
     when(this.repository.hasClass(new ClassName("com.example.Foo")))
-        .thenReturn(false);
-    assertEquals(Option.<ClassName>none(), this.testee.findTestee("com.example.TestFoo"));
+    .thenReturn(false);
+    assertEquals(Option.<ClassName> none(),
+        this.testee.findTestee("com.example.TestFoo"));
   }
 
   @Test
@@ -132,7 +135,7 @@ public class CodeSourceTest {
     when(this.repository.fetchClass(ClassName.fromString("Foo"))).thenReturn(
         Option.some(this.foo));
     when(this.repository.fetchClass(ClassName.fromString("Unknown")))
-        .thenReturn(Option.<ClassInfo> none());
+    .thenReturn(Option.<ClassInfo> none());
     assertEquals(Arrays.asList(this.foo), this.testee.getClassInfo(Arrays
         .asList(ClassName.fromString("Foo"), ClassName.fromString("Unknown"))));
   }
@@ -142,7 +145,7 @@ public class CodeSourceTest {
     this.testee.fetchClassBytes(ClassName.fromString("Foo"));
     verify(this.repository).querySource(ClassName.fromString("Foo"));
   }
-  
+
   private ClassInfo makeClassInfo(final String name) {
     final ClassInfo ci = ClassInfoMother.make(name);
     when(this.repository.fetchClass(ClassName.fromString(name))).thenReturn(

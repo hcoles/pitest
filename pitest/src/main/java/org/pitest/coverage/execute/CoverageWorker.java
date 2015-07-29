@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,8 @@ public class CoverageWorker {
 
       final Container c = new UnContainer();
 
-      final Pitest pit = new Pitest(Collections.singletonList(new ErrorListener()));
+      final Pitest pit = new Pitest(
+          Collections.singletonList(new ErrorListener()));
       pit.run(c, decoratedTests);
 
     } catch (final Exception ex) {
@@ -59,6 +60,7 @@ public class CoverageWorker {
 
   private Comparator<TestUnit> testComparator() {
     return new Comparator<TestUnit>() {
+      @Override
       public int compare(final TestUnit o1, final TestUnit o2) {
         return o1.getDescription().getQualifiedName()
             .compareTo(o2.getDescription().getQualifiedName());

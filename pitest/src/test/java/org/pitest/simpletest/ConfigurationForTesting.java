@@ -12,12 +12,17 @@ import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
-import org.pitest.testapi.*;
+import org.pitest.testapi.BaseTestClassIdentifier;
+import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.TestSuiteFinder;
+import org.pitest.testapi.TestUnitFinder;
 
 public class ConfigurationForTesting implements Configuration {
 
   private static class TestFinder implements MethodFinder {
 
+    @Override
     public Option<TestMethod> apply(final Method method) {
       final TestAnnotationForTesting annotation = method
           .getAnnotation(TestAnnotationForTesting.class);
@@ -25,8 +30,8 @@ public class ConfigurationForTesting implements Configuration {
       if (annotation != null) {
         final Class<? extends Throwable> expected = !annotation.expected()
             .getName().equals(TestAnnotationForTesting.NONE.class.getName()) ? annotation
-            .expected() : null;
-        return Option.some(new TestMethod(method, expected));
+                .expected() : null;
+                return Option.some(new TestMethod(method, expected));
       } else {
         return Option.none();
       }
@@ -34,6 +39,7 @@ public class ConfigurationForTesting implements Configuration {
 
   }
 
+  @Override
   public TestUnitFinder testUnitFinder() {
 
     final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
@@ -41,7 +47,7 @@ public class ConfigurationForTesting implements Configuration {
 
     final List<InstantiationStrategy> instantiationStrategies =
 
-    Arrays
+        Arrays
         .<InstantiationStrategy> asList(new NoArgsConstructorInstantiationStrategy());
 
     return new CompoundTestUnitFinder(
@@ -49,19 +55,23 @@ public class ConfigurationForTesting implements Configuration {
             instantiationStrategies, tmfs)));
   }
 
+  @Override
   public TestSuiteFinder testSuiteFinder() {
     return new NoTestSuiteFinder();
   }
 
+  @Override
   public TestClassIdentifier testClassIdentifier() {
     return new BaseTestClassIdentifier() {
 
+      @Override
       public boolean isATestClass(final ClassInfo a) {
         return a.hasAnnotation(TestAnnotationForTesting.class);
       }
     };
   }
 
+  @Override
   public Option<PitHelpError> verifyEnvironment() {
     return Option.none();
   }

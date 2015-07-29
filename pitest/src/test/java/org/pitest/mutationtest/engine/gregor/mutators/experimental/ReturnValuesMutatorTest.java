@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,6 +44,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       return this.value;
     }
 
+    @Override
     public Boolean call() throws Exception {
       return returnPrimitiveBoolean();
     }
@@ -83,6 +84,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       return this.value;
     }
 
+    @Override
     public Integer call() throws Exception {
       return returnPrimitiveInteger();
     }
@@ -119,6 +121,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       return this.value;
     }
 
+    @Override
     public Long call() throws Exception {
       return returnPrimitiveLong();
     }
@@ -144,6 +147,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       return this.value;
     }
 
+    @Override
     public Float call() throws Exception {
       return returnPrimitiveFloat();
     }
@@ -177,6 +181,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       return this.value;
     }
 
+    @Override
     public Double call() throws Exception {
       return returnPrimitiveDouble();
     }
@@ -206,6 +211,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Boolean call() throws Exception {
       return this.value;
     }
@@ -246,6 +252,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       return this.value;
     }
@@ -280,6 +287,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Long call() throws Exception {
       return this.value;
     }
@@ -315,6 +323,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Object call() throws Exception {
       return this.value;
     }
@@ -343,6 +352,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public CustomObject call() throws Exception {
       return this.value;
     }
@@ -371,6 +381,7 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
       this.object = object;
     }
 
+    @Override
     public T call() throws Exception {
       return this.object;
     }

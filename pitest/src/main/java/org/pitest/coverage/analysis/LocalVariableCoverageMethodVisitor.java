@@ -59,7 +59,7 @@ class LocalVariableCoverageMethodVisitor extends AbstractCoverageStrategy {
         CodeCoverageStore.CLASS_NAME, CodeCoverageStore.PROBE_METHOD_NAME,
         "(II"
             + String.format(String.format("%%0%dd", this.blocks.size()), 0)
-                .replace("0", "Z") + ")V", false);
+            .replace("0", "Z") + ")V", false);
   }
 
 }

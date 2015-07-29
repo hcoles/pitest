@@ -9,5 +9,5 @@ public class TestThrowsExceptionInFinallyBlock {
     final ThrowsExceptionInFinallyBlockTestee t = new ThrowsExceptionInFinallyBlockTestee();
     t.foo();
   }
-  
+
 }

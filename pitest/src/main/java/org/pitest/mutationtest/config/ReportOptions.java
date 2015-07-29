@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,23 +57,23 @@ import org.pitest.util.Unchecked;
 /**
  * Big ball of user supplied options to configure various aspects of mutation
  * testing.
- * 
+ *
  */
 public class ReportOptions {
 
   public static final Collection<String> LOGGING_CLASSES                = Arrays
-                                                                            .asList(
-                                                                                "java.util.logging",
-                                                                                "org.apache.log4j",
-                                                                                "org.slf4j",
-                                                                                "org.apache.commons.logging");
+      .asList(
+          "java.util.logging",
+          "org.apache.log4j",
+          "org.slf4j",
+          "org.apache.commons.logging");
 
   private Collection<Predicate<String>>  targetClasses;
   private Collection<Predicate<String>>  excludedMethods                = Collections
-                                                                            .emptyList();
+      .emptyList();
 
   private Collection<Predicate<String>>  excludedClasses                = Collections
-                                                                            .emptyList();
+      .emptyList();
 
   private Collection<String>             codePaths;
 
@@ -105,7 +105,7 @@ public class ReportOptions {
 
   private final Collection<String>       outputs                        = new LinkedHashSet<String>();
 
-  private TestGroupConfig groupConfig;
+  private TestGroupConfig                groupConfig;
 
   private int                            mutationUnitSize;
   private boolean                        shouldCreateTimestampedReports = true;
@@ -219,6 +219,7 @@ public class ReportOptions {
   private static F<String, File> stringToFile() {
     return new F<String, File>() {
 
+      @Override
       public File apply(final String a) {
         return new File(a);
       }
@@ -293,7 +294,7 @@ public class ReportOptions {
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
       return this.getTargetClassesFilter(); // if no tests specified assume the
-                                            // target classes filter covers both
+      // target classes filter covers both
     } else {
       return Prelude.and(or(this.targetTests),
           not(isBlackListed(ReportOptions.this.excludedClasses)));
@@ -305,6 +306,7 @@ public class ReportOptions {
       final Collection<Predicate<String>> excludedClasses) {
     return new Predicate<String>() {
 
+      @Override
       public Boolean apply(final String a) {
         return or(excludedClasses).apply(a);
       }
@@ -370,7 +372,6 @@ public class ReportOptions {
     this.failWhenNoMutations = failWhenNoMutations;
   }
 
-
   public ProjectClassPaths getMutationClassPaths() {
 
     return new ProjectClassPaths(this.getClassPath(), createClassesFilter(),
@@ -403,7 +404,6 @@ public class ReportOptions {
   public void setCodePaths(final Collection<String> codePaths) {
     this.codePaths = codePaths;
   }
-
 
   public void setGroupConfig(final TestGroupConfig groupConfig) {
     this.groupConfig = groupConfig;
@@ -539,9 +539,9 @@ public class ReportOptions {
   public boolean isIncludeLaunchClasspath() {
     return this.includeLaunchClasspath;
   }
-  
+
   public Properties getFreeFormProperties() {
-    return properties;
+    return this.properties;
   }
 
   public void setFreeFormProperties(Properties props) {
@@ -550,15 +550,14 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [targetClasses="
-        + this.targetClasses + ", excludedMethods=" + this.excludedMethods
-        + ", excludedClasses=" + this.excludedClasses + ", codePaths="
-        + this.codePaths + ", reportDir=" + this.reportDir
-        + ", historyInputLocation=" + this.historyInputLocation
-        + ", historyOutputLocation=" + this.historyOutputLocation
-        + ", sourceDirs=" + this.sourceDirs + ", classPathElements="
-        + this.classPathElements + ", mutators=" + this.mutators
-        + ", dependencyAnalysisMaxDistance="
+    return "ReportOptions [targetClasses=" + this.targetClasses
+        + ", excludedMethods=" + this.excludedMethods + ", excludedClasses="
+        + this.excludedClasses + ", codePaths=" + this.codePaths
+        + ", reportDir=" + this.reportDir + ", historyInputLocation="
+        + this.historyInputLocation + ", historyOutputLocation="
+        + this.historyOutputLocation + ", sourceDirs=" + this.sourceDirs
+        + ", classPathElements=" + this.classPathElements + ", mutators="
+        + this.mutators + ", dependencyAnalysisMaxDistance="
         + this.dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
         + this.mutateStaticInitializers + ", jvmArgs=" + this.jvmArgs
         + ", numberOfThreads=" + this.numberOfThreads + ", timeoutFactor="
@@ -575,9 +574,8 @@ public class ReportOptions {
         + this.exportLineCoverage + ", mutationThreshold="
         + this.mutationThreshold + ", coverageThreshold="
         + this.coverageThreshold + ", mutationEngine=" + this.mutationEngine
-        + ", javaExecutable=" + this.javaExecutable + ", includeLaunchClasspath="
-        + this.includeLaunchClasspath + "]";
+        + ", javaExecutable=" + this.javaExecutable
+        + ", includeLaunchClasspath=" + this.includeLaunchClasspath + "]";
   }
-
 
 }

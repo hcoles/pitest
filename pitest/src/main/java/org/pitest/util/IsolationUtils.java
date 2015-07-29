@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,20 +27,21 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 public abstract class IsolationUtils {
 
   private static final XStream                           XSTREAM_INSTANCE          = new XStream(
-                                                                                       new PitXmlDriver());
+      new PitXmlDriver());
   private static final WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
   private static final ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
 
+    @Override
                                                                                      public boolean fromDifferentLoader(
-                                                                                         final Class<?> clazz,
-                                                                                         final ClassLoader loader) {
-                                                                                       return IsolationUtils
-                                                                                           .fromIncompatibleLoader(
-                                                                                               clazz,
-                                                                                               loader);
-                                                                                     }
+        final Class<?> clazz,
+        final ClassLoader loader) {
+      return IsolationUtils
+          .fromIncompatibleLoader(
+              clazz,
+              loader);
+    }
 
-                                                                                   };
+  };
 
   public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
     return LOADER_DETECTION_STRATEGY;

@@ -14,6 +14,9 @@
  */
 package org.pitest.maven;
 
+import java.io.File;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -21,23 +24,20 @@ import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 
-import java.io.File;
-import java.util.Map;
-
 public class RunPitStrategy implements GoalStrategy {
 
-  public CombinedStatistics execute(File baseDir,
-                                    ReportOptions data,
-                                    PluginServices plugins,
-                                    Map<String,String> environmentVariables)
-      throws MojoExecutionException {
+  @Override
+  public CombinedStatistics execute(File baseDir, ReportOptions data,
+      PluginServices plugins, Map<String, String> environmentVariables)
+          throws MojoExecutionException {
 
-     EntryPoint e = new EntryPoint();
-     AnalysisResult result = e.execute(baseDir, data, plugins,environmentVariables);
-     if ( result.getError().hasSome() ) {
-       throw new MojoExecutionException("fail", result.getError().value());
-     }
-     return result.getStatistics().value();
+    EntryPoint e = new EntryPoint();
+    AnalysisResult result = e.execute(baseDir, data, plugins,
+        environmentVariables);
+    if (result.getError().hasSome()) {
+      throw new MojoExecutionException("fail", result.getError().value());
+    }
+    return result.getStatistics().value();
   }
 
 }

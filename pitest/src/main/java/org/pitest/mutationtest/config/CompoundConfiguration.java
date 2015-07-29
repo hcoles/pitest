@@ -1,16 +1,16 @@
 /*
  * Copyright 2011 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.config;
 
@@ -47,6 +47,7 @@ public class CompoundConfiguration implements Configuration {
   private static F<Configuration, TestClassIdentifier> asTestIdentifier() {
 
     return new F<Configuration, TestClassIdentifier>() {
+      @Override
       public TestClassIdentifier apply(final Configuration a) {
         return a.testClassIdentifier();
       }
@@ -57,6 +58,7 @@ public class CompoundConfiguration implements Configuration {
 
   private static F<Configuration, TestSuiteFinder> asSuiteFinders() {
     return new F<Configuration, TestSuiteFinder>() {
+      @Override
       public TestSuiteFinder apply(final Configuration a) {
         return a.testSuiteFinder();
       }
@@ -66,6 +68,7 @@ public class CompoundConfiguration implements Configuration {
 
   private static F<Configuration, TestUnitFinder> asTestUnitFinders() {
     return new F<Configuration, TestUnitFinder>() {
+      @Override
       public TestUnitFinder apply(final Configuration a) {
         return a.testUnitFinder();
       }
@@ -73,18 +76,22 @@ public class CompoundConfiguration implements Configuration {
     };
   }
 
+  @Override
   public TestUnitFinder testUnitFinder() {
     return this.testUnitFinder;
   }
 
+  @Override
   public TestSuiteFinder testSuiteFinder() {
     return this.suiteFinder;
   }
 
+  @Override
   public TestClassIdentifier testClassIdentifier() {
     return this.testIdentifier;
   }
 
+  @Override
   public Option<PitHelpError> verifyEnvironment() {
     final List<PitHelpError> verificationResults = FCollection.flatMap(
         this.configs, verify());
@@ -97,6 +104,7 @@ public class CompoundConfiguration implements Configuration {
 
   private static F<Configuration, Iterable<PitHelpError>> verify() {
     return new F<Configuration, Iterable<PitHelpError>>() {
+      @Override
       public Iterable<PitHelpError> apply(final Configuration a) {
         return a.verifyEnvironment();
       }

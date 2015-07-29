@@ -50,7 +50,7 @@ class ArgumentPropagationVisitor extends MethodVisitor {
     if (hasArgumentMatchingTheReturnType(desc)) {
       final MutationIdentifier newId = this.context.registerMutation(
           this.factory, "replaced call to " + owner + "::" + name
-              + " with argument");
+          + " with argument");
       if (this.context.shouldMutate(newId)) {
         final Type returnType = Type.getReturnType(desc);
         replaceMethodCallWithArgumentHavingSameTypeAsReturnValue(

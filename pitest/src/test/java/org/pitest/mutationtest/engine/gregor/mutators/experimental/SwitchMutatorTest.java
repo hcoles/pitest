@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,6 +44,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       switch (this.value) {
       case 0:
@@ -69,6 +70,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Character call() throws Exception {
       switch (this.value) {
       case 'a':
@@ -98,6 +100,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       switch (this.value) {
       case FIRST:
@@ -118,7 +121,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
   }
 
   private static class HasMultipleArmIntSwitchWithDefault implements
-      Callable<Integer> {
+  Callable<Integer> {
 
     private final int value;
 
@@ -126,6 +129,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       switch (this.value) {
       case 0:
@@ -160,7 +164,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
   }
 
   private static class HasMultipleArmIntSwitchWithoutDefault implements
-      Callable<Integer> {
+  Callable<Integer> {
 
     private final int value;
 
@@ -168,6 +172,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       switch (this.value) {
       case 0:
@@ -208,6 +213,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       int i = 1;
       switch (this.value) {
@@ -232,7 +238,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
   }
 
   private static class HasTwoLookupSwitchStatements implements
-      Callable<Integer> {
+  Callable<Integer> {
 
     private final int value;
 
@@ -240,6 +246,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
       this.value = value;
     }
 
+    @Override
     public Integer call() throws Exception {
       int i = 1;
       switch (this.value) {

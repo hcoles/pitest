@@ -48,11 +48,11 @@ import org.pitest.util.Log;
 public class MutationTestWorker {
 
   private static final Logger                               LOG   = Log
-                                                                      .getLogger();
+      .getLogger();
 
   // micro optimise debug logging
   private static final boolean                              DEBUG = LOG
-                                                                      .isLoggable(Level.FINE);
+      .isLoggable(Level.FINE);
 
   private final Mutater                                     mutater;
   private final ClassLoader                                 loader;
@@ -208,7 +208,7 @@ public class MutationTestWorker {
     if (listener.lastFailingTest().hasSome()) {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
           listener.status(), listener.lastFailingTest().value()
-          .getQualifiedName());
+              .getQualifiedName());
     } else {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
           listener.status());

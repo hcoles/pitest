@@ -8,10 +8,11 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 /**
  * Always selects the start status for a mutation
- * 
+ *
  */
 public class NullAnalyser implements MutationAnalyser {
 
+  @Override
   public Collection<MutationResult> analyse(
       final Collection<MutationDetails> mutationsForClasses) {
     return FCollection.map(mutationsForClasses, mutationToResult());
@@ -20,6 +21,7 @@ public class NullAnalyser implements MutationAnalyser {
   private F<MutationDetails, MutationResult> mutationToResult() {
     return new F<MutationDetails, MutationResult>() {
 
+      @Override
       public MutationResult apply(final MutationDetails a) {
         return new MutationResult(a, new MutationStatusTestPair(0,
             DetectionStatus.NOT_STARTED));

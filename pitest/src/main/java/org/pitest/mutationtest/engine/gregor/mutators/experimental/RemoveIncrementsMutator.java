@@ -25,15 +25,18 @@ public enum RemoveIncrementsMutator implements MethodMutatorFactory {
 
   REMOVE_INCREMENTS_MUTATOR;
 
+  @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new RemoveIncrementsMethodVisitor(this, context, methodVisitor);
   }
 
+  @Override
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }
 
+  @Override
   public String getName() {
     return name();
   }

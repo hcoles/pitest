@@ -351,6 +351,7 @@ public class PitMojo extends AbstractMojo {
     this.plugins = plugins;
   }
 
+  @Override
   public final void execute() throws MojoExecutionException,
   MojoFailureException {
 

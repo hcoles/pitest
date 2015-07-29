@@ -8,7 +8,7 @@ import org.pitest.mutationtest.MutationResultListener;
 public class SpinnerListener implements MutationResultListener {
 
   private static final String[] SPINNER_CHARS = new String[] { "\u0008/",
-      "\u0008-", "\u0008\\", "\u0008|"       };
+    "\u0008-", "\u0008\\", "\u0008|"       };
 
   private final PrintStream     out;
 
@@ -18,15 +18,18 @@ public class SpinnerListener implements MutationResultListener {
     this.out = out;
   }
 
+  @Override
   public void runStart() {
 
   }
 
+  @Override
   public void handleMutationResult(final ClassMutationResults metaData) {
     this.out.printf("%s", SPINNER_CHARS[this.position % SPINNER_CHARS.length]);
     this.position++;
   }
 
+  @Override
   public void runEnd() {
 
   }

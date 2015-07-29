@@ -39,8 +39,8 @@ public class CoverageClassVisitorTest {
     this.testee.registerProbes(6);
     this.testee.visitEnd();
 
-    CodeCoverageStore.visitProbes(this.classId, 0,
-        new boolean[] { false, false, true, false, false, false, false });
+    CodeCoverageStore.visitProbes(this.classId, 0, new boolean[] { false,
+        false, true, false, false, false, false });
 
     assertEquals(Arrays.asList(CodeCoverageStore.encode(this.classId, 2)),
         CodeCoverageStore.getHits());

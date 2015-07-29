@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator
 class MutatingClassVisitor extends ClassVisitor {
 
   private final F<MethodInfo, Boolean>    filter;
-  private final ClassContext                   context;
+  private final ClassContext              context;
   private final Set<MethodMutatorFactory> methodMutators = new HashSet<MethodMutatorFactory>();
   private final PremutationClassInfo      classInfo;
 
@@ -64,20 +64,21 @@ class MutatingClassVisitor extends ClassVisitor {
   public MethodVisitor visitMethod(final int access, final String methodName,
       final String methodDescriptor, final String signature,
       final String[] exceptions) {
-       
-    MethodMutationContext methodContext = new MethodMutationContext(context, Location.location(
-        ClassName.fromString(context.getClassInfo().getName()),
-        MethodName.fromString(methodName), methodDescriptor));
-    
+
+    MethodMutationContext methodContext = new MethodMutationContext(
+        this.context, Location.location(
+            ClassName.fromString(this.context.getClassInfo().getName()),
+            MethodName.fromString(methodName), methodDescriptor));
+
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
         methodDescriptor, signature, exceptions);
 
     final MethodInfo info = new MethodInfo()
-        .withOwner(this.context.getClassInfo()).withAccess(access)
-        .withMethodName(methodName).withMethodDescriptor(methodDescriptor);
+    .withOwner(this.context.getClassInfo()).withAccess(access)
+    .withMethodName(methodName).withMethodDescriptor(methodDescriptor);
 
     if (this.filter.apply(info)) {
-      return  this.visitMethodForMutation(methodContext, info, methodVisitor);
+      return this.visitMethodForMutation(methodContext, info, methodVisitor);
     } else {
       return methodVisitor;
     }
@@ -97,23 +98,30 @@ class MutatingClassVisitor extends ClassVisitor {
         methodContext, wrapWithFilters(methodContext, next)), methodContext);
   }
 
-  private MethodVisitor wrapWithDecorators(MethodMutationContext methodContext, final MethodVisitor mv) {
-    return wrapWithBlockTracker(methodContext, wrapWithLineTracker(methodContext,mv));
+  private MethodVisitor wrapWithDecorators(MethodMutationContext methodContext,
+      final MethodVisitor mv) {
+    return wrapWithBlockTracker(methodContext,
+        wrapWithLineTracker(methodContext, mv));
   }
 
-  private MethodVisitor wrapWithBlockTracker(MethodMutationContext methodContext, final MethodVisitor mv) {
+  private MethodVisitor wrapWithBlockTracker(
+      MethodMutationContext methodContext, final MethodVisitor mv) {
     return new BlockTrackingMethodDecorator(methodContext, mv);
   }
 
-  private MethodVisitor wrapWithLineTracker(MethodMutationContext methodContext, final MethodVisitor mv) {
+  private MethodVisitor wrapWithLineTracker(
+      MethodMutationContext methodContext, final MethodVisitor mv) {
     return new LineTrackingMethodVisitor(methodContext, mv);
   }
 
-  private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,final MethodVisitor wrappedMethodVisitor) {
-    return wrapWithLineFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
+  private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,
+      final MethodVisitor wrappedMethodVisitor) {
+    return wrapWithLineFilter(methodContext,
+        wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
   }
 
-  private MethodVisitor wrapWithAssertFilter(MethodMutationContext methodContext,
+  private MethodVisitor wrapWithAssertFilter(
+      MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
     return new AvoidAssertsMethodAdapter(methodContext, wrappedMethodVisitor);
   }

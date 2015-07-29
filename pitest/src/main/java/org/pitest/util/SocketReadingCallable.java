@@ -23,6 +23,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
     this.receive = receive;
   }
 
+  @Override
   public ExitCode call() throws Exception {
     final Socket clientSocket = this.socket.accept();
     ExitCode exitCode = ExitCode.UNKNOWN_ERROR;

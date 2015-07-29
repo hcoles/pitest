@@ -9,5 +9,5 @@ public class TestInfoTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(TestInfo.class).verify();
-  } 
+  }
 }

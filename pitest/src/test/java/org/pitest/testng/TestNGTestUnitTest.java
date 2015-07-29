@@ -1,16 +1,16 @@
 /*
  * Copyright 2011 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.testng;
 
@@ -28,9 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 
@@ -63,14 +63,13 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
 
-
   @Test
   public void shouldReportTestClassStartWhenExecutingInForeignClassLoader() {
     this.testee = new TestNGTestUnit(neverMatch(), Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
-  
+
   @Test
   public void shouldReportTestMethodStart() {
     this.testee = new TestNGTestUnit(Passes.class, this.config);
@@ -78,10 +77,10 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifyStart(
         new Description("passes", Passes.class));
   }
-  
+
   @Test
   public void shouldReportTestMethodStartWhenExecutingInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(),Passes.class, this.config);
+    this.testee = new TestNGTestUnit(neverMatch(), Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyStart(
         new Description("passes", Passes.class));
@@ -92,17 +91,16 @@ public class TestNGTestUnitTest {
     this.testee = new TestNGTestUnit(Passes.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1))
-        .notifyEnd(new Description("passes", Passes.class));
-  }
-  
-  @Test
-  public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfullyInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(),Passes.class, this.config);
-    this.testee.execute(this.loader, this.rc);
-    verify(this.rc, times(1))
-        .notifyEnd(new Description("passes", Passes.class));
+    .notifyEnd(new Description("passes", Passes.class));
   }
 
+  @Test
+  public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfullyInForeignClassLoader() {
+    this.testee = new TestNGTestUnit(neverMatch(), Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    verify(this.rc, times(1))
+    .notifyEnd(new Description("passes", Passes.class));
+  }
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFails() {
@@ -112,7 +110,7 @@ public class TestNGTestUnitTest {
         eq(new Description("fails", Fails.class)),
         any(AssertionFailedError.class));
   }
-  
+
   @Test
   public void shouldSkipPassingTestsAfterAFailure() {
     this.testee = new TestNGTestUnit(Fails.class, this.config);
@@ -120,11 +118,10 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("passes", Fails.class)));
   }
-  
-  
+
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFailsInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(),Fails.class, this.config);
+    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifyEnd(
         eq(new Description("fails", Fails.class)),
@@ -133,7 +130,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldSkipPassingTestsAfterAFailureInForeignClassLoader() {
-    this.testee = new TestNGTestUnit(neverMatch(),Fails.class, this.config);
+    this.testee = new TestNGTestUnit(neverMatch(), Fails.class, this.config);
     this.testee.execute(this.loader, this.rc);
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("passes", Fails.class)));
@@ -162,7 +159,7 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifyEnd(
         new Description("includeAndExcludeGroup", HasGroups.class));
   }
-  
+
   @Test
   public void shouldReportTestSkipped() {
     this.testee = new TestNGTestUnit(Skips.class, this.config);
@@ -178,9 +175,10 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("skip", Skips.class)));
   }
-  
+
   private ClassLoaderDetectionStrategy neverMatch() {
     return new ClassLoaderDetectionStrategy() {
+      @Override
       public boolean fromDifferentLoader(final Class<?> clazz,
           final ClassLoader loader) {
         return true;

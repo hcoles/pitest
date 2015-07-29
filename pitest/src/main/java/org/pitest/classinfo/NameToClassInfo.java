@@ -11,6 +11,7 @@ public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
     this.repository = repository;
   }
 
+  @Override
   public Option<ClassInfo> apply(final ClassName a) {
     return this.repository.fetchClass(a);
   }

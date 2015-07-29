@@ -32,6 +32,7 @@ public class ClassInfo {
 
   private static F<String, Boolean> isAGroovyClass() {
     return new F<String, Boolean>() {
+      @Override
       public Boolean apply(final String a) {
         return a.startsWith("groovy/lang/")
             || a.startsWith("org/codehaus/groovy/runtime");

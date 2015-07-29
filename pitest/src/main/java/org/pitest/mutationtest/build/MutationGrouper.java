@@ -6,10 +6,9 @@ import java.util.List;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public interface MutationGrouper  {
+public interface MutationGrouper {
 
-  List<List<MutationDetails>> groupMutations(
-      Collection<ClassName> codeClasses,
+  List<List<MutationDetails>> groupMutations(Collection<ClassName> codeClasses,
       final Collection<MutationDetails> mutations);
 
 }

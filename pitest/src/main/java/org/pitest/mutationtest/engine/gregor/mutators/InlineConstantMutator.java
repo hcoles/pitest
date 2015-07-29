@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +27,8 @@ import org.pitest.util.PitError;
  * The <code>InlineConstantMutator</code> is a mutator that mutates integer
  * inline constants (including short, byte, long) by adding 1 and that mutates
  * float inline constants (including double) by replacing them with 1.
- * 
- * 
+ *
+ *
  * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
 public class InlineConstantMutator implements MethodMutatorFactory {
@@ -193,7 +193,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     /**
      * Translates the opcode to a number (inline constant) if possible or
      * returns <code>null</code> if the opcode cannot be translated.
-     * 
+     *
      * @param opcode
      *          that might represent an inline constant.
      * @return the value of the inline constant represented by opcode or
@@ -237,7 +237,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
      */
     @Override
@@ -255,7 +255,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.objectweb.asm.MethodAdapter#visitIntInsn(int, int)
      */
     @Override
@@ -269,7 +269,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.objectweb.asm.MethodAdapter#visitLdcInsn(java.lang.Object)
      */
     @Override
@@ -284,11 +284,13 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
   }
 
+  @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new InlineConstantVisitor(context, methodVisitor);
   }
 
+  @Override
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }
@@ -298,6 +300,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     return "INLINE_CONSTANT_MUTATOR";
   }
 
+  @Override
   public String getName() {
     return toString();
   }

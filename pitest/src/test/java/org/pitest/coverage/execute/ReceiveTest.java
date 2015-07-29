@@ -40,6 +40,7 @@ public class ReceiveTest {
 
   private SideEffect1<CoverageResult> stubHandler() {
     return new SideEffect1<CoverageResult>() {
+      @Override
       public void apply(final CoverageResult a) {
         ReceiveTest.this.result = a;
       }
@@ -64,13 +65,12 @@ public class ReceiveTest {
     assertEquals(true, this.result.isGreenTest());
   }
 
-
   private void recordTestCoverage(final int executionTime, final int classId,
       final int probeNumber, final boolean testPassed) {
     when(this.is.readInt()).thenReturn(classId, executionTime);
     when(this.is.readString()).thenReturn("foo");
     this.testee.apply(Id.CLAZZ, this.is);
-    
+
     when(this.is.read(Description.class)).thenReturn(this.description);
     when(this.is.readInt()).thenReturn(1);
     when(this.is.readLong()).thenReturn(1l,

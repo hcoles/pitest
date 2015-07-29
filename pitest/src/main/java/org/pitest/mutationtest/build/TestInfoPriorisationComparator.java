@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
 
 public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
-    Serializable {
+Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -34,6 +34,7 @@ public class TestInfoPriorisationComparator implements Comparator<TestInfo>,
     this.distanceTimeWeighting = distanceTimeWeighting;
   }
 
+  @Override
   public int compare(final TestInfo arg0, final TestInfo arg1) {
     final int t0 = arg0.getTime();
     final int t1 = arg1.getTime();

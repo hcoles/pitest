@@ -10,11 +10,12 @@ public class FrameOptions {
    * Java 7 and above require frame info for class version above 7. The ASM
    * compute frame options does not support the JSR opcode used by some pre 7
    * compilers when generating java 5 bytecode.
-   * 
+   *
    * We dodge this issue by only computing frames for classes with a version
    * above 6.
-   * 
-   * @param bs a class
+   *
+   * @param bs
+   *          a class
    * @return appropriate flags
    */
   public static int pickFlags(byte[] bs) {

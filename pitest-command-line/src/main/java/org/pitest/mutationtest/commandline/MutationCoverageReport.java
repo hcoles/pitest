@@ -14,6 +14,8 @@
  */
 package org.pitest.mutationtest.commandline;
 
+import java.util.HashMap;
+
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -22,8 +24,6 @@ import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
-
-import java.util.HashMap;
 
 /**
  * Entry point for command line interface
@@ -44,8 +44,10 @@ public class MutationCoverageReport {
 
       final CombinedStatistics stats = runReport(data, plugins);
 
-      throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(), data.getCoverageThreshold());
-      throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(), data.getMutationThreshold());
+      throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(),
+          data.getCoverageThreshold());
+      throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
+          data.getMutationThreshold());
     }
 
   }
@@ -53,9 +55,8 @@ public class MutationCoverageReport {
   private static void throwErrorIfScoreBelowCoverageThreshold(
       CoverageSummary stats, int threshold) {
     if ((threshold != 0) && (stats.getCoverage() < threshold)) {
-      throw new RuntimeException("Line coverage of "
-          + stats.getCoverage() + " is below threshold of "
-          + threshold);
+      throw new RuntimeException("Line coverage of " + stats.getCoverage()
+          + " is below threshold of " + threshold);
     }
   }
 
@@ -68,10 +69,12 @@ public class MutationCoverageReport {
     }
   }
 
-  private static CombinedStatistics runReport(ReportOptions data, PluginServices plugins) {
+  private static CombinedStatistics runReport(ReportOptions data,
+      PluginServices plugins) {
 
     EntryPoint e = new EntryPoint();
-    AnalysisResult result = e.execute(null, data, plugins,new HashMap<String, String>());
+    AnalysisResult result = e.execute(null, data, plugins,
+        new HashMap<String, String>());
     if (result.getError().hasSome()) {
       throw Unchecked.translateCheckedException(result.getError().value());
     }

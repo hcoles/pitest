@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ public class DefaultReporter implements Reporter {
     this.w = new SafeDataOutputStream(w);
   }
 
+  @Override
   public synchronized void describe(final MutationIdentifier i)
       throws IOException {
     this.w.writeByte(Id.DESCRIBE);
@@ -38,6 +39,7 @@ public class DefaultReporter implements Reporter {
     this.w.flush();
   }
 
+  @Override
   public synchronized void report(final MutationIdentifier i,
       final MutationStatusTestPair mutationDetected) throws IOException {
     this.w.writeByte(Id.REPORT);
@@ -46,6 +48,7 @@ public class DefaultReporter implements Reporter {
     this.w.flush();
   }
 
+  @Override
   public synchronized void done(final ExitCode exitCode) {
     this.w.writeByte(Id.DONE);
     this.w.writeInt(exitCode.getCode());

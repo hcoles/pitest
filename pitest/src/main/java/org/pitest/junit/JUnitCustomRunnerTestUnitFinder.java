@@ -44,6 +44,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   @SuppressWarnings("rawtypes")
   private static final Option<Class> CLASS_RULE = findClassRuleClass();
 
+  @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
@@ -71,7 +72,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean isAJUnitThreeErrorOrWarning(final Runner runner) {
     return !runner.getDescription().getChildren().isEmpty()
         && runner.getDescription().getChildren().get(0).getClassName()
-        .startsWith("junit.framework.TestSuite");
+            .startsWith("junit.framework.TestSuite");
   }
 
   private boolean shouldTreatAsOneUnit(final Class<?> clazz, final Runner runner) {
@@ -127,6 +128,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private F<Description, TestUnit> descriptionToTestUnit() {
     return new F<Description, TestUnit>() {
 
+      @Override
       public TestUnit apply(final Description a) {
         return descriptionToTest(a);
       }
@@ -137,6 +139,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private F<Description, Boolean> isTest() {
     return new F<Description, Boolean>() {
 
+      @Override
       public Boolean apply(final Description a) {
         return a.isTest();
       }

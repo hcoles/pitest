@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,7 @@ public class MetaDataExtractor implements MutationResultListener {
 
   public int getNumberOfTestsRun() {
     final F2<Integer, MutationResult, Integer> sum = new F2<Integer, MutationResult, Integer>() {
+      @Override
       public Integer apply(final Integer a, final MutationResult b) {
         return a + b.getNumberOfTestsRun();
       }
@@ -50,14 +51,17 @@ public class MetaDataExtractor implements MutationResultListener {
     return FCollection.fold(sum, 0, this.data);
   }
 
+  @Override
   public void runStart() {
 
   }
 
+  @Override
   public void handleMutationResult(final ClassMutationResults metaData) {
     this.data.addAll(metaData.getMutations());
   }
 
+  @Override
   public void runEnd() {
     // TODO Auto-generated method stub
 

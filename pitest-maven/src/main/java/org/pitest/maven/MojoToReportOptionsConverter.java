@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ public class MojoToReportOptionsConverter {
     try {
       classPath.addAll(this.mojo.getProject().getTestClasspathElements());
     } catch (final DependencyResolutionRequiredException e1) {
-      log.info(e1);
+      this.log.info(e1);
     }
 
     addOwnDependenciesToClassPath(classPath);
@@ -84,7 +84,7 @@ public class MojoToReportOptionsConverter {
     final ReportOptions data = new ReportOptions();
 
     if (this.mojo.getProject().getBuild() != null) {
-      log.info("Mutating from "
+      this.log.info("Mutating from "
           + this.mojo.getProject().getBuild().getOutputDirectory());
       data.setCodePaths(Collections.singleton(this.mojo.getProject().getBuild()
           .getOutputDirectory()));
@@ -147,13 +147,13 @@ public class MojoToReportOptionsConverter {
     if (!this.mojo.isParseSurefireConfig()) {
       return option;
     } else if (plugins.isEmpty()) {
-      log.warn("Could not find surefire configuration in pom");
+      this.log.warn("Could not find surefire configuration in pom");
       return option;
     }
 
     Plugin surefire = plugins.iterator().next();
     if (surefire != null) {
-      return surefireConverter.update(option,
+      return this.surefireConverter.update(option,
           (Xpp3Dom) surefire.getConfiguration());
     } else {
       return option;
@@ -163,12 +163,13 @@ public class MojoToReportOptionsConverter {
 
   private Collection<Plugin> lookupPlugin(String key) {
     @SuppressWarnings("unchecked")
-    List<Plugin> plugins = mojo.getProject().getBuildPlugins();
+    List<Plugin> plugins = this.mojo.getProject().getBuildPlugins();
     return FCollection.filter(plugins, hasKey(key));
   }
 
   private static F<Plugin, Boolean> hasKey(final String key) {
     return new F<Plugin, Boolean>() {
+      @Override
       public Boolean apply(Plugin a) {
         return a.getKey().equals(key);
       }
@@ -187,7 +188,8 @@ public class MojoToReportOptionsConverter {
 
   private void addOwnDependenciesToClassPath(final List<String> classPath) {
     for (final Artifact dependency : filteredDependencies()) {
-      log.info("Adding " + dependency.getGroupId() + ":" + dependency.getArtifactId() + " to SUT classpath");
+      this.log.info("Adding " + dependency.getGroupId() + ":"
+          + dependency.getArtifactId() + " to SUT classpath");
       classPath.add(dependency.getFile().getAbsolutePath());
     }
   }
@@ -203,7 +205,7 @@ public class MojoToReportOptionsConverter {
 
   private Collection<Artifact> filteredDependencies() {
     return FCollection.filter(this.mojo.getPluginArtifactMap().values(),
-        dependencyFilter);
+        this.dependencyFilter);
   }
 
   private Collection<String> determineMutators() {
@@ -235,6 +237,7 @@ public class MojoToReportOptionsConverter {
 
   private F<String, File> stringToFile() {
     return new F<String, File>() {
+      @Override
       public File apply(final String a) {
         return new File(a);
       }
@@ -253,14 +256,13 @@ public class MojoToReportOptionsConverter {
   private boolean hasValue(final Collection<?> collection) {
     return (collection != null) && !collection.isEmpty();
   }
-  
+
   private Properties createPluginProperties() {
     Properties p = new Properties();
-    if (mojo.getPluginProperties() != null) {
-    p.putAll(mojo.getPluginProperties());
+    if (this.mojo.getPluginProperties() != null) {
+      p.putAll(this.mojo.getPluginProperties());
     }
     return p;
   }
-  
 
 }

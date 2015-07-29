@@ -57,7 +57,7 @@ public class Log {
   static class PlainFormatter extends Formatter {
 
     private static final String LINE_SEPARATOR = System
-                                                   .getProperty("line.separator");
+        .getProperty("line.separator");
     private final DateFormat    dateFormat     = DateFormat.getTimeInstance();
 
     @Override

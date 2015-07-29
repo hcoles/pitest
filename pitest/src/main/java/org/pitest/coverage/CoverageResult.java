@@ -6,10 +6,10 @@ import org.pitest.testapi.Description;
 
 public class CoverageResult {
 
-  private final Description                 testUnitDescription;
-  private final int                         executionTime;
+  private final Description               testUnitDescription;
+  private final int                       executionTime;
   private final Collection<BlockLocation> visitedBlocks;
-  private final boolean                     greenSuite;
+  private final boolean                   greenSuite;
 
   public CoverageResult(final Description testUnitDescription,
       final int executionTime, final boolean greenSuite,
@@ -35,7 +35,7 @@ public class CoverageResult {
   public boolean isGreenTest() {
     return this.greenSuite;
   }
-  
+
   public int getNumberOfCoveredBlocks() {
     return this.visitedBlocks.size();
   }

@@ -68,7 +68,7 @@ public class DependencyFilterTest {
     when(
         this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
             .getDescription().getFirstTestClass()), any(Predicate.class)))
-        .thenReturn(Arrays.asList("foo"));
+            .thenReturn(Arrays.asList("foo"));
     when(
         this.extractor.extractCallDependenciesForPackages(
             eq(this.anotherTestUnit.getDescription().getFirstTestClass()),
@@ -87,7 +87,7 @@ public class DependencyFilterTest {
     when(
         this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
             .getDescription().getFirstTestClass()), any(Predicate.class)))
-        .thenReturn(Arrays.asList("foo"));
+            .thenReturn(Arrays.asList("foo"));
 
     this.tus = Arrays.asList(this.aTestUnit, this.aTestUnit);
 
@@ -100,10 +100,12 @@ public class DependencyFilterTest {
   private TestUnit makeTestUnit(final Description d) {
     return new TestUnit() {
 
+      @Override
       public void execute(final ClassLoader loader, final ResultCollector rc) {
 
       }
 
+      @Override
       public Description getDescription() {
         return d;
       }

@@ -25,7 +25,7 @@ public class ClassUtils {
       final BufferedInputStream stream = new BufferedInputStream(
           resource.openStream());
       final byte[] result = new byte[resource.openConnection()
-          .getContentLength()];
+                                     .getContentLength()];
 
       int i;
       int counter = 0;

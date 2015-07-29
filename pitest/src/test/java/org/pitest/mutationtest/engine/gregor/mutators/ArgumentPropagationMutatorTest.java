@@ -1,33 +1,33 @@
 /*
  * Copyright 2014 Stefan Mandel, Urs Metz
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR;
+import org.junit.Before;
+import org.junit.Test;
+import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
@@ -44,7 +44,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private static class HasStringMethodCall implements Callable<String> {
-    private String arg;
+    private final String arg;
 
     public HasStringMethodCall(String arg) {
       this.arg = arg;
@@ -54,8 +54,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return "abc" + aString;
     }
 
+    @Override
     public String call() throws Exception {
-      return delegate(arg);
+      return delegate(this.arg);
     }
   }
 
@@ -66,7 +67,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private static class HasIntMethodCall implements Callable<String> {
-    private int arg;
+    private final int arg;
 
     public HasIntMethodCall(int arg) {
       this.arg = arg;
@@ -76,8 +77,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return 22 + aInt;
     }
 
+    @Override
     public String call() throws Exception {
-      return String.valueOf(delegate(arg));
+      return String.valueOf(delegate(this.arg));
     }
   }
 
@@ -88,7 +90,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private static class HasLongMethodCall implements Callable<String> {
-    private long arg;
+    private final long arg;
 
     public HasLongMethodCall(long arg) {
       this.arg = arg;
@@ -98,8 +100,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return 22L + argument;
     }
 
+    @Override
     public String call() throws Exception {
-      return String.valueOf(delegate(arg));
+      return String.valueOf(delegate(this.arg));
     }
   }
 
@@ -109,6 +112,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   class ReturnsDifferentType implements Callable<String> {
+    @Override
     public String call() {
       return addThreeAndConvertToString(3);
     }
@@ -126,9 +130,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private class OnlyFirstArgumentHasMatchingType implements Callable<String> {
-    private String aString;
-    private Object anObject;
-    private long   aLong;
+    private final String aString;
+    private final Object anObject;
+    private final long   aLong;
 
     public OnlyFirstArgumentHasMatchingType(String aString, Object anObject,
         long aLong) {
@@ -137,8 +141,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       this.aLong = aLong;
     }
 
+    @Override
     public String call() throws Exception {
-      return aMethod(aString, anObject, aLong);
+      return aMethod(this.aString, this.anObject, this.aLong);
     }
 
     private String aMethod(String aString, Object anObject, long aLong) {
@@ -154,17 +159,18 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private class HasSeveralArgumentWithMatchingType implements Callable<String> {
-    private int int1;
-    private int int2;
+    private final int int1;
+    private final int int2;
 
     public HasSeveralArgumentWithMatchingType(int i, int j) {
       this.int1 = i;
       this.int2 = j;
     }
 
+    @Override
     public String call() throws Exception {
       String anInt = "3";
-      return String.valueOf(aMethod(int1, anInt, int2));
+      return String.valueOf(aMethod(this.int1, anInt, this.int2));
     }
 
     private int aMethod(int int1, String aString, int int2) {
@@ -180,11 +186,13 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private class ReturnValueNotUsed implements Callable<Boolean> {
-    private List<String> aList = asList("xyz");
+    private final List<String> aList = asList("xyz");
 
+    @Override
     public Boolean call() throws Exception {
-      aList.set(0, "will not be present in list in mutated version");
-      return aList.contains("will not be present in list in mutated version");
+      this.aList.set(0, "will not be present in list in mutated version");
+      return this.aList
+          .contains("will not be present in list in mutated version");
     }
   }
 
@@ -203,6 +211,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return new String[] {};
     }
 
+    @Override
     public String[] call() throws Exception {
       String[] s = { "1", "2" };
       return delegate(s);
@@ -216,12 +225,13 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   private static class HasArrayMethodOfDifferentType implements
-      Callable<String[]> {
+  Callable<String[]> {
 
     public String[] delegate(final Integer[] ss) {
       return new String[] {};
     }
 
+    @Override
     public String[] call() throws Exception {
       Integer[] s = { 1, 2 };
       return delegate(s);
@@ -243,6 +253,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return Arrays.asList(new String[] { "foo", "bar" });
     }
 
+    @Override
     public List<String> call() throws Exception {
       List<Integer> s = Collections.emptyList();
       return delegate(s);
@@ -252,18 +263,16 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   @Test
   public void shouldReplaceInstanceMethodCallThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
-    final Mutant mutant = getFirstMutant(
-        CallsOtherObjectWithResultOfInstanceMethod.class);
+    final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfInstanceMethod.class);
     MyListener listener = new MyListener();
-    assertMutantCallableReturns(
-        new CallsOtherObjectWithResultOfInstanceMethod("lowercase", listener),
-        mutant, "lowercase");
+    assertMutantCallableReturns(new CallsOtherObjectWithResultOfInstanceMethod(
+        "lowercase", listener), mutant, "lowercase");
   }
 
-  private class CallsOtherObjectWithResultOfInstanceMethod
-      implements Callable<String> {
-    private String     arg;
-    private MyListener listener;
+  private class CallsOtherObjectWithResultOfInstanceMethod implements
+      Callable<String> {
+    private final String     arg;
+    private final MyListener listener;
 
     public CallsOtherObjectWithResultOfInstanceMethod(String arg,
         MyListener listener) {
@@ -275,27 +284,26 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return aString.toUpperCase();
     }
 
+    @Override
     public String call() throws Exception {
-      listener.call(delegate(arg));
-      return listener.getCalledWith();
+      this.listener.call(delegate(this.arg));
+      return this.listener.getCalledWith();
     }
   }
 
   @Test
   public void shouldReplaceStaticMethodCallThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
-    final Mutant mutant = getFirstMutant(
-        CallsOtherObjectWithResultOfStaticMethod.class);
+    final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfStaticMethod.class);
     MyListener listener = new MyListener();
-    assertMutantCallableReturns(
-        new CallsOtherObjectWithResultOfStaticMethod("lowercase", listener),
-        mutant, "lowercase");
+    assertMutantCallableReturns(new CallsOtherObjectWithResultOfStaticMethod(
+        "lowercase", listener), mutant, "lowercase");
   }
 
-  private static class CallsOtherObjectWithResultOfStaticMethod
-      implements Callable<String> {
-    private String     arg;
-    private MyListener listener;
+  private static class CallsOtherObjectWithResultOfStaticMethod implements
+      Callable<String> {
+    private final String     arg;
+    private final MyListener listener;
 
     public CallsOtherObjectWithResultOfStaticMethod(String arg,
         MyListener listener) {
@@ -307,45 +315,44 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
       return aString.toUpperCase();
     }
 
+    @Override
     public String call() throws Exception {
-      listener.call(delegate(3, arg, 5L));
-      return listener.getCalledWith();
+      this.listener.call(delegate(3, this.arg, 5L));
+      return this.listener.getCalledWith();
     }
   }
 
   @Test
   public void shouldReplaceInstanceMethodCallWithSeveralArgumentsThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
-    final Mutant mutant = getFirstMutant(
-        CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments.class);
+    final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments.class);
     MyListener listener = new MyListener();
     assertMutantCallableReturns(
         new CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments(
-            "lowercase", listener),
-        mutant, "lowercase");
+            "lowercase", listener), mutant, "lowercase");
 
   }
 
   private static class CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments
-      implements Callable<String> {
-    private String     arg;
-    private MyListener listener;
+  implements Callable<String> {
+    private final String     arg;
+    private final MyListener listener;
 
     public CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments(
-        String arg,
-        MyListener listener) {
+        String arg, MyListener listener) {
       this.arg = arg;
       this.listener = listener;
     }
 
-    private String delegate(int i, double aDouble, Object object, String aString,
-        long l) {
+    private String delegate(int i, double aDouble, Object object,
+        String aString, long l) {
       return aString.toUpperCase();
     }
 
+    @Override
     public String call() throws Exception {
-      listener.call(delegate(3, 4.2D, new Object(), arg, 5L));
-      return listener.getCalledWith();
+      this.listener.call(delegate(3, 4.2D, new Object(), this.arg, 5L));
+      return this.listener.getCalledWith();
     }
   }
 
@@ -353,11 +360,11 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
     private String calledWith = "not called";
 
     public void call(String text) {
-      calledWith = text;
+      this.calledWith = text;
     }
 
     public String getCalledWith() {
-      return calledWith;
+      return this.calledWith;
     }
   }
 }

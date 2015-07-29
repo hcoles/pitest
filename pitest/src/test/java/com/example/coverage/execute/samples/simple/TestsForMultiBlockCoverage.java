@@ -11,14 +11,14 @@ public class TestsForMultiBlockCoverage {
     MultiBlockCoverageTestee.blocks1(1);
   }
 
-//  @Test
-//  public void test2() {
-//    try {
-//    MultiBlockCoverageTestee.blocks2(1);
-//    } catch(UnsupportedOperationException e) {
-//      
-//    }
-//  }
+  // @Test
+  // public void test2() {
+  // try {
+  // MultiBlockCoverageTestee.blocks2(1);
+  // } catch(UnsupportedOperationException e) {
+  //
+  // }
+  // }
 
   @Test
   public void test3() {

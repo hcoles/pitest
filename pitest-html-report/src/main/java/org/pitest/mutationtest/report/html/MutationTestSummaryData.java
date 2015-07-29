@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -107,6 +107,7 @@ public class MutationTestSummaryData {
   private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
     return new F2<Integer, ClassInfo, Integer>() {
 
+      @Override
       public Integer apply(final Integer a, final ClassInfo b) {
         return a + b.getNumberOfCodeLines();
       }
@@ -131,6 +132,7 @@ public class MutationTestSummaryData {
   private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
     return new F<MutationResult, Iterable<TestInfo>>() {
 
+      @Override
       public Iterable<TestInfo> apply(final MutationResult a) {
         return a.getDetails().getTestsInOrder();
       }

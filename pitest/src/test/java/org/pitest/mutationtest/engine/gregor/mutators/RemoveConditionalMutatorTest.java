@@ -14,10 +14,14 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_IF_MUTATOR", new RemoveConditionalMutator(Choice.EQUAL, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE_MUTATOR", new RemoveConditionalMutator(Choice.EQUAL, false).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_IF_MUTATOR", new RemoveConditionalMutator(Choice.ORDER, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE_MUTATOR", new RemoveConditionalMutator(Choice.ORDER, false).getName());
+    assertEquals("REMOVE_CONDITIONALS_EQUAL_IF_MUTATOR",
+        new RemoveConditionalMutator(Choice.EQUAL, true).getName());
+    assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE_MUTATOR",
+        new RemoveConditionalMutator(Choice.EQUAL, false).getName());
+    assertEquals("REMOVE_CONDITIONALS_ORDER_IF_MUTATOR",
+        new RemoveConditionalMutator(Choice.ORDER, true).getName());
+    assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE_MUTATOR",
+        new RemoveConditionalMutator(Choice.ORDER, false).getName());
   }
 
   private static int getZeroButPreventInlining() {
@@ -31,6 +35,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i != 0) {
         return "was not zero";
@@ -48,21 +53,23 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
     assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
   }
-  
+
   @Test
   public void shouldDescribeReplacementOfEqualityChecksWithTrue() {
     createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
     final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    assertThat(mutant.getDetails().getDescription()).contains("equality check with true");
+    assertThat(mutant.getDetails().getDescription()).contains(
+        "equality check with true");
   }
 
   @Test
   public void shouldDescribeReplacementOfEqualityChecksWithFalse() {
     createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
     final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    assertThat(mutant.getDetails().getDescription()).contains("equality check with false");
+    assertThat(mutant.getDetails().getDescription()).contains(
+        "equality check with false");
   }
-  
+
   @Test
   public void shouldReplaceIFEQ_EQUAL_F() throws Exception {
     createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
@@ -71,7 +78,6 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
     assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
   }
-  
 
   @Test
   public void shouldNotReplaceIFEQ_ORDER_T() throws Exception {
@@ -92,6 +98,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i == 0) {
         return "was zero";
@@ -138,6 +145,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i != null) {
         return "was not null";
@@ -184,6 +192,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i == null) {
         return "was null";
@@ -230,6 +239,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i == j) {
@@ -277,6 +287,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i != j) {
@@ -317,13 +328,14 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertNoMutants(HasIF_ICMPEQ.class);
   }
 
- static class HasIF_ACMPEQ implements Callable<String> {
+  static class HasIF_ACMPEQ implements Callable<String> {
     private final Object i;
 
     HasIF_ACMPEQ(final Object i) {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i != this) {
         return "was not zero";
@@ -370,6 +382,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i == this) {
         return "was not zero";
@@ -416,6 +429,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i > 0) {
         return "was > zero";
@@ -459,17 +473,18 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
   public void shouldDescribeReplacementOfOrderCheckWithTrue() throws Exception {
     createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
     final Mutant mutant = getFirstMutant(HasIFLE.class);
-    assertThat(mutant.getDetails().getDescription()).contains(" comparison check with true");
+    assertThat(mutant.getDetails().getDescription()).contains(
+        " comparison check with true");
   }
-  
+
   @Test
   public void shouldDescribeReplacementOfOrderCheckWithFalse() throws Exception {
     createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
     final Mutant mutant = getFirstMutant(HasIFLE.class);
-    assertThat(mutant.getDetails().getDescription()).contains(" comparison check with false");
+    assertThat(mutant.getDetails().getDescription()).contains(
+        " comparison check with false");
   }
 
-  
   static class HasIFGE implements Callable<String> {
     private final int i;
 
@@ -477,6 +492,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i < 0) {
         return "was < zero";
@@ -523,6 +539,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i <= 0) {
         return "was <= zero";
@@ -569,6 +586,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       if (this.i >= 0) {
         return "was >= zero";
@@ -608,7 +626,6 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIFLT(0), mutant, expected);
   }
 
-
   static class HasIF_ICMPLE implements Callable<String> {
     private final int i;
 
@@ -616,6 +633,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i > j) {
@@ -663,6 +681,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i < j) {
@@ -703,7 +722,6 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasIF_ICMPGE(0), mutant, expected);
   }
 
-
   static class HasIF_ICMPGT implements Callable<String> {
     private final int i;
 
@@ -711,6 +729,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i <= j) {
@@ -758,6 +777,7 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
       this.i = i;
     }
 
+    @Override
     public String call() {
       final int j = getZeroButPreventInlining();
       if (this.i >= j) {

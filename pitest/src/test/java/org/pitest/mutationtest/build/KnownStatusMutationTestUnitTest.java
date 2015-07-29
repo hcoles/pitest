@@ -20,12 +20,12 @@ public class KnownStatusMutationTestUnitTest {
 
   private KnownStatusMutationTestUnit testee;
 
-
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
 
   }
+
   @Test
   public void shouldCreateMutationMetaDataForSuppliedResults() throws Exception {
     final MutationResult mr = new MutationResult(

@@ -111,6 +111,7 @@ public class CoverageSlave {
   private static Predicate<String> convertToJVMClassFilter(
       final Predicate<String> child) {
     return new Predicate<String>() {
+      @Override
       public Boolean apply(final String a) {
         return child.apply(a.replace("/", "."));
       }
@@ -120,7 +121,7 @@ public class CoverageSlave {
 
   private static List<TestUnit> getTestsFromParent(
       final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
-          throws IOException {
+      throws IOException {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 
@@ -129,7 +130,7 @@ public class CoverageSlave {
     final DependencyFilter filter = new DependencyFilter(
         new DependencyExtractor(new ClassPathByteArraySource(),
             paramsFromParent.getDependencyAnalysisMaxDistance()),
-            paramsFromParent.getFilter());
+        paramsFromParent.getFilter());
     final List<TestUnit> filteredTus = filter
         .filterTestsByDependencyAnalysis(tus);
 

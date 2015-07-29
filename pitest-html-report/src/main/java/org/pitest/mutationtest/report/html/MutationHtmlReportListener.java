@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,11 +52,11 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final CoverageDatabase          coverage;
   private final Set<String>               mutatorNames;
 
-  private final String css;
+  private final String                    css;
 
   public MutationHtmlReportListener(final CoverageDatabase coverage,
-      final ResultOutputStrategy outputStrategy, Collection<String> mutatorNames,
-      final SourceLocator... locators) {
+      final ResultOutputStrategy outputStrategy,
+      Collection<String> mutatorNames, final SourceLocator... locators) {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
     this.sourceRoots = new HashSet<SourceLocator>(Arrays.asList(locators));
@@ -66,9 +66,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private String loadCss() {
     try {
-      return FileUtil.readToString(IsolationUtils
-              .getContextClassLoader().getResourceAsStream(
-                      "templates/mutation/style.css"));
+      return FileUtil.readToString(IsolationUtils.getContextClassLoader()
+          .getResourceAsStream("templates/mutation/style.css"));
     } catch (IOException e) {
       Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
     }
@@ -87,7 +86,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_report");
-      st.setAttribute("css", css);
+      st.setAttribute("css", this.css);
 
       st.setAttribute("tests", mutationMetaData.getTests());
 
@@ -109,16 +108,17 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private PackageSummaryData collectPackageSummaries(
       final ClassMutationResults mutationMetaData) {
     final String packageName = mutationMetaData.getPackageName();
-        
+
     return this.packageSummaryData.update(packageName,
-        createSummaryData(this.coverage,mutationMetaData));
+        createSummaryData(this.coverage, mutationMetaData));
   }
-  
+
   public MutationTestSummaryData createSummaryData(
       final CoverageDatabase coverage, final ClassMutationResults data) {
     return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
-        mutatorNames, coverage.getClassInfo(Collections.singleton(data.getMutatedClass())),
-        coverage.getNumberOfCoveredLines(Collections.singleton(data.getMutatedClass())));
+        this.mutatorNames, coverage.getClassInfo(Collections.singleton(data
+            .getMutatedClass())), coverage.getNumberOfCoveredLines(Collections
+            .singleton(data.getMutatedClass())));
   }
 
   private SourceFile createAnnotatedSourceFile(
@@ -139,9 +139,9 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
       final String packageName, final MutationResultList mutationsForThisFile)
-      throws IOException {
-    final Collection<ClassInfo> classes = this.coverage
-        .getClassesForFile(sourceFile, packageName);
+          throws IOException {
+    final Collection<ClassInfo> classes = this.coverage.getClassesForFile(
+        sourceFile, packageName);
     final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
     if (reader.hasSome()) {
@@ -160,6 +160,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private F<ClassInfo, String> classInfoToJavaName() {
     return new F<ClassInfo, String>() {
 
+      @Override
       public String apply(final ClassInfo a) {
         return a.getName().asJavaName();
       }
@@ -227,15 +228,18 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   }
 
+  @Override
   public void runStart() {
     // TODO Auto-generated method stub
 
   }
 
+  @Override
   public void runEnd() {
     createIndexPages();
   }
 
+  @Override
   public void handleMutationResult(final ClassMutationResults metaData) {
     final PackageSummaryData packageData = collectPackageSummaries(metaData);
 

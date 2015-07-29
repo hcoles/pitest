@@ -9,6 +9,6 @@ public class HierarchicalClassIdTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(HierarchicalClassId.class).verify();
-  } 
+  }
 
 }

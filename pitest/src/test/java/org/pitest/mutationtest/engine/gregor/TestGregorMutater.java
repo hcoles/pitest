@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor;
 
@@ -125,6 +125,7 @@ public class TestGregorMutater extends MutatorTestBase {
   private static Matcher<Collection<?>> aNonEmptyCollection() {
     return new TypeSafeMatcher<Collection<?>>() {
 
+      @Override
       public void describeTo(final Description description) {
         description.appendText("a non empty collection");
       }
@@ -348,25 +349,27 @@ public class TestGregorMutater extends MutatorTestBase {
     }
 
     public int a(int i) {
-      if ( i > 2) {
+      if (i > 2) {
         System.out.println(i);
       }
       return 1;
     }
   }
-  
+
   @Test
   public void shouldScopeMutationIndexesByInstructionCounter() {
     createTesteeWith(Mutator.byName("RETURN_VALS"));
     final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
     assertEquals(2, actualDetails.size());
-    assertEquals(4,actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(15,actualDetails.get(1).getId().getFirstIndex()); // differs by target? 
+    assertEquals(4, actualDetails.get(0).getId().getFirstIndex());
+    assertEquals(15, actualDetails.get(1).getId().getFirstIndex()); // differs
+                                                                    // by
+                                                                    // target?
   }
 
-  
   private static F<MutationDetails, Boolean> isInFinallyBlock() {
     return new F<MutationDetails, Boolean>() {
+      @Override
       public Boolean apply(final MutationDetails a) {
         return a.isInFinallyBlock();
       }

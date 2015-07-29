@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -96,10 +96,11 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
   }
 
   private static class ClassAnnotationValueVisitor extends AnnotationVisitor {
-    private ClassInfoBuilder classInfo;
-    private ClassName annotation;
+    private final ClassInfoBuilder classInfo;
+    private final ClassName        annotation;
 
-    public ClassAnnotationValueVisitor(ClassInfoBuilder classInfo, ClassName annotation) {
+    public ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
+        ClassName annotation) {
       super(Opcodes.ASM5, null);
       this.classInfo = classInfo;
       this.annotation = annotation;
@@ -108,7 +109,8 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     @Override
     public void visit(String name, Object value) {
       if (name.equals("value")) {
-        classInfo.registerClassAnnotationValue(annotation, simplify(value));
+        this.classInfo.registerClassAnnotationValue(this.annotation,
+            simplify(value));
       }
       super.visit(name, value);
     }
@@ -127,7 +129,10 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
           @Override
           public void visitEnd() {
-            classInfo.registerClassAnnotationValue(annotation, arrayValue.toArray());
+            ClassAnnotationValueVisitor.this.classInfo
+                .registerClassAnnotationValue(
+                    ClassAnnotationValueVisitor.this.annotation,
+                    arrayValue.toArray());
           }
         };
       }
@@ -147,7 +152,8 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 class InfoMethodVisitor extends MethodVisitor {
   private final ClassInfoBuilder classInfo;
 
-  public InfoMethodVisitor(final ClassInfoBuilder classInfo, final MethodVisitor writer) {
+  public InfoMethodVisitor(final ClassInfoBuilder classInfo,
+      final MethodVisitor writer) {
     super(Opcodes.ASM5, writer);
     this.classInfo = classInfo;
   }

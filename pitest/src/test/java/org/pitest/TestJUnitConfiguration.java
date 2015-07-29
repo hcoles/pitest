@@ -52,19 +52,19 @@ import com.example.JUnitParamsTest;
 
 public class TestJUnitConfiguration {
 
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(new TestGroupConfig());
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
+                                                        new TestGroupConfig());
   private Pitest                             pitest;
   private Container                          container;
 
   @Mock
   private TestListener                       listener;
 
-
   @Before
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    
+
     this.pitest = new Pitest(Collections.singletonList(this.listener));
   }
 
@@ -82,7 +82,7 @@ public class TestJUnitConfiguration {
   }
 
   public static class JUnit3TestWithSingleStringConstructorAndJUnit4Annotations
-      extends TestCase {
+  extends TestCase {
 
     private final String name;
 
@@ -162,7 +162,6 @@ public class TestJUnitConfiguration {
     run(JUnit4TestWithExpectations.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
   }
-
 
   public static class SimpleJUnit3Test extends TestCase {
     public void testOne() {
@@ -463,12 +462,12 @@ public class TestJUnitConfiguration {
     verify(this.listener, times(2)).onTestSkipped((any(TestResult.class)));
     verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
-  
+
   public static class HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation {
-    
+
     @BeforeClass
     public static void foo() {
-      
+
     }
 
     @Test
@@ -486,13 +485,13 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotSkipEnabledTestsInAClassWithBeforeClassAnotationAndAnIgnoredTest() {
-      run(HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation.class);
-      verify(this.listener).onTestSuccess((any(TestResult.class)));
+    run(HasMethodAnnotatedAsIgnoredAndBeforeClassAnnotation.class);
+    verify(this.listener).onTestSuccess((any(TestResult.class)));
   }
 
   @Test
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
-    assertEquals(Option.<PitHelpError>none(), this.testee.verifyEnvironment());
+    assertEquals(Option.<PitHelpError> none(), this.testee.verifyEnvironment());
   }
 
   public static class HasAssumptionFailure {
@@ -579,7 +578,6 @@ public class TestJUnitConfiguration {
     verify(this.listener, times(3)).onTestSuccess(any(TestResult.class));
   }
 
-  
   public static class HasOneMethodAnnotatedAsIgnored {
 
     @Test
@@ -605,14 +603,15 @@ public class TestJUnitConfiguration {
     run(HasOneMethodAnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSuccess((any(TestResult.class)));
   }
-  
+
   private void run(final Class<?> clazz) {
     this.pitest.run(this.container, this.testee, clazz);
   }
 
   private List<TestUnit> find(Class<?> clazz) {
     FindTestUnits finder = new FindTestUnits(this.testee);
-    return finder.findTestUnitsForAllSuppliedClasses(Arrays.<Class<?>>asList(clazz));
+    return finder.findTestUnitsForAllSuppliedClasses(Arrays
+        .<Class<?>> asList(clazz));
   }
-  
+
 }

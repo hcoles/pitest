@@ -14,18 +14,17 @@
  */
 package org.pitest.maven;
 
+import java.io.File;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
-import java.io.File;
-import java.util.Map;
-
 public interface GoalStrategy {
 
-  CombinedStatistics execute(File baseDir,
-                             ReportOptions options,
-                             PluginServices plugins,
-                             Map<String,String> environmentVariables) throws MojoExecutionException;
+  CombinedStatistics execute(File baseDir, ReportOptions options,
+      PluginServices plugins, Map<String, String> environmentVariables)
+      throws MojoExecutionException;
 }

@@ -1,17 +1,17 @@
 package org.pitest.process;
 
-import org.junit.Test;
-import org.pitest.classpath.ClassPath;
-import org.pitest.functional.SideEffect1;
-import org.pitest.util.NullJavaAgent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.pitest.classpath.ClassPath;
+import org.pitest.functional.SideEffect1;
+import org.pitest.util.NullJavaAgent;
 
 public class WrappingProcessTest {
 
@@ -30,21 +30,20 @@ public class WrappingProcessTest {
 
   @Test
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
-      InterruptedException {
+  InterruptedException {
 
-    LaunchOptions launchOptions = new LaunchOptions(
-        NullJavaAgent.instance(),
-        new DefaultJavaExecutableLocator(),
-        Collections.<String>emptyList(),
+    LaunchOptions launchOptions = new LaunchOptions(NullJavaAgent.instance(),
+        new DefaultJavaExecutableLocator(), Collections.<String> emptyList(),
         new HashMap<String, String>());
 
-    ProcessArgs processArgs = ProcessArgs.withClassPath(new ClassPath().getLocalClassPath())
+    ProcessArgs processArgs = ProcessArgs
+        .withClassPath(new ClassPath().getLocalClassPath())
         .andBaseDir(new File(System.getProperty("user.dir")))
-        .andLaunchOptions(launchOptions)
-        .andStdout(nullHandler())
+        .andLaunchOptions(launchOptions).andStdout(nullHandler())
         .andStderr(nullHandler());
 
-    WrappingProcess wrappingProcess = new WrappingProcess(-1,processArgs,getClass());
+    WrappingProcess wrappingProcess = new WrappingProcess(-1, processArgs,
+        getClass());
     wrappingProcess.start();
     JavaProcess process = wrappingProcess.getProcess();
 
@@ -54,6 +53,7 @@ public class WrappingProcessTest {
 
   private SideEffect1<String> nullHandler() {
     return new SideEffect1<String>() {
+      @Override
       public void apply(final String a) {
 
       }

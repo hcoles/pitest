@@ -31,6 +31,7 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
     this.children = children;
   }
 
+  @Override
   public MutationResultListener getListener(final Properties props,
       final ListenerArguments args) {
     return new CompoundTestListener(FCollection.map(this.children,
@@ -41,6 +42,7 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
       final Properties props, final ListenerArguments args) {
     return new F<MutationResultListenerFactory, MutationResultListener>() {
 
+      @Override
       public MutationResultListener apply(final MutationResultListenerFactory a) {
         return a.getListener(props, args);
       }
@@ -48,10 +50,12 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
     };
   }
 
+  @Override
   public String name() {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   public String description() {
     throw new UnsupportedOperationException();
   }

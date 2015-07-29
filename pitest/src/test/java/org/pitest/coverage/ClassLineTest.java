@@ -9,7 +9,6 @@ public class ClassLineTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(ClassLine.class).verify();
-  } 
-
+  }
 
 }

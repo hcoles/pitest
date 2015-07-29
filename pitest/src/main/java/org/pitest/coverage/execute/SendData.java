@@ -17,6 +17,7 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
     this.testClasses = testClasses;
   }
 
+  @Override
   public void apply(final SafeDataOutputStream dos) {
     sendArguments(dos);
     sendTests(dos);

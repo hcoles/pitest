@@ -9,6 +9,6 @@ public class ClassIdentifierTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(ClassIdentifier.class).verify();
-  }  
+  }
 
 }

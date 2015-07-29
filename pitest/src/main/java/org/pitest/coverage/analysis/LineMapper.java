@@ -24,6 +24,7 @@ public class LineMapper implements LineMap {
     this.source = source;
   }
 
+  @Override
   public Map<BlockLocation, Set<Integer>> mapLines(final ClassName clazz) {
     final ControlFlowAnalyser cfa = new ControlFlowAnalyser();
 

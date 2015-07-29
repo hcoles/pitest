@@ -1,16 +1,16 @@
 /*
  * Copyright 2011 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http:www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http:www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package sun.pitest;
 
@@ -123,6 +123,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation1() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0]);
       }
@@ -135,6 +136,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation2() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1]);
       }
@@ -147,6 +149,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation3() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2]);
@@ -160,6 +163,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation4() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3]);
@@ -173,6 +177,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation5() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4]);
@@ -186,6 +191,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation6() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5]);
@@ -199,6 +205,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation7() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6]);
@@ -212,6 +219,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation8() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7]);
@@ -225,6 +233,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation9() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -239,6 +248,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation10() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -253,6 +263,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation11() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -267,6 +278,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation12() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -281,6 +293,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation13() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -295,6 +308,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation14() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -310,6 +324,7 @@ public class CodeCoverageStoreTest {
   public void shouldReportCorrectCoverageForSpecialisation15() {
     final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
 
+      @Override
       public void apply(final Integer classId, final boolean[] probes) {
         CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
             probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
@@ -377,12 +392,14 @@ public class CodeCoverageStoreTest {
   private void assertDoesNotHitLine(final int classId, final int... i) {
     final Collection<Long> actual = CodeCoverageStore.getHits();
     for (final int probe : i) {
-      assertThat(actual).doesNotContain(CodeCoverageStore.encode(classId, probe));
+      assertThat(actual).doesNotContain(
+          CodeCoverageStore.encode(classId, probe));
     }
   }
 
   private Callable<ConcurrentModificationException> makeReader() {
     final Callable<ConcurrentModificationException> read = new Callable<ConcurrentModificationException>() {
+      @Override
       public ConcurrentModificationException call() throws Exception {
         ConcurrentModificationException error = null;
         try {
@@ -414,6 +431,7 @@ public class CodeCoverageStoreTest {
   private static Runnable makeWriter(final int sleepPeriod) {
     final Runnable write = new Runnable() {
 
+      @Override
       public void run() {
         for (int i = 0; i != 1000; i++) {
           try {
@@ -429,4 +447,3 @@ public class CodeCoverageStoreTest {
   }
 
 }
-

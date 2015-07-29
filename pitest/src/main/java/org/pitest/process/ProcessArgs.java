@@ -14,16 +14,16 @@
  */
 package org.pitest.process;
 
-import org.pitest.classpath.ClassPath;
-import org.pitest.functional.SideEffect1;
+import static org.pitest.functional.prelude.Prelude.print;
+import static org.pitest.functional.prelude.Prelude.printTo;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.pitest.functional.prelude.Prelude.print;
-import static org.pitest.functional.prelude.Prelude.printTo;
+import org.pitest.classpath.ClassPath;
+import org.pitest.functional.SideEffect1;
 
 public final class ProcessArgs {
 
@@ -112,6 +112,6 @@ public final class ProcessArgs {
   }
 
   public Map<String, String> getEnvironmentVariables() {
-    return environmentVariables;
+    return this.environmentVariables;
   }
 }

@@ -1,16 +1,16 @@
 /*
  * Copyright 2011 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.testng;
 
@@ -38,13 +38,13 @@ import org.testng.xml.XmlTest;
  * tests.
  */
 public class TestNGTestUnit extends AbstractTestUnit {
-  
+
   // needs to be static as jmockit assumes only a single instance per jvm
-  private static final TestNG TESTNG = new TestNG(false);
+  private static final TestNG                TESTNG = new TestNG(false);
 
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
-  private final TestGroupConfig config;
+  private final TestGroupConfig              config;
 
   public TestNGTestUnit(
       final ClassLoaderDetectionStrategy classloaderDetection,
@@ -73,8 +73,8 @@ public class TestNGTestUnit extends AbstractTestUnit {
   private void executeInForeignLoader(ResultCollector rc, ClassLoader loader) {
     @SuppressWarnings("unchecked")
     Callable<List<String>> e = (Callable<List<String>>) IsolationUtils
-        .cloneForLoader(new ForeignClassLoaderTestNGExecutor(createSuite()),
-            loader);
+    .cloneForLoader(new ForeignClassLoaderTestNGExecutor(createSuite()),
+        loader);
     try {
       List<String> q = e.call();
       Events.applyEvents(q, rc, this.getDescription());
@@ -84,10 +84,10 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
   }
 
-  private void executeInCurrentLoader( final ResultCollector rc) {
+  private void executeInCurrentLoader(final ResultCollector rc) {
     final ITestListener listener = new TestNGAdapter(this.clazz,
         this.getDescription(), rc);
-    
+
     final XmlSuite suite = createSuite();
 
     TESTNG.setDefaultSuiteName(suite.getName());

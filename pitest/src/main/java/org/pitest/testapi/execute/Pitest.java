@@ -31,7 +31,7 @@ import org.pitest.util.PitError;
 
 public class Pitest {
 
-  private static final Logger                LOG   = Log.getLogger();
+  private static final Logger                LOG = Log.getLogger();
 
   private final List<? extends TestListener> listeners;
 
@@ -44,7 +44,7 @@ public class Pitest {
       final List<? extends TestUnit> testUnits) {
 
     LOG.fine("Running " + testUnits.size() + " units");
-   
+
     signalRunStartToAllListeners();
 
     executeTests(container, testUnits);
@@ -85,6 +85,7 @@ public class Pitest {
 
   private void signalRunStartToAllListeners() {
     FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
+      @Override
       public void apply(final TestListener a) {
         a.onRunStart();
       }
@@ -93,6 +94,7 @@ public class Pitest {
 
   private void signalRunEndToAllListeners() {
     FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
+      @Override
       public void apply(final TestListener a) {
         a.onRunEnd();
       }

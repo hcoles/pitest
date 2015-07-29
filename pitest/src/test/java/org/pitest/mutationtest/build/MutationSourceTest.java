@@ -70,7 +70,7 @@ public class MutationSourceTest {
     when(this.prioritiser.assignTests(any(MutationDetails.class))).thenReturn(
         expected);
     when(this.mutater.findMutations(any(ClassName.class)))
-        .thenReturn(mutations);
+    .thenReturn(mutations);
     final MutationDetails actual = this.testee.createMutations(this.foo)
         .iterator().next();
     assertEquals(expected, actual.getTestsInOrder());
@@ -83,6 +83,7 @@ public class MutationSourceTest {
 
   private F<Integer, TestInfo> timeToTestInfo() {
     return new F<Integer, TestInfo>() {
+      @Override
       public TestInfo apply(final Integer a) {
         return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
       }
@@ -96,8 +97,8 @@ public class MutationSourceTest {
   }
 
   private MutationDetails makeMutation(final String method) {
-    final MutationIdentifier id = new MutationIdentifier(aLocation().withClass(
-        this.foo).withMethod(method).build(), 0, "mutator");
+    final MutationIdentifier id = new MutationIdentifier(aLocation()
+        .withClass(this.foo).withMethod(method).build(), 0, "mutator");
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 

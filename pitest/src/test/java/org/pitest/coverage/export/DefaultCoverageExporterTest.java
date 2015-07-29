@@ -32,6 +32,7 @@ public class DefaultCoverageExporterTest {
   private ResultOutputStrategy createOutputStrategy() {
     return new ResultOutputStrategy() {
 
+      @Override
       public Writer createWriterForFile(final String sourceFile) {
         return DefaultCoverageExporterTest.this.out;
       }
@@ -43,7 +44,7 @@ public class DefaultCoverageExporterTest {
   public void shouldWriteValidXMLDocumentWhenNoCoverage() {
     this.testee.recordCoverage(Collections.<BlockCoverage> emptyList());
     String actual = this.out.toString();
-	  assertThat(actual).contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    assertThat(actual).contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     assertThat(actual).contains("<coverage>");
     assertThat(actual).contains("</coverage>");
   }
@@ -53,17 +54,23 @@ public class DefaultCoverageExporterTest {
     LocationBuilder loc = aLocation().withMethod("method");
     BlockLocationBuilder block = aBlockLocation().withBlock(42);
     final Collection<BlockCoverage> coverage = Arrays.asList(
-        new BlockCoverage(block.withLocation(loc.withClass(ClassName.fromString("Foo"))).build(), Arrays.asList("Test1",
-            "Test2")),
-            new BlockCoverage(block.withLocation(loc.withClass(ClassName.fromString("Bar"))).build(), Arrays.asList("Test3",
-                "Test4")));
+        new BlockCoverage(block.withLocation(
+            loc.withClass(ClassName.fromString("Foo"))).build(), Arrays.asList(
+            "Test1", "Test2")),
+        new BlockCoverage(block.withLocation(
+            loc.withClass(ClassName.fromString("Bar"))).build(), Arrays.asList(
+            "Test3", "Test4")));
     this.testee.recordCoverage(coverage);
 
     String actual = this.out.toString();
-	  assertThat(actual).contains("<block classname='Foo' method='method' number='42'>");
-    assertThat(actual).contains("<block classname='Bar' method='method' number='42'>");
-    assertThat(actual).contains("<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>");
-    assertThat(actual).contains("<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>");
+    assertThat(actual).contains(
+        "<block classname='Foo' method='method' number='42'>");
+    assertThat(actual).contains(
+        "<block classname='Bar' method='method' number='42'>");
+    assertThat(actual).contains(
+        "<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>");
+    assertThat(actual).contains(
+        "<tests>\n<test name='Test3'/>\n<test name='Test4'/>\n</tests>");
   }
 
 }

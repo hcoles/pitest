@@ -11,18 +11,19 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
   private final ClassByteArraySource byteSource;
   private byte[]                     lastClassPreMutation;
   private ClassName                  lastMutatedClass;
-  private ClassLoader lastUsedLoader;
+  private ClassLoader                lastUsedLoader;
 
   HotSwap(final ClassByteArraySource byteSource) {
     this.byteSource = byteSource;
   }
 
+  @Override
   public Boolean apply(final ClassName clazzName, final ClassLoader loader,
       final byte[] b) {
     Class<?> clazz;
     try {
       restoreLastClass(this.byteSource, clazzName, loader);
-      lastUsedLoader = loader;
+      this.lastUsedLoader = loader;
       clazz = Class.forName(clazzName.asJavaName(), false, loader);
       return HotSwapAgent.hotSwap(clazz, b);
     } catch (final ClassNotFoundException e) {
@@ -33,9 +34,9 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
 
   private void restoreLastClass(final ClassByteArraySource byteSource,
       final ClassName clazzName, final ClassLoader loader)
-      throws ClassNotFoundException {
+          throws ClassNotFoundException {
     if ((this.lastMutatedClass != null)
-        && !this.lastMutatedClass.equals(clazzName)) {      
+        && !this.lastMutatedClass.equals(clazzName)) {
       restoreForLoader(this.lastUsedLoader);
       restoreForLoader(loader);
     }
@@ -49,8 +50,10 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
     this.lastMutatedClass = clazzName;
   }
 
-  private void restoreForLoader(ClassLoader loader) throws ClassNotFoundException {
-    Class<?> clazz = Class.forName(this.lastMutatedClass.asJavaName(), false, loader);
+  private void restoreForLoader(ClassLoader loader)
+      throws ClassNotFoundException {
+    Class<?> clazz = Class.forName(this.lastMutatedClass.asJavaName(), false,
+        loader);
     HotSwapAgent.hotSwap(clazz, this.lastClassPreMutation);
   }
 

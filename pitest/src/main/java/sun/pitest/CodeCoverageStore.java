@@ -2,14 +2,14 @@
  * Originally based on http://code.google.com/p/javacoveragent/ by
  * "alex.mq0" and "dmitry.kandalov" - but don't think anything of the original
  * now remains in terms of either code or design.
- * 
- * 
+ *
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,17 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CodeCoverageStore {
 
-  private static final int                     CLASS_HIT_INDEX         = 0;
+  private static final int                     CLASS_HIT_INDEX   = 0;
 
-  public static final String                   CLASS_NAME              = CodeCoverageStore.class
-                                                                           .getName()
-                                                                           .replace(
-                                                                               '.',
-                                                                               '/');
-  public static final String                   PROBE_METHOD_NAME       = "visitProbes";
+  public static final String                   CLASS_NAME        = CodeCoverageStore.class
+                                                                     .getName()
+                                                                     .replace(
+                                                                         '.',
+                                                                         '/');
+  public static final String                   PROBE_METHOD_NAME = "visitProbes";
 
   private static InvokeReceiver                invokeQueue;
-  private static int                           classId                 = 0;
+  private static int                           classId           = 0;
 
   // array of probe hits, first slot indicates any hits to the class.
   // testing suggests boolean array with synchronization to ensure happens
@@ -49,8 +49,7 @@ public final class CodeCoverageStore {
   // both AtomicInteger array with bit per flag and integer per flag.
   // optimisation with other methods of ensuring a happens before not yet
   // investigated
-  private static final Map<Integer, boolean[]> CLASS_HITS               = new ConcurrentHashMap<Integer, boolean[]>();
-
+  private static final Map<Integer, boolean[]> CLASS_HITS        = new ConcurrentHashMap<Integer, boolean[]>();
 
   public static void init(final InvokeReceiver invokeQueue) {
     CodeCoverageStore.invokeQueue = invokeQueue;
@@ -77,11 +76,11 @@ public final class CodeCoverageStore {
   }
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // 
+  //
   // Overloaded special case implementations for methods with 1 to N probes.
   // Allows probes to be implemented as
   // local variables and the loop in the array based version to be unrolled.
-  // 
+  //
 
   public static void visitProbes(final int classId, final int offset,
       final boolean p0) { // NO_UCD
@@ -569,7 +568,7 @@ public final class CodeCoverageStore {
         continue;
       }
       final int classId = each.getKey();
-     // final int[] mapping = classProbeToBlockMapping.get(classId);
+      // final int[] mapping = classProbeToBlockMapping.get(classId);
       for (int probeId = 1; probeId != bs.length; probeId++) {
         if (bs[probeId]) {
           blockHits.add(encode(classId, probeId - 1));
@@ -584,11 +583,13 @@ public final class CodeCoverageStore {
     invokeQueue.registerClass(id, className);
     return id;
   }
-  
-  public static void registerMethod(final int clazz, final String methodName, final String methodDesc, final int firstProbe, final int lastProbe) {
-    invokeQueue.registerProbes(clazz, methodName, methodDesc, firstProbe, lastProbe);
+
+  public static void registerMethod(final int clazz, final String methodName,
+      final String methodDesc, final int firstProbe, final int lastProbe) {
+    invokeQueue.registerProbes(clazz, methodName, methodDesc, firstProbe,
+        lastProbe);
   }
-  
+
   private static synchronized int nextId() {
     return classId++;
   }

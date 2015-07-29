@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor;
 
@@ -132,6 +132,7 @@ public abstract class MutatorTestBase {
   private Transformation createTransformation(final Mutant mutant) {
     return new Transformation() {
 
+      @Override
       public byte[] transform(final String name, final byte[] bytes) {
         if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
           return mutant.getBytes();
@@ -160,6 +161,7 @@ public abstract class MutatorTestBase {
   private F<MutationDetails, Mutant> createMutant() {
     return new F<MutationDetails, Mutant>() {
 
+      @Override
       public Mutant apply(final MutationDetails a) {
         return MutatorTestBase.this.engine.getMutation(a.getId());
       }
@@ -199,14 +201,14 @@ public abstract class MutatorTestBase {
 
   protected void assertMutantsReturn(final Callable<String> mutee,
 
-  final FunctionalList<MutationDetails> details,
+      final FunctionalList<MutationDetails> details,
       final String... expectedResults) {
 
     final List<Mutant> mutants = this.getMutants(details);
     assertEquals("Should return one mutant for each request", details.size(),
         mutants.size());
-    final FunctionalList<String> results = FCollection.map(mutants
-        ,mutantToStringReults(mutee));
+    final FunctionalList<String> results = FCollection.map(mutants,
+        mutantToStringReults(mutee));
 
     int i = 0;
     for (final String actual : results) {
@@ -218,6 +220,7 @@ public abstract class MutatorTestBase {
   private F<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
     return new F<Mutant, String>() {
 
+      @Override
       public String apply(final Mutant mutant) {
         return mutateAndCall(mutee, mutant);
       }
@@ -245,6 +248,7 @@ public abstract class MutatorTestBase {
   protected Predicate<MethodInfo> mutateOnlyCallMethod() {
     return new Predicate<MethodInfo>() {
 
+      @Override
       public Boolean apply(final MethodInfo a) {
         return a.getName().equals("call");
       }
@@ -254,6 +258,7 @@ public abstract class MutatorTestBase {
 
   protected F<MutationDetails, Boolean> descriptionContaining(final String value) {
     return new F<MutationDetails, Boolean>() {
+      @Override
       public Boolean apply(final MutationDetails a) {
         return a.getDescription().contains(value);
       }

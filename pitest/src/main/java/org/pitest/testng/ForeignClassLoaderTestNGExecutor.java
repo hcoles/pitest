@@ -10,27 +10,25 @@ import org.testng.TestNG;
 import org.testng.xml.XmlSuite;
 
 public class ForeignClassLoaderTestNGExecutor implements Callable<List<String>> {
-  
+
   private final XmlSuite suite;
-  
+
   public ForeignClassLoaderTestNGExecutor(XmlSuite suite) {
     this.suite = suite;
   }
-  
+
+  @Override
   public List<String> call() throws Exception {
     List<String> queue = new ArrayList<String>();
     final ITestListener listener = new ForeignClassLoaderAdaptingListener(queue);
     final TestNG testng = new TestNG(false);
-    testng.setDefaultSuiteName(suite.getName());
-    testng.setXmlSuites(Collections.singletonList(suite));
+    testng.setDefaultSuiteName(this.suite.getName());
+    testng.setXmlSuites(Collections.singletonList(this.suite));
 
     testng.addListener(listener);
     testng.run();
-    
+
     return queue;
   }
 
-
 }
-
-

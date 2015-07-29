@@ -1,5 +1,10 @@
 package org.pitest.maven;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -7,11 +12,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Extracts configuration from surefire plugin and create pitest equivalents
@@ -29,8 +29,9 @@ public class SurefireConfigConverter {
 
   private void convertGroups(ReportOptions option, Xpp3Dom configuration) {
     TestGroupConfig existing = option.getGroupConfig();
-    if (existing == null || (existing.getExcludedGroups().isEmpty()
-        && existing.getIncludedGroups().isEmpty())) {
+    if ((existing == null)
+        || (existing.getExcludedGroups().isEmpty() && existing
+            .getIncludedGroups().isEmpty())) {
       List<String> groups = extractStrings("groups", configuration);
       List<String> excluded = extractStrings("excludedGroups", configuration);
       TestGroupConfig gc = new TestGroupConfig(excluded, groups);
@@ -57,6 +58,7 @@ public class SurefireConfigConverter {
 
   private F<String, Predicate<String>> filenameToClassFilter() {
     return new F<String, Predicate<String>>() {
+      @Override
       public Predicate<String> apply(String a) {
         return new Glob(a.replace(".java", "").replace("/", "."));
       }

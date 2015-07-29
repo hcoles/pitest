@@ -53,8 +53,8 @@ public class MutationTestUnitTest {
     this.mutations = new ArrayList<MutationDetails>();
     this.tests = new ArrayList<ClassName>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
-        new WorkerFactory(null, config, mutationConfig,
-            timeout, false, null));
+        new WorkerFactory(null, this.config, this.mutationConfig, this.timeout,
+            false, null));
   }
 
   @Test
@@ -69,10 +69,10 @@ public class MutationTestUnitTest {
 
   @Test
   public void shouldReportPriorityBasedOnNumberOfMutations() {
-    mutations.add(MutationDetailsMother.aMutationDetail().build());
-    testee = new MutationTestUnit(MutationDetailsMother.aMutationDetail()
-        .build(42), tests, null);
-    assertThat(testee.priority()).isEqualTo(42);
+    this.mutations.add(MutationDetailsMother.aMutationDetail().build());
+    this.testee = new MutationTestUnit(MutationDetailsMother.aMutationDetail()
+        .build(42), this.tests, null);
+    assertThat(this.testee.priority()).isEqualTo(42);
   }
 
   private void addMutation() {

@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.pitest.functional.predicate.Predicate;
 
 /**
  * @author henry
- * 
+ *
  */
 public abstract class Prelude {
 
@@ -57,6 +57,7 @@ public abstract class Prelude {
       final Collection<A> collection) {
     return new SideEffect1<A>() {
 
+      @Override
       public void apply(final A a) {
         collection.add(a);
       }
@@ -68,6 +69,7 @@ public abstract class Prelude {
   public static <A, B> SideEffect1<A> putToMap(final Map<A, B> map,
       final B value) {
     return new SideEffect1<A>() {
+      @Override
       public void apply(final A key) {
         map.put(key, value);
       }
@@ -76,6 +78,7 @@ public abstract class Prelude {
 
   public static final <A> F<A, A> id() {
     return new F<A, A>() {
+      @Override
       public A apply(final A a) {
         return a;
       }
@@ -101,6 +104,7 @@ public abstract class Prelude {
 
   public static final <T> SideEffect1<T> printTo(final PrintStream stream) {
     return new SideEffect1<T>() {
+      @Override
       public void apply(final T a) {
         stream.print(a);
       }
@@ -109,6 +113,7 @@ public abstract class Prelude {
 
   public static <T> SideEffect1<T> printWith(final T t) {
     return new SideEffect1<T>() {
+      @Override
       public void apply(final T a) {
         System.out.print(t + " : " + a);
       }
@@ -117,6 +122,7 @@ public abstract class Prelude {
 
   public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
     return new Predicate<T>() {
+      @Override
       public Boolean apply(final T o) {
         return o.longValue() > value.longValue();
       }
@@ -125,6 +131,7 @@ public abstract class Prelude {
 
   public static <T> Predicate<T> isEqualTo(final T value) {
     return new Predicate<T>() {
+      @Override
       public Boolean apply(final T o) {
         return o.equals(value);
       }
@@ -133,6 +140,7 @@ public abstract class Prelude {
 
   public static <T> Predicate<T> isNotNull() {
     return new Predicate<T>() {
+      @Override
       public Boolean apply(final T o) {
         return (o != null);
       }
@@ -141,6 +149,7 @@ public abstract class Prelude {
 
   public static <T> Predicate<T> isNull() {
     return new Predicate<T>() {
+      @Override
       public Boolean apply(final T o) {
         return (o == null);
       }
@@ -150,6 +159,7 @@ public abstract class Prelude {
   public static <T> F<T, Iterable<T>> asList(final Class<T> type) {
     return new F<T, Iterable<T>>() {
 
+      @Override
       public Iterable<T> apply(final T a) {
         return Collections.singletonList(a);
       }
@@ -160,6 +170,7 @@ public abstract class Prelude {
   public static <T> SideEffect1<T> noSideEffect(final Class<T> clazz) {
     return new SideEffect1<T>() {
 
+      @Override
       public void apply(final T a) {
       }
 

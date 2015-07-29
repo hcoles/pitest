@@ -11,6 +11,7 @@ public class TimeOutSystemExitSideEffect implements SideEffect {
     this.r = r;
   }
 
+  @Override
   public void apply() {
     this.r.done(ExitCode.TIMEOUT);
   }

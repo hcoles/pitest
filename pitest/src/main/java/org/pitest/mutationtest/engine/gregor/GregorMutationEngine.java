@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 /**
  * The default (and currently only) mutation engine for PIT.
- * 
+ *
  * In case anyone was wondering I'm named after either Gregor Mendel or Gregor
  * Samsa, or maybe both.
  */
@@ -46,6 +46,7 @@ public class GregorMutationEngine implements MutationEngine {
     this.inlinedCodeDetector = config.inlinedCodeDetector();
   }
 
+  @Override
   public Mutater createMutator(final ClassByteArraySource byteSource) {
     return new GregorMutater(byteSource, this.methodFilter,
         this.mutationOperators, this.loggingClasses, this.inlinedCodeDetector);
@@ -57,6 +58,7 @@ public class GregorMutationEngine implements MutationEngine {
         + ", mutationOperators=" + this.mutationOperators + "]";
   }
 
+  @Override
   public Collection<String> getMutatorNames() {
     return FCollection.map(this.mutationOperators, toName());
   }
@@ -64,6 +66,7 @@ public class GregorMutationEngine implements MutationEngine {
   private static F<MethodMutatorFactory, String> toName() {
     return new F<MethodMutatorFactory, String>() {
 
+      @Override
       public String apply(final MethodMutatorFactory a) {
         return a.getName();
       }

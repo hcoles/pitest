@@ -36,6 +36,7 @@ public class AnalyisPriorityComparatorTest {
   private MutationAnalysisUnit unit(final int count) {
     return new MutationAnalysisUnit() {
 
+      @Override
       public int priority() {
         return count;
       }
@@ -45,6 +46,7 @@ public class AnalyisPriorityComparatorTest {
         return "" + count;
       }
 
+      @Override
       public MutationMetaData call() throws Exception {
         return null;
       }

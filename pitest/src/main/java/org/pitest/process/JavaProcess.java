@@ -24,31 +24,30 @@ public class JavaProcess {
   private final Monitor out;
   private final Monitor err;
 
-  public JavaProcess( Process process,
-                      SideEffect1<String> sysoutHandler,
-                      SideEffect1<String> syserrHandler) {
+  public JavaProcess(Process process, SideEffect1<String> sysoutHandler,
+      SideEffect1<String> syserrHandler) {
     this.process = process;
 
-    out = new StreamMonitor(process.getInputStream(), sysoutHandler);
-    err = new StreamMonitor(process.getErrorStream(), syserrHandler);
+    this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);
+    this.err = new StreamMonitor(process.getErrorStream(), syserrHandler);
   }
 
   public void destroy() {
-    out.requestStop();
-    err.requestStop();
-    process.destroy();
+    this.out.requestStop();
+    this.err.requestStop();
+    this.process.destroy();
   }
 
   public int waitToDie() throws InterruptedException {
-    int exitVal = process.waitFor();
-    out.requestStop();
-    err.requestStop();
+    int exitVal = this.process.waitFor();
+    this.out.requestStop();
+    this.err.requestStop();
     return exitVal;
   }
 
   public boolean isAlive() {
     try {
-      process.exitValue();
+      this.process.exitValue();
       return false;
     } catch (IllegalThreadStateException e) {
       return true;

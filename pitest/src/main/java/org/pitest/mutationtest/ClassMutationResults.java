@@ -7,7 +7,7 @@ import org.pitest.classinfo.ClassName;
 
 /**
  * Details of mutation results from a single class.
- * 
+ *
  * A single instance will only ever contain mutations relating to a single
  * class. The mutations for a class may however be spread across multiple
  * instances.

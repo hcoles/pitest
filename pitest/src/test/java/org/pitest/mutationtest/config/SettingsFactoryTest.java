@@ -20,22 +20,22 @@ import org.pitest.util.PitError;
 
 public class SettingsFactoryTest {
 
-  private final ReportOptions options = new ReportOptions();
+  private final ReportOptions  options = new ReportOptions();
 
   private final PluginServices plugins = PluginServices.makeForContextLoader();
 
-  private SettingsFactory     testee;
+  private SettingsFactory      testee;
 
   @Before
   public void setUp() {
-    this.testee = new SettingsFactory(this.options, plugins);
+    this.testee = new SettingsFactory(this.options, this.plugins);
   }
 
   @Test
   public void shouldReturnTheLegacyTestFrameworkPluginWhenNoOtherOnClasspath() {
-    assertTrue(testee.getTestFrameworkPlugin() != null);
+    assertTrue(this.testee.getTestFrameworkPlugin() != null);
   }
-  
+
   @Test
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
     this.options.setExportLineCoverage(false);
@@ -52,7 +52,7 @@ public class SettingsFactoryTest {
     this.options.setMutationEngine("unknown");
     this.testee.createEngine();
   }
-  
+
   @Test
   public void shouldReturnListenerWhenRequestedListenerIsKnown() {
     this.options.addOutputFormats(Arrays.asList("XML"));
@@ -61,31 +61,32 @@ public class SettingsFactoryTest {
 
   @Test
   public void shouldSupportXMLAndCSV() {
-    this.options.addOutputFormats(Arrays.asList("CSV","XML"));
+    this.options.addOutputFormats(Arrays.asList("CSV", "XML"));
     assertNotNull(this.testee.createListener());
   }
-  
+
   @Test(expected = PitError.class)
   public void shouldThrowErrorWhenRequestedListenerNotKnown() {
     this.options.addOutputFormats(Arrays.asList("unknown"));
     this.testee.createListener();
   }
-  
+
   @Test
   public void shouldReturnADefaultJavaExecutableWhenNoneIsSpecified() {
     this.options.setJavaExecutable(null);
-    File actual = new File(testee.getJavaExecutable().javaExecutable());
-    if(System.getProperty("os.name").contains("Windows"))
-        actual = new File(actual.getPath() + ".exe");
+    File actual = new File(this.testee.getJavaExecutable().javaExecutable());
+    if (System.getProperty("os.name").contains("Windows")) {
+      actual = new File(actual.getPath() + ".exe");
+    }
     assertTrue(actual.exists());
   }
-  
+
   @Test
   public void shouldReturnSpecifiedJavaExecutableWhenOneSet() {
     this.options.setJavaExecutable("foo");
-    assertEquals("foo",testee.getJavaExecutable().javaExecutable());
+    assertEquals("foo", this.testee.getJavaExecutable().javaExecutable());
   }
-  
+
   @Test
   public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
     this.options.setTargetClasses(Glob.toGlobPredicates(Collections
@@ -101,7 +102,6 @@ public class SettingsFactoryTest {
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("org/pitest/coverage"));
   }
-  
 
   @Test(expected = PitHelpError.class)
   public void shouldNotAllowUserToMakePITMutateItself() {
@@ -110,5 +110,4 @@ public class SettingsFactoryTest {
     this.testee.createCoverageOptions();
   }
 
-  
 }

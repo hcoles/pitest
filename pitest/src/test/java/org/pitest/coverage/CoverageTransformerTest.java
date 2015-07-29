@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,12 +35,12 @@ import sun.pitest.CodeCoverageStore;
 import sun.pitest.InvokeReceiver;
 
 public class CoverageTransformerTest {
-  
-  private final ClassLoader loader = IsolationUtils
-      .getContextClassLoader();
 
-  private final ClassByteArraySource bytes = new ClassloaderByteArraySource(loader
-                                               );
+  private final ClassLoader          loader = IsolationUtils
+                                                .getContextClassLoader();
+
+  private final ClassByteArraySource bytes  = new ClassloaderByteArraySource(
+                                                this.loader);
 
   @Mock
   private InvokeReceiver             invokeQueue;
@@ -86,36 +85,34 @@ public class CoverageTransformerTest {
     assertValidClass(Math.class);
   }
 
-   
   private void assertValidClass(final Class<?> clazz)
       throws IllegalClassFormatException {
     final byte[] bs = transform(clazz);
-   // printClass(bs);
+    // printClass(bs);
     final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);
 
   }
 
-  
   protected void printRaw(final Class<?> clazz) throws IOException {
-    OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(IsolationUtils.getContextClassLoader());
+    OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(
+        IsolationUtils.getContextClassLoader());
     printClass(StreamUtil.streamToByteArray(r.getData(clazz.getName())));
   }
-  
+
   protected void printClass(final byte[] bs) {
     final ClassReader reader = new ClassReader(bs);
-    reader.accept(new TraceClassVisitor(null, new ASMifier(),
-        new PrintWriter(System.out)), ClassReader.EXPAND_FRAMES);
+    reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
+        System.out)), ClassReader.EXPAND_FRAMES);
   }
 
-  
   private byte[] transform(final Class<?> clazz)
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
         True.<String> all());
-    final byte[] bs = testee.transform(loader, clazz.getName(), null, null,
-        this.bytes.getBytes(clazz.getName()).value());
+    final byte[] bs = testee.transform(this.loader, clazz.getName(), null,
+        null, this.bytes.getBytes(clazz.getName()).value());
     return bs;
   }
 

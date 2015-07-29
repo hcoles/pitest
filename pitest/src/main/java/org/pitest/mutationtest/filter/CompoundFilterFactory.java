@@ -10,29 +10,36 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 
 public class CompoundFilterFactory implements MutationFilterFactory {
-  
+
   private final List<MutationFilterFactory> children = new ArrayList<MutationFilterFactory>();
-  
-  public CompoundFilterFactory( Collection<? extends MutationFilterFactory> filters ) {
+
+  public CompoundFilterFactory(
+      Collection<? extends MutationFilterFactory> filters) {
     this.children.addAll(filters);
   }
 
+  @Override
   public String description() {
     return null;
   }
 
-  public MutationFilter createFilter(Properties props, CodeSource source, int maxMutationsPerClass) {
-    List<MutationFilter> filters = FCollection.map(children, toFilter(props, source, maxMutationsPerClass));
+  @Override
+  public MutationFilter createFilter(Properties props, CodeSource source,
+      int maxMutationsPerClass) {
+    List<MutationFilter> filters = FCollection.map(this.children,
+        toFilter(props, source, maxMutationsPerClass));
     return new CompoundMutationFilter(filters);
   }
 
-  private static F<MutationFilterFactory, MutationFilter> toFilter(final Properties props, final CodeSource source,
+  private static F<MutationFilterFactory, MutationFilter> toFilter(
+      final Properties props, final CodeSource source,
       final int maxMutationsPerClass) {
-    return new  F<MutationFilterFactory, MutationFilter> () {
+    return new F<MutationFilterFactory, MutationFilter>() {
+      @Override
       public MutationFilter apply(MutationFilterFactory a) {
-       return a.createFilter(props, source, maxMutationsPerClass);
+        return a.createFilter(props, source, maxMutationsPerClass);
       }
-      
+
     };
   }
 

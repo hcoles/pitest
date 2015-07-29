@@ -1,17 +1,17 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
@@ -28,8 +28,8 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 /**
- * 
- * 
+ *
+ *
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
  */
 public class MemberVariableMutatorTest extends MutatorTestBase {
@@ -51,6 +51,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
     private Object member;
 
+    @Override
     public Object call() throws Exception {
       this.member = TEST_OBJECT;
       return this.member;
@@ -68,6 +69,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
     private final Integer member2 = 5;
 
+    @Override
     public Integer call() throws Exception {
       return this.member2;
     }
@@ -88,13 +90,14 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
       this.member2 = i;
     }
 
+    @Override
     public Integer call() throws Exception {
       return this.member2;
     }
   }
 
   static class HasFinalPrimitiveMemberVariableStarter extends
-      MutantStarter<Integer> {
+  MutantStarter<Integer> {
     @Override
     protected Callable<Integer> constructMutee() throws Exception {
       return new HasFinalPrimitiveMemberVariable(5);
@@ -112,6 +115,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   static class NoInit implements Callable<Integer> {
     private int x;
 
+    @Override
     public Integer call() throws Exception {
       return this.x;
     }
@@ -125,15 +129,16 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   }
 
   static class HasConstantFinalPrimitiveMemberVariable implements
-      Callable<String> {
+  Callable<String> {
 
     public final int member2 = 42;
 
+    @Override
     public String call() throws Exception {
       final Class<?> c = getClass();
       final Integer i = (Integer) c.getField("member2").get(this);
       return "" + this.member2 + "-" + i; // will be optimized by compiler to
-                                          // "42-" + i;
+      // "42-" + i;
     }
   }
 
@@ -149,10 +154,11 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   }
 
   static class AssignmentAfterSomeValuesOnStack_SingleWord implements
-      Callable<String> {
+  Callable<String> {
 
     private int member = 1;
 
+    @Override
     public String call() throws Exception {
       // bipush 100
       // aload_0
@@ -178,10 +184,11 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   }
 
   static class AssignmentAfterSomeValuesOnStack_TwoWord implements
-      Callable<String> {
+  Callable<String> {
 
     private long member = 1;
 
+    @Override
     public String call() throws Exception {
       // ldc2_w 100
       // aload_0

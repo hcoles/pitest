@@ -56,13 +56,14 @@ public class CodeSource implements ClassInfoSource {
   @SuppressWarnings("unchecked")
   public List<ClassInfo> getTests() {
     return flatMap(this.classPath.test(), nameToClassInfo()).filter(
-        and(isWithinATestClass(), isIncludedClass(), not(ClassInfo.matchIfAbstract())));
+        and(isWithinATestClass(), isIncludedClass(),
+            not(ClassInfo.matchIfAbstract())));
   }
 
   public ClassPath getClassPath() {
     return this.classPath.getClassPath();
   }
-  
+
   public ProjectClassPaths getProjectPaths() {
     return this.classPath;
   }
@@ -80,7 +81,8 @@ public class CodeSource implements ClassInfoSource {
   public Option<byte[]> fetchClassBytes(final ClassName clazz) {
     return this.classRepository.querySource(clazz);
   }
-  
+
+  @Override
   public Option<ClassInfo> fetchClass(final ClassName clazz) {
     return this.classRepository.fetchClass(clazz);
   }
@@ -92,6 +94,7 @@ public class CodeSource implements ClassInfoSource {
   private F<ClassInfo, Boolean> isWithinATestClass() {
     return new F<ClassInfo, Boolean>() {
 
+      @Override
       public Boolean apply(final ClassInfo a) {
         return CodeSource.this.testIdentifier.isATestClass(a);
       }
@@ -102,6 +105,7 @@ public class CodeSource implements ClassInfoSource {
 
   private F<ClassInfo, Boolean> isIncludedClass() {
     return new F<ClassInfo, Boolean>() {
+      @Override
       public Boolean apply(final ClassInfo a) {
         return CodeSource.this.testIdentifier.isIncluded(a);
       }
@@ -109,5 +113,5 @@ public class CodeSource implements ClassInfoSource {
     };
 
   }
-  
+
 }

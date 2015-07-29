@@ -13,6 +13,7 @@ import org.pitest.functional.Option;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
 
+  @Override
   public Option<byte[]> getBytes(final String classname) {
     final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());
     try {
@@ -27,20 +28,24 @@ public class ResourceFolderByteArraySource implements ClassByteArraySource {
 
 class ResourceFolderClassPathroot implements ClassPathRoot {
 
+  @Override
   public URL getResource(final String name) throws MalformedURLException {
     return null;
   }
 
+  @Override
   public InputStream getData(final String name) throws IOException {
     final String path = "sampleClasses/" + name.replace(".", "/")
         + ".class.bin";
     return IsolationUtils.getContextClassLoader().getResourceAsStream(path);
   }
 
+  @Override
   public Collection<String> classNames() {
     return null;
   }
 
+  @Override
   public Option<String> cacheLocation() {
     return null;
   }

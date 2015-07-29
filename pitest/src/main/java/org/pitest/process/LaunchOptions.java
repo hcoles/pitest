@@ -24,16 +24,16 @@ public class LaunchOptions {
   private final JavaAgent             javaAgentFinder;
   private final List<String>          childJVMArgs;
   private final JavaExecutableLocator javaExecutable;
-  private final Map<String,String> environmentVariables;
+  private final Map<String, String>   environmentVariables;
 
   public LaunchOptions(JavaAgent javaAgentFinder) {
     this(javaAgentFinder, new DefaultJavaExecutableLocator(), Collections
-        .<String> emptyList(),new HashMap<String,String>());
+        .<String> emptyList(), new HashMap<String, String>());
   }
 
-  public LaunchOptions( JavaAgent javaAgentFinder,
-                        JavaExecutableLocator javaExecutable,
-                        List<String> childJVMArgs,Map<String,String> environmentVariables) {
+  public LaunchOptions(JavaAgent javaAgentFinder,
+      JavaExecutableLocator javaExecutable, List<String> childJVMArgs,
+      Map<String, String> environmentVariables) {
     this.javaAgentFinder = javaAgentFinder;
     this.childJVMArgs = childJVMArgs;
     this.javaExecutable = javaExecutable;
@@ -53,6 +53,6 @@ public class LaunchOptions {
   }
 
   public Map<String, String> getEnvironmentVariables() {
-    return environmentVariables;
+    return this.environmentVariables;
   }
 }

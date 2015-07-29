@@ -33,22 +33,22 @@ import org.pitest.testapi.TestUnit;
 
 public class MutationTestWorkerTest {
 
-  private MutationTestWorker                       testee;
+  private MutationTestWorker                          testee;
 
   @Mock
-  private ClassLoader                              loader;
+  private ClassLoader                                 loader;
 
   @Mock
-  private Mutater                                  mutater;
+  private Mutater                                     mutater;
 
   @Mock
   private F3<ClassName, ClassLoader, byte[], Boolean> hotswapper;
 
   @Mock
-  private TimeOutDecoratedTestSource               testSource;
+  private TimeOutDecoratedTestSource                  testSource;
 
   @Mock
-  private Reporter                                 reporter;
+  private Reporter                                    reporter;
 
   @Before
   public void setUp() {
@@ -133,11 +133,13 @@ public class MutationTestWorkerTest {
   private TestUnit makeFailingTest() {
     return new TestUnit() {
 
+      @Override
       public void execute(final ClassLoader loader, final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription(), new AssertionFailedError());
       }
 
+      @Override
       public Description getDescription() {
         return new Description("atest");
       }
@@ -148,11 +150,13 @@ public class MutationTestWorkerTest {
   private TestUnit makePassingTest() {
     return new TestUnit() {
 
+      @Override
       public void execute(final ClassLoader loader, final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription());
       }
 
+      @Override
       public Description getDescription() {
         return new Description("atest");
       }

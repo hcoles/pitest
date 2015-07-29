@@ -28,15 +28,18 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
   NEGATE_CONDITIONALS_MUTATOR;
 
+  @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ConditionalMethodVisitor(this, context, methodVisitor);
   }
 
+  @Override
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }
 
+  @Override
   public String getName() {
     return name();
   }

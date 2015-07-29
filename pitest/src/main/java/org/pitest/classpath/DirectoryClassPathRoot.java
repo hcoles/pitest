@@ -14,17 +14,17 @@ import org.pitest.functional.Option;
 
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 public class DirectoryClassPathRoot implements ClassPathRoot {
 
@@ -34,6 +34,7 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
     this.root = root;
   }
 
+  @Override
   public InputStream getData(final String classname) throws IOException {
     final String filename = classname.replace('.', File.separatorChar).concat(
         ".class");
@@ -45,6 +46,7 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
     }
   }
 
+  @Override
   public URL getResource(final String name) throws MalformedURLException {
     final File f = new File(this.root, name);
     if (f.canRead()) {
@@ -55,6 +57,7 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
     }
   }
 
+  @Override
   public Collection<String> classNames() {
     return classNames(this.root);
   }
@@ -76,9 +79,10 @@ public class DirectoryClassPathRoot implements ClassPathRoot {
         .getAbsolutePath()
         .substring(this.root.getAbsolutePath().length() + 1,
             (f.getAbsolutePath().length() - ".class".length()))
-        .replace(File.separatorChar, '.');
+            .replace(File.separatorChar, '.');
   }
 
+  @Override
   public Option<String> cacheLocation() {
     return Option.some(this.root.getAbsolutePath());
   }

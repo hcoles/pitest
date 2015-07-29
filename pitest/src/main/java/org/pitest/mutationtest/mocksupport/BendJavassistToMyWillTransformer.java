@@ -17,17 +17,20 @@ public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
     this.filter = filter;
   }
 
+  @Override
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined,
       final ProtectionDomain protectionDomain, final byte[] classfileBuffer)
-      throws IllegalClassFormatException {
+          throws IllegalClassFormatException {
 
     if (shouldInclude(className)) {
 
       final ClassReader reader = new ClassReader(classfileBuffer);
-      final ClassWriter writer = new ClassWriter(FrameOptions.pickFlags(classfileBuffer));
+      final ClassWriter writer = new ClassWriter(
+          FrameOptions.pickFlags(classfileBuffer));
 
-      reader.accept(new JavassistInputStreamInterceptorAdapater(writer), ClassReader.EXPAND_FRAMES);
+      reader.accept(new JavassistInputStreamInterceptorAdapater(writer),
+          ClassReader.EXPAND_FRAMES);
       return writer.toByteArray();
     } else {
       return null;

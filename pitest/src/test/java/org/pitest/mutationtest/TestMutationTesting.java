@@ -14,8 +14,22 @@
  */
 package org.pitest.mutationtest;
 
-import com.example.MutationsInNestedClasses;
-import com.example.MutationsInNestedClassesTest;
+import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.DetectionStatus.KILLED;
+import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
+import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
+import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,7 +51,13 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.*;
+import org.pitest.mutationtest.build.DefaultGrouper;
+import org.pitest.mutationtest.build.DefaultTestPrioritiser;
+import org.pitest.mutationtest.build.MutationAnalysisUnit;
+import org.pitest.mutationtest.build.MutationSource;
+import org.pitest.mutationtest.build.MutationTestBuilder;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -57,10 +77,8 @@ import org.pitest.util.Functions;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.DetectionStatus.*;
+import com.example.MutationsInNestedClasses;
+import com.example.MutationsInNestedClassesTest;
 
 @Category(SystemTest.class)
 public class TestMutationTesting {
@@ -76,7 +94,8 @@ public class TestMutationTesting {
     this.config = new ConfigurationForTesting();
     this.metaDataExtractor = new MetaDataExtractor();
     this.mae = new MutationAnalysisExecutor(1,
-        Collections.<MutationResultListener> singletonList(metaDataExtractor));
+        Collections
+            .<MutationResultListener> singletonList(this.metaDataExtractor));
   }
 
   public static class NoMutations {
@@ -323,7 +342,8 @@ public class TestMutationTesting {
     final CoverageOptions coverageOptions = createCoverageOptions(data);
 
     final LaunchOptions launchOptions = new LaunchOptions(agent,
-        new DefaultJavaExecutableLocator(), data.getJvmArgs(),new HashMap<String, String>());
+        new DefaultJavaExecutableLocator(), data.getJvmArgs(),
+        new HashMap<String, String>());
 
     final PathFilter pf = new PathFilter(
         Prelude.not(new DefaultDependencyPathPredicate()),
@@ -345,8 +365,8 @@ public class TestMutationTesting {
         ClassInfo.toClassName());
 
     final MutationEngine engine = new GregorEngineFactory()
-        .createEngineWithMutators(false, False.<String> instance(),
-            Collections.<String> emptyList(), mutators, true);
+    .createEngineWithMutators(false, False.<String> instance(),
+        Collections.<String> emptyList(), mutators, true);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         launchOptions);

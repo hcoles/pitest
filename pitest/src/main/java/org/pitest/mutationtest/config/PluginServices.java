@@ -30,7 +30,7 @@ public class PluginServices {
   /**
    * Lists all plugin classes that must be present on the classpath of the
    * controlling process only.
-   * 
+   *
    * @return list of plugins
    */
   public Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
@@ -55,31 +55,31 @@ public class PluginServices {
   }
 
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
-    return ServiceLoader.load(TestPluginFactory.class, loader);
+    return ServiceLoader.load(TestPluginFactory.class, this.loader);
   }
 
   Collection<? extends MutationGrouperFactory> findGroupers() {
-    return ServiceLoader.load(MutationGrouperFactory.class, loader);
+    return ServiceLoader.load(MutationGrouperFactory.class, this.loader);
   }
 
   Collection<? extends MutationFilterFactory> findFilters() {
-    return ServiceLoader.load(MutationFilterFactory.class, loader);
+    return ServiceLoader.load(MutationFilterFactory.class, this.loader);
   }
 
   Collection<? extends MutationResultListenerFactory> findListeners() {
-    return ServiceLoader.load(MutationResultListenerFactory.class, loader);
+    return ServiceLoader.load(MutationResultListenerFactory.class, this.loader);
   }
 
   Collection<? extends MutationEngineFactory> findMutationEngines() {
-    return ServiceLoader.load(MutationEngineFactory.class, loader);
+    return ServiceLoader.load(MutationEngineFactory.class, this.loader);
   }
 
   Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
-    return ServiceLoader.load(TestPrioritiserFactory.class, loader);
+    return ServiceLoader.load(TestPrioritiserFactory.class, this.loader);
   }
 
   private Collection<ClientClasspathPlugin> nullPlugins() {
-    return ServiceLoader.load(ClientClasspathPlugin.class, loader);
+    return ServiceLoader.load(ClientClasspathPlugin.class, this.loader);
   }
 
 }

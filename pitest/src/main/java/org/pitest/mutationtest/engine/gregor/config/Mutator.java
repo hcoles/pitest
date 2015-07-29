@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -41,7 +42,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
-import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -78,7 +78,7 @@ public final class Mutator {
 
     /**
      * Default mutator that removes method calls to void methods.
-     * 
+     *
      */
     add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
 
@@ -124,10 +124,14 @@ public final class Mutator {
      * ORDER version mutates only those.
      */
 
-    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL, true));
-    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(Choice.EQUAL, false));
-    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(Choice.ORDER, true));
-    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(Choice.ORDER, false));
+    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL,
+        true));
+    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(
+        Choice.EQUAL, false));
+    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(
+        Choice.ORDER, true));
+    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(
+        Choice.ORDER, false));
     addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
 
     /**
@@ -143,7 +147,8 @@ public final class Mutator {
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
 
     /**
-     * Experimental mutator that replaces method call with one of its parameters of matching type
+     * Experimental mutator that replaces method call with one of its parameters
+     * of matching type
      */
     add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
@@ -159,12 +164,14 @@ public final class Mutator {
   }
 
   private static Collection<MethodMutatorFactory> stronger() {
-    return combine(defaults(),group(new RemoveConditionalMutator(Choice.EQUAL, false), new SwitchMutator()));
+    return combine(
+        defaults(),
+        group(new RemoveConditionalMutator(Choice.EQUAL, false),
+            new SwitchMutator()));
   }
 
   private static Collection<MethodMutatorFactory> combine(
-      Collection<MethodMutatorFactory> a,
-      Collection<MethodMutatorFactory> b) {
+      Collection<MethodMutatorFactory> a, Collection<MethodMutatorFactory> b) {
     List<MethodMutatorFactory> l = new ArrayList<MethodMutatorFactory>(a);
     l.addAll(b);
     return l;
@@ -213,6 +220,7 @@ public final class Mutator {
 
   private static Comparator<? super MethodMutatorFactory> compareId() {
     return new Comparator<MethodMutatorFactory>() {
+      @Override
       public int compare(final MethodMutatorFactory o1,
           final MethodMutatorFactory o2) {
         return o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
@@ -222,10 +230,11 @@ public final class Mutator {
 
   private static F<String, Iterable<MethodMutatorFactory>> fromString() {
     return new F<String, Iterable<MethodMutatorFactory>>() {
+      @Override
       public Iterable<MethodMutatorFactory> apply(final String a) {
         Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
         if (i == null) {
-            throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
+          throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
         }
         return i;
       }

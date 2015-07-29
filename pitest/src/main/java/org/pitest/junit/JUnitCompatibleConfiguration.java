@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,9 @@ import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
 
@@ -32,28 +32,32 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   private final TestGroupConfig config;
 
-  private static final Pattern VERSION_PATTERN = Pattern
-                                                   .compile("(\\d+)\\.(\\d+).*");
+  private static final Pattern  VERSION_PATTERN = Pattern
+                                                    .compile("(\\d+)\\.(\\d+).*");
 
   public JUnitCompatibleConfiguration(TestGroupConfig config) {
     this.config = config;
   }
 
+  @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
         new JUnitCustomRunnerTestUnitFinder(),
         new ParameterisedJUnitTestFinder()));
   }
 
+  @Override
   public TestSuiteFinder testSuiteFinder() {
     return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
         new JUnit4SuiteFinder(), new RunnerSuiteFinder()));
   }
 
+  @Override
   public TestClassIdentifier testClassIdentifier() {
     return new JUnitTestClassIdentifier(this.config);
   }
 
+  @Override
   public Option<PitHelpError> verifyEnvironment() {
     try {
       final String version = junit.runner.Version.id();

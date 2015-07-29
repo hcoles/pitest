@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,7 +75,9 @@ public enum DetectionStatus {
 
   /**
    * Converts a process exit code to a mutation status
-   * @param exitCode Exit code to convert
+   * 
+   * @param exitCode
+   *          Exit code to convert
    * @return The status corresponding to the exit code
    */
   public static DetectionStatus getForErrorExitCode(final ExitCode exitCode) {
@@ -92,7 +94,7 @@ public enum DetectionStatus {
    * Returns true if this status indicates that the mutation was distinguished
    * from the un-mutated code by the test suite, ignores the slight ambiguity of
    * some of the statuses.
-   * 
+   *
    * @return True if detected, false if not.
    */
   public boolean isDetected() {

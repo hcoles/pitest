@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,6 +61,7 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   private void sortMutationsIntoLineOrder() {
     final Comparator<MutationResult> c = new Comparator<MutationResult>() {
 
+      @Override
       public int compare(final MutationResult o1, final MutationResult o2) {
         return o1.getDetails().getLineNumber()
             - o2.getDetails().getLineNumber();
@@ -70,32 +71,39 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
     Collections.sort(this.impl, c);
   }
 
+  @Override
   public boolean contains(final F<MutationResult, Boolean> predicate) {
     return FCollection.contains(this.impl, predicate);
   }
 
+  @Override
   public FunctionalList<MutationResult> filter(
       final F<MutationResult, Boolean> predicate) {
     return FCollection.filter(this, predicate);
   }
 
+  @Override
   public <B> FunctionalList<B> flatMap(
       final F<MutationResult, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
+  @Override
   public void forEach(final SideEffect1<MutationResult> e) {
     FCollection.forEach(this, e);
   }
 
+  @Override
   public Iterator<MutationResult> iterator() {
     return this.impl.iterator();
   }
 
+  @Override
   public <B> FunctionalList<B> map(final F<MutationResult, B> f) {
     return FCollection.map(this, f);
   }
 
+  @Override
   public <B> void mapTo(final F<MutationResult, B> f,
       final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);

@@ -16,7 +16,7 @@ import org.pitest.bytecode.MethodDecoratorTest;
 public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
 
   @Mock
-  private MethodMutationContext                   context;
+  private MethodMutationContext     context;
 
   @Mock
   private Label                     label;
@@ -80,10 +80,10 @@ public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
         "desiredAssertionStatus", "()Z", true);
     verify(this.context).disableMutations(anyString());
     this.testee
-        .visitFieldInsn(
-            Opcodes.PUTSTATIC,
-            "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement",
-            "$assertionsDisabled", "Z");
+    .visitFieldInsn(
+        Opcodes.PUTSTATIC,
+        "org/pitest/mutationtest/engine/gregor/TestGregorMutater$HasAssertStatement",
+        "$assertionsDisabled", "Z");
     verify(this.context).enableMutatations(anyString());
   }
 

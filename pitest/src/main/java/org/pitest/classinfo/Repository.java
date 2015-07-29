@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class Repository implements ClassInfoSource {
   }
 
   public Option<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
-                                                              // only)
+    // only)
     return fetchClass(clazz.getName());
   }
 
@@ -50,6 +50,7 @@ public class Repository implements ClassInfoSource {
     return fetchClass(new ClassName(name));
   }
 
+  @Override
   public Option<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {

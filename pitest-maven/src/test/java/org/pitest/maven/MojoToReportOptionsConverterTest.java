@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,9 +15,10 @@
 package org.pitest.maven;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Arrays;
@@ -41,19 +42,18 @@ import org.pitest.util.Unchecked;
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   private MojoToReportOptionsConverter testee;
-  private SurefireConfigConverter surefireConverter;
-  
+  private SurefireConfigConverter      surefireConverter;
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
     Plugin surefire = new Plugin();
     surefire.setGroupId("org.apache.maven.plugins");
     surefire.setArtifactId("maven-surefire-plugin");
-    surefireConverter = Mockito.mock(SurefireConfigConverter.class);
+    this.surefireConverter = Mockito.mock(SurefireConfigConverter.class);
     List<Plugin> mavenPlugins = Collections.singletonList(surefire);
     when(this.project.getBuildPlugins()).thenReturn(mavenPlugins);
   }
-
 
   public void testsParsesReportDir() {
     final ReportOptions actual = parseConfig("<reportsDirectory>Foo</reportsDirectory>");
@@ -102,7 +102,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>bar</param>" + //
         "                  </mutators>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList("foo","bar"), actual.getMutators());
+    assertEquals(Arrays.asList("foo", "bar"), actual.getMutators());
   }
 
   public void testParsersMutateStaticInitializersFlag() {
@@ -224,9 +224,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>CSV</param>" + //
         "                  </outputFormats>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(
-        new HashSet<String>(Arrays.asList("HTML",
-            "CSV")), actual.getOutputFormats());
+    assertEquals(new HashSet<String>(Arrays.asList("HTML", "CSV")),
+        actual.getOutputFormats());
   }
 
   public void testObeysFailWhenNoMutationsFlagWhenPackagingTypeIsNotPOM() {
@@ -295,45 +294,54 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig("<mutationEngine>foo</mutationEngine>");
     assertEquals("foo", actual.getMutationEngine());
   }
-  
+
   public void testDefaultsJavaExecutableToNull() {
     final ReportOptions actual = parseConfig("");
     assertEquals(null, actual.getJavaExecutable());
   }
-  
+
   public void testParsesJavaExecutable() {
     final ReportOptions actual = parseConfig("<jvm>foo</jvm>");
     assertEquals("foo", actual.getJavaExecutable());
   }
-  
-  public void testParsesExcludedClasspathElements() throws DependencyResolutionRequiredException {
-	  final String sep = File.pathSeparator;
-	  
-	  final Set<Artifact> artifacts = new HashSet<Artifact>();
-	  final Artifact dependency = Mockito.mock(Artifact.class);
-	  when(dependency.getGroupId()).thenReturn("group");
-	  when(dependency.getArtifactId()).thenReturn("artifact");
-	  when(dependency.getFile()).thenReturn(new File("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
-	  artifacts.add(dependency);
-	  when(this.project.getArtifacts()).thenReturn(artifacts);
-	  when(this.project.getTestClasspathElements()).thenReturn(Arrays.asList("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
-	  
-	  final ReportOptions actual = parseConfig("<classpathDependencyExcludes>"
-	  		+ "										<param>group:artifact</param>"
-	  		+ "									</classpathDependencyExcludes>");
-	  assertFalse(actual.getClassPathElements().contains("group" + sep + "artifact" + sep + "1.0.0" + sep + "group-artifact-1.0.0.jar"));
+
+  public void testParsesExcludedClasspathElements()
+      throws DependencyResolutionRequiredException {
+    final String sep = File.pathSeparator;
+
+    final Set<Artifact> artifacts = new HashSet<Artifact>();
+    final Artifact dependency = Mockito.mock(Artifact.class);
+    when(dependency.getGroupId()).thenReturn("group");
+    when(dependency.getArtifactId()).thenReturn("artifact");
+    when(dependency.getFile()).thenReturn(
+        new File("group" + sep + "artifact" + sep + "1.0.0" + sep
+            + "group-artifact-1.0.0.jar"));
+    artifacts.add(dependency);
+    when(this.project.getArtifacts()).thenReturn(artifacts);
+    when(this.project.getTestClasspathElements()).thenReturn(
+        Arrays.asList("group" + sep + "artifact" + sep + "1.0.0" + sep
+            + "group-artifact-1.0.0.jar"));
+
+    final ReportOptions actual = parseConfig("<classpathDependencyExcludes>"
+        + "										<param>group:artifact</param>"
+        + "									</classpathDependencyExcludes>");
+    assertFalse(actual.getClassPathElements().contains(
+        "group" + sep + "artifact" + sep + "1.0.0" + sep
+        + "group-artifact-1.0.0.jar"));
   }
-  
+
   public void testParsesSurefireConfigWhenFlagSet() {
     parseConfig("<parseSurefireConfig>true</parseSurefireConfig>");
-    verify(surefireConverter).update(any(ReportOptions.class), any(Xpp3Dom.class));
+    verify(this.surefireConverter).update(any(ReportOptions.class),
+        any(Xpp3Dom.class));
   }
-  
+
   public void testIgnoreSurefireConfigWhenFlagNotSet() {
     parseConfig("<parseSurefireConfig>false</parseSurefireConfig>");
-    verify(surefireConverter, never()).update(any(ReportOptions.class), any(Xpp3Dom.class));
+    verify(this.surefireConverter, never()).update(any(ReportOptions.class),
+        any(Xpp3Dom.class));
   }
-  
+
   public void testParsesCustomProperties() {
     final ReportOptions actual = parseConfig("<pluginConfiguration><foo>foo</foo><bar>bar</bar></pluginConfiguration>");
     assertEquals("foo", actual.getFreeFormProperties().get("foo"));
@@ -346,8 +354,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
       final PitMojo mojo = createPITMojo(pom);
       @SuppressWarnings("unchecked")
       Predicate<Artifact> filter = Mockito.mock(Predicate.class);
-      when(surefireConverter.update(any(ReportOptions.class), any(Xpp3Dom.class))).then(returnsFirstArg());
-      this.testee = new MojoToReportOptionsConverter(mojo, surefireConverter,filter);
+      when(
+          this.surefireConverter.update(any(ReportOptions.class),
+              any(Xpp3Dom.class))).then(returnsFirstArg());
+      this.testee = new MojoToReportOptionsConverter(mojo,
+          this.surefireConverter, filter);
       final ReportOptions actual = this.testee.convert();
       return actual;
     } catch (final Exception ex) {

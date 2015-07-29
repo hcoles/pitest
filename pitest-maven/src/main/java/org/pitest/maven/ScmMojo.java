@@ -168,6 +168,7 @@ public class ScmMojo extends PitMojo {
 
   private static F<String, ScmFileStatus> stringToMavenScmStatus() {
     return new F<String, ScmFileStatus>() {
+      @Override
       public ScmFileStatus apply(final String a) {
         return ScmStatus.valueOf(a.toUpperCase()).getStatus();
       }

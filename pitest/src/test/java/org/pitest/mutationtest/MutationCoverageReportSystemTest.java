@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldReportSurvivingMutations() {
     this.data
-        .setTargetClasses(predicateFor("com.example.CoveredButOnlyPartiallyTested*"));
+    .setTargetClasses(predicateFor("com.example.CoveredButOnlyPartiallyTested*"));
     createAndRun();
     verifyResults(KILLED, SURVIVED);
   }
@@ -100,7 +100,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldKillMutationsInStaticInitializersWhenThereIsCoverageAndMutateStaticFlagIsSet() {
     this.data.setMutateStaticInitializers(true);
     this.data
-        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -109,7 +109,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldNotCreateMutationsInStaticInitializersWhenFlagNotSet() {
     this.data.setMutateStaticInitializers(false);
     this.data
-        .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
+    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
     createAndRun();
     verifyResults();
   }
@@ -118,7 +118,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
     setMutators("MATH");
     this.data
-        .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
+    .setTargetClasses(predicateFor("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
         + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
     createAndRun();
@@ -129,9 +129,9 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldOnlyRunTestsMathchingSuppliedFilter() {
     this.data.setMutateStaticInitializers(true);
     this.data
-        .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
+    .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
     this.data
-        .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
+    .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -140,7 +140,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
     setMutators("RETURN_VALS");
     this.data
-        .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
+    .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -149,7 +149,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
     this.data
-        .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
+    .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -166,7 +166,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldLimitNumberOfMutationsPerClass() {
     this.data.setTargetClasses(predicateFor(MultipleMutations.class));
     this.data
-        .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
+    .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
     this.data.setMaxMutationsPerClass(1);
     createAndRun();
     verifyResults(NO_COVERAGE);
@@ -217,7 +217,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void willAllowExcludedClassesToBeReIncludedViaSuite() {
     this.data
-        .setTargetTests(predicateFor("com.example.*SuiteForFullyCovered*"));
+    .setTargetTests(predicateFor("com.example.*SuiteForFullyCovered*"));
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
     this.data.setExcludedClasses(predicateFor(FullyCoveredTesteeTest.class));
     createAndRun();
@@ -246,11 +246,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
       this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
       this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
-      
+
       List<String> cp = new ArrayList<String>();
       cp.addAll(ClassPath.getClassPathElementsAsPaths());
       cp.add(location);
-      
+
       this.data.setClassPathElements(cp);
       this.data.setDependencyAnalysisMaxDistance(-1);
       this.data.setExcludedClasses(predicateFor("*Power*", "*JMockit*"));
@@ -264,7 +264,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldSupportTestNG() {
     this.data
-        .setTargetClasses(predicateFor("com.example.testng.FullyCovered*"));
+    .setTargetClasses(predicateFor("com.example.testng.FullyCovered*"));
     this.data.setVerbose(true);
     createAndRun(new TestNGConfiguration(new TestGroupConfig(
         Collections.<String> emptyList(), Collections.<String> emptyList())));
@@ -275,7 +275,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldTerminateWhenThreadpoolCreated() {
     this.data.setTargetClasses(predicateFor(KeepAliveThread.class));
     this.data
-        .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
+    .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
     createAndRun();
     verifyResults(SURVIVED);
   }
@@ -285,7 +285,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("NEGATE_CONDITIONALS");
     this.data.setTargetClasses(predicateFor(CrashesJVMWhenMutated.class));
     this.data
-        .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
+    .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
     createAndRun();
 
     verifyResults(RUN_ERROR);
@@ -319,7 +319,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("INCREMENTS");
     this.data.setTargetClasses(predicateFor(HasMutationsInFinallyBlock.class));
     this.data
-        .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
+    .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
     this.data.setDetectInlinedCode(true);
     createAndRun();
 
@@ -330,7 +330,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
     setMutators("RETURN_VALS");
     this.data
-        .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
+    .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
     this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
 
     createAndRun();
@@ -344,23 +344,23 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
 
     this.data
-        .setTargetClasses(predicateFor(com.example.mutatablecodeintest.Mutee.class));
+    .setTargetClasses(predicateFor(com.example.mutatablecodeintest.Mutee.class));
     this.data
-        .setTargetTests(predicateFor(com.example.mutatablecodeintest.MuteeTest.class));
+    .setTargetTests(predicateFor(com.example.mutatablecodeintest.MuteeTest.class));
 
     createAndRun();
 
     verifyResults(KILLED);
   }
-  
+
   @Test
   public void shouldKillMutationsWhenKillingTestClassContainsAnIgnoreOnAnotherMethod() {
     setMutators("RETURN_VALS");
 
     this.data
-        .setTargetClasses(predicateFor(com.example.testhasignores.Mutee.class));
+    .setTargetClasses(predicateFor(com.example.testhasignores.Mutee.class));
     this.data
-        .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
+    .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
 
     createAndRun();
 
@@ -377,6 +377,5 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       out.write(buf, 0, len);
     }
   }
-
 
 }

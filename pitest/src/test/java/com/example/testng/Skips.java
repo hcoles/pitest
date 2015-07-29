@@ -2,7 +2,6 @@ package com.example.testng;
 
 import org.testng.SkipException;
 
-
 public class Skips {
 
   @org.testng.annotations.Test()

@@ -60,8 +60,8 @@ public class RunnerSuiteFinderTest {
   @Test
   public void shouldFindSuiteClassesInCustomSuite() {
     final Collection<Class<?>> actual = findWithTestee(CustomSuite.class);
-    final Collection<Class<?>> expected = Arrays.<Class<?>>asList(
-        One.class, Two.class);
+    final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
+        Two.class);
 
     assertContains(expected, actual);
   }
@@ -80,8 +80,8 @@ public class RunnerSuiteFinderTest {
   @Test
   public void shouldFindSuiteClassesInJUnit3Suite() {
     final Collection<Class<?>> actual = findWithTestee(JUnit3Suite.class);
-    final Collection<Class<?>> expected = Arrays.<Class<?>>asList(
-        One.class, Two.class);
+    final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
+        Two.class);
     assertContains(expected, actual);
   }
 
@@ -102,16 +102,16 @@ public class RunnerSuiteFinderTest {
   @Test
   public void shouldFindSuiteClassesInJUnit3SuiteMethod() {
     final Collection<Class<?>> actual = findWithTestee(JUnit3SuiteMethod.class);
-    final Collection<Class<?>> expected = Arrays.<Class<?>>asList(
-        One.class, Two.class);
+    final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
+        Two.class);
     assertContains(expected, actual);
   }
 
   @Test
   public void shouldFindSuiteClasseInNestedJUnit3Suite() {
     final Collection<Class<?>> actual = findWithTestee(com.example.JUnitThreeSuite.class);
-    final Collection<Class<?>> expected = Arrays.<Class<?>>asList(
-        com.example.JUnitThreeTest.class);
+    final Collection<Class<?>> expected = Arrays
+        .<Class<?>> asList(com.example.JUnitThreeTest.class);
     assertContains(expected, actual);
   }
 

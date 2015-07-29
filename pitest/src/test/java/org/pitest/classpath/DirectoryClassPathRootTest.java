@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.junit.Test;
-import org.pitest.classpath.DirectoryClassPathRoot;
 
 public class DirectoryClassPathRootTest {
 

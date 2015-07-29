@@ -1,12 +1,12 @@
 /*
  * Copyright 2012 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ import org.pitest.util.Log;
 public class CoverageData implements CoverageDatabase {
 
   private static final Logger                                 LOG           = Log
-                                                                                .getLogger();
+      .getLogger();
 
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
@@ -60,9 +60,11 @@ public class CoverageData implements CoverageDatabase {
   public CoverageData(final CodeSource code, final LineMap lm) {
     this.code = code;
     this.lm = lm;
-    this.classesForFile = FCollection.bucket(this.code.getCode(), keyFromClassInfo());
+    this.classesForFile = FCollection.bucket(this.code.getCode(),
+        keyFromClassInfo());
   }
-  
+
+  @Override
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
     final Collection<TestInfo> result = getTestsForClassName(
         classLine.getClassName()).get(classLine);
@@ -77,14 +79,17 @@ public class CoverageData implements CoverageDatabase {
     return !this.hasFailedTest;
   }
 
+  @Override
   public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
     return this.code.getClassInfo(classes);
   }
 
+  @Override
   public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
     return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
   }
 
+  @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
     final Set<TestInfo> tis = new TreeSet<TestInfo>(
         new TestInfoNameComparator());
@@ -107,11 +112,12 @@ public class CoverageData implements CoverageDatabase {
     Set<TestInfo> tests = this.blockCoverage.get(each);
     if (tests == null) {
       tests = new TreeSet<TestInfo>(new TestInfoNameComparator());
-      blockCoverage.put(each, tests);
+      this.blockCoverage.put(each, tests);
     }
     tests.add(ti);
   }
 
+  @Override
   public BigInteger getCoverageIdForClass(final ClassName clazz) {
     final Map<ClassLine, Set<TestInfo>> coverage = getTestsForClassName(clazz);
     if (coverage.isEmpty()) {
@@ -127,6 +133,7 @@ public class CoverageData implements CoverageDatabase {
 
   private static F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
     return new F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage>() {
+      @Override
       public BlockCoverage apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
             TestInfo.toName()));
@@ -134,21 +141,23 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
+  @Override
   public Collection<ClassInfo> getClassesForFile(final String sourceFile,
       String packageName) {
     Collection<ClassInfo> value = this.getClassesForFileCache().get(
-            keyFromSourceAndPackage(sourceFile, packageName));
+        keyFromSourceAndPackage(sourceFile, packageName));
     if (value == null) {
-      return Collections.<ClassInfo>emptyList();
+      return Collections.<ClassInfo> emptyList();
     } else {
       return value;
     }
   }
-  
+
   private Map<String, Collection<ClassInfo>> getClassesForFileCache() {
     return this.classesForFile;
   }
 
+  @Override
   public CoverageSummary createSummary() {
     return new CoverageSummary(numberOfLines(), coveredLines());
   }
@@ -168,6 +177,7 @@ public class CoverageData implements CoverageDatabase {
 
   private F<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
     return new F<Set<TestInfo>, Iterable<ClassName>>() {
+      @Override
       public Iterable<ClassName> apply(final Set<TestInfo> a) {
         return FCollection.map(a, TestInfo.toDefiningClassName());
       }
@@ -175,17 +185,19 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private static F<ClassInfo, String> keyFromClassInfo() {
-      
+
     return new F<ClassInfo, String>() {
+      @Override
       public String apply(final ClassInfo c) {
-        return keyFromSourceAndPackage(c.getSourceFileName(), c.getName().getPackage().asJavaName());
+        return keyFromSourceAndPackage(c.getSourceFileName(), c.getName()
+            .getPackage().asJavaName());
       }
     };
   }
 
-  private static String keyFromSourceAndPackage(
-      final String sourceFile, final String packageName) {
-      
+  private static String keyFromSourceAndPackage(final String sourceFile,
+      final String packageName) {
+
     return packageName + " " + sourceFile;
   }
 
@@ -205,6 +217,7 @@ public class CoverageData implements CoverageDatabase {
   private F2<Integer, ClassInfo, Integer> numberLines() {
     return new F2<Integer, ClassInfo, Integer>() {
 
+      @Override
       public Integer apply(final Integer a, final ClassInfo clazz) {
         return a + clazz.getNumberOfCodeLines();
       }
@@ -231,6 +244,7 @@ public class CoverageData implements CoverageDatabase {
   private F2<Integer, ClassName, Integer> numberCoveredLines() {
     return new F2<Integer, ClassName, Integer>() {
 
+      @Override
       public Integer apply(final Integer a, final ClassName clazz) {
         return a + getNumberOfCoveredLines(clazz);
       }
@@ -277,7 +291,7 @@ public class CoverageData implements CoverageDatabase {
       }
     }
 
-    lineCoverage.put(clazz, linesToTests);
+    this.lineCoverage.put(clazz, linesToTests);
     return linesToTests;
   }
 
@@ -308,8 +322,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private void calculateLinesForBlocks(ClassName className) {
-    Map<BlockLocation, Set<Integer>> lines = lm.mapLines(className);
-    blocksToLines.putAll(lines);
+    Map<BlockLocation, Set<Integer>> lines = this.lm.mapLines(className);
+    this.blocksToLines.putAll(lines);
   }
 
   private void recordTestFailure() {
@@ -318,6 +332,7 @@ public class CoverageData implements CoverageDatabase {
 
   private F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>> toTests() {
     return new F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>>() {
+      @Override
       public Iterable<TestInfo> apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return a.getValue();
       }
@@ -327,6 +342,7 @@ public class CoverageData implements CoverageDatabase {
   private Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
       final ClassName clazz) {
     return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
+      @Override
       public Boolean apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return a.getKey().isFor(clazz);
       }

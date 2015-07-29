@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,14 +21,15 @@ import java.util.Set;
 
 class ClassInfoBuilder {
 
-  int                access;
-  ClassIdentifier    id;
-  String             outerClass;
-  String             superClass;
-  String             sourceFile;
-  final Set<Integer> codeLines   = new HashSet<Integer>();
-  final Set<String>  annotations = new HashSet<String>(0);
-  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>(0);
+  int                          access;
+  ClassIdentifier              id;
+  String                       outerClass;
+  String                       superClass;
+  String                       sourceFile;
+  final Set<Integer>           codeLines             = new HashSet<Integer>();
+  final Set<String>            annotations           = new HashSet<String>(0);
+  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>(
+                                                         0);
 
   public void registerCodeLine(final int line) {
     this.codeLines.add(line);
@@ -38,8 +39,9 @@ class ClassInfoBuilder {
     this.annotations.add(annotation);
   }
 
-  public void registerClassAnnotationValue(final ClassName annotation, final Object value) {
-    classAnnotationValues.put(annotation, value);
+  public void registerClassAnnotationValue(final ClassName annotation,
+      final Object value) {
+    this.classAnnotationValues.put(annotation, value);
   }
 
 }

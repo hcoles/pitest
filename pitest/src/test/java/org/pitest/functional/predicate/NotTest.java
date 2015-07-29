@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.pitest.functional.predicate;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 /**
  * @author henry
- * 
+ *
  */
 public class NotTest {
 

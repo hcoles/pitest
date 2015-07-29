@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 public class PackageSummaryMap {
 
   private final Map<String, PackageSummaryData> packageSummaryData = new TreeMap<String, PackageSummaryData>();

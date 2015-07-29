@@ -36,6 +36,7 @@ class DependencyFilter {
     return new F<TestUnit, Boolean>() {
       private final Map<String, Boolean> cache = new HashMap<String, Boolean>();
 
+      @Override
       public Boolean apply(final TestUnit testUnit) {
         final String testClass = testUnit.getDescription().getFirstTestClass();
         try {

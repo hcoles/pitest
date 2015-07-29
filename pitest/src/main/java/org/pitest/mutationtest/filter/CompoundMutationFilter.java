@@ -14,10 +14,11 @@ class CompoundMutationFilter implements MutationFilter {
     this.children.addAll(children);
   }
 
+  @Override
   public Collection<MutationDetails> filter(
       Collection<MutationDetails> mutations) {
     Collection<MutationDetails> modified = mutations;
-    for (MutationFilter each : children) {
+    for (MutationFilter each : this.children) {
       modified = each.filter(modified);
     }
     return modified;

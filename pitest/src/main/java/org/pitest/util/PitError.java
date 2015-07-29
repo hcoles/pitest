@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,22 +37,22 @@ public final class PitError extends RuntimeException {
     final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
 
     return "\n\nPlease copy and paste the information and the complete stacktrace below when reporting an issue\n"
-        + "VM : "
-        + rt.getVmName()
-        + "\n"
-        + "Vendor : "
-        + rt.getVmVendor()
-        + "\n"
-        + "Version : "
-        + rt.getVmVersion()
-        + "\n"
-        + "Uptime : "
-        + rt.getUptime()
-        + "\n"
-        + "Input -> "
-        + createInputString(rt.getInputArguments())
-        + "\n"
-        + "BootClassPathSupported : " + rt.isBootClassPathSupported() + "\n";
+    + "VM : "
+    + rt.getVmName()
+    + "\n"
+    + "Vendor : "
+    + rt.getVmVendor()
+    + "\n"
+    + "Version : "
+    + rt.getVmVersion()
+    + "\n"
+    + "Uptime : "
+    + rt.getUptime()
+    + "\n"
+    + "Input -> "
+    + createInputString(rt.getInputArguments())
+    + "\n"
+    + "BootClassPathSupported : " + rt.isBootClassPathSupported() + "\n";
 
   }
 
@@ -66,6 +66,7 @@ public final class PitError extends RuntimeException {
     return new F2<StringBuilder, String, StringBuilder>() {
       private int position = 0;
 
+      @Override
       public StringBuilder apply(final StringBuilder a, final String b) {
         this.position++;
         return a.append("\n " + this.position + " : " + b);

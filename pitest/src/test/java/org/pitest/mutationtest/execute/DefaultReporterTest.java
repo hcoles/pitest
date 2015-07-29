@@ -30,17 +30,18 @@ public class DefaultReporterTest {
 
   @Test
   public void shouldSendMutationIdentifierToOutputStream() throws IOException {
-    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo").build();
+    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo")
+        .build();
     this.testee.describe(mi);
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DESCRIBE, is.readByte());
     assertEquals(is.read(MutationIdentifier.class), mi);
   }
 
-
   @Test
   public void shouldSendDetectionStatus() throws IOException {
-    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo").build();
+    final MutationIdentifier mi = aMutationId().withIndex(0).withMutator("foo")
+        .build();
     final MutationStatusTestPair ms = new MutationStatusTestPair(2,
         DetectionStatus.KILLED, "foo");
     this.testee.report(mi, ms);

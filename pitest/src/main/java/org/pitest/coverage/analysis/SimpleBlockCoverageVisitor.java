@@ -1,6 +1,5 @@
 package org.pitest.coverage.analysis;
 
-
 import java.util.List;
 
 import org.objectweb.asm.Handle;
@@ -13,28 +12,28 @@ import sun.pitest.CodeCoverageStore;
 
 /**
  * Instruments via a method call at each line.
- * 
+ *
  * This simplistic approach is generally slow, but does not require finally
  * blocks that are difficult to generate correctly for constructors.
- * 
+ *
  * This simple approach should however provide better performance for single
  * line methods.
  */
 public class SimpleBlockCoverageVisitor extends MethodVisitor {
-  private final MethodVisitor methodVisitor;
-  private final int           classId;
+  private final MethodVisitor      methodVisitor;
+  private final int                classId;
 
-  private final int           probeOffset;
+  private final int                probeOffset;
 
   private final InstructionCounter counter;
-  private final List<Block> blocks;
-  
-  private int                 probeCount = 0;
-  
+  private final List<Block>        blocks;
 
-  public SimpleBlockCoverageVisitor(List<Block> blocks, InstructionCounter counter,
-      final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc, final int probeOffset) {
+  private int                      probeCount = 0;
+
+  public SimpleBlockCoverageVisitor(List<Block> blocks,
+      InstructionCounter counter, final int classId,
+      final MethodVisitor writer, final int access, final String name,
+      final String desc, final int probeOffset) {
     super(Opcodes.ASM5, writer);
 
     this.counter = counter;
@@ -44,7 +43,7 @@ public class SimpleBlockCoverageVisitor extends MethodVisitor {
 
     this.probeOffset = probeOffset;
   }
-  
+
   @Override
   public void visitFrame(final int type, final int nLocal,
       final Object[] local, final int nStack, final Object[] stack) {
@@ -141,16 +140,15 @@ public class SimpleBlockCoverageVisitor extends MethodVisitor {
     insertProbeIfAppropriate();
     super.visitMultiANewArrayInsn(desc, dims);
   }
-  
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
     insertProbeIfAppropriate();
     super.visitLineNumber(line, start);
   }
-  
+
   private void insertProbeIfAppropriate() {
-    if ( needsProbe(counter.currentInstructionCount()) ) {
+    if (needsProbe(this.counter.currentInstructionCount())) {
       this.methodVisitor.visitLdcInsn(this.classId);
       this.methodVisitor.visitLdcInsn(this.probeCount + this.probeOffset);
 
@@ -162,8 +160,8 @@ public class SimpleBlockCoverageVisitor extends MethodVisitor {
   }
 
   private boolean needsProbe(int currentInstructionCount) {
-    for ( Block each : this.blocks) {
-      if ( each.firstInstructionIs(currentInstructionCount - 1)) {
+    for (Block each : this.blocks) {
+      if (each.firstInstructionIs(currentInstructionCount - 1)) {
         return true;
       }
     }

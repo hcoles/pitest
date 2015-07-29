@@ -40,15 +40,16 @@ public class MutationAnalysisExecutor {
     LOG.fine("Running " + testUnits.size() + " units");
 
     signalRunStartToAllListeners();
-    
-    List<Future<MutationMetaData>> results = new ArrayList<Future<MutationMetaData>>(testUnits.size());
-    
+
+    List<Future<MutationMetaData>> results = new ArrayList<Future<MutationMetaData>>(
+        testUnits.size());
+
     for (final MutationAnalysisUnit unit : testUnits) {
-      results.add(executor.submit(unit));
+      results.add(this.executor.submit(unit));
     }
-    
+
     this.executor.shutdown();
-        
+
     try {
       processResult(results);
     } catch (InterruptedException e) {
@@ -56,16 +57,16 @@ public class MutationAnalysisExecutor {
     } catch (ExecutionException e) {
       throw Unchecked.translateCheckedException(e);
     }
-    
-    signalRunEndToAllListeners();
 
+    signalRunEndToAllListeners();
 
   }
 
-  private void processResult(List<Future<MutationMetaData>> results) throws InterruptedException, ExecutionException {
-    for ( Future<MutationMetaData> f  : results ) {
+  private void processResult(List<Future<MutationMetaData>> results)
+      throws InterruptedException, ExecutionException {
+    for (Future<MutationMetaData> f : results) {
       MutationMetaData r = f.get();
-      for ( MutationResultListener l : listeners ) {
+      for (MutationResultListener l : this.listeners) {
         for (final ClassMutationResults cr : r.toClassResults()) {
           l.handleMutationResult(cr);
         }
@@ -74,21 +75,23 @@ public class MutationAnalysisExecutor {
   }
 
   private void signalRunStartToAllListeners() {
-    FCollection.forEach(listeners, new SideEffect1<MutationResultListener>() {
-      public void apply(final MutationResultListener a) {
-        a.runStart();
-      }
-    });
+    FCollection.forEach(this.listeners,
+        new SideEffect1<MutationResultListener>() {
+          @Override
+          public void apply(final MutationResultListener a) {
+            a.runStart();
+          }
+        });
   }
-
 
   private void signalRunEndToAllListeners() {
-    FCollection.forEach(listeners, new SideEffect1<MutationResultListener>() {
-      public void apply(final MutationResultListener a) {
-        a.runEnd();
-      }
-    });
+    FCollection.forEach(this.listeners,
+        new SideEffect1<MutationResultListener>() {
+          @Override
+          public void apply(final MutationResultListener a) {
+            a.runEnd();
+          }
+        });
   }
-
 
 }

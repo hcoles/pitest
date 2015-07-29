@@ -25,6 +25,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
     this.outputStrategy = outputStrategy;
   }
 
+  @Override
   public void recordCoverage(final Collection<BlockCoverage> coverage) {
     final Writer out = this.outputStrategy
         .createWriterForFile("linecoverage.xml");
@@ -43,9 +44,12 @@ public class DefaultCoverageExporter implements CoverageExporter {
 
   private void writeLineCoverage(final BlockCoverage each, final Writer out) {
     Location l = each.getBlock().getLocation();
-    write(out, "<block classname='"
-        + l.getClassName().asJavaName() + "'" + " method='"
-        + StringUtil.escapeBasicHtmlChars(l.getMethodName().name()) + "' number='" + each.getBlock().getBlock() + "'>");
+    write(
+        out,
+        "<block classname='" + l.getClassName().asJavaName() + "'"
+            + " method='"
+            + StringUtil.escapeBasicHtmlChars(l.getMethodName().name())
+            + "' number='" + each.getBlock().getBlock() + "'>");
     write(out, "<tests>\n");
     final List<String> ts = new ArrayList<String>(each.getTests());
     Collections.sort(ts);

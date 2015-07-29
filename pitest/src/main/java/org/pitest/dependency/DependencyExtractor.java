@@ -1,12 +1,12 @@
 /*
  * Copyright 2010 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class DependencyExtractor {
   @SuppressWarnings("unchecked")
   public Collection<String> extractCallDependenciesForPackages(
       final String clazz, final Predicate<String> targetPackages)
-      throws IOException {
+          throws IOException {
     final Set<String> allDependencies = extractCallDependencies(clazz,
         new IgnoreCoreClasses());
     return FCollection.filter(allDependencies,
@@ -66,6 +66,7 @@ public class DependencyExtractor {
   private static F<String, Boolean> notSuppliedClass(final String clazz) {
     return new F<String, Boolean>() {
 
+      @Override
       public Boolean apply(final String a) {
         return !Functions.jvmClassToClassName().apply(a).equals(clazz);
       }
@@ -77,6 +78,7 @@ public class DependencyExtractor {
       final Predicate<String> predicate) {
     return new F<String, Boolean>() {
 
+      @Override
       public Boolean apply(final String a) {
         return predicate.apply(Functions.jvmClassToClassName().apply(a));
       }
@@ -150,6 +152,7 @@ public class DependencyExtractor {
 
   private static Comparator<DependencyAccess> equalDestinationComparator() {
     return new Comparator<DependencyAccess>() {
+      @Override
       public int compare(final DependencyAccess o1, final DependencyAccess o2) {
         return o1.getDest().compareTo(o2.getDest());
       }
@@ -190,6 +193,7 @@ public class DependencyExtractor {
   private static F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
 
     return new F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>>() {
+      @Override
       public Map<String, List<DependencyAccess>> apply(
           final Map<String, List<DependencyAccess>> map,
           final DependencyAccess access) {
@@ -208,6 +212,7 @@ public class DependencyExtractor {
 
   private static Comparator<DependencyAccess> classNameComparator() {
     return new Comparator<DependencyAccess>() {
+      @Override
       public int compare(final DependencyAccess lhs, final DependencyAccess rhs) {
         return lhs.getDest().getOwner().compareTo(rhs.getDest().getOwner());
       }
@@ -216,6 +221,7 @@ public class DependencyExtractor {
 
   private static Predicate<DependencyAccess> nameIsEqual(final String clazz) {
     return new Predicate<DependencyAccess>() {
+      @Override
       public Boolean apply(final DependencyAccess a) {
         return a.getDest().getOwner().equals(clazz);
       }
@@ -226,6 +232,7 @@ public class DependencyExtractor {
       final List<DependencyAccess> dependencies,
       final Predicate<DependencyAccess> predicate) {
     final SideEffect1<DependencyAccess> se = new SideEffect1<DependencyAccess>() {
+      @Override
       public void apply(final DependencyAccess a) {
         if (predicate.apply(a)) {
           dependencies.add(a);

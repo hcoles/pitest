@@ -15,22 +15,27 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class NullHistoryStore implements HistoryStore {
 
+  @Override
   public void initialize() {
 
   }
 
+  @Override
   public void recordResult(final MutationResult result) {
 
   }
 
+  @Override
   public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
     return Collections.emptyMap();
   }
 
+  @Override
   public Map<ClassName, ClassHistory> getHistoricClassPath() {
     return Collections.emptyMap();
   }
 
+  @Override
   public void recordClassPath(final Collection<HierarchicalClassId> ids,
       final CoverageDatabase coverageInfo) {
 

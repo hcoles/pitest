@@ -5,18 +5,16 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 
 import org.junit.Test;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.util.IsolationUtils;
 
 public class ComputeClassWriterTest {
 
   private final ComputeClassWriter testee = new ComputeClassWriter(
-                                              new ClassloaderByteArraySource(
-                                                  IsolationUtils
-                                                      .getContextClassLoader()),
-                                              new HashMap<String, String>(), 0);
+      new ClassloaderByteArraySource(
+          IsolationUtils
+          .getContextClassLoader()),
+          new HashMap<String, String>(), 0);
 
   @Test
   public void shouldResolveObjectAsSuperClassWhenNoCommonParentExists() {

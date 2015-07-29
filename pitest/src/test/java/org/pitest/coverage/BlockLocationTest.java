@@ -9,6 +9,6 @@ public class BlockLocationTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(BlockLocation.class).verify();
-  } 
+  }
 
 }

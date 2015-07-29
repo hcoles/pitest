@@ -58,19 +58,19 @@ public class CoverageAnalyser extends MethodNode {
       accept(new InstructionTrackingMethodVisitor(
           new SimpleBlockCoverageVisitor(blocks, counter, this.classId,
               this.mv, this.access, this.name, this.desc, this.probeOffset),
-          counter));
+              counter));
     } else if ((blockCount <= MAX_SUPPORTED_LOCAL_PROBES) && (blockCount >= 1)) {
       accept(new InstructionTrackingMethodVisitor(
           new LocalVariableCoverageMethodVisitor(blocks, counter, this.classId,
               this.mv, this.access, this.name, this.desc, this.probeOffset),
-          counter));
+              counter));
     } else {
       // for now fall back to the naive implementation - could instead use array
       // passing version
       accept(new InstructionTrackingMethodVisitor(
           new ArrayProbeCoverageMethodVisitor(blocks, counter, this.classId,
               this.mv, this.access, this.name, this.desc, this.probeOffset),
-          counter));
+              counter));
     }
 
   }

@@ -24,6 +24,7 @@ public class PluginFilter implements Predicate<String> {
 
   private static F<ClientClasspathPlugin, String> classToLocation() {
     return new F<ClientClasspathPlugin, String>() {
+      @Override
       public String apply(final ClientClasspathPlugin a) {
         try {
           return new File(a.getClass().getProtectionDomain().getCodeSource()
@@ -42,6 +43,7 @@ public class PluginFilter implements Predicate<String> {
     };
   }
 
+  @Override
   public Boolean apply(final String a) {
     return this.includedClassPathElement.contains(a);
   }

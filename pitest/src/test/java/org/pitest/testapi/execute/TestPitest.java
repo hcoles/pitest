@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.pitest.testapi.execute;
 
@@ -22,25 +22,24 @@ import org.pitest.testapi.execute.containers.UnContainer;
 
 /**
  * @author henry
- * 
+ *
  */
 
 public class TestPitest {
 
-  private Pitest              testee;
-  private Container           container;
+  private Pitest       testee;
+  private Container    container;
 
   @Mock
-  private TestListener        listener;
+  private TestListener listener;
   @Mock
-  private TestListener        listener2;
-
+  private TestListener listener2;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.testee = new Pitest(Arrays.asList(listener,listener2));
+    this.testee = new Pitest(Arrays.asList(this.listener, this.listener2));
   }
 
   public static class PassingTest {
@@ -54,28 +53,29 @@ public class TestPitest {
   public void shouldNotifyAllListenersOfRunStart() {
     run(PassingTest.class);
     verify(this.listener).onRunStart();
-    verify(listener2).onRunStart();
+    verify(this.listener2).onRunStart();
   }
 
   @Test
   public void shouldNotifyAllListenersOfTestStart() {
     run(PassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
-    verify(listener2).onTestStart(any(Description.class));
+    verify(this.listener2).onTestStart(any(Description.class));
   }
 
   @Test
   public void shouldNotifyAllListenersOfTestSuccess() {
     run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
-    verify(listener2).onTestSuccess(any(TestResult.class));
+    verify(this.listener2).onTestSuccess(any(TestResult.class));
   }
 
   @Test
-  public void shouldNotifyAllListenersOfRunEnd() {;
-    run(PassingTest.class);
-    verify(this.listener).onRunEnd();
-    verify(listener2).onRunEnd();
+  public void shouldNotifyAllListenersOfRunEnd() {
+    ;
+  run(PassingTest.class);
+  verify(this.listener).onRunEnd();
+  verify(this.listener2).onRunEnd();
   }
 
   @Test

@@ -24,15 +24,18 @@ public class JavassistInputStreamInterceptorAdapaterTest {
 
   @Test
   public void shouldNotInterceptNormalInvokeInterfaceCalls() {
-    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far", false);
+    this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar", "far",
+        false);
     verify(this.mv).visitMethodInsn(Opcodes.INVOKEINTERFACE, "foo", "bar",
-        "far",false);
+        "far", false);
   }
 
   @Test
   public void shouldNotInterceptNormalInvokeStaticCalls() {
-    this.testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far", false);
-    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far", false);
+    this.testee.visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far",
+        false);
+    verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC, "foo", "bar", "far",
+        false);
   }
 
   @Test

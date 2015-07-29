@@ -96,6 +96,7 @@ public class SettingsFactory {
   private static F<MutationResultListenerFactory, Boolean> nameMatches(
       final Iterable<String> outputFormats) {
     return new F<MutationResultListenerFactory, Boolean>() {
+      @Override
       public Boolean apply(final MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
       }
@@ -104,6 +105,7 @@ public class SettingsFactory {
 
   private static Predicate<String> equalsIgnoreCase(final String other) {
     return new Predicate<String>() {
+      @Override
       public Boolean apply(final String a) {
         return a.equalsIgnoreCase(other);
       }
@@ -121,7 +123,6 @@ public class SettingsFactory {
         .findTestPrioritisers();
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }
-
 
   public Configuration getTestFrameworkPlugin() {
 
@@ -142,6 +143,7 @@ public class SettingsFactory {
 
   private static F<String, Boolean> commonClasses() {
     return new F<String, Boolean>() {
+      @Override
       public Boolean apply(final String name) {
         return name.startsWith("java") || name.startsWith("sun/")
             || name.startsWith("org/junit") || name.startsWith("junit")

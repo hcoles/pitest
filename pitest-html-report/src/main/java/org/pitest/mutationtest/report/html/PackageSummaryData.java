@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class PackageSummaryData implements Comparable<PackageSummaryData> {
 
   private final String                               packageName;
@@ -86,6 +85,7 @@ public class PackageSummaryData implements Comparable<PackageSummaryData> {
     return true;
   }
 
+  @Override
   public int compareTo(final PackageSummaryData arg0) {
     return this.packageName.compareTo(arg0.packageName);
   }

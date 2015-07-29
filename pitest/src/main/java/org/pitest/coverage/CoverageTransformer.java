@@ -24,10 +24,11 @@ public class CoverageTransformer implements ClassFileTransformer {
     this.filter = filter;
   }
 
+  @Override
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined,
       final ProtectionDomain protectionDomain, final byte[] classfileBuffer)
-      throws IllegalClassFormatException {
+          throws IllegalClassFormatException {
     final boolean include = shouldInclude(className);
     if (include) {
       try {

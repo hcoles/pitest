@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine;
 
@@ -63,8 +63,10 @@ public final class MutationDetails {
   }
 
   /**
-   * Returns the human readable description of the mutation. This may be a constant string
-   * or may provide more contextual information depending on the mutation operator.
+   * Returns the human readable description of the mutation. This may be a
+   * constant string or may provide more contextual information depending on the
+   * mutation operator.
+   * 
    * @return Human readable description of the mutation
    */
   public String getDescription() {
@@ -73,6 +75,7 @@ public final class MutationDetails {
 
   /**
    * Returns the mutation description with special characters escaped
+   * 
    * @return Escaped description string
    */
   @Deprecated
@@ -83,6 +86,7 @@ public final class MutationDetails {
 
   /**
    * Returns the method name in which this mutation is located as a string
+   * 
    * @return method name as string
    */
   @Deprecated
@@ -93,6 +97,7 @@ public final class MutationDetails {
 
   /**
    * Returns the class in which this mutation is located
+   * 
    * @return class in which mutation is located
    */
   public ClassName getClassName() {
@@ -101,6 +106,7 @@ public final class MutationDetails {
 
   /**
    * Returns the class in which this mutation is located
+   * 
    * @return class in which mutation is located
    */
   public MethodName getMethod() {
@@ -109,6 +115,7 @@ public final class MutationDetails {
 
   /**
    * Returns the file in which this mutation is located
+   * 
    * @return file in which mutation is located
    */
   public String getFilename() {
@@ -118,6 +125,7 @@ public final class MutationDetails {
   /**
    * Returns the line number on which the mutation occurs as reported within the
    * jvm bytecode
+   * 
    * @return The line number on which the mutation occurs.
    */
   public int getLineNumber() {
@@ -126,6 +134,7 @@ public final class MutationDetails {
 
   /**
    * Returns the ClassLine in which this mutation is located
+   * 
    * @return the ClassLine in which this mutation is located
    */
   public ClassLine getClassLine() {
@@ -134,6 +143,7 @@ public final class MutationDetails {
 
   /**
    * Returns the identified for this mutation
+   * 
    * @return a MutationIdentifier
    */
   public MutationIdentifier getId() {
@@ -142,15 +152,18 @@ public final class MutationDetails {
 
   /**
    * Returns the tests that cover this mutation in optimised order
+   * 
    * @return a list of TestInfo objects
    */
   public List<TestInfo> getTestsInOrder() {
     return this.testsInOrder;
   }
-  
+
   /**
    * Adds tests to the list of covering tests
-   * @param testNames The tests to add
+   * 
+   * @param testNames
+   *          The tests to add
    */
   public void addTestsInOrder(final Collection<TestInfo> testNames) {
     this.testsInOrder.addAll(testNames);
@@ -158,16 +171,18 @@ public final class MutationDetails {
   }
 
   /**
-   * Indicates if this mutation might poison state within the jvm 
-   * (e.g affect the values of static variable)
+   * Indicates if this mutation might poison state within the jvm (e.g affect
+   * the values of static variable)
+   * 
    * @return true if the mutation might poison the jvm otherwise false
    */
   public boolean mayPoisonJVM() {
-    return poison || isInStaticInitializer();
+    return this.poison || isInStaticInitializer();
   }
-  
+
   /**
    * Indicates if this mutation is in a static initializer block
+   * 
    * @return true if in a static initializer otherwise false
    */
   public boolean isInStaticInitializer() {
@@ -175,8 +190,10 @@ public final class MutationDetails {
   }
 
   /**
-   * Returns the basic block in which this mutation occurs.
-   * See https://github.com/hcoles/pitest/issues/131 for discussion on block coverage
+   * Returns the basic block in which this mutation occurs. See
+   * https://github.com/hcoles/pitest/issues/131 for discussion on block
+   * coverage
+   * 
    * @return the block within the method that this mutation is located in
    */
   public int getBlock() {
@@ -185,7 +202,9 @@ public final class MutationDetails {
 
   /**
    * Returns true if this mutation has a matching identifier
-   * @param id the MutationIdentifier to match
+   * 
+   * @param id
+   *          the MutationIdentifier to match
    * @return true if the MutationIdentifier matches otherwise false
    */
   public Boolean matchesId(final MutationIdentifier id) {
@@ -194,6 +213,7 @@ public final class MutationDetails {
 
   /**
    * Returns the name of the mutator that created this mutation
+   * 
    * @return the mutator name
    */
   public String getMutator() {
@@ -201,9 +221,9 @@ public final class MutationDetails {
   }
 
   /**
-   * Returns the index to the first instruction on which this mutation occurs. This index
-   * is specific to how ASM represents the bytecode.
-   * 
+   * Returns the index to the first instruction on which this mutation occurs.
+   * This index is specific to how ASM represents the bytecode.
+   *
    * @return the zero based index to the instruction
    */
   public int getFirstIndex() {
@@ -212,6 +232,7 @@ public final class MutationDetails {
 
   /**
    * Indicates if the mutation is within a finally block
+   * 
    * @return true if in finally block otherwise false
    */
   public boolean isInFinallyBlock() {

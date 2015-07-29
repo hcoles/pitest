@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Henry Coles and Stefan Penndorf
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasBooleanICONST0 implements Callable<Boolean> {
 
+    @Override
     public Boolean call() throws Exception {
       return false;
     }
@@ -53,6 +54,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST0 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 0;
     }
@@ -67,6 +69,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasBooleanICONST1 implements Callable<Boolean> {
 
+    @Override
     public Boolean call() throws Exception {
       return true;
     }
@@ -81,6 +84,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST1 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 1;
     }
@@ -95,6 +99,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST2 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 2;
     }
@@ -109,6 +114,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST3 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 3;
     }
@@ -123,6 +129,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST4 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 4;
     }
@@ -137,6 +144,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONST5 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 5;
     }
@@ -151,6 +159,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerLDC implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 987654321;
     }
@@ -166,6 +175,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerICONSTM1 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return -1;
     }
@@ -187,6 +197,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasBIPUSHMinus2 implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return -2;
     }
@@ -201,6 +212,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasBIPUSH implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 28;
     }
@@ -216,6 +228,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasSIPUSH implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return 32700;
     }
@@ -231,6 +244,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasTwoMutationPoints implements Callable<Boolean> {
 
+    @Override
     public Boolean call() throws Exception {
       int i = Short.MAX_VALUE;
 
@@ -253,6 +267,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasShortOverflow implements Callable<Short> {
 
+    @Override
     public Short call() throws Exception {
       short s = Short.MAX_VALUE;
       s = preventSourceFormatingMakingFinal(s);
@@ -276,6 +291,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerAtMaxShortValue implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       int i = Short.MAX_VALUE;
       i = preventSourceFormatingMakingFinal(i);
@@ -304,6 +320,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasByteOverflow implements Callable<Byte> {
 
+    @Override
     public Byte call() throws Exception {
       byte b = Byte.MAX_VALUE;
       b = preventSourceFormatingMakingFinal(b);
@@ -333,6 +350,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasIntegerMaxValue implements Callable<Integer> {
 
+    @Override
     public Integer call() throws Exception {
       return Integer.MAX_VALUE;
     }
@@ -348,6 +366,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasLongLCONST0 implements Callable<Long> {
 
+    @Override
     public Long call() throws Exception {
       return 0L;
     }
@@ -362,6 +381,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasLongLCONST1 implements Callable<Long> {
 
+    @Override
     public Long call() throws Exception {
       return 1L;
     }
@@ -376,6 +396,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasLongLDC implements Callable<Long> {
 
+    @Override
     public Long call() throws Exception {
       return 2999999999L;
     }
@@ -390,6 +411,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasLongLDCMinus1 implements Callable<Long> {
 
+    @Override
     public Long call() throws Exception {
       return -1L;
     }
@@ -408,6 +430,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasFloatFCONST0 implements Callable<Float> {
 
+    @Override
     public Float call() throws Exception {
       return 0.0F;
     }
@@ -422,6 +445,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasFloatFCONST1 implements Callable<Float> {
 
+    @Override
     public Float call() throws Exception {
       return 1.0F;
     }
@@ -436,6 +460,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasFloatFCONST2 implements Callable<Float> {
 
+    @Override
     public Float call() throws Exception {
       return 2.0F;
     }
@@ -450,6 +475,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasFloatLDC implements Callable<Float> {
 
+    @Override
     public Float call() throws Exception {
       return 8364.123F;
     }
@@ -464,6 +490,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasFloatMultipleLDC implements Callable<Float> {
 
+    @Override
     public Float call() throws Exception {
       float f = 16.0F;
       float f2 = 4.0F;
@@ -485,6 +512,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasDoubleDCONST0 implements Callable<Double> {
 
+    @Override
     public Double call() throws Exception {
       return 0.0D;
     }
@@ -499,6 +527,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasDoubleDCONST1 implements Callable<Double> {
 
+    @Override
     public Double call() throws Exception {
       return 1.0D;
     }
@@ -513,6 +542,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasDoubleLDC implements Callable<Double> {
 
+    @Override
     public Double call() throws Exception {
       return 123456789.123D;
     }
@@ -527,6 +557,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   private static class HasDoubleMultipleLDC implements Callable<Double> {
 
+    @Override
     public Double call() throws Exception {
       double d = 4578.1158D;
       double d2 = 2.0D;

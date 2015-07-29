@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 Henry Coles
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor.config;
 
@@ -30,6 +30,7 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
 public final class GregorEngineFactory implements MutationEngineFactory {
 
+  @Override
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
@@ -88,6 +89,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
       final Predicate<String> excludedMethods) {
     return new Predicate<MethodInfo>() {
 
+      @Override
       public Boolean apply(final MethodInfo a) {
         return excludedMethods.apply(a.getName());
       }
@@ -98,6 +100,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   private static Predicate<MethodInfo> notStaticInitializer() {
     return new Predicate<MethodInfo>() {
 
+      @Override
       public Boolean apply(final MethodInfo a) {
         return !a.isStaticInitializer();
       }
@@ -105,10 +108,12 @@ public final class GregorEngineFactory implements MutationEngineFactory {
     };
   }
 
+  @Override
   public String name() {
     return "gregor";
   }
 
+  @Override
   public String description() {
     return "Default mutation engine";
   }

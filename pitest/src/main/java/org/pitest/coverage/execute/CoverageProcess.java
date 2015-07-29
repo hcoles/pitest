@@ -18,7 +18,7 @@ public class CoverageProcess {
   public CoverageProcess(final ProcessArgs processArgs,
       final CoverageOptions arguments, final ServerSocket socket,
       final List<String> testClases, final SideEffect1<CoverageResult> handler)
-      throws IOException {
+          throws IOException {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         CoverageSlave.class);
     this.crt = new CoverageCommunicationThread(socket, arguments, testClases,

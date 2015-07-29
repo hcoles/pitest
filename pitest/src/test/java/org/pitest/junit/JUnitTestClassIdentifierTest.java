@@ -1,18 +1,24 @@
 /*
  * Copyright 2011 Henry Coles
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.junit;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -27,22 +33,17 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class JUnitTestClassIdentifierTest {
 
   private JUnitTestClassIdentifier testee;
   private Repository               classRepostory;
-  private List<String>             excludedGroups = new ArrayList<String>();
-  private List<String>             includedGroups = new ArrayList<String>();
+  private final List<String>       excludedGroups = new ArrayList<String>();
+  private final List<String>       includedGroups = new ArrayList<String>();
 
   @Before
   public void setUp() {
-    TestGroupConfig groupConfig = new TestGroupConfig(excludedGroups, includedGroups);
+    TestGroupConfig groupConfig = new TestGroupConfig(this.excludedGroups,
+        this.includedGroups);
     this.testee = new JUnitTestClassIdentifier(groupConfig);
     this.classRepostory = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()));
@@ -110,24 +111,33 @@ public class JUnitTestClassIdentifierTest {
     assertTrue(this.testee.isATestClass(find(DescendentOfTest.class)));
   }
 
-  private interface AlphaTests {}
-  private interface BetaTests {}
-  private interface GammaTests {}
+  private interface AlphaTests {
+  }
 
-  private class NoCategoryTest extends HasTestAnnotation {}
+  private interface BetaTests {
+  }
+
+  private interface GammaTests {
+  }
+
+  private class NoCategoryTest extends HasTestAnnotation {
+  }
 
   @Category(AlphaTests.class)
-  private class AlphaCategoryTest extends HasTestAnnotation {}
+  private class AlphaCategoryTest extends HasTestAnnotation {
+  }
 
   @Category(BetaTests.class)
-  private class BetaCategoryTest extends HasTestAnnotation {}
+  private class BetaCategoryTest extends HasTestAnnotation {
+  }
 
-  @Category({BetaTests.class, GammaTests.class})
-  private class TwoCategoryTest extends HasTestAnnotation {}
+  @Category({ BetaTests.class, GammaTests.class })
+  private class TwoCategoryTest extends HasTestAnnotation {
+  }
 
   @Test
   public void shouldIncludeEverythingWhenNoCategoriesSpecified() {
-    includedGroups.clear();
+    this.includedGroups.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
@@ -136,7 +146,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldOnlyIncludeTestsInIncludedCategories() {
-    includedGroups.add(BetaTests.class.getName());
+    this.includedGroups.add(BetaTests.class.getName());
     assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
@@ -145,7 +155,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldNotExcludeWhenNoCategoriesSpecified() {
-    excludedGroups.clear();
+    this.excludedGroups.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
@@ -154,7 +164,7 @@ public class JUnitTestClassIdentifierTest {
 
   @Test
   public void shouldOnlyExcludeTestsInExcludedCategories() {
-    excludedGroups.add(BetaTests.class.getName());
+    this.excludedGroups.add(BetaTests.class.getName());
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));

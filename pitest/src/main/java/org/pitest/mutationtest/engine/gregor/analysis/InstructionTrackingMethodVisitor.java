@@ -110,14 +110,11 @@ public class InstructionTrackingMethodVisitor extends MethodVisitor {
     this.count.increment();
     super.visitMultiANewArrayInsn(desc, dims);
   }
-  
-
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
     this.count.increment();
     super.visitLineNumber(line, start);
   }
-  
 
 }

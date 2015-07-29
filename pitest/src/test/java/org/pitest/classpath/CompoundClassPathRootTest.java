@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 
 public class CompoundClassPathRootTest {
 
-
   private CompoundClassPathRoot testee;
 
   @Mock
@@ -48,12 +47,12 @@ public class CompoundClassPathRootTest {
   public void shouldReturnNullWhenNoChildCanSupplyData() throws IOException {
     assertThat(this.testee.getData("unknown")).isNull();
   }
-  
+
   @Test
   public void shouldReturnNullWhenNoChildCanSupplyResource() throws IOException {
     assertThat(this.testee.getResource("unknown")).isNull();
   }
-  
+
   @Test
   public void shouldReturnClassDataFromChildren() throws IOException {
     when(this.child1.getData(any(String.class))).thenReturn(null);
@@ -69,5 +68,5 @@ public class CompoundClassPathRootTest {
     when(this.child1.getResource(any(String.class))).thenReturn(url);
     assertThat(this.testee.getResource("Foo")).isSameAs(url);
   }
-  
+
 }

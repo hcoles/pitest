@@ -11,27 +11,25 @@ import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 abstract class AbstractCoverageStrategy extends AdviceAdapter {
 
+  protected final MethodVisitor    methodVisitor;
+  protected final int              classId;
+  protected final int              probeOffset;
+  protected final List<Block>      blocks;
 
-  protected final MethodVisitor methodVisitor;
-  protected final int           classId;
-  protected final int           probeOffset;
-  protected final List<Block> blocks;
-  
   private final InstructionCounter counter;
-    
+
   /**
    * label to mark start of try finally block that is added to each method
    */
-  private final Label         before     = new Label();
+  private final Label              before     = new Label();
 
   /**
    * label to mark handler block of try finally
    */
-  private final Label         handler    = new Label();
+  private final Label              handler    = new Label();
 
-  protected int               probeCount = 0;
+  protected int                    probeCount = 0;
 
-  
   AbstractCoverageStrategy(List<Block> blocks, InstructionCounter counter,
       final int classId, final MethodVisitor writer, final int access,
       final String name, final String desc, final int probeOffset) {
@@ -45,12 +43,11 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
   }
 
   abstract void prepare();
-  
+
   abstract void generateProbeReportCode();
-  
+
   abstract void insertProbe();
 
-  
   @Override
   public void visitCode() {
     super.visitCode();
@@ -112,8 +109,7 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
       }
     }
   }
-  
-  
+
   @Override
   public void visitFrame(final int type, final int nLocal,
       final Object[] local, final int nStack, final Object[] stack) {
@@ -210,24 +206,23 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
     insertProbeIfAppropriate();
     super.visitMultiANewArrayInsn(desc, dims);
   }
-  
 
   @Override
   public void visitLineNumber(final int line, final Label start) {
     insertProbeIfAppropriate();
     super.visitLineNumber(line, start);
   }
-  
+
   private void insertProbeIfAppropriate() {
-    if ( needsProbe(counter.currentInstructionCount()) ) {
-        insertProbe();
-        this.probeCount++;
+    if (needsProbe(this.counter.currentInstructionCount())) {
+      insertProbe();
+      this.probeCount++;
     }
   }
 
   private boolean needsProbe(int currentInstructionCount) {
-    for ( Block each : this.blocks) {
-      if ( each.firstInstructionIs(currentInstructionCount - 1)) {
+    for (Block each : this.blocks) {
+      if (each.firstInstructionIs(currentInstructionCount - 1)) {
         return true;
       }
     }

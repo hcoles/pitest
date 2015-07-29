@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.pitest.functional;
 
@@ -20,7 +20,7 @@ import org.pitest.util.PitError;
 
 /**
  * @author henry
- * 
+ *
  */
 public class FArrayTest {
 
@@ -41,6 +41,7 @@ public class FArrayTest {
   @Test
   public void shouldReturnOnlyMatchesToPredicate() {
     final Predicate<Integer> p = new Predicate<Integer>() {
+      @Override
       public Boolean apply(final Integer a) {
         return a <= 2;
       }
@@ -57,6 +58,7 @@ public class FArrayTest {
   @Test
   public void shouldApplyFlatMapToAllItems() {
     final F<Integer, Collection<Integer>> f = new F<Integer, Collection<Integer>>() {
+      @Override
       public List<Integer> apply(final Integer a) {
         return Arrays.asList(a, a);
       }
@@ -74,6 +76,7 @@ public class FArrayTest {
 
   private F<Object, Option<Object>> objectToObjectIterable() {
     return new F<Object, Option<Object>>() {
+      @Override
       public Option<Object> apply(final Object a) {
         return Option.some(a);
       }
@@ -98,6 +101,7 @@ public class FArrayTest {
     final Integer[] xs = { 1, 2, 3 };
     final Predicate<Integer> predicate = new Predicate<Integer>() {
 
+      @Override
       public Boolean apply(final Integer a) {
         if (a == 2) {
           throw new PitError("Did not shortcut");
