@@ -27,7 +27,9 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -191,12 +193,10 @@ public abstract class MutatorTestBase {
 
   }
 
-  protected void printMutant(final Mutant mutant) {
-    // final ASMifierClassVisitor asm = new ASMifierClassVisitor(new
-    // PrintWriter(
-    // System.out));
-    // final ClassReader r = new ClassReader(mutant.getBytes());
-    // r.accept(asm, ClassReader.SKIP_FRAMES);
+  protected void printMutant(final Mutant mutant) {    
+     final ClassReader reader = new ClassReader(mutant.getBytes());
+     reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
+         System.out)), ClassReader.EXPAND_FRAMES);
   }
 
   protected void assertMutantsReturn(final Callable<String> mutee,
