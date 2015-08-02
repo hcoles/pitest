@@ -130,7 +130,7 @@ public class MethodInfo {
   }
 
   public static boolean doesReturnOwner(String owner, String desc) {
-    return Type.getReturnType(desc).equals(Type.getType("L"+owner+";"));
+    return Type.getReturnType(desc).equals(Type.getType("L" + owner + ";"));
   }
 
 }

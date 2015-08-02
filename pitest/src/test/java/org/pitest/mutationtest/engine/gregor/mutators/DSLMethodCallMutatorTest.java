@@ -19,10 +19,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.ASMifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -98,6 +102,14 @@ public class DSLMethodCallMutatorTest extends MutatorTestBase {
 
 	}
 
+	public static void main(String[] args) throws Exception{
+    final TraceClassVisitor asm = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
+            System.out));
+    final ClassReader r = new ClassReader(HasDslMethodCall.class.getName());
+    r.accept(asm, ClassReader.SKIP_FRAMES);
+	}
+    
+    
 	@Before
 	public void setupEngineToRemoveVoidMethods() {
 		createTesteeWith(mutateOnlyCallMethod(), DSLMethodCallMutator.DSL_METHOD_CALL_MUTATOR);

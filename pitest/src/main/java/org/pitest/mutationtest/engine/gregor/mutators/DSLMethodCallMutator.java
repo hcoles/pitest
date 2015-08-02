@@ -27,14 +27,8 @@ public enum DSLMethodCallMutator implements MethodMutatorFactory {
 
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, dslMethods()) {
-      @Override
-      protected boolean filter(int opcode, String owner, String name, String desc, boolean itf) {
-        return super.filter(opcode, owner, name, desc, itf) 
-        		&& MethodInfo.doesReturnOwner(owner,desc);
-      }
-    };
+    return new DSLCallMethodVisitor(methodInfo, context, methodVisitor,
+        this, dslMethods());
   }
 
   public String getGloballyUniqueId() {

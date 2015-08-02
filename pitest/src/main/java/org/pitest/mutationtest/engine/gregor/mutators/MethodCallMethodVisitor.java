@@ -69,7 +69,8 @@ class MethodCallMethodVisitor extends MethodVisitor {
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc, boolean itf) {
 
-    if (!filter(opcode, owner, name, desc, itf)) {
+    if (!this.filter.apply(name, desc)
+        || isCallToSuperOrOwnConstructor(name, owner)) {
       this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
     } else {
       final MutationIdentifier newId = this.context.registerMutation(
@@ -87,12 +88,6 @@ class MethodCallMethodVisitor extends MethodVisitor {
     }
 
   }
-
-protected boolean filter(final int opcode, final String owner,
-	      final String name, final String desc, boolean itf) {
-	return this.filter.apply(name, desc)
-        && !isCallToSuperOrOwnConstructor(name, owner);
-}
 
   private boolean isCallToSuperOrOwnConstructor(final String name,
       final String owner) {
