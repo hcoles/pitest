@@ -25,11 +25,7 @@ F5<Integer, String, String, String, String[], Boolean> {
   @Override
   public Boolean apply(final Integer access, final String name,
       final String desc, final String signature, final String[] exceptions) {
-    return (isSynthetic(access) || isBridge(access));
-  }
-
-  private boolean isBridge(final Integer access) {
-    return false;
+    return (isSynthetic(access));
   }
 
   private boolean isSynthetic(final Integer access) {
