@@ -351,7 +351,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
-      final PitMojo mojo = createPITMojo(pom);
+      final AbstractPitMojo mojo = createPITMojo(pom);
       @SuppressWarnings("unchecked")
       Predicate<Artifact> filter = Mockito.mock(Predicate.class);
       when(

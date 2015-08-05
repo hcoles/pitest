@@ -21,7 +21,7 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 public class PitMojoTest extends BasePitMojoTest {
 
-  private PitMojo testee;
+  private AbstractPitMojo testee;
 
   @Override
   public void setUp() throws Exception {
@@ -104,7 +104,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testConfigureEnvironmentVariable() throws Exception {
 
-    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "                    <environmentVariables>\n"
         + "                        <DISPLAY>:20</DISPLAY>\n"
         + "                    </environmentVariables>"));
