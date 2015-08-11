@@ -145,6 +145,7 @@ public class PitMojoIT {
   @Test
   public void shouldWorkWithPowerMock() throws Exception {
     File testDir = prepare("/pit-powermock");
+    verifier.addCliOption("-DtimeoutConstant=8000");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
