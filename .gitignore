@@ -8,4 +8,5 @@ target/
 .metadata
 .idea
 *.iml
+.checkstyle
 dependency-reduced-pom.xml
