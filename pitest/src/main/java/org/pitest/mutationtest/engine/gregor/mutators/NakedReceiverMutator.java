@@ -77,6 +77,11 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
         final MutationIdentifier newId = this.context
             .registerMutation(this.factory,
                 "replaced call to " + owner + "::" + name + " with receiver");
+        if (context.shouldMutate(newId)) {
+          // remove call to method by swallowing the visitMethodInsn call
+          return;
+        }
+        this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
       } else {
         this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
       }
