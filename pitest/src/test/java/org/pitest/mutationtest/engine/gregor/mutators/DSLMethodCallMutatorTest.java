@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -102,13 +103,35 @@ public class DSLMethodCallMutatorTest extends MutatorTestBase {
 
 	}
 
-	public static void main(String[] args) throws Exception{
-    final TraceClassVisitor asm = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
-            System.out));
-    final ClassReader r = new ClassReader(HasDslMethodCall.class.getName());
-    r.accept(asm, ClassReader.SKIP_FRAMES);
+	static class ParentHasDslMethodCall<X extends ParentHasDslMethodCall>   {
+
+		private int i = 0;
+
+		public X chain(final int newVal) {
+			this.i += newVal;
+			return (X) this;
+		}
+
+		public String call() throws Exception {
+			this.chain(7).chain(5);
+			return "" + this;
+		}
+
+		@Override
+		public String toString() {
+			return "ParentHasDslMethodCall [i=" + i + "]";
+		}
+
 	}
-    
+
+	static class ChildHasDslMethodCall extends ParentHasDslMethodCall<ChildHasDslMethodCall> implements Callable<String> {
+
+		public String call() throws Exception {
+			this.chain(1).chain(3);
+			return "" + this;
+		}
+
+	}
     
 	@Before
 	public void setupEngineToRemoveVoidMethods() {
@@ -140,4 +163,14 @@ public class DSLMethodCallMutatorTest extends MutatorTestBase {
 		assertMutantCallableReturns(new HasDslMethodCall(), mutant, "HasDslMethodCall [i=3]");
 	}
 
+
+	@Test
+	@Ignore
+	public void shouldRemoveInheritedDslMethods() throws Exception {
+		FunctionalList<MutationDetails> methods = findMutationsFor(ChildHasDslMethodCall.class);
+		assertEquals(1, methods.size());
+
+		final Mutant mutant = getFirstMutant(ChildHasDslMethodCall.class);
+		assertMutantCallableReturns(new ChildHasDslMethodCall(), mutant, "ChildHasDslMethodCall [i=5]");
+	}
 }
