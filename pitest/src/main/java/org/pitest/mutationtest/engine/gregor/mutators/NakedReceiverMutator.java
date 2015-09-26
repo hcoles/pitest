@@ -23,6 +23,9 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+import static org.objectweb.asm.Opcodes.POP;
+import static org.objectweb.asm.Opcodes.POP2;
+
 /**
  * Mutator for non-void methods whos return type matches
  * the receiver's type that replaces the method call with the receiver.
@@ -78,7 +81,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
             .registerMutation(this.factory,
                 "replaced call to " + owner + "::" + name + " with receiver");
         if (context.shouldMutate(newId)) {
-          // remove call to method by swallowing the visitMethodInsn call
+          popMethodArgumentsFromStack(desc);
           return;
         }
         this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
@@ -92,5 +95,19 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
       return Type.getObjectType(owner).equals(Type.getReturnType(desc));
     }
 
+    private void popMethodArgumentsFromStack(String desc) {
+      Type[] argumentTypes = Type.getArgumentTypes(desc);
+      for (Type argType : argumentTypes) {
+        popArgument(argType);
+      }
+    }
+
+    private void popArgument(final Type argumentType) {
+      if (argumentType.getSize() != 1) {
+        this.mv.visitInsn(POP2);
+      } else {
+        this.mv.visitInsn(POP);
+      }
+    }
   }
 }
