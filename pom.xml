@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.pitest</groupId>
 	<organization>
@@ -8,7 +7,7 @@
 	</organization>
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1.7-SNAPSHOT</version>
+	<version>1.1.7</version>
 	<name>pitest-parent</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
@@ -16,7 +15,8 @@
 		<url>https://github.com/hcoles/pitest</url>
 		<connection>scm:git:git@github.com:hcoles/pitest.git</connection>
 		<developerConnection>scm:git:git@github.com:hcoles/pitest.git</developerConnection>
-	</scm>
+	  <tag>pitest-parent-1.1.7</tag>
+  </scm>
 
 	<licenses>
 		<license>
@@ -178,7 +178,7 @@
 						<dependency>
 							<groupId>org.pitest</groupId>
 							<artifactId>pitest-build-config</artifactId>
-							<version>1.1.7-SNAPSHOT</version>
+							<version>1.1.7</version>
 						</dependency>
 					</dependencies>
 					<executions>
