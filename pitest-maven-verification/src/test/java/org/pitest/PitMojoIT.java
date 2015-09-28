@@ -75,6 +75,17 @@ public class PitMojoIT {
 
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
   }
+  
+  @Test(timeout=30000)
+  public void shouldNotHangWhenLargeAmountsOfConsoleOutput() throws Exception {
+    File testDir = prepare("/pit-process-hang");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage"); 
+    // checkout output looks sane, but main point is that test coed
+    assertThat(readResults(testDir))
+    .contains(
+        "<sourceFile>SomeCode.java</sourceFile>");
+  }
 
   @Test
   public void shouldProduceConsistantCoverageData() throws Exception {

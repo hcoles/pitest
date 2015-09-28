@@ -30,6 +30,9 @@ public class JavaProcess {
 
     this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);
     this.err = new StreamMonitor(process.getErrorStream(), syserrHandler);
+    
+    out.requestStart();
+    err.requestStart();
   }
 
   public void destroy() {
