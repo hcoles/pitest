@@ -20,7 +20,7 @@ public enum ExitCode {
 
   private final int code;
 
-  private ExitCode(final int code) {
+  ExitCode(final int code) {
     this.code = code;
   }
 
