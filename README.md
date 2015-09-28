@@ -9,9 +9,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.7-SNAPSHOT
+### 1.1.8-SNAPSHOT
+
+Nothing yet
+
+### 1.1.7
 
 * #196 - Raise minimum java version to 1.6
+* #231 - Process hangs
 
 ### 1.1.6
 
@@ -19,6 +24,8 @@ Read all about it at http://pitest.org
 * #184 - Remove undocumented project file feature
 * #219 - Performance improvement for report generation (thanks tobiasbaum) 
 * #190 - Allow custom properties for plugins
+
+Note this release contains a known issue (#231). Please upgrade.
 
 ### 1.1.5
 
