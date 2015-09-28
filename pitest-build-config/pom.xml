@@ -4,4 +4,10 @@
   <artifactId>pitest-build-config</artifactId>
   <version>1.1.7-SNAPSHOT</version>
   <name>Build Config</name>
+  <parent>
+    <artifactId>pitest-parent</artifactId>
+    <groupId>org.pitest</groupId>
+    <version>1.1.7-SNAPSHOT</version>
+  </parent>
+
 </project>
