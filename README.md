@@ -11,7 +11,7 @@ Read all about it at http://pitest.org
 
 ### 1.1.8-SNAPSHOT
 
-Nothing yet
+* #239 - Provide a shortut to set history files via maven
 
 ### 1.1.7
 

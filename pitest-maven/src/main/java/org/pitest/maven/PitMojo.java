@@ -102,6 +102,17 @@ public class PitMojo extends AbstractMojo {
    * @parameter expression="${historyInputFile}"
    */
   private File                        historyInputFile;
+  
+  /**
+   * Convenience flag to read and write history to a local temp file.
+   * 
+   * Setting this flag is the equivalent to calling maven with -DhistoryInputFile=file -DhistoryOutputFile=file
+   * 
+   * Where file is a file named [groupid][artifactid][version]_pitest_history.bin in the temp directory
+   * 
+   * @parameter default-value="false" expression="${withHistory}"
+   */
+  private boolean                     withHistory;
 
   /**
    * Maximum distance to look from test to class. Relevant when mutating static
@@ -537,6 +548,10 @@ public class PitMojo extends AbstractMojo {
     return this.historyInputFile;
   }
 
+  public boolean useHistory() {
+    return this.withHistory;
+  }
+  
   public boolean isExportLineCoverage() {
     return this.exportLineCoverage;
   }

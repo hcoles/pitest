@@ -14,6 +14,7 @@
  */
 package org.pitest.maven;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
@@ -278,6 +279,15 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesHistoryOutputFile() {
     final ReportOptions actual = parseConfig("<historyOutputFile>foo</historyOutputFile>");
     assertEquals(new File("foo"), actual.getHistoryOutputLocation());
+  }
+  
+  public void testParsesLocalHistoryFlag() {
+    when(this.project.getGroupId()).thenReturn("com.example");
+    when(this.project.getArtifactId()).thenReturn("foo");    
+    when(this.project.getVersion()).thenReturn("0.1-SNAPSHOT");      
+    final ReportOptions actual = parseConfig("<withHistory>true</withHistory>");
+    String expected = "com.example.foo.0.1-SNAPSHOT_pitest_history.bin";
+    assertThat(actual.getHistoryInputLocation().getAbsolutePath()).endsWith(expected);
   }
 
   public void testParsesLineCoverageExportFlagWhenSet() {
