@@ -47,7 +47,7 @@ class RemoveIncrementsMethodVisitor extends MethodVisitor {
   private final MethodMutatorFactory factory;
   private final MutationContext      context;
 
-  public RemoveIncrementsMethodVisitor(final MethodMutatorFactory factory,
+  RemoveIncrementsMethodVisitor(final MethodMutatorFactory factory,
       final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(Opcodes.ASM5, delegateMethodVisitor);
     this.factory = factory;

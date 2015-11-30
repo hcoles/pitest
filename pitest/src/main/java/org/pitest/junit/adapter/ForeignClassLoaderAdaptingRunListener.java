@@ -33,7 +33,7 @@ class ForeignClassLoaderAdaptingRunListener extends RunListener {
   private final List<String> events;
   private boolean            finished = false;
 
-  public ForeignClassLoaderAdaptingRunListener(final List<String> queue) {
+  ForeignClassLoaderAdaptingRunListener(final List<String> queue) {
     this.events = queue;
   }
 

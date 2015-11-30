@@ -1,7 +1,5 @@
 package com.example;
 
-import java.io.Serializable;
-
 public class SomeCode {
 
    public void generateLotsOfOutput() {

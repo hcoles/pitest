@@ -32,13 +32,13 @@ class ConfigurationFactory {
   private final ClassByteArraySource source;
   private final TestGroupConfig      config;
 
-  public ConfigurationFactory(final TestGroupConfig config,
+  ConfigurationFactory(final TestGroupConfig config,
       final ClassByteArraySource source) {
     this.source = source;
     this.config = config;
   }
 
-  public Configuration createConfiguration() {
+  Configuration createConfiguration() {
     final Collection<Configuration> configs = new ArrayList<Configuration>();
     final Repository classRepository = new Repository(this.source);
 

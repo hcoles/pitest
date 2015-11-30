@@ -58,7 +58,7 @@ public enum ReturnValsMutator implements MethodMutatorFactory {
 
 class ReturnValsMethodVisitor extends AbstractInsnMutator {
 
-  public ReturnValsMethodVisitor(final MethodMutatorFactory factory,
+  ReturnValsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
     super(factory, methodInfo, context, writer);

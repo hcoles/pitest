@@ -12,7 +12,7 @@ class AdaptingRunListener extends RunListener {
   private final ResultCollector                rc;
   private boolean                              failed = false;
 
-  public AdaptingRunListener(final org.pitest.testapi.Description description,
+  AdaptingRunListener(final org.pitest.testapi.Description description,
       final ResultCollector rc) {
     this.description = description;
     this.rc = rc;

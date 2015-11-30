@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 public class Timings {
 
-  public static enum Stage {
+  public enum Stage {
     BUILD_MUTATION_TESTS("build mutation tests"), RUN_MUTATION_TESTS(
         "run mutation analysis"), SCAN_CLASS_PATH("scan classpath"), COVERAGE(
             "coverage and dependency analysis");

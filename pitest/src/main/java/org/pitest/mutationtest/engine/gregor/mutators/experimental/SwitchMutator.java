@@ -36,7 +36,7 @@ public class SwitchMutator implements MethodMutatorFactory {
 
     private final MutationContext context;
 
-    public SwitchMethodVisitor(final MutationContext context,
+    SwitchMethodVisitor(final MutationContext context,
         final MethodVisitor methodVisitor) {
       super(Opcodes.ASM5, methodVisitor);
       this.context = context;

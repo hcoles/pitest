@@ -50,7 +50,7 @@ public enum MathMutator implements MethodMutatorFactory {
 
 class MathMethodVisitor extends AbstractInsnMutator {
 
-  public MathMethodVisitor(final MethodMutatorFactory factory,
+  MathMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
     super(factory, methodInfo, context, writer);

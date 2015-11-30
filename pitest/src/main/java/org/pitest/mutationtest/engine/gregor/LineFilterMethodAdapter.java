@@ -11,7 +11,7 @@ class LineFilterMethodAdapter extends MethodVisitor {
   private final MutationContext      context;
   private final PremutationClassInfo classInfo;
 
-  public LineFilterMethodAdapter(final MutationContext context,
+  LineFilterMethodAdapter(final MutationContext context,
       final PremutationClassInfo classInfo,
       final MethodVisitor delegateMethodVisitor) {
     super(Opcodes.ASM5, delegateMethodVisitor);

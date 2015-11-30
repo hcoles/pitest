@@ -37,7 +37,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
 
   private static final String INTERCEPTOR_CLASS = classToName(JavassistInterceptor.class);
 
-  public JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv) {
+  JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv) {
     super(Opcodes.ASM5, mv);
   }
 

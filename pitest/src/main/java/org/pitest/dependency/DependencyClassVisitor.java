@@ -67,7 +67,7 @@ class DependencyClassVisitor extends ClassVisitor {
     private final Member                        member;
     private final SideEffect1<DependencyAccess> typeReceiver;
 
-    public DependencyAnalysisMethodVisitor(final Member member,
+    DependencyAnalysisMethodVisitor(final Member member,
         final MethodVisitor methodVisitor,
         final SideEffect1<DependencyAccess> typeReceiver) {
       super(Opcodes.ASM5, methodVisitor);

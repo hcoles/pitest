@@ -170,7 +170,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
    * @param context
    *          to store detected line numbers
    */
-  public TryWithResourcesMethodVisitor(final PremutationClassInfo context) {
+  TryWithResourcesMethodVisitor(final PremutationClassInfo context) {
     super(Opcodes.ASM5);
     this.context = context;
   }
