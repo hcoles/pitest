@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
-			<version>4.3</version>
+			<version>4.9</version>
 		</dependency>
 
 	</dependencies>
