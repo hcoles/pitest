@@ -36,7 +36,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
   private final class InlineConstantVisitor extends MethodVisitor {
     private final MutationContext context;
 
-    public InlineConstantVisitor(final MutationContext context,
+    InlineConstantVisitor(final MutationContext context,
         final MethodVisitor delegateVisitor) {
       super(Opcodes.ASM5, delegateVisitor);
       this.context = context;

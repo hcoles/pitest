@@ -15,7 +15,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
   private final ReceiveStrategy                   receive;
   private final ServerSocket                      socket;
 
-  public SocketReadingCallable(final ServerSocket socket,
+  SocketReadingCallable(final ServerSocket socket,
       final SideEffect1<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
     this.socket = socket;

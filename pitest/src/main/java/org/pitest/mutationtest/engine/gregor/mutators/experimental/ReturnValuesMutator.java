@@ -45,7 +45,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
     private final String mutatorInternalName;
     private final String mutationMethodDescriptor;
 
-    public ObjectMutationMethod() {
+    ObjectMutationMethod() {
 
       final Type mutatorType = Type.getType(ReturnValuesMutator.class);
       this.mutatorInternalName = mutatorType.getInternalName();

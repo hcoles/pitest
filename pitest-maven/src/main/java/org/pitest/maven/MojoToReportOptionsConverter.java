@@ -26,6 +26,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -132,8 +133,8 @@ public class MojoToReportOptionsConverter {
     data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
     data.setDetectInlinedCode(this.mojo.isDetectInlinedCode());
 
-    data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
-    data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+    determineHistory(data);
+    
     data.setExportLineCoverage(this.mojo.isExportLineCoverage());
     data.setMutationEngine(this.mojo.getMutationEngine());
     data.setJavaExecutable(this.mojo.getJavaExecutable());
@@ -142,6 +143,31 @@ public class MojoToReportOptionsConverter {
     return data;
   }
 
+  private void determineHistory(final ReportOptions data) {
+    if (this.mojo.useHistory()) {
+      useHistoryFileInTempDir(data);
+    } else {
+      data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
+      data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+    }
+  }
+
+  private void useHistoryFileInTempDir(final ReportOptions data) {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    MavenProject project = this.mojo.project;
+    String name = project.getGroupId() + "."
+        + project.getArtifactId() + "."
+        + project.getVersion() + "_pitest_history.bin";
+    File historyFile = new File(tempDir, name);
+    log.info("Will read and write history at " + historyFile);
+    if (this.mojo.getHistoryInputFile() == null) {
+      data.setHistoryInputLocation(historyFile);
+    }
+    if (this.mojo.getHistoryOutputFile() == null) {
+      data.setHistoryOutputLocation(historyFile);
+    }
+  }
+  
   private ReportOptions updateFromSurefire(ReportOptions option) {
     Collection<Plugin> plugins = lookupPlugin("org.apache.maven.plugins:maven-surefire-plugin");
     if (!this.mojo.isParseSurefireConfig()) {

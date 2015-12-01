@@ -35,7 +35,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
     private final MutationContext context;
 
-    public MemberVariableVisitor(final MutationContext context,
+    MemberVariableVisitor(final MutationContext context,
         final MethodVisitor delegateVisitor) {
       super(Opcodes.ASM5, delegateVisitor);
       this.context = context;

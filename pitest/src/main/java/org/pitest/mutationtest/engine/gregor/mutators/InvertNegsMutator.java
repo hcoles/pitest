@@ -60,7 +60,7 @@ class InvertNegsMethodVisitor extends AbstractInsnMutator {
     MUTATIONS.put(Opcodes.LNEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
   }
 
-  public InvertNegsMethodVisitor(final MethodMutatorFactory factory,
+  InvertNegsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
     super(factory, methodInfo, context, writer);

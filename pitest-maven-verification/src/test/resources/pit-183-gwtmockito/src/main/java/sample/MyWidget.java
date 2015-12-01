@@ -29,8 +29,10 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class MyWidget extends Composite {
 
-  interface MyUiBinder extends UiBinder<Widget, MyWidget> {}
-  private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+  interface MyUiBinder extends UiBinder<Widget, MyWidget> {
+    
+  }
+  private static final MyUiBinder UI_BINDER = GWT.create(MyUiBinder.class);
 
   public interface DataProvider {
     String getData();
@@ -44,7 +46,7 @@ public class MyWidget extends Composite {
   public MyWidget() {
     dataProvider = GWT.create(DataProvider.class);
     doStuffInJavaScript();
-    initWidget(uiBinder.createAndBindUi(this));
+    initWidget(UI_BINDER.createAndBindUi(this));
   }
 
   public void setName(String firstName, String lastName) {
@@ -64,7 +66,9 @@ public class MyWidget extends Composite {
       }
 
       @Override
-      public void onFailure(Throwable caught) {}
+      public void onFailure(Throwable caught) {
+        
+      }
     });
   }
 

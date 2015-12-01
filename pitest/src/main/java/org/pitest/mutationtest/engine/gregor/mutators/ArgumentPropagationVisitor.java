@@ -37,7 +37,7 @@ class ArgumentPropagationVisitor extends MethodVisitor {
   private final MethodMutatorFactory factory;
   private final MutationContext      context;
 
-  public ArgumentPropagationVisitor(final MutationContext context,
+  ArgumentPropagationVisitor(final MutationContext context,
       final MethodVisitor writer, final MethodMutatorFactory factory) {
     super(Opcodes.ASM5, writer);
     this.factory = factory;

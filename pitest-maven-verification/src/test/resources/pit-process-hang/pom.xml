@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>pitest-sample</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<name>pit process hang</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+			    <version>${pit.version}</version>
+				<configuration>
+					<verbose>true</verbose>
+				    <outputFormats><value>XML</value></outputFormats>	
+				    <timestampedReports>false</timestampedReports>				
+					<exportLineCoverage>true</exportLineCoverage>
+					<mutators>
+						<mutator>VOID_METHOD_CALLS</mutator>
+					</mutators>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -76,7 +76,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
     private final MutationContext      context;
     private final MethodMutatorFactory factory;
 
-    public RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
+    RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
         final MutationContext context,
         final MethodVisitor delegateMethodVisitor, String description) {
       super(Opcodes.ASM5, delegateMethodVisitor);

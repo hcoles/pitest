@@ -54,7 +54,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
     RETURN_TYPE_MAP.put(Type.DOUBLE_TYPE, DCONST_0);
   }
 
-  public MethodCallMethodVisitor(final MethodInfo methodInfo,
+  MethodCallMethodVisitor(final MethodInfo methodInfo,
       final MutationContext context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {

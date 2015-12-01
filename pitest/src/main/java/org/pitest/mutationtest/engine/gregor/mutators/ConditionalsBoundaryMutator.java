@@ -66,7 +66,7 @@ class ConditionalsBoundaryMethodVisitor extends AbstractJumpMutator {
         DESCRIPTION));
   }
 
-  public ConditionalsBoundaryMethodVisitor(final MethodMutatorFactory factory,
+  ConditionalsBoundaryMethodVisitor(final MethodMutatorFactory factory,
       final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }

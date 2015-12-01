@@ -8,7 +8,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Goal which runs a coverage mutation report
  */
 @Mojo(name = "mutationCoverage", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
-
 public class PitMojo extends AbstractPitMojo {
 
 }

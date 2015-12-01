@@ -99,7 +99,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     private final ClassInfoBuilder classInfo;
     private final ClassName        annotation;
 
-    public ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
+    ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
         ClassName annotation) {
       super(Opcodes.ASM5, null);
       this.classInfo = classInfo;
@@ -152,7 +152,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 class InfoMethodVisitor extends MethodVisitor {
   private final ClassInfoBuilder classInfo;
 
-  public InfoMethodVisitor(final ClassInfoBuilder classInfo,
+  InfoMethodVisitor(final ClassInfoBuilder classInfo,
       final MethodVisitor writer) {
     super(Opcodes.ASM5, writer);
     this.classInfo = classInfo;

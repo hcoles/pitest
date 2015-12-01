@@ -38,7 +38,7 @@ public enum Help {
   private static final String URL = "http://pitest.org";
   private final String        text;
 
-  private Help(final String text) {
+  Help(final String text) {
     this.text = text;
   }
 

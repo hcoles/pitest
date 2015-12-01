@@ -11,7 +11,7 @@ public class CoveredByMultipleThreads {
       return 42;
     }
     
-    for ( int j= 0 ; j != 100; j++ ) {
+    for ( int j = 0; j != 100; j++ ) {
        try {
         Thread.sleep(1);
       } catch (InterruptedException e) {

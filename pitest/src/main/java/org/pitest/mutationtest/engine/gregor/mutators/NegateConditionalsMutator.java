@@ -80,7 +80,7 @@ class ConditionalMethodVisitor extends AbstractJumpMutator {
         DESCRIPTION));
   }
 
-  public ConditionalMethodVisitor(final MethodMutatorFactory factory,
+  ConditionalMethodVisitor(final MethodMutatorFactory factory,
       final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }

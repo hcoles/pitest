@@ -83,6 +83,17 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "historyInputFile")
   private File                        historyInputFile;
+  
+  /**
+   * Convenience flag to read and write history to a local temp file.
+   * 
+   * Setting this flag is the equivalent to calling maven with -DhistoryInputFile=file -DhistoryOutputFile=file
+   * 
+   * Where file is a file named [groupid][artifactid][version]_pitest_history.bin in the temp directory
+   * 
+   */
+  @Parameter(defaultValue = "false", property = "withHistory")
+  private boolean                     withHistory;  
 
   /**
    * Maximum distance to look from test to class. Relevant when mutating static
@@ -123,9 +134,7 @@ public class AbstractPitMojo extends AbstractMojo {
   private float                       timeoutFactor;
 
   /**
-   * Constant factor to allow for timeouts
-   *
-   * 
+   * Constant factor to allow for timeouts 
    */
   @Parameter(defaultValue = "3000", property = "timeoutConstant")
   private long                        timeoutConstant;
@@ -530,5 +539,9 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public Map<String, String> getEnvironmentVariables() {
     return environmentVariables;
+  }
+
+  public boolean useHistory() {
+    return this.withHistory;
   }
 }
