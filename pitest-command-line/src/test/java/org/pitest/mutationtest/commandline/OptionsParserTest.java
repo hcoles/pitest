@@ -82,8 +82,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfSourceDirectories() {
     final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
         "foo/bar,bar/far");
-    assertEquals(Arrays.asList(new File("foo/bar"), new File("bar/far")),
-        actual.getSourceDirs());
+    assertEquals(Arrays.asList(new File("foo/bar"), new File("bar/far")), actual.getSourceDirs());
   }
 
   @Test
@@ -197,6 +196,20 @@ public class OptionsParserTest {
     assertTrue(actualPredicate.apply("foo_anything"));
     assertTrue(actualPredicate.apply("bar_anything"));
     assertFalse(actualPredicate.apply("notfoobar"));
+  }
+
+  @Test
+  public void shouldParseCommaSeparatedListOfTargetTestClassGlobAsRegex() {
+    ReportOptions actual = parseAddingRequiredArgs("--targetTest",
+            "~foo\\w*,~bar.*");
+    Predicate<String> actualPredicate = actual.getTargetTestsFilter();
+    assertTrue(actualPredicate.apply("foo_anything"));
+    assertTrue(actualPredicate.apply("bar_anything"));
+    assertFalse(actualPredicate.apply("notfoobar"));
+    actual = parseAddingRequiredArgs("--targetTest",
+            "~.*?foo\\w*,~bar.*");
+    actualPredicate = actual.getTargetTestsFilter();
+    assertTrue(actualPredicate.apply("notfoobar"));
   }
 
   @Test
