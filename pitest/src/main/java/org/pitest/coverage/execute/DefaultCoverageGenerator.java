@@ -135,13 +135,13 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     if (exitCode == ExitCode.JUNIT_ISSUE) {
       LOG.severe("Error generating coverage. Please check that your classpath contains JUnit 4.6 or above.");
       throw new PitError(
-          "Coverage generation slave exited abnormally. Please check the classpath.");
+          "Coverage generation minion exited abnormally. Please check the classpath.");
     } else if (!exitCode.isOk()) {
-      LOG.severe("Coverage generator Slave exited abnormally due to "
+      LOG.severe("Coverage generator Minion exited abnormally due to "
           + exitCode);
-      throw new PitError("Coverage generation slave exited abnormally!");
+      throw new PitError("Coverage generation minion exited abnormally!");
     } else {
-      LOG.fine("Coverage generator Slave exited ok");
+      LOG.fine("Coverage generator Minion exited ok");
     }
   }
 
@@ -167,7 +167,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return new SideEffect1<String>() {
       @Override
       public void apply(final String a) {
-        LOG.info("SLAVE : " + a);
+        LOG.info("MINION : " + a);
       }
     };
   }
@@ -176,7 +176,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return new SideEffect1<String>() {
       @Override
       public void apply(final String a) {
-        LOG.fine("SLAVE : " + a);
+        LOG.fine("MINION : " + a);
       }
     };
   }

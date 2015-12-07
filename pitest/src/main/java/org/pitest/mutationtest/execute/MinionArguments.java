@@ -22,7 +22,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.testapi.Configuration;
 
-public class SlaveArguments {
+public class MinionArguments {
 
   final Collection<MutationDetails> mutations;
   final Collection<ClassName>       testClasses;
@@ -31,7 +31,7 @@ public class SlaveArguments {
   final boolean                     verbose;
   final Configuration               pitConfig;
 
-  public SlaveArguments(final Collection<MutationDetails> mutations,
+  public MinionArguments(final Collection<MutationDetails> mutations,
       final Collection<ClassName> tests, final MutationEngine engine,
       final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
       final Configuration pitConfig) {

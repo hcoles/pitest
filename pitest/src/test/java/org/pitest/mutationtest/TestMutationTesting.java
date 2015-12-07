@@ -234,7 +234,7 @@ public class TestMutationTesting {
   }
 
   @Test
-  public void shouldExportSystemPropertiesToSlaveProcess() {
+  public void shouldExportSystemPropertiesToMinionProcess() {
     // System.setProperty("foo", "foo");
     // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutationOnly.class,

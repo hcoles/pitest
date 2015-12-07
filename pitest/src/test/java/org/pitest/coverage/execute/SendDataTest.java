@@ -31,13 +31,13 @@ public class SendDataTest {
   }
 
   @Test
-  public void shouldSendArgumentsToSlave() {
+  public void shouldSendArgumentsToMinion() {
     this.testee.apply(this.os);
     verify(this.os).write(this.arguments);
   }
 
   @Test
-  public void shouldSendTestClassesToSlave() {
+  public void shouldSendTestClassesToMinion() {
     this.testClasses.add("foo");
     this.testClasses.add("bar");
     this.testee.apply(this.os);

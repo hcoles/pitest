@@ -46,14 +46,14 @@ import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
 
-public class MutationTestSlave {
+public class MutationTestMinion {
 
   private static final Logger       LOG = Log.getLogger();
 
   private final SafeDataInputStream dis;
   private final Reporter            reporter;
 
-  public MutationTestSlave(final SafeDataInputStream dis,
+  public MutationTestMinion(final SafeDataInputStream dis,
       final Reporter reporter) {
     this.dis = dis;
     this.reporter = reporter;
@@ -62,8 +62,8 @@ public class MutationTestSlave {
   public void run() {
     try {
 
-      final SlaveArguments paramsFromParent = this.dis
-          .read(SlaveArguments.class);
+      final MinionArguments paramsFromParent = this.dis
+          .read(MinionArguments.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
 
@@ -94,7 +94,7 @@ public class MutationTestSlave {
 
   public static void main(final String[] args) {
 
-    LOG.log(Level.FINE, "slave started");
+    LOG.log(Level.FINE, "minion started");
 
     enablePowerMockSupport();
 
@@ -109,7 +109,7 @@ public class MutationTestSlave {
       final Reporter reporter = new DefaultReporter(s.getOutputStream());
       addMemoryWatchDog(reporter);
 
-      final MutationTestSlave instance = new MutationTestSlave(dis, reporter);
+      final MutationTestMinion instance = new MutationTestMinion(dis, reporter);
       instance.run();
     } catch (final UnknownHostException ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);

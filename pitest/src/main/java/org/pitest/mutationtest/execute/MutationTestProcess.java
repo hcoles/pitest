@@ -18,9 +18,9 @@ public class MutationTestProcess {
   private final MutationTestCommunicationThread thread;
 
   public MutationTestProcess(final ServerSocket socket,
-      final ProcessArgs processArgs, final SlaveArguments arguments) {
+      final ProcessArgs processArgs, final MinionArguments arguments) {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
-        MutationTestSlave.class);
+        MutationTestMinion.class);
     this.thread = new MutationTestCommunicationThread(socket, arguments,
         new HashMap<MutationIdentifier, MutationStatusTestPair>());
 

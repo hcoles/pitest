@@ -24,9 +24,9 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.PitError;
 import org.pitest.util.SafeDataInputStream;
 
-public class MutationTestSlaveTest {
+public class MutationTestMinionTest {
 
-  private MutationTestSlave           testee;
+  private MutationTestMinion           testee;
 
   @Mock
   private Reporter                    reporter;
@@ -46,7 +46,7 @@ public class MutationTestSlaveTest {
   @Mock
   private Mutater                     mutater;
 
-  private SlaveArguments              args;
+  private MinionArguments              args;
 
   private Collection<MutationDetails> mutations;
 
@@ -58,14 +58,14 @@ public class MutationTestSlaveTest {
     this.mutations = new ArrayList<MutationDetails>();
     this.tests = new ArrayList<ClassName>();
 
-    this.args = new SlaveArguments(this.mutations, this.tests, this.engine,
+    this.args = new MinionArguments(this.mutations, this.tests, this.engine,
         this.timeoutStrategy, false, this.testConfig);
 
-    when(this.is.read(SlaveArguments.class)).thenReturn(this.args);
+    when(this.is.read(MinionArguments.class)).thenReturn(this.args);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
     .thenReturn(this.mutater);
 
-    this.testee = new MutationTestSlave(this.is, this.reporter);
+    this.testee = new MutationTestMinion(this.is, this.reporter);
   }
 
   @Test

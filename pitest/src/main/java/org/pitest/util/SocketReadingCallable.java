@@ -31,7 +31,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
       final BufferedInputStream bif = new BufferedInputStream(
           clientSocket.getInputStream());
 
-      sendDataToSlave(clientSocket);
+      sendDataToMinion(clientSocket);
 
       final SafeDataInputStream is = new SafeDataInputStream(bif);
       exitCode = receiveResults(is);
@@ -54,7 +54,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
     return exitCode;
   }
 
-  private void sendDataToSlave(final Socket clientSocket) throws IOException {
+  private void sendDataToMinion(final Socket clientSocket) throws IOException {
     final OutputStream os = clientSocket.getOutputStream();
     final SafeDataOutputStream dos = new SafeDataOutputStream(os);
     this.sendInitialData.apply(dos);

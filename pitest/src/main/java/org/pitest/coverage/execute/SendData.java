@@ -32,13 +32,13 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
 
     // send individually to reduce memory overhead of deserializing large
     // suite
-    LOG.info("Sending " + this.testClasses.size() + " test classes to slave");
+    LOG.info("Sending " + this.testClasses.size() + " test classes to minion");
     dos.writeInt(this.testClasses.size());
     for (final String tc : this.testClasses) {
       dos.writeString(tc);
     }
     dos.flush();
-    LOG.info("Sent tests to slave");
+    LOG.info("Sent tests to minion");
 
   }
 }

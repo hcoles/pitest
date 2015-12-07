@@ -20,14 +20,14 @@ public class WrappingProcess {
 
   private final int         port;
   private final ProcessArgs processArgs;
-  private final Class<?>    slaveClass;
+  private final Class<?>    minionClass;
 
   private JavaProcess       process;
 
-  public WrappingProcess(int port, ProcessArgs args, Class<?> slaveClass) {
+  public WrappingProcess(int port, ProcessArgs args, Class<?> minionClass) {
     this.port = port;
     this.processArgs = args;
-    this.slaveClass = slaveClass;
+    this.minionClass = minionClass;
   }
 
   public void start() throws IOException {
@@ -35,7 +35,7 @@ public class WrappingProcess {
 
     ProcessBuilder processBuilder = createProcessBuilder(
         this.processArgs.getJavaExecutable(), this.processArgs.getJvmArgs(),
-        this.slaveClass, Arrays.asList(args),
+        this.minionClass, Arrays.asList(args),
         this.processArgs.getJavaAgentFinder());
 
     configureProcessBuilder(processBuilder, this.processArgs.getWorkingDir(),

@@ -34,9 +34,9 @@ public class MutationTestCommunicationThread extends CommunicationThread {
   private static final Logger LOG = Log.getLogger();
 
   private static class SendData implements SideEffect1<SafeDataOutputStream> {
-    private final SlaveArguments arguments;
+    private final MinionArguments arguments;
 
-    SendData(final SlaveArguments arguments) {
+    SendData(final MinionArguments arguments) {
       this.arguments = arguments;
     }
 
@@ -86,7 +86,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
   private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 
   public MutationTestCommunicationThread(final ServerSocket socket,
-      final SlaveArguments arguments,
+      final MinionArguments arguments,
       final Map<MutationIdentifier, MutationStatusTestPair> idMap) {
     super(socket, new SendData(arguments), new Receive(idMap));
     this.idMap = idMap;

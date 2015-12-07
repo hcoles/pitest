@@ -41,7 +41,7 @@ import org.pitest.util.SafeDataInputStream;
 
 import sun.pitest.CodeCoverageStore;
 
-public class CoverageSlave {
+public class CoverageMinion {
 
   private static final Logger LOG = Log.getLogger();
 

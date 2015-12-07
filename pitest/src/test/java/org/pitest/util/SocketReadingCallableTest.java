@@ -50,13 +50,13 @@ public class SocketReadingCallableTest {
   }
 
   @Test
-  public void shouldReportTheExitCodeSentByTheSlaveProcess() throws Exception {
+  public void shouldReportTheExitCodeSentByTheMinionProcess() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
     assertEquals(ExitCode.TIMEOUT, this.testee.call());
   }
 
   @Test
-  public void shouldSendInitialDataToSlave() throws Exception {
+  public void shouldSendInitialDataToMinion() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
     this.testee.call();
     verify(this.sendDataSideEffect).apply(any(SafeDataOutputStream.class));

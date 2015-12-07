@@ -67,23 +67,23 @@ public class MutationTestUnit implements MutationAnalysisUnit {
         remainingMutations, this.testClasses);
     worker.start();
 
-    setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(mutations,
+    setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(mutations,
         remainingMutations);
 
-    final ExitCode exitCode = waitForSlaveToDie(worker);
+    final ExitCode exitCode = waitForMinionToDie(worker);
     worker.results(mutations);
 
     correctResultForProcessExitCode(mutations, exitCode);
 
   }
 
-  private ExitCode waitForSlaveToDie(final MutationTestProcess worker) {
+  private ExitCode waitForMinionToDie(final MutationTestProcess worker) {
     final ExitCode exitCode = worker.waitToDie();
     LOG.fine("Exit code was - " + exitCode);
     return exitCode;
   }
 
-  private void setFirstMutationToStatusOfStartedInCaseSlaveFailsAtBoot(
+  private void setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(
       final MutationStatusMap mutations,
       final Collection<MutationDetails> remainingMutations) {
     mutations.setStatusForMutation(remainingMutations.iterator().next(),
@@ -98,13 +98,13 @@ public class MutationTestUnit implements MutationAnalysisUnit {
           .getUnfinishedRuns();
       final DetectionStatus status = DetectionStatus
           .getForErrorExitCode(exitCode);
-      LOG.warning("Slave exited abnormally due to " + status);
+      LOG.warning("Minion exited abnormally due to " + status);
       LOG.fine("Setting " + unfinishedRuns.size() + " unfinished runs to "
           + status + " state");
       mutations.setStatusForMutations(unfinishedRuns, status);
 
     } else {
-      LOG.fine("Slave exited ok");
+      LOG.fine("Minion exited ok");
     }
 
   }

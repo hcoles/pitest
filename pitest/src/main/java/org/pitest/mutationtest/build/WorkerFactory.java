@@ -12,7 +12,7 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.execute.MutationTestProcess;
-import org.pitest.mutationtest.execute.SlaveArguments;
+import org.pitest.mutationtest.execute.MinionArguments;
 import org.pitest.process.ProcessArgs;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.Log;
@@ -42,7 +42,7 @@ public class WorkerFactory {
   public MutationTestProcess createWorker(
       final Collection<MutationDetails> remainingMutations,
       final Collection<ClassName> testClasses) {
-    final SlaveArguments fileArgs = new SlaveArguments(remainingMutations,
+    final MinionArguments fileArgs = new MinionArguments(remainingMutations,
         testClasses, this.config.getEngine(), this.timeoutStrategy,
         Log.isVerbose(), this.pitConfig);
 
