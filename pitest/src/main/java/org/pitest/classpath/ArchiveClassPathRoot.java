@@ -71,7 +71,7 @@ public class ArchiveClassPathRoot implements ClassPathRoot {
 
   }
 
-  private void closeQuietly(final ZipFile zip) {
+  private static void closeQuietly(final ZipFile zip) {
     try {
       zip.close();
     } catch (final IOException e) {

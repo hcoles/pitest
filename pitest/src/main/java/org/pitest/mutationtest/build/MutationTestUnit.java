@@ -56,7 +56,19 @@ public class MutationTestUnit implements MutationAnalysisUnit {
 
     return reportResults(mutations);
   }
+  
+  @Override
+  public int priority() {
+    return this.availableMutations.size();
+  }
 
+  private void runTestsInSeperateProcess(final MutationStatusMap mutations)
+      throws IOException, InterruptedException {
+    while (mutations.hasUnrunMutations()) {
+      runTestInSeperateProcessForMutationRange(mutations);
+    }
+  }
+  
   private void runTestInSeperateProcessForMutationRange(
       final MutationStatusMap mutations) throws IOException,
       InterruptedException {
@@ -74,23 +86,22 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     worker.results(mutations);
 
     correctResultForProcessExitCode(mutations, exitCode);
-
   }
 
-  private ExitCode waitForMinionToDie(final MutationTestProcess worker) {
+  private static ExitCode waitForMinionToDie(final MutationTestProcess worker) {
     final ExitCode exitCode = worker.waitToDie();
     LOG.fine("Exit code was - " + exitCode);
     return exitCode;
   }
 
-  private void setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(
+  private static void setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(
       final MutationStatusMap mutations,
       final Collection<MutationDetails> remainingMutations) {
     mutations.setStatusForMutation(remainingMutations.iterator().next(),
         DetectionStatus.STARTED);
   }
 
-  private void correctResultForProcessExitCode(
+  private static void correctResultForProcessExitCode(
       final MutationStatusMap mutations, final ExitCode exitCode) {
 
     if (!exitCode.isOk()) {
@@ -109,21 +120,10 @@ public class MutationTestUnit implements MutationAnalysisUnit {
 
   }
 
-  private void runTestsInSeperateProcess(final MutationStatusMap mutations)
-      throws IOException, InterruptedException {
-    while (mutations.hasUnrunMutations()) {
-      runTestInSeperateProcessForMutationRange(mutations);
-    }
-
-  }
-
-  private MutationMetaData reportResults(final MutationStatusMap mutationsMap) {
+  private static MutationMetaData reportResults(final MutationStatusMap mutationsMap) {
     return new MutationMetaData(mutationsMap.createMutationResults());
   }
 
-  @Override
-  public int priority() {
-    return this.availableMutations.size();
-  }
+
 
 }

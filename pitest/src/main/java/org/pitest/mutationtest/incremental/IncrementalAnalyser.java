@@ -2,7 +2,7 @@ package org.pitest.mutationtest.incremental;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +36,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private static Map<DetectionStatus, Long> createStatusMap() {
-    final HashMap<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
+    final EnumMap<DetectionStatus, Long> map = new EnumMap<DetectionStatus, Long>(DetectionStatus.class);
     for (final DetectionStatus each : DetectionStatus.values()) {
       map.put(each, 0L);
     }

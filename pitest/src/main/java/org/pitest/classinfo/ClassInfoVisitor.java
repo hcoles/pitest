@@ -139,7 +139,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       return super.visitArray(name);
     }
 
-    private Object simplify(Object value) {
+    private static Object simplify(Object value) {
       Object newValue = value;
       if (value instanceof Type) {
         newValue = ((Type) value).getClassName();

@@ -119,7 +119,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   }
 
   public static Runner createRunner(final Class<?> clazz) {
-    final RunnerBuilder builder = createRunnerBuilder(clazz);
+    final RunnerBuilder builder = createRunnerBuilder();
     try {
       return builder.runnerForClass(clazz);
     } catch (final Throwable ex) {
@@ -129,7 +129,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   }
 
-  private static RunnerBuilder createRunnerBuilder(final Class<?> clazz) {
+  private static RunnerBuilder createRunnerBuilder() {
     return new AllDefaultPossibilitiesBuilder(true);
   }
 

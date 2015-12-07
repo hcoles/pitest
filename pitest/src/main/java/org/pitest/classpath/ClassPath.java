@@ -57,15 +57,6 @@ public class ClassPath {
     this(createRoots(FCollection.filter(files, exists())));
   }
 
-  private static F<File, Boolean> exists() {
-    return new F<File, Boolean>() {
-      @Override
-      public Boolean apply(final File a) {
-        return a.exists() && a.canRead();
-      }
-    };
-  }
-
   public Collection<String> classNames() {
     return this.root.classNames();
   }
@@ -81,19 +72,24 @@ public class ClassPath {
         if (f.isDirectory()) {
           rs.add(new DirectoryClassPathRoot(f));
         } else {
-          try {
-            if (!f.canRead()) {
-              throw new IOException("Can't read the file " + f);
-            }
-            rs.add(new ArchiveClassPathRoot(f));
-          } catch (final ZipException ex) {
-            LOG.warning("Can't open the archive " + f);
-          }
+          handleArchive(rs, f);
         }
       }
       return rs;
     } catch (final IOException ex) {
       throw new PitError("Error handling file " + lastFile, ex);
+    }
+  }
+
+  private static void handleArchive(final List<ClassPathRoot> rs, final File f)
+      throws IOException {
+    try {
+      if (!f.canRead()) {
+        throw new IOException("Can't read the file " + f);
+      }
+      rs.add(new ArchiveClassPathRoot(f));
+    } catch (final ZipException ex) {
+      LOG.warning("Can't open the archive " + f);
     }
   }
 
@@ -124,6 +120,36 @@ public class ClassPath {
     return filesAsString;
   }
 
+
+  public static Collection<File> getClassPathElementsAsFiles() {
+    final Set<File> us = new LinkedHashSet<File>();
+    FCollection.mapTo(getClassPathElementsAsAre(), stringToCanonicalFile(), us);
+    return us;
+  }
+
+
+  public Collection<String> findClasses(final Predicate<String> nameFilter) {
+    return FCollection.filter(classNames(), nameFilter);
+  }
+
+  public String getLocalClassPath() {
+    return this.root.cacheLocation().value();
+  }
+
+  public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {
+    return new ClassPath(FCollection.filter(this.root, predicate).toArray(
+        new ClassPathRoot[0]));
+  }
+  
+  private static F<File, Boolean> exists() {
+    return new F<File, Boolean>() {
+      @Override
+      public Boolean apply(final File a) {
+        return a.exists() && a.canRead();
+      }
+    };
+  }
+
   private static F<File, String> fileToString() {
     return new F<File, String>() {
       @Override
@@ -132,13 +158,7 @@ public class ClassPath {
       }
     };
   }
-
-  public static Collection<File> getClassPathElementsAsFiles() {
-    final Set<File> us = new LinkedHashSet<File>();
-    FCollection.mapTo(getClassPathElementsAsAre(), stringToCanonicalFile(), us);
-    return us;
-  }
-
+  
   private static F<String, File> stringToCanonicalFile() {
     return new F<String, File>() {
       @Override
@@ -163,19 +183,6 @@ public class ClassPath {
       return new ArrayList<String>();
     }
 
-  }
-
-  public Collection<String> findClasses(final Predicate<String> nameFilter) {
-    return FCollection.filter(classNames(), nameFilter);
-  }
-
-  public String getLocalClassPath() {
-    return this.root.cacheLocation().value();
-  }
-
-  public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {
-    return new ClassPath(FCollection.filter(this.root, predicate).toArray(
-        new ClassPathRoot[0]));
   }
 
 }

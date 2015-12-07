@@ -42,9 +42,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
       throw Unchecked.translateCheckedException(e);
     } finally {
       try {
-        if (clientSocket != null) {
-          clientSocket.close();
-        }
+        clientSocket.close();
         this.socket.close();
       } catch (final IOException e) {
         throw Unchecked.translateCheckedException(e);

@@ -28,7 +28,7 @@ F5<Integer, String, String, String, String[], Boolean> {
     return (isSynthetic(access));
   }
 
-  private boolean isSynthetic(final Integer access) {
+  private static boolean isSynthetic(final Integer access) {
     return (access & Opcodes.ACC_BRIDGE) == 0;
   }
 

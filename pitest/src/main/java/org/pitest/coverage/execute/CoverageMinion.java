@@ -52,7 +52,7 @@ public class CoverageMinion {
     CoveragePipe invokeQueue = null;
     try {
 
-      final int port = Integer.valueOf(args[0]);
+      final int port = Integer.parseInt(args[0]);
       s = new Socket("localhost", port);
 
       final SafeDataInputStream dis = new SafeDataInputStream(

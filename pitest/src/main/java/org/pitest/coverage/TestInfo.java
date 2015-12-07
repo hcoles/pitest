@@ -36,13 +36,6 @@ public final class TestInfo {
     this.blocks = blocksCovered;
   }
 
-  private String internIfNotNull(final String string) {
-    if (string == null) {
-      return null;
-    }
-    return string.intern();
-  }
-
   public String getName() {
     return this.name;
   }
@@ -123,6 +116,13 @@ public final class TestInfo {
       return false;
     }
     return true;
+  }
+  
+  private static String internIfNotNull(final String string) {
+    if (string == null) {
+      return null;
+    }
+    return string.intern();
   }
 
 }

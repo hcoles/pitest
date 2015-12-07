@@ -117,7 +117,7 @@ public class ComputeClassWriter extends ClassWriter {
 
   }
 
-  private boolean isInterface(final ClassReader info1) {
+  private static boolean isInterface(final ClassReader info1) {
     return (info1.getAccess() & Opcodes.ACC_INTERFACE) != 0;
   }
 

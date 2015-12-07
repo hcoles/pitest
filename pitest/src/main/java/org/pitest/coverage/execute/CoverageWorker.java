@@ -40,7 +40,6 @@ public class CoverageWorker {
   public void run() {
 
     try {
-
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
           this.pipe);
 
@@ -58,7 +57,7 @@ public class CoverageWorker {
 
   }
 
-  private Comparator<TestUnit> testComparator() {
+  private static Comparator<TestUnit> testComparator() {
     return new Comparator<TestUnit>() {
       @Override
       public int compare(final TestUnit o1, final TestUnit o2) {
@@ -69,7 +68,7 @@ public class CoverageWorker {
     };
   }
 
-  private List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
+  private static List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
       final CoverageReceiver queue) {
     final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
     for (final TestUnit each : plainTests) {

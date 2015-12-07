@@ -29,7 +29,7 @@ public class ControlFlowAnalyser {
 
   private static final int LIKELY_NUMBER_OF_LINES_PER_BLOCK = 7;
 
-  public List<Block> analyze(final MethodNode mn) {
+  public static List<Block> analyze(final MethodNode mn) {
     final List<Block> blocks = new ArrayList<Block>(mn.instructions.size());
 
     final Set<AbstractInsnNode> jumpTargets = findJumpTargets(mn.instructions);
@@ -83,11 +83,11 @@ public class ControlFlowAnalyser {
     return new HashSet<Integer>(LIKELY_NUMBER_OF_LINES_PER_BLOCK);
   }
 
-  private boolean isInstruction(final AbstractInsnNode ins) {
+  private static boolean isInstruction(final AbstractInsnNode ins) {
     return !((ins instanceof LabelNode) || (ins instanceof FrameNode));
   }
 
-  private void addtryCatchBoundaries(final MethodNode mn,
+  private static void addtryCatchBoundaries(final MethodNode mn,
       final Set<AbstractInsnNode> jumpTargets) {
     for (final Object each : mn.tryCatchBlocks) {
       final TryCatchBlockNode tcb = (TryCatchBlockNode) each;
@@ -95,11 +95,11 @@ public class ControlFlowAnalyser {
     }
   }
 
-  private boolean endsBlock(final AbstractInsnNode ins) {
+  private static boolean endsBlock(final AbstractInsnNode ins) {
     return (ins instanceof JumpInsnNode) || isReturn(ins);
   }
 
-  private boolean isReturn(final AbstractInsnNode ins) {
+  private static boolean isReturn(final AbstractInsnNode ins) {
     final int opcode = ins.getOpcode();
     switch (opcode) {
     case RETURN:
@@ -118,7 +118,7 @@ public class ControlFlowAnalyser {
 
   @SuppressWarnings("unchecked")
   // asm jar has no generics info
-  private Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
+  private static Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
     final Set<AbstractInsnNode> jumpTargets = new HashSet<AbstractInsnNode>();
     final ListIterator<?> it = instructions.iterator();
     while (it.hasNext()) {

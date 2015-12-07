@@ -104,7 +104,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
+  private static void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
     if (!coverage.allTestsGreen()) {
       throw new PitHelpError(Help.FAILING_TESTS);
     }
@@ -163,7 +163,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private SideEffect1<String> logInfo() {
+  private static SideEffect1<String> logInfo() {
     return new SideEffect1<String>() {
       @Override
       public void apply(final String a) {
@@ -172,7 +172,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     };
   }
 
-  private SideEffect1<String> log() {
+  private static SideEffect1<String> log() {
     return new SideEffect1<String>() {
       @Override
       public void apply(final String a) {
@@ -186,7 +186,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return new SideEffect1<CoverageResult>() {
       private final String[] spinner = new String[] { "\u0008/", "\u0008-",
           "\u0008\\", "\u0008|" };
-      int                    i       = 0;
+      int i = 0;
 
       @Override
       public void apply(final CoverageResult cr) {

@@ -295,7 +295,7 @@ public class CoverageData implements CoverageDatabase {
     return linesToTests;
   }
 
-  private Set<TestInfo> getLineTestSet(ClassName clazz,
+  private static Set<TestInfo> getLineTestSet(ClassName clazz,
       Map<ClassLine, Set<TestInfo>> linesToTests,
       Entry<BlockLocation, Set<TestInfo>> each, int line) {
     ClassLine cl = new ClassLine(clazz, line);

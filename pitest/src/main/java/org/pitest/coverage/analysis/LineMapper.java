@@ -26,7 +26,6 @@ public class LineMapper implements LineMap {
 
   @Override
   public Map<BlockLocation, Set<Integer>> mapLines(final ClassName clazz) {
-    final ControlFlowAnalyser cfa = new ControlFlowAnalyser();
 
     final Map<BlockLocation, Set<Integer>> map = new HashMap<BlockLocation, Set<Integer>>();
 
@@ -42,7 +41,7 @@ public class LineMapper implements LineMap {
         final MethodNode mn = (MethodNode) m;
         final Location l = Location.location(clazz,
             MethodName.fromString(mn.name), mn.desc);
-        final List<Block> blocks = cfa.analyze(mn);
+        final List<Block> blocks = ControlFlowAnalyser.analyze(mn);
         for (int i = 0; i != blocks.size(); i++) {
           final BlockLocation bl = new BlockLocation(l, i);
           map.put(bl, blocks.get(i).getLines());

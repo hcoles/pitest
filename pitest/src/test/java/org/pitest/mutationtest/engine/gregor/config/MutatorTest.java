@@ -30,9 +30,9 @@ public class MutatorTest {
   @SuppressWarnings("unchecked")
   @Test
   public void shouldReturnRequestedMutators() {
-    assertThat(parseStrings("MATH", "INVERT_NEGS").containsAll(
+    assertThat(parseStrings("MATH", "INVERT_NEGS")).containsAll(
         Arrays.asList(MathMutator.MATH_MUTATOR,
-            InvertNegsMutator.INVERT_NEGS_MUTATOR)));
+            InvertNegsMutator.INVERT_NEGS_MUTATOR));
   }
 
   @Test

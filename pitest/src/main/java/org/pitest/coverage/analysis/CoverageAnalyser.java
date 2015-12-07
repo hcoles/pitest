@@ -76,7 +76,6 @@ public class CoverageAnalyser extends MethodNode {
   }
 
   private List<Block> findRequriedProbeLocations() {
-    final ControlFlowAnalyser cfa = new ControlFlowAnalyser();
-    return cfa.analyze(this);
+    return ControlFlowAnalyser.analyze(this);
   }
 }
