@@ -16,43 +16,15 @@ package org.pitest.util;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.logging.Logger;
 
 public class SocketFinder {
 
-  private static final Logger LOG             = Log.getLogger();
-
-  private static final int    MIN_PORT_NUMBER = 8091;
-  private static final int    MAX_PORT_NUMBER = 9000;
-
-  private int                 lastPortNumber  = MIN_PORT_NUMBER;
-
   public synchronized ServerSocket getNextAvailableServerSocket() {
-    this.lastPortNumber++;
-    ServerSocket socket = getIfAvailable(this.lastPortNumber);
-    while (socket == null) {
-      this.lastPortNumber++;
-
-      if (this.lastPortNumber > MAX_PORT_NUMBER) {
-        this.lastPortNumber = 9000;
-      }
-      socket = getIfAvailable(this.lastPortNumber);
-    }
-
-    LOG.fine("using port " + this.lastPortNumber);
-
-    return socket;
-  }
-
-  private static synchronized ServerSocket getIfAvailable(final int port) {
-    ServerSocket ss = null;
     try {
-      ss = new ServerSocket(port);
+      return new ServerSocket(0);
     } catch (final IOException e) {
-      LOG.fine("port " + port + " is in use");
+      throw Unchecked.translateCheckedException(e);
     }
-
-    return ss;
   }
 
 }
