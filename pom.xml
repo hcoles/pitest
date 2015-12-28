@@ -192,6 +192,7 @@
 							<configuration>
 								<failOnViolation>true</failOnViolation>
 								<configLocation>pitest/checkstyle.xml</configLocation>
+                                                                <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>	
 							</configuration>
 						</execution>
 					</executions>
