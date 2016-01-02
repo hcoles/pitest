@@ -9,10 +9,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.8-SNAPSHOT
+### 1.1.9-SNAPSHOT
 
-* #239 - Provide a shortut to set history files via maven
+Nothing yet
+
+### 1.1.8
+
+* #239 - Provide a shortcut to set history files via maven
 * #240 - Support for regexes (thanks sebi-hgdata)
+* #243 - Use ephemeral ports to communicate with minions
 
 ### 1.1.7
 
