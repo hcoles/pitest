@@ -97,14 +97,14 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     return pom;
   }
 
-  protected PitMojo createPITMojo(final String config) throws Exception {
-    final PitMojo pitMojo = new PitMojo(this.executionStrategy, this.filter,
+  protected AbstractPitMojo createPITMojo(final String config) throws Exception {
+    final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy, this.filter,
         this.plugins);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }
 
-  protected void configurePitMojo(final PitMojo pitMojo, final String config)
+  protected void configurePitMojo(final AbstractPitMojo pitMojo, final String config)
       throws Exception {
     final Xpp3Dom xpp3dom = Xpp3DomBuilder.build(new StringReader(config));
     final PlexusConfiguration pluginConfiguration = extractPluginConfiguration(

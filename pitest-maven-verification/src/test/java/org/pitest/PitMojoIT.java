@@ -158,6 +158,7 @@ public class PitMojoIT {
   @Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
     File testDir = prepare("/pit-powermock");
+    verifier.addCliOption("-DtimeoutConstant=10000");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 

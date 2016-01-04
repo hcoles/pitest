@@ -1,7 +1,21 @@
 package org.pitest.maven;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -18,69 +32,49 @@ import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Goal which runs a coverage mutation report only for files that have been
  * modified or introduced locally based on the source control configured in
  * maven.
- *
- * @goal scmMutationCoverage
- *
- * @requiresDependencyResolution test
- *
- * @phase integration-test
  */
-public class ScmMojo extends PitMojo {
+@Mojo(name = "scmMutationCoverage", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
+public class ScmMojo extends AbstractPitMojo {
 
-  /**
-   * @component
-   */
-  private ScmManager  manager;
+  @Component
+  private ScmManager      manager;
 
   /**
    * List of scm status to include. Names match those defined by the maven scm
    * plugin.
    *
    * Common values include ADDED,MODIFIED (the defaults) & UNKNOWN.
-   *
-   * @parameter expression="${include}"
    */
+  @Parameter(property = "include")
   private HashSet<String> include;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
    * "connection" or "developerConnection".
-   *
-   * @parameter default-value="connection" expression="${connectionType}"
    */
-  private String      connectionType;
+  @Parameter(property = "connectionType", defaultValue = "connection")
+  private String          connectionType;
 
   /**
    * Project basedir
-   *
-   * @parameter expression="${basedir}"
-   * @required
    */
-  private File        basedir;
+  @Parameter(property = "basedir", required = true)
+  private File            basedir;
 
   /**
    * Base of scm root. For a multi module project this is probably the parent
    * project.
-   *
-   * @parameter expression="${project.parent.basedir}"
    */
-  private File        scmRootDir;
+  @Parameter(property = "project.parent.basedir")
+  private File            scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
-      final ScmManager manager, Predicate<Artifact> filter, PluginServices plugins) {
+      final ScmManager manager, Predicate<Artifact> filter,
+      PluginServices plugins) {
     super(executionStrategy, filter, plugins);
     this.manager = manager;
   }
@@ -102,17 +96,19 @@ public class ScmMojo extends PitMojo {
 
     logClassNames();
     defaultTargetTestsToGroupNameIfNoValueSet();
-    final ReportOptions data = new MojoToReportOptionsConverter(this, new SurefireConfigConverter(),filter).convert();
+    final ReportOptions data = new MojoToReportOptionsConverter(this,
+        new SurefireConfigConverter(), filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data, plugins,new HashMap<String, String>()));
+    return Option.some(this.goalStrategy.execute(detectBaseDir(), data,
+        plugins, new HashMap<String, String>()));
 
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
     if (this.getTargetTests() == null) {
-      this.targetTests = makeConcreteList(Collections.singletonList(this.getProject()
-          .getGroupId() + "*"));
+      this.targetTests = makeConcreteList(Collections.singletonList(this
+          .getProject().getGroupId() + "*"));
     }
   }
 
@@ -214,8 +210,7 @@ public class ScmMojo extends PitMojo {
   }
 
   /**
-   * A bug in maven 2 requires that all list fields
-   * declare a concrete list type
+   * A bug in maven 2 requires that all list fields declare a concrete list type
    */
   private static ArrayList<String> makeConcreteList(List<String> list) {
     return new ArrayList<String>(list);

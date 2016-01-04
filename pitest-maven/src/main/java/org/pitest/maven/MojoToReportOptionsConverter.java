@@ -37,12 +37,12 @@ import org.pitest.util.Glob;
 
 public class MojoToReportOptionsConverter {
 
-  private final PitMojo                 mojo;
+  private final AbstractPitMojo                 mojo;
   private final Predicate<Artifact>     dependencyFilter;
   private final Log                     log;
   private final SurefireConfigConverter surefireConverter;
 
-  public MojoToReportOptionsConverter(final PitMojo mojo,
+  public MojoToReportOptionsConverter(final AbstractPitMojo mojo,
       SurefireConfigConverter surefireConverter,
       Predicate<Artifact> dependencyFilter) {
     this.mojo = mojo;

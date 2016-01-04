@@ -38,8 +38,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -66,7 +66,7 @@
 	
 	<properties>
 		<junit.version>4.8.1</junit.version>	
-		<powermock.version>1.5.4</powermock.version>
+		<powermock.version>1.6.2</powermock.version>
 	</properties>
 
 </project>
