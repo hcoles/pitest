@@ -57,7 +57,7 @@ public class ScmMojo extends AbstractPitMojo {
   private HashSet<String> include;
 
   /**
-   * Analyze local changes. If set to false analyzes last commited change.
+   * Analyze last commit. If set to true analyzes last commited change set.
    */
   @Parameter(defaultValue = "false", property = "analyseLastCommit")
   private boolean analyseLastCommit;
