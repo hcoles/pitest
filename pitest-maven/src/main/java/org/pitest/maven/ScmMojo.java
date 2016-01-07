@@ -59,8 +59,8 @@ public class ScmMojo extends AbstractPitMojo {
   /**
    * Analyze local changes. If set to false analyzes last commited change.
    */
-  @Parameter(defaultValue = "true", property = "localChanges")
-  private boolean         localChanges;
+  @Parameter(defaultValue = "false", property = "analyseLastCommit")
+  private boolean analyseLastCommit;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
@@ -84,10 +84,10 @@ public class ScmMojo extends AbstractPitMojo {
 
   public ScmMojo(final RunPitStrategy executionStrategy,
                  final ScmManager manager, Predicate<Artifact> filter,
-                 PluginServices plugins, boolean localChanges) {
+                 PluginServices plugins, boolean analyseLastCommit) {
     super(executionStrategy, filter, plugins);
     this.manager = manager;
-    this.localChanges = localChanges;
+    this.analyseLastCommit = analyseLastCommit;
   }
 
   public ScmMojo() {
@@ -101,7 +101,7 @@ public class ScmMojo extends AbstractPitMojo {
 
     if (this.targetClasses.isEmpty()) {
       this.getLog().info(
-          "No modified files found - nothing to mutation test, localChanges=" + this.localChanges);
+          "No modified files found - nothing to mutation test, analyseLastCommit=" + this.analyseLastCommit);
       return Option.none();
     }
 
@@ -149,7 +149,7 @@ public class ScmMojo extends AbstractPitMojo {
       final File scmRoot = scmRoot();
       this.getLog().info("Scm root dir is " + scmRoot);
 
-      if (!localChanges) {
+      if (analyseLastCommit) {
         lastCommitChanges(statusToInclude, modifiedPaths, repository, scmRoot);
       } else {
         localChanges(statusToInclude, modifiedPaths, repository, scmRoot);
