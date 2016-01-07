@@ -9,15 +9,21 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.scm.ChangeFile;
+import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
+import org.apache.maven.scm.command.changelog.ChangeLogScmRequest;
+import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -46,7 +52,7 @@ public class ScmMojoTest extends BasePitMojoTest {
   public void setUp() throws Exception {
     super.setUp();
     this.testee = new ScmMojo(this.executionStrategy, this.manager,
-        this.filter, this.plugins);
+        this.filter, this.plugins, false);
     this.testee.setScmRootDir(new File("foo"));
     when(this.project.getBuild()).thenReturn(this.build);
     when(this.build.getSourceDirectory()).thenReturn("foo");
@@ -111,6 +117,33 @@ public class ScmMojoTest extends BasePitMojoTest {
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
+  }
+
+  public void testLastCommitIsMutationTested() throws Exception {
+    setupConnection();
+    configurePitMojo(
+            this.testee,
+            createPomWithConfiguration("<analyseLastCommit>true</analyseLastCommit>"));
+    givenChangeLogWithLastCommit();
+    this.testee.execute();
+    verify(this.executionStrategy).execute(any(File.class),
+            any(ReportOptions.class), any(PluginServices.class), anyMap());
+  }
+
+  private void givenChangeLogWithLastCommit() throws ScmException {
+    when(this.manager.changeLog(any(ChangeLogScmRequest.class)))
+            .thenReturn(new ChangeLogScmResult("", new ChangeLogSet(Arrays.asList(aChangeSetWithAddedFile()),
+                    new Date(), new Date())));
+  }
+
+  private ChangeSet aChangeSetWithAddedFile() {
+    return new ChangeSet(new Date(), "", "", Arrays.asList(aChangeFile(ScmFileStatus.ADDED)));
+  }
+
+  private ChangeFile aChangeFile(ScmFileStatus fileStatus) {
+    ChangeFile changeFile = new ChangeFile("foo/bar/Bar.java");
+    changeFile.setAction(fileStatus);
+    return changeFile;
   }
 
   public void testUnknownAndDeletedClassesAreNotMutationTested()

@@ -16,10 +16,14 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.scm.ChangeFile;
+import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
+import org.apache.maven.scm.command.changelog.ChangeLogScmRequest;
+import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -53,6 +57,12 @@ public class ScmMojo extends AbstractPitMojo {
   private HashSet<String> include;
 
   /**
+   * Analyze last commit. If set to true analyzes last commited change set.
+   */
+  @Parameter(defaultValue = "false", property = "analyseLastCommit")
+  private boolean analyseLastCommit;
+
+  /**
    * Connection type to use when querying scm for changed files. Can either be
    * "connection" or "developerConnection".
    */
@@ -73,10 +83,11 @@ public class ScmMojo extends AbstractPitMojo {
   private File            scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
-      final ScmManager manager, Predicate<Artifact> filter,
-      PluginServices plugins) {
+                 final ScmManager manager, Predicate<Artifact> filter,
+                 PluginServices plugins, boolean analyseLastCommit) {
     super(executionStrategy, filter, plugins);
     this.manager = manager;
+    this.analyseLastCommit = analyseLastCommit;
   }
 
   public ScmMojo() {
@@ -90,7 +101,7 @@ public class ScmMojo extends AbstractPitMojo {
 
     if (this.targetClasses.isEmpty()) {
       this.getLog().info(
-          "No locally modified files found - nothing to mutation test");
+          "No modified files found - nothing to mutation test, analyseLastCommit=" + this.analyseLastCommit);
       return Option.none();
     }
 
@@ -114,7 +125,7 @@ public class ScmMojo extends AbstractPitMojo {
 
   private void logClassNames() {
     for (final String each : this.targetClasses) {
-      this.getLog().info("Will mutate locally changed class " + each);
+      this.getLog().info("Will mutate changed class " + each);
     }
   }
 
@@ -137,19 +148,47 @@ public class ScmMojo extends AbstractPitMojo {
           .makeScmRepository(getSCMConnection());
       final File scmRoot = scmRoot();
       this.getLog().info("Scm root dir is " + scmRoot);
-      final StatusScmResult status = this.manager.status(repository,
-          new ScmFileSet(scmRoot));
 
-      for (final ScmFile file : status.getChangedFiles()) {
-        if (statusToInclude.contains(file.getStatus())) {
-          modifiedPaths.add(file.getPath());
-        }
+      if (analyseLastCommit) {
+        lastCommitChanges(statusToInclude, modifiedPaths, repository, scmRoot);
+      } else {
+        localChanges(statusToInclude, modifiedPaths, repository, scmRoot);
       }
       return modifiedPaths;
     } catch (final ScmException e) {
       throw new MojoExecutionException("Error while querying scm", e);
     }
 
+  }
+
+  private void lastCommitChanges(Set<ScmFileStatus> statusToInclude, List<String> modifiedPaths, ScmRepository repository, File scmRoot) throws ScmException {
+    ChangeLogScmRequest scmRequest = new ChangeLogScmRequest(repository, new ScmFileSet(scmRoot));
+    scmRequest.setLimit(1);
+
+    ChangeLogScmResult changeLogScmResult = this.manager.changeLog(scmRequest);
+    if (changeLogScmResult.isSuccess()) {
+      List<ChangeSet> changeSets = changeLogScmResult.getChangeLog().getChangeSets();
+      if (!changeSets.isEmpty()) {
+        List<ChangeFile> files = changeSets.get(0).getFiles();
+
+        for (final ChangeFile changeFile : files) {
+          if (statusToInclude.contains(changeFile.getAction())) {
+            modifiedPaths.add(changeFile.getName());
+          }
+        }
+      }
+    }
+  }
+
+  private void localChanges(Set<ScmFileStatus> statusToInclude, List<String> modifiedPaths, ScmRepository repository, File scmRoot) throws ScmException {
+    final StatusScmResult status = this.manager.status(repository,
+            new ScmFileSet(scmRoot));
+
+    for (final ScmFile file : status.getChangedFiles()) {
+      if (statusToInclude.contains(file.getStatus())) {
+        modifiedPaths.add(file.getPath());
+      }
+    }
   }
 
   private Set<ScmFileStatus> makeStatusSet() {
