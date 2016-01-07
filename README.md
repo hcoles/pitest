@@ -11,7 +11,7 @@ Read all about it at http://pitest.org
 
 ### 1.1.9-SNAPSHOT
 
-Nothing yet
+* #132 - Allow analysis of only files touched in last commit (thanks Tomasz Luch)
 
 ### 1.1.8
 
