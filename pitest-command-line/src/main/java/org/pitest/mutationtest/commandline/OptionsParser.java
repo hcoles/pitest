@@ -169,8 +169,8 @@ public class OptionsParser {
         .describedAs("comma separated list of mutation operators");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
-        .withValuesSeparatedBy(',')
-        .describedAs("comma separated list of child JVM args");
+        .describedAs(
+                "Child JVM args provided as a single string that can include spaces");
 
     this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS)
         .withOptionalArg()

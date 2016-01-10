@@ -95,7 +95,7 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfJVMArgs() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
+    assertEquals(Arrays.asList("foo,bar"), actual.getJvmArgs());
   }
 
   @Test
