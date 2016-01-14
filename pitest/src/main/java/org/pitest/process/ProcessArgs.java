@@ -18,6 +18,8 @@ import static org.pitest.functional.prelude.Prelude.print;
 import static org.pitest.functional.prelude.Prelude.printTo;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +78,11 @@ public final class ProcessArgs {
   }
 
   public List<String> getJvmArgs() {
-    return this.jvmArgs;
+    List<String> result = new ArrayList<String>();
+    for (String s: this.jvmArgs) {
+        result.addAll(Arrays.asList(s.split(" ")));
+    }
+    return result;
   }
 
   public JavaAgent getJavaAgentFinder() {
