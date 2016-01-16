@@ -105,7 +105,7 @@ public class MutationIdentifierTest {
   }
 
   @Test
-  public void shouldSortInConsistantOrder() {
+  public void shouldSortInConsistentOrder() {
     MutationIdentifier a = aMutationId().withIndex(1).withMutator("A").build();
     MutationIdentifier b = aMutationId().withIndex(1).withMutator("Z").build();
     MutationIdentifier c = aMutationId().withIndex(1).withMutator("AA").build();

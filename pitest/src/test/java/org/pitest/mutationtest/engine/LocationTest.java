@@ -15,7 +15,7 @@ import org.pitest.classinfo.ClassName;
 public class LocationTest {
 
   @Test
-  public void shouldSortInConsistantOrder() {
+  public void shouldSortInConsistentOrder() {
     Location a = location(ClassName.fromString("A"),
         MethodName.fromString("A"), "A");
     Location b = location(ClassName.fromString("AA"),
