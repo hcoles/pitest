@@ -44,7 +44,9 @@ public class MemoryWatchdog {
         // LOG.info("Setting a threshold shutdown on pool: " + mp.getName()
         // + " for: " + alert);
         mp.setUsageThreshold(alert);
-
+      } else {
+        Log.getLogger().warning("Memory monitoring not supported on pool "
+            + mp.getName() + " of type " + mp.getType());
       }
     }
   }

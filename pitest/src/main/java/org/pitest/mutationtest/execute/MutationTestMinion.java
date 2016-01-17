@@ -86,6 +86,14 @@ public class MutationTestMinion {
               tests, this.reporter));
       this.reporter.done(ExitCode.OK);
     } catch (final Throwable ex) {
+      Throwable chained = ex;
+      while (chained != null) {
+        if (chained instanceof OutOfMemoryError) {
+          this.reporter.done(ExitCode.OUT_OF_MEMORY);
+          return;
+        }
+        chained = chained.getCause();
+      }
       LOG.log(Level.WARNING, "Error during mutation test", ex);
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
