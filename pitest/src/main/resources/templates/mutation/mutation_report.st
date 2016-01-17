@@ -10,6 +10,96 @@ $css$
 .pop:hover span{ display:inline; position:absolute; color:#111; border:1px solid #DCA; background:#fffAF0;}
 
 .pop span { border-radius:4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; -moz-box-shadow: 5px 5px 8px #CCC; -webkit-box-shadow: 5px 5px 8px #CCC; box-shadow: 5px 5px 8px #CCC; }
+
+.box {
+  width: 40%;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.button {
+  font-size: 1em;
+  padding: 0;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.button:hover {
+  background: #06D85F;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 90%;
+  height: 90%;
+  position: relative;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  overflow-y: scroll;
+  max-height: 25px;
+}
+
+div.scroll {
+    background-color: #00FFFF;
+    width: 100px;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .popup{
+    width: 70%;
+  }
+}
+
 </style>
 
 </head>
@@ -50,7 +140,18 @@ $sourceFile.groups:{ group |
 
 <a name='group$sourceFile$_$group.id$'/> 
 
-$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</p> }$
+$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$ </span></span>
+&nbsp;
+<a class="button" href="#popup$i$.$sourceFile$_$group.id$">$mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</a>
+<div id="popup$i$.$sourceFile$_$group.id$" class="overlay">
+<div class="popup"><a class="close" href='#group$sourceFile$_$group.id$'>&times;</a>
+<div style="overflow: scroll; height: 600px">
+<b>Killed by : </b>
+<pre>
+$mutation.killingTestDescription$
+</pre></div></div></div>
+
+ </p> }$
 </td>
 </tr>
 }$

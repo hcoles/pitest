@@ -17,60 +17,106 @@ package org.pitest.mutationtest;
 import org.pitest.util.ExitCode;
 
 /**
- * The detection status of a mutant
+ * The detection status of a mutant. Equality is defined based on
+ * the kind of detection (e.g. KILLED, SURVIVED, etc.) and does not
+ * take into account extra information collected during testing —
+ * such as stack trace.
  */
-public enum DetectionStatus {
-  /**
-   * Mutation was detected by a test
-   */
-  KILLED(true),
+public class DetectionStatus implements Comparable<DetectionStatus> {
 
-  /**
-   * No test failed in the presence of the mutation
-   */
-  SURVIVED(false),
+  private ActualStatus actualStatus;
+  private String stackTrace;
 
-  /**
-   * A test took a long time to run when mutation was present, might indicate an
-   * that the mutation caused an infinite loop but we don't know for sure.
-   */
-  TIMED_OUT(true),
+  public DetectionStatus() {
+  }
 
-  /**
-   * Mutation could not be loaded into the jvm. Should never happen.
-   */
-  NON_VIABLE(true),
+  public DetectionStatus(DetectionStatus status) {
+    this.setActualStatus(status.getActualStatus());
+  }
 
-  /**
-   * JVM ran out of memory while processing a mutation. Might indicate that the
-   * mutation increases memory usage but we don't know for sure.
-   */
-  MEMORY_ERROR(true),
-  /**
-   * Mutation not yet assessed. For internal use only.
-   */
-  NOT_STARTED(false),
+  public enum ActualStatus {
+    /**
+     * Mutation was detected by a test
+     */
+    KILLED(true),
 
-  /**
-   * Processing of mutation has begun but not yet fully assessed. For internal
-   * use only.
-   */
-  STARTED(false),
+    /**
+     * No test failed in the presence of the mutation
+     */
+    SURVIVED(false),
 
-  /**
-   * Something went wrong. Don't know what but it was probably bad.
-   */
-  RUN_ERROR(true),
+    /**
+     * A test took a long time to run when mutation was present, might indicate an
+     * that the mutation caused an infinite loop but we don't know for sure.
+     */
+    TIMED_OUT(true),
 
-  /**
-   * Mutation is not covered by any test.
-   */
-  NO_COVERAGE(false);
+    /**
+     * Mutation could not be loaded into the jvm. Should never happen.
+     */
+    NON_VIABLE(true),
 
-  private final boolean detected;
+    /**
+     * JVM ran out of memory while processing a mutation. Might indicate that the
+     * mutation increases memory usage but we don't know for sure.
+     */
+    MEMORY_ERROR(true),
+    /**
+     * Mutation not yet assessed. For internal use only.
+     */
+    NOT_STARTED(false),
 
-  DetectionStatus(final boolean detected) {
-    this.detected = detected;
+    /**
+     * Processing of mutation has begun but not yet fully assessed. For internal
+     * use only.
+     */
+    STARTED(false),
+
+    /**
+     * Something went wrong. Don't know what but it was probably bad.
+     */
+    RUN_ERROR(true),
+
+    /**
+     * Mutation is not covered by any test.
+     */
+    NO_COVERAGE(false);
+
+    private final boolean detected;
+
+    ActualStatus(final boolean detected) {
+      this.detected = detected;
+    }
+  }
+
+  public static final DetectionStatus KILLED = new DetectionStatus();
+  public static final DetectionStatus SURVIVED = new DetectionStatus();
+  public static final DetectionStatus TIMED_OUT = new DetectionStatus();
+  public static final DetectionStatus MEMORY_ERROR = new DetectionStatus();
+  public static final DetectionStatus NOT_STARTED = new DetectionStatus();
+  public static final DetectionStatus STARTED = new DetectionStatus();
+  public static final DetectionStatus RUN_ERROR = new DetectionStatus();
+  public static final DetectionStatus NO_COVERAGE = new DetectionStatus();
+  public static final DetectionStatus NON_VIABLE = new DetectionStatus();
+
+  static {
+    KILLED.setActualStatus(ActualStatus.KILLED);
+    SURVIVED.setActualStatus(ActualStatus.SURVIVED);
+    TIMED_OUT.setActualStatus(ActualStatus.TIMED_OUT);
+    MEMORY_ERROR.setActualStatus(ActualStatus.MEMORY_ERROR);
+    NOT_STARTED.setActualStatus(ActualStatus.NOT_STARTED);
+    STARTED.setActualStatus(ActualStatus.STARTED);
+    RUN_ERROR.setActualStatus(ActualStatus.RUN_ERROR);
+    NO_COVERAGE.setActualStatus(ActualStatus.NO_COVERAGE);
+    NON_VIABLE.setActualStatus(ActualStatus.NON_VIABLE);
+  }
+
+  public static final DetectionStatus[] VALUES = new DetectionStatus[]
+      {KILLED, SURVIVED, TIMED_OUT, MEMORY_ERROR, NOT_STARTED, STARTED,
+          RUN_ERROR, NO_COVERAGE, NON_VIABLE};
+
+  public static DetectionStatus[] values() {
+    return VALUES;
   }
 
   /**
@@ -82,11 +128,11 @@ public enum DetectionStatus {
    */
   public static DetectionStatus getForErrorExitCode(final ExitCode exitCode) {
     if (exitCode.equals(ExitCode.OUT_OF_MEMORY)) {
-      return DetectionStatus.MEMORY_ERROR;
+      return MEMORY_ERROR;
     } else if (exitCode.equals(ExitCode.TIMEOUT)) {
-      return DetectionStatus.TIMED_OUT;
+      return TIMED_OUT;
     } else {
-      return DetectionStatus.RUN_ERROR;
+      return RUN_ERROR;
     }
   }
 
@@ -98,7 +144,60 @@ public enum DetectionStatus {
    * @return True if detected, false if not.
    */
   public boolean isDetected() {
-    return this.detected;
+    return this.getActualStatus().detected;
+  }
+
+  public String name() {
+    return getActualStatus().name();
+  }
+
+  public ActualStatus getActualStatus() {
+    return actualStatus;
+  }
+
+  public void setActualStatus(ActualStatus actualStatus) {
+    this.actualStatus = actualStatus;
+  }
+
+  public String getStackTrace() {
+    return stackTrace;
+  }
+
+  public void setStackTrace(String stackTrace) {
+    this.stackTrace = stackTrace;
+  }
+
+  @Override
+  public String toString() {
+    return "" + getActualStatus();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || !(o instanceof DetectionStatus)) {
+      return false;
+    }
+    if (getActualStatus() == null
+        ^ ((DetectionStatus) o).getActualStatus() == null) {
+      return false;
+    }
+    if (getActualStatus() == null) {
+      return true;
+    }
+    return getActualStatus().equals(((DetectionStatus) o).getActualStatus());
+  }
+
+  @Override
+  public int hashCode() {
+    if (getActualStatus() == null) {
+      return 0;
+    }
+    return getActualStatus().hashCode();
+  }
+
+  @Override
+  public int compareTo(DetectionStatus o) {
+    return getActualStatus().compareTo(o.getActualStatus());
   }
 
 };

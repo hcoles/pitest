@@ -30,7 +30,11 @@ public final class MutationStatusTestPair {
   public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status, final String killingTest) {
     this.status = status;
-    this.killingTest = Option.some(killingTest);
+    if (killingTest == null) {
+      this.killingTest = Option.none();
+    } else {
+      this.killingTest = Option.some(killingTest);
+    }
     this.numberOfTestsRun = numberOfTestsRun;
   }
 
@@ -40,6 +44,10 @@ public final class MutationStatusTestPair {
 
   public Option<String> getKillingTest() {
     return this.killingTest;
+  }
+
+  public String getStackTrace() {
+    return status.getStackTrace() != null ? status.getStackTrace() : "";
   }
 
   public int getNumberOfTestsRun() {
@@ -90,7 +98,11 @@ public final class MutationStatusTestPair {
     if (this.numberOfTestsRun != other.numberOfTestsRun) {
       return false;
     }
-    if (this.status != other.status) {
+    if (this.status == null) {
+        if (other.status != null) {
+          return false;
+        }
+    } else if (!this.status.equals(other.status)) {
       return false;
     }
     return true;

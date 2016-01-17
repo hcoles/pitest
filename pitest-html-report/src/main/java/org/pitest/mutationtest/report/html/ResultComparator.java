@@ -12,7 +12,8 @@ import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -20,8 +21,7 @@ import org.pitest.mutationtest.MutationResult;
 class ResultComparator implements Comparator<MutationResult>, Serializable {
 
   private static final long                              serialVersionUID = 1L;
-  private static final EnumMap<DetectionStatus, Integer> RANK             = new EnumMap<DetectionStatus, Integer>(
-                                                                              DetectionStatus.class);
+  private static final Map<DetectionStatus, Integer> RANK             = new HashMap<DetectionStatus, Integer>();
 
   static {
     RANK.put(KILLED, 4);

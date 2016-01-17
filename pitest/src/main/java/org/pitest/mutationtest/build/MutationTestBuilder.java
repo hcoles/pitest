@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
@@ -31,8 +32,11 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.util.Log;
 
 public class MutationTestBuilder {
+
+  private static final Logger LOG = Log.getLogger();
 
   private final MutationSource   mutationSource;
   private final MutationAnalyser analyser;
@@ -55,6 +59,7 @@ public class MutationTestBuilder {
 
     final List<MutationDetails> mutations = FCollection.flatMap(codeClasses,
         classToMutations());
+    LOG.info(mutations.size() + " mutations in group");
 
     Collections.sort(mutations, comparator());
 
@@ -131,7 +136,7 @@ public class MutationTestBuilder {
     return new F<MutationResult, Boolean>() {
       @Override
       public Boolean apply(final MutationResult a) {
-        return a.getStatus() == DetectionStatus.NOT_STARTED;
+        return DetectionStatus.NOT_STARTED.equals(a.getStatus());
       }
     };
   }

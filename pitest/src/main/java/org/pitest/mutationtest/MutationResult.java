@@ -53,7 +53,11 @@ public final class MutationResult {
   }
 
   public String getKillingTestDescription() {
-    return getKillingTest().getOrElse("none");
+    if (getKillingTest().hasSome()) {
+      return getKillingTest().value() + (this.status.getStackTrace().equals("") ? "" : "\n" + this.status.getStackTrace());
+    } else {
+      return "none";
+    }
   }
 
   @Override

@@ -14,20 +14,28 @@
  */
 package org.pitest.mutationtest.execute;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.logging.Logger;
+
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+import org.pitest.util.Log;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
+  private static final Logger LOG = Log.getLogger();
   private Option<Description> lastFailingTest = Option.none();
+  private Option<Throwable> throwable = Option.none();
   private int                 testsRun        = 0;
 
   @Override
   public void onTestFailure(final TestResult tr) {
     this.lastFailingTest = Option.some(tr.getDescription());
+    this.throwable = Option.some(tr.getThrowable());
   }
 
   @Override
@@ -47,9 +55,20 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   public DetectionStatus status() {
     if (this.lastFailingTest.hasSome()) {
-      return DetectionStatus.KILLED;
+      DetectionStatus status = new DetectionStatus();
+      status.setActualStatus(DetectionStatus.ActualStatus.KILLED);
+      ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+      PrintStream outPS = new PrintStream(outStream);
+      if (this.throwable.hasSome()) {
+        Throwable t = this.throwable.value();
+        t.printStackTrace(outPS);
+      } else {
+        LOG.finer("No stack trace for failed test");
+      }
+      status.setStackTrace(outStream.toString());
+      return status;
     } else {
-      return DetectionStatus.SURVIVED;
+      return new DetectionStatus(DetectionStatus.SURVIVED);
     }
   }
 

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,8 +67,10 @@ public class ScoreTest {
 
   @Test
   public void shouldPrintScoresFourToALine() {
+    //Note that this test tests more than it purports, because it is
+    //dependent on a particular printing order
     final String[] ss = generateReportLines();
-    assertEquals("> KILLED 0 SURVIVED 0 TIMED_OUT 0 NON_VIABLE 0 ", ss[2]);
+    assertEquals("> KILLED 0 SURVIVED 0 TIMED_OUT 0 MEMORY_ERROR 0 ", ss[2]);
   }
 
   private String[] generateReportLines() {

@@ -2,7 +2,7 @@ package org.pitest.mutationtest.incremental;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +36,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private static Map<DetectionStatus, Long> createStatusMap() {
-    final EnumMap<DetectionStatus, Long> map = new EnumMap<DetectionStatus, Long>(DetectionStatus.class);
+    final Map<DetectionStatus, Long> map = new HashMap<DetectionStatus, Long>();
     for (final DetectionStatus each : DetectionStatus.values()) {
       map.put(each, 0L);
     }
@@ -84,20 +84,21 @@ public class IncrementalAnalyser implements MutationAnalyser {
       return analyseFromScratch(each);
     }
 
-    if (mutationStatusTestPair.getStatus() == DetectionStatus.TIMED_OUT) {
-      return makeResult(each, DetectionStatus.TIMED_OUT);
+    if (mutationStatusTestPair.getStatus().equals(DetectionStatus.TIMED_OUT)) {
+      return makeResult(each, new DetectionStatus(DetectionStatus.TIMED_OUT));
     }
 
-    if ((mutationStatusTestPair.getStatus() == DetectionStatus.KILLED)
+    if ((mutationStatusTestPair.getStatus().equals(DetectionStatus.KILLED))
         && killingTestHasNotChanged(each, mutationStatusTestPair)) {
-      return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair
+      return makeResult(each, new DetectionStatus(DetectionStatus.KILLED),
+          mutationStatusTestPair
           .getKillingTest().value());
     }
 
-    if ((mutationStatusTestPair.getStatus() == DetectionStatus.SURVIVED)
+    if ((mutationStatusTestPair.getStatus().equals(DetectionStatus.SURVIVED))
         && !this.history.hasCoverageChanged(clazz,
             this.coverage.getCoverageIdForClass(clazz))) {
-      return makeResult(each, DetectionStatus.SURVIVED);
+      return makeResult(each, new DetectionStatus(DetectionStatus.SURVIVED));
     }
 
     return analyseFromScratch(each);
@@ -131,7 +132,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private MutationResult analyseFromScratch(final MutationDetails mutation) {
-    return makeResult(mutation, DetectionStatus.NOT_STARTED);
+    return makeResult(mutation, new DetectionStatus(DetectionStatus.NOT_STARTED));
   }
 
   private MutationResult makeResult(final MutationDetails each,
@@ -147,7 +148,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private void updatePreanalysedTotal(final DetectionStatus status) {
-    if (status != DetectionStatus.NOT_STARTED) {
+    if (!status.equals(DetectionStatus.NOT_STARTED)) {
       final long count = this.preAnalysed.get(status);
       this.preAnalysed.put(status, count + 1);
     }
