@@ -2,7 +2,9 @@ package org.pitest.mutationtest.execute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -44,14 +46,17 @@ public class MutationAnalysisExecutor {
     List<Future<MutationMetaData>> results = new ArrayList<Future<MutationMetaData>>(
         testUnits.size());
 
+    CompletionService<MutationMetaData> completionService =
+        new ExecutorCompletionService<MutationMetaData>(executor);
+
     for (final MutationAnalysisUnit unit : testUnits) {
-      results.add(this.executor.submit(unit));
+      results.add(completionService.submit(unit));
     }
 
     this.executor.shutdown();
 
     try {
-      processResult(results);
+      processResult(completionService, results.size());
     } catch (InterruptedException e) {
       throw Unchecked.translateCheckedException(e);
     } catch (ExecutionException e) {
@@ -62,10 +67,14 @@ public class MutationAnalysisExecutor {
 
   }
 
-  private void processResult(List<Future<MutationMetaData>> results)
+  private void processResult(CompletionService<MutationMetaData> completionService,
+      int nResultsToCollect)
       throws InterruptedException, ExecutionException {
-    for (Future<MutationMetaData> f : results) {
+    int collected = 0;
+    while (collected < nResultsToCollect) {
+      Future<MutationMetaData> f = completionService.take();
       MutationMetaData r = f.get();
+      ++collected;
       for (MutationResultListener l : this.listeners) {
         for (final ClassMutationResults cr : r.toClassResults()) {
           l.handleMutationResult(cr);
