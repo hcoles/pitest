@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.execute;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.ByteArrayInputStream;
@@ -9,13 +10,20 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Id;
 import org.pitest.util.SafeDataInputStream;
+import org.pitest.util.SafeDataOutputStream;
 
+import mockit.Expectations;
+import mockit.VerificationsInOrder;
+import mockit.integration.junit4.JMockit;
+
+@RunWith(JMockit.class)
 public class DefaultReporterTest {
 
   private DefaultReporter       testee;
@@ -57,9 +65,22 @@ public class DefaultReporterTest {
     return is;
   }
 
+  @SuppressWarnings("unused")
   @Test
-  public void shouldSendExitCode() {
+  public void shouldSendExitCodeAndDie() {
+    @SuppressWarnings("hiding")
+    final SafeDataOutputStream os = new SafeDataOutputStream(null);
+    new Expectations(System.class, SafeDataOutputStream.class) {{
+      System.exit(anyInt); result = null;
+    }};
     this.testee.done(ExitCode.TIMEOUT);
+    new VerificationsInOrder() {{
+      os.writeByte(Id.DONE);
+      os.writeInt(ExitCode.TIMEOUT.getCode());
+      int i;
+      System.exit(i = withCapture());
+      assertTrue(i > 0);
+    }};
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DONE, is.readByte());
     assertEquals(is.readInt(), ExitCode.TIMEOUT.getCode());

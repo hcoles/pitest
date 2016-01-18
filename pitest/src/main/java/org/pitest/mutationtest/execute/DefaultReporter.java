@@ -53,6 +53,13 @@ public class DefaultReporter implements Reporter {
     this.w.writeByte(Id.DONE);
     this.w.writeInt(exitCode.getCode());
     this.w.flush();
+    //The writes above cause the server to kill the Minion using the
+    //Process API.
+    //Might as well also explicitly exit here (which also makes it easier
+    //to identify the mechanism by which the Minion process ends),
+    //rather than keeping the Minion alive for a variable period
+    //of time.
+    System.exit(exitCode.getCode());
   }
 
 }
