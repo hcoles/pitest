@@ -9,7 +9,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.9-SNAPSHOT
+### 1.1.10-SNAPSHOT
+
+Nothing yet
+
+### 1.1.9
 
 * #132 - Allow analysis of only files touched in last commit (thanks Tomasz Luch)
 
