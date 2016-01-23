@@ -16,6 +16,7 @@ package org.pitest.coverage.execute;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.coverage.CoverageReceiver;
@@ -50,6 +51,10 @@ public class CoverageDecorator extends TestUnitDecorator {
     this.child().execute(loader, wrappedCollector);
 
     final int executionTime = (int) (System.currentTimeMillis() - t0);
+
+    if (wrappedCollector.failure != null) {
+      LOG.log(Level.SEVERE, "Test failure", wrappedCollector.failure);
+    }
 
     final int threadsAfterTest = this.threads.getThreadCount();
     if (threadsAfterTest > threadsBeforeTest) {

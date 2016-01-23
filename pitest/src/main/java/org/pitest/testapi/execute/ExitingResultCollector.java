@@ -20,7 +20,7 @@ import org.pitest.testapi.ResultCollector;
 public class ExitingResultCollector implements ResultCollector {
 
   private final ResultCollector child;
-  private boolean               hadFailure = false;
+  public Throwable failure;
 
   public ExitingResultCollector(final ResultCollector child) {
     this.child = child;
@@ -38,14 +38,14 @@ public class ExitingResultCollector implements ResultCollector {
 
   @Override
   public boolean shouldExit() {
-    return this.hadFailure;
+    return failure != null;
   }
 
   @Override
   public void notifyEnd(final Description description, final Throwable t) {
     this.child.notifyEnd(description, t);
     if (t != null) {
-      this.hadFailure = true;
+      failure = t;
     }
     Throwable chained = t;
     while (chained != null) {
