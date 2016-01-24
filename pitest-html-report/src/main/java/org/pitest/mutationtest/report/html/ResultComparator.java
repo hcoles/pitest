@@ -9,6 +9,7 @@ import static org.pitest.mutationtest.DetectionStatus.RUN_ERROR;
 import static org.pitest.mutationtest.DetectionStatus.STARTED;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
+import static org.pitest.mutationtest.DetectionStatus.TOO_MANY_FILES;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ class ResultComparator implements Comparator<MutationResult>, Serializable {
     RANK.put(TIMED_OUT, 2);
     RANK.put(NON_VIABLE, 3);
     RANK.put(MEMORY_ERROR, 1);
+    RANK.put(TOO_MANY_FILES, 1);
     RANK.put(NOT_STARTED, 1);
     RANK.put(STARTED, 1);
     RANK.put(RUN_ERROR, 0);

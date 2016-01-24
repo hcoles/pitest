@@ -61,6 +61,14 @@ public class DetectionStatus implements Comparable<DetectionStatus> {
      * mutation increases memory usage but we don't know for sure.
      */
     MEMORY_ERROR(true),
+
+    /**
+     * JVM ran out of file descriptors while processing a mutation. Might
+     * indicate that the mutation increases file usage or leads to file resource
+     * leaks but we don't know for sure.
+     */
+    TOO_MANY_FILES(true),
+
     /**
      * Mutation not yet assessed. For internal use only.
      */
@@ -93,6 +101,7 @@ public class DetectionStatus implements Comparable<DetectionStatus> {
   public static final DetectionStatus SURVIVED = new DetectionStatus();
   public static final DetectionStatus TIMED_OUT = new DetectionStatus();
   public static final DetectionStatus MEMORY_ERROR = new DetectionStatus();
+  public static final DetectionStatus TOO_MANY_FILES = new DetectionStatus();
   public static final DetectionStatus NOT_STARTED = new DetectionStatus();
   public static final DetectionStatus STARTED = new DetectionStatus();
   public static final DetectionStatus RUN_ERROR = new DetectionStatus();
@@ -104,6 +113,7 @@ public class DetectionStatus implements Comparable<DetectionStatus> {
     SURVIVED.setActualStatus(ActualStatus.SURVIVED);
     TIMED_OUT.setActualStatus(ActualStatus.TIMED_OUT);
     MEMORY_ERROR.setActualStatus(ActualStatus.MEMORY_ERROR);
+    TOO_MANY_FILES.setActualStatus(ActualStatus.TOO_MANY_FILES);
     NOT_STARTED.setActualStatus(ActualStatus.NOT_STARTED);
     STARTED.setActualStatus(ActualStatus.STARTED);
     RUN_ERROR.setActualStatus(ActualStatus.RUN_ERROR);
@@ -112,8 +122,8 @@ public class DetectionStatus implements Comparable<DetectionStatus> {
   }
 
   public static final DetectionStatus[] VALUES = new DetectionStatus[]
-      {KILLED, SURVIVED, TIMED_OUT, MEMORY_ERROR, NOT_STARTED, STARTED,
-          RUN_ERROR, NO_COVERAGE, NON_VIABLE};
+      {KILLED, SURVIVED, TIMED_OUT, MEMORY_ERROR, NOT_STARTED, TOO_MANY_FILES,
+          STARTED, RUN_ERROR, NO_COVERAGE, NON_VIABLE};
 
   public static DetectionStatus[] values() {
     return VALUES;
@@ -129,6 +139,8 @@ public class DetectionStatus implements Comparable<DetectionStatus> {
   public static DetectionStatus getForErrorExitCode(final ExitCode exitCode) {
     if (exitCode.equals(ExitCode.OUT_OF_MEMORY)) {
       return MEMORY_ERROR;
+    } else if (exitCode.equals(ExitCode.TOO_MANY_FILES)) {
+      return TOO_MANY_FILES;
     } else if (exitCode.equals(ExitCode.TIMEOUT)) {
       return TIMED_OUT;
     } else {

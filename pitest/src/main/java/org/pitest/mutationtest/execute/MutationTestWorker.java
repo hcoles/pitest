@@ -109,7 +109,9 @@ public class MutationTestWorker {
     r.report(mutationId, mutationDetected);
 
     DetectionStatus status = mutationDetected.getStatus();
-    if (status.equals(DetectionStatus.MEMORY_ERROR)) {
+    if (status.equals(DetectionStatus.TOO_MANY_FILES)) {
+      throw new RuntimeException("Too many open files during test run");
+    } else if (status.equals(DetectionStatus.MEMORY_ERROR)) {
       throw new OutOfMemoryError("OutOfMemoryError during test run");
     }
     if (DEBUG) {

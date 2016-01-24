@@ -36,5 +36,6 @@ body{
 .timed_out {background-color: #dde7ef}
 .non_viable {background-color: #aaffaa}
 .memory_error {background-color: #dde7ef}
+.too_many_files {background-color: #dde7af}
 .not_started {background-color: #dde7ef; color : red}
 .no_coverage {background-color: #ffaaaa}

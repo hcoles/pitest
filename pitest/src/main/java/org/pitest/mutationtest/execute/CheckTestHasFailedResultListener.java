@@ -68,6 +68,11 @@ public class CheckTestHasFailedResultListener implements TestListener {
             status.setActualStatus(DetectionStatus.ActualStatus.MEMORY_ERROR);
             break;
           }
+          if (chained.getMessage() != null && chained.getMessage().
+              contains("Too many open files")) {
+            status.setActualStatus(DetectionStatus.ActualStatus.TOO_MANY_FILES);
+            break;
+          }
           chained = chained.getCause();
         }
       } else {

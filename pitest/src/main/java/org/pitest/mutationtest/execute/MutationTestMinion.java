@@ -92,6 +92,10 @@ public class MutationTestMinion {
           this.reporter.done(ExitCode.OUT_OF_MEMORY);
           return;
         }
+        if (chained.getMessage() != null && chained.getMessage().
+            contains("Too many open files")) {
+          this.reporter.done(ExitCode.TOO_MANY_FILES);
+        }
         chained = chained.getCause();
       }
       LOG.log(Level.WARNING, "Error during mutation test", ex);
