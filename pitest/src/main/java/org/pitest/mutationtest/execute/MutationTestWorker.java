@@ -107,6 +107,11 @@ public class MutationTestWorker {
         mutationDetails, mutatedClass, relevantTests);
 
     r.report(mutationId, mutationDetected);
+
+    DetectionStatus status = mutationDetected.getStatus();
+    if (status.equals(DetectionStatus.MEMORY_ERROR)) {
+      throw new OutOfMemoryError("OutOfMemoryError during test run");
+    }
     if (DEBUG) {
       LOG.fine("Mutation " + mutationId + " detected = " + mutationDetected);
     }

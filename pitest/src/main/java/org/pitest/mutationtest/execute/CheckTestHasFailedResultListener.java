@@ -62,6 +62,14 @@ public class CheckTestHasFailedResultListener implements TestListener {
       if (this.throwable.hasSome()) {
         Throwable t = this.throwable.value();
         t.printStackTrace(outPS);
+        Throwable chained = t;
+        while (chained != null) {
+          if (chained instanceof OutOfMemoryError) {
+            status.setActualStatus(DetectionStatus.ActualStatus.MEMORY_ERROR);
+            break;
+          }
+          chained = chained.getCause();
+        }
       } else {
         LOG.finer("No stack trace for failed test");
       }

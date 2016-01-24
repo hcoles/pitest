@@ -47,13 +47,6 @@ public class ExitingResultCollector implements ResultCollector {
     if (t != null) {
       failure = t;
     }
-    Throwable chained = t;
-    while (chained != null) {
-      if (chained instanceof OutOfMemoryError) {
-        throw new RuntimeException("Minion out of memory", t);
-      }
-      chained = chained.getCause();
-    }
   }
 
   @Override

@@ -42,13 +42,6 @@ public final class ConcreteResultCollector implements ResultCollector {
   @Override
   public void notifyEnd(final Description description, final Throwable t) {
     put(new TestResult(description, t));
-    Throwable chained = t;
-    while (chained != null) {
-      if (chained instanceof OutOfMemoryError) {
-        throw new RuntimeException("Minion out of memory", t);
-      }
-      chained = chained.getCause();
-    }
   }
 
   @Override
