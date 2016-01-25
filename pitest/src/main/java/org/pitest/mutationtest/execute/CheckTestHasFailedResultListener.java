@@ -16,6 +16,7 @@ package org.pitest.mutationtest.execute;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import org.pitest.functional.Option;
@@ -66,6 +67,10 @@ public class CheckTestHasFailedResultListener implements TestListener {
         while (chained != null) {
           if (chained instanceof OutOfMemoryError) {
             status.setActualStatus(DetectionStatus.ActualStatus.MEMORY_ERROR);
+            break;
+          }
+          if (chained instanceof TimeoutException) {
+            status.setActualStatus(DetectionStatus.ActualStatus.TIMED_OUT);
             break;
           }
           if (chained.getMessage() != null && chained.getMessage().

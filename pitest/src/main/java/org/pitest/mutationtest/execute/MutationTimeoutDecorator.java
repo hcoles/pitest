@@ -14,6 +14,8 @@
  */
 package org.pitest.mutationtest.execute;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
+import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.Unchecked;
@@ -29,17 +32,40 @@ import org.pitest.util.Unchecked;
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
   private final TimeoutLengthStrategy timeOutStrategy;
-  private final SideEffect            timeOutSideEffect;
   private final long                  executionTime;
 
   public MutationTimeoutDecorator(final TestUnit child,
       final SideEffect timeOutSideEffect,
       final TimeoutLengthStrategy timeStrategy, final long executionTime) {
     super(child);
-    this.timeOutSideEffect = timeOutSideEffect;
     this.executionTime = executionTime;
     this.timeOutStrategy = timeStrategy;
   }
+
+  //Adapted from https://devnet.jetbrains.com/message/5233636
+  private static String getDump() {
+    StringBuilder builder = new StringBuilder();
+    Throwable forFormatting = new Throwable();
+    for (Thread thread : Thread.getAllStackTraces().keySet()) {
+      forFormatting.setStackTrace(thread.getStackTrace());
+      builder.append(String.format("\"%s\" %s prio=%d tid=%d nid=1 "
+          + "%s\njava.lang.Thread.State: %s\n",
+          thread.getName(),
+          (thread.isDaemon() ? "daemon" : ""),
+          thread.getPriority(),
+          thread.getId(),
+          Thread.State.WAITING.equals(thread.getState())
+              ? "in Object.wait()" : thread.getState().name().toLowerCase(),
+              (thread.getState().equals(Thread.State.WAITING)
+              ? "WAITING (on object monitor)" : thread.getState())));
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      forFormatting.printStackTrace(pw);
+      builder.append(sw);
+      builder.append("\n");
+    }
+    return builder.toString();
+}
 
   @Override
   public void execute(final ClassLoader loader, final ResultCollector rc) {
@@ -50,7 +76,8 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
     final FutureTask<?> future = createFutureForChildTestUnit(loader, rc);
     executeFutureWithTimeOut(maxTime, future, rc);
     if (!future.isDone()) {
-      this.timeOutSideEffect.apply();
+      TimeoutException t = new TimeoutException("Mutation test timeout\n" + getDump());
+      rc.notifyEnd(new Description(""), t);
     }
 
   }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -113,6 +114,9 @@ public class MutationTestWorker {
       throw new RuntimeException("Too many open files during test run");
     } else if (status.equals(DetectionStatus.MEMORY_ERROR)) {
       throw new OutOfMemoryError("OutOfMemoryError during test run");
+    } else if (status.equals(DetectionStatus.TIMED_OUT)) {
+      throw new RuntimeException(
+        new TimeoutException("Timeout during test run"));
     }
     if (DEBUG) {
       LOG.fine("Mutation " + mutationId + " detected = " + mutationDetected);

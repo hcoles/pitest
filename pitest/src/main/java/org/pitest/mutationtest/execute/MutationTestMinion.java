@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,6 +89,10 @@ public class MutationTestMinion {
     } catch (final Throwable ex) {
       Throwable chained = ex;
       while (chained != null) {
+        if (chained instanceof TimeoutException) {
+          this.reporter.done(ExitCode.TIMEOUT);
+          return;
+        }
         if (chained instanceof OutOfMemoryError) {
           this.reporter.done(ExitCode.OUT_OF_MEMORY);
           return;
