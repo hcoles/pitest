@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.report.xml;
 
+import static org.pitest.mutationtest.report.xml.Tag.description;
 import static org.pitest.mutationtest.report.xml.Tag.index;
 import static org.pitest.mutationtest.report.xml.Tag.killingTest;
 import static org.pitest.mutationtest.report.xml.Tag.lineNumber;
@@ -37,7 +38,7 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 enum Tag {
-  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest;
+  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, description;
 }
 
 public class XMLReportListener implements MutationResultListener {
@@ -79,7 +80,8 @@ public class XMLReportListener implements MutationResultListener {
         + makeNode(clean(details.getMutator()), mutator)
         + makeNode("" + details.getFirstIndex(), index)
         + makeNode(createKillingTestDesc(mutation.getKillingTest()),
-            killingTest);
+            killingTest)
+        + makeNode(clean(details.getDescription()), description);
   }
 
   private String clean(final String value) {
