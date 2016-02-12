@@ -24,10 +24,14 @@ import static org.pitest.mutationtest.report.xml.Tag.mutatedMethod;
 import static org.pitest.mutationtest.report.xml.Tag.mutation;
 import static org.pitest.mutationtest.report.xml.Tag.mutator;
 import static org.pitest.mutationtest.report.xml.Tag.sourceFile;
+import static org.pitest.mutationtest.report.xml.Tag.testInfo;
+import static org.pitest.mutationtest.report.xml.Tag.testInfos;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
@@ -38,7 +42,7 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 enum Tag {
-  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, description;
+  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, description, testInfos, testInfo;
 }
 
 public class XMLReportListener implements MutationResultListener {
@@ -81,7 +85,21 @@ public class XMLReportListener implements MutationResultListener {
         + makeNode("" + details.getFirstIndex(), index)
         + makeNode(createKillingTestDesc(mutation.getKillingTest()),
             killingTest)
+        + makeTestInfoNode(details)
         + makeNode(clean(details.getDescription()), description);
+  }
+
+  private String makeTestInfoNode(MutationDetails aDetails) {
+      List<TestInfo> tests = aDetails.getTestsInOrder();
+
+      if (tests == null || tests.isEmpty()) {
+        return "";
+      }
+      StringBuilder result = new StringBuilder();
+      for (TestInfo info : tests) {
+          result.append(makeNode(info.getName(), testInfo));
+      }
+      return makeNode(result.toString(), testInfos);
   }
 
   private String clean(final String value) {
