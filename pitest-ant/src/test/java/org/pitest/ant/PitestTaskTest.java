@@ -420,6 +420,13 @@ public class PitestTaskTest {
   }
   
   @Test
+  public void shouldPassMaxSurvivorsToJavaTask() {
+    this.pitestTask.setMaxSurviving("42");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--maxSurviving=42");
+  }
+  
+  @Test
   public void shouldPassCoverageThresholdToJavaTask() {
     this.pitestTask.setCoverageThreshold("42");
     this.pitestTask.execute(this.java);

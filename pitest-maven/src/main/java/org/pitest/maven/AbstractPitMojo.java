@@ -210,6 +210,12 @@ public class AbstractPitMojo extends AbstractMojo {
   private int                         mutationThreshold;
 
   /**
+   * Maximum surviving mutants to allow
+   */
+  @Parameter(defaultValue = "-1", property = "maxSurviving")
+  private int                         maxSurviving;
+    
+  /**
    * Line coverage threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "coverageThreshold")
@@ -336,6 +342,7 @@ public class AbstractPitMojo extends AbstractMojo {
       final Option<CombinedStatistics> result = analyse();
       if (result.hasSome()) {
         throwErrorIfScoreBelowThreshold(result.value().getMutationStatistics());
+        throwErrorIfMoreThanMaximumSurvivors(result.value().getMutationStatistics());
         throwErrorIfCoverageBelowThreshold(result.value().getCoverageSummary());
       }
 
@@ -372,6 +379,16 @@ public class AbstractPitMojo extends AbstractMojo {
       throw new MojoFailureException("Mutation score of "
           + result.getPercentageDetected() + " is below threshold of "
           + this.mutationThreshold);
+    }
+  }
+  
+  private void throwErrorIfMoreThanMaximumSurvivors(final MutationStatistics result)
+      throws MojoFailureException {
+    if ((this.maxSurviving > 0)
+        && (result.getTotalSurvivingMutations() > this.maxSurviving)) {
+      throw new MojoFailureException("Had "
+          + result.getTotalSurvivingMutations() + " surviving mutants, but only "
+          + this.mutationThreshold + " survivors allowed");
     }
   }
 

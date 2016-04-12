@@ -375,6 +375,13 @@ public class OptionsParserTest {
         "42");
     assertEquals(42, actual.getMutationThreshold());
   }
+  
+  @Test
+  public void shouldParseMaximumAllowedSurvivingMutants() {
+    final ReportOptions actual = parseAddingRequiredArgs("--maxSurviving",
+        "42");
+    assertEquals(42, actual.getMaximumAllowedSurvivors());
+  }
 
   @Test
   public void shouldParseCoverageThreshold() {

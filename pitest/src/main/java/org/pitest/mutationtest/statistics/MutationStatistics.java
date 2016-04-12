@@ -66,6 +66,10 @@ public class MutationStatistics {
     return FCollection.fold(addDetectedTotals(), 0L,
         this.mutatorTotalMap.values());
   }
+  
+  public long getTotalSurvivingMutations() {
+    return getTotalMutations() - getTotalDetectedMutations();
+  }
 
   public long getPercentageDetected() {
     if (getTotalMutations() == 0) {

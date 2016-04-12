@@ -94,6 +94,22 @@ public class MutationStatisticsTest {
         makeResult(DetectionStatus.KILLED)));
     assertEquals(50, this.testee.getPercentageDetected());
   }
+  
+  @Test
+  public void shouldReportNumberOfSurvivingMutants() {
+    this.testee.registerResults(Arrays.asList(
+        makeResult(DetectionStatus.SURVIVED),
+        makeResult(DetectionStatus.SURVIVED)));
+    assertEquals(2, this.testee.getTotalSurvivingMutations());
+  }
+  
+  @Test
+  public void shouldReportNumberOfSurvivingMutantsWhenNoneSurvive() {
+    this.testee.registerResults(Arrays.asList(
+        makeResult(DetectionStatus.KILLED),
+        makeResult(DetectionStatus.TIMED_OUT)));
+    assertEquals(0, this.testee.getTotalSurvivingMutations());
+  }
 
   @Test
   public void shouldReportTotalNumberOfMutationsWhenNoneGenerated() {

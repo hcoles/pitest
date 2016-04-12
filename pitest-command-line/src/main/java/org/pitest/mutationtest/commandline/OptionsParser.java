@@ -31,6 +31,7 @@ import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_LAUNCH_CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
+import static org.pitest.mutationtest.config.ConfigOption.MAX_SURVIVING;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
@@ -107,6 +108,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
   private final ArgumentAcceptingOptionSpec<Integer> coverageThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<Integer> maxSurvivingSpec;
   private final OptionSpec<String>                   mutationEngine;
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
@@ -279,6 +281,11 @@ public class OptionsParser {
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Mutation score below which to throw an error")
         .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
+    
+    this.maxSurvivingSpec = parserAccepts(MAX_SURVIVING)
+        .withRequiredArg().ofType(Integer.class)
+        .describedAs("Maximum number of surviving mutants to allow without throwing an error")
+        .defaultsTo(MAX_SURVIVING.getDefault(Integer.class));
 
     this.coverageThreshHoldSpec = parserAccepts(COVERAGE_THRESHOLD)
         .withRequiredArg().ofType(Integer.class)
@@ -366,6 +373,7 @@ public class OptionsParser {
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
+    data.setMaximumAllowedSurvivors(this.maxSurvivingSpec.value(userArgs));
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
     data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec
