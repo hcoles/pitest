@@ -15,93 +15,29 @@
 package org.pitest.mutationtest.statistics;
 
 import java.io.PrintStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import org.pitest.functional.F;
-import org.pitest.functional.F2;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.DetectionStatus;
+public final class Score {
 
-public class Score {
+  private final String                mutatorName;
+  private final Iterable<StatusCount> counts;
+  private final long                  totalMutations;
+  private final long                  totalDetected;
 
-  private final String                            mutatorName;
-  private final Map<DetectionStatus, StatusCount> counts;
-
-  public Score(final String name) {
+  public Score(final String name, Iterable<StatusCount> counts,
+      long totalMutations, long totalDetected) {
     this.mutatorName = name;
-    this.counts = createMap();
-  }
-
-  private static Map<DetectionStatus, StatusCount> createMap() {
-    final Map<DetectionStatus, StatusCount> map = new LinkedHashMap<DetectionStatus, StatusCount>();
-    for (final DetectionStatus each : DetectionStatus.values()) {
-      map.put(each, new StatusCount(each, 0L));
-    }
-    return map;
-  }
-
-  public void registerResult(final DetectionStatus result) {
-    final StatusCount total = this.counts.get(result);
-    total.increment();
-  }
-
-  public Iterable<StatusCount> getCounts() {
-    return this.counts.values();
-  }
-
-  public long getTotalMutations() {
-    return FCollection.fold(addTotals(), 0L, this.counts.values());
-  }
-
-  public long getTotalDetectedMutations() {
-    return FCollection.fold(addTotals(), 0L,
-        FCollection.filter(this.counts.values(), isDetected()));
-  }
-
-  public long getPercentageDetected() {
-    if (getTotalMutations() == 0) {
-      return 100;
-    }
-
-    if (getTotalDetectedMutations() == 0) {
-      return 0;
-    }
-
-    return Math.round((100f / getTotalMutations())
-        * getTotalDetectedMutations());
-  }
-
-  private static F<StatusCount, Boolean> isDetected() {
-    return new F<StatusCount, Boolean>() {
-
-      @Override
-      public Boolean apply(final StatusCount a) {
-        return a.getStatus().isDetected();
-      }
-
-    };
-  }
-
-  private F2<Long, StatusCount, Long> addTotals() {
-    return new F2<Long, StatusCount, Long>() {
-
-      @Override
-      public Long apply(final Long a, final StatusCount b) {
-        return a + b.getCount();
-      }
-
-    };
+    this.counts = counts;
+    this.totalMutations = totalMutations;
+    this.totalDetected = totalDetected;
   }
 
   public void report(final PrintStream out) {
     out.println("> " + this.mutatorName);
-    out.println(">> Generated " + this.getTotalMutations() + " Killed "
-        + this.getTotalDetectedMutations() + " ("
-        + this.getPercentageDetected() + "%)");
+    out.println(">> Generated " + this.totalMutations + " Killed "
+        + this.totalDetected + " (" + this.getPercentageDetected() + "%)");
     int i = 0;
     StringBuilder sb = new StringBuilder();
-    for (final StatusCount each : this.counts.values()) {
+    for (final StatusCount each : this.counts) {
       sb.append(each + " ");
       i++;
       if ((i % 4) == 0) {
@@ -114,6 +50,27 @@ public class Score {
 
   public String getMutatorName() {
     return this.mutatorName;
+  }
+
+  public long getTotalMutations() {
+    return this.totalMutations;
+  }
+
+  public long getTotalDetectedMutations() {
+    return totalDetected;
+  }
+
+  public int getPercentageDetected() {
+    if (getTotalMutations() == 0) {
+      return 100;
+    }
+
+    if (getTotalDetectedMutations() == 0) {
+      return 0;
+    }
+
+    return Math.round((100f / getTotalMutations())
+        * getTotalDetectedMutations());
   }
 
 }

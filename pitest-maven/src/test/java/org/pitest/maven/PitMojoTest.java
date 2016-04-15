@@ -6,17 +6,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.statistics.Score;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 public class PitMojoTest extends BasePitMojoTest {
@@ -137,8 +138,8 @@ public class PitMojoTest extends BasePitMojoTest {
 
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
       throws MojoExecutionException {
-    final MutationStatistics stats = Mockito.mock(MutationStatistics.class);
-    when(stats.getPercentageDetected()).thenReturn(mutationScore);
+    Iterable<Score> scores = Collections.<Score>emptyList();
+    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 0);
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
@@ -149,8 +150,9 @@ public class PitMojoTest extends BasePitMojoTest {
   
   private void setupSuvivingMutants(long survivors)
       throws MojoExecutionException {
-    final MutationStatistics stats = Mockito.mock(MutationStatistics.class);
-    when(stats.getTotalSurvivingMutations()).thenReturn(survivors);
+    Iterable<Score> scores = Collections.<Score>emptyList();
+    int detected = 100;
+    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, 0);
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(

@@ -29,11 +29,11 @@ import org.pitest.util.StringUtil;
 
 public class ScoreTest {
 
-  private Score testee;
+  private ScorePrecursor testee;
 
   @Before
   public void setUp() {
-    this.testee = new Score("foo");
+    this.testee = new ScorePrecursor("foo");
   }
 
   @Test
@@ -73,7 +73,7 @@ public class ScoreTest {
   private String[] generateReportLines() {
     final ByteArrayOutputStream s = new ByteArrayOutputStream();
     final PrintStream out = new PrintStream(s);
-    this.testee.report(out);
+    this.testee.toScore().report(out);
     final String actual = new String(s.toByteArray());
     final String[] ss = actual.split(StringUtil.newLine());
     return ss;
@@ -81,19 +81,19 @@ public class ScoreTest {
 
   @Test
   public void shouldCalculateTotalNumberOfMutationsWhenNoneRegistered() {
-    assertEquals(0, this.testee.getTotalMutations());
+    assertEquals(0, this.testee.toScore().getTotalMutations());
   }
 
   @Test
   public void shouldCalculateTotalNumberOfDectedMutationsWhenNoneRegistered() {
-    assertEquals(0, this.testee.getTotalDetectedMutations());
+    assertEquals(0, this.testee.toScore().getTotalDetectedMutations());
   }
 
   @Test
   public void shouldCalculateTotalNumberOfMutationsWhenSomeRegistered() {
     this.testee.registerResult(DetectionStatus.KILLED);
     this.testee.registerResult(DetectionStatus.NO_COVERAGE);
-    assertEquals(2, this.testee.getTotalMutations());
+    assertEquals(2, this.testee.toScore().getTotalMutations());
   }
 
   @Test
@@ -102,31 +102,31 @@ public class ScoreTest {
     this.testee.registerResult(DetectionStatus.NO_COVERAGE);
     this.testee.registerResult(DetectionStatus.TIMED_OUT);
     this.testee.registerResult(DetectionStatus.SURVIVED);
-    assertEquals(2, this.testee.getTotalDetectedMutations());
+    assertEquals(2, this.testee.toScore().getTotalDetectedMutations());
   }
 
   @Test
   public void shouldCalculatePercentageDetectedWhenNoneFound() {
-    assertEquals(100, this.testee.getPercentageDetected());
+    assertEquals(100, this.testee.toScore().getPercentageDetected());
   }
 
   @Test
   public void shouldCalculatePercentageDetectedWhenNoneDetected() {
     this.testee.registerResult(DetectionStatus.SURVIVED);
-    assertEquals(0, this.testee.getPercentageDetected());
+    assertEquals(0, this.testee.toScore().getPercentageDetected());
   }
 
   @Test
   public void shouldCalculatePercentageDetectedWhenSomeDetected() {
     registerResults(DetectionStatus.SURVIVED, 2);
     registerResults(DetectionStatus.KILLED, 1);
-    assertEquals(33, this.testee.getPercentageDetected());
+    assertEquals(33, this.testee.toScore().getPercentageDetected());
   }
 
   @Test
   public void shouldCalculatePercentageDetectedWhenAllDetected() {
     registerResults(DetectionStatus.KILLED, 8);
-    assertEquals(100, this.testee.getPercentageDetected());
+    assertEquals(100, this.testee.toScore().getPercentageDetected());
   }
 
   private void registerResults(final DetectionStatus status, final int times) {

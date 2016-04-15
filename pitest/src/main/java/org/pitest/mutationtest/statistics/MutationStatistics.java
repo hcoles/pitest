@@ -17,56 +17,34 @@ package org.pitest.mutationtest.statistics;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import org.pitest.functional.F2;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
-import org.pitest.mutationtest.MutationResult;
+public final class MutationStatistics {
+  private final Iterable<Score> scores;
+  private final long totalMutations;
+  private final long numberOfTestsRun;
+  private final long totalDetected;
 
-public class MutationStatistics {
-  private final Map<String, Score> mutatorTotalMap  = new HashMap<String, Score>();
-  private long                     numberOfTestsRun = 0;
-
-  public void registerResults(final Collection<MutationResult> results) {
-    FCollection.forEach(results, register());
-  }
-
-  private SideEffect1<MutationResult> register() {
-    return new SideEffect1<MutationResult>() {
-
-      @Override
-      public void apply(final MutationResult mr) {
-        MutationStatistics.this.numberOfTestsRun = MutationStatistics.this.numberOfTestsRun
-            + mr.getNumberOfTestsRun();
-        final String key = mr.getDetails().getId().getMutator();
-        Score total = MutationStatistics.this.mutatorTotalMap.get(key);
-        if (total == null) {
-          total = new Score(key);
-          MutationStatistics.this.mutatorTotalMap.put(key, total);
-        }
-        total.registerResult(mr.getStatus());
-      }
-
-    };
+  public MutationStatistics(Iterable<Score> scores, long totalMutations, 
+      long totalDetected, long numberOfTestsRun) {
+    this.scores = scores;
+    this.totalMutations = totalMutations;
+    this.totalDetected = totalDetected;
+    this.numberOfTestsRun = numberOfTestsRun;
   }
 
   public Iterable<Score> getScores() {
-    return this.mutatorTotalMap.values();
+    return this.scores;
   }
-
+  
   public long getTotalMutations() {
-    return FCollection.fold(addTotals(), 0L, this.mutatorTotalMap.values());
+    return this.totalMutations;
   }
 
   public long getTotalDetectedMutations() {
-    return FCollection.fold(addDetectedTotals(), 0L,
-        this.mutatorTotalMap.values());
+    return this.totalDetected;
   }
-  
+
   public long getTotalSurvivingMutations() {
     return getTotalMutations() - getTotalDetectedMutations();
   }
@@ -82,28 +60,6 @@ public class MutationStatistics {
 
     return Math.round((100f / getTotalMutations())
         * getTotalDetectedMutations());
-  }
-
-  private static F2<Long, Score, Long> addDetectedTotals() {
-    return new F2<Long, Score, Long>() {
-
-      @Override
-      public Long apply(final Long a, final Score b) {
-        return a + b.getTotalDetectedMutations();
-      }
-
-    };
-  }
-
-  private static F2<Long, Score, Long> addTotals() {
-    return new F2<Long, Score, Long>() {
-
-      @Override
-      public Long apply(final Long a, final Score b) {
-        return a + b.getTotalMutations();
-      }
-
-    };
   }
 
   public void report(final PrintStream out) {
@@ -123,7 +79,7 @@ public class MutationStatistics {
     final float testsPerMutation = this.numberOfTestsRun
         / (float) this.getTotalMutations();
     return new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH))
-    .format(testsPerMutation);
+        .format(testsPerMutation);
   }
 
 }

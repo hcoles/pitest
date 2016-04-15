@@ -20,11 +20,11 @@ import org.pitest.mutationtest.MutationResultListener;
 public class MutationStatisticsListener implements MutationResultListener,
 MutationStatisticsSource {
 
-  private final MutationStatistics mutatorScores = new MutationStatistics();
+  private final MutationStatisticsPrecursor mutatorScores = new MutationStatisticsPrecursor();
 
   @Override
   public MutationStatistics getStatistics() {
-    return this.mutatorScores;
+    return this.mutatorScores.toStatistics();
   }
 
   @Override
