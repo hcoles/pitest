@@ -29,12 +29,13 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   @Override
   public void verify(final CodeSource code) {
-    final Collection<ClassInfo> codeClasses = code.getCode();
+    final Collection<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
     // perform only a weak check for line numbers as
     // some jvm languages are not guaranteed to produce them for all classes
     checkAtLeastOneClassHasLineNumbers(codeClasses);
     FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
   }
+
 
   private void checkAtLeastOneClassHasLineNumbers(
       final Collection<ClassInfo> codeClasses) {
@@ -61,6 +62,15 @@ public class DefaultBuildVerifier implements BuildVerifier {
         if (a.getSourceFileName() == null) {
           throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());
         }
+      }
+    };
+  }
+  
+  private static F<ClassInfo, Boolean> isNotSynthetic() {
+    return new F<ClassInfo, Boolean>() {
+      @Override
+      public Boolean apply(ClassInfo a) {
+        return !a.isSynthetic();
       }
     };
   }

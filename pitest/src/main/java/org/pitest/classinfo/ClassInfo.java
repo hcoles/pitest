@@ -73,6 +73,10 @@ public class ClassInfo {
   public boolean isAbstract() {
     return (this.access & Opcodes.ACC_ABSTRACT) != 0;
   }
+  
+  public boolean isSynthetic() {
+    return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
+  }
 
   public boolean isTopLevelClass() {
     return getOuterClass().hasNone();

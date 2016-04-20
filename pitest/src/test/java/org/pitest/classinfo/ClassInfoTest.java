@@ -62,6 +62,22 @@ public class ClassInfoTest {
         .equals(classB.getHierarchicalId().getHierarchicalHash()));
   }
 
+  @Test
+  public void shouldReportWhenClassIsSynthetic() {
+    this.data.access = Opcodes.ACC_SYNTHETIC | Opcodes.ACC_PUBLIC;
+    final ClassInfo testee = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    assertTrue(testee.isSynthetic());
+  }
+  
+  @Test
+  public void shouldReportWhenClassIsNotSynthetic() {
+    this.data.access = Opcodes.ACC_PUBLIC;
+    final ClassInfo testee = new ClassInfo(emptyClassPointer(),
+        emptyClassPointer(), this.data);
+    assertFalse(testee.isSynthetic());
+  }
+  
   private ClassPointer emptyClassPointer() {
     return new ClassPointer() {
       @Override

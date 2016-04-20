@@ -63,6 +63,16 @@ public class DefaultBuildVerifierTest {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
     this.testee.verify(this.code);
   }
+  
+  @Test
+  public void shouldNotThrowErrorForSyntheticClassCompiledWithoutSourceFileDebugInfo() {
+    setupClassPath(new ResourceFolderByteArraySource(), "SyntheticNoSourceDebug");
+    try {
+      this.testee.verify(this.code);
+    } catch (PitHelpError ex) {
+      fail();
+    }
+  }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
