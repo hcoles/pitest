@@ -25,9 +25,9 @@ public enum Help {
               NO_JUNIT(
                   "JUnit was not found on the classpath. PIT requires JUnit 4.6 or above."), //
                   NO_SOURCE_FILE(
-                      "The class %s does not contain a source debug information. All classes must be compiled with source and line number debug information."), //
+                      "The class %s does not contain source debug information. All classes must have an associated source file"), //
                       NO_LINE_NUMBERS(
-                          "No classes found with line number debug information. All classes must be compiled with source and line number debug information."), //
+                          "No classes found with line number debug information. All classes should be compiled with source and line number debug information."), //
                           NO_TEST_LIBRARY(
                               "No test library found on classpath. PIT requires either JUnit 4 (but can run JUnit 3 tests) or TestNG"), //
                               BAD_FILTER(
