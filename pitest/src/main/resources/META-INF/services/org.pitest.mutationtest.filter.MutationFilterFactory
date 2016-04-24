@@ -1,1 +1,2 @@
 org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
+org.pitest.mutationtest.filter.KotlinFilterFactory
