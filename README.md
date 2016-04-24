@@ -11,7 +11,8 @@ Read all about it at http://pitest.org
 
 ### 1.1.10-SNAPSHOT
 
-Nothing yet
+* #260 - Initial support for mutating Kotlin code
+* Break build when maximum number of failing mutants exceeded
 
 ### 1.1.9
 
