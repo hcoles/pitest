@@ -343,6 +343,20 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
+  @Test
+  public void shouldWorkWithYatspec() throws Exception {
+    File testDir = prepare("/pit-263-yatspec");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='true' status='KILLED'><sourceFile>SomeClass.java</sourceFile>");
+    assertThat(actual).doesNotContain("status='NO_COVERAGE'");
+    assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
+
   private static String readResults(File testDir) throws IOException {
     File mutationReport = new File(testDir.getAbsoluteFile() + File.separator
         + "target" + File.separator + "pit-reports" + File.separator
