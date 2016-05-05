@@ -108,6 +108,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return runnerName.equals("junitparams.JUnitParamsRunner")
         || runnerName.startsWith("org.spockframework.runtime.Sputnik")
         || runnerName.startsWith("com.insightfullogic.lambdabehave")
+        || runnerName.startsWith("com.googlecode.yatspec")
         || runnerName.startsWith("com.google.gwtmockito.GwtMockitoTestRunner");
   }
 
