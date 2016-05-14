@@ -9,10 +9,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.10-SNAPSHOT
+### 1.1.11-SNAPSHOT
+
+Nothing yet
+
+### 1.1.10
 
 * #260 - Initial support for mutating Kotlin code
-* Break build when maximum number of failing mutants exceeded
+* #264 - Support for yatspec runner (thanks @theangrydev)
+* Break build when more than `maxSurviving` mutants survive
 
 ### 1.1.9
 
