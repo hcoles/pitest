@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.pitest</groupId>
   <artifactId>pitest-build-config</artifactId>
-  <version>1.1.10-SNAPSHOT</version>
+  <version>1.1.10</version>
   <name>Build Config</name>
   <parent>
     <artifactId>pitest-parent</artifactId>
     <groupId>org.pitest</groupId>
-    <version>1.1.10-SNAPSHOT</version>
+    <version>1.1.10</version>
   </parent>
 
 </project>
