@@ -13,12 +13,12 @@ class ScorePrecursor {
   private final String                            mutatorName;
   private final Map<DetectionStatus, StatusCount> counts;
 
-  public ScorePrecursor(final String name) {
+  ScorePrecursor(final String name) {
     this.mutatorName = name;
     this.counts = createMap();
   }
 
-  public void registerResult(final DetectionStatus result) {
+  void registerResult(final DetectionStatus result) {
     final StatusCount total = this.counts.get(result);
     total.increment();
   }

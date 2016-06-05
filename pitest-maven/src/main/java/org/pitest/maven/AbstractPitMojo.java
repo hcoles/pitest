@@ -213,7 +213,7 @@ public class AbstractPitMojo extends AbstractMojo {
    * Maximum surviving mutants to allow
    */
   @Parameter(defaultValue = "-1", property = "maxSurviving")
-  private int                         maxSurviving;
+  private int                         maxSurviving = -1;
     
   /**
    * Line coverage threshold at which to fail build
@@ -384,11 +384,11 @@ public class AbstractPitMojo extends AbstractMojo {
   
   private void throwErrorIfMoreThanMaximumSurvivors(final MutationStatistics result)
       throws MojoFailureException {
-    if ((this.maxSurviving > 0)
+    if ((this.maxSurviving >= 0)
         && (result.getTotalSurvivingMutations() > this.maxSurviving)) {
       throw new MojoFailureException("Had "
           + result.getTotalSurvivingMutations() + " surviving mutants, but only "
-          + this.mutationThreshold + " survivors allowed");
+          + this.maxSurviving + " survivors allowed");
     }
   }
 
