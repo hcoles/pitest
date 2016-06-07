@@ -64,9 +64,9 @@ public class DefaultCoverageExporterTest {
 
     String actual = this.out.toString();
     assertThat(actual).contains(
-        "<block classname='Foo' method='method' number='42'>");
+        "<block classname='Foo' method='method()I' number='42'>");
     assertThat(actual).contains(
-        "<block classname='Bar' method='method' number='42'>");
+        "<block classname='Bar' method='method()I' number='42'>");
     assertThat(actual).contains(
         "<tests>\n<test name='Test1'/>\n<test name='Test2'/>\n</tests>");
     assertThat(actual).contains(
