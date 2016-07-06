@@ -24,6 +24,7 @@ import org.objectweb.asm.Opcodes;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 
 public class ClassInfo {
 
@@ -185,5 +186,23 @@ public class ClassInfo {
 
     };
   }
-
+  
+  public static <T extends Annotation> F<ClassInfo, Boolean> matchIfAnnotationPresentWithValueString(
+      final Class<T> annotation, final Predicate<String> annotationPredicate) {
+    return matchIfAnnotationPresentWithValueString(new ClassName(annotation), annotationPredicate);
+  }
+  
+  public static F<ClassInfo, Boolean> matchIfAnnotationPresentWithValueString(
+      final ClassName annotationName, final Predicate<String> annotationPredicate) {
+    return new F<ClassInfo, Boolean>() {
+      @Override
+      public Boolean apply(final ClassInfo a) {
+        String annotationValue = (String) a.getClassAnnotationValue(annotationName);
+        if (annotationValue != null) {
+          return annotationPredicate.apply(annotationValue);
+        }
+        return false;
+      }
+    };
+  }
 }

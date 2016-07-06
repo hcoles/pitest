@@ -249,6 +249,12 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "classpathDependencyExcludes")
   private ArrayList<String>           classpathDependencyExcludes;
+  
+  /**
+   * 
+   */
+  @Parameter(property = "excludedRunners")
+  private ArrayList<String>           excludedRunners;
 
   /**
    * When set indicates that analysis of this project should be skipped
@@ -560,5 +566,9 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public boolean useHistory() {
     return this.withHistory;
+  }
+
+  public ArrayList<String> getExcludedRunners() {
+    return excludedRunners;
   }
 }
