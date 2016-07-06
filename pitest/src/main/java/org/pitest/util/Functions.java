@@ -71,18 +71,4 @@ public abstract class Functions {
 
     };
   }
-  
-  public static F<String, Class<?>> nameToClass() {
-    return new F<String, Class<?>>() {
-      @Override
-      public Class<?> apply(final String name) {
-        try {
-          return Class.forName(name);
-        } catch (ClassNotFoundException e) {
-          throw new RuntimeException(name + " class cannot be loaded", e);
-        }
-      }
-    };
-  }
-
 }
