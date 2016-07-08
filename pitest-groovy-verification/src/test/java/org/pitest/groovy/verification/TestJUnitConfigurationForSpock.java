@@ -22,7 +22,7 @@ import com.example.spock.ParametrizedSpockTest;
 
 public class TestJUnitConfigurationForSpock {
   
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(new TestGroupConfig());
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList());
   private Pitest                             pitest;
   private Container                          container;
 

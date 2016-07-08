@@ -53,7 +53,8 @@ import com.example.JUnitParamsTest;
 public class TestJUnitConfiguration {
 
   private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
-                                                        new TestGroupConfig());
+                                                        new TestGroupConfig(), 
+                                                        Collections.<String>emptyList());
   private Pitest                             pitest;
   private Container                          container;
 

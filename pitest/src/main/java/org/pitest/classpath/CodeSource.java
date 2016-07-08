@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
@@ -19,7 +18,6 @@ import org.pitest.classinfo.TestToClassMapper;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.testapi.TestClassIdentifier;
 
 /**
@@ -30,22 +28,18 @@ public class CodeSource implements ClassInfoSource {
   private final ProjectClassPaths   classPath;
   private final Repository          classRepository;
   private final TestClassIdentifier testIdentifier;
-  private final Collection<String> excludedRunners;
 
   public CodeSource(final ProjectClassPaths classPath,
-      final TestClassIdentifier testIdentifier, 
-      final Collection<String> excludedRunners) {
+      final TestClassIdentifier testIdentifier) {
     this(classPath, new Repository(new ClassPathByteArraySource(
-        classPath.getClassPath())), testIdentifier, excludedRunners);
+        classPath.getClassPath())), testIdentifier);
   }
 
   CodeSource(final ProjectClassPaths classPath,
-      final Repository classRepository, final TestClassIdentifier testIdentifier, 
-      final Collection<String> excludedRunners) {
+      final Repository classRepository, final TestClassIdentifier testIdentifier) {
     this.classPath = classPath;
     this.classRepository = classRepository;
     this.testIdentifier = testIdentifier;
-    this.excludedRunners = excludedRunners;
   }
 
   public Collection<ClassInfo> getCode() {
@@ -63,9 +57,7 @@ public class CodeSource implements ClassInfoSource {
   public List<ClassInfo> getTests() {
     return flatMap(this.classPath.test(), nameToClassInfo()).filter(
         and(isWithinATestClass(), isIncludedClass(),
-            not(ClassInfo.matchIfAbstract()),
-            not(ClassInfo.matchIfAnnotationPresentWithValueString(RunWith.class, 
-                isRanWith(this.excludedRunners)))));
+            not(ClassInfo.matchIfAbstract())));
   }
 
   public ClassPath getClassPath() {
@@ -120,14 +112,5 @@ public class CodeSource implements ClassInfoSource {
 
     };
 
-  }
-  
-  private Predicate<String> isRanWith(final Collection<String> runners) {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(String a) {
-        return runners.contains(a);
-      }
-    };
   }
 }

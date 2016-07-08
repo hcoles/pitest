@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -307,7 +308,7 @@ public class CoverageProcessSystemTest {
     };
 
     final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
+        new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()), true, -1);
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
     final SocketFinder sf = new SocketFinder();
@@ -367,7 +368,7 @@ public class CoverageProcessSystemTest {
     };
 
     final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(new TestGroupConfig()), true, -1);
+        new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()), true, -1);
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
       final LaunchOptions lo = new LaunchOptions(agent);

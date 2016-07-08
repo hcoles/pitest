@@ -41,7 +41,7 @@ public class CodeSourceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.testee = new CodeSource(this.classPath, this.repository,
-        this.testIdentifer, Collections.<String>emptyList());
+        this.testIdentifer);
     this.foo = makeClassInfo("Foo");
     this.bar = makeClassInfo("Bar");
   }

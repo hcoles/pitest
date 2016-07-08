@@ -83,7 +83,7 @@ public class EntryPoint {
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
-        .testClassIdentifier(), data.getExcludedRunners());
+        .testClassIdentifier());
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(

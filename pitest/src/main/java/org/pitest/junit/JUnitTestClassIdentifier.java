@@ -15,6 +15,7 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,9 +28,11 @@ import org.pitest.testapi.TestGroupConfig;
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
   private final TestGroupConfig config;
+  private final Collection<String> excludedRunners;
 
-  public JUnitTestClassIdentifier(TestGroupConfig config) {
+  public JUnitTestClassIdentifier(TestGroupConfig config, Collection<String> excludedRunners) {
     this.config = config;
+    this.excludedRunners = excludedRunners;
   }
 
   @Override
@@ -39,7 +42,16 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
   @Override
   public boolean isIncluded(ClassInfo a) {
-    return isIncludedCategory(a) && !isExcludedCategory(a);
+    return isIncludedCategory(a) && !isExcludedCategory(a) && isNotRanWithExcludedRunner(a);
+  }
+
+  private boolean isNotRanWithExcludedRunner(ClassInfo a) {
+    String runWith = getRunWithAnnotationValue(a);
+    return this.excludedRunners.isEmpty() || !this.excludedRunners.contains(runWith);
+  }
+
+  private String getRunWithAnnotationValue(ClassInfo a) {
+    return (String) a.getClassAnnotationValue(new ClassName("org.junit.runner.RunWith"));
   }
 
   private boolean isIncludedCategory(ClassInfo a) {

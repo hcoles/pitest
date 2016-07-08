@@ -18,6 +18,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -46,7 +48,8 @@ public class ConfigurationFactoryTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new ConfigurationFactory(this.groupConfig, this.source);
+    this.testee = new ConfigurationFactory(this.groupConfig, this.source, 
+        Collections.<String>emptyList());
     this.realSource = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     when(this.source.getBytes("org.junit.Test")).thenReturn(

@@ -96,7 +96,7 @@ public abstract class ReportTestBase {
   }
 
   protected void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
+    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()));
   }
 
   protected void createAndRun(final Configuration configuration) {
@@ -115,7 +115,7 @@ public abstract class ReportTestBase {
 
       final Timings timings = new Timings();
       final CodeSource code = new CodeSource(cps, coverageOptions
-          .getPitConfig().testClassIdentifier(), this.data.getExcludedRunners());
+          .getPitConfig().testClassIdentifier());
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code,

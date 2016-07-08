@@ -3,6 +3,8 @@ package org.pitest.junit;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.testapi.TestGroupConfig;
@@ -13,7 +15,7 @@ public class JUnitCompatibleConfigurationTest {
   @Before
   public void setUp() throws Exception {
 
-    this.testee = new JUnitCompatibleConfiguration(new TestGroupConfig());
+    this.testee = new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList());
   }
 
   @Test

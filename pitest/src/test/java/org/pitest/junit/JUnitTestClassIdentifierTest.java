@@ -18,14 +18,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
@@ -33,18 +34,21 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
+import junit.framework.TestCase;
+
 public class JUnitTestClassIdentifierTest {
 
   private JUnitTestClassIdentifier testee;
   private Repository               classRepostory;
   private final List<String>       excludedGroups = new ArrayList<String>();
   private final List<String>       includedGroups = new ArrayList<String>();
+  private final List<String>       excludedRunners = new ArrayList<String>();
 
   @Before
   public void setUp() {
     TestGroupConfig groupConfig = new TestGroupConfig(this.excludedGroups,
         this.includedGroups);
-    this.testee = new JUnitTestClassIdentifier(groupConfig);
+    this.testee = new JUnitTestClassIdentifier(groupConfig, excludedRunners);
     this.classRepostory = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()));
   }
@@ -120,6 +124,7 @@ public class JUnitTestClassIdentifierTest {
   private interface GammaTests {
   }
 
+  @RunWith(BlockJUnit4ClassRunner.class)
   private class NoCategoryTest extends HasTestAnnotation {
   }
 
@@ -169,6 +174,24 @@ public class JUnitTestClassIdentifierTest {
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+  
+  @Test
+  public void shouldExcludeTestWithSpecifiedRunner() {
+    this.excludedRunners.add(BlockJUnit4ClassRunner.class.getName());
+    assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+  
+  @Test
+  public void shouldNotExcludedAnyTestsWhenNoExcludedRunners() {
+    this.excludedRunners.clear();
+    assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
   }
 
   private ClassInfo find(final Class<?> clazz) {
