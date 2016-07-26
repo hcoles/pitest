@@ -107,6 +107,8 @@ public class MutationCoverage {
 
     verifyBuildSuitableForMutationTesting();
 
+    checkExcludedRunners();
+    
     final CoverageDatabase coverageData = coverage().calculateCoverage();
 
     LOG.fine("Used memory after coverage calculation "
@@ -157,7 +159,20 @@ public class MutationCoverage {
 
   }
 
-  private int numberOfThreads() {
+  private void checkExcludedRunners() {
+    Collection<String> excludedRunners = this.data.getExcludedRunners();
+    if (!excludedRunners.isEmpty()) {
+      // Check whether JUnit4 is available or not
+      try {
+        Class.forName("org.junit.runner.RunWith");
+      } catch (ClassNotFoundException e) {
+        // JUnit4 is not available on the classpath
+        throw new PitHelpError(Help.NO_JUNIT_EXCLUDE_RUNNERS);
+      }
+    }
+  }
+
+private int numberOfThreads() {
     return Math.max(1, this.data.getNumberOfThreads());
   }
 

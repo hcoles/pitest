@@ -123,6 +123,8 @@ public class ReportOptions {
   private Properties                     properties;
 
   private int maxSurvivors;
+  
+  private Collection<String>             excludedRunners                = new ArrayList<String>();
 
   public boolean isVerbose() {
     return this.verbose;
@@ -557,6 +559,14 @@ public class ReportOptions {
   public void setMaximumAllowedSurvivors(int maxSurvivors) {
     this.maxSurvivors = maxSurvivors;
   }
+  
+  public Collection<String> getExcludedRunners() {
+    return excludedRunners;
+  }
+
+  public void setExcludedRunners(Collection<String> excludedRunners) {
+    this.excludedRunners = excludedRunners;
+  }
 
   @Override
   public String toString() {
@@ -582,7 +592,7 @@ public class ReportOptions {
         + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
         + mutationEngine + ", javaExecutable=" + javaExecutable
         + ", includeLaunchClasspath=" + includeLaunchClasspath
-        + ", properties=" + properties + ", maxSurvivors=" + maxSurvivors + "]";
+        + ", properties=" + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners=" + excludedRunners + "]";
   }
   
 }

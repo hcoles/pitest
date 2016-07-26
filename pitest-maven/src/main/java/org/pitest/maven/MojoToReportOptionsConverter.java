@@ -105,6 +105,7 @@ public class MojoToReportOptionsConverter {
         .getExcludedClasses()));
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setMaxMutationsPerClass(this.mojo.getMaxMutationsPerClass());
+    data.setExcludedRunners(this.mojo.getExcludedRunners());
 
     data.setReportDir(this.mojo.getReportsDirectory().getAbsolutePath());
     data.setVerbose(this.mojo.isVerbose());

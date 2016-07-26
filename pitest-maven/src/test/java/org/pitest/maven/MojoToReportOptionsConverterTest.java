@@ -87,6 +87,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig("<maxDependencyDistance>42</maxDependencyDistance>");
     assertEquals(42, actual.getDependencyAnalysisMaxDistance());
   }
+  
+  public void testParsesExcludedRunners() {
+    String runner = "org.springframework.test.context.junit4.SpringJUnit4ClassRunner";
+    final ReportOptions actual = parseConfig("<excludedRunners><param>" + runner + "</param></excludedRunners>");
+    assertThat(actual.getExcludedRunners()).hasSize(1).containsExactly(runner);
+  }
 
   public void testParsesListOfJVMArgs() {
     final String xml = "<jvmArgs>" + //
