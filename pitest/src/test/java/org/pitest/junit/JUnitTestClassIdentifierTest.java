@@ -16,10 +16,9 @@ package org.pitest.junit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import junit.framework.TestCase;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -33,8 +32,6 @@ import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
-
-import junit.framework.TestCase;
 
 public class JUnitTestClassIdentifierTest {
 
@@ -128,6 +125,12 @@ public class JUnitTestClassIdentifierTest {
   private class NoCategoryTest extends HasTestAnnotation {
   }
 
+  private class NoCategoryTestFromParentTest extends NoCategoryTest {
+  }
+
+  private class NoCategoryTestFromGrandParentTest extends NoCategoryTest {
+  }
+  
   @Category(AlphaTests.class)
   private class AlphaCategoryTest extends HasTestAnnotation {
   }
@@ -136,62 +139,93 @@ public class JUnitTestClassIdentifierTest {
   private class BetaCategoryTest extends HasTestAnnotation {
   }
 
-  @Category({ BetaTests.class, GammaTests.class })
+  @Category({BetaTests.class, GammaTests.class })
   private class TwoCategoryTest extends HasTestAnnotation {
   }
+  
+  private class CategoryBetaFromParentTest extends BetaCategoryTest {
+  }
 
+  private class CategoryBetaFromGrandParentTest extends BetaCategoryTest {
+  }
+  
   @Test
   public void shouldIncludeEverythingWhenNoCategoriesSpecified() {
     this.includedGroups.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
 
   @Test
   public void shouldOnlyIncludeTestsInIncludedCategories() {
     this.includedGroups.add(BetaTests.class.getName());
     assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertFalse(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
 
   @Test
   public void shouldNotExcludeWhenNoCategoriesSpecified() {
     this.excludedGroups.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
 
   @Test
   public void shouldOnlyExcludeTestsInExcludedCategories() {
     this.excludedGroups.add(BetaTests.class.getName());
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertFalse(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
   
   @Test
   public void shouldExcludeTestWithSpecifiedRunner() {
     this.excludedRunners.add(BlockJUnit4ClassRunner.class.getName());
     assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
   
   @Test
   public void shouldNotExcludedAnyTestsWhenNoExcludedRunners() {
     this.excludedRunners.clear();
     assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
 
   private ClassInfo find(final Class<?> clazz) {
