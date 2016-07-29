@@ -16,8 +16,6 @@ package org.pitest.junit;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
@@ -34,9 +32,8 @@ public class JUnitCompatibleConfiguration implements Configuration {
   private final TestGroupConfig config;
   private final Collection<String> excludedRunners;
 
-  private static final Pattern  VERSION_PATTERN = Pattern
-                                                    .compile("(\\d+)\\.(\\d+).*");
-
+  private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
+  
   public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
     this.config = config;
     this.excludedRunners = excludedRunners;
@@ -75,16 +72,12 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   boolean isInvalidVersion(final String version) {
-    final Matcher matcher = VERSION_PATTERN.matcher(version);
-
-    if (!matcher.matches()) {
+    try {
+      final JUnitVersion jUnitVersion = JUnitVersion.parse(version);
+      return jUnitVersion.isLessThan(MIN_JUNIT_VERSION);
+    } catch (final IllegalArgumentException e) {
       return true;
     }
-
-    final int major = Integer.parseInt(matcher.group(1));
-    final int minor = Integer.parseInt(matcher.group(2));
-
-    return (major < 4) || ((major == 4) && (minor < 6));
   }
 
 }

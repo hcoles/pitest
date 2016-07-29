@@ -16,7 +16,9 @@ package org.pitest.junit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import junit.framework.TestCase;
+import junit.runner.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,8 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
 
 public class JUnitTestClassIdentifierTest {
+
+  private static final JUnitVersion MIN_JUNIT_VERSION_WITH_CATEGORY_INHERITANCE = JUnitVersion.parse("4.12");
 
   private JUnitTestClassIdentifier testee;
   private Repository               classRepostory;
@@ -171,10 +175,22 @@ public class JUnitTestClassIdentifierTest {
     assertFalse(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+
+  @Test
+  public void shouldIncludeTestsInIncludedCategoriesInherited() {
+    assumeJUnitSupportsCategoryInheritance();
+    this.includedGroups.add(BetaTests.class.getName());
+    assertFalse(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertFalse(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
+    assertFalse(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(TwoCategoryTest.class)));
     assertTrue(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
     assertTrue(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
-
+  
   @Test
   public void shouldNotExcludeWhenNoCategoriesSpecified() {
     this.excludedGroups.clear();
@@ -197,10 +213,28 @@ public class JUnitTestClassIdentifierTest {
     assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(TwoCategoryTest.class)));
+  }
+
+  @Test
+  public void shouldExcludeTestsInExcludedCategoriesInherited() {
+    assumeJUnitSupportsCategoryInheritance();
+    this.excludedGroups.add(BetaTests.class.getName());
+    assertTrue(this.testee.isIncluded(find(NoCategoryTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(NoCategoryTestFromGrandParentTest.class)));
+    assertTrue(this.testee.isIncluded(find(AlphaCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(BetaCategoryTest.class)));
+    assertFalse(this.testee.isIncluded(find(TwoCategoryTest.class)));
     assertFalse(this.testee.isIncluded(find(CategoryBetaFromParentTest.class)));
     assertFalse(this.testee.isIncluded(find(CategoryBetaFromGrandParentTest.class)));
   }
-  
+
+  private void assumeJUnitSupportsCategoryInheritance() {
+    final String id = Version.id();
+    final JUnitVersion jUnitVersion = JUnitVersion.parse(id);
+    assumeTrue(jUnitVersion.isGreaterThanOrEqualTo(MIN_JUNIT_VERSION_WITH_CATEGORY_INHERITANCE));
+  }
+
   @Test
   public void shouldExcludeTestWithSpecifiedRunner() {
     this.excludedRunners.add(BlockJUnit4ClassRunner.class.getName());

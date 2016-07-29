@@ -14,6 +14,7 @@
  */
 package org.pitest.junit;
 
+import java.lang.annotation.Inherited;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,9 +70,11 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     }
 
     private String[] getCategories(final ClassInfo a) {
-        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(Category.class));
+        final Class<Category> categoryClass = Category.class;
+        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(categoryClass));
         if (categoryArray == null) {
-            if (a.getSuperClass().hasSome()) {
+            final boolean isCategoryInherited = categoryClass.isAnnotationPresent(Inherited.class);
+            if (isCategoryInherited && a.getSuperClass().hasSome()) {
                 return getCategories(a.getSuperClass().value());
             } else {
                 return new String[]{};
