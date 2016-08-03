@@ -251,9 +251,9 @@ public class OptionsParser {
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("coma separated list of additional classpath elements");
 
-	this.classPathFile = this.parserAccepts(CLASSPATH_FILE).withRequiredArg()
+    this.classPathFile = this.parserAccepts(CLASSPATH_FILE).withRequiredArg()
         .ofType(File.class).describedAs("File with a list of additional classpath elements (one per line)");
-		
+
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether to throw error if no mutations found");
