@@ -108,6 +108,12 @@ public enum ConfigOption {
    * analyse
    */
   CLASSPATH("classPath"),
+   /**
+   * Same as classPath above, but in a file. The file should contain paths to the jars
+   * to be added to the classpath. one path per line.
+   * This is usually only needed if you are running on windows and have a huge classpath
+   */
+  CLASSPATH_FILE("classPathFile"),
   /**
    * Flag to indicate if an error should be thrown if no mutations found
    */

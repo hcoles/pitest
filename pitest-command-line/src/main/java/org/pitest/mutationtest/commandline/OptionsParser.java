@@ -17,6 +17,7 @@ package org.pitest.mutationtest.commandline;
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
+import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH_FILE;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.COVERAGE_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
@@ -52,10 +53,13 @@ import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionException;
@@ -72,12 +76,15 @@ import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
+import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
 
 public class OptionsParser {
 
   private final Predicate<String>                    dependencyFilter;
-
+  
+  private static final Logger LOG = Log.getLogger();
+  
   private final OptionParser                         parser;
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
   private final OptionSpec<String>                   targetClassesSpec;
@@ -99,6 +106,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedClassesSpec;
   private final OptionSpec<String>                   outputFormatSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
+  private final OptionSpec<File>                     classPathFile;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
   private final OptionSpec<String>                   excludedGroupsSpec;
@@ -243,6 +251,9 @@ public class OptionsParser {
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("coma separated list of additional classpath elements");
 
+	this.classPathFile = this.parserAccepts(CLASSPATH_FILE).withRequiredArg()
+        .ofType(File.class).describedAs("File with a list of additional classpath elements (one per line)");
+		
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether to throw error if no mutations found");
@@ -402,6 +413,13 @@ public class OptionsParser {
     } else {
       elements.addAll(FCollection.filter(
           ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
+    }
+    if (userArgs.has(this.classPathFile)) {
+      try {
+        elements.addAll(Files.readAllLines(userArgs.valueOf(this.classPathFile).toPath(), Charset.forName("UTF-8")));
+      } catch (IOException ioe) {
+        LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - " + ioe.getMessage() );
+      }
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
