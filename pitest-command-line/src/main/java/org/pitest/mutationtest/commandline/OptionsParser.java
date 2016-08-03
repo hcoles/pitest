@@ -51,10 +51,10 @@ import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
 import static org.pitest.mutationtest.config.ConfigOption.USE_INLINED_CODE_DETECTION;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -415,10 +415,25 @@ public class OptionsParser {
           ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
     }
     if (userArgs.has(this.classPathFile)) {
+      BufferedReader classPathFileBR = null;
       try {
-        elements.addAll(Files.readAllLines(userArgs.valueOf(this.classPathFile).toPath(), Charset.forName("UTF-8")));
+        classPathFileBR = new BufferedReader(new FileReader(userArgs.valueOf(this.classPathFile).getAbsoluteFile()));
+        String element;
+        while ((element = classPathFileBR.readLine()) != null) {
+          elements.add(element);
+        }
       } catch (IOException ioe) {
-        LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - " + ioe.getMessage() );
+        LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - "
+                + ioe.getMessage());
+      } finally {
+        try {
+          if (classPathFileBR != null) {
+            classPathFileBR.close();
+          }
+        } catch (IOException ex) {
+          LOG.warning("Error while closing the class path file's buffered reader:" + userArgs.valueOf(this.classPathFile)
+                  .getAbsolutePath() + " - " + ex.getMessage());
+        }
       }
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
