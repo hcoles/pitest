@@ -8,6 +8,12 @@ import org.junit.Test;
 public class GlobTest {
 
   @Test
+  public void shouldHandleEmptyStrings() {
+    final Glob glob = new Glob("");
+    assertTrue(glob.matches(""));
+  }
+
+  @Test
   public void shouldFindExactMatches() {
     final String value = "org.foo.foo";
     final Glob glob = new Glob(value);
