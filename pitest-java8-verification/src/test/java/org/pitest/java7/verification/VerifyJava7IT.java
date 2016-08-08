@@ -18,6 +18,16 @@ public class VerifyJava7IT extends ReportTestBase {
   }
 
   @Test
+  public void shouldMutateIfElseOnAStringEqualityWithREMOVE_CONDITIONALSWhenInsideSwitchOnString() {
+    setMutators("REMOVE_CONDITIONALS");
+    this.data.setTargetClasses(predicateFor(
+        "com.example.java7.HasIfOnAStringEqualityInsideSwitchTestee*"));
+    this.data.setVerbose(true);
+    createAndRun();
+    verifyResults(KILLED, KILLED);
+  }
+
+  @Test
   public void shouldNotMutateSwitchOnAStringWithREMOVE_CONDITIONALS() {
     setMutators("REMOVE_CONDITIONALS");
     this.data.setTargetClasses(

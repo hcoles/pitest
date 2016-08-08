@@ -58,6 +58,45 @@ public class MutationOnSwitchInstructionLookupImpl
     this.controlFlowAnalyserWrapper = controlFlowAnalyserWrapper;
   }
 
+  private boolean hasMutationOnSwitchInstruction(final MutationDetails mutation,
+      final byte[] bytes) {
+    final ClassReader cr = classReaderFunction.apply(bytes);
+    final ClassNode classNode = classNodeSupplier.get();
+
+    cr.accept(classNode, ClassReader.EXPAND_FRAMES);
+
+    for (final Object m : classNode.methods) {
+      final MethodNode methodNode = (MethodNode) m;
+      final MethodName methodName = MethodName.fromString(methodNode.name);
+      if (methodName.equals(mutation.getMethod())) {
+
+        final List<Block> blocks = controlFlowAnalyserWrapper
+            .analyze(methodNode);
+        for (final Block block : blocks) {
+          final ClassLine classLine = mutation.getClassLine();
+          final int lineNumber = classLine.getLineNumber();
+          if (isBlockForMutatedLine(block, lineNumber)) {
+            final int firstInstruction = block.getFirstInstruction();
+            final int lastInstruction = block.getLastInstruction();
+
+            for (int i = firstInstruction; i <= lastInstruction; i++) {
+              final AbstractInsnNode abstractInsnNode = methodNode.instructions
+                  .get(i);
+              final boolean isSwitchInstruction = isSwitchInstruction(
+                  abstractInsnNode);
+              if (isSwitchInstruction) {
+                return true;
+              }
+            }
+
+          }
+        }
+      }
+
+    }
+    return false;
+  }
+
   private boolean isBlockForMutatedLine(final Block block,
       final int lineNumber) {
     return block.getLines().contains(lineNumber);
@@ -70,44 +109,8 @@ public class MutationOnSwitchInstructionLookupImpl
 
     final Option<byte[]> maybeBytes = source.fetchClassBytes(className);
 
-    if (maybeBytes.hasSome()) {
-      final byte[] bytes = maybeBytes.value();
-      final ClassReader cr = classReaderFunction.apply(bytes);
-      final ClassNode classNode = classNodeSupplier.get();
-
-      cr.accept(classNode, ClassReader.EXPAND_FRAMES);
-
-      for (final Object m : classNode.methods) {
-        final MethodNode methodNode = (MethodNode) m;
-        final MethodName methodName = MethodName.fromString(methodNode.name);
-        if (methodName.equals(mutation.getMethod())) {
-
-          final List<Block> blocks = controlFlowAnalyserWrapper
-              .analyze(methodNode);
-          for (final Block block : blocks) {
-            final ClassLine classLine = mutation.getClassLine();
-            final int lineNumber = classLine.getLineNumber();
-            if (isBlockForMutatedLine(block, lineNumber)) {
-              final int firstInstruction = block.getFirstInstruction();
-              final int lastInstruction = block.getLastInstruction();
-
-              for (int i = firstInstruction; i <= lastInstruction; i++) {
-                final AbstractInsnNode abstractInsnNode = methodNode.instructions
-                    .get(i);
-                final boolean isSwitchInstruction = isSwitchInstruction(
-                    abstractInsnNode);
-                if (isSwitchInstruction) {
-                  return true;
-                }
-              }
-
-            }
-          }
-        }
-
-      }
-    }
-    return false;
+    return maybeBytes.hasSome()
+        && hasMutationOnSwitchInstruction(mutation, maybeBytes.value());
   }
 
   private boolean isSwitchInstruction(final AbstractInsnNode abstractInsnNode) {

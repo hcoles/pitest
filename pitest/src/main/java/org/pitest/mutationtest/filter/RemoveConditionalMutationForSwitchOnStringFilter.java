@@ -35,24 +35,24 @@ class RemoveConditionalMutationForSwitchOnStringFilter
         Prelude.not(isRemoveConditionalMutationForSwitchOnString()));
   }
 
+  private boolean isMutationOnSwitchInstruction(
+      final MutationDetails mutation) {
+    return mutationOnSwitchInstructionLookup
+        .isMutationOnSwitchInstruction(mutation, this.source);
+  }
+
+  private boolean isRemoveConditionalMutation(final MutationDetails mutation) {
+    return mutation.getId().getMutator().startsWith(
+        "org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator_EQUAL");
+  }
+
   private F<MutationDetails, Boolean> isRemoveConditionalMutationForSwitchOnString() {
     return new F<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(final MutationDetails mutation) {
-        if (mutation.getId().getMutator().startsWith(
-            "org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator_EQUAL")) {
-
-          final boolean mutationOnSwitchInstruction = mutationOnSwitchInstructionLookup
-              .isMutationOnSwitchInstruction(mutation,
-                  RemoveConditionalMutationForSwitchOnStringFilter.this.source);
-          if (mutationOnSwitchInstruction) {
-            return true;
-          }
-
-        }
-        return false;
+        return isRemoveConditionalMutation(mutation)
+            && isMutationOnSwitchInstruction(mutation);
       }
-
     };
   }
 
