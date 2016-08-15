@@ -96,7 +96,7 @@ public abstract class ReportTestBase {
   }
 
   protected void createAndRun() {
-    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig()));
+    createAndRun(new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()));
   }
 
   protected void createAndRun(final Configuration configuration) {

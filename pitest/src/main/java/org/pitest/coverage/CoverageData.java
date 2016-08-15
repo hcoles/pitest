@@ -228,7 +228,7 @@ public class CoverageData implements CoverageDatabase {
   private void checkForFailedTest(final CoverageResult cr) {
     if (!cr.isGreenTest()) {
       recordTestFailure();
-      LOG.warning(cr.getTestUnitDescription()
+      LOG.severe(cr.getTestUnitDescription()
           + " did not pass without mutation.");
     }
   }

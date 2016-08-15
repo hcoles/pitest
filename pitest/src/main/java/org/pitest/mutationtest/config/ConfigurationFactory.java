@@ -31,11 +31,13 @@ class ConfigurationFactory {
 
   private final ClassByteArraySource source;
   private final TestGroupConfig      config;
+  private final Collection<String> excludedRunners;
 
   ConfigurationFactory(final TestGroupConfig config,
-      final ClassByteArraySource source) {
+      final ClassByteArraySource source, Collection<String> excludedRunners) {
     this.source = source;
     this.config = config;
+    this.excludedRunners = excludedRunners;
   }
 
   Configuration createConfiguration() {
@@ -44,7 +46,7 @@ class ConfigurationFactory {
 
     if (classRepository.fetchClass(ClassName.fromString("org.junit.Test"))
         .hasSome()) {
-      configs.add(new JUnitCompatibleConfiguration(this.config));
+      configs.add(new JUnitCompatibleConfiguration(this.config, this.excludedRunners));
     }
 
     if (classRepository.fetchClass(ClassName.fromString("org.testng.TestNG"))

@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <groupId>sample</groupId>
+    <artifactId>pit-yatspec</artifactId>
+    <version>DEV-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pit.version}</version>
+                <configuration>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    <outputFormats>
+                        <value>XML</value>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                    <targetClasses>
+                        <param>sample*</param>
+                    </targetClasses>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>repo.bodar.com</id>
+            <url>http://repo.bodar.com</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.yatspec</groupId>
+            <artifactId>yatspec</artifactId>
+            <version>1.23</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

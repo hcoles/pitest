@@ -58,7 +58,7 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
-    setupCoverage(20l, 1, 1);
+    setupCoverage(20, 1, 1);
     try {
       this.testee.execute();
       fail();
@@ -70,7 +70,7 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testDoesNotThrowsMojoFailureExceptionWhenMutationScoreOnThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
-    setupCoverage(21l, 1, 1);
+    setupCoverage(21, 1, 1);
     try {
       this.testee.execute();
       // pass
@@ -82,7 +82,7 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testThrowsMojoFailureExceptionWhenSurvivingMutantsAboveThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>19</maxSurviving>"));
-    setupSuvivingMutants(20l);
+    setupSuvivingMutants(20);
     try {
       this.testee.execute();
       fail();
@@ -94,11 +94,23 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testDoesNotThrowsMojoFailureExceptionWhenSurvivingMutantsOnThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>19</maxSurviving>"));
-    setupSuvivingMutants(19l);
+    setupSuvivingMutants(19);
     try {
       this.testee.execute();
     } catch (final MojoFailureException ex) {
       fail();
+    }
+  }
+  
+  public void testAllowsSurvivingMutantsThresholdToBeZero()
+      throws Exception {
+    this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>0</maxSurviving>"));
+    setupSuvivingMutants(1);
+    try {
+      this.testee.execute();
+      fail();
+    } catch (final MojoFailureException ex) {
+      // pass
     }
   }
   

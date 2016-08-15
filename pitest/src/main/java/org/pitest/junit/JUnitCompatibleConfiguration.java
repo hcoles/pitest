@@ -15,6 +15,7 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,12 +32,14 @@ import org.pitest.testapi.TestUnitFinder;
 public class JUnitCompatibleConfiguration implements Configuration {
 
   private final TestGroupConfig config;
+  private final Collection<String> excludedRunners;
 
   private static final Pattern  VERSION_PATTERN = Pattern
                                                     .compile("(\\d+)\\.(\\d+).*");
 
-  public JUnitCompatibleConfiguration(TestGroupConfig config) {
+  public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
     this.config = config;
+    this.excludedRunners = excludedRunners;
   }
 
   @Override
@@ -54,7 +57,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   @Override
   public TestClassIdentifier testClassIdentifier() {
-    return new JUnitTestClassIdentifier(this.config);
+    return new JUnitTestClassIdentifier(this.config, this.excludedRunners);
   }
 
   @Override
