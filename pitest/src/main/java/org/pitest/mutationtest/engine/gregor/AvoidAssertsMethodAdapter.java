@@ -25,6 +25,7 @@ import org.objectweb.asm.Opcodes;
 public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
   private static final String   DISABLE_REASON = "ASSERTS";
+  private static final String DISABLE_REASON_KOTLIN = "KOTLIN_INTRINSICS";
 
   private final MutationContext context;
   private boolean               assertBlockStarted;
@@ -43,8 +44,11 @@ public class AvoidAssertsMethodAdapter extends MethodVisitor {
     if ((opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/Class".equals(owner)
         && "desiredAssertionStatus".equals(name)) {
       this.context.disableMutations(DISABLE_REASON);
+    } else if ("kotlin/jvm/internal/Intrinsics".equals(owner)) {
+        this.context.disableMutations(DISABLE_REASON_KOTLIN);
     }
-    super.visitMethodInsn(opcode, owner, name, desc, itf);
+
+      super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
 
   @Override

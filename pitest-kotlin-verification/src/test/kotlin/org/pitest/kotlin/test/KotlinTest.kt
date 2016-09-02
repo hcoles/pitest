@@ -125,7 +125,7 @@ class KotlinTest {
     }
 
     @Test
-    fun shouldDetectedMixOfSurvivingAndKilledMutations() {
+    fun shouldIgnoreKotlinIntrinsics() {
         runIt(FullyCovereredClass::class.java, FullyCovereredClassTest::class.java,
                 Mutator.defaults())
         Assert.assertFalse(metaDataExtractor.detectionStatus.contains(DetectionStatus.NO_COVERAGE))
