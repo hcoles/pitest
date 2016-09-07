@@ -26,7 +26,7 @@ public class Glob implements Predicate<String> {
   private final Pattern regex;
 
   public Glob(final String glob) {
-    if (glob.charAt(0) == '~') {
+    if (glob.startsWith("~")) {
       this.regex = Pattern.compile(glob.substring(1));
     } else {
       this.regex = Pattern.compile(convertGlobToRegex(glob)

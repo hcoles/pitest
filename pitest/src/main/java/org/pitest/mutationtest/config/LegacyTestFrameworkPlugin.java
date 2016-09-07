@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.config;
 
+import java.util.Collection;
+
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
@@ -30,9 +32,9 @@ public class LegacyTestFrameworkPlugin implements TestPluginFactory {
 
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
-      ClassByteArraySource source) {
+      ClassByteArraySource source, Collection<String> excludedRunners) {
     final ConfigurationFactory configFactory = new ConfigurationFactory(config,
-        source);
+        source, excludedRunners);
     return configFactory.createConfiguration();
   }
 

@@ -33,8 +33,10 @@ public enum Help {
   BAD_FILTER(
       "The supplied filter would cause PIT to try and mutate itself. This will lead to many wasted hours of confusion and debugging. You have better things to do with your life so please don't do this again."), //
   UNKNOWN_MUTATOR(
-      "Mutator or group %s is unknown. Check PIT configuration and try again.");
-
+      "Mutator or group %s is unknown. Check PIT configuration and try again."),
+  NO_JUNIT_EXCLUDE_RUNNERS(
+      "Exclude Runners option requires JUnit 4.6 or above.");
+  
   private static final String URL = "http://pitest.org";
   private final String        text;
 

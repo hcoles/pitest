@@ -130,7 +130,8 @@ public class SettingsFactory {
         .findTestFrameworkPlugins();
     return firstOrDefault(testPlugins, new LegacyTestFrameworkPlugin())
         .createTestFrameworkConfiguration(this.options.getGroupConfig(),
-            new ClassPathByteArraySource(this.options.getClassPath()));
+            new ClassPathByteArraySource(this.options.getClassPath()),
+            this.options.getExcludedRunners());
   }
 
   @SuppressWarnings("unchecked")

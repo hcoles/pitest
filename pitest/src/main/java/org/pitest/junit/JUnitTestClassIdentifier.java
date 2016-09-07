@@ -15,6 +15,7 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,47 +27,55 @@ import org.pitest.testapi.TestGroupConfig;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
-  private final TestGroupConfig config;
+    private final TestGroupConfig config;
+    private final Collection<String> excludedRunners;
 
-  public JUnitTestClassIdentifier(TestGroupConfig config) {
-    this.config = config;
-  }
-
-  @Override
-  public boolean isATestClass(final ClassInfo a) {
-    return TestInfo.isWithinATestClass(a);
-  }
-
-  @Override
-  public boolean isIncluded(ClassInfo a) {
-    return isIncludedCategory(a) && !isExcludedCategory(a);
-  }
-
-  private boolean isIncludedCategory(ClassInfo a) {
-    List<String> included = this.config.getIncludedGroups();
-    return included.isEmpty()
-        || !Collections.disjoint(included, Arrays.asList(getCategories(a)));
-  }
-
-  private boolean isExcludedCategory(ClassInfo a) {
-    List<String> excluded = this.config.getExcludedGroups();
-    return !excluded.isEmpty()
-        && !Collections.disjoint(excluded, Arrays.asList(getCategories(a)));
-  }
-
-  private String[] getCategories(ClassInfo a) {
-    Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName
-        .fromClass(Category.class));
-    if (categoryArray == null) {
-      return new String[] {};
+    public JUnitTestClassIdentifier(final TestGroupConfig config, final Collection<String> excludedRunners) {
+        this.config = config;
+        this.excludedRunners = excludedRunners;
     }
-    return copyArray(categoryArray);
-  }
 
-  private String[] copyArray(Object[] original) {
-    String[] copy = new String[original.length];
-    System.arraycopy(original, 0, copy, 0, original.length);
-    return copy;
-  }
+    @Override
+    public boolean isATestClass(final ClassInfo a) {
+        return TestInfo.isWithinATestClass(a);
+    }
+
+    @Override
+    public boolean isIncluded(final ClassInfo a) {
+        return isIncludedCategory(a) && !isExcludedCategory(a) && isNotRanWithExcludedRunner(a);
+    }
+
+    private boolean isNotRanWithExcludedRunner(final ClassInfo a) {
+        final String runWith = getRunWithAnnotationValue(a);
+        return !this.excludedRunners.contains(runWith);
+    }
+
+    private String getRunWithAnnotationValue(final ClassInfo a) {
+        return (String) a.getClassAnnotationValue(new ClassName("org.junit.runner.RunWith"));
+    }
+
+    private boolean isIncludedCategory(final ClassInfo a) {
+        final List<String> included = this.config.getIncludedGroups();
+        return included.isEmpty() || !Collections.disjoint(included, Arrays.asList(getCategories(a)));
+    }
+
+    private boolean isExcludedCategory(final ClassInfo a) {
+        final List<String> excluded = this.config.getExcludedGroups();
+        return !excluded.isEmpty() && !Collections.disjoint(excluded, Arrays.asList(getCategories(a)));
+    }
+
+    private String[] getCategories(final ClassInfo a) {
+        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(Category.class));
+        if (categoryArray == null) {
+            return new String[]{};
+        }
+        return copyArray(categoryArray);
+    }
+
+    private String[] copyArray(final Object[] original) {
+        final String[] copy = new String[original.length];
+        System.arraycopy(original, 0, copy, 0, original.length);
+        return copy;
+    }
 
 }
