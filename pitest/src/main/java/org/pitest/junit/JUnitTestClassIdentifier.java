@@ -14,6 +14,7 @@
  */
 package org.pitest.junit;
 
+import java.lang.annotation.Inherited;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +52,11 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     }
 
     private String getRunWithAnnotationValue(final ClassInfo a) {
-        return (String) a.getClassAnnotationValue(new ClassName("org.junit.runner.RunWith"));
+        Object classAnnotationValue = a.getClassAnnotationValue(new ClassName("org.junit.runner.RunWith"));
+        if (classAnnotationValue == null && a.getSuperClass().hasSome()) {
+            classAnnotationValue = getRunWithAnnotationValue(a.getSuperClass().value());
+        }
+        return (String) classAnnotationValue;
     }
 
     private boolean isIncludedCategory(final ClassInfo a) {
@@ -65,9 +70,15 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     }
 
     private String[] getCategories(final ClassInfo a) {
-        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(Category.class));
+        final Class<Category> categoryClass = Category.class;
+        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(categoryClass));
         if (categoryArray == null) {
-            return new String[]{};
+            final boolean isCategoryInherited = categoryClass.isAnnotationPresent(Inherited.class);
+            if (isCategoryInherited && a.getSuperClass().hasSome()) {
+                return getCategories(a.getSuperClass().value());
+            } else {
+                return new String[]{};
+            }
         }
         return copyArray(categoryArray);
     }
