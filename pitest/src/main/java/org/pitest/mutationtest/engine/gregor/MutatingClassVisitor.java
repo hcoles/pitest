@@ -116,8 +116,8 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
-    return wrapWithLineFilter(methodContext,
-        wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
+    return wrapWithKotlinFilter(methodContext, wrapWithLineFilter(methodContext,
+        wrapWithAssertFilter(methodContext, wrappedMethodVisitor)));
   }
 
   private static MethodVisitor wrapWithAssertFilter(
@@ -132,4 +132,9 @@ class MutatingClassVisitor extends ClassVisitor {
         wrappedMethodVisitor);
   }
 
+  private static MethodVisitor wrapWithKotlinFilter(
+          MethodMutationContext methodContext,
+          final MethodVisitor wrappedMethodVisitor) {
+    return new AvoidKotlinMethodAdapter(methodContext, wrappedMethodVisitor);
+  }
 }
