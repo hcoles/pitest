@@ -298,13 +298,24 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldAcceptFileWithListOfAdditionalClassPathElements() {
+    ClassLoader classLoader = getClass().getClassLoader();
+    File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
+    final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
+	    classPathFile.getAbsolutePath());
+    final Collection<String> actual = ro.getClassPathElements();
+    assertTrue(actual.contains("C:/foo"));
+    assertTrue(actual.contains("/etc/bar"));
+  }
+  
+  @Test
   public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
     assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
         .shouldFailWhenNoMutations());
     assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
         .shouldFailWhenNoMutations());
   }
-
+  
   @Test
   public void shouldFailWhenNoMutationsSetByDefault() {
     assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
