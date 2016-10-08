@@ -3,8 +3,13 @@ package org.pitest.coverage.execute;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+import org.pitest.util.Log;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ErrorListener implements TestListener {
+  private static final Logger LOG = Log.getLogger();
 
   @Override
   public void onRunStart() {
@@ -16,8 +21,7 @@ public class ErrorListener implements TestListener {
 
   @Override
   public void onTestFailure(final TestResult tr) {
-    System.out.println("FAIL " + tr.getDescription() + " -> "
-        + tr.getThrowable());
+    LOG.log(Level.SEVERE, tr.getDescription().toString(), tr.getThrowable());
   }
 
   @Override
