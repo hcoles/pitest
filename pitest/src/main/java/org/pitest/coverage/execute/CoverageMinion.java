@@ -54,17 +54,17 @@ public class CoverageMinion {
 
       final int port = Integer.parseInt(args[0]);
       s = new Socket("localhost", port);
-
+   
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
-
+      
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
-
+  
       Log.setVerbose(paramsFromParent.isVerbose());
-
+    
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
           s.getOutputStream()));
-
+      
       CodeCoverageStore.init(invokeQueue);
 
       LOG.info("Checking environment");
@@ -88,6 +88,7 @@ public class CoverageMinion {
       LOG.log(Level.SEVERE, phe.getMessage());
       exitCode = ExitCode.JUNIT_ISSUE;
     } catch (final Throwable ex) {
+      ex.printStackTrace(System.out);
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",
           ex);
       exitCode = ExitCode.UNKNOWN_ERROR;

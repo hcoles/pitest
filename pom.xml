@@ -59,9 +59,10 @@
 
 	<modules>
 		<module>pitest-build-config</module>
-		<module>pitest-maven</module>
 		<module>pitest</module>
-		<module>pitest-ant</module>
+        <module>pitest-entry</module>
+        <module>pitest-maven</module>
+        <module>pitest-ant</module>
 		<module>pitest-command-line</module>
 		<module>pitest-html-report</module>
 		<module>pitest-maven-verification</module>

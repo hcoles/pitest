@@ -64,7 +64,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.pitest</groupId>
-			<artifactId>pitest</artifactId>
+			<artifactId>pitest-entry</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
