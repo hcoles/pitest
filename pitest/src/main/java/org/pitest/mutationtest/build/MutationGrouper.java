@@ -9,6 +9,6 @@ import org.pitest.mutationtest.engine.MutationDetails;
 public interface MutationGrouper {
 
   List<List<MutationDetails>> groupMutations(Collection<ClassName> codeClasses,
-      final Collection<MutationDetails> mutations);
+      Collection<MutationDetails> mutations);
 
 }

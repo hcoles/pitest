@@ -20,9 +20,9 @@ public interface ResultCollector {
 
   void notifyEnd(Description description);
 
-  void notifyStart(final Description description);
+  void notifyStart(Description description);
 
-  void notifySkipped(final Description description);
+  void notifySkipped(Description description);
 
   boolean shouldExit();
 }
