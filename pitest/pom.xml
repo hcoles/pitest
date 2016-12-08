@@ -66,10 +66,6 @@
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
-
-					<!-- for PowerMockAgentTest -javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -->
-					<argLine>-Dfoo=foo</argLine>
-
 					<groups>org.pitest.SystemTest</groups>
 				</configuration>
 				<executions>
@@ -251,18 +247,6 @@
 			<groupId>jmock</groupId>
 			<artifactId>jmock</artifactId>
 			<version>1.2.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<version>3.3.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.dspace.dependencies.jmockit</groupId>
-			<artifactId>dspace-jmockit</artifactId>
-			<version>0.999.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

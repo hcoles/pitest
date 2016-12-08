@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>pitest-parent</artifactId>
+		<groupId>org.pitest</groupId>
+		<version>1.1.12-SNAPSHOT</version>
+	</parent>
+	<artifactId>pitest-entry</artifactId>
+	<name>pitest-entry</name>
+	<url>http://pitest.org</url>
+	<description>Pitest entry point</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<index>true</index>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testNGArtifactName>none:none</testNGArtifactName>
+
+					<includes>
+						<include>org/**/Test*.java</include>
+						<include>org/**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/*$*</exclude>
+						<exclude>com/*/**.java</exclude>
+						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
+					</excludes>
+					<excludedGroups>org.pitest.SystemTest</excludedGroups>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.testng</groupId>
+						<artifactId>testng</artifactId>
+						<version>${testng.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+
+					<!-- for PowerMockAgentTest -javaagent:"${settings.localRepository}"/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar -->
+					<argLine>-Dfoo=foo</argLine>
+
+					<groups>org.pitest.SystemTest</groups>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.pitest</groupId>
+			<artifactId>pitest</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- for the xstream history store. cannot used shaded version -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pitest</groupId>
+			<artifactId>pitest</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.jqno.equalsverifier</groupId>
+			<artifactId>equalsverifier</artifactId>
+			<version>1.7.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- to verify compatibility -->
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

@@ -17,7 +17,6 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 import java.lang.management.MemoryNotificationInfo;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,12 +37,10 @@ import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
-import org.pitest.util.CommandLineMessage;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
-import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
 
 public class MutationTestMinion {
@@ -61,12 +58,12 @@ public class MutationTestMinion {
 
   public void run() {
     try {
-
+      
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
       Log.setVerbose(paramsFromParent.isVerbose());
-
+      
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
       final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
@@ -74,18 +71,20 @@ public class MutationTestMinion {
 
       final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(
           byteSource);
-
+      
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           paramsFromParent.engine.createMutator(byteSource), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, paramsFromParent.pitConfig);
-
+      
       worker.run(paramsFromParent.mutations, this.reporter,
           new TimeOutDecoratedTestSource(paramsFromParent.timeoutStrategy,
               tests, this.reporter));
+      
       this.reporter.done(ExitCode.OK);
     } catch (final Throwable ex) {
+      ex.printStackTrace(System.out);
       LOG.log(Level.WARNING, "Error during mutation test", ex);
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
@@ -111,12 +110,9 @@ public class MutationTestMinion {
 
       final MutationTestMinion instance = new MutationTestMinion(dis, reporter);
       instance.run();
-    } catch (final UnknownHostException ex) {
+    } catch (final Throwable ex) {
+      ex.printStackTrace(System.out);
       LOG.log(Level.WARNING, "Error during mutation test", ex);
-    } catch (final IOException ex) {
-      LOG.log(Level.WARNING, "Error during mutation test", ex);
-    } catch (final RuntimeException t) {
-      LOG.log(Level.WARNING, "RuntimeException during mutation test", t);
     } finally {
       if (s != null) {
         safelyCloseSocket(s);

@@ -55,13 +55,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.pitest</groupId>
-			<artifactId>pitest</artifactId>
+			<artifactId>pitest-entry</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.pitest</groupId>
-			<artifactId>pitest</artifactId>
+			<artifactId>pitest-entry</artifactId>
 			<type>test-jar</type>
 			<version>${project.version}</version>
 			<scope>test</scope>
