@@ -129,12 +129,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.dspace.dependencies.jmockit</groupId>
-			<artifactId>dspace-jmockit</artifactId>
-			<version>0.999.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>${testng.version}</version>

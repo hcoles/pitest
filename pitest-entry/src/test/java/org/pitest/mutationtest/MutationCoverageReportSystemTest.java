@@ -20,7 +20,6 @@ import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.DetectionStatus.RUN_ERROR;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
-import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -46,7 +44,6 @@ import org.pitest.util.IsolationUtils;
 import com.example.BeforeAfterClassTest;
 import com.example.CoveredByABeforeAfterClassTest;
 import com.example.CoveredByEasyMock;
-import com.example.CoveredByJMockit;
 import com.example.CoveredByJUnitThreeSuite;
 import com.example.CrashesJVMWhenMutated;
 import com.example.FailsTestWhenEnvVariableSetTestee;
@@ -178,15 +175,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data.setTargetTests(predicateFor(com.example.EasyMockTest.class));
     createAndRun();
     verifyResults(KILLED, KILLED, KILLED);
-  }
-
-  @Test
-  @Ignore("does not seem to be possible to have TestNG on the classpath when jmockit agent is loaded")
-  public void shouldWorkWithJMockit() {
-    this.data.setTargetClasses(predicateFor(CoveredByJMockit.class));
-    this.data.setTargetTests(predicateFor(com.example.JMockitTest.class));
-    createAndRun();
-    verifyResults(KILLED, KILLED, TIMED_OUT);
   }
 
   @Test
