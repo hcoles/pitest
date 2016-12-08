@@ -9,7 +9,7 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public interface CodeHistory {
 
-  Option<MutationStatusTestPair> getPreviousResult(final MutationIdentifier id);
+  Option<MutationStatusTestPair> getPreviousResult(MutationIdentifier id);
 
   boolean hasClassChanged(ClassName className);
 

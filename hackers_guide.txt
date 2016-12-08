@@ -1,0 +1,21 @@
+# General
+
+Pitest supports all version of Java back to Java 6. 
+
+As long as the resulting binaries support Java 6 technically the build itself could be tied to higher versions of Java, but testing is currently tied into building so it must build with Java 6.
+
+It is reccomended to use Java 8 while developing, but be aware that it is not possible to use any Java 8 (or 7) features.
+
+# Eclipse users
+
+Import everything as an existing maven project. If you do not have groovy plugins installed the `pitest-groovy-verification` module will show errors. Unless you are working on something Groovy related it is easiest just to close the module rather than installing the Groovy dependencies into eclipse.
+
+## Code format
+
+The files `code_format_profile.xml` and `code_cleanup_profile.xml` in the root of the repository.
+
+Will create formatting and cleanup profiles named henry. Some aspects of these will be changed in the future (e.g. the use of columns to layout fields) but they should be used while editing pitest to maintain consistency.
+
+# InteliJ
+
+?

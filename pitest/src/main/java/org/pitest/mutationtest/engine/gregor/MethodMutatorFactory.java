@@ -34,8 +34,8 @@ import org.objectweb.asm.MethodVisitor;
  */
 public interface MethodMutatorFactory {
 
-  MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor);
+  MethodVisitor create(MutationContext context,
+      MethodInfo methodInfo, MethodVisitor methodVisitor);
 
   String getGloballyUniqueId();
 
