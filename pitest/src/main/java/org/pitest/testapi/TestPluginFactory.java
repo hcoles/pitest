@@ -7,7 +7,7 @@ import org.pitest.plugin.ClientClasspathPlugin;
 
 public interface TestPluginFactory extends ClientClasspathPlugin {
 
-  Configuration createTestFrameworkConfiguration(final TestGroupConfig config,
-      final ClassByteArraySource source, Collection<String> excludedRunners);
+  Configuration createTestFrameworkConfiguration(TestGroupConfig config,
+      ClassByteArraySource source, Collection<String> excludedRunners);
 
 }

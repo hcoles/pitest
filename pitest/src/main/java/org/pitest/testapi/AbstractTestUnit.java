@@ -27,8 +27,7 @@ public abstract class AbstractTestUnit implements TestUnit {
   }
 
   @Override
-  public abstract void execute(final ClassLoader loader,
-      final ResultCollector rc);
+  public abstract void execute(ClassLoader loader, ResultCollector rc);
 
   @Override
   public final Description getDescription() {

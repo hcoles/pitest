@@ -16,6 +16,6 @@ package org.pitest.functional;
 
 public interface F5<A, B, C, D, E, FF> {
 
-  FF apply(final A a, final B b, final C c, final D d, final E e);
+  FF apply(A a, B b, C c, D d, E e);
 
 }

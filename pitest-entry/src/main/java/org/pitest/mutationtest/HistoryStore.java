@@ -12,10 +12,9 @@ public interface HistoryStore {
 
   void initialize();
 
-  void recordClassPath(final Collection<HierarchicalClassId> ids,
-      final CoverageDatabase coverageInfo);
+  void recordClassPath(Collection<HierarchicalClassId> ids, CoverageDatabase coverageInfo);
 
-  void recordResult(final MutationResult result);
+  void recordResult(MutationResult result);
 
   Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults();
 

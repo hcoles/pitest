@@ -18,6 +18,6 @@ import java.io.File;
 
 public interface ReportDirCreationStrategy {
 
-  File createReportDir(final String base);
+  File createReportDir(String base);
 
 }

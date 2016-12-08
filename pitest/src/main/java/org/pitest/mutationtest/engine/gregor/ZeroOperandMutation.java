@@ -18,8 +18,8 @@ import org.objectweb.asm.MethodVisitor;
 
 public interface ZeroOperandMutation {
 
-  void apply(final int opCode, final MethodVisitor mv);
+  void apply(int opCode, MethodVisitor mv);
 
-  String decribe(final int opCode, final MethodInfo methodInfo);
+  String decribe(int opCode, MethodInfo methodInfo);
 
 }
