@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.testapi.TestGroupConfig;
 
+import com.example.testng.AbstractTestNGClass;
 import com.example.testng.AnnotatedAtClassLevel;
 import com.example.testng.AnnotatedAtMethodLevel;
 
@@ -53,4 +54,8 @@ public class TestNGTestUnitFinderTest {
     assertEquals(0, this.testee.findTestUnits(String.class).size());
   }
 
+  @Test
+  public void shouldIgnoreAbstractClasses() {
+    assertEquals(0, this.testee.findTestUnits(AbstractTestNGClass.class).size());
+  }
 }
