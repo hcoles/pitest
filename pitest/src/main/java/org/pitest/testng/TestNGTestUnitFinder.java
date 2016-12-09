@@ -14,6 +14,7 @@
  */
 package org.pitest.testng;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
   @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
-    if (hasClassAnnotation(clazz) || hasMethodAnnotation(clazz)) {
+    if (!isAbstract(clazz) && (hasClassAnnotation(clazz) || hasMethodAnnotation(clazz))) {
       return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz,
           this.config));
     }
@@ -51,6 +52,10 @@ public class TestNGTestUnitFinder implements TestUnitFinder {
   private boolean hasMethodAnnotation(final Class<?> clazz) {
     return FCollection.contains(Reflection.allMethods(clazz),
         IsAnnotatedWith.instance(org.testng.annotations.Test.class));
+  }
+
+  private boolean isAbstract(Class<?> clazz) {
+    return Modifier.isAbstract(clazz.getModifiers());
   }
 
 }

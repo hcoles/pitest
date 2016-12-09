@@ -11,6 +11,8 @@ Read all about it at http://pitest.org
 
 ### 1.1.12-SNAPSHOT
 
+* #318 - Separate main process code from code sharing client classpath
+* #295 - Ignore abstract TestNG tests
 * #215 - Automatic selection of target classes for maven
 
 ### 1.1.11
