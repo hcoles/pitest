@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -54,6 +55,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     this.surefireConverter = Mockito.mock(SurefireConfigConverter.class);
     List<Plugin> mavenPlugins = Collections.singletonList(surefire);
     when(this.project.getBuildPlugins()).thenReturn(mavenPlugins);
+    Build build = new Build();
+    build.setOutputDirectory("");
+    when(this.project.getBuild()).thenReturn(build);
   }
 
   public void testsParsesReportDir() {

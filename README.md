@@ -11,7 +11,7 @@ Read all about it at http://pitest.org
 
 ### 1.1.12-SNAPSHOT
 
-Nothing yet
+* 90 - Automatic selection of target classes for maven
 
 ### 1.1.11
 

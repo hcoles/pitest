@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -64,6 +65,12 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         ClassPath.getClassPathElementsAsFiles(), fileToString()));
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");
+    
+    final Build build = new Build();
+    build.setOutputDirectory("");
+    
+    when(this.project.getBuild()).thenReturn(build);
+    
     when(this.plugins.findToolClasspathPlugins()).thenReturn(
         Collections.emptyList());
     when(this.plugins.findClientClasspathPlugins()).thenReturn(
