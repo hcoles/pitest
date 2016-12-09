@@ -30,21 +30,39 @@ public class DefaultBuildVerifier implements BuildVerifier {
   @Override
   public void verify(final CodeSource code) {
     final Collection<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
-    // perform only a weak check for line numbers as
-    // some jvm languages are not guaranteed to produce them for all classes
-    checkAtLeastOneClassHasLineNumbers(codeClasses);
-    FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
+
+    if (hasMutableCode(codeClasses)) {
+      checkAtLeastOneClassHasLineNumbers(codeClasses);
+      FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
+    }
   }
 
+  private boolean hasMutableCode(Collection<ClassInfo> codeClasses ) {
+    return !codeClasses.isEmpty() && hasAtLeastOneClass(codeClasses);
+  }
+  
+  private boolean hasAtLeastOneClass(final Collection<ClassInfo> codeClasses) {
+    return FCollection.contains(codeClasses, aConcreteClass());
+  }
 
   private void checkAtLeastOneClassHasLineNumbers(
       final Collection<ClassInfo> codeClasses) {
-    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())
-        && !codeClasses.isEmpty()) {
+    // perform only a weak check for line numbers as
+    // some jvm languages are not guaranteed to produce them for all classes
+    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())) {
       throw new PitHelpError(Help.NO_LINE_NUMBERS);
     }
   }
 
+  private static F<ClassInfo, Boolean> aConcreteClass() {
+    return new F<ClassInfo, Boolean>() {
+      @Override
+      public Boolean apply(final ClassInfo a) {
+        return !a.isInterface();
+      }
+    };
+  }
+  
   private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
     return new F<ClassInfo, Boolean>() {
       @Override

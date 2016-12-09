@@ -12,6 +12,7 @@ Read all about it at http://pitest.org
 ### 1.1.12-SNAPSHOT
 
 * #215 - Automatic selection of target classes for maven
+* #306 - Do not fail when only interfaces are in changeset
 
 ### 1.1.11
 
