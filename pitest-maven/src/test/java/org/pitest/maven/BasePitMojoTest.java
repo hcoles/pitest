@@ -36,6 +36,7 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.config.PluginServices;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -106,7 +107,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   protected AbstractPitMojo createPITMojo(final String config) throws Exception {
     final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy, this.filter,
-        this.plugins);
+        this.plugins, True.<MavenProject>all());
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }

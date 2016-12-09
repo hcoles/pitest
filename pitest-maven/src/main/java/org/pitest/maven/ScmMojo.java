@@ -16,6 +16,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
@@ -84,8 +85,8 @@ public class ScmMojo extends AbstractPitMojo {
 
   public ScmMojo(final RunPitStrategy executionStrategy,
                  final ScmManager manager, Predicate<Artifact> filter,
-                 PluginServices plugins, boolean analyseLastCommit) {
-    super(executionStrategy, filter, plugins);
+                 PluginServices plugins, boolean analyseLastCommit, Predicate<MavenProject> nonEmptyProjectCheck) {
+    super(executionStrategy, filter, plugins, nonEmptyProjectCheck);
     this.manager = manager;
     this.analyseLastCommit = analyseLastCommit;
   }
