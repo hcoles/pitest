@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -28,6 +30,8 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
@@ -244,18 +248,41 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<Predicate<String>> determineTargetClasses() {
-    return returnOrDefaultToClassesLikeGroupName(this.mojo.getTargetClasses());
+    return useConfiguredTargetClassesOrFindOccupiedPackages(this.mojo.getTargetClasses());
   }
 
-  private Collection<Predicate<String>> returnOrDefaultToClassesLikeGroupName(
+  private Collection<Predicate<String>> useConfiguredTargetClassesOrFindOccupiedPackages(
       final Collection<String> filters) {
     if (!hasValue(filters)) {
-      final String groupId = this.mojo.getProject().getGroupId() + "*";
-      this.mojo.getLog().info("Defaulting to group id (" + groupId + ")");
-      return Collections.<Predicate<String>> singleton(new Glob(groupId));
+      this.mojo.getLog().info("Defaulting target classes to match packages in build directory");
+      return FCollection.map(findOccupiedPackages(), Glob.toGlobPredicate());
     } else {
       return FCollection.map(filters, Glob.toGlobPredicate());
     }
+  }
+  
+  
+  private Collection<String> findOccupiedPackages() {
+    String outputDirName = this.mojo.getProject().getBuild()
+        .getOutputDirectory();
+    File outputDir = new File(outputDirName);
+    if (outputDir.exists()) {
+      DirectoryClassPathRoot root = new DirectoryClassPathRoot(outputDir);
+      Set<String> occupiedPackages = new HashSet<String>();
+      FCollection.mapTo(root.classNames(), classToPackageGlob(),
+          occupiedPackages);
+      return occupiedPackages;
+    }
+    return Collections.emptyList();
+  }
+  
+  private static F<String,String> classToPackageGlob() {
+    return new F<String,String>() {
+      @Override
+      public String apply(String a) {
+        return ClassName.fromString(a).getPackage().asJavaName() + ".*";
+      }
+    };
   }
 
   private Collection<File> stringsTofiles(final List<String> sourceRoots) {
@@ -268,7 +295,6 @@ public class MojoToReportOptionsConverter {
       public File apply(final String a) {
         return new File(a);
       }
-
     };
   }
 
