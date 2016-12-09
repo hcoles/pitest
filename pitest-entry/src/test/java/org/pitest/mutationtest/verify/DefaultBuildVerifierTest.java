@@ -50,6 +50,11 @@ public class DefaultBuildVerifierTest {
   private static class AClass {
 
   }
+  
+  private static interface AnInterface {
+    
+  }
+  
 
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
@@ -89,6 +94,16 @@ public class DefaultBuildVerifierTest {
       fail();
     }
   }
+  
+  @Test
+  public void shouldNotThrowAnErrorWhenOnlyInterfacesPresent() {
+    setupClassPath(AnInterface.class);
+    try {
+      this.testee.verify(this.code);
+    } catch (final PitHelpError e) {
+      fail();
+    }
+  }  
 
   private void setupClassPath(final Class<?> clazz) {
     this.setupClassPath(
