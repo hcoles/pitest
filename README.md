@@ -14,6 +14,7 @@ Read all about it at http://pitest.org
 * #318 - Separate main process code from code sharing client classpath
 * #295 - Ignore abstract TestNG tests
 * #215 - Automatic selection of target classes for maven
+* #314 - Do not fail for maven modules without tests or code
 * #306 - Do not fail when only interfaces are in changeset
 
 ### 1.1.11

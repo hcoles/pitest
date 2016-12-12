@@ -28,6 +28,8 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 public class AbstractPitMojo extends AbstractMojo {
 
+  private final Predicate<MavenProject> notEmptyProject;
+  
   protected final Predicate<Artifact> filter;
 
   protected final PluginServices      plugins;
@@ -316,14 +318,15 @@ public class AbstractPitMojo extends AbstractMojo {
   public AbstractPitMojo() {
     this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
         AbstractPitMojo.class.getClassLoader())), new PluginServices(
-        AbstractPitMojo.class.getClassLoader()));
+        AbstractPitMojo.class.getClassLoader()), new NonEmptyProjectCheck());
   }
 
   public AbstractPitMojo(final GoalStrategy strategy, final Predicate<Artifact> filter,
-      final PluginServices plugins) {
+      final PluginServices plugins, final Predicate<MavenProject> emptyProjectCheck) {
     this.goalStrategy = strategy;
     this.filter = filter;
     this.plugins = plugins;
+    this.notEmptyProject = emptyProjectCheck;
   }
 
   @Override
@@ -528,8 +531,10 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   protected boolean shouldRun() {
-    return !this.skip && !this.skipTests
-        && !this.project.getPackaging().equalsIgnoreCase("pom");
+    return !this.skip 
+        && !this.skipTests
+        && !this.project.getPackaging().equalsIgnoreCase("pom")
+        && notEmptyProject.apply(project);
   }
 
   public String getMutationEngine() {
@@ -571,4 +576,5 @@ public class AbstractPitMojo extends AbstractMojo {
   public ArrayList<String> getExcludedRunners() {
     return excludedRunners;
   }
+  
 }
