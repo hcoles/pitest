@@ -16,6 +16,7 @@ Read all about it at http://pitest.org
 * #215 - Automatic selection of target classes for maven
 * #314 - Do not fail for maven modules without tests or code
 * #306 - Do not fail when only interfaces are in changeset
+* #325 - Anonymous class in Spock test causing error
 
 ### 1.1.11
 
