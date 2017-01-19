@@ -16,6 +16,7 @@
 package org.pitest.junit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,21 +37,26 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   @Override
   @SuppressWarnings("unchecked")
   public List<Class<?>> apply(final Class<?> a) {
+    try {
+      final Runner runner = AdaptedJUnitTestUnit.createRunner(a);
 
-    final Runner runner = AdaptedJUnitTestUnit.createRunner(a);
+      final List<Description> allChildren = new ArrayList<Description>();
+      flattenChildren(allChildren, runner.getDescription());
 
-    final List<Description> allChildren = new ArrayList<Description>();
-    flattenChildren(allChildren, runner.getDescription());
+      final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(
+          runner.getDescription().getChildren().size());
 
-    final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(runner
-        .getDescription().getChildren().size());
+      final List<Description> suites = FCollection.filter(allChildren,
+          Prelude.or(isSuiteMethodRunner(runner), isSuite()));
+      FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
 
-    final List<Description> suites = FCollection.filter(allChildren,
-        Prelude.or(isSuiteMethodRunner(runner), isSuite()));
-    FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
-
-    classes.remove(a);
-    return new ArrayList<Class<?>>(classes);
+      classes.remove(a);
+      return new ArrayList<Class<?>>(classes);
+    } catch (RuntimeException ex) {
+      // some runners (looking at you spock) can throw a runtime exception
+      // when the getDescription method is called.
+      return Collections.emptyList();
+    }
 
   }
 

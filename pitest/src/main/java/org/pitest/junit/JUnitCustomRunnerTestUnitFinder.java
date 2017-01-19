@@ -62,11 +62,19 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private boolean isNotARunnableTest(final Runner runner, final String className) {
-    return (runner == null)
-        || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
-        || isParameterizedTest(runner) || isAJUnitThreeErrorOrWarning(runner)
-        || isJUnitThreeSuiteMethodNotForOwnClass(runner, className);
+  private boolean isNotARunnableTest(final Runner runner,
+      final String className) {
+    try {
+      return (runner == null)
+          || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
+          || isParameterizedTest(runner) 
+          || isAJUnitThreeErrorOrWarning(runner)
+          || isJUnitThreeSuiteMethodNotForOwnClass(runner, className);
+    } catch (RuntimeException ex) {
+      // some runners (looking at you spock) can throw a runtime exception
+      // when the getDescription method is called
+      return true;
+    }
   }
 
   private boolean isAJUnitThreeErrorOrWarning(final Runner runner) {

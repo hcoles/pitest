@@ -2,15 +2,14 @@ package org.pitest.junit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -18,6 +17,9 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
 import com.example.TheoryTest;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class RunnerSuiteFinderTest {
 
@@ -84,7 +86,7 @@ public class RunnerSuiteFinderTest {
         Two.class);
     assertContains(expected, actual);
   }
-
+  
   public static class JUnit3SuiteMethod extends TestCase {
     public JUnit3SuiteMethod(final String testName) {
       super(testName);
@@ -115,6 +117,36 @@ public class RunnerSuiteFinderTest {
     assertContains(expected, actual);
   }
 
+  @Test
+  public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
+    try {
+      findWithTestee(ThrowsOnDiscoverySuite.class); 
+      // pass
+    } catch(RuntimeException ex) {
+      fail();
+    }
+  }
+  
+  @RunWith(ThrowsOnDiscoveryRunner.class)
+  @SuiteClasses({ One.class, Two.class })
+  static class ThrowsOnDiscoverySuite {
+
+  }
+  
+  public static class ThrowsOnDiscoveryRunner extends Suite {
+
+    public ThrowsOnDiscoveryRunner(final Class<?> klass, final RunnerBuilder rb)
+        throws InitializationError {
+      super(klass, rb);
+    }
+    
+    @Override
+    public Description getDescription() {
+      throw new RuntimeException();
+    }
+
+  }
+  
   private Collection<Class<?>> findWithTestee(final Class<?> clazz) {
     return this.testee.apply(clazz);
   }

@@ -17,6 +17,7 @@ package org.pitest.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.mockito.MockitoAnnotations;
+import org.pitest.junit.RunnerSuiteFinderTest.ThrowsOnDiscoverySuite;
 import org.pitest.testapi.TestUnit;
 
 import com.example.JUnitParamsTest;
@@ -339,6 +341,16 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void willFindSingleTestUnitInJUnitParamsTest() {
     final Collection<TestUnit> actual = findWithTestee(JUnitParamsTest.class);
     assertEquals(1, actual.size());
+  }
+  
+  @Test
+  public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
+    try {
+      findWithTestee(ThrowsOnDiscoverySuite.class); 
+      // pass
+    } catch(RuntimeException ex) {
+      fail();
+    }
   }
 
 }
