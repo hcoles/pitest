@@ -14,8 +14,13 @@
  */
 package org.pitest.maven;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import org.apache.maven.artifact.Artifact;
 import org.pitest.functional.F;
@@ -23,7 +28,9 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.util.Log;
 import org.pitest.util.PitError;
+import org.pitest.util.StringUtil;
 
 public class DependencyFilter implements Predicate<Artifact> {
 
@@ -33,6 +40,7 @@ public class DependencyFilter implements Predicate<Artifact> {
     final Iterable<? extends ClientClasspathPlugin> runtimePlugins = plugins
         .findClientClasspathPlugins();
     FCollection.mapTo(runtimePlugins, artifactToPair(), this.groups);
+    findVendorIdForGroups();
   }
 
   private static F<ClientClasspathPlugin, GroupIdPair> artifactToPair() {
@@ -66,6 +74,44 @@ public class DependencyFilter implements Predicate<Artifact> {
       }
 
     };
+  }
+
+  /**
+   * Changes the (Implementation-Vendor,Implementation-Title) pairs
+   * by the corresponding (Implementation-Vendor-Id, Implementation-Title) pair
+   * when the Implementation-Vendor-Id is available.
+   * Targets the fact that, by default, project.groupId is assigned to Implementation-Vendor-Id
+   * and project.organization.name is assigned to Implementation-Vendor on the META-INF/MANIFEST.MF file.
+   */
+  private void findVendorIdForGroups() {
+    ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    try {
+      //Checks every META-INF/MANIFEST.MF file found in the classpath
+      Enumeration<URL> urls = loader.getResources("META-INF/MANIFEST.MF");
+      while (urls.hasMoreElements()) {
+        URL url = urls.nextElement();
+
+        String urlStr = url.toString();
+
+        Manifest manifest = new Manifest(url.openStream());
+        Attributes attributes = manifest.getMainAttributes();
+        String vendor = attributes.getValue("Implementation-Vendor");
+        String vendorId = attributes.getValue("Implementation-Vendor-Id");
+        String id = attributes.getValue("Implementation-Title");
+
+        if (StringUtil.isNullOrEmpty(vendor) || StringUtil.isNullOrEmpty(vendorId) || StringUtil.isNullOrEmpty(id)) {
+          continue;
+        }
+
+        GroupIdPair query = new GroupIdPair(vendor, id);
+        if (groups.contains(query)) {
+          groups.remove(query);
+          groups.add(new GroupIdPair(vendorId, id));
+        }
+      }
+    } catch (IOException exc) {
+      Log.getLogger().fine("An exception was thrown while looking for manifest files. Message: " + exc.getMessage());
+    }
   }
 
   @Override
