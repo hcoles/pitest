@@ -91,8 +91,6 @@ public class DependencyFilter implements Predicate<Artifact> {
       while (urls.hasMoreElements()) {
         URL url = urls.nextElement();
 
-        String urlStr = url.toString();
-
         Manifest manifest = new Manifest(url.openStream());
         Attributes attributes = manifest.getMainAttributes();
         String vendor = attributes.getValue("Implementation-Vendor");
