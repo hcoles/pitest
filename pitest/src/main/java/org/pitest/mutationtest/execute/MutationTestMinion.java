@@ -34,6 +34,8 @@ import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
+import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
+import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
@@ -134,7 +136,7 @@ public class MutationTestMinion {
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*"))));
+        .or(new Glob("javassist/*")), JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class)));
   }
 
   private static void safelyCloseSocket(final Socket s) {

@@ -5,16 +5,20 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
+import org.pitest.functional.F;
 import org.pitest.functional.predicate.Predicate;
 
 public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
 
   private final Predicate<String> filter;
+  private final F<ClassWriter,ClassVisitor> transformation;
 
-  public BendJavassistToMyWillTransformer(final Predicate<String> filter) {
+  public BendJavassistToMyWillTransformer(final Predicate<String> filter, F<ClassWriter,ClassVisitor> transformation) {
     this.filter = filter;
+    this.transformation = transformation;
   }
 
   @Override
@@ -29,7 +33,7 @@ public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
       final ClassWriter writer = new ClassWriter(
           FrameOptions.pickFlags(classfileBuffer));
 
-      reader.accept(new JavassistInputStreamInterceptorAdapater(writer),
+      reader.accept(transformation.apply(writer),
           ClassReader.EXPAND_FRAMES);
       return writer.toByteArray();
     } else {

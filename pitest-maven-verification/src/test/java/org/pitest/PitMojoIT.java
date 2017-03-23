@@ -32,7 +32,6 @@ import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -155,7 +154,7 @@ public class PitMojoIT {
   }
 
   @Test
-  @Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
+  //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
     File testDir = prepare("/pit-powermock");
     verifier.addCliOption("-DtimeoutConstant=10000");
@@ -173,6 +172,7 @@ public class PitMojoIT {
         .contains(
             "<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
+    assertThat(actual).doesNotContain("<mutation detected='false' status='NO_COVERAGE'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile><mutatedClass>com.example.PowerMockCallsOwnMethod</mutatedClass><mutatedMethod>branchedCode</mutatedMethod>");
   }
 
   @Test
