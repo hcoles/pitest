@@ -27,6 +27,7 @@ import junit.framework.AssertionFailedError;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
@@ -118,6 +119,19 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("passes", Fails.class)));
   }
+  
+  // we have static state so history may affect results
+  @Test
+  public void shouldRunTestsInNextTestClassAferFailure() {
+    new TestNGTestUnit(Fails.class, this.config).execute(loader, Mockito.mock(ResultCollector.class));
+    
+    this.testee = new TestNGTestUnit(neverMatch(), Passes.class, this.config);
+    this.testee.execute(this.loader, this.rc);
+    
+    verify(this.rc, times(1))
+    .notifyEnd(new Description("passes", Passes.class));;
+  }
+
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFailsInForeignClassLoader() {

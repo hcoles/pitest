@@ -12,13 +12,12 @@ import org.pitest.util.IsolationUtils;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.SkipException;
 
-public class ForeignClassLoaderAdaptingListener implements ITestListener {
+public class ForeignClassLoaderAdaptingListener implements ITestListener, FailureTracker {
 
   private final List<String> events;
   private Throwable          error;
-  private boolean            hasHadFailure = false;
+  private boolean            hasHadFailure;
 
   public ForeignClassLoaderAdaptingListener(List<String> events) {
     this.events = events;
@@ -35,6 +34,7 @@ public class ForeignClassLoaderAdaptingListener implements ITestListener {
 
   @Override
   public void onStart(ITestContext arg0) {
+    hasHadFailure = false;
     storeAsString(new Start());
   }
 
@@ -57,9 +57,6 @@ public class ForeignClassLoaderAdaptingListener implements ITestListener {
 
   @Override
   public void onTestStart(ITestResult result) {
-    if (this.hasHadFailure) {
-      throw new SkipException("skipping");
-    }
     storeAsString(new TestStart(result.getMethod().getMethodName()));
   }
 
@@ -71,6 +68,11 @@ public class ForeignClassLoaderAdaptingListener implements ITestListener {
   private void storeAsString(
       final SideEffect2<ResultCollector, org.pitest.testapi.Description> result) {
     this.events.add(IsolationUtils.toXml(result));
+  }
+
+  @Override
+  public boolean hasHadFailure() {
+    return hasHadFailure;
   }
 
 }
