@@ -19,7 +19,7 @@ public class JavassistInputStreamInterceptorAdapaterTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new JavassistInputStreamInterceptorMethodVisitor(this.mv);
+    this.testee = new JavassistInputStreamInterceptorMethodVisitor(this.mv, "com.example.TheInterceptorClassName");
   }
 
   @Test
@@ -51,7 +51,7 @@ public class JavassistInputStreamInterceptorAdapaterTest {
     this.testee.visitMethodInsn(Opcodes.INVOKEINTERFACE, "javassist/ClassPath",
         "openClassfile", "far", false);
     verify(this.mv).visitMethodInsn(Opcodes.INVOKESTATIC,
-        "org/pitest/mutationtest/mocksupport/JavassistInterceptor",
+        "com.example.TheInterceptorClassName",
         "openClassfile",
         "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", false);
   }

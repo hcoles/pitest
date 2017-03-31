@@ -25,7 +25,12 @@ import org.pitest.testapi.foreignclassloader.Events;
 import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestResult;
+import org.testng.SkipException;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
@@ -41,11 +46,18 @@ public class TestNGTestUnit extends AbstractTestUnit {
 
   // needs to be static as jmockit assumes only a single instance per jvm
   private static final TestNG                TESTNG = new TestNG(false);
-
+  private static final MutableTestListenerWrapper LISTENER = new MutableTestListenerWrapper();
+  
+  static {
+    TESTNG.addListener(LISTENER);
+    TESTNG.addInvokedMethodListener(new FailFast(LISTENER));
+  }
+  
   private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
   private final TestGroupConfig              config;
-
+ 
+  
   public TestNGTestUnit(
       final ClassLoaderDetectionStrategy classloaderDetection,
       final Class<?> clazz, final TestGroupConfig config) {
@@ -85,7 +97,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
   }
 
   private void executeInCurrentLoader(final ResultCollector rc) {
-    final ITestListener listener = new TestNGAdapter(this.clazz,
+    final TestNGAdapter listener = new TestNGAdapter(this.clazz,
         this.getDescription(), rc);
 
     final XmlSuite suite = createSuite();
@@ -93,18 +105,19 @@ public class TestNGTestUnit extends AbstractTestUnit {
     TESTNG.setDefaultSuiteName(suite.getName());
     TESTNG.setXmlSuites(Collections.singletonList(suite));
 
-    TESTNG.addListener(listener);
+    LISTENER.setChild(listener);
     try {
       TESTNG.run();
     } finally {
       // yes this is hideous
-      TESTNG.getTestListeners().remove(listener);
+      LISTENER.setChild(null);
     }
   }
 
   private XmlSuite createSuite() {
     final XmlSuite suite = new XmlSuite();
     suite.setName(this.clazz.getName());
+    suite.setSkipFailedInvocationCounts(true);
     final XmlTest test = new XmlTest(suite);
     test.setName(this.clazz.getName());
     final XmlClass xclass = new XmlClass(this.clazz.getName());
@@ -120,4 +133,66 @@ public class TestNGTestUnit extends AbstractTestUnit {
     return suite;
   }
 
+}
+
+class FailFast implements IInvokedMethodListener {
+  
+  private final FailureTracker listener;
+  
+  FailFast(FailureTracker listener) {
+    this.listener = listener;
+  }
+
+  @Override
+  public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+    if (listener.hasHadFailure()) {
+      throw new SkipException("Skipping");
+    }
+  }
+
+  @Override
+  public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+ 
+  }
+  
+}
+
+class MutableTestListenerWrapper implements ITestListener, FailureTracker {
+  private TestNGAdapter child;
+  
+  public void setChild(TestNGAdapter child) {
+    this.child = child;
+  }
+
+  public boolean hasHadFailure() {
+    return child.hasHadFailure();
+  }
+
+  public void onTestStart(ITestResult result) {
+    child.onTestStart(result);
+  }
+
+  public void onTestSuccess(ITestResult result) {
+    child.onTestSuccess(result);
+  }
+
+  public void onTestFailure(ITestResult result) {
+    child.onTestFailure(result);
+  }
+
+  public void onTestSkipped(ITestResult result) {
+    child.onTestSkipped(result);
+  }
+
+  public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+    child.onTestFailedButWithinSuccessPercentage(result);
+  }
+
+  public void onStart(ITestContext context) {
+    child.onStart(context);
+  }
+
+  public void onFinish(ITestContext context) {
+    child.onFinish(context);
+  }
 }

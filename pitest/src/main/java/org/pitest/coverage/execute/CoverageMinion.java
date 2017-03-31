@@ -32,10 +32,14 @@ import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
+import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
+import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
 
@@ -47,6 +51,8 @@ public class CoverageMinion {
 
   public static void main(final String[] args) {
 
+    enablePowerMockSupport();
+    
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
     CoveragePipe invokeQueue = null;
@@ -107,6 +113,14 @@ public class CoverageMinion {
 
     System.exit(exitCode.getCode());
 
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void enablePowerMockSupport() {
+    // Bwahahahahahahaha
+    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
+        .or(new Glob("javassist/*")), 
+        JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistCoverageInterceptor.class)));
   }
 
   private static Predicate<String> convertToJVMClassFilter(

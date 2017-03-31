@@ -19,7 +19,6 @@ import org.pitest.testapi.ResultCollector;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.SkipException;
 
 public class TestNGAdapter implements ITestListener {
 
@@ -34,6 +33,10 @@ public class TestNGAdapter implements ITestListener {
     this.rc = rc;
     this.description = d;
     this.clazz = clazz;
+  }
+  
+  public boolean hasHadFailure() {
+    return hasHadFailure;
   }
 
   @Override
@@ -70,9 +73,6 @@ public class TestNGAdapter implements ITestListener {
 
   @Override
   public void onTestStart(final ITestResult arg0) {
-    if (this.hasHadFailure) {
-      throw new SkipException("skipping");
-    }
     this.rc.notifyStart(makeDescription(arg0));
   }
 

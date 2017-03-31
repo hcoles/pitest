@@ -26,7 +26,6 @@ import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.SkipException;
 
 public class TestNGAdapterTest {
 
@@ -94,13 +93,5 @@ public class TestNGAdapterTest {
     .notifyStart(new Description("method", this.clazz));
     verify(this.rc, times(1)).notifyEnd(new Description("method", this.clazz),
         throwable);
-  }
-
-  @Test(expected = SkipException.class)
-  public void shouldSkipRemainingTestsAfterFirstFailure() {
-    final Throwable throwable = new RuntimeException();
-    when(this.result.getThrowable()).thenReturn(throwable);
-    this.testee.onTestFailure(this.result);
-    this.testee.onTestStart(this.result);
   }
 }

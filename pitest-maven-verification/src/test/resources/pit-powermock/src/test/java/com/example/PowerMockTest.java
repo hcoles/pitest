@@ -21,6 +21,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PowerMockFoo.class, PowerMockCallsOwnMethod.class })
 @PowerMockIgnore("org.pitest.*")
@@ -46,6 +48,14 @@ public class PowerMockTest {
     PowerMockito.verifyStatic();
     PowerMockCallsOwnMethod.foo();
 
+  }
+  
+  @Test
+  public void testMutationInBranchedCode() {
+    PowerMockCallsOwnMethod testee = new PowerMockCallsOwnMethod();
+    assertEquals(10,testee.branchedCode(0));
+    assertEquals(12,testee.branchedCode(2));
+    assertEquals(11,testee.branchedCode(1));
   }
 
 }

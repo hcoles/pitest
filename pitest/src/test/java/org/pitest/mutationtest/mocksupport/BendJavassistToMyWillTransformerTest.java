@@ -27,7 +27,7 @@ public class BendJavassistToMyWillTransformerTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new BendJavassistToMyWillTransformer(this.filter);
+    this.testee = new BendJavassistToMyWillTransformer(this.filter, JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class));
     final ClassloaderByteArraySource source = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     this.bytes = source.getBytes("java.lang.String").value();
@@ -47,4 +47,6 @@ public class BendJavassistToMyWillTransformerTest {
     assertFalse(null == this.testee.transform(null, "foo", null, null,
         this.bytes));
   }
+  
+
 }

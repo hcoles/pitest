@@ -65,6 +65,7 @@ public class ReportOptions {
       .asList(
           "java.util.logging",
           "org.apache.log4j",
+          "org.apache.logging.log4j",
           "org.slf4j",
           "org.apache.commons.logging");
 
