@@ -9,7 +9,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.1.12-SNAPSHOT
+### 1.2.1-SNAPSHOT
+
+Nothing yet
+
+### 1.2.0
 
 * #318 - Separate main process code from code sharing client classpath
 * #295 - Ignore abstract TestNG tests
