@@ -17,6 +17,10 @@ Read all about it at http://pitest.org
 * #314 - Do not fail for maven modules without tests or code
 * #306 - Do not fail when only interfaces are in changeset
 * #325 - Anonymous class in Spock test causing error
+* #334 - Compatibility with recent TestNG releases
+* #335 - Incorrect coverage with powermock
+
+Note - as of this release the maven plugin will automatically determine which classes to mutate instead of assuming that the package names match the group id.
 
 ### 1.1.11
 
