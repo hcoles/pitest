@@ -100,8 +100,8 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private static MethodVisitor wrapWithDecorators(MethodMutationContext methodContext,
       final MethodVisitor mv) {
-    return wrapWithBlockTracker(methodContext,
-        wrapWithLineTracker(methodContext, mv));
+    return wrapWithAnnotationFilter(methodContext, wrapWithBlockTracker(methodContext,
+        wrapWithLineTracker(methodContext, mv)));
   }
 
   private static MethodVisitor wrapWithBlockTracker(
@@ -125,11 +125,17 @@ class MutatingClassVisitor extends ClassVisitor {
       final MethodVisitor wrappedMethodVisitor) {
     return new AvoidAssertsMethodAdapter(methodContext, wrappedMethodVisitor);
   }
-
+ 
   private MethodVisitor wrapWithLineFilter(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
     return new LineFilterMethodAdapter(methodContext, this.classInfo,
         wrappedMethodVisitor);
+  }
+
+  private static MethodVisitor wrapWithAnnotationFilter(
+      MethodMutationContext methodContext,
+      final MethodVisitor wrappedMethodVisitor) {
+    return new AvoidAnnotatedMethodsFilter(methodContext, wrappedMethodVisitor);
   }
 
 }
