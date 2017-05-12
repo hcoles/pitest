@@ -54,8 +54,6 @@ public class WrappingProcess {
     Map<String, String> environment = processBuilder.environment();
     environment.put("CLASSPATH", initialClassPath);
     
-    System.out.println("CP is " + initialClassPath);
-
     for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       environment.put(entry.getKey(), entry.getValue());
     }
