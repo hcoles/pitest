@@ -46,12 +46,13 @@ public class AvoidAnnotatedMethodsFilter extends MethodVisitor {
      || desc.endsWith("CoverageIgnore;") ) {
       this.context.disableMutations(DISABLE_REASON);
     }
-    return null;
+    return this.mv.visitAnnotation(desc, visible);
   }
 
   @Override
   public void visitEnd() {
     this.context.enableMutatations(DISABLE_REASON);
+    this.mv.visitEnd();
   }
 
 }
