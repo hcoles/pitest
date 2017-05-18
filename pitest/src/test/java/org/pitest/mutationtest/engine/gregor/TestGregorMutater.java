@@ -14,18 +14,14 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -119,23 +115,10 @@ public class TestGregorMutater extends MutatorTestBase {
   public void shouldMutateCustomConstructorsAddedToEnums() {
     createTesteeWith(Mutator.all());
     final Collection<MutationDetails> actualDetails = findMutationsFor(EnumWithCustomConstructor.class);
-    assertThat(actualDetails, is(aNonEmptyCollection()));
+    assertThat(actualDetails).isNotEmpty();
   }
 
-  private static Matcher<Collection<?>> aNonEmptyCollection() {
-    return new TypeSafeMatcher<Collection<?>>() {
 
-      @Override
-      public void describeTo(final Description description) {
-        description.appendText("a non empty collection");
-      }
-
-      @Override
-      public boolean matchesSafely(final Collection<?> item) {
-        return !item.isEmpty();
-      }
-    };
-  }
 
   public static class HasAssertStatement {
     public void foo(final int i) {
@@ -399,6 +382,21 @@ public class TestGregorMutater extends MutatorTestBase {
     
     public int e() {
       return 1;
+    }
+  }
+  
+  @Test
+  public void shouldNotMutateClassesAnnotatedWithGenerated() {
+    createTesteeWith(Mutator.byName("RETURN_VALS"));
+    final List<MutationDetails> mutants = findMutationsFor(AnnotatedToAvoidAtClassLevel.class);
+    
+    assertThat(mutants).isEmpty();
+  }
+  
+  @Generated
+  public static class AnnotatedToAvoidAtClassLevel {
+    public int mutateMe() {
+      return 42;
     }
   }
   

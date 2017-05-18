@@ -9,12 +9,12 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class PreMutationAnalyser extends ClassVisitor {
+class PreMutationAnalyser extends ClassVisitor {
 
   private final PremutationClassInfo classInfo = new PremutationClassInfo();
   private final Set<String>          loggingClasses;
 
-  public PreMutationAnalyser(final Set<String> loggingClasses) {
+  PreMutationAnalyser(final Set<String> loggingClasses) {
     super(Opcodes.ASM5);
     this.loggingClasses = loggingClasses;
   }
@@ -39,6 +39,9 @@ public class PreMutationAnalyser extends ClassVisitor {
   @Override
   public AnnotationVisitor visitAnnotation(final String desc,
       final boolean visible) {
+    if (AvoidedAnnotations.shouldAvoid(desc)) {
+      classInfo.exclude();
+    }
     return null;
   }
 

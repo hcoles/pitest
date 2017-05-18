@@ -3,17 +3,26 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PremutationClassInfo {
+class PremutationClassInfo {
 
   private final Set<Integer> linesToAvoid = new HashSet<Integer>();
+  private boolean isExcluded;
 
-  public void registerLineToAvoid(final int lineNumber) {
+  void registerLineToAvoid(final int lineNumber) {
     this.linesToAvoid.add(lineNumber);
 
   }
 
-  public boolean isLineToAvoid(final int line) {
+  boolean isLineToAvoid(final int line) {
     return this.linesToAvoid.contains(line);
+  }
+  
+  void exclude() {
+    isExcluded = true;
+  }
+  
+  boolean shouldExclude() {
+    return isExcluded;
   }
 
 }
