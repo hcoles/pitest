@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.NakedReceiverMutator.NAKED_RECEIVER;
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.NAKED_RECEIVER;
 
 public class NakedReceiverMutatorTest extends MutatorTestBase {
 
