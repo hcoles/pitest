@@ -38,6 +38,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
@@ -152,6 +153,11 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
+
+    /**
+     * Experimental mutator that replaces method call with this
+     */
+    add("NAKED_RECEIVER", NakedReceiverMutator.NAKED_RECEIVER);
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
