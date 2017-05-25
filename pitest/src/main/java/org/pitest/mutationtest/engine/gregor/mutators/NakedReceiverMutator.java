@@ -66,7 +66,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
     private final MethodMutatorFactory factory;
     private final MutationContext      context;
 
-    public ReplaceMethodCallWithObjectVisitor(final MutationContext context,
+    ReplaceMethodCallWithObjectVisitor(final MutationContext context,
         final MethodVisitor writer, final MethodMutatorFactory factory) {
       super(Opcodes.ASM5, writer);
       this.factory = factory;
@@ -76,7 +76,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
     @Override
     public void visitMethodInsn(final int opcode, final String owner,
         final String name, final String desc, final boolean itf) {
-      if (hasReturnTypeMatchingReceiverType(desc, owner)) {
+      if (isNonStaticCall(opcode) && hasReturnTypeMatchingReceiverType(desc, owner)) {
         final MutationIdentifier newId = this.context
             .registerMutation(this.factory,
                 "replaced call to " + owner + "::" + name + " with receiver");
@@ -108,6 +108,10 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
       } else {
         this.mv.visitInsn(POP);
       }
+    }
+    
+    private boolean isNonStaticCall(int opcode) {
+      return Opcodes.INVOKESTATIC != opcode;
     }
   }
 }

@@ -55,6 +55,11 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   public void shouldNotMutateVoidMethodCall() throws Exception {
     assertNoMutants(HasVoidMethodCall.class);
   }
+  
+  @Test
+  public void shouldNotMutateStaticMethodCall() {
+    assertNoMutants(HasStaticMethodCallWithSameType.class);
+  }
 
   @Test
   public void willReplaceCallToMethodWithDifferentGenericTypeDueToTypeErasure()
@@ -87,13 +92,13 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static class HasMethodWithDifferentReturnType {
+  static class HasMethodWithDifferentReturnType {
     public int call() throws Exception {
       return "".length();
     }
   }
 
-  private static class HasVoidMethodCall {
+  static class HasVoidMethodCall {
     public void call() throws Exception {
     }
   }
@@ -111,7 +116,17 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static class Foo<T> extends ArrayList<T> {
+  static class HasStaticMethodCallWithSameType {
+    public void call() {
+      HasStaticMethodCallWithSameType.instance();
+    }
+
+    private static HasStaticMethodCallWithSameType instance() {
+      return new HasStaticMethodCallWithSameType();
+    }
+  }
+  
+  static class Foo<T> extends ArrayList<T> {
 
     public Foo(T arg) {
       super(singletonList(arg));
