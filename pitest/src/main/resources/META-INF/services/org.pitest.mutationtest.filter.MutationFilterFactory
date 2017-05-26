@@ -1,2 +1,3 @@
 org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
 org.pitest.mutationtest.filter.KotlinFilterFactory
+org.pitest.mutationtest.filter.RemoveConditionalMutationForSwitchOnStringFilterFactory
