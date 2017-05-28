@@ -14,7 +14,6 @@
  */
 package org.pitest.junit;
 
-import java.lang.annotation.Inherited;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,7 +72,10 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
         final Class<Category> categoryClass = Category.class;
         final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(categoryClass));
         if (categoryArray == null) {
-            final boolean isCategoryInherited = categoryClass.isAnnotationPresent(Inherited.class);
+            // this check is not working correctly (at least for maven) - category is picked up from the junit pit depends on
+            // final boolean isCategoryInherited = categoryClass.isAnnotationPresent(Inherited.class);
+            // hard coding to modern behaviour for now
+            final boolean isCategoryInherited = true;
             if (isCategoryInherited && a.getSuperClass().hasSome()) {
                 return getCategories(a.getSuperClass().value());
             } else {
