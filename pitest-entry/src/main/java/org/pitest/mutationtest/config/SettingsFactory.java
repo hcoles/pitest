@@ -15,9 +15,11 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.mutationtest.build.CompoundInterceptorFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
 import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
+import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.CompoundFilterFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
@@ -141,6 +143,12 @@ public class SettingsFactory {
         this.options.getTargetClassesFilter(), not(commonClasses())),
         this.getTestFrameworkPlugin(), this.options.isVerbose(),
         this.options.getDependencyAnalysisMaxDistance());
+  }
+  
+  public MutationInterceptorFactory getInterceptor() {
+    final Collection<? extends MutationInterceptorFactory> interceptors = this.plugins
+        .findInterceptors();
+    return new CompoundInterceptorFactory(interceptors);
   }
 
   @SuppressWarnings("unchecked")
