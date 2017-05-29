@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 
 public class CompoundClassPathRoot implements ClassPathRoot,
@@ -18,7 +19,7 @@ public class CompoundClassPathRoot implements ClassPathRoot,
   private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
 
   public CompoundClassPathRoot(final List<ClassPathRoot> roots) {
-    this.roots.addAll(roots);
+    this.roots.addAll(wrapToAvoidIOOperations(roots));
   }
 
   @Override
@@ -78,4 +79,10 @@ public class CompoundClassPathRoot implements ClassPathRoot,
     return this.roots.iterator();
   }
 
+  private  static List<ClassPathRoot> wrapToAvoidIOOperations(
+      List<ClassPathRoot> roots) {
+    return FCollection.map(roots, NameCachingRoot.toCachingRoot());
+  }
+
+  
 }
