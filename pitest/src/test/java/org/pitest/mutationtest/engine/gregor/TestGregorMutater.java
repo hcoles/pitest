@@ -400,6 +400,14 @@ public class TestGregorMutater extends MutatorTestBase {
     }
   }
   
+  @Test
+  public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
+    createTesteeWith(new ResourceFolderByteArraySource(),
+        True.<MethodInfo> all(), Mutator.byName("REMOVE_CONDITIONALS"));
+    final Collection<MutationDetails> actualDetails = findMutationsFor("Java7SwitchOnString");
+    assertThat(actualDetails).isEmpty();
+  }
+  
   
   private static F<MutationDetails, Boolean> isInFinallyBlock() {
     return new F<MutationDetails, Boolean>() {

@@ -21,6 +21,7 @@ import java.util.List;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.TestInfo;
+import org.pitest.util.Preconditions;
 import org.pitest.util.StringUtil;
 
 /**
@@ -46,8 +47,8 @@ public final class MutationDetails {
       final String description, final int lineNumber, final int block,
       final boolean isInFinallyBlock, final boolean poison) {
     this.id = id;
-    this.description = description;
-    this.filename = filename;
+    this.description = Preconditions.checkNotNull(description);
+    this.filename = Preconditions.checkNotNull(filename);
     this.lineNumber = lineNumber;
     this.block = block;
     this.isInFinallyBlock = isInFinallyBlock;

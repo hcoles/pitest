@@ -76,7 +76,7 @@ public class MutationTestUnitTest {
   }
 
   private void addMutation() {
-    this.mutations.add(new MutationDetails(aMutationId().build(), null, null,
+    this.mutations.add(new MutationDetails(aMutationId().build(), "file", "desc",
         0, 0));
   }
 

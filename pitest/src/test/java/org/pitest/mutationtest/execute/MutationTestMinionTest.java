@@ -77,7 +77,7 @@ public class MutationTestMinionTest {
   @Test
   public void shouldReportErrorWhenOneOccursDuringAnalysis() {
     this.mutations.add(new MutationDetails(aMutationId().withIndex(0)
-        .withMutator("foo").build(), null, null, 0, 0));
+        .withMutator("foo").build(), "file", "desc", 0, 0));
     when(this.mutater.getMutation(any(MutationIdentifier.class))).thenThrow(
         new PitError("foo"));
     this.testee.run();
