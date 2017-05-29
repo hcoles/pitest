@@ -33,7 +33,7 @@ import org.pitest.util.Unchecked;
 /**
  * ClassPathRoot wrapping a jar or zip file
  */
-public class ArchiveClassPathRoot implements ClassPathRoot {
+public class ArchiveClassPathRoot implements ClassPathRoot, IOHeavyRoot {
 
   private final File file;
 
