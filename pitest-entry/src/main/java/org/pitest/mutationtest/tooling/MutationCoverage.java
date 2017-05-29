@@ -44,6 +44,7 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
+import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
@@ -255,9 +256,12 @@ private int numberOfThreads() {
         .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
             coverageData);
 
+    MutationInterceptor interceptor = this.settings.getInterceptor()
+        .createInterceptor(this.data.getFreeFormProperties(), bas);
+    
     final MutationSource source = new MutationSource(mutationConfig,
         makeFilter().createFilter(this.data.getFreeFormProperties(), this.code,
-            this.data.getMaxMutationsPerClass()), testPrioritiser, bas);
+            this.data.getMaxMutationsPerClass()), testPrioritiser, bas, interceptor);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);

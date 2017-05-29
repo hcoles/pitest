@@ -61,6 +61,10 @@ public final class MutationDetails {
         + ", description=" + this.description + ", testsInOrder="
         + this.testsInOrder + "]";
   }
+  
+  public MutationDetails withDescription(String desc) {
+    return new MutationDetails(id, filename, desc, lineNumber, block, isInFinallyBlock, poison);
+  }
 
   /**
    * Returns the human readable description of the mutation. This may be a
@@ -268,5 +272,6 @@ public final class MutationDetails {
     }
     return true;
   }
+
 
 }
