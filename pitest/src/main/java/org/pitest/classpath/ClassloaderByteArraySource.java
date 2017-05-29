@@ -18,12 +18,17 @@ import java.io.IOException;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
 
 public class ClassloaderByteArraySource implements ClassByteArraySource {
 
   private final ClassPath cp;
 
+  public ClassloaderByteArraySource() {
+    this(IsolationUtils.getContextClassLoader());
+  }
+  
   public ClassloaderByteArraySource(final ClassLoader loader) {
     this.cp = new ClassPath(new OtherClassLoaderClassPathRoot(loader));
   }
