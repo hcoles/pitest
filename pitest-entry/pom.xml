@@ -132,6 +132,12 @@
 			<version>1.7.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-commons</artifactId>
+			<version>${asm.version}</version>
+			<scope>test</scope>
+		</dependency>		
 
 		<!-- to verify compatibility -->
 		<dependency>
