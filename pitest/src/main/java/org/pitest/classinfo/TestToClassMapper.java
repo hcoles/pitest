@@ -27,7 +27,7 @@ public class TestToClassMapper {
 
   public Option<ClassName> findTestee(final String className) {
 
-    final ClassName name = new ClassName(className);
+    final ClassName name = ClassName.fromString(className);
 
     if (name.asJavaName().endsWith("Test")
         && tryName(name.withoutSuffixChars(TEST_LENGTH))) {

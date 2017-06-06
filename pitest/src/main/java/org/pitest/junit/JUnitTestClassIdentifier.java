@@ -51,7 +51,7 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     }
 
     private String getRunWithAnnotationValue(final ClassInfo a) {
-        Object classAnnotationValue = a.getClassAnnotationValue(new ClassName("org.junit.runner.RunWith"));
+        Object classAnnotationValue = a.getClassAnnotationValue(ClassName.fromString("org.junit.runner.RunWith"));
         if (classAnnotationValue == null && a.getSuperClass().hasSome()) {
             classAnnotationValue = getRunWithAnnotationValue(a.getSuperClass().value());
         }

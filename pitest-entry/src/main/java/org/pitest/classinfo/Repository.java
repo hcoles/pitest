@@ -47,7 +47,7 @@ public class Repository implements ClassInfoSource {
   }
 
   private Option<ClassInfo> fetchClass(final String name) {
-    return fetchClass(new ClassName(name));
+    return fetchClass(ClassName.fromString(name));
   }
 
   @Override

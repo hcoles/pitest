@@ -20,7 +20,7 @@ import org.pitest.functional.Option;
 import org.pitest.testapi.BaseTestClassIdentifier;
 
 public class TestNGTestClassIdentifier extends BaseTestClassIdentifier {
-  private static final ClassName ANNOTATION_NAME = new ClassName(
+  private static final ClassName ANNOTATION_NAME = ClassName.fromString(
                                                      "org.testng.annotations.Test");
 
   @Override

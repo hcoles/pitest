@@ -27,11 +27,11 @@ public final class ClassName implements Comparable<ClassName> {
 
   private final String        name;
 
-  public ClassName(final String name) {
+  private ClassName(final String name) {
     this.name = name.replace('.', '/').intern();
   }
 
-  public ClassName(final Class<?> clazz) {
+  private ClassName(final Class<?> clazz) {
     this(clazz.getName());
   }
 

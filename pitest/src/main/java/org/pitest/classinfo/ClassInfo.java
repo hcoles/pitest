@@ -95,7 +95,7 @@ public class ClassInfo {
   }
 
   public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
-    return hasAnnotation(new ClassName(annotation));
+    return hasAnnotation(ClassName.fromClass(annotation));
   }
 
   public boolean hasAnnotation(final ClassName annotation) {
@@ -107,7 +107,7 @@ public class ClassInfo {
   }
 
   public boolean descendsFrom(final Class<?> clazz) {
-    return descendsFrom(new ClassName(clazz.getName()));
+    return descendsFrom(ClassName.fromClass(clazz));
   }
 
   public HierarchicalClassId getHierarchicalId() {

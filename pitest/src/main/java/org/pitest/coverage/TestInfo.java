@@ -68,7 +68,7 @@ public final class TestInfo {
 
       @Override
       public ClassName apply(final TestInfo a) {
-        return new ClassName(a.definingClass);
+        return ClassName.fromString(a.definingClass);
       }
 
     };

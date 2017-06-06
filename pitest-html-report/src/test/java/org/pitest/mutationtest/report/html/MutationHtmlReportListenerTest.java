@@ -65,7 +65,7 @@ public class MutationHtmlReportListenerTest {
 
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
-    when(this.classInfo.getName()).thenReturn(new ClassName("foo"));
+    when(this.classInfo.getName()).thenReturn(ClassName.fromString("foo"));
     when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(
         Collections.singleton(this.classInfo));
 

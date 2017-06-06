@@ -102,29 +102,29 @@ public class CodeSourceTest {
     when(this.classPath.code()).thenReturn(
         Arrays.asList(foo.getName(), bar.getName()));
 
-    assertEquals(new HashSet<ClassName>(Arrays.asList(new ClassName("Bar"))),
+    assertEquals(new HashSet<ClassName>(Arrays.asList(ClassName.fromString("Bar"))),
         this.testee.getCodeUnderTestNames());
   }
 
   @Test
   public void shouldMapTestsPostfixedWithTestToTesteeWhenTesteeExists() {
-    when(this.repository.hasClass(new ClassName("com.example.Foo")))
+    when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(true);
-    assertEquals(new ClassName("com.example.Foo"),
+    assertEquals(ClassName.fromString("com.example.Foo"),
         this.testee.findTestee("com.example.FooTest").value());
   }
 
   @Test
   public void shouldMapTestsPrefixedWithTestToTesteeWhenTesteeExists() {
-    when(this.repository.hasClass(new ClassName("com.example.Foo")))
+    when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(true);
-    assertEquals(new ClassName("com.example.Foo"),
+    assertEquals(ClassName.fromString("com.example.Foo"),
         this.testee.findTestee("com.example.TestFoo").value());
   }
 
   @Test
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
-    when(this.repository.hasClass(new ClassName("com.example.Foo")))
+    when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(false);
     assertEquals(Option.<ClassName> none(),
         this.testee.findTestee("com.example.TestFoo"));

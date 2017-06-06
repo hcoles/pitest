@@ -126,7 +126,7 @@ public class ClassInfoVisitorTest {
   }
 
   private ClassInfoBuilder getClassInfo(final String name, final byte[] bytes) {
-    return ClassInfoVisitor.getClassInfo(new ClassName(name), bytes, 0);
+    return ClassInfoVisitor.getClassInfo(ClassName.fromString(name), bytes, 0);
   }
 
   @Target(TYPE)
