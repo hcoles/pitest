@@ -17,6 +17,7 @@ package org.pitest.classinfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -156,6 +157,16 @@ public class ClassNameTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(ClassName.class).verify();
+  }
+  
+  @Test
+  public void shouldUseCachedInstancesForObject() {
+    assertThat(ClassName.fromClass(Object.class)).isSameAs(ClassName.fromClass(Object.class));      
+  }
+  
+  @Test
+  public void shouldUseCachedInstancesForString() {
+    assertThat(ClassName.fromClass(String.class)).isSameAs(ClassName.fromClass(String.class));       
   }
 
 }
