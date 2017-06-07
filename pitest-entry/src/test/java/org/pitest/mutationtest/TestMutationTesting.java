@@ -51,9 +51,11 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.DefaultTestPrioritiser;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
+import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
@@ -373,9 +375,12 @@ public class TestMutationTesting {
 
     final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
+    
+    MutationInterceptor emptyIntercpetor = CompoundMutationInterceptor.nullInterceptor();
+    
     final MutationSource source = new MutationSource(mutationConfig,
         UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(
-            coverageData), bas);
+            coverageData), bas, emptyIntercpetor);
 
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig,

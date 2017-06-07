@@ -54,7 +54,7 @@ public class MutationTestBuilderTest {
         Arrays.asList(createDetails("foo"), createDetails("foo"),
             createDetails("foo")));
     final List<MutationAnalysisUnit> actual = this.testee
-        .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
+        .createMutationTestUnits(Arrays.asList(ClassName.fromString("foo")));
     assertEquals(3, actual.size());
   }
 
@@ -63,7 +63,7 @@ public class MutationTestBuilderTest {
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Collections.<MutationDetails> emptyList());
     assertTrue(this.testee.createMutationTestUnits(
-        Arrays.asList(new ClassName("foo"))).isEmpty());
+        Arrays.asList(ClassName.fromString("foo"))).isEmpty());
   }
 
   @Test
@@ -86,7 +86,7 @@ public class MutationTestBuilderTest {
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Arrays.asList(mutation1, mutation2));
     final List<MutationAnalysisUnit> actual = this.testee
-        .createMutationTestUnits(Arrays.asList(new ClassName("foo")));
+        .createMutationTestUnits(Arrays.asList(ClassName.fromString("foo")));
     assertEquals(1, actual.size());
   }
 

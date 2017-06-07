@@ -172,7 +172,7 @@ public class CoverageMinion {
     LOG.fine("Expecting " + count + " tests classes from parent");
     final List<ClassName> classes = new ArrayList<ClassName>(count);
     for (int i = 0; i != count; i++) {
-      classes.add(new ClassName(dis.readString()));
+      classes.add(ClassName.fromString(dis.readString()));
     }
     LOG.fine("Tests classes received");
 

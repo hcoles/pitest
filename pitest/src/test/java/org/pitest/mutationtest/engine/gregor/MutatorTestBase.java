@@ -54,11 +54,11 @@ public abstract class MutatorTestBase {
 
   protected FunctionalList<MutationDetails> findMutationsFor(
       final Class<?> clazz) {
-    return this.engine.findMutations(new ClassName(clazz));
+    return this.engine.findMutations(ClassName.fromClass(clazz));
   }
 
   protected FunctionalList<MutationDetails> findMutationsFor(final String clazz) {
-    return this.engine.findMutations(new ClassName(clazz));
+    return this.engine.findMutations(ClassName.fromString(clazz));
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,

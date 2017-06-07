@@ -49,13 +49,14 @@ public class ClassPath {
     this(Arrays.asList(roots));
   }
 
+  public ClassPath(final Collection<File> files) {
+    this(createRoots(FCollection.filter(files, exists())));
+  }
+  
   public ClassPath(List<ClassPathRoot> roots) {
     this.root = new CompoundClassPathRoot(roots);
   }
 
-  public ClassPath(final Collection<File> files) {
-    this(createRoots(FCollection.filter(files, exists())));
-  }
 
   public Collection<String> classNames() {
     return this.root.classNames();
@@ -184,5 +185,5 @@ public class ClassPath {
     }
 
   }
-
+  
 }

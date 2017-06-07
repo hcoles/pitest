@@ -17,6 +17,7 @@ package org.pitest.classinfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,34 +32,34 @@ public class ClassNameTest {
 
   @Test
   public void shouldConvertJavaNamesToInternalNames() {
-    final ClassName testee = new ClassName("com.foo.bar");
+    final ClassName testee = ClassName.fromString("com.foo.bar");
     assertEquals("com/foo/bar", testee.asInternalName());
   }
 
   @Test
   public void shouldConvertInternalNamesToJavaNames() {
-    final ClassName testee = new ClassName("com/foo/bar");
+    final ClassName testee = ClassName.fromString("com/foo/bar");
     assertEquals("com.foo.bar", testee.asJavaName());
   }
 
   @Test
   public void shouldTreatSameClassNameAsEqual() {
-    final ClassName left = new ClassName("com/foo/bar");
-    final ClassName right = new ClassName("com.foo.bar");
+    final ClassName left = ClassName.fromString("com/foo/bar");
+    final ClassName right = ClassName.fromString("com.foo.bar");
     assertTrue(left.equals(right));
     assertTrue(right.equals(left));
   }
 
   @Test
   public void shouldDisplayJavaNameInToString() {
-    final ClassName testee = new ClassName("com/foo/bar");
+    final ClassName testee = ClassName.fromString("com/foo/bar");
     assertEquals("com.foo.bar", testee.toString());
   }
 
   @Test
   public void getNameWithoutPackageShouldReturnNameOnlyWhenClassIsOuterClass() {
-    assertEquals(new ClassName("String"),
-        new ClassName(String.class).getNameWithoutPackage());
+    assertEquals(ClassName.fromString("String"),
+        ClassName.fromClass(String.class).getNameWithoutPackage());
   }
 
   static class Foo {
@@ -67,36 +68,36 @@ public class ClassNameTest {
 
   @Test
   public void getNameWithoutPackageShouldReturnNameWhenClassIsInnerClass() {
-    assertEquals(new ClassName("ClassNameTest$Foo"),
-        new ClassName(Foo.class).getNameWithoutPackage());
+    assertEquals(ClassName.fromString("ClassNameTest$Foo"),
+        ClassName.fromClass(Foo.class).getNameWithoutPackage());
   }
 
   @Test
   public void getNameWithoutPackageShouldReturnNameWhenClassInPackageDefault() {
-    assertEquals(new ClassName("Foo"),
-        new ClassName("Foo").getNameWithoutPackage());
+    assertEquals(ClassName.fromString("Foo"),
+        ClassName.fromString("Foo").getNameWithoutPackage());
   }
 
   @Test
   public void getPackageShouldReturnEmptyPackageWhenClassInPackageDefault() {
-    assertEquals(new ClassName(""), new ClassName("Foo").getPackage());
+    assertEquals(ClassName.fromString(""), ClassName.fromString("Foo").getPackage());
   }
 
   @Test
   public void getPackageShouldReturnPackageWhenClassWithinAPackage() {
-    assertEquals(new ClassName("org.pitest.classinfo"), new ClassName(
+    assertEquals(ClassName.fromString("org.pitest.classinfo"), ClassName.fromClass(
         ClassNameTest.class).getPackage());
   }
 
   @Test
   public void withoutSuffixCharsShouldReturnPacakgeAndClassWithoutSuffixChars() {
-    assertEquals(new ClassName("com.example.Foo"), new ClassName(
+    assertEquals(ClassName.fromString("com.example.Foo"), ClassName.fromString(
         "com.example.FooTest").withoutSuffixChars(4));
   }
 
   @Test
   public void withoutPrefeixCharsShouldReturnPacakgeAndClassWithoutPrefixChars() {
-    assertEquals(new ClassName("com.example.Foo"), new ClassName(
+    assertEquals(ClassName.fromString("com.example.Foo"), ClassName.fromString(
         "com.example.TestFoo").withoutPrefixChars(4));
   }
 
@@ -144,18 +145,28 @@ public class ClassNameTest {
   @Test
   public void nameToClassShouldReturnClassWhenKnownToLoader() {
     assertEquals(Option.some(String.class),
-        ClassName.nameToClass().apply(new ClassName("java.lang.String")));
+        ClassName.nameToClass().apply(ClassName.fromString("java.lang.String")));
   }
 
   @Test
   public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
     assertEquals(Option.none(),
-        ClassName.nameToClass().apply(new ClassName("org.unknown.Unknown")));
+        ClassName.nameToClass().apply(ClassName.fromString("org.unknown.Unknown")));
   }
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(ClassName.class).verify();
+  }
+  
+  @Test
+  public void shouldUseCachedInstancesForObject() {
+    assertThat(ClassName.fromClass(Object.class)).isSameAs(ClassName.fromClass(Object.class));      
+  }
+  
+  @Test
+  public void shouldUseCachedInstancesForString() {
+    assertThat(ClassName.fromClass(String.class)).isSameAs(ClassName.fromClass(String.class));       
   }
 
 }

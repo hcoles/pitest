@@ -24,24 +24,31 @@ import org.pitest.util.Log;
 public final class ClassName implements Comparable<ClassName> {
 
   private static final Logger LOG = Log.getLogger();
+  
+  private static final ClassName OBJECT = new ClassName("java/lang/Object");
+  private static final ClassName STRING = new ClassName("java/lang/String");
 
   private final String        name;
 
-  public ClassName(final String name) {
-    this.name = name.replace('.', '/').intern();
-  }
-
-  public ClassName(final Class<?> clazz) {
-    this(clazz.getName());
-  }
-
-  public static ClassName fromString(final String clazz) {
-    return new ClassName(clazz);
+  private ClassName(final String name) {
+    this.name = name;
   }
 
   public static ClassName fromClass(final Class<?> clazz) {
-    return new ClassName(clazz);
+    return ClassName.fromString(clazz.getName());
   }
+  
+  public static ClassName fromString(final String clazz) {
+    String name = clazz.replace('.', '/');
+    if (name.equals(OBJECT.asInternalName())) {
+      return OBJECT;
+    }
+    if (name.equals(STRING.asInternalName())) {
+      return STRING;
+    }
+    return new ClassName(name);
+  }
+
 
   public String asJavaName() {
     return this.name.replace('/', '.');
@@ -54,7 +61,7 @@ public final class ClassName implements Comparable<ClassName> {
   public ClassName getNameWithoutPackage() {
     final int lastSeparator = this.name.lastIndexOf('/');
     if (lastSeparator != -1) {
-      return new ClassName(this.name.substring(lastSeparator + 1,
+      return ClassName.fromString(this.name.substring(lastSeparator + 1,
           this.name.length()));
     }
     return this;
@@ -63,14 +70,14 @@ public final class ClassName implements Comparable<ClassName> {
   public ClassName getPackage() {
     final int lastSeparator = this.name.lastIndexOf('/');
     if (lastSeparator != -1) {
-      return new ClassName(this.name.substring(0, lastSeparator));
+      return ClassName.fromString(this.name.substring(0, lastSeparator));
     }
-    return new ClassName("");
+    return ClassName.fromString("");
   }
 
   public ClassName withoutPrefixChars(final int prefixLength) {
     final String nameWithoutPackage = this.getNameWithoutPackage().asJavaName();
-    return new ClassName(this.getPackage().asJavaName()
+    return ClassName.fromString(this.getPackage().asJavaName()
         + "/"
         + nameWithoutPackage.substring(prefixLength,
             nameWithoutPackage.length()));
@@ -78,7 +85,7 @@ public final class ClassName implements Comparable<ClassName> {
 
   public ClassName withoutSuffixChars(final int suffixLength) {
     final String nameWithoutPacakge = this.getNameWithoutPackage().asJavaName();
-    return new ClassName(this.getPackage().asJavaName()
+    return ClassName.fromString(this.getPackage().asJavaName()
         + "/"
         + nameWithoutPacakge.substring(0, nameWithoutPacakge.length()
             - suffixLength));

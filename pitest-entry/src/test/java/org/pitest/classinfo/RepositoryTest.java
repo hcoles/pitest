@@ -54,20 +54,20 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnTrueWhenAskedForKnownClass() {
-    assertTrue(this.testee.hasClass(new ClassName(Integer.class)));
+    assertTrue(this.testee.hasClass(ClassName.fromClass(Integer.class)));
   }
 
   @Test
   public void shouldReturnFalseWhenAskedForUnknownClass() {
-    assertFalse(this.testee.hasClass(new ClassName("never.heard.of.you")));
+    assertFalse(this.testee.hasClass(ClassName.fromString("never.heard.of.you")));
   }
 
   @Test
   public void shouldOnlyCheckSourceForUnknownClassesOnce() {
     this.testee = new Repository(this.source);
     when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
-    this.testee.hasClass(new ClassName("foo"));
-    this.testee.hasClass(new ClassName("foo"));
+    this.testee.hasClass(ClassName.fromString("foo"));
+    this.testee.hasClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
   }
 
@@ -90,7 +90,7 @@ public class RepositoryTest {
   public void shouldOnlyQuerySourceForAnUnknownClassOnce() {
     this.testee = new Repository(this.source);
     when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
-    this.testee.hasClass(new ClassName("foo"));
+    this.testee.hasClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
   }
@@ -191,14 +191,14 @@ public class RepositoryTest {
   @Test
   public void shouldReportSuperClass() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(Bar.class);
-    assertEquals(new ClassName(Foo.class), aClass.value().getSuperClass()
+    assertEquals(ClassName.fromClass(Foo.class), aClass.value().getSuperClass()
         .value().getName());
   }
 
   @Test
   public void shouldReportSuperClassAsObjectWhenNoneDeclared() {
     final Option<ClassInfo> aClass = this.testee.fetchClass(Foo.class);
-    assertEquals(new ClassName(Object.class), aClass.value().getSuperClass()
+    assertEquals(ClassName.fromClass(Object.class), aClass.value().getSuperClass()
         .value().getName());
   }
 

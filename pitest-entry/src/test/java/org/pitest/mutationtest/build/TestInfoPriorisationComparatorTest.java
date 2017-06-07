@@ -36,7 +36,7 @@ public class TestInfoPriorisationComparatorTest {
 
   @Before
   public void setUp() {
-    this.testee = new TestInfoPriorisationComparator(new ClassName(TARGET),
+    this.testee = new TestInfoPriorisationComparator(ClassName.fromString(TARGET),
         TIME_WEIGHTING);
   }
 
@@ -93,7 +93,7 @@ public class TestInfoPriorisationComparatorTest {
   private TestInfo testInfo(final int time, final String target,
       final int linesCovered) {
     return new TestInfo("", time + target + linesCovered, time,
-        Option.some(new ClassName(target)), linesCovered);
+        Option.some(ClassName.fromString(target)), linesCovered);
   }
 
 }

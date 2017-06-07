@@ -73,7 +73,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       final String innerName, final int access) {
     super.visitInnerClass(name, outerName, innerName, access);
     if ((outerName != null)
-        && this.classInfo.id.getName().equals(new ClassName(name))) {
+        && this.classInfo.id.getName().equals(ClassName.fromString(name))) {
       this.classInfo.outerClass = outerName;
     }
   }
@@ -83,7 +83,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       final boolean visible) {
     final String type = desc.substring(1, desc.length() - 1);
     this.classInfo.registerAnnotation(type);
-    return new ClassAnnotationValueVisitor(this.classInfo, new ClassName(type));
+    return new ClassAnnotationValueVisitor(this.classInfo, ClassName.fromString(type));
   }
 
   @Override

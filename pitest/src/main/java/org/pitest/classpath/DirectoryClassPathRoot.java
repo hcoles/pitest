@@ -26,7 +26,7 @@ import org.pitest.functional.Option;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-public class DirectoryClassPathRoot implements ClassPathRoot {
+public class DirectoryClassPathRoot implements ClassPathRoot, IOHeavyRoot {
 
   private final File root;
 

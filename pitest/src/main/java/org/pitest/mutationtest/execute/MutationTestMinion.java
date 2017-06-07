@@ -39,6 +39,7 @@ import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
+import org.pitest.util.CachingByteArraySource;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
@@ -48,6 +49,10 @@ import org.pitest.util.SafeDataInputStream;
 public class MutationTestMinion {
 
   private static final Logger       LOG = Log.getLogger();
+
+  // We maintain a small cache to avoid reading byte code off disk more than once
+  // Size is arbitrary but assumed to be large enough to cover likely max number of inner classes
+  private static final int CACHE_SIZE = 12;
 
   private final SafeDataInputStream dis;
   private final Reporter            reporter;
@@ -68,8 +73,8 @@ public class MutationTestMinion {
       
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
-      final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
-          loader);
+      final ClassByteArraySource byteSource = new CachingByteArraySource(new ClassloaderByteArraySource(
+          loader), CACHE_SIZE);
 
       final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(
           byteSource);

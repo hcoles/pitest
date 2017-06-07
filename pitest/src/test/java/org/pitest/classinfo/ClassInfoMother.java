@@ -36,6 +36,6 @@ public class ClassInfoMother {
   }
 
   public static ClassInfo make(final String name) {
-    return make(new ClassIdentifier(1, new ClassName(name)));
+    return make(new ClassIdentifier(1, ClassName.fromString(name)));
   }
 }

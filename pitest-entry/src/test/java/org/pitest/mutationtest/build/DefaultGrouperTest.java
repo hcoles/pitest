@@ -32,7 +32,7 @@ public class DefaultGrouperTest {
   public void shouldCreateMultipleTestUnitsWhenUnitSizeIsLessThanNumberOfMutations() {
     makeTesteeWithUnitSizeOf(1);
     final List<List<MutationDetails>> actual = this.testee.groupMutations(
-        Arrays.asList(new ClassName("foo")), Arrays.asList(
+        Arrays.asList(ClassName.fromString("foo")), Arrays.asList(
             createDetails("foo"), createDetails("foo"), createDetails("foo")));
 
     assertEquals(3, actual.size());

@@ -44,7 +44,7 @@ public class TestToClassMapperTest {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
         .thenReturn(Option.some(bytes));
-    assertEquals(new ClassName("com.example.Foo"),
+    assertEquals(ClassName.fromString("com.example.Foo"),
         this.testee.findTestee("com.example.FooTest").value());
   }
 
@@ -53,7 +53,7 @@ public class TestToClassMapperTest {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
         .thenReturn(Option.some(bytes));
-    assertEquals(new ClassName("com.example.Foo"),
+    assertEquals(ClassName.fromString("com.example.Foo"),
         this.testee.findTestee("com.example.TestFoo").value());
   }
 

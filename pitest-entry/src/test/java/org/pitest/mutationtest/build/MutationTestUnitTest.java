@@ -60,7 +60,7 @@ public class MutationTestUnitTest {
   @Test
   public void shouldReportWhenMutationsNotCoveredByAnyTest() throws Exception {
     addMutation();
-    this.tests.add(new ClassName("foo"));
+    this.tests.add(ClassName.fromString("foo"));
     MutationMetaData actual = this.testee.call();
     final MutationResult expected = new MutationResult(this.mutations.get(0),
         new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
