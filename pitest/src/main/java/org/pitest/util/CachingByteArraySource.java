@@ -9,16 +9,11 @@ import org.pitest.functional.Option;
 public class CachingByteArraySource implements ClassByteArraySource {
   
   private final ClassByteArraySource child;
-  private final Map<String,Option<byte[]>> cache = new LinkedHashMap<String,Option<byte[]>>() {
-    private static final long serialVersionUID = 2648931151905594122L;
-    @Override
-    protected boolean removeEldestEntry(Map.Entry <String,Option<byte[]>>eldest) {
-      return size() > 100;
-  }
-  };
+  private final Map<String,Option<byte[]>> cache;
 
-  public CachingByteArraySource(ClassByteArraySource child) {
+  public CachingByteArraySource(ClassByteArraySource child, int maxSize) {
     this.child = child;
+    this.cache = new FixedSizeHashMap<String,Option<byte[]>>(maxSize);
   }
 
   @Override
@@ -35,3 +30,15 @@ public class CachingByteArraySource implements ClassByteArraySource {
   }
 
 }
+
+class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {
+  private final int maxsize;
+  FixedSizeHashMap(int maxsize) {
+    this.maxsize = maxsize;
+  }
+  private static final long serialVersionUID = 2648931151905594122L;
+  @Override
+  protected boolean removeEldestEntry(Map.Entry <K,V> eldest) {
+    return size() > maxsize;
+}
+};

@@ -45,7 +45,7 @@ public class MutationSource {
     this.mutationConfig = mutationConfig;
     this.testPrioritiser = testPrioritiser;
     this.filter = filter;
-    this.source = new CachingByteArraySource(source);
+    this.source = new CachingByteArraySource(source, 200);
     this.interceptor = interceptor;
   }
 
