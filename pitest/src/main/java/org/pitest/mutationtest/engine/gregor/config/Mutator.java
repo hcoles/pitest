@@ -34,6 +34,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.DSLMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
@@ -82,6 +83,13 @@ public final class Mutator {
      *
      */
     add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+
+
+    /**
+     * Default mutator that removes method calls to dsl methods.
+     * 
+     */
+    add("DSL_METHOD_CALLS", DSLMethodCallMutator.DSL_METHOD_CALL_MUTATOR);
 
     /**
      * Default mutator that negates conditionals.

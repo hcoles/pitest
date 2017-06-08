@@ -185,7 +185,7 @@ public abstract class MutatorTestBase {
   }
 
   private void verifyMutant(final Mutant mutant) {
-    // printMutant(mutant);
+//    printMutant(mutant);
     final StringWriter sw = new StringWriter();
     final PrintWriter pw = new PrintWriter(sw);
     CheckClassAdapter.verify(new ClassReader(mutant.getBytes()), false, pw);
@@ -193,10 +193,11 @@ public abstract class MutatorTestBase {
 
   }
 
-  protected void printMutant(final Mutant mutant) {    
-     final ClassReader reader = new ClassReader(mutant.getBytes());
-     reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
-         System.out)), ClassReader.EXPAND_FRAMES);
+  protected void printMutant(final Mutant mutant) {
+     final TraceClassVisitor asm = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
+             System.out));
+     final ClassReader r = new ClassReader(mutant.getBytes());
+     r.accept(asm, ClassReader.SKIP_FRAMES);
   }
 
   protected void assertMutantsReturn(final Callable<String> mutee,
