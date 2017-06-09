@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -22,7 +21,7 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
   }
   
   @Override
-  public void begin(ClassName clazz) {
+  public void begin(ClassTree clazz) {
     for (final MutationInterceptor each : this.children) {
       each.begin(clazz);
     }

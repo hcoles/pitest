@@ -27,6 +27,7 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 
 import org.pitest.boot.HotSwapAgent;
+import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
@@ -39,7 +40,6 @@ import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
-import org.pitest.util.CachingByteArraySource;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;

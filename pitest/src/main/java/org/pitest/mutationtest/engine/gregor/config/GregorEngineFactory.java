@@ -31,24 +31,22 @@ import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 public final class GregorEngineFactory implements MutationEngineFactory {
 
   @Override
-  public MutationEngine createEngine(final boolean mutateStaticInitializers,
+  public MutationEngine createEngine(
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<String> mutators, final boolean detectInlinedCode) {
-    return createEngineWithMutators(mutateStaticInitializers, excludedMethods,
+    return createEngineWithMutators(excludedMethods,
         loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators),
         detectInlinedCode);
   }
 
   public MutationEngine createEngineWithMutators(
-      final boolean mutateStaticInitializers,
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
       final boolean detectInlinedCode) {
 
-    final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
-        Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
+    final Predicate<MethodInfo> filter = Prelude.not(stringToMethodInfoPredicate(excludedMethods));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         filter, loggingClasses, mutators,
         inlinedCodeDetector(detectInlinedCode));
@@ -74,17 +72,6 @@ public final class GregorEngineFactory implements MutationEngineFactory {
 
   }
 
-  @SuppressWarnings("unchecked")
-  private static Predicate<MethodInfo> pickFilter(
-      final boolean mutateStaticInitializers,
-      final Predicate<MethodInfo> excludedMethods) {
-    if (!mutateStaticInitializers) {
-      return Prelude.and(excludedMethods, notStaticInitializer());
-    } else {
-      return excludedMethods;
-    }
-  }
-
   private static F<MethodInfo, Boolean> stringToMethodInfoPredicate(
       final Predicate<String> excludedMethods) {
     return new Predicate<MethodInfo>() {
@@ -92,17 +79,6 @@ public final class GregorEngineFactory implements MutationEngineFactory {
       @Override
       public Boolean apply(final MethodInfo a) {
         return excludedMethods.apply(a.getName());
-      }
-
-    };
-  }
-
-  private static Predicate<MethodInfo> notStaticInitializer() {
-    return new Predicate<MethodInfo>() {
-
-      @Override
-      public Boolean apply(final MethodInfo a) {
-        return !a.isStaticInitializer();
       }
 
     };

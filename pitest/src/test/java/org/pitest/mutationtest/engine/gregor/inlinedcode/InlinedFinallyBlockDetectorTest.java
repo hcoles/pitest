@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class InlinedFinallyBlockDetectorTest {
 
@@ -74,13 +75,13 @@ public class InlinedFinallyBlockDetectorTest {
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final int index) {
     return new MutationDetails(makeId(Collections.singleton(index), mutator),
-        "file", "desc", line, block, true, false);
+        "file", "desc", line, block, true, PoisonStatus.NORMAL);
   }
 
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final Collection<Integer> indexes) {
     return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
-        "file", "desc", line, block, true, false);
+        "file", "desc", line, block, true, PoisonStatus.NORMAL);
   }
 
   private MutationDetails makeMutant(final int line, final int block,

@@ -23,6 +23,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class DefaultTestPrioritiserTest {
 
@@ -56,7 +57,8 @@ public class DefaultTestPrioritiserTest {
     final List<TestInfo> expected = makeTestInfos(0);
     when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
     final List<TestInfo> actual = this.testee
-        .assignTests(makeMutation("<clinit>"));
+        .assignTests(makeMutation("<clinit>")
+            .withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE));
     assertEquals(expected, actual);
   }
 

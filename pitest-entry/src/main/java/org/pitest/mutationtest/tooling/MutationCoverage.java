@@ -120,7 +120,6 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     final MutationEngine engine = this.strategies.factory().createEngine(
-        this.data.isMutateStaticInitializers(),
         Prelude.or(this.data.getExcludedMethods()),
         this.data.getLoggingClasses(), this.data.getMutators(),
         this.data.isDetectInlinedCode());
@@ -257,7 +256,7 @@ private int numberOfThreads() {
             coverageData);
 
     MutationInterceptor interceptor = this.settings.getInterceptor()
-        .createInterceptor(this.data.getFreeFormProperties(), bas);
+        .createInterceptor(this.data, bas);
     
     final MutationSource source = new MutationSource(mutationConfig,
         makeFilter().createFilter(this.data.getFreeFormProperties(), this.code,

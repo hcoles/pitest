@@ -8,7 +8,7 @@ import org.pitest.plugin.ClientClasspathPlugin;
 
 public interface MutationEngineFactory extends ClientClasspathPlugin {
 
-  MutationEngine createEngine(boolean mutateStaticInitializers,
+  MutationEngine createEngine(
       Predicate<String> excludedMethods,
       Collection<String> loggingClasses,
       Collection<String> mutators, boolean detectInlinedCode);

@@ -30,6 +30,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.functional.predicate.False;
+import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
 
 public class MutableListTest {
@@ -214,5 +216,12 @@ public class MutableListTest {
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(MutableList.class).verify();
+  }
+  
+  @Test
+  public void shouldImplementFindFirst() {
+    this.testee.addAll(Arrays.asList(1, 2, 3));
+    assertEquals(Option.some(1), testee.findFirst(True.<Integer>all()));
+    assertEquals(Option.none(), testee.findFirst(False.<Integer>instance()));
   }
 }

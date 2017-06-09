@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,11 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CompoundMutationInterceptorTest {
@@ -40,7 +38,7 @@ public class CompoundMutationInterceptorTest {
   
   @Test
   public void shouldNotifyAllChildrenOfNewClass() {
-    ClassName aClass = ClassName.fromString("foo");
+    ClassTree aClass = new ClassTree(null);
 
     testee.begin(aClass);
     verify(child1).begin(aClass);    

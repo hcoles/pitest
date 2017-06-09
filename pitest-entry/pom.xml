@@ -100,6 +100,15 @@
 			<artifactId>pitest</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- asm in main pitest project is shaded. Easiest to depend on
+		own unshaded copy for main process analysis purposes  -->
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-debug-all</artifactId>
+			<version>${asm.version}</version>
+		</dependency>		
+		
 		<!-- for the xstream history store. cannot used shaded version -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>

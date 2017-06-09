@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -36,8 +37,7 @@ public class MutationSourceTest {
 
   private MutationConfig       config;
 
-  @Mock
-  private ClassByteArraySource source;
+  private ClassByteArraySource source = ClassloaderByteArraySource.fromContext();
 
   @Mock
   private Mutater              mutater;
@@ -48,7 +48,7 @@ public class MutationSourceTest {
   @Mock
   private TestPrioritiser      prioritiser;
 
-  private final ClassName      foo = ClassName.fromString("foo");
+  private final ClassName      foo = ClassName.fromClass(Foo.class);
 
   @Before
   public void setUp() {
@@ -88,7 +88,6 @@ public class MutationSourceTest {
       public TestInfo apply(final Integer a) {
         return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
       }
-
     };
   }
 
@@ -103,4 +102,8 @@ public class MutationSourceTest {
     return new MutationDetails(id, "file", "desc", 1, 2);
   }
 
+}
+
+class Foo {
+  
 }

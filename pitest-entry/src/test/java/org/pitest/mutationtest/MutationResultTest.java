@@ -15,9 +15,10 @@
 package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class MutationResultTest {
 

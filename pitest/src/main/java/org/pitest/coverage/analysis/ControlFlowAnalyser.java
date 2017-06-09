@@ -116,13 +116,11 @@ public class ControlFlowAnalyser {
 
   }
 
-  @SuppressWarnings("unchecked")
-  // asm jar has no generics info
   private static Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
     final Set<AbstractInsnNode> jumpTargets = new HashSet<AbstractInsnNode>();
-    final ListIterator<?> it = instructions.iterator();
+    final ListIterator<AbstractInsnNode> it = instructions.iterator();
     while (it.hasNext()) {
-      final Object o = it.next();
+      final AbstractInsnNode o = it.next();
       if (o instanceof JumpInsnNode) {
         jumpTargets.add(((JumpInsnNode) o).label);
       } else if (o instanceof TableSwitchInsnNode) {

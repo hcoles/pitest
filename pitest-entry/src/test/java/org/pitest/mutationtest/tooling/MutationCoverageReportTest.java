@@ -58,9 +58,6 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.tooling.CombinedStatistics;
-import org.pitest.mutationtest.tooling.MutationCoverage;
-import org.pitest.mutationtest.tooling.MutationStrategies;
 import org.pitest.mutationtest.verify.BuildVerifier;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
@@ -120,7 +117,7 @@ public class MutationCoverageReportTest {
   @SuppressWarnings("unchecked")
   private void mockMutationEngine() {
     when(
-        this.mutationFactory.createEngine(anyBoolean(), any(Predicate.class),
+        this.mutationFactory.createEngine(any(Predicate.class),
             anyCollection(), anyCollection(), anyBoolean())).thenReturn(
                 this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
@@ -150,13 +147,15 @@ public class MutationCoverageReportTest {
   @SuppressWarnings("unchecked")
   @Test
   public void shouldRecordClassPath() {
+    
+    ClassName clazz = ClassName.fromClass(Foo.class);
 
     final HierarchicalClassId fooId = new HierarchicalClassId(
-        new ClassIdentifier(0, ClassName.fromString("foo")), "0");
+        new ClassIdentifier(0, clazz), "0");
     final ClassInfo foo = ClassInfoMother.make(fooId.getId());
 
     when(this.code.getCodeUnderTestNames()).thenReturn(
-        Collections.singleton(ClassName.fromString("foo")));
+        Collections.singleton(clazz));
     when(this.code.getClassInfo(any(List.class))).thenReturn(
         Collections.singletonList(foo));
 
@@ -181,7 +180,7 @@ public class MutationCoverageReportTest {
   @Test
   public void shouldReportMutationsFoundWhenSomeDetected() {
     this.data.setFailWhenNoMutations(false);
-    final ClassName foo = ClassName.fromString("foo");
+    final ClassName foo = ClassName.fromClass(Foo.class);
     when(this.mutater.findMutations(foo)).thenReturn(
         MutationDetailsMother.aMutationDetail().build(1));
     when(this.code.getCodeUnderTestNames()).thenReturn(
@@ -206,4 +205,8 @@ public class MutationCoverageReportTest {
     }
   }
 
+}
+
+class Foo {
+  
 }
