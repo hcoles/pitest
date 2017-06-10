@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FunctionalList;
@@ -37,7 +38,17 @@ public class MethodTree {
     }
     
     return createInstructionList();
-    
+  }
+  
+  public FunctionalList<AnnotationNode> annotations() {
+    FunctionalList<AnnotationNode> annotaions = new MutableList<AnnotationNode>();
+    if (rawNode.invisibleAnnotations != null) {
+      annotaions.addAll(rawNode.invisibleAnnotations);
+    }
+    if (rawNode.visibleAnnotations != null) {
+      annotaions.addAll(rawNode.visibleAnnotations);
+    }
+    return annotaions;
   }
 
   private FunctionalList<AbstractInsnNode> createInstructionList() {

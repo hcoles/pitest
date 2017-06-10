@@ -12,11 +12,11 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.build.AnalysisFunctions;
 import org.pitest.mutationtest.build.ClassTree;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MethodTree;
 import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -84,7 +84,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
       Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods()
       .filter(isPrivateStatic())
       .filter(matchingCalls)
-      .map(toMutationDetailsPredicate())
+      .map(AnalysisFunctions.matchMutationsInMethod())
       );
       
       isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);
@@ -113,21 +113,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private static F<MethodTree, Predicate<MutationDetails>> toMutationDetailsPredicate() {
-    return new F<MethodTree, Predicate<MutationDetails>>() {
-      @Override
-      public Predicate<MutationDetails> apply(final MethodTree method) {
-        final Location methodLocation = method.asLocation();
-        return new Predicate<MutationDetails>() {
-          @Override
-          public Boolean apply(MutationDetails a) {
-            return methodLocation.equals(a.getId().getLocation());
-          }
-        };
-      }
 
-    };
-  }
   
   private static F<MethodInsnNode, Predicate<MethodTree>> toPredicate() {   
     return new F<MethodInsnNode, Predicate<MethodTree>> () {

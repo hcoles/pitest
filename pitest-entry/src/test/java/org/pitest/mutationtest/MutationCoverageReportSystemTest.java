@@ -36,6 +36,7 @@ import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -409,6 +410,24 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     // would prefer removed here
     verifyResults(NO_COVERAGE);
+  }
+  
+  @Test
+  public void shouldNotMutateClassesAnnotatedWithGenerated() {
+    setMutators("RETURN_VALS");
+    this.data
+    .setTargetClasses(predicateFor(AnnotatedToAvoidAtClassLevel.class));
+    
+    createAndRun();
+
+    verifyResults();
+  }
+  
+  @Generated
+  public static class AnnotatedToAvoidAtClassLevel {
+    public int mutateMe() {
+      return 42;
+    }
   }
   
   

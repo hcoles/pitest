@@ -19,7 +19,6 @@ import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,9 +90,6 @@ public class GregorMutater implements Mutater {
       final ClassContext context, final byte[] classToMutate) {
 
     final PremutationClassInfo classInfo = performPreScan(classToMutate);
-    if (classInfo.shouldExclude()) {
-      return Collections.emptyList();
-    }
 
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();

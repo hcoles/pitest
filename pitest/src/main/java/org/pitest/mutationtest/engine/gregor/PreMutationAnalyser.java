@@ -39,9 +39,6 @@ class PreMutationAnalyser extends ClassVisitor {
   @Override
   public AnnotationVisitor visitAnnotation(final String desc,
       final boolean visible) {
-    if (AvoidedAnnotations.shouldAvoid(desc)) {
-      classInfo.exclude();
-    }
     return null;
   }
 

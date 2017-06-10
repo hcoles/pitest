@@ -386,21 +386,6 @@ public class TestGregorMutater extends MutatorTestBase {
   }
   
   @Test
-  public void shouldNotMutateClassesAnnotatedWithGenerated() {
-    createTesteeWith(Mutator.byName("RETURN_VALS"));
-    final List<MutationDetails> mutants = findMutationsFor(AnnotatedToAvoidAtClassLevel.class);
-    
-    assertThat(mutants).isEmpty();
-  }
-  
-  @Generated
-  public static class AnnotatedToAvoidAtClassLevel {
-    public int mutateMe() {
-      return 42;
-    }
-  }
-  
-  @Test
   public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
     createTesteeWith(new ResourceFolderByteArraySource(),
         True.<MethodInfo> all(), Mutator.byName("REMOVE_CONDITIONALS"));

@@ -1,12 +1,14 @@
 package org.pitest.mutationtest.build;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.MutableList;
 
 public class ClassTree {
   
@@ -33,6 +35,17 @@ public class ClassTree {
     return lazyMethods;
   }
   
+  public FunctionalList<AnnotationNode> annotations() {
+    FunctionalList<AnnotationNode> annotaions = new MutableList<AnnotationNode>();
+    if (rawNode.invisibleAnnotations != null) {
+      annotaions.addAll(rawNode.invisibleAnnotations);
+    }
+    if (rawNode.visibleAnnotations != null) {
+      annotaions.addAll(rawNode.visibleAnnotations);
+    }
+    return annotaions;
+  }
+  
   private static F<MethodNode, MethodTree> toTree(final ClassName name) {
     return new F<MethodNode, MethodTree>() {
       @Override
@@ -50,5 +63,6 @@ public class ClassTree {
   public ClassNode rawNode() {
     return rawNode;
   }
+
 
 }
