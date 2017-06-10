@@ -13,6 +13,7 @@ import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.ClassTree;
+import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MethodTree;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -191,6 +192,11 @@ public class StaticInitializerInterceptor implements MutationInterceptor {
         return a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
       }
     };
+  }
+
+  @Override
+  public InterceptorType type() {
+    return InterceptorType.MODIFY;
   }
 
 }

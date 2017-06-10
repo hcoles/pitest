@@ -7,6 +7,8 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public interface MutationInterceptor {
   
+  InterceptorType type();
+  
   void begin(ClassTree clazz);
   
   Collection<MutationDetails> intercept(Collection<MutationDetails> mutations, Mutater m);
