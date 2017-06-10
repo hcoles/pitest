@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build.intercept;
+package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
 
@@ -36,7 +36,7 @@ import org.pitest.mutationtest.engine.PoisonStatus;
  * and would exclude methods called from location other than <clinit>.
  * 
  */
-public class StaticInitializerInterceptor implements MutationInterceptor {
+class StaticInitializerInterceptor implements MutationInterceptor {
   
   private static final MethodName CLINIT = MethodName.fromString("<clinit>");
   

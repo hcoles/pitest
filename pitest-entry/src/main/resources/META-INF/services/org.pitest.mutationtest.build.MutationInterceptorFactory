@@ -1,2 +1,2 @@
-org.pitest.mutationtest.build.intercept.StaticInitializerInterceptorFactory
-org.pitest.mutationtest.build.intercept.StaticInitializerFilterFactory
+org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerInterceptorFactory
+org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerFilterFactory

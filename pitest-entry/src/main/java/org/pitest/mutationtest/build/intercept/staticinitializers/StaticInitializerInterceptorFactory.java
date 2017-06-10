@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build.intercept;
+package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.build.MutationInterceptor;

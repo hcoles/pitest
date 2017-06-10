@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build.intercept;
+package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
 
@@ -11,7 +11,7 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public class StaticInitializerFilter implements MutationInterceptor {
+class StaticInitializerFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {

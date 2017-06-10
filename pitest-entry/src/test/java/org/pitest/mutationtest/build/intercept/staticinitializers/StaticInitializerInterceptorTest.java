@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build.intercept;
+package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -13,6 +13,7 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.ClassTree;
+import org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerInterceptor;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
