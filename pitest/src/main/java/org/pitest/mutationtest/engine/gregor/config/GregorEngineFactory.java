@@ -24,9 +24,6 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 
 public final class GregorEngineFactory implements MutationEngineFactory {
 
@@ -34,32 +31,20 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   public MutationEngine createEngine(
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
-      final Collection<String> mutators, final boolean detectInlinedCode) {
+      final Collection<String> mutators) {
     return createEngineWithMutators(excludedMethods,
-        loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators),
-        detectInlinedCode);
+        loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators));
   }
 
   public MutationEngine createEngineWithMutators(
       final Predicate<String> excludedMethods,
       final Collection<String> loggingClasses,
-      final Collection<? extends MethodMutatorFactory> mutators,
-      final boolean detectInlinedCode) {
+      final Collection<? extends MethodMutatorFactory> mutators) {
 
     final Predicate<MethodInfo> filter = Prelude.not(stringToMethodInfoPredicate(excludedMethods));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        filter, loggingClasses, mutators,
-        inlinedCodeDetector(detectInlinedCode));
+        filter, loggingClasses, mutators);
     return new GregorMutationEngine(config);
-  }
-
-  private static InlinedCodeFilter inlinedCodeDetector(
-      final boolean detectInlinedCode) {
-    if (detectInlinedCode) {
-      return new InlinedFinallyBlockDetector();
-    } else {
-      return new NoInlinedCodeDetection();
-    }
   }
 
   private static Collection<? extends MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(

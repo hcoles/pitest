@@ -40,8 +40,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
 import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
@@ -64,7 +62,7 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), filteredClasses(), inlinedCodeFilter());
+        Arrays.asList(mutators), filteredClasses());
   }
 
   private Collection<String> filteredClasses() {
@@ -75,7 +73,7 @@ public abstract class MutatorTestBase {
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(source, filter, mutators,
-        filteredClasses(), inlinedCodeFilter());
+        filteredClasses());
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -87,11 +85,7 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses, inlinedCodeFilter());
-  }
-
-  private InlinedCodeFilter inlinedCodeFilter() {
-    return new NoInlinedCodeDetection();
+        mutators, loggingClasses);
   }
 
   protected void createTesteeWith(

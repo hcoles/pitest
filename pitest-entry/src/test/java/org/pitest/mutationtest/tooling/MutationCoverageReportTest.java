@@ -17,7 +17,6 @@ package org.pitest.mutationtest.tooling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -118,7 +117,7 @@ public class MutationCoverageReportTest {
   private void mockMutationEngine() {
     when(
         this.mutationFactory.createEngine(any(Predicate.class),
-            anyCollection(), anyCollection(), anyBoolean())).thenReturn(
+            anyCollection(), anyCollection())).thenReturn(
                 this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
     .thenReturn(this.mutater);

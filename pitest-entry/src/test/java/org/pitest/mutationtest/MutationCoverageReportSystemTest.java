@@ -422,7 +422,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     verifyResults();
   }
-  
+    
   @Generated
   public static class AnnotatedToAvoidAtClassLevel {
     public int mutateMe() {

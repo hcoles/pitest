@@ -41,7 +41,6 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public class GregorMutater implements Mutater {
 
@@ -50,19 +49,16 @@ public class GregorMutater implements Mutater {
   private final ClassByteArraySource      byteSource;
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
   private final Set<String>               loggingClasses = new HashSet<String>();
-  private final InlinedCodeFilter         inlinedCodeDetector;
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators,
-      final Collection<String> loggingClasses,
-      final InlinedCodeFilter inlinedCodeDetector) {
+      final Collection<String> loggingClasses) {
     this.filter = filter;
     this.mutators.addAll(mutators);
     this.byteSource = byteSource;
     this.loggingClasses.addAll(FCollection.map(loggingClasses,
         classNameToJVMClassName()));
-    this.inlinedCodeDetector = inlinedCodeDetector;
   }
 
   @Override
@@ -98,7 +94,7 @@ public class GregorMutater implements Mutater {
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    return this.inlinedCodeDetector.process(context.getCollectedMutations());
+    return context.getCollectedMutations();
   }
 
   private PremutationClassInfo performPreScan(final byte[] classToMutate) {

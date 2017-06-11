@@ -24,7 +24,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 /**
  * The default (and currently only) mutation engine for PIT.
@@ -37,19 +36,17 @@ public class GregorMutationEngine implements MutationEngine {
   private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
   private final Set<String>               loggingClasses    = new LinkedHashSet<String>();
   private final Predicate<MethodInfo>     methodFilter;
-  private final InlinedCodeFilter         inlinedCodeDetector;
 
   public GregorMutationEngine(final MutationEngineConfiguration config) {
     this.methodFilter = config.methodFilter();
     this.mutationOperators.addAll(config.mutators());
     this.loggingClasses.addAll(config.doNotMutateCallsTo());
-    this.inlinedCodeDetector = config.inlinedCodeDetector();
   }
 
   @Override
   public Mutater createMutator(final ClassByteArraySource byteSource) {
     return new GregorMutater(byteSource, this.methodFilter,
-        this.mutationOperators, this.loggingClasses, this.inlinedCodeDetector);
+        this.mutationOperators, this.loggingClasses);
   }
 
   @Override

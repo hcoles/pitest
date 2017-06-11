@@ -28,8 +28,6 @@ import org.junit.runner.RunWith;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedFinallyBlockDetector;
 import org.pitest.util.ResourceFolderByteArraySource;
 
 /**
@@ -46,20 +44,19 @@ public class TestTryWithResources extends MutatorTestBase {
   @DataPoints
   public static String[][]                data      = new String[][] {
       { "1", "TryExample" }, { "2", "TryCatchExample" },
-      { "3", "TryCatchFinallyExample" }, { "2", "TryFinallyExample" },
       { "1", "TryWithTwoCloseableExample" },
       { "1", "TryWithNestedTryExample" }, { "1", "TryWithInterfaceExample" } };
 
   @Theory
   public void testTryWithResourcesMutationsWithFilter(String... data) {
-    createEngine(new InlinedFinallyBlockDetector());
+    createEngine();
     testWithExpected(data[0], data[1]);
   }
 
-  private void createEngine(InlinedCodeFilter inlinedCodeDetector) {
+  private void createEngine() {
     this.engine = new GregorMutater(new ResourceFolderByteArraySource(),
         True.<MethodInfo> all(), Mutator.defaults(),
-        Collections.<String> emptyList(), inlinedCodeDetector);
+        Collections.<String> emptyList());
   }
 
   private void testWithExpected(String expected, String className) {
