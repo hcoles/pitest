@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,9 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.CoverageIgnore;
+import org.pitest.mutationtest.engine.gregor.DoNotMutate;
+import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.util.Glob;
@@ -141,6 +145,39 @@ public class MutationDiscoveryTest {
     assertThat(actual).isEmpty();  
   }
 
+  
+  @Test
+  public void shouldNotMutateMethodsAnnotatedWithGenerated() {
+    final Collection<MutationDetails> actualDetails = findMutants(AnnotatedToAvoidMethod.class);
+    // all but two methods are annotated to ignore
+    assertEquals(2, actualDetails.size());
+  }
+  
+  public static class AnnotatedToAvoidMethod {
+    public int a() {
+      return 1;
+    }
+
+    @Generated
+    public int b() {
+      return 1;
+    }
+    
+    @DoNotMutate
+    public int c() {
+      return 1;
+    }
+    
+    @CoverageIgnore
+    public int d() {
+      return 1;
+    }
+    
+    public int e() {
+      return 1;
+    }
+  }
+  
   private static class HasLogger {
     private static Logger log = Logger.getLogger(HasLogger.class.getName());
 
@@ -151,7 +188,7 @@ public class MutationDiscoveryTest {
   }
 
   
-  private Collection<MutationDetails> findMutants(Class<HasLogger> clazz) {
+  private Collection<MutationDetails> findMutants(Class<?> clazz) {
     Predicate<String> glob = new Glob(clazz.getName());
     this.data.setTargetClasses(Collections.singleton(glob));
     this.cbas = ClassloaderByteArraySource.fromContext();
