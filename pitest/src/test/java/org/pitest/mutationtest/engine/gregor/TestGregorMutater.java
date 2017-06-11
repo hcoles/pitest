@@ -349,56 +349,6 @@ public class TestGregorMutater extends MutatorTestBase {
                                                                     // by
                                                                     // target?
   }
-
-
-  
-  @Test
-  public void shouldNotMutateMethodsAnnotatedWithGenerated() {
-    createTesteeWith(Mutator.byName("RETURN_VALS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(AnnotatedToAvoidMethod.class);
-    // all but two methods are annotated to ignore
-    assertEquals(2, actualDetails.size());
-  }
-  
-  public static class AnnotatedToAvoidMethod {
-    public int a() {
-      return 1;
-    }
-
-    @Generated
-    public int b() {
-      return 1;
-    }
-    
-    @DoNotMutate
-    public int c() {
-      return 1;
-    }
-    
-    @CoverageIgnore
-    public int d() {
-      return 1;
-    }
-    
-    public int e() {
-      return 1;
-    }
-  }
-  
-  @Test
-  public void shouldNotMutateClassesAnnotatedWithGenerated() {
-    createTesteeWith(Mutator.byName("RETURN_VALS"));
-    final List<MutationDetails> mutants = findMutationsFor(AnnotatedToAvoidAtClassLevel.class);
-    
-    assertThat(mutants).isEmpty();
-  }
-  
-  @Generated
-  public static class AnnotatedToAvoidAtClassLevel {
-    public int mutateMe() {
-      return 42;
-    }
-  }
   
   @Test
   public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {

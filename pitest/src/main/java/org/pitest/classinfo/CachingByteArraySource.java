@@ -1,9 +1,8 @@
-package org.pitest.util;
+package org.pitest.classinfo;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.Option;
 
 public class CachingByteArraySource implements ClassByteArraySource {

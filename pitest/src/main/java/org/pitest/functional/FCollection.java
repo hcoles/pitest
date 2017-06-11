@@ -86,6 +86,18 @@ public abstract class FCollection {
       }
     }
   }
+  
+
+  public static <T> Option<T> findFirst(final Iterable<? extends T> xs,
+      final F<T, Boolean> predicate) {
+    for (final T x : xs) {
+      if (predicate.apply(x)) {
+        return Option.some(x);
+      }
+    }
+    return Option.none();
+  }
+  
 
   public static <T> boolean contains(final Iterable<? extends T> xs,
       final F<T, Boolean> predicate) {

@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.inlinedcode;
+package org.pitest.mutationtest.build.intercept.javafeatures;
 
 public class LineMutatorPair {
 

@@ -30,5 +30,4 @@ public interface FunctionalIterable<A> extends Iterable<A> {
   List<A> filter(F<A, Boolean> predicate);
 
   boolean contains(F<A, Boolean> predicate);
-
 }

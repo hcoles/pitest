@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.report.html.InputStreamLineIterable;
 
 public class InputStreamLineIterableTest {
 
@@ -74,7 +73,7 @@ public class InputStreamLineIterableTest {
   public void shouldReturnFalseWhenContainsCalledAndPredicateDoesNotMatch() {
     assertFalse(this.testee.contains(isEqualTo("10")));
   }
-
+  
   private F<String, Option<String>> mapIfNotTwo() {
     return new F<String, Option<String>>() {
       @Override

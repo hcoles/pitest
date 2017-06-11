@@ -94,7 +94,6 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
 
   @Override
   public <B> FunctionalList<B> flatMap(final F<String, ? extends Iterable<B>> f) {
-
     return FCollection.flatMap(this, f);
   }
 

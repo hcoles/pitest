@@ -16,10 +16,8 @@ package org.pitest.mutationtest.engine.gregor;
 
 import static org.pitest.functional.prelude.Prelude.and;
 import static org.pitest.functional.prelude.Prelude.not;
-import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +40,6 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public class GregorMutater implements Mutater {
 
@@ -50,20 +47,13 @@ public class GregorMutater implements Mutater {
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
-  private final Set<String>               loggingClasses = new HashSet<String>();
-  private final InlinedCodeFilter         inlinedCodeDetector;
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
-      final Collection<MethodMutatorFactory> mutators,
-      final Collection<String> loggingClasses,
-      final InlinedCodeFilter inlinedCodeDetector) {
+      final Collection<MethodMutatorFactory> mutators) {
     this.filter = filter;
     this.mutators.addAll(mutators);
     this.byteSource = byteSource;
-    this.loggingClasses.addAll(FCollection.map(loggingClasses,
-        classNameToJVMClassName()));
-    this.inlinedCodeDetector = inlinedCodeDetector;
   }
 
   @Override
@@ -90,28 +80,14 @@ public class GregorMutater implements Mutater {
   private Collection<MutationDetails> findMutationsForBytes(
       final ClassContext context, final byte[] classToMutate) {
 
-    final PremutationClassInfo classInfo = performPreScan(classToMutate);
-    if (classInfo.shouldExclude()) {
-      return Collections.emptyList();
-    }
-
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();
     final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
-        filterMethods(), classInfo, this.mutators);
+        filterMethods(), this.mutators);
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    return this.inlinedCodeDetector.process(context.getCollectedMutations());
-  }
-
-  private PremutationClassInfo performPreScan(final byte[] classToMutate) {
-    final ClassReader reader = new ClassReader(classToMutate);
-
-    final PreMutationAnalyser an = new PreMutationAnalyser(this.loggingClasses);
-    reader.accept(an, 0);
-    return an.getClassInfo();
-
+    return context.getCollectedMutations();
   }
 
   @Override
@@ -123,13 +99,11 @@ public class GregorMutater implements Mutater {
     final Option<byte[]> bytes = this.byteSource.getBytes(id.getClassName()
         .asJavaName());
 
-    final PremutationClassInfo classInfo = performPreScan(bytes.value());
-
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ComputeClassWriter(this.byteSource,
         this.computeCache, FrameOptions.pickFlags(bytes.value()));
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
-        filterMethods(), classInfo, FCollection.filter(this.mutators,
+        filterMethods(), FCollection.filter(this.mutators,
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 

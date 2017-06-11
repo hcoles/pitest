@@ -17,16 +17,11 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Collection;
 
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public interface MutationEngineConfiguration {
 
   Collection<? extends MethodMutatorFactory> mutators();
 
   Predicate<MethodInfo> methodFilter();
-
-  Collection<String> doNotMutateCallsTo();
-
-  InlinedCodeFilter inlinedCodeDetector();
 
 }

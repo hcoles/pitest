@@ -18,4 +18,14 @@ import java.util.List;
 
 public interface FunctionalList<T> extends FunctionalCollection<T>, List<T> {
 
+  @Override
+  FunctionalList<T> filter(F<T, Boolean> predicate);
+  
+  @Override
+  <B> FunctionalList<B> flatMap(F<T, ? extends Iterable<B>> f);
+  
+  @Override
+  <B> FunctionalList<B> map(F<T, B> f);
+  
+  Option<T> findFirst(F<T, Boolean> predicate);
 }

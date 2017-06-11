@@ -20,24 +20,17 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationEngineConfiguration;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
 
 public class DefaultMutationEngineConfiguration implements
 MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
-  private final Collection<String>                         doNotMutate;
   private final Collection<? extends MethodMutatorFactory> mutators;
-  private final InlinedCodeFilter                          inlinedCodeDetector;
 
   public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
-      final Collection<String> loggingClasses,
-      final Collection<? extends MethodMutatorFactory> mutators,
-      final InlinedCodeFilter inlinedCodeDetector) {
+      final Collection<? extends MethodMutatorFactory> mutators) {
     this.methodFilter = filter;
-    this.doNotMutate = loggingClasses;
     this.mutators = mutators;
-    this.inlinedCodeDetector = inlinedCodeDetector;
   }
 
   @Override
@@ -46,18 +39,8 @@ MutationEngineConfiguration {
   }
 
   @Override
-  public Collection<String> doNotMutateCallsTo() {
-    return this.doNotMutate;
-  }
-
-  @Override
   public Predicate<MethodInfo> methodFilter() {
     return this.methodFilter;
-  }
-
-  @Override
-  public InlinedCodeFilter inlinedCodeDetector() {
-    return this.inlinedCodeDetector;
   }
 
 }

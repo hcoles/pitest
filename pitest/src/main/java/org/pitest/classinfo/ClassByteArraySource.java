@@ -18,6 +18,11 @@ import org.pitest.functional.Option;
 
 public interface ClassByteArraySource {
 
+  /**
+   * Returns bytes for a class represented in java/lang/String format
+   * @param clazz classname in com.example.Foo format
+   * @return bytes option of byte[]
+   */
   Option<byte[]> getBytes(String clazz);
 
 }

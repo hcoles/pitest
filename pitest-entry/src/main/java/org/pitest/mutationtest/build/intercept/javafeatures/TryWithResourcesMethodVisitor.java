@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.engine.gregor;
+package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ASTORE;
@@ -27,6 +27,7 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -161,7 +162,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
                                                                           ATHROW);           // throw
                                                                                               // throwable1
 
-  private final PremutationClassInfo context;
+  private final Set<Integer> lines;
 
   private final List<Integer>        opcodesStack                 = new ArrayList<Integer>();
   private int                        currentLineNumber;
@@ -170,9 +171,9 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
    * @param context
    *          to store detected line numbers
    */
-  TryWithResourcesMethodVisitor(final PremutationClassInfo context) {
+  TryWithResourcesMethodVisitor(final Set<Integer> lines) {
     super(Opcodes.ASM5);
-    this.context = context;
+    this.lines = lines;
   }
 
   @Override
@@ -214,7 +215,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
     if (JAVAC_CLASS_INS_SEQUENCE.equals(this.opcodesStack)
         || JAVAC_INTERFACE_INS_SEQUENCE.equals(this.opcodesStack)
         || ECJ_INS_SEQUENCE.equals(this.opcodesStack)) {
-      this.context.registerLineToAvoid(this.currentLineNumber);
+      this.lines.add(this.currentLineNumber);
     }
     prepareToStartTracking();
   }

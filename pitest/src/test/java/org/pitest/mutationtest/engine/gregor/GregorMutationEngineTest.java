@@ -18,13 +18,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
@@ -37,8 +35,7 @@ public class GregorMutationEngineTest {
     final Collection<MethodMutatorFactory> mutators = Mutator
         .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH"));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        True.<MethodInfo> all(), Collections.<String> emptyList(), mutators,
-        new NoInlinedCodeDetection());
+        True.<MethodInfo> all(), mutators);
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),

@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -40,8 +39,6 @@ import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.InlinedCodeFilter;
-import org.pitest.mutationtest.engine.gregor.inlinedcode.NoInlinedCodeDetection;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
 import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
@@ -64,18 +61,13 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), filteredClasses(), inlinedCodeFilter());
-  }
-
-  private Collection<String> filteredClasses() {
-    return Arrays.asList(Logger.class.getName(), StringBuilder.class.getName());
+        Arrays.asList(mutators));
   }
 
   protected void createTesteeWith(final ClassByteArraySource source,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    this.engine = new GregorMutater(source, filter, mutators,
-        filteredClasses(), inlinedCodeFilter());
+    this.engine = new GregorMutater(source, filter, mutators);
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -87,11 +79,7 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses, inlinedCodeFilter());
-  }
-
-  private InlinedCodeFilter inlinedCodeFilter() {
-    return new NoInlinedCodeDetection();
+        mutators);
   }
 
   protected void createTesteeWith(

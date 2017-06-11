@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.True;
@@ -244,6 +245,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   }
 
   @Test
+  @Ignore("functionality moving to filter")
   public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
     createTesteeWith(True.<MethodInfo> all(),
         NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);

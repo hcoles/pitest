@@ -36,6 +36,7 @@ import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
@@ -355,6 +356,81 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
+  
+  @Test
+  public void shouldNotMutateStaticMethodsOnlyCalledFromInitializer() {
+    setMutators("VOID_METHOD_CALLS");
+    
+    this.data
+    .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledOnlyFromInitializer.class));
+
+    this.data.setMutateStaticInitializers(false);
+    
+    createAndRun();
+
+    verifyResults();
+  }
+  
+  @Test
+  public void willMutateStaticMethodsCalledFromInitializerAndElsewhere() {
+    setMutators("VOID_METHOD_CALLS");
+    
+    this.data
+    .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledFromInitializerAndElseWhere.class));
+    this.data.setMutateStaticInitializers(false);
+    
+    createAndRun();
+
+    // would prefer NO_COVERAGE here
+    verifyResults();
+  }
+  
+  @Test
+  public void shouldMutateNonPrivateStaticMethodsCalledFromInitializerOnly() {
+    setMutators("VOID_METHOD_CALLS");
+    
+    this.data
+    .setTargetClasses(predicateFor(com.example.staticinitializers.NonPrivateMethodsCalledFromInitializerOnly.class));
+    this.data.setMutateStaticInitializers(false);
+    
+    createAndRun();
+
+    verifyResults(NO_COVERAGE,NO_COVERAGE,NO_COVERAGE);
+  }
+  
+  @Test
+  public void willMutatePriveMethodsCalledInChainFromInitializer() {
+    setMutators("VOID_METHOD_CALLS");
+    
+    this.data
+    .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledInChainFromStaticInitializer.class));
+    this.data.setMutateStaticInitializers(false);
+    
+    createAndRun();
+
+    // would prefer removed here
+    verifyResults(NO_COVERAGE);
+  }
+  
+  @Test
+  public void shouldNotMutateClassesAnnotatedWithGenerated() {
+    setMutators("RETURN_VALS");
+    this.data
+    .setTargetClasses(predicateFor(AnnotatedToAvoidAtClassLevel.class));
+    
+    createAndRun();
+
+    verifyResults();
+  }
+    
+  @Generated
+  public static class AnnotatedToAvoidAtClassLevel {
+    public int mutateMe() {
+      return 42;
+    }
+  }
+  
+  
   private static void copy(final InputStream in, final OutputStream out)
       throws IOException {
     // Read bytes and write to destination until eof

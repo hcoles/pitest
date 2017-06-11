@@ -36,16 +36,16 @@ public final class MutationDetails {
   private final String              description;
   private final ArrayList<TestInfo> testsInOrder = new ArrayList<TestInfo>();
   private final boolean             isInFinallyBlock;
-  private final boolean             poison;
+  private final PoisonStatus        poison;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block) {
-    this(id, filename, description, lineNumber, block, false, false);
+    this(id, filename, description, lineNumber, block, false, PoisonStatus.NORMAL);
   }
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block,
-      final boolean isInFinallyBlock, final boolean poison) {
+      final boolean isInFinallyBlock, final PoisonStatus poison) {
     this.id = id;
     this.description = Preconditions.checkNotNull(description);
     this.filename = Preconditions.checkNotNull(filename);
@@ -55,18 +55,24 @@ public final class MutationDetails {
     this.poison = poison;
   }
 
+
+  
   @Override
   public String toString() {
-    return "MutationDetails [id=" + this.id + ", filename=" + this.filename
-        + ", block=" + this.block + ", lineNumber=" + this.lineNumber
-        + ", description=" + this.description + ", testsInOrder="
-        + this.testsInOrder + "]";
+    return "MutationDetails [id=" + id + ", filename=" + filename + ", block="
+        + block + ", lineNumber=" + lineNumber + ", description=" + description
+        + ", testsInOrder=" + testsInOrder + ", isInFinallyBlock="
+        + isInFinallyBlock + ", poison=" + poison + "]";
   }
-  
+
   public MutationDetails withDescription(String desc) {
     return new MutationDetails(id, filename, desc, lineNumber, block, isInFinallyBlock, poison);
   }
 
+  public MutationDetails withPoisonStatus(PoisonStatus poisonStatus) {
+    return new MutationDetails(id, filename, description, lineNumber, block, isInFinallyBlock, poisonStatus);
+  }
+  
   /**
    * Returns the human readable description of the mutation. This may be a
    * constant string or may provide more contextual information depending on the
@@ -182,7 +188,7 @@ public final class MutationDetails {
    * @return true if the mutation might poison the jvm otherwise false
    */
   public boolean mayPoisonJVM() {
-    return this.poison || isInStaticInitializer();
+    return this.poison.mayPoison();
   }
 
   /**
@@ -191,7 +197,7 @@ public final class MutationDetails {
    * @return true if in a static initializer otherwise false
    */
   public boolean isInStaticInitializer() {
-    return this.getMethod().name().trim().startsWith("<clinit>");
+    return this.poison == PoisonStatus.IS_STATIC_INITIALIZER_CODE;
   }
 
   /**

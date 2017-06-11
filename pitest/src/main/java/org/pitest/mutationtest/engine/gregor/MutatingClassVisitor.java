@@ -33,17 +33,14 @@ class MutatingClassVisitor extends ClassVisitor {
   private final F<MethodInfo, Boolean>    filter;
   private final ClassContext              context;
   private final Set<MethodMutatorFactory> methodMutators = new HashSet<MethodMutatorFactory>();
-  private final PremutationClassInfo      classInfo;
 
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
       final ClassContext context, final F<MethodInfo, Boolean> filter,
-      final PremutationClassInfo classInfo,
       final Collection<MethodMutatorFactory> mutators) {
     super(Opcodes.ASM5, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
     this.methodMutators.addAll(mutators);
-    this.classInfo = classInfo;
   }
 
   @Override
@@ -100,8 +97,8 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private static MethodVisitor wrapWithDecorators(MethodMutationContext methodContext,
       final MethodVisitor mv) {
-    return wrapWithAnnotationFilter(methodContext, wrapWithBlockTracker(methodContext,
-        wrapWithLineTracker(methodContext, mv)));
+    return wrapWithBlockTracker(methodContext,
+        wrapWithLineTracker(methodContext, mv));
   }
 
   private static MethodVisitor wrapWithBlockTracker(
@@ -116,8 +113,8 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
-    return wrapWithLineFilter(methodContext,
-        wrapWithStringSwitchFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor)));
+    return 
+        wrapWithStringSwitchFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
   }
 
   private static MethodVisitor wrapWithStringSwitchFilter(
@@ -131,18 +128,6 @@ class MutatingClassVisitor extends ClassVisitor {
       MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
     return new AvoidAssertsMethodAdapter(methodContext, wrappedMethodVisitor);
-  }
- 
-  private MethodVisitor wrapWithLineFilter(MethodMutationContext methodContext,
-      final MethodVisitor wrappedMethodVisitor) {
-    return new LineFilterMethodAdapter(methodContext, this.classInfo,
-        wrappedMethodVisitor);
-  }
-
-  private static MethodVisitor wrapWithAnnotationFilter(
-      MethodMutationContext methodContext,
-      final MethodVisitor wrappedMethodVisitor) {
-    return new AvoidAnnotatedMethodsFilter(methodContext, wrappedMethodVisitor);
   }
 
 }

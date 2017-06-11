@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
@@ -25,7 +26,6 @@ import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.filter.MutationFilter;
-import org.pitest.util.CachingByteArraySource;
 import org.pitest.util.Log;
 
 public class MutationSource {
@@ -56,14 +56,21 @@ public class MutationSource {
     final Collection<MutationDetails> availableMutations = this.filter.filter(m
         .findMutations(clazz));
     
-    interceptor.begin(clazz);
-    Collection<MutationDetails> updatedMutations = interceptor.intercept(availableMutations, m);
-    interceptor.end();
+    if (availableMutations.isEmpty()) {
+      return availableMutations;
+    } else {
+      ClassTree tree = ClassTree
+          .fromBytes(this.source.getBytes(clazz.asJavaName()).value());
 
-    assignTestsToMutations(updatedMutations);
-    
-    return updatedMutations;
+      interceptor.begin(tree);
+      Collection<MutationDetails> updatedMutations = interceptor
+          .intercept(availableMutations, m);
+      interceptor.end();
 
+      assignTestsToMutations(updatedMutations);
+
+      return updatedMutations;
+    }
   }
   
   private void assignTestsToMutations(

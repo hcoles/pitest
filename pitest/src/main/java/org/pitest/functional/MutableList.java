@@ -131,6 +131,12 @@ public final class MutableList<A> implements FunctionalList<A> {
   public <B> void mapTo(final F<A, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
+  
+  @Override
+  public Option<A> findFirst(F<A, Boolean> predicate) {
+    return FCollection.findFirst(impl, predicate);
+  }
+
 
   @Override
   public void add(final int arg0, final A arg1) {
