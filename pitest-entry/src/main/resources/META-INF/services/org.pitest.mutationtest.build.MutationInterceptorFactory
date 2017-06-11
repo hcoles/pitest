@@ -2,3 +2,4 @@ org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerInte
 org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerFilterFactory
 org.pitest.mutationtest.build.intercept.annotations.ExcludedAnnotationInterceptorFactory
 org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFactory
+ org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory

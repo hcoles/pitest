@@ -367,8 +367,7 @@ public class TestMutationTesting {
         ClassInfo.toClassName());
 
     final MutationEngine engine = new GregorEngineFactory()
-    .createEngineWithMutators(False.<String> instance(),
-        Collections.<String> emptyList(), mutators);
+    .createEngineWithMutators(False.<String> instance(), mutators);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         launchOptions);

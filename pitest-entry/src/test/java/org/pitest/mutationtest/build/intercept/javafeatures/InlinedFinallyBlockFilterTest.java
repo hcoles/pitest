@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -21,6 +22,10 @@ public class InlinedFinallyBlockFilterTest {
   InlinedFinallyBlockFilter testee = new InlinedFinallyBlockFilter();
   Mutater unused;
   
+  @Test
+  public void shouldDeclareTypeAsFilter() {
+    assertEquals(InterceptorType.FILTER, this.testee.type());
+  }
 
   @Test
   public void shouldNotCombineMutantsWhenOnSameLineAndDifferentBlocksButFromDifferentMutators() {

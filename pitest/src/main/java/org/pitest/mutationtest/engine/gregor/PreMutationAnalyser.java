@@ -1,7 +1,5 @@
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.Set;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
@@ -12,11 +10,9 @@ import org.objectweb.asm.Opcodes;
 class PreMutationAnalyser extends ClassVisitor {
 
   private final PremutationClassInfo classInfo = new PremutationClassInfo();
-  private final Set<String>          loggingClasses;
 
-  PreMutationAnalyser(final Set<String> loggingClasses) {
+  PreMutationAnalyser() {
     super(Opcodes.ASM5);
-    this.loggingClasses = loggingClasses;
   }
 
   @Override
@@ -63,7 +59,7 @@ class PreMutationAnalyser extends ClassVisitor {
   @Override
   public MethodVisitor visitMethod(final int access, final String name,
       final String desc, final String signature, final String[] exceptions) {
-    return new PreMutationMethodAnalyzer(this.loggingClasses, this.classInfo);
+    return new TryWithResourcesMethodVisitor(classInfo);
   }
 
   @Override

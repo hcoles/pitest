@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
@@ -109,6 +111,30 @@ public class MutationDiscoveryTest {
 
   }
   
+  @Test 
+  public void shouldFilterMutationsInLoggingCalls() {
+    data.setLoggingClasses(Collections.singleton("java.util.logging"));
+    Collection<MutationDetails>  actual = findMutants(HasLogger.class);
+    assertThat(actual).isEmpty();  
+  }
+
+  private static class HasLogger {
+    private static Logger log = Logger.getLogger(HasLogger.class.getName());
+
+    @SuppressWarnings("unused")
+    public void call(int i) {
+      log.info("foo " + i);
+    }
+  }
+
+  
+  private Collection<MutationDetails> findMutants(Class<HasLogger> clazz) {
+    Predicate<String> glob = new Glob(clazz.getName());
+    this.data.setTargetClasses(Collections.singleton(glob));
+    this.cbas = ClassloaderByteArraySource.fromContext();
+    return findMutants(ClassName.fromClass(clazz));
+  }
+  
   private Collection<MutationDetails> findMutants(ClassName clazz) {
     MutationSource source = createSource(cbas);
     return source.createMutations(clazz);
@@ -127,8 +153,7 @@ public class MutationDiscoveryTest {
     final CodeSource cs = new CodeSource(cps, null);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
-        Prelude.or(data.getExcludedMethods()),
-        data.getLoggingClasses(), data.getMutators());
+        Prelude.or(data.getExcludedMethods()), data.getMutators());
     
     final MutationConfig config = new MutationConfig(engine, null);
 

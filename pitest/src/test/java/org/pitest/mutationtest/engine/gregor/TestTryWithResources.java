@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -55,8 +54,7 @@ public class TestTryWithResources extends MutatorTestBase {
 
   private void createEngine() {
     this.engine = new GregorMutater(new ResourceFolderByteArraySource(),
-        True.<MethodInfo> all(), Mutator.defaults(),
-        Collections.<String> emptyList());
+        True.<MethodInfo> all(), Mutator.defaults());
   }
 
   private void testWithExpected(String expected, String className) {

@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -62,18 +61,13 @@ public abstract class MutatorTestBase {
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
       final MethodMutatorFactory... mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        Arrays.asList(mutators), filteredClasses());
-  }
-
-  private Collection<String> filteredClasses() {
-    return Arrays.asList(Logger.class.getName(), StringBuilder.class.getName());
+        Arrays.asList(mutators));
   }
 
   protected void createTesteeWith(final ClassByteArraySource source,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    this.engine = new GregorMutater(source, filter, mutators,
-        filteredClasses());
+    this.engine = new GregorMutater(source, filter, mutators);
   }
 
   protected void createTesteeWith(final Predicate<MethodInfo> filter,
@@ -85,7 +79,7 @@ public abstract class MutatorTestBase {
       final Collection<String> loggingClasses,
       final Collection<MethodMutatorFactory> mutators) {
     this.engine = new GregorMutater(new ClassPathByteArraySource(), filter,
-        mutators, loggingClasses);
+        mutators);
   }
 
   protected void createTesteeWith(

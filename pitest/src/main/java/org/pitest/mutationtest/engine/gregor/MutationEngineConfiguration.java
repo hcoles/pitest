@@ -24,6 +24,4 @@ public interface MutationEngineConfiguration {
 
   Predicate<MethodInfo> methodFilter();
 
-  Collection<String> doNotMutateCallsTo();
-
 }

@@ -16,7 +16,6 @@ package org.pitest.mutationtest.engine.gregor;
 
 import static org.pitest.functional.prelude.Prelude.and;
 import static org.pitest.functional.prelude.Prelude.not;
-import static org.pitest.util.Functions.classNameToJVMClassName;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,17 +47,13 @@ public class GregorMutater implements Mutater {
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
   private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
-  private final Set<String>               loggingClasses = new HashSet<String>();
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
-      final Collection<MethodMutatorFactory> mutators,
-      final Collection<String> loggingClasses) {
+      final Collection<MethodMutatorFactory> mutators) {
     this.filter = filter;
     this.mutators.addAll(mutators);
     this.byteSource = byteSource;
-    this.loggingClasses.addAll(FCollection.map(loggingClasses,
-        classNameToJVMClassName()));
   }
 
   @Override
@@ -100,7 +95,7 @@ public class GregorMutater implements Mutater {
   private PremutationClassInfo performPreScan(final byte[] classToMutate) {
     final ClassReader reader = new ClassReader(classToMutate);
 
-    final PreMutationAnalyser an = new PreMutationAnalyser(this.loggingClasses);
+    final PreMutationAnalyser an = new PreMutationAnalyser();
     reader.accept(an, 0);
     return an.getClassInfo();
 

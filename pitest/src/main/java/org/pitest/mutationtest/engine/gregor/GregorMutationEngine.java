@@ -34,19 +34,17 @@ import org.pitest.mutationtest.engine.MutationEngine;
 public class GregorMutationEngine implements MutationEngine {
 
   private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
-  private final Set<String>               loggingClasses    = new LinkedHashSet<String>();
   private final Predicate<MethodInfo>     methodFilter;
 
   public GregorMutationEngine(final MutationEngineConfiguration config) {
     this.methodFilter = config.methodFilter();
     this.mutationOperators.addAll(config.mutators());
-    this.loggingClasses.addAll(config.doNotMutateCallsTo());
   }
 
   @Override
   public Mutater createMutator(final ClassByteArraySource byteSource) {
     return new GregorMutater(byteSource, this.methodFilter,
-        this.mutationOperators, this.loggingClasses);
+        this.mutationOperators);
   }
 
   @Override

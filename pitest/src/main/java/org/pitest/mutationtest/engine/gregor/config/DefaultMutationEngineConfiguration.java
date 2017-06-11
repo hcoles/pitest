@@ -25,25 +25,17 @@ public class DefaultMutationEngineConfiguration implements
 MutationEngineConfiguration {
 
   private final Predicate<MethodInfo>                      methodFilter;
-  private final Collection<String>                         doNotMutate;
   private final Collection<? extends MethodMutatorFactory> mutators;
 
   public DefaultMutationEngineConfiguration(final Predicate<MethodInfo> filter,
-      final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators) {
     this.methodFilter = filter;
-    this.doNotMutate = loggingClasses;
     this.mutators = mutators;
   }
 
   @Override
   public Collection<? extends MethodMutatorFactory> mutators() {
     return this.mutators;
-  }
-
-  @Override
-  public Collection<String> doNotMutateCallsTo() {
-    return this.doNotMutate;
   }
 
   @Override

@@ -15,27 +15,25 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.True;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.NAKED_RECEIVER;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.NAKED_RECEIVER;
+import org.junit.Before;
+import org.junit.Test;
+import org.pitest.functional.FunctionalList;
+import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(True.<MethodInfo>all(), NAKED_RECEIVER);
+    createTesteeWith(mutateOnlyCallMethod(), NAKED_RECEIVER);
   }
 
   @Test
@@ -74,7 +72,8 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   public void shouldRemoveDslMethods() throws Exception {
     FunctionalList<MutationDetails> mutations = findMutationsFor(
         HasDslMethodCall.class);
-    assertThat(mutations).hasSize(1);
+    // stringbuilder matches pattern for a dsl
+    assertThat(mutations).hasSize(3);
 
     final Mutant mutant = getFirstMutant(HasDslMethodCall.class);
     assertMutantCallableReturns(new HasDslMethodCall(), mutant, "HasDslMethodCall [i=3]");

@@ -28,7 +28,7 @@ public class StaticInitializerInterceptorTest {
   public void setup() {
     ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
-    mutator = new GregorMutater(source, True.<MethodInfo>all(), mutators, Collections.<String>emptyList());
+    mutator = new GregorMutater(source, True.<MethodInfo>all(), mutators);
     testee = new StaticInitializerInterceptor();
   }
 

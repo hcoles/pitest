@@ -121,7 +121,7 @@ public class MutationCoverage {
 
     final MutationEngine engine = this.strategies.factory().createEngine(
         Prelude.or(this.data.getExcludedMethods()),
-        this.data.getLoggingClasses(), this.data.getMutators());
+        this.data.getMutators());
 
     final List<MutationResultListener> config = createConfig(t0, coverageData,
         stats, engine);

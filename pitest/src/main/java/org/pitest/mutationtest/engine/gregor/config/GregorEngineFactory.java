@@ -30,20 +30,18 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   @Override
   public MutationEngine createEngine(
       final Predicate<String> excludedMethods,
-      final Collection<String> loggingClasses,
       final Collection<String> mutators) {
     return createEngineWithMutators(excludedMethods,
-        loggingClasses, createMutatorListFromArrayOrUseDefaults(mutators));
+           createMutatorListFromArrayOrUseDefaults(mutators));
   }
 
   public MutationEngine createEngineWithMutators(
       final Predicate<String> excludedMethods,
-      final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
     final Predicate<MethodInfo> filter = Prelude.not(stringToMethodInfoPredicate(excludedMethods));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        filter, loggingClasses, mutators);
+        filter, mutators);
     return new GregorMutationEngine(config);
   }
 

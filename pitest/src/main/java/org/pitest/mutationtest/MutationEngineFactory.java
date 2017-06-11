@@ -10,7 +10,6 @@ public interface MutationEngineFactory extends ClientClasspathPlugin {
 
   MutationEngine createEngine(
       Predicate<String> excludedMethods,
-      Collection<String> loggingClasses,
       Collection<String> mutators);
 
   String name();
