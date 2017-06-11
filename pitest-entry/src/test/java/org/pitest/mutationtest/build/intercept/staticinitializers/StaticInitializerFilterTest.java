@@ -6,13 +6,9 @@ import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDeta
 import java.util.Collection;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerFilter;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.PoisonStatus;
 
-@RunWith(MockitoJUnitRunner.class)
 public class StaticInitializerFilterTest {
   
   StaticInitializerFilter testee  = new StaticInitializerFilter();  

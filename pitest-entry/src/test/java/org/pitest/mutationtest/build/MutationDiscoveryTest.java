@@ -31,6 +31,9 @@ import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.util.Glob;
 import org.pitest.util.ResourceFolderByteArraySource;
 
+/**
+ * Tests discovery of mutants - including the full default interceptor chain
+ */
 public class MutationDiscoveryTest {
   
   ReportOptions data = new ReportOptions();
@@ -108,7 +111,27 @@ public class MutationDiscoveryTest {
     Collection<MutationDetails> unfiltered = findMutants(clazz);
     
     assertThat(filtered.size()).isLessThan(unfiltered.size());
-
+  }
+  
+  @Test
+  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithJavac() {
+    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_javac");
+    Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).hasSize(1);
+  }
+  
+  @Test
+  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithEcj() {
+    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_ecj");
+    Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).hasSize(1);
+  }
+  
+  @Test
+  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithApectj() {
+    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_aspectj");
+    Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).hasSize(1);
   }
   
   @Test 

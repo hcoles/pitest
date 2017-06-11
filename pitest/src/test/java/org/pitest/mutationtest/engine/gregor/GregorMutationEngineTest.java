@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.True;

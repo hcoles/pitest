@@ -80,25 +80,14 @@ public class GregorMutater implements Mutater {
   private Collection<MutationDetails> findMutationsForBytes(
       final ClassContext context, final byte[] classToMutate) {
 
-    final PremutationClassInfo classInfo = performPreScan(classToMutate);
-
     final ClassReader first = new ClassReader(classToMutate);
     final NullVisitor nv = new NullVisitor();
     final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
-        filterMethods(), classInfo, this.mutators);
+        filterMethods(), this.mutators);
 
     first.accept(mca, ClassReader.EXPAND_FRAMES);
 
     return context.getCollectedMutations();
-  }
-
-  private PremutationClassInfo performPreScan(final byte[] classToMutate) {
-    final ClassReader reader = new ClassReader(classToMutate);
-
-    final PreMutationAnalyser an = new PreMutationAnalyser();
-    reader.accept(an, 0);
-    return an.getClassInfo();
-
   }
 
   @Override
@@ -110,13 +99,11 @@ public class GregorMutater implements Mutater {
     final Option<byte[]> bytes = this.byteSource.getBytes(id.getClassName()
         .asJavaName());
 
-    final PremutationClassInfo classInfo = performPreScan(bytes.value());
-
     final ClassReader reader = new ClassReader(bytes.value());
     final ClassWriter w = new ComputeClassWriter(this.byteSource,
         this.computeCache, FrameOptions.pickFlags(bytes.value()));
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
-        filterMethods(), classInfo, FCollection.filter(this.mutators,
+        filterMethods(), FCollection.filter(this.mutators,
             isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
