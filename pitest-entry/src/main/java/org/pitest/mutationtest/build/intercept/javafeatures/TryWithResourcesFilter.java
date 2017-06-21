@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.ClassTree;
 import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MethodTree;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;

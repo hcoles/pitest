@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.objectweb.asm.tree.AnnotationNode;
+import org.pitest.bytecode.analysis.AnalysisFunctions;
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.AnalysisFunctions;
-import org.pitest.mutationtest.build.ClassTree;
 import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MethodTree;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;

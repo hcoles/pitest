@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build;
+package org.pitest.bytecode.analysis;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AnnotationNode;

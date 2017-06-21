@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
