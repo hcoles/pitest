@@ -4,9 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.Predicate;
-
 public class SequenceQuery<T> {
   
   private final Partial<T> token;
@@ -15,7 +12,7 @@ public class SequenceQuery<T> {
     this.token = token;
   }
 
-  public SequenceQuery<T> then(Predicate< T> next) {
+  public SequenceQuery<T> then(Match<T> next) {
     return then(new SequenceQuery<T>(new Literal<T>(next)));
   }
 
@@ -41,20 +38,18 @@ public class SequenceQuery<T> {
     return new SequenceQuery<T>(concat);
   }
   
-
-
   public SequenceQuery<T> oneOrMore(SequenceQuery<T> next) {
     final Concat<T> concat = new Concat<T>(this.token, new Plus<T>(next.token));
     return new SequenceQuery<T>(concat);
   }
   
   public SequenceMatcher<T> compile() {
-    return compileIgnoring(False.<T>instance());
+    return compileIgnoring(Match.<T>never());
   }
 
   @SuppressWarnings("unchecked")
-  public SequenceMatcher<T> compileIgnoring(Predicate<T> ignoring) {
-    return new NFASequenceMatcher<T>(ignoring, this.token.make(Match.MATCH));
+  public SequenceMatcher<T> compileIgnoring(Match<T> ignoring) {
+    return new NFASequenceMatcher<T>(ignoring, this.token.make(EndMatch.MATCH));
   }
 
   interface Partial<T> {
@@ -62,9 +57,9 @@ public class SequenceQuery<T> {
   }
 
   static class Literal<T> implements Partial<T> {
-    Predicate< T> c;
+    Match< T> c;
 
-    Literal(Predicate<  T> p) {
+    Literal(Match<  T> p) {
       this.c = p;
     }
 
@@ -144,10 +139,10 @@ public class SequenceQuery<T> {
 
 class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
-  private final Predicate<T> ignore;
+  private final Match<T> ignore;
   private final State<T> start;
 
-  NFASequenceMatcher( Predicate<T> ignore, State<T> state) {
+  NFASequenceMatcher(Match<T> ignore, State<T> state) {
     this.ignore = ignore;
     this.start = state;
   }
@@ -155,17 +150,21 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
   @Override
   public boolean matches(List<T> sequence) {
     Set<State<T>> currentState = new HashSet<State<T>>();
+    Context<T> context = Context.start(sequence);
 
     addstate(currentState, this.start);
 
     for (int i = 0; i != sequence.size(); i++) {
+      
+      // FIXME not using peak ahead so can context be removed?
+      context = context.moveForward();
       final T c = sequence.get(i);
       
-      if (ignore.apply(c)) {
+      if (ignore.test(context, c)) {
         continue;
       }
       
-      final Set<State<T>> nextStates = step(currentState, c);
+      final Set<State<T>> nextStates = step(context, currentState, c);
       currentState = nextStates;
     }
     return isMatch(currentState);
@@ -185,13 +184,13 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
   }
 
-  private static <T> Set<State<T>> step(Set<State<T>> currentState, T c) {
+  private static <T> Set<State<T>> step(Context<T> context, Set<State<T>> currentState, T c) {
 
     final Set<State<T>> nextStates = new HashSet<State<T>>();
     for (final State<T> each : currentState) {
       if (each instanceof Consume) {
         final Consume<T> consume = (Consume<T>) each;
-        if (consume.c.apply(c)) {
+        if (consume.c.test(context, c)) {
           addstate(nextStates, consume.out);
         }
       }
@@ -200,7 +199,7 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
   }
 
   private static <T> boolean isMatch(Set<State<T>> currentState) {
-    return currentState.contains(Match.MATCH);
+    return currentState.contains(EndMatch.MATCH);
   }
 
 }
@@ -210,16 +209,16 @@ interface State<T> {
 }
 
 class Consume<T> implements State<T> {
-  final Predicate< T> c;
+  final Match< T> c;
   State<T>           out;
 
-  Consume(Predicate<T> c, State<T> out) {
+  Consume(Match<T> c, State<T> out) {
     this.c = c;
     this.out = out;
   }
   
-  boolean matches(T t) {
-    return c.apply(t);
+  boolean matches(Context<T> context, T t) {
+    return c.test(context, t);
   }
 }
 
@@ -234,6 +233,6 @@ class Split<T> implements State<T> {
 }
 
 @SuppressWarnings("rawtypes")
-enum Match implements State {
+enum EndMatch implements State {
   MATCH;
 }

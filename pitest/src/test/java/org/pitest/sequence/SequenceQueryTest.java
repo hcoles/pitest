@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.functional.predicate.Predicate;
 
 public class SequenceQueryTest {
 
@@ -29,9 +28,9 @@ public class SequenceQueryTest {
        .then(eq(3))
        .compile();
 
-    assertTrue(testee.matches( asList(1, 2, 3)));
-    assertFalse(testee.matches( asList(1, 2)));
-    assertFalse(testee.matches( asList(1, 2, 3, 4)));
+    assertTrue(testee.matches(asList(1, 2, 3)));
+    assertFalse(testee.matches(asList(1, 2)));
+    assertFalse(testee.matches(asList(1, 2, 3, 4)));
   }
 
   @Test
@@ -43,9 +42,9 @@ public class SequenceQueryTest {
        .or(right)
        .compile();
 
-    assertTrue(testee.matches( asList(1)));
-    assertTrue(testee.matches( asList(2)));
-    assertFalse(testee.matches( asList(3)));
+    assertTrue(testee.matches(asList(1)));
+    assertTrue(testee.matches(asList(2)));
+    assertFalse(testee.matches(asList(3)));
   }
 
   @Test
@@ -57,11 +56,11 @@ public class SequenceQueryTest {
        .zeroOrMore(right)
        .compile();
 
-    assertTrue(testee.matches( asList(1)));
-    assertTrue(testee.matches( asList(1, 2)));
-    assertTrue(testee.matches( asList(1, 2, 2, 2)));
-    assertFalse(testee.matches( asList(1, 2, 3)));
-    assertFalse(testee.matches( asList(1, 3)));
+    assertTrue(testee.matches(asList(1)));
+    assertTrue(testee.matches(asList(1, 2)));
+    assertTrue(testee.matches(asList(1, 2, 2, 2)));
+    assertFalse(testee.matches(asList(1, 2, 3)));
+    assertFalse(testee.matches(asList(1, 3)));
   }
 
   @Test
@@ -73,11 +72,11 @@ public class SequenceQueryTest {
        .oneOrMore(right)
        .compile();
 
-    assertFalse(testee.matches( asList(1)));
-    assertTrue(testee.matches( asList(1, 2)));
-    assertTrue(testee.matches( asList(1, 2, 2, 2)));
-    assertFalse(testee.matches( asList(1, 2, 3)));
-    assertFalse(testee.matches( asList(1, 3)));
+    assertFalse(testee.matches(asList(1)));
+    assertTrue(testee.matches(asList(1, 2)));
+    assertTrue(testee.matches(asList(1, 2, 2, 2)));
+    assertFalse(testee.matches(asList(1, 2, 3)));
+    assertFalse(testee.matches(asList(1, 3)));
   }
 
   @Test
@@ -86,26 +85,31 @@ public class SequenceQueryTest {
 
     SequenceQuery<Integer> right = QueryStart.match(eq(3));
 
-   SequenceMatcher<Integer> testee = QueryStart.match(eq(1))
+    SequenceMatcher<Integer> testee = QueryStart.match(eq(1))
         .thenAnyOf(left, right)
         .then(eq(99))
         .compile();
 
-    assertTrue(testee.matches( asList(1, 2, 99)));
-    assertTrue(testee.matches( asList(1, 3, 99)));
-    assertFalse(testee.matches( asList(1, 2)));
-    assertFalse(testee.matches( asList(1, 2, 3, 99)));
+    assertTrue(testee.matches(asList(1, 2, 99)));
+    assertTrue(testee.matches(asList(1, 3, 99)));
+    assertFalse(testee.matches(asList(1, 2)));
+    assertFalse(testee.matches(asList(1, 2, 3, 99)));
+  }
+  
+  @Test
+  public void shouldSkipItemsMatchingIgnoreList() {
+    SequenceMatcher<Integer> testee = QueryStart
+        .match(eq(1))
+        .then(eq(2))
+        .compileIgnoring(eq(99));
+    
+    assertTrue(testee.matches(asList(1, 99, 2)));
   }
 
-  private Predicate<Integer> eq(final int i) {
-    return new Predicate<Integer>() {
-      @Override
-      public Boolean apply(Integer t) {
-        return t.equals(i);
-      }
-    };
+  private Match<Integer> eq(final int i) {
+    return Match.isEqual(i);
   }
-
+  
   private static List<Integer> asList(Integer... is) {
     return Arrays.asList(is);
   }

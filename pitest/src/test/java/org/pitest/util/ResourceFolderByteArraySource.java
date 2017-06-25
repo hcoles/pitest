@@ -21,7 +21,6 @@ public class ResourceFolderByteArraySource implements ClassByteArraySource {
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
-
   }
 
 }
