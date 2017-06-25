@@ -20,6 +20,10 @@ import org.pitest.sequence.SlotWrite;
 
 public class InstructionMatchers {
   
+  public static Match<AbstractInsnNode> anyInstruction() {
+    return Match.always();
+  }
+  
   public static Match<AbstractInsnNode> opCode(final int opcode) {
     return new Match<AbstractInsnNode>() {
       @Override
@@ -38,15 +42,6 @@ public class InstructionMatchers {
       }
     };
   }
-
-  public static <T> Match<T> any(Class<T> t) {
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T a) {
-        return true;
-      }
-    };
-  };
 
   public static <T> Match<T> matchAndStore(final Match<T> target,
       final SlotWrite<T> slot) {
@@ -74,7 +69,6 @@ public class InstructionMatchers {
           return false;
         }
       }
-      
     };
   }
 

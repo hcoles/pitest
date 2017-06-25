@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class MatchTest {
 
-  private Context unused = null;
+  private Context<Integer> unused = null;
 
   @Test
   public void alwaysShouldAlwaysMatch() {

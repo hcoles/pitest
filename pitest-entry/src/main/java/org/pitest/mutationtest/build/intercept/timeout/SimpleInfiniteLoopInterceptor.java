@@ -4,7 +4,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aReturn;
-import static org.pitest.bytecode.analysis.InstructionMatchers.any;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
@@ -41,6 +41,19 @@ import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 
+/**
+ * Removes mutants that will create infinite loops.
+ * 
+ * Types of infinite loop detected
+ *   For loops without increments
+ *   While loops with check on counter without increments
+ *   Iterator loops without call to iterator.next (NOT yet implemented)
+ *   For loops with conditional hard coded to true (NOT yet implemented)
+ *   While loop with conditional hard coded to true (NOT yet implemented)
+ *
+ * Check is not designed to catch all possible infinite loops. Aim is to improve
+ * performance by reducing number of mutants that timeout (costing about 4 seconds).
+ */
 public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
 
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
@@ -74,7 +87,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       .then(matchAndStore(isA(LabelNode.class), LOOP_START.write()))
       .zeroOrMore(DOES_NOT_BREAK_LOOP)
       .then(load(COUNTER_VARIABLE.read()))
-      .then(any(AbstractInsnNode.class))
+      .then(anyInstruction())
       .then(jumpsTo(LOOP_START.read()))
       // can't currently deal with loops with conditionals that cause additional jumps back
       .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START.read()).negate()));

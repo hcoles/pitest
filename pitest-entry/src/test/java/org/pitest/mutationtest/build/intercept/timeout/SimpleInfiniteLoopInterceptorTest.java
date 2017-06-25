@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.timeout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.bytecode.analysis.MethodMatchers.named;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.functional.Option;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
@@ -54,92 +56,98 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementJavac() {
-    checkFiltered(HasForLoops.class, Compiler.javac, "infiniteNoIncrement");
+  public void shouldFindInfiniteLoopsInForLoopWithNoIncrement() {
+    checkFiltered(HasForLoops.class, "infiniteNoIncrement");
   }
-  
-  @Test
-  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementEclipse() {
-    checkFiltered(HasForLoops.class, Compiler.eclipse, "infiniteNoIncrement");
-  }
-  
-  
+    
   @Test
   public void shouldNotFindInfiniteLoopsInCodeWithNoLoops() {
-    checkNotFiltered(HasForLoops.class, Compiler.javac, "noLoop");
-    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "noLoop");
-  }
-
-  @Test
-  public void shouldNotFindInfiniteLoopsInValidForLoopJavaC() {
-    checkNotFiltered(HasForLoops.class, Compiler.javac, "normalLoop");
+    checkNotFiltered(HasForLoops.class, "noLoop");
   }
   
   @Test
-  public void shouldNotFindInfiniteLoopsInValidForLoopEclipse() {
-    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "normalLoop");
+  public void shouldNotFindInfiniteLoopsInValidForLoop() {
+    checkNotFiltered(HasForLoops.class, "normalLoop");
+  }
+    
+  @Test
+  public void shouldNotFindInfiniteLoopsInForLoopWithNonConditionalIncrementInLoop() {
+    checkNotFiltered(HasForLoops.class, "incrementInsideLoop");
+  }
+    
+  @Test
+  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalIncrementInLoop() {
+    checkNotFiltered(HasForLoops.class, "incrementInsideLoopConditionally");
   }
   
   @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithNonConditionalIncrementInLoopJavac() {
-    checkNotFiltered(HasForLoops.class, Compiler.javac, "incrementInsideLoop");
+  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturn() {
+    checkNotFiltered(HasForLoops.class, "returnsInLoop");
   }
   
   @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithNonConditionalIncrementInLoopEclipse() {
-    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "incrementInsideLoop");
-  }
-  
-  @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalIncrementInLoopJavac() {
-    checkNotFiltered(HasForLoops.class, Compiler.javac, "incrementInsideLoopConditionally");
-  }
-  
-  @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalIncrementInLoopEclipse() {
-    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "incrementInsideLoopConditionally");
-  }
-  
-  @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturnEclipse() {
-    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "returnsInLoop");
-  }
-  
-  @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturnJavac() {
-    checkNotFiltered(HasForLoops.class, Compiler.javac, "returnsInLoop");
+  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalBreak() {
+    checkNotFiltered(HasForLoops.class, "brokenByBreak");
   }
   
   @Test
   public void shouldFindInfiniteLoopsInForLoopWithNoIncrementAndBranchedContents() {
-    checkFiltered(HasForLoops.class, Compiler.javac, "infiniteMoreComplex");
-    checkFiltered(HasForLoops.class, Compiler.eclipse, "infiniteMoreComplex");    
+    checkFiltered(HasForLoops.class, "infiniteMoreComplex");    
   }
   
   @Test
   public void shouldNotFindInfiniteLoopsInWhileLoopWithIncrement() {
-    checkNotFiltered(HasWhileLoops.class, Compiler.javac, "simpleWhile");
-    checkNotFiltered(HasWhileLoops.class, Compiler.eclipse, "simpleWhile");
+    checkNotFiltered(HasWhileLoops.class, "simpleWhile");
   }
   
   @Test
   public void shouldNotFindInfiniteLoopsInDoWhileLoopWithIncrement() {
-    checkNotFiltered(HasWhileLoops.class, Compiler.javac, "simpleDoWhile");
-    checkNotFiltered(HasWhileLoops.class, Compiler.eclipse, "simpleDoWhile");
+    checkNotFiltered(HasWhileLoops.class, "simpleDoWhile");
   }
   
   @Test
   public void willNotFindInfiniteLoopsInInfiniteWhileLoop() {
     // would prefer it to filter
-    checkNotFiltered(HasWhileLoops.class, Compiler.eclipse, "infiniteWhile"); 
+    checkNotFiltered(HasWhileLoops.class, "infiniteWhile"); 
   }
   
+  private void checkNotFiltered(Class<?> clazz, String method) {
+    boolean testedSomething = false;
+    for (Compiler each : Compiler.values()) {
+      Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+          method);
+      for (MethodTree m : mt) {
+        assertThat(SimpleInfiniteLoopInterceptor.INFINITE_LOOP
+            .matches(m.instructions()))
+                .describedAs("With " + each
+                    + " compiler matched when it shouldn't " + toString(m))
+                .isFalse();
+        testedSomething = true;
+      }
 
-  private void checkFiltered(Class<?> clazz, Compiler compiler, String method) {
-    MethodTree mt = parseMethodFromCompiledResource(clazz, compiler, method);
-    assertThat(SimpleInfiniteLoopInterceptor.INFINITE_LOOP.matches(mt.instructions()))
-    .describedAs("Did not match as expected " + toString(mt))
-    .isTrue();
+    }
+    if (!testedSomething) {
+      fail("No samples found for test");
+    }
+  }
+  
+  private void checkFiltered(Class<?> clazz, String method) {
+    boolean testedSomething = false;
+    for (Compiler each : Compiler.values()) {
+      Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+          method);
+      for (MethodTree m : mt) {
+        assertThat(SimpleInfiniteLoopInterceptor.INFINITE_LOOP
+            .matches(m.instructions()))
+                .describedAs("With " + each
+                    + " compiler did not match as expected " + toString(m))
+                .isTrue();
+        testedSomething = true;
+      }
+    }
+    if (!testedSomething) {
+      fail("No samples found for test");
+    }
   }
   
   private String toString(MethodTree mt) {
@@ -155,19 +163,17 @@ public class SimpleInfiniteLoopInterceptorTest {
     return "Byte code is \n" + new String(bos.toByteArray());
   }
 
-  private void checkNotFiltered(Class<?> clazz, Compiler compiler, String method) {
-    MethodTree mt = parseMethodFromCompiledResource(clazz, compiler, method);
-    assertThat(SimpleInfiniteLoopInterceptor.INFINITE_LOOP.matches(mt.instructions()))
-    .describedAs("Matched when it shouldn't " + toString(mt))
-    .isFalse();
-  }
 
-  private MethodTree parseMethodFromCompiledResource(Class<?> clazz,
+
+  private Option<MethodTree> parseMethodFromCompiledResource(Class<?> clazz,
       Compiler compiler, String method) {
     ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
-    byte[] bs = source.getBytes("loops/" + compiler.name() + "/" + ClassName.fromClass(clazz).getNameWithoutPackage().asJavaName()).value();
-    ClassTree tree = ClassTree.fromBytes(bs);
-    return tree.methods().findFirst(named(method)).value();
+    Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + ClassName.fromClass(clazz).getNameWithoutPackage().asJavaName());
+    for (byte[] bytes : bs) {
+      ClassTree tree = ClassTree.fromBytes(bytes);
+      return tree.methods().findFirst(named(method)); 
+    }
+    return Option.none();
   }
   
   private ClassTree forClass(Class<?> clazz) {
@@ -237,6 +243,16 @@ class HasForLoops {
       }
     }
   }
+  
+  public void brokenByBreak() {
+    int j = 0;
+    for (int i = 0; i != 10;) {
+      if ( j > 10 ) {
+        break;
+      }
+      j = j + 1;
+    }
+  }
 }
 
 class HasWhileLoops {
@@ -274,6 +290,6 @@ class MutateMyForLoop {
 }
 
 enum Compiler {
-  javac, eclipse
+  eclipse, javac
 }
 
