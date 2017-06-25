@@ -3,6 +3,7 @@ package org.pitest.mutationtest.build.intercept.timeout;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
+import static org.pitest.bytecode.analysis.InstructionMatchers.aReturn;
 import static org.pitest.bytecode.analysis.InstructionMatchers.any;
 import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
@@ -47,10 +48,11 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   private static final Slot<AbstractInsnNode> LOOP_START       = Slot.create(AbstractInsnNode.class);
   private static final Slot<Integer>          COUNTER_VARIABLE = Slot.create(Integer.class);
   
-  // need to negate a sequence
-  static final SequenceQuery<AbstractInsnNode> DOES_NOT_MODIFY_COUNTER = QueryStart
+  private static final SequenceQuery<AbstractInsnNode> DOES_NOT_BREAK_LOOP = QueryStart
       .match(storesTo(COUNTER_VARIABLE)
-          .or(increments(COUNTER_VARIABLE)).negate());
+          .or(increments(COUNTER_VARIABLE))
+          .or(aReturn())
+          .negate());
           
   static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_START = QueryStart
       .any(AbstractInsnNode.class)
@@ -59,7 +61,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       .then(load(COUNTER_VARIABLE))
       .then(aPush())
       .then(aConditionalJump())
-      .zeroOrMore(DOES_NOT_MODIFY_COUNTER)
+      .zeroOrMore(DOES_NOT_BREAK_LOOP)
       .then(jumpsTo(LOOP_START))
       // can't currently deal with loops with conditionals that cause additional jumps back
       .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START).negate()));
@@ -70,7 +72,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       .then(isA(LabelNode.class))
       .then(aJump())
       .then(matchAndStore(isA(LabelNode.class), LOOP_START))
-      .zeroOrMore(DOES_NOT_MODIFY_COUNTER)
+      .zeroOrMore(DOES_NOT_BREAK_LOOP)
       .then(load(COUNTER_VARIABLE))
       .then(any(AbstractInsnNode.class))
       .then(jumpsTo(LOOP_START))

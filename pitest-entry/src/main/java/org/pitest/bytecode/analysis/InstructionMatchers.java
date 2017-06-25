@@ -1,5 +1,12 @@
 package org.pitest.bytecode.analysis;
 
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LRETURN;
+import static org.objectweb.asm.Opcodes.RETURN;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
@@ -137,6 +144,15 @@ public class InstructionMatchers {
   
   public static Match<AbstractInsnNode> aPush() {
     return opCode(Opcodes.BIPUSH).or(opCode(Opcodes.SIPUSH));
+  }
+  
+  public static Match<AbstractInsnNode> aReturn() {
+    return opCode(IRETURN)
+        .or(opCode(LRETURN))
+        .or(opCode(FRETURN))
+        .or(opCode(DRETURN))
+        .or(opCode(ARETURN))
+        .or(opCode(RETURN));
   }
   
   public static Match<AbstractInsnNode> aJump() {

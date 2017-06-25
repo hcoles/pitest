@@ -42,6 +42,29 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
+  public void shouldFilterMutationsThatRemoveForLoopIncrement() {
+    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForLoop.class));
+    assertThat(mutations).hasSize(2);
+    
+    testee.begin(forClass(MutateMyForLoop.class));
+    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
+    testee.end();
+    
+    assertThat(actual).hasSize(1);   
+  }
+  
+  @Test
+  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementJavac() {
+    checkFiltered(HasForLoops.class, Compiler.javac, "infiniteNoIncrement");
+  }
+  
+  @Test
+  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementEclipse() {
+    checkFiltered(HasForLoops.class, Compiler.eclipse, "infiniteNoIncrement");
+  }
+  
+  
+  @Test
   public void shouldNotFindInfiniteLoopsInCodeWithNoLoops() {
     checkNotFiltered(HasForLoops.class, Compiler.javac, "noLoop");
     checkNotFiltered(HasForLoops.class, Compiler.eclipse, "noLoop");
@@ -78,13 +101,13 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementJavac() {
-    checkFiltered(HasForLoops.class, Compiler.javac, "infiniteNoIncrement");
+  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturnEclipse() {
+    checkNotFiltered(HasForLoops.class, Compiler.eclipse, "returnsInLoop");
   }
   
   @Test
-  public void shouldFindInfiniteLoopsInForLoopWithNoIncrementEclipse() {
-    checkFiltered(HasForLoops.class, Compiler.eclipse, "infiniteNoIncrement");
+  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturnJavac() {
+    checkNotFiltered(HasForLoops.class, Compiler.javac, "returnsInLoop");
   }
   
   @Test
@@ -106,16 +129,11 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldFilterMutationsThatRemoveForLoopIncrement() {
-    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForLoop.class));
-    assertThat(mutations).hasSize(2);
-    
-    testee.begin(forClass(MutateMyForLoop.class));
-    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
-    testee.end();
-    
-    assertThat(actual).hasSize(1);   
+  public void willNotFindInfiniteLoopsInInfiniteWhileLoop() {
+    // would prefer it to filter
+    checkNotFiltered(HasWhileLoops.class, Compiler.eclipse, "infiniteWhile"); 
   }
+  
 
   private void checkFiltered(Class<?> clazz, Compiler compiler, String method) {
     MethodTree mt = parseMethodFromCompiledResource(clazz, compiler, method);
@@ -206,6 +224,16 @@ class HasForLoops {
         System.out.println("7 " + i);
       } else {
         continue;
+      }
+    }
+  }
+  
+  public void returnsInLoop() {
+    int j = 0;
+    for (int i = 0; i != 10;) {
+      j = j + 1;
+      if ( j > 10 ) {
+        return;
       }
     }
   }
