@@ -22,15 +22,13 @@ public class Context<T> {
     return new Context<T>(new HashMap<Slot<?>, Object>(), sequence, -1);
   }
   
-  public <S> void store(Slot<S> slot, S value) {
-    System.out.println("Storing " + value + " in " + slot);
-    slots.put(slot, value);
+  public <S> void store(SlotWrite<S> slot, S value) {
+    slots.put(slot.slot(), value);
   }
   
   @SuppressWarnings("unchecked")
-  public <S> Option<S> retrieve(Slot<S> slot) {
-    System.out.println("Retrieving " + slot);
-    return (Option<S>) Option.some(slots.get(slot));
+  public <S> Option<S> retrieve(SlotRead<S> slot) {
+    return (Option<S>) Option.some(slots.get(slot.slot()));
   }
   
   

@@ -49,35 +49,35 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   private static final Slot<Integer>          COUNTER_VARIABLE = Slot.create(Integer.class);
   
   private static final SequenceQuery<AbstractInsnNode> DOES_NOT_BREAK_LOOP = QueryStart
-      .match(storesTo(COUNTER_VARIABLE)
-          .or(increments(COUNTER_VARIABLE))
+      .match(storesTo(COUNTER_VARIABLE.read())
+          .or(increments(COUNTER_VARIABLE.read()))
           .or(aReturn())
           .negate());
           
   static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_START = QueryStart
       .any(AbstractInsnNode.class)
-      .then(stores(COUNTER_VARIABLE))
-      .then(matchAndStore(isA(LabelNode.class), LOOP_START))
-      .then(load(COUNTER_VARIABLE))
+      .then(stores(COUNTER_VARIABLE.write()))
+      .then(matchAndStore(isA(LabelNode.class), LOOP_START.write()))
+      .then(load(COUNTER_VARIABLE.read()))
       .then(aPush())
       .then(aConditionalJump())
       .zeroOrMore(DOES_NOT_BREAK_LOOP)
-      .then(jumpsTo(LOOP_START))
+      .then(jumpsTo(LOOP_START.read()))
       // can't currently deal with loops with conditionals that cause additional jumps back
-      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START).negate()));
+      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START.read()).negate()));
   
   static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_END = QueryStart
       .any(AbstractInsnNode.class)
-      .then(stores(COUNTER_VARIABLE))
+      .then(stores(COUNTER_VARIABLE.write()))
       .then(isA(LabelNode.class))
       .then(aJump())
-      .then(matchAndStore(isA(LabelNode.class), LOOP_START))
+      .then(matchAndStore(isA(LabelNode.class), LOOP_START.write()))
       .zeroOrMore(DOES_NOT_BREAK_LOOP)
-      .then(load(COUNTER_VARIABLE))
+      .then(load(COUNTER_VARIABLE.read()))
       .then(any(AbstractInsnNode.class))
-      .then(jumpsTo(LOOP_START))
+      .then(jumpsTo(LOOP_START.read()))
       // can't currently deal with loops with conditionals that cause additional jumps back
-      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START).negate()));
+      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START.read()).negate()));
   
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())

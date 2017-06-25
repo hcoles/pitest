@@ -15,7 +15,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
-import org.pitest.sequence.Slot;
+import org.pitest.sequence.SlotRead;
+import org.pitest.sequence.SlotWrite;
 
 public class InstructionMatchers {
   
@@ -48,7 +49,7 @@ public class InstructionMatchers {
   };
 
   public static <T> Match<T> matchAndStore(final Match<T> target,
-      final Slot<T> slot) {
+      final SlotWrite<T> slot) {
     return new Match<T>() {
       @Override
       public boolean test(Context<T> c, T t) {
@@ -62,7 +63,7 @@ public class InstructionMatchers {
     };
   }
 
-  public static Match<AbstractInsnNode> increments(final Slot<Integer> counterVariable) {
+  public static Match<AbstractInsnNode> increments(final SlotRead<Integer> counterVariable) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
@@ -78,7 +79,7 @@ public class InstructionMatchers {
   }
 
   public static Match<AbstractInsnNode> stores(
-      final Slot<Integer> counterVariable) {
+      final SlotWrite<Integer> counterVariable) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
@@ -98,7 +99,7 @@ public class InstructionMatchers {
   }
   
   public static Match<AbstractInsnNode> storesTo(
-      final Slot<Integer> counterVariable) {
+      final SlotRead<Integer> counterVariable) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
@@ -118,7 +119,7 @@ public class InstructionMatchers {
   }
 
   public static Match<AbstractInsnNode> load(
-      final Slot<Integer> counterVariable) {
+      final SlotRead<Integer> counterVariable) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
@@ -168,7 +169,7 @@ public class InstructionMatchers {
   
   
   public static Match<AbstractInsnNode> jumpsTo(
-      final Slot<AbstractInsnNode> loopStart) {
+      final SlotRead<AbstractInsnNode> loopStart) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
