@@ -11,3 +11,4 @@ target/
 *.iml
 .checkstyle
 dependency-reduced-pom.xml
+*/bin

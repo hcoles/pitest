@@ -154,17 +154,15 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
     addstate(currentState, this.start);
 
-    for (int i = 0; i != sequence.size(); i++) {
-      
+    for (T t : sequence) {      
       // FIXME not using peak ahead so can context be removed?
       context = context.moveForward();
-      final T c = sequence.get(i);
       
-      if (ignore.test(context, c)) {
+      if (ignore.test(context, t)) {
         continue;
       }
       
-      final Set<State<T>> nextStates = step(context, currentState, c);
+      final Set<State<T>> nextStates = step(context, currentState, t);
       currentState = nextStates;
     }
     return isMatch(currentState);

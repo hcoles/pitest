@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.timeout;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aJump;
+import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aReturn;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
@@ -9,13 +10,13 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.load;
-import static org.pitest.bytecode.analysis.InstructionMatchers.matchAndStore;
 import static org.pitest.bytecode.analysis.InstructionMatchers.stores;
 import static org.pitest.bytecode.analysis.InstructionMatchers.storesTo;
 import static org.pitest.bytecode.analysis.MethodMatchers.forLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,7 +59,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
 
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
   
-  private static final Slot<AbstractInsnNode> LOOP_START       = Slot.create(AbstractInsnNode.class);
+  private static final Slot<LabelNode> LOOP_START       = Slot.create(LabelNode.class);
   private static final Slot<Integer>          COUNTER_VARIABLE = Slot.create(Integer.class);
   
   private static final SequenceQuery<AbstractInsnNode> DOES_NOT_BREAK_LOOP = QueryStart
@@ -70,7 +71,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_START = QueryStart
       .any(AbstractInsnNode.class)
       .then(stores(COUNTER_VARIABLE.write()))
-      .then(matchAndStore(isA(LabelNode.class), LOOP_START.write()))
+      .then(aLabelNode(LOOP_START.write()))
       .then(load(COUNTER_VARIABLE.read()))
       .then(aPush())
       .then(aConditionalJump())
@@ -84,7 +85,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       .then(stores(COUNTER_VARIABLE.write()))
       .then(isA(LabelNode.class))
       .then(aJump())
-      .then(matchAndStore(isA(LabelNode.class), LOOP_START.write()))
+      .then(aLabelNode(LOOP_START.write()))
       .zeroOrMore(DOES_NOT_BREAK_LOOP)
       .then(load(COUNTER_VARIABLE.read()))
       .then(anyInstruction())
@@ -127,6 +128,12 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       Collection<MutationDetails> mutations, Mutater m) {
     
     MethodTree method = currentClass.methods().findFirst(forLocation(location)).value();
+    
+    //  give up if our matcher thinks loop is already infinite 
+    if (INFINITE_LOOP.matches(method.instructions())) {
+      return Collections.emptyList();
+    }
+    
     List<MutationDetails> timeouts = new ArrayList<MutationDetails>();
     for ( MutationDetails each : mutations ) {
       // avoid cost of static analysis by first checking mutant is on
