@@ -10,6 +10,9 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.load;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.stores;
 import static org.pitest.bytecode.analysis.InstructionMatchers.storesTo;
 import static org.pitest.bytecode.analysis.MethodMatchers.forLocation;
@@ -17,6 +20,7 @@ import static org.pitest.bytecode.analysis.MethodMatchers.forLocation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +31,9 @@ import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -59,47 +65,19 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
 
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
   
-  private static final Slot<LabelNode> LOOP_START       = Slot.create(LabelNode.class);
-  private static final Slot<Integer>          COUNTER_VARIABLE = Slot.create(Integer.class);
-  
-  private static final SequenceQuery<AbstractInsnNode> DOES_NOT_BREAK_LOOP = QueryStart
-      .match(storesTo(COUNTER_VARIABLE.read())
-          .or(increments(COUNTER_VARIABLE.read()))
-          .or(aReturn())
-          .negate());
-          
-  static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_START = QueryStart
-      .any(AbstractInsnNode.class)
-      .then(stores(COUNTER_VARIABLE.write()))
-      .then(aLabelNode(LOOP_START.write()))
-      .then(load(COUNTER_VARIABLE.read()))
-      .then(aPush())
-      .then(aConditionalJump())
-      .zeroOrMore(DOES_NOT_BREAK_LOOP)
-      .then(jumpsTo(LOOP_START.read()))
-      // can't currently deal with loops with conditionals that cause additional jumps back
-      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START.read()).negate()));
-  
-  static final SequenceQuery<AbstractInsnNode> INFINITE_LOOP_CONDITIONAL_AT_END = QueryStart
-      .any(AbstractInsnNode.class)
-      .then(stores(COUNTER_VARIABLE.write()))
-      .then(isA(LabelNode.class))
-      .then(aJump())
-      .then(aLabelNode(LOOP_START.write()))
-      .zeroOrMore(DOES_NOT_BREAK_LOOP)
-      .then(load(COUNTER_VARIABLE.read()))
-      .then(anyInstruction())
-      .then(jumpsTo(LOOP_START.read()))
-      // can't currently deal with loops with conditionals that cause additional jumps back
-      .zeroOrMore(QueryStart.match(jumpsTo(LOOP_START.read()).negate()));
-  
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())
-      .or(INFINITE_LOOP_CONDITIONAL_AT_START)
-      .or(INFINITE_LOOP_CONDITIONAL_AT_END)
+      .or(infiniteCountingLoopConditionAtStart())
+      .or(infiniteCountingLoopConditionAtEnd())
+      .or(inifniteIteratorLoop())
+      .or(infiniteIteratorLoopJavac())
       .compileIgnoring(IGNORE);
       
   private ClassTree currentClass;
+  
+  private static SequenceQuery<AbstractInsnNode> doesNotBreakIteratorLoop() {
+    return QueryStart.match(methodCallTo(ClassName.fromClass(Iterator.class), "next").negate());
+  }  
 
   @Override
   public InterceptorType type() {
@@ -138,7 +116,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     for ( MutationDetails each : mutations ) {
       // avoid cost of static analysis by first checking mutant is on
       // on instruction that could affect looping
-      if (mutatesAnInc(method, each) && isInfiniteLoop(each,m) ) {
+      if (couldCauseInfiniteLoop(method, each) && isInfiniteLoop(each,m) ) {
         timeouts.add(each);
       }
     }
@@ -152,8 +130,13 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     return INFINITE_LOOP.matches(mutantMethod.value().instructions());
   }
 
-  private boolean mutatesAnInc(MethodTree method, MutationDetails each) {
-    return method.instructions().get(each.getInstructionIndex()).getOpcode() == Opcodes.IINC;
+  private boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
+    AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    return instruction.getOpcode() == Opcodes.IINC || isIteratorNext(instruction);
+  }
+
+  private boolean isIteratorNext(AbstractInsnNode instruction) {
+    return InstructionMatchers.methodCallTo(ClassName.fromClass(Iterator.class), "next").test(null, instruction);
   }
 
   private F<MutationDetails, Location> mutationToLocation() {
@@ -169,5 +152,75 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   public void end() {
     currentClass = null;
   }
-
+  
+  private static SequenceQuery<AbstractInsnNode> inifniteIteratorLoop() {
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    
+    return QueryStart
+        .any(AbstractInsnNode.class)
+        .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
+        .then(opCode(Opcodes.ASTORE))
+        .zeroOrMore(QueryStart.match(anyInstruction()))
+        .then(aJump())
+        .then(aLabelNode(loopStart.write()))
+        .oneOrMore(doesNotBreakIteratorLoop())
+        .then(jumpsTo(loopStart.read()))
+        // can't currently deal with loops with conditionals that cause additional jumps back
+        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
+  }
+  
+  private static SequenceQuery<AbstractInsnNode> infiniteIteratorLoopJavac() {
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    
+    return  QueryStart
+        .any(AbstractInsnNode.class)
+        .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
+        .then(opCode(Opcodes.ASTORE))
+        .then(aLabelNode(loopStart.write()))
+        .oneOrMore(doesNotBreakIteratorLoop())
+        .then(jumpsTo(loopStart.read()))
+        // can't currently deal with loops with conditionals that cause additional jumps back
+        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));   
+  }
+  
+  private static SequenceQuery<AbstractInsnNode> infiniteCountingLoopConditionAtStart() {
+    Slot<Integer> counterVariable = Slot.create(Integer.class);
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    return QueryStart
+        .any(AbstractInsnNode.class)
+        .then(stores(counterVariable.write()))
+        .then(aLabelNode(loopStart.write()))
+        .then(load(counterVariable.read()))
+        .then(aPush())
+        .then(aConditionalJump())
+        .zeroOrMore(doesNotBreakLoop(counterVariable))
+        .then(jumpsTo(loopStart.read()))
+        // can't currently deal with loops with conditionals that cause additional jumps back
+        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
+  }
+  
+  private static SequenceQuery<AbstractInsnNode> infiniteCountingLoopConditionAtEnd() {
+    Slot<Integer> counterVariable = Slot.create(Integer.class);
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    return QueryStart
+        .any(AbstractInsnNode.class)
+        .then(stores(counterVariable.write()))
+        .then(isA(LabelNode.class))
+        .then(aJump())
+        .then(aLabelNode(loopStart.write()))
+        .zeroOrMore(doesNotBreakLoop(counterVariable))
+        .then(load(counterVariable.read()))
+        .then(anyInstruction())
+        .then(jumpsTo(loopStart.read()))
+        // can't currently deal with loops with conditionals that cause additional jumps back
+        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
+  }
+  
+  private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {
+    return QueryStart
+        .match(storesTo(counterVariable.read())
+            .or(increments(counterVariable.read()))
+            .or(aReturn())
+            .negate());
+  }
 }

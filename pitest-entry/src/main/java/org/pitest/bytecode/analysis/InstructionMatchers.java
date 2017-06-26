@@ -12,7 +12,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
@@ -175,6 +177,35 @@ public class InstructionMatchers {
     };
   }
   
+  public static  Match<AbstractInsnNode> methodCallThatReturns(final ClassName type) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        if ( t instanceof MethodInsnNode ) {
+          return ((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";");
+        }
+        return false;
+      }
+      
+    };
+  }
+  
+  public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        if ( t instanceof MethodInsnNode ) {
+          MethodInsnNode call = (MethodInsnNode) t;
+          
+          return call.name.equals(name) && call.owner.equals(owner.asInternalName());
+        }
+        return false;
+      }
+      
+    };
+  }
+  
+  
   private static Match<AbstractInsnNode> storeJumpTarget(
       final SlotWrite<LabelNode> label) {
     return new Match<AbstractInsnNode>() {
@@ -203,5 +234,7 @@ public class InstructionMatchers {
         return context.retrieve(loopStart).contains(Prelude.isEqualTo(jump.label));
       }
     };
-  }  
+  }
+  
+
 }
