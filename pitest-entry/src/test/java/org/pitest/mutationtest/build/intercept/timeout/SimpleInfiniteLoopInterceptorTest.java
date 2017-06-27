@@ -165,10 +165,11 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldMatchRealInfiniteLoopFromJodaTimeMutant() {
+  public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {
     checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
     checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
     checkFiltered(ClassName.fromString("MonthDayMutated"),"withPeriodAdded");
+    checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
   }
   
   

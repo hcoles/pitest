@@ -3,6 +3,12 @@ package org.pitest.bytecode.analysis;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.DRETURN;
 import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.ICONST_2;
+import static org.objectweb.asm.Opcodes.ICONST_3;
+import static org.objectweb.asm.Opcodes.ICONST_4;
+import static org.objectweb.asm.Opcodes.ICONST_5;
 import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.LRETURN;
 import static org.objectweb.asm.Opcodes.RETURN;
@@ -133,6 +139,15 @@ public class InstructionMatchers {
         .or(opCode(DRETURN))
         .or(opCode(ARETURN))
         .or(opCode(RETURN));
+  }
+  
+  public static Match<AbstractInsnNode> anIntegerConstant() {
+    return opCode(ICONST_0)
+        .or(opCode(ICONST_1))
+        .or(opCode(ICONST_2))
+        .or(opCode(ICONST_3))
+        .or(opCode(ICONST_4))
+        .or(opCode(ICONST_5));
   }
   
   public static Match<AbstractInsnNode> aLabelNode(SlotWrite<LabelNode> slot) {

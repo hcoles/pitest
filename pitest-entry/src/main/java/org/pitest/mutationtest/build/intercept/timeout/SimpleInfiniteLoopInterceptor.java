@@ -4,7 +4,9 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
@@ -187,6 +189,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
+        .then(anIntegerConstant())
         .then(stores(counterVariable.write()))
         .then(aLabelNode(loopStart.write()))
         .then(load(counterVariable.read()))
@@ -203,7 +206,8 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
-        .then(stores(counterVariable.write()))
+        .then(anIntegerConstant())
+        .then(stores(counterVariable.write()).and(debug("found counter")))
         .then(isA(LabelNode.class))
         .then(opCode(Opcodes.GOTO))
         .then(aLabelNode(loopStart.write()))
@@ -217,7 +221,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   
   private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {
     return QueryStart
-        .match(storesTo(counterVariable.read())
+        .match(storesTo(counterVariable.read()).and(debug("broken by store"))
             .or(increments(counterVariable.read()))
             .negate());
   }
