@@ -8,9 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.objectweb.asm.util.Textifier;
@@ -25,6 +25,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
 
@@ -33,19 +34,11 @@ public class SimpleInfiniteLoopInterceptorTest {
       .fromContext();
 
   SimpleInfiniteLoopInterceptor testee = new SimpleInfiniteLoopInterceptor();
-  GregorMutater                 mutator;
 
-  @Before
-  public void setUp() {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource
-        .fromContext();
-    Collection<MethodMutatorFactory> mutators = asList(
-        RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
-    mutator = new GregorMutater(source, True.<MethodInfo> all(), mutators);
-  }
-  
+
   @Test
   public void shouldFilterMutationsThatRemoveForLoopIncrement() {
+    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
     List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForLoop.class));
     assertThat(mutations).hasSize(2);
     
@@ -58,6 +51,7 @@ public class SimpleInfiniteLoopInterceptorTest {
   
   @Test
   public void shouldNotFilterMutationsInMethodsThatAppearToAlreadyHaveInfiniteLoops() {
+    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
     // our analysis incorrectly identifies some loops as infinite - must skip these
     List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(DontFilterMyAlreadyInfiniteLoop.class));
     assertThat(mutations).hasSize(1);
@@ -69,12 +63,31 @@ public class SimpleInfiniteLoopInterceptorTest {
     assertThat(actual).hasSize(1);   
   }
   
+  @Test
+  public void shouldFilterMutationsThatRemoveIteratorNextCalls() {
+    GregorMutater mutator = createMutator(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForEachLoop.class));
+    assertThat(mutations).hasSize(3);
+    
+    testee.begin(forClass(MutateMyForEachLoop.class));
+    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
+    testee.end();
+    
+    assertThat(actual).hasSize(2);   
+  }
   
   @Test
   public void shouldFindInfiniteLoopsInForLoopWithNoIncrement() {
     checkFiltered(HasForLoops.class, "infiniteNoIncrement");
   }
     
+  @Test
+  @Ignore("not implemented yet")
+  public void shouldFindInfiniteLoopsInForLoopWithhNoConditional() {
+    checkFiltered(HasForLoops.class, "infiniteNoConditional");
+  }
+    
+  
   @Test
   public void shouldNotFindInfiniteLoopsInCodeWithNoLoops() {
     checkNotFiltered(HasForLoops.class, "noLoop");
@@ -96,8 +109,11 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalReturn() {
-    checkNotFiltered(HasForLoops.class, "returnsInLoop");
+  @Ignore("need thought")
+  public void willFindInfiniteLoopsInForLoopWithConditionalReturn() {
+    // although these loops are likely not infinite, pragmatically it is
+    // worth avoiding mutating them as they are likely to be long running
+    checkFiltered(HasForLoops.class, "returnsInLoop");
   }
   
   @Test
@@ -110,6 +126,11 @@ public class SimpleInfiniteLoopInterceptorTest {
   @Test
   public void shouldFindInfiniteLoopsInForLoopWithNoIncrementAndBranchedContents() {
     checkFiltered(HasForLoops.class, "infiniteMoreComplex");    
+  }
+  
+  @Test
+  public void shouldFindInfiniteForLoopsWhenOtherBranchedCodePresent() {
+    checkFiltered(HasForLoops.class, "ifForInfiniteNoIncrement");  
   }
   
   @Test
@@ -128,7 +149,39 @@ public class SimpleInfiniteLoopInterceptorTest {
     checkNotFiltered(HasWhileLoops.class, "infiniteWhile"); 
   }
   
+  @Test
+  public void shouldNotFindInfiniteLoopInForEach() {
+    checkNotFiltered(HasIteratorLoops.class, "forEach");
+  }
+  
+  @Test
+  public void shouldNotFindInfiniteLoopInHandCodedInteratorLoop() {
+    checkNotFiltered(HasIteratorLoops.class, "iteratorLoop");
+  }
+  
+  @Test
+  public void shouldFindInfiniteLoopInIteratorLoopWithoutNext() {
+    checkFiltered(HasIteratorLoops.class, "infiniteNoNextCall");
+  }
+  
+  @Test
+  public void shouldMatchRealInfiniteLoopFromJodaTimeMutant() {
+    checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
+    checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
+    checkFiltered(ClassName.fromString("MonthDayMutated"),"withPeriodAdded");
+  }
+  
+  
   private void checkNotFiltered(Class<?> clazz, String method) {
+    checkNotFiltered(ClassName.fromClass(clazz), method);
+  }
+  
+  private void checkFiltered(Class<?> clazz, String method) {
+    checkFiltered(ClassName.fromClass(clazz), method);
+  }
+  
+  
+  private void checkNotFiltered(ClassName clazz, String method) {
     boolean testedSomething = false;
     for (Compiler each : Compiler.values()) {
       Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
@@ -148,7 +201,7 @@ public class SimpleInfiniteLoopInterceptorTest {
     }
   }
   
-  private void checkFiltered(Class<?> clazz, String method) {
+  private void checkFiltered(ClassName clazz, String method) {
     boolean testedSomething = false;
     for (Compiler each : Compiler.values()) {
       Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
@@ -180,12 +233,10 @@ public class SimpleInfiniteLoopInterceptorTest {
     return "Byte code is \n" + new String(bos.toByteArray());
   }
 
-
-
-  private Option<MethodTree> parseMethodFromCompiledResource(Class<?> clazz,
+  private Option<MethodTree> parseMethodFromCompiledResource(ClassName clazz,
       Compiler compiler, String method) {
     ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
-    Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + ClassName.fromClass(clazz).getNameWithoutPackage().asJavaName());
+    Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
     for (byte[] bytes : bs) {
       ClassTree tree = ClassTree.fromBytes(bytes);
       return tree.methods().findFirst(named(method)); 
@@ -200,6 +251,14 @@ public class SimpleInfiniteLoopInterceptorTest {
 
   private Collection<MethodMutatorFactory> asList(MethodMutatorFactory ...factories ) {
     return Arrays.asList(factories);
+  }
+  
+
+  private GregorMutater createMutator(MethodMutatorFactory ...factories) {
+    ClassloaderByteArraySource source = ClassloaderByteArraySource
+        .fromContext();
+    Collection<MethodMutatorFactory> mutators = asList(factories);
+    return new GregorMutater(source, True.<MethodInfo> all(), mutators);
   }
 }
 
@@ -251,6 +310,20 @@ class HasForLoops {
     }
   }
   
+  public void ifForInfiniteNoIncrement(int j) {
+    if (j > 11) {
+      return;
+    }
+    
+    for (int a = 0; a != 10; a++) {
+      System.out.println("" + a);
+    }
+    
+    for (int i = 0; i != 10;) {
+      System.out.println("" + i);
+    }
+  }
+  
   public void returnsInLoop() {
     int j = 0;
     for (int i = 0; i != 10;) {
@@ -268,6 +341,18 @@ class HasForLoops {
         break;
       }
       j = j + 1;
+    }
+  }
+  
+  public void infiniteNoConditional() {
+    for (int i = 0; ; i++) {
+      System.out.println("" + i);
+    }
+  }
+  
+  public void infiniteAlwaysTrue() {
+    for (int i = 0;true; i++) {
+      System.out.println("" + i);
     }
   }
 }
@@ -296,6 +381,28 @@ class HasWhileLoops {
   }
 }
 
+class HasIteratorLoops {
+  public void forEach(List<String> ss) {
+    for (String each : ss) {
+      System.out.println(each);
+    }
+  }
+  
+  public void iteratorLoop(List<String> ss) {
+    for(Iterator<String> it = ss.iterator(); it.hasNext(); ) {
+      String s = it.next();
+      System.out.println(s);
+    }
+  }
+  
+  public void infiniteNoNextCall(List<String> ss) {
+    for(Iterator<String> it = ss.iterator(); it.hasNext(); ) {
+      System.out.println(it);
+    }
+  }
+  
+}
+
 class MutateMyForLoop {
   public int normalLoop(int j) {
     for (int i = 0; i != 10; i++) {
@@ -305,6 +412,15 @@ class MutateMyForLoop {
     return j++;
   }
 }
+
+class MutateMyForEachLoop {
+  public void forEach(List<String> ss) {
+    for (String each : ss) {
+      System.out.println(each);
+    }
+  }
+}
+
 
 class DontFilterMyAlreadyInfiniteLoop {
   public int normalLoop(int j) {

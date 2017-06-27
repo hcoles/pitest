@@ -39,5 +39,9 @@ public class Context<T> {
   public boolean lookAhead(Match<T> next) {
     return position + 1 < sequence.size() && next.test(moveForward(), sequence.get(position + 1));
   }
+
+  public int position() {
+    return position;
+  }
   
 }

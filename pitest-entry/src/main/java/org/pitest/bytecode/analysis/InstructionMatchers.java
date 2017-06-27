@@ -12,7 +12,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
@@ -88,11 +90,8 @@ public class InstructionMatchers {
         }
         VarInsnNode varNode = (VarInsnNode) a;
 
-        if (a.getOpcode() == Opcodes.ISTORE) {
-          context.retrieve(counterVariable).contains(Prelude.isEqualTo(varNode.var));
-          return true;
-        }
-        return false;
+        return (a.getOpcode() == Opcodes.ISTORE) 
+            && context.retrieve(counterVariable).contains(Prelude.isEqualTo(varNode.var));
       }
 
     };
@@ -149,16 +148,19 @@ public class InstructionMatchers {
   }
   
   public static Match<AbstractInsnNode> aConditionalJumpTo(SlotWrite<LabelNode> label) {
-    // FIXME incomplete
     return aConditionalJump()
         .and(storeJumpTarget(label));
   }
   
   public static Match<AbstractInsnNode> aConditionalJump() {
-    // FIXME incomplete
-    return opCode(Opcodes.IF_ACMPEQ)
-        .or(opCode(Opcodes.IF_ACMPNE))
-        .or(opCode(Opcodes.IF_ICMPEQ));
+    return new  Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        return (t instanceof JumpInsnNode) 
+            && t.getOpcode() != Opcodes.GOTO
+            && t.getOpcode() != Opcodes.JSR;
+      }   
+    };
   }
   
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> writeNodeToSlot(final SlotWrite<T> slot, final Class<T> clazz) {
@@ -174,6 +176,35 @@ public class InstructionMatchers {
       
     };
   }
+  
+  public static  Match<AbstractInsnNode> methodCallThatReturns(final ClassName type) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        if ( t instanceof MethodInsnNode ) {
+          return ((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";");
+        }
+        return false;
+      }
+      
+    };
+  }
+  
+  public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        if ( t instanceof MethodInsnNode ) {
+          MethodInsnNode call = (MethodInsnNode) t;
+          
+          return call.name.equals(name) && call.owner.equals(owner.asInternalName());
+        }
+        return false;
+      }
+      
+    };
+  }
+  
   
   private static Match<AbstractInsnNode> storeJumpTarget(
       final SlotWrite<LabelNode> label) {
@@ -203,5 +234,16 @@ public class InstructionMatchers {
         return context.retrieve(loopStart).contains(Prelude.isEqualTo(jump.label));
       }
     };
-  }  
+  }
+  
+  public static Match<AbstractInsnNode> debug(final String msg) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
+        System.out.println(msg + " at " + context.position());
+        return true;
+      }
+    };
+  }
+
 }
