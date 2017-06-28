@@ -172,7 +172,6 @@ public class SimpleInfiniteLoopInterceptorTest {
     checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
   }
   
-  
   private void checkNotFiltered(Class<?> clazz, String method) {
     checkNotFiltered(ClassName.fromClass(clazz), method);
   }
