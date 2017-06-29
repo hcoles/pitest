@@ -17,6 +17,7 @@ import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
@@ -30,8 +31,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncreme
 import org.pitest.util.ResourceFolderByteArraySource;
 
 public class SimpleInfiniteLoopInterceptorTest {
-  ClassloaderByteArraySource    source = ClassloaderByteArraySource
-      .fromContext();
+  ClassByteArraySource    source = ClassloaderByteArraySource.fromContext();
 
   SimpleInfiniteLoopInterceptor testee = new SimpleInfiniteLoopInterceptor();
 
@@ -62,7 +62,7 @@ public class SimpleInfiniteLoopInterceptorTest {
     
     assertThat(actual).hasSize(1);   
   }
-  
+    
   @Test
   public void shouldFilterMutationsThatRemoveIteratorNextCalls() {
     GregorMutater mutator = createMutator(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
@@ -166,10 +166,13 @@ public class SimpleInfiniteLoopInterceptorTest {
   
   @Test
   public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {
-    checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
-    checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
+    //checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
+   // checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
+    
+    checkNotFiltered(ClassName.fromString("MonthDay"),"withPeriodAdded");
     checkFiltered(ClassName.fromString("MonthDayMutated"),"withPeriodAdded");
-    checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
+    
+   // checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
   }
   
   private void checkNotFiltered(Class<?> clazz, String method) {
@@ -248,15 +251,13 @@ public class SimpleInfiniteLoopInterceptorTest {
     byte[] bs = source.getBytes(clazz.getName()).value();
     return ClassTree.fromBytes(bs);
   }
-
+  
   private Collection<MethodMutatorFactory> asList(MethodMutatorFactory ...factories ) {
     return Arrays.asList(factories);
   }
   
 
   private GregorMutater createMutator(MethodMutatorFactory ...factories) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource
-        .fromContext();
     Collection<MethodMutatorFactory> mutators = asList(factories);
     return new GregorMutater(source, True.<MethodInfo> all(), mutators);
   }

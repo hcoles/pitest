@@ -7,9 +7,11 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
+import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
 import static org.pitest.bytecode.analysis.InstructionMatchers.increments;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.load;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
@@ -130,7 +132,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     Option<MethodTree> mutantMethod = mutantClass.methods().findFirst(forLocation(each.getId().getLocation()));
     return INFINITE_LOOP.matches(mutantMethod.value().instructions());
   }
-
+  
   private boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
     AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
     return instruction.getOpcode() == Opcodes.IINC || isIteratorNext(instruction);
@@ -204,19 +206,23 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   private static SequenceQuery<AbstractInsnNode> infiniteCountingLoopConditionAtEnd() {
     Slot<Integer> counterVariable = Slot.create(Integer.class);
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
+    
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant())
         .then(stores(counterVariable.write()).and(debug("found counter")))
         .then(isA(LabelNode.class))
-        .then(opCode(Opcodes.GOTO))
-        .then(aLabelNode(loopStart.write()))
+        .then(gotoLabel(loopEnd.write()))
+        .then(aLabelNode(loopStart.write()).and(debug("loop start")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
-        .then(load(counterVariable.read())) // is it really important that we read the counter?
+        .then(labelNode(loopEnd.read()).and(debug("loop end")))
+        .then(load(counterVariable.read()).and(debug("read"))) // is it really important that we read the counter?
         .zeroOrMore(doesNotBreakLoop(counterVariable))
-        .then(jumpsTo(loopStart.read()))
+        .then(jumpsTo(loopStart.read()).and(debug("jump")))
+        .zeroOrMore(QueryStart.match(anyInstruction()));
         // can't currently deal with loops with conditionals that cause additional jumps back
-        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
+        //.zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
   }
   
   private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {

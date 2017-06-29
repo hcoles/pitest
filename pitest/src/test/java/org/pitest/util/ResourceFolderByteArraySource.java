@@ -12,7 +12,8 @@ import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
-
+  
+  
   @Override
   public Option<byte[]> getBytes(final String classname) {
     final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());
@@ -33,7 +34,7 @@ class ResourceFolderClassPathroot implements ClassPathRoot {
   }
 
   @Override
-  public InputStream getData(final String name) throws IOException {
+  public InputStream getData(String name) throws IOException {
     final String path = "sampleClasses/" + name.replace(".", "/")
         + ".class.bin";
     return IsolationUtils.getContextClassLoader().getResourceAsStream(path);

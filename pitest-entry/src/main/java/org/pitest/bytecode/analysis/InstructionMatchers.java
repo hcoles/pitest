@@ -251,6 +251,28 @@ public class InstructionMatchers {
     };
   }
   
+  public static Match<AbstractInsnNode> gotoLabel(
+      final SlotWrite<LabelNode> loopEnd) {
+        return opCode(Opcodes.GOTO).and(storeJumpTarget(loopEnd));
+  }
+  
+  public static Match<AbstractInsnNode> labelNode(
+      final SlotRead<LabelNode> loopEnd) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+       if (!(t instanceof LabelNode)) {
+         return false;
+       }
+       
+       LabelNode l = (LabelNode) t;
+       return c.retrieve(loopEnd).contains(Prelude.isEqualTo(l));
+       
+      }
+      
+    };
+  }
+  
   public static Match<AbstractInsnNode> debug(final String msg) {
     return new Match<AbstractInsnNode>() {
       @Override
