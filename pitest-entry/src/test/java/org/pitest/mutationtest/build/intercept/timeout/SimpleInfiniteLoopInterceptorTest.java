@@ -2,7 +2,7 @@ package org.pitest.mutationtest.build.intercept.timeout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.pitest.bytecode.analysis.MethodMatchers.named;
+import static org.pitest.bytecode.analysis.MethodMatchers.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -21,7 +21,10 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -104,8 +107,9 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
     
   @Test
-  public void shouldNotFindInfiniteLoopsInForLoopWithConditionalIncrementInLoop() {
-    checkNotFiltered(HasForLoops.class, "incrementInsideLoopConditionally");
+  @Ignore("depends on compiler")
+  public void mightTreatLoopsAsInifiniteDespitePotentialBreakByCondtional() {
+    checkFiltered(HasForLoops.class, "incrementInsideLoopConditionally");
   }
   
   @Test
@@ -166,13 +170,18 @@ public class SimpleInfiniteLoopInterceptorTest {
   
   @Test
   public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {
-    //checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
-   // checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
+    checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
+    checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
     
     checkNotFiltered(ClassName.fromString("MonthDay"),"withPeriodAdded");
     checkFiltered(ClassName.fromString("MonthDayMutated"),"withPeriodAdded");
     
-   // checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
+    checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
+    
+    Location l = Location.location(ClassName.fromString("org.joda.time.MonthDay")
+        , MethodName.fromString("withPeriodAdded")
+        , "(Lorg/joda/time/ReadablePeriod;I)Lorg/joda/time/MonthDay;");
+    checkFiltered(ClassName.fromString("MonthDayMutated2"),forLocation(l));
   }
   
   private void checkNotFiltered(Class<?> clazz, String method) {
@@ -183,8 +192,11 @@ public class SimpleInfiniteLoopInterceptorTest {
     checkFiltered(ClassName.fromClass(clazz), method);
   }
   
-  
   private void checkNotFiltered(ClassName clazz, String method) {
+    checkNotFiltered(clazz, named(method));
+  }
+  
+  private void checkNotFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
     for (Compiler each : Compiler.values()) {
       Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
@@ -205,6 +217,10 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   private void checkFiltered(ClassName clazz, String method) {
+    checkFiltered(clazz, named(method));
+  }
+  
+  private void checkFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
     for (Compiler each : Compiler.values()) {
       Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
@@ -237,12 +253,12 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
 
   private Option<MethodTree> parseMethodFromCompiledResource(ClassName clazz,
-      Compiler compiler, String method) {
+      Compiler compiler, Predicate<MethodTree> method) {
     ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
     Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
     for (byte[] bytes : bs) {
       ClassTree tree = ClassTree.fromBytes(bytes);
-      return tree.methods().findFirst(named(method)); 
+      return tree.methods().findFirst(method); 
     }
     return Option.none();
   }

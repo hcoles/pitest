@@ -118,7 +118,7 @@ public class InstructionMatchers {
 
     };
   }
-
+  
   public static Match<AbstractInsnNode> aGoto() {
     return new Match<AbstractInsnNode>() {
       @Override
@@ -205,6 +205,11 @@ public class InstructionMatchers {
     };
   }
   
+  public static  Match<AbstractInsnNode> methodCall() {
+    return isA(MethodInsnNode.class);
+  }
+  
+  
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
     return new Match<AbstractInsnNode>() {
       @Override
@@ -216,7 +221,6 @@ public class InstructionMatchers {
         }
         return false;
       }
-      
     };
   }
   
@@ -277,7 +281,7 @@ public class InstructionMatchers {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        System.out.println(msg + " at " + context.position());
+        //System.out.println(msg + " at " + context.position());
         return true;
       }
     };

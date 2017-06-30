@@ -3,7 +3,6 @@ package org.pitest.mutationtest.build.intercept.timeout;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
-import static org.pitest.bytecode.analysis.InstructionMatchers.aPush;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
@@ -13,6 +12,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.load;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCall;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
@@ -101,6 +101,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     for (Entry<Location, Collection<MutationDetails>> each : buckets.entrySet() ) {
       willTimeout.addAll(findTimeoutMutants(each.getKey(), each.getValue(), m));
     }
+    System.out.println("Found " + willTimeout.size() + " long running loop mutants in " + currentClass.name());
     mutations.removeAll(willTimeout);
     return mutations;
   }
@@ -191,12 +192,13 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
-        .then(anIntegerConstant())
-        .then(stores(counterVariable.write()))
-        .then(aLabelNode(loopStart.write()))
-        .then(load(counterVariable.read()))
-        .then(aPush())
-        .then(aConditionalJump())
+        .then(anIntegerConstant().and(debug("constant")))
+        .then(stores(counterVariable.write()).and(debug("counter")))
+        .then(aLabelNode(loopStart.write()).and(debug("label")))
+        .then(load(counterVariable.read()).and(debug("load")))
+        .zeroOrMore(doesNotBreakLoop(counterVariable))
+        .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD).or(opCode(Opcodes.ALOAD).or(methodCall()))))
+        .then(aConditionalJump().and(debug("jump")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .then(jumpsTo(loopStart.read()))
         // can't currently deal with loops with conditionals that cause additional jumps back

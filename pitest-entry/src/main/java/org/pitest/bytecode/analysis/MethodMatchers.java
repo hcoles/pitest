@@ -1,6 +1,6 @@
 package org.pitest.bytecode.analysis;
 
-import org.pitest.functional.F;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.Location;
 
 public class MethodMatchers {
@@ -10,8 +10,8 @@ public class MethodMatchers {
    * @param name the methods name
    * @return true if matched
    */
-  public static F<MethodTree, Boolean> named(final String name) {
-    return new F<MethodTree, Boolean>() {
+  public static Predicate<MethodTree> named(final String name) {
+    return new Predicate<MethodTree>() {
       @Override
       public Boolean apply(MethodTree a) {
         return a.rawNode().name.equals(name);
@@ -19,8 +19,8 @@ public class MethodMatchers {
     };
   }
 
-  public static F<MethodTree, Boolean> forLocation(final Location location) {
-    return new F<MethodTree, Boolean>() {
+  public static Predicate<MethodTree> forLocation(final Location location) {
+    return new Predicate<MethodTree>() {
       @Override
       public Boolean apply(MethodTree a) {
         return a.asLocation().equals(location);
