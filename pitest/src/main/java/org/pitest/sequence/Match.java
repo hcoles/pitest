@@ -68,14 +68,4 @@ public abstract class Match<T> {
       }
     };
   }
-
-  public Match<T> peak(final Match<T> next) {
-    final Match<T> self = this;
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return c.lookAhead(next) && self.test(c, t);
-      }
-    };
-  }
 }

@@ -44,12 +44,13 @@ public class SequenceQuery<T> {
   }
   
   public SequenceMatcher<T> compile() {
-    return compileIgnoring(Match.<T>never());
+    return compile(QueryParams.<T>params());
   }
 
   @SuppressWarnings("unchecked")
-  public SequenceMatcher<T> compileIgnoring(Match<T> ignoring) {
-    return new NFASequenceMatcher<T>(ignoring, this.token.make(EndMatch.MATCH));
+  public SequenceMatcher<T> compile(QueryParams<T> params) {
+    return new NFASequenceMatcher<T>(params.ignoring(), 
+        this.token.make(EndMatch.MATCH), params.isDebug());
   }
 
   interface Partial<T> {
@@ -139,24 +140,25 @@ public class SequenceQuery<T> {
 
 class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
+  private final boolean debug;
   private final Match<T> ignore;
   private final State<T> start;
 
-  NFASequenceMatcher(Match<T> ignore, State<T> state) {
+  NFASequenceMatcher(Match<T> ignore, State<T> state, boolean debug) {
     this.ignore = ignore;
     this.start = state;
+    this.debug = debug;
   }
 
   @Override
   public boolean matches(List<T> sequence) {
     Set<State<T>> currentState = new HashSet<State<T>>();
-    Context<T> context = Context.start(sequence);
+    final Context<T> context = Context.start(sequence, debug);
 
     addstate(currentState, this.start);
 
     for (T t : sequence) {      
-      // FIXME not using peak ahead so can context be removed?
-      context = context.moveForward();
+      context.moveForward();
       
       if (ignore.test(context, t)) {
         continue;

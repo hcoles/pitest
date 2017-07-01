@@ -7,19 +7,25 @@ import java.util.Map;
 import org.pitest.functional.Option;
 
 public class Context<T> {
+  
+  private final boolean debug;
   private final Map<Slot<?>, Object> slots;
   private final List<T> sequence;
-  
-  private final int position;
+  private int position;
 
-  Context(Map<Slot<?>, Object> slots, List<T> sequence, int position) {
+  Context(Map<Slot<?>, Object> slots, List<T> sequence, int position, boolean debug) {
     this.slots = slots;
     this.sequence = sequence;
     this.position = position;
+    this.debug = debug;
   }
 
-  public static <T> Context<T> start( List<T> sequence) {
-    return new Context<T>(new HashMap<Slot<?>, Object>(), sequence, -1);
+  public static <T> Context<T> start(List<T> sequence) {
+    return start(sequence, false);
+  }
+  
+  public static <T> Context<T> start(List<T> sequence, boolean debug) {
+    return new Context<T>(new HashMap<Slot<?>, Object>(), sequence, -1, debug);
   }
   
   public <S> void store(SlotWrite<S> slot, S value) {
@@ -32,16 +38,18 @@ public class Context<T> {
   }
   
   
-  Context<T> moveForward() {
-    return new Context<T>(slots, sequence, position + 1);
-  }
-
-  public boolean lookAhead(Match<T> next) {
-    return position + 1 < sequence.size() && next.test(moveForward(), sequence.get(position + 1));
+  void moveForward() {
+    position = position + 1;
   }
 
   public int position() {
     return position;
+  }
+
+  public void debug(String msg) {
+    if (debug) {
+      System.out.println(msg + " at " + position + " for " + sequence.get(position));
+    }
   }
   
 }

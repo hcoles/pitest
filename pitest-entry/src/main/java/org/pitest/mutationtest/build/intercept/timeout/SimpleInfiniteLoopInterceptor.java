@@ -46,6 +46,7 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.Match;
+import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
@@ -66,6 +67,8 @@ import org.pitest.sequence.Slot;
  */
 public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
 
+  private static final boolean DEBUG = true;
+  
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
   
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
@@ -74,7 +77,10 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
       .or(infiniteCountingLoopConditionAtEnd())
       .or(inifniteIteratorLoop())
       .or(infiniteIteratorLoopJavac())
-      .compileIgnoring(IGNORE);
+      .compile(QueryParams.params(AbstractInsnNode.class)
+          .withIgnores(IGNORE)
+          .withDebug(DEBUG)
+          );
       
   private ClassTree currentClass;
   
@@ -213,7 +219,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant())
-        .then(stores(counterVariable.write()).and(debug("found counter")))
+        .then(stores(counterVariable.write()).and(debug("counter")))
         .then(isA(LabelNode.class))
         .then(gotoLabel(loopEnd.write()))
         .then(aLabelNode(loopStart.write()).and(debug("loop start")))
@@ -223,8 +229,6 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .then(jumpsTo(loopStart.read()).and(debug("jump")))
         .zeroOrMore(QueryStart.match(anyInstruction()));
-        // can't currently deal with loops with conditionals that cause additional jumps back
-        //.zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
   }
   
   private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {

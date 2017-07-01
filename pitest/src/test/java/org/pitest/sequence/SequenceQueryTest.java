@@ -101,7 +101,7 @@ public class SequenceQueryTest {
     SequenceMatcher<Integer> testee = QueryStart
         .match(eq(1))
         .then(eq(2))
-        .compileIgnoring(eq(99));
+        .compile(QueryParams.params(Integer.class).withIgnores(eq(99)));
     
     assertTrue(testee.matches(asList(1, 99, 2)));
   }

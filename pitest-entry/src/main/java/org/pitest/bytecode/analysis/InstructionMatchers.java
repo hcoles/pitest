@@ -1,17 +1,11 @@
 package org.pitest.bytecode.analysis;
 
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FRETURN;
 import static org.objectweb.asm.Opcodes.ICONST_0;
 import static org.objectweb.asm.Opcodes.ICONST_1;
 import static org.objectweb.asm.Opcodes.ICONST_2;
 import static org.objectweb.asm.Opcodes.ICONST_3;
 import static org.objectweb.asm.Opcodes.ICONST_4;
 import static org.objectweb.asm.Opcodes.ICONST_5;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -119,28 +113,7 @@ public class InstructionMatchers {
     };
   }
   
-  public static Match<AbstractInsnNode> aGoto() {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode a) {
-        return a.getOpcode() == Opcodes.GOTO;
-      }
-    };
-  }
-  
-  public static Match<AbstractInsnNode> aPush() {
-    return opCode(Opcodes.BIPUSH).or(opCode(Opcodes.SIPUSH));
-  }
-  
-  public static Match<AbstractInsnNode> aReturn() {
-    return opCode(IRETURN)
-        .or(opCode(LRETURN))
-        .or(opCode(FRETURN))
-        .or(opCode(DRETURN))
-        .or(opCode(ARETURN))
-        .or(opCode(RETURN));
-  }
-  
+   
   public static Match<AbstractInsnNode> anIntegerConstant() {
     return opCode(ICONST_0)
         .or(opCode(ICONST_1))
@@ -158,14 +131,6 @@ public class InstructionMatchers {
     return isA(JumpInsnNode.class);
   }
   
-  public static Match<AbstractInsnNode> aJumpTo(SlotWrite<LabelNode> label) {
-    return isA(JumpInsnNode.class).and(storeJumpTarget(label));
-  }
-  
-  public static Match<AbstractInsnNode> aConditionalJumpTo(SlotWrite<LabelNode> label) {
-    return aConditionalJump()
-        .and(storeJumpTarget(label));
-  }
   
   public static Match<AbstractInsnNode> aConditionalJump() {
     return new  Match<AbstractInsnNode>() {
@@ -281,7 +246,7 @@ public class InstructionMatchers {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        //System.out.println(msg + " at " + context.position());
+        context.debug(msg);
         return true;
       }
     };
