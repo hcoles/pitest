@@ -28,8 +28,9 @@ public class Context<T> {
     return new Context<T>(new HashMap<Slot<?>, Object>(), sequence, -1, debug);
   }
   
-  public <S> void store(SlotWrite<S> slot, S value) {
+  public <S> boolean store(SlotWrite<S> slot, S value) {
     slots.put(slot.slot(), value);
+    return true;
   }
   
   @SuppressWarnings("unchecked")

@@ -46,40 +46,32 @@ public class InstructionMatchers {
     };
   }
 
-  public static Match<AbstractInsnNode> increments(final SlotRead<Integer> counterVariable) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        if (a instanceof IincInsnNode) {
-          IincInsnNode inc = (IincInsnNode) a;
-          return context.retrieve(counterVariable).contains(Prelude.isEqualTo(inc.var));
-        } else {
-          return false;
-        }
-      }
-    };
+  public static Match<AbstractInsnNode> incrementsVariable(final SlotRead<Integer> counterVariable) {
+   return new Match<AbstractInsnNode>() {
+     @Override
+     public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
+       return (a instanceof IincInsnNode) 
+           && context.retrieve(counterVariable).contains(Prelude.isEqualTo(((IincInsnNode)a).var));
+     }
+   };
   }
 
-  public static Match<AbstractInsnNode> stores(
+  public static Match<AbstractInsnNode> anIStore(
       final SlotWrite<Integer> counterVariable) {
-    return new Match<AbstractInsnNode>() {
+    return opCode(Opcodes.ISTORE).and(aVariableAccess(counterVariable));
+  }
+   
+  public static Match<AbstractInsnNode> aVariableAccess(
+      final SlotWrite<Integer> counterVariable) {
+    return new  Match<AbstractInsnNode>() {
       @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        if (!(a instanceof VarInsnNode)) {
-          return false;
-        }
-        VarInsnNode varNode = (VarInsnNode) a;
-
-        if (a.getOpcode() == Opcodes.ISTORE) {
-          context.store(counterVariable, varNode.var);
-          return true;
-        }
-        return false;
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        return (t instanceof VarInsnNode) && c.store(counterVariable, ((VarInsnNode) t).var);
       }
-
+      
     };
   }
-  
+
   public static Match<AbstractInsnNode> storesTo(
       final SlotRead<Integer> counterVariable) {
     return new Match<AbstractInsnNode>() {

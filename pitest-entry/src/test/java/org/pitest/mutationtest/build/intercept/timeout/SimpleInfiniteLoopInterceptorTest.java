@@ -177,6 +177,7 @@ public class SimpleInfiniteLoopInterceptorTest {
     checkFiltered(ClassName.fromString("MonthDayMutated"),"withPeriodAdded");
     
     checkFiltered(ClassName.fromString("BaseChronologyMutated"),"validate");
+    checkFiltered(ClassName.fromString("BaseChronologyMutated2"),"set");
     
     Location l = Location.location(ClassName.fromString("org.joda.time.MonthDay")
         , MethodName.fromString("withPeriodAdded")
