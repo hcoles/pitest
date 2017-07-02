@@ -1,13 +1,13 @@
-package org.pitest.mutationtest.build;
+package org.pitest.bytecode.analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.F;
-import org.pitest.mutationtest.build.ClassTree;
-import org.pitest.mutationtest.build.MethodTree;
 
 public class ClassTreeTest {
   

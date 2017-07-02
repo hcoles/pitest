@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build;
+package org.pitest.bytecode.analysis;
 
 import org.pitest.functional.F;
 import org.pitest.functional.predicate.Predicate;

@@ -240,6 +240,14 @@ public final class MutationDetails {
   public int getFirstIndex() {
     return this.id.getFirstIndex();
   }
+  
+  /**
+   * Zero based index to first affected ASM instruction
+   * @return
+   */
+  public int getInstructionIndex() {
+    return getFirstIndex() - 1;
+  }
 
   /**
    * Indicates if the mutation is within a finally block

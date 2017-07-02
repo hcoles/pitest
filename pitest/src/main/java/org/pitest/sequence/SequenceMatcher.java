@@ -1,0 +1,9 @@
+package org.pitest.sequence;
+
+import java.util.List;
+
+public interface SequenceMatcher<T> {
+
+  boolean matches(List<T> sequence);
+ 
+}
