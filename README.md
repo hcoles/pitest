@@ -14,6 +14,7 @@ Read all about it at http://pitest.org
 * #218 - New "naked receiver" / method chain mutator. (thanks @UrsMetz)
 * #354/#356 - New extension point plus changes to reduce cost of random access to bytecode for static analysis
 * #353 - Improved static initializer code detection
+* #364 - Filter infinite loops via static analysis
 
 (Note #347 will **not** detect `javax.annoation.Generated` as it has only source retention.) 
 
