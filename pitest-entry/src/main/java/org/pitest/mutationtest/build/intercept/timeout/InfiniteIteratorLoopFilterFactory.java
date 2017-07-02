@@ -5,17 +5,17 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 
-public class SimpleInfiniteLoopFactory implements MutationInterceptorFactory {
+public class InfiniteIteratorLoopFilterFactory  implements MutationInterceptorFactory {
 
   @Override
   public String description() {
-    return "Infinite loop interceptor";
+    return "Long running iterator loop filter";
   }
 
   @Override
   public MutationInterceptor createInterceptor(ReportOptions data,
       ClassByteArraySource source) {
-    return new SimpleInfiniteLoopInterceptor();
+    return new InfiniteIteratorLoopFilter();
   }
 
 }

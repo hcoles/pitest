@@ -4,4 +4,5 @@ org.pitest.mutationtest.build.intercept.annotations.ExcludedAnnotationIntercepto
 org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.TryWithResourcesFilterFactory
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
-org.pitest.mutationtest.build.intercept.timeout.SimpleInfiniteLoopFactory
+org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
+org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
