@@ -169,7 +169,12 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {
+  public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {  
+    Location l1 = Location.location(ClassName.fromString("org.joda.time.field.BaseDateTimeField")
+        , MethodName.fromString("set")
+        , "(Lorg/joda/time/ReadablePartial;I[II)[I");
+    checkFiltered(ClassName.fromString("BaseDateTimeFieldMutated"),forLocation(l1));
+    
     checkNotFiltered(ClassName.fromString("LocalDate"),"withPeriodAdded");
     checkFiltered(ClassName.fromString("LocalDateMutated"),"withPeriodAdded");
     
@@ -258,7 +263,7 @@ public class SimpleInfiniteLoopInterceptorTest {
     ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
     Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
     for (byte[] bytes : bs) {
-      ClassTree tree = ClassTree.fromBytes(bytes);
+      ClassTree tree = ClassTree.fromBytes(bytes);     
       return tree.methods().findFirst(method); 
     }
     return Option.none();

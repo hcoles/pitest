@@ -199,8 +199,12 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant().and(debug("constant")))
+        .zeroOrMore(QueryStart.match(opCode(Opcodes.IADD))) // FIXME just one rather than many
         .then(anIStore(counterVariable.write()).and(debug("counter")))
-        .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD).or(opCode(Opcodes.ALOAD).or(opCode(Opcodes.ISTORE)).or(methodCall()))))
+        .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD)
+                                    .or(opCode(Opcodes.ALOAD)
+                                    .or(opCode(Opcodes.ISTORE))
+                                    .or(methodCall()))))
         .then(aLabelNode(loopStart.write()).and(debug("label")))
         .then(load(counterVariable.read()).and(debug("load")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
