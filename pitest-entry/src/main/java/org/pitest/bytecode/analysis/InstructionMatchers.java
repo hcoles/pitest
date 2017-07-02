@@ -6,6 +6,9 @@ import static org.objectweb.asm.Opcodes.ICONST_2;
 import static org.objectweb.asm.Opcodes.ICONST_3;
 import static org.objectweb.asm.Opcodes.ICONST_4;
 import static org.objectweb.asm.Opcodes.ICONST_5;
+import static org.objectweb.asm.Opcodes.ICONST_M1;
+import static org.objectweb.asm.Opcodes.ILOAD;
+import static org.objectweb.asm.Opcodes.ISTORE;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -68,46 +71,34 @@ public class InstructionMatchers {
       public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
         return (t instanceof VarInsnNode) && c.store(counterVariable, ((VarInsnNode) t).var);
       }
-      
     };
   }
 
-  public static Match<AbstractInsnNode> storesTo(
+  public static Match<AbstractInsnNode> anIStoreTo(
       final SlotRead<Integer> counterVariable) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        if (!(a instanceof VarInsnNode)) {
-          return false;
-        }
-        VarInsnNode varNode = (VarInsnNode) a;
-
-        return (a.getOpcode() == Opcodes.ISTORE) 
-            && context.retrieve(counterVariable).contains(Prelude.isEqualTo(varNode.var));
-      }
-
-    };
+    return opCode(ISTORE).and(variableMatches(counterVariable));
   }
 
-  public static Match<AbstractInsnNode> load(
+  public static Match<AbstractInsnNode> anILoadOf(
       final SlotRead<Integer> counterVariable) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        if (a.getOpcode() != Opcodes.ILOAD) {
-          return false;
-        }
-
-        VarInsnNode varNode = (VarInsnNode) a;
-        return context.retrieve(counterVariable).contains(Prelude.isEqualTo(varNode.var));
-      }
-
-    };
+    return opCode(ILOAD).and(variableMatches(counterVariable));
   }
   
-   
+  public static Match<AbstractInsnNode> variableMatches(
+      final SlotRead<Integer> counterVariable) {
+    return new  Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        return (t instanceof VarInsnNode) 
+            && c.retrieve(counterVariable).contains(Prelude.isEqualTo(((VarInsnNode)t).var));
+      }
+    };
+  }   
+  
+  
   public static Match<AbstractInsnNode> anIntegerConstant() {
-    return opCode(ICONST_0)
+    return opCode(ICONST_M1)
+        .or(opCode(ICONST_0))
         .or(opCode(ICONST_1))
         .or(opCode(ICONST_2))
         .or(opCode(ICONST_3))
@@ -122,7 +113,6 @@ public class InstructionMatchers {
   public static Match<AbstractInsnNode> aJump() {
     return isA(JumpInsnNode.class);
   }
-  
   
   public static Match<AbstractInsnNode> aConditionalJump() {
     return new  Match<AbstractInsnNode>() {
@@ -166,14 +156,12 @@ public class InstructionMatchers {
     return isA(MethodInsnNode.class);
   }
   
-  
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
     return new Match<AbstractInsnNode>() {
       @Override
       public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
         if ( t instanceof MethodInsnNode ) {
           MethodInsnNode call = (MethodInsnNode) t;
-          
           return call.name.equals(name) && call.owner.equals(owner.asInternalName());
         }
         return false;

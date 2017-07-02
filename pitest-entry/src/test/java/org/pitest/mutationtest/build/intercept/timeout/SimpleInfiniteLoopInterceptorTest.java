@@ -86,8 +86,13 @@ public class SimpleInfiniteLoopInterceptorTest {
     
   @Test
   @Ignore("not implemented yet")
-  public void shouldFindInfiniteLoopsInForLoopWithhNoConditional() {
+  public void shouldFindInfiniteLoopsInForLoopWithNoConditional() {
     checkFiltered(HasForLoops.class, "infiniteNoConditional");
+  }
+  
+  @Test
+  public void cannotFindInfiniteLoopsInForWhenCounterDeclaredElsewhere() {
+    checkNotFiltered(HasForLoops.class, "infiniteDeclarationNotInFor");
   }
     
   
@@ -169,7 +174,7 @@ public class SimpleInfiniteLoopInterceptorTest {
   }
   
   @Test
-  public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {  
+  public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {      
     Location l1 = Location.location(ClassName.fromString("org.joda.time.field.BaseDateTimeField")
         , MethodName.fromString("set")
         , "(Lorg/joda/time/ReadablePartial;I[II)[I");
@@ -376,6 +381,12 @@ class HasForLoops {
   public void infiniteAlwaysTrue() {
     for (int i = 0;true; i++) {
       System.out.println("" + i);
+    }
+  }
+  
+  public void infiniteDeclarationNotInFor(int size) {
+    for (; size> 2; ) {
+      System.out.println("" + size);
     }
   }
 }

@@ -11,13 +11,13 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.incrementsVariabl
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
-import static org.pitest.bytecode.analysis.InstructionMatchers.load;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anILoadOf;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCall;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIStore;
-import static org.pitest.bytecode.analysis.InstructionMatchers.storesTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anIStoreTo;
 import static org.pitest.bytecode.analysis.MethodMatchers.forLocation;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ import org.pitest.sequence.Slot;
  */
 public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
 
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
   
@@ -206,7 +206,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
                                     .or(opCode(Opcodes.ISTORE))
                                     .or(methodCall()))))
         .then(aLabelNode(loopStart.write()).and(debug("label")))
-        .then(load(counterVariable.read()).and(debug("load")))
+        .then(anILoadOf(counterVariable.read()).and(debug("load")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD).or(opCode(Opcodes.ALOAD).or(methodCall()))))
         .then(aConditionalJump().and(debug("jump")))
@@ -229,7 +229,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
         .then(aLabelNode(loopStart.write()).and(debug("loop start")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .then(labelNode(loopEnd.read()).and(debug("loop end")))
-        .then(load(counterVariable.read()).and(debug("read"))) // is it really important that we read the counter?
+        .then(anILoadOf(counterVariable.read()).and(debug("read"))) // is it really important that we read the counter?
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .then(jumpsTo(loopStart.read()).and(debug("jump")))
         .zeroOrMore(QueryStart.match(anyInstruction()));
@@ -237,7 +237,7 @@ public class SimpleInfiniteLoopInterceptor implements MutationInterceptor {
   
   private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {
     return QueryStart
-        .match(storesTo(counterVariable.read()).and(debug("broken by store"))
+        .match(anIStoreTo(counterVariable.read()).and(debug("broken by store"))
             .or(incrementsVariable(counterVariable.read()))
             .negate());
   }
