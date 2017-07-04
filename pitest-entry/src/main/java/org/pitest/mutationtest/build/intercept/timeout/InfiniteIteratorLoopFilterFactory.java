@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.build.intercept.timeout;
 
-import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
-import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.Feature;
 
 public class InfiniteIteratorLoopFilterFactory  implements MutationInterceptorFactory {
 
@@ -13,9 +13,16 @@ public class InfiniteIteratorLoopFilterFactory  implements MutationInterceptorFa
   }
 
   @Override
-  public MutationInterceptor createInterceptor(ReportOptions data,
-      ClassByteArraySource source) {
+  public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new InfiniteIteratorLoopFilter();
   }
 
+  @Override
+  public Feature provides() {
+    return Feature.named("FINFIT")
+        .withOnByDefault(true)
+        .withDescription("Filters out mutations that may cause infinite loops"
+            + " by removing calls to iterator.next");
+  }
+  
 }

@@ -1,11 +1,18 @@
 package org.pitest.mutationtest.build.intercept.annotations;
 
-import org.pitest.classinfo.ClassByteArraySource;
+import java.util.Arrays;
+import java.util.List;
+
+import org.pitest.functional.Option;
+import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
-import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.Feature;
+import org.pitest.plugin.FeatureSetting;
 
 public class ExcludedAnnotationInterceptorFactory implements MutationInterceptorFactory  {
+  
+  private static final String ARGUMENT = "annotation";
 
   @Override
   public String description() {
@@ -13,9 +20,22 @@ public class ExcludedAnnotationInterceptorFactory implements MutationInterceptor
   }
 
   @Override
-  public MutationInterceptor createInterceptor(ReportOptions data,
-      ClassByteArraySource source) {
-    return new ExcludedAnnotationInterceptor();
+  public MutationInterceptor createInterceptor(InterceptorParameters params) {
+    return new ExcludedAnnotationInterceptor(determineAnnotations(params.settings()));
+  }
+
+  private List<String> determineAnnotations(Option<FeatureSetting> settings) {
+    if (settings.hasNone() || settings.value().getList(ARGUMENT).isEmpty()) {
+      return Arrays.asList("Generated", "DoNotMutate", "CoverageIgnore");
+    }
+    return settings.value().getList(ARGUMENT); 
+  }
+
+  @Override
+  public Feature provides() {
+    return Feature.named("FANN")
+        .withOnByDefault(true)
+        .withDescription("Filters out mutations in classes and methods with matching annotations of class or runtime retention");
   }
 
 }

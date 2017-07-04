@@ -5,6 +5,7 @@ import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDeta
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
 public class ExcludedAnnotationInterceptorTest {
 
-  ExcludedAnnotationInterceptor testee = new ExcludedAnnotationInterceptor();
+  ExcludedAnnotationInterceptor testee = new ExcludedAnnotationInterceptor(Arrays.asList("TestGeneratedAnnotation", "AnotherTestAnnotation"));
   Mutater mutator;
   
   @Before
@@ -91,18 +92,18 @@ class UnAnnotated {
   
 }
 
-@Generated
+@TestGeneratedAnnotation
 class AnnotatedWithGenerated {
   
 }
 
-@DoNotMutate
+@AnotherTestAnnotation
 class AnnotatedWithDoNotMutate {
   
 }
 
 class MethodAnnotatedWithGenerated {
-  @Generated
+  @TestGeneratedAnnotation
   public void foo() {
     System.out.println("don't mutate me");
   }
@@ -113,12 +114,12 @@ class MethodAnnotatedWithGenerated {
 }
 
 @Retention(value=RetentionPolicy.RUNTIME)
-@interface DoNotMutate {
+@interface TestGeneratedAnnotation {
   
 }
 
 @Retention(value=RetentionPolicy.CLASS)
-@interface Generated {
+@interface AnotherTestAnnotation {
   
 }
 

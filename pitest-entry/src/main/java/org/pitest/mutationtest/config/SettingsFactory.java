@@ -2,6 +2,7 @@ package org.pitest.mutationtest.config;
 
 import static org.pitest.functional.prelude.Prelude.not;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -23,6 +24,7 @@ import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.CompoundFilterFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
+import org.pitest.plugin.FeatureParser;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
@@ -145,10 +147,11 @@ public class SettingsFactory {
         this.options.getDependencyAnalysisMaxDistance());
   }
   
-  public MutationInterceptorFactory getInterceptor() {
+  public CompoundInterceptorFactory getInterceptor() {
     final Collection<? extends MutationInterceptorFactory> interceptors = this.plugins
         .findInterceptors();
-    return new CompoundInterceptorFactory(interceptors);
+    FeatureParser parser = new FeatureParser();
+    return new CompoundInterceptorFactory(parser.parseFeatures(options.getFeatures()), new ArrayList<MutationInterceptorFactory>(interceptors));
   }
 
   @SuppressWarnings("unchecked")

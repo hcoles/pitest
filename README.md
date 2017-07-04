@@ -15,6 +15,7 @@ Read all about it at http://pitest.org
 * #354/#356 - New extension point plus changes to reduce cost of random access to bytecode for static analysis
 * #353 - Improved static initializer code detection
 * #364 - Filter infinite loops via static analysis
+* #365 - Configuration system for plugins
 
 (Note #347 will **not** detect `javax.annoation.Generated` as it has only source retention.) 
 

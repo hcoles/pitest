@@ -1,6 +1,5 @@
 package org.pitest.mutationtest.build;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,38 +7,36 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.FeatureSelector;
+import org.pitest.plugin.FeatureSetting;
 
-public class CompoundInterceptorFactory implements MutationInterceptorFactory {
+public class CompoundInterceptorFactory {
 
-  private final List<MutationInterceptorFactory> children = new ArrayList<MutationInterceptorFactory>();
-
-  public CompoundInterceptorFactory(
-      Collection<? extends MutationInterceptorFactory> filters) {
-    this.children.addAll(filters);
+  private final FeatureSelector<MutationInterceptorFactory> features;
+  
+  public CompoundInterceptorFactory(List<FeatureSetting> features,
+      Collection<MutationInterceptorFactory> filters) {
+    this.features = new FeatureSelector<MutationInterceptorFactory>(features, filters);
   }
 
-  @Override
-  public String description() {
-    return null;
-  }
-
-  @Override
-  public MutationInterceptor createInterceptor(ReportOptions data,
-      ClassByteArraySource source) {
-    List<MutationInterceptor> interceptors = FCollection.map(this.children,
-        toInterceptor(data, source));
+  public MutationInterceptor createInterceptor(
+      ReportOptions data,
+      ClassByteArraySource source) {    
+    List<MutationInterceptor> interceptors = FCollection.map(this.features.getActiveFeatures(),
+        toInterceptor(features, data, source));
     return new CompoundMutationInterceptor(interceptors);
   }
 
+  
   private static F<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
-      final ReportOptions data, final ClassByteArraySource source) {
+      final FeatureSelector<MutationInterceptorFactory> features, final ReportOptions data, final ClassByteArraySource source) {  
+        
     return new F<MutationInterceptorFactory, MutationInterceptor>() {
       @Override
       public MutationInterceptor apply(MutationInterceptorFactory a) {
-        return a.createInterceptor(data, source);
+        return a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, source));
       }
-
     };
+        
   }
-
-}
+ }

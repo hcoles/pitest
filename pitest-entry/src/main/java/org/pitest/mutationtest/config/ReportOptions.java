@@ -86,6 +86,7 @@ public class ReportOptions {
   private Collection<File>               sourceDirs;
   private Collection<String>             classPathElements;
   private Collection<String>             mutators;
+  private Collection<String>             features;
 
   private int                            dependencyAnalysisMaxDistance;
   private boolean                        mutateStaticInitializers       = false;
@@ -182,6 +183,15 @@ public class ReportOptions {
    */
   public void setMutators(final Collection<String> mutators) {
     this.mutators = mutators;
+  }
+
+    
+  public Collection<String> getFeatures() {
+    return features;
+  }
+
+  public void setFeatures(Collection<String> features) {
+    this.features = features;
   }
 
   /**
@@ -586,7 +596,8 @@ public class ReportOptions {
         + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
         + mutationEngine + ", javaExecutable=" + javaExecutable
         + ", includeLaunchClasspath=" + includeLaunchClasspath
-        + ", properties=" + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners=" + excludedRunners + "]";
+        + ", properties=" + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners=" + excludedRunners 
+        + ", features=" + features + "]";
   }
   
 }

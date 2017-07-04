@@ -26,6 +26,7 @@ import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
 import static org.pitest.mutationtest.config.ConfigOption.EXPORT_LINE_COVERAGE;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
+import static org.pitest.mutationtest.config.ConfigOption.FEATURES;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
@@ -61,14 +62,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
-import joptsimple.util.KeyValuePair;
-
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
@@ -78,6 +71,14 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
+
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
+import joptsimple.util.KeyValuePair;
 
 public class OptionsParser {
 
@@ -96,6 +97,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     historyOutputSpec;
   private final OptionSpec<File>                     historyInputSpec;
   private final OptionSpec<String>                   mutators;
+  private final OptionSpec<String>                   features;
   private final OptionSpec<String>                   jvmArgs;
   private final ArgumentAcceptingOptionSpec<Boolean> mutateStatics;
   private final OptionSpec<Float>                    timeoutFactorSpec;
@@ -177,6 +179,10 @@ public class OptionsParser {
     this.mutators = parserAccepts(MUTATIONS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("comma separated list of mutation operators");
+    
+    this.features = parserAccepts(FEATURES).withRequiredArg()
+        .ofType(String.class).withValuesSeparatedBy(',')
+        .describedAs("comma separated list of features to enable/disable.");    
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
@@ -350,6 +356,7 @@ public class OptionsParser {
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
+    data.setFeatures(this.features.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
 

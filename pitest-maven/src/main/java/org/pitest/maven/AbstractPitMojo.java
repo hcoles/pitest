@@ -128,6 +128,13 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "mutators")
   private ArrayList<String>           mutators;
+  
+  /**
+   * Mutation operators to apply
+   */
+  @Parameter(property = "features")
+  private ArrayList<String>           features;
+
 
   /**
    * Weighting to allow for timeouts
@@ -576,5 +583,10 @@ public class AbstractPitMojo extends AbstractMojo {
   public ArrayList<String> getExcludedRunners() {
     return excludedRunners;
   }
+  
+  public ArrayList<String> getFeatures() {
+    return features;
+  }
+
   
 }

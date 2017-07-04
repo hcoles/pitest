@@ -118,6 +118,7 @@ public class MojoToReportOptionsConverter {
     }
 
     data.setMutators(determineMutators());
+    data.setFeatures(determineFeatures());
     data.setTimeoutConstant(this.mojo.getTimeoutConstant());
     data.setTimeoutFactor(this.mojo.getTimeoutFactor());
     if (hasValue(this.mojo.getAvoidCallsTo())) {
@@ -147,6 +148,7 @@ public class MojoToReportOptionsConverter {
 
     return data;
   }
+
 
   private void determineHistory(final ReportOptions data) {
     if (this.mojo.useHistory()) {
@@ -247,6 +249,14 @@ public class MojoToReportOptionsConverter {
     }
   }
 
+  private Collection<String> determineFeatures() {
+      if (this.mojo.getFeatures() != null) {
+        return this.mojo.getFeatures();
+      } else {
+        return Collections.emptyList();
+      }
+  }  
+  
   private Collection<Predicate<String>> determineTargetClasses() {
     return useConfiguredTargetClassesOrFindOccupiedPackages(this.mojo.getTargetClasses());
   }

@@ -154,6 +154,13 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutators=a,b");
   }
+  
+  @Test
+  public void shouldPassFeaturesOptionToJavaTask() {
+    this.pitestTask.setFeatures("FOO,BAR(a[1] a[2])");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--features=FOO,BAR(a[1] a[2])");
+  }
 
   @Test
   public void shouldPassOutputFormatsOptionToJavaTask() {
