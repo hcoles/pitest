@@ -35,7 +35,7 @@ public class ExcludedAnnotationInterceptorFactory implements MutationInterceptor
   public Feature provides() {
     return Feature.named("FANN")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations in classes and methods with matching annotations of class or runtime retention");
+        .withDescription("Filters mutations in classes and methods with matching annotations of class or runtime retention");
   }
 
 }

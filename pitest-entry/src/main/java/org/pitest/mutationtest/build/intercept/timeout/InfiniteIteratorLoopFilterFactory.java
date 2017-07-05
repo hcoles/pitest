@@ -21,7 +21,7 @@ public class InfiniteIteratorLoopFilterFactory  implements MutationInterceptorFa
   public Feature provides() {
     return Feature.named("FINFIT")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations that may cause infinite loops"
+        .withDescription("Filters mutations that may cause infinite loops"
             + " by removing calls to iterator.next");
   }
   

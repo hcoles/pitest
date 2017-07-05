@@ -23,9 +23,9 @@ public class StaticInitializerFilterFactory implements MutationInterceptorFactor
 
   @Override
   public Feature provides() {
-    return Feature.named("FSTATI")
+    return Feature.named("FSTATINIT")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations in code in static initializers and code called only from them");
+        .withDescription("Filters mutations in static initializers and code called only from them");
   }
   
 }

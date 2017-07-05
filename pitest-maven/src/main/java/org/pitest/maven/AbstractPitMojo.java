@@ -199,7 +199,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
-   * If set to 1 will analyse very slowly, but with string (jvm per mutant)
+   * If set to 1 will analyse very slowly, but with strong (jvm per mutant)
    * isolation.
    *
    */

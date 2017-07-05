@@ -13,6 +13,7 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.functional.Option;
+import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -20,13 +21,15 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
+import org.pitest.plugin.Feature;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
+import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
 
 public class EntryPoint {
-
+  
   /**
    * Convenient entry point for tools to run mutation analysis.
    *
@@ -59,6 +62,14 @@ public class EntryPoint {
   public AnalysisResult execute(File baseDir, ReportOptions data,
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
+    if (data.isVerbose()) {
+      Log.getLogger().info("---------------------------------------------------------------------------");
+      Log.getLogger().info("Enabled (+) and disabled (-) features.");
+      Log.getLogger().info("-----------------------------------------");
+      settings.describeFeatures(asInfo("+"), asInfo("-"));
+      Log.getLogger().info("---------------------------------------------------------------------------");      
+    }
+    
     final ClassPath cp = data.getClassPath();
 
     final Option<Reader> reader = data.createHistoryReader();
@@ -109,6 +120,16 @@ public class EntryPoint {
       historyWriter.close();
     }
 
+  }
+
+  private SideEffect1<Feature> asInfo(final String leader) {
+    return new SideEffect1<Feature>() {
+      @Override
+      public void apply(Feature a) {
+        Log.getLogger().info(String.format("%1$-16s",leader + a.name()) + a.description());
+      }
+      
+    };
   }
 
 }

@@ -23,9 +23,9 @@ public class InlinedFinallyBlockFilterFactory  implements MutationInterceptorFac
   
   @Override
   public Feature provides() {
-    return Feature.named("FINFB")
+    return Feature.named("FFBLOCK")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations in code duplicated by finally block inlining");
+        .withDescription("Filters mutations in code duplicated by finally block inlining");
   }
   
 

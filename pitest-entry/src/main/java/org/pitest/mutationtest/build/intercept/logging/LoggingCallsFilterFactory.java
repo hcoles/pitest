@@ -19,9 +19,9 @@ public class LoggingCallsFilterFactory  implements MutationInterceptorFactory {
 
   @Override
   public Feature provides() {
-    return Feature.named("FLOGC")
+    return Feature.named("FLOGCALL")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations in code that makes calls to logging frameworks or configured methods");
+        .withDescription("Filters mutations in code that makes calls to logging frameworks");
   }
   
 }

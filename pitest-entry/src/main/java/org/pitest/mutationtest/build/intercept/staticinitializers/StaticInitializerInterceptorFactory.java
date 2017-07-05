@@ -21,6 +21,6 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
   public Feature provides() {
     return Feature.named("FSTATI")
         .withOnByDefault(true)
-        .withDescription("Filters out mutations in code in static initializers and code called only from them");
+        .withDescription("Filters mutations in static initializers and code called only from them");
   }
 }

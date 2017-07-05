@@ -4,6 +4,8 @@ import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.coverage.CoverageExporter;
@@ -12,6 +14,7 @@ import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -24,7 +27,11 @@ import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.filter.CompoundFilterFactory;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
+import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParser;
+import org.pitest.plugin.FeatureSelector;
+import org.pitest.plugin.FeatureSetting;
+import org.pitest.plugin.ProvidesFeature;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
@@ -85,36 +92,23 @@ public class SettingsFactory {
         .findGroupers();
     return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
   }
-
-  private Iterable<MutationResultListenerFactory> findListeners() {
-    final Iterable<? extends MutationResultListenerFactory> listeners = this.plugins
-        .findListeners();
-    final Collection<MutationResultListenerFactory> matches = FCollection
-        .filter(listeners, nameMatches(this.options.getOutputFormats()));
-    if (matches.size() < this.options.getOutputFormats().size()) {
-      throw new PitError("Unknown listener requested in "
-          + StringUtil.join(this.options.getOutputFormats(), ","));
-    }
-    return matches;
-  }
-
-  private static F<MutationResultListenerFactory, Boolean> nameMatches(
-      final Iterable<String> outputFormats) {
-    return new F<MutationResultListenerFactory, Boolean>() {
-      @Override
-      public Boolean apply(final MutationResultListenerFactory a) {
-        return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
-      }
-    };
-  }
-
-  private static Predicate<String> equalsIgnoreCase(final String other) {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(final String a) {
-        return a.equalsIgnoreCase(other);
-      }
-    };
+  
+  public void describeFeatures(SideEffect1<Feature> enabled, SideEffect1<Feature> disabled) {
+    FeatureParser parser = new FeatureParser();
+    Collection<ProvidesFeature> available = new ArrayList<ProvidesFeature>(this.plugins.findInterceptors());
+    List<FeatureSetting> settings = parser.parseFeatures(options.getFeatures());
+    FeatureSelector<ProvidesFeature> selector = new FeatureSelector<ProvidesFeature>(settings, available);
+    
+    HashSet<Feature> enabledFeatures = new HashSet<Feature>();
+    FCollection.mapTo(selector.getActiveFeatures(), toFeature(), enabledFeatures);
+   
+    FCollection.forEach(enabledFeatures, enabled);
+    
+    HashSet<Feature> disabledFeatures = new HashSet<Feature>();
+    FCollection.mapTo(available, toFeature(), disabledFeatures);
+    disabledFeatures.removeAll(enabledFeatures);
+    
+    FCollection.forEach(disabledFeatures, disabled);
   }
 
   public MutationFilterFactory createMutationFilter() {
@@ -153,6 +147,37 @@ public class SettingsFactory {
     FeatureParser parser = new FeatureParser();
     return new CompoundInterceptorFactory(parser.parseFeatures(options.getFeatures()), new ArrayList<MutationInterceptorFactory>(interceptors));
   }
+  
+  private static F<MutationResultListenerFactory, Boolean> nameMatches(
+      final Iterable<String> outputFormats) {
+    return new F<MutationResultListenerFactory, Boolean>() {
+      @Override
+      public Boolean apply(final MutationResultListenerFactory a) {
+        return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
+      }
+    };
+  }
+
+  private Iterable<MutationResultListenerFactory> findListeners() {
+    final Iterable<? extends MutationResultListenerFactory> listeners = this.plugins
+        .findListeners();
+    final Collection<MutationResultListenerFactory> matches = FCollection
+        .filter(listeners, nameMatches(this.options.getOutputFormats()));
+    if (matches.size() < this.options.getOutputFormats().size()) {
+      throw new PitError("Unknown listener requested in "
+          + StringUtil.join(this.options.getOutputFormats(), ","));
+    }
+    return matches;
+  }
+  
+  private static Predicate<String> equalsIgnoreCase(final String other) {
+    return new Predicate<String>() {
+      @Override
+      public Boolean apply(final String a) {
+        return a.equalsIgnoreCase(other);
+      }
+    };
+  }
 
   @SuppressWarnings("unchecked")
   private static F<String, Boolean> commonClasses() {
@@ -182,4 +207,17 @@ public class SettingsFactory {
     return found.iterator().next();
   }
 
+  
+
+  private static F<ProvidesFeature, Feature> toFeature() {
+    return new F<ProvidesFeature, Feature>() {
+      @Override
+      public Feature apply(ProvidesFeature a) {
+        return a.provides();
+      }
+      
+    };
+  }
+
+  
 }
