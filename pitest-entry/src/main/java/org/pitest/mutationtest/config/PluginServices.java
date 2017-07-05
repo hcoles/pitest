@@ -55,7 +55,6 @@ public class PluginServices {
     l.addAll(nullPlugins());
     return l;
   }
-
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return ServiceLoader.load(TestPluginFactory.class, this.loader);
   }

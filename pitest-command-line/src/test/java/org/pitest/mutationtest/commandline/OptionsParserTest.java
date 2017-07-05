@@ -107,6 +107,12 @@ public class OptionsParserTest {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.name(),
         MathMutator.MATH_MUTATOR.name()), actual.getMutators());
   }
+  
+  @Test
+  public void shouldParseCommaSeparatedListOfFeatures() {
+    final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
+    assertThat(actual.getFeatures()).contains("+FOO()", "-BAR(value=1 & value=2)");
+  }
 
   @Test
   public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {

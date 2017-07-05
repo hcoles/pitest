@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.annotations;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.objectweb.asm.tree.AnnotationNode;
 import org.pitest.bytecode.analysis.AnalysisFunctions;
@@ -19,8 +20,15 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
+  private final List<String> configuredAnnotations;
+  
   private boolean skipClass;
   private Predicate<MutationDetails> annotatedMethodMatcher;
+  
+  
+  ExcludedAnnotationInterceptor(List<String> configuredAnnotations) {
+    this.configuredAnnotations = configuredAnnotations;
+  }
   
   @Override
   public InterceptorType type() {
@@ -71,10 +79,14 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     
   }
   
-  static boolean shouldAvoid(String desc) {
-    return desc.endsWith("Generated;") 
-        || desc.endsWith("DoNotMutate;") 
-        || desc.endsWith("CoverageIgnore;"); 
+  boolean shouldAvoid(String desc) {
+    String matchAgainst = desc.replace(";", "");
+    for (String each : configuredAnnotations) {
+      if (matchAgainst.endsWith(each)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

@@ -115,6 +115,16 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig(xml);
     assertEquals(Arrays.asList("foo", "bar"), actual.getMutators());
   }
+  
+  public void testParsesListOfFeatures() {
+    final String xml = "<features>" + //
+        "                      <param>+FOO</param>" + //
+        "                      <param>-BAR(foo[1] bar[3])</param>" + //
+        "               </features>";
+    final ReportOptions actual = parseConfig(xml);
+    assertThat(actual.getFeatures()).contains("+FOO", "-BAR(foo[1] bar[3])");
+  }
+
 
   public void testParsersMutateStaticInitializersFlag() {
     assertTrue(parseConfig(

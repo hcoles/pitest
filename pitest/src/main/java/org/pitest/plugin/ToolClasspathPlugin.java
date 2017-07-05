@@ -1,7 +1,7 @@
 package org.pitest.plugin;
 
 /**
- * Plugins that do not need to be available at runtime chould implement this
+ * Plugins that do not need to be available at runtime should implement this
  * interface
  *
  */

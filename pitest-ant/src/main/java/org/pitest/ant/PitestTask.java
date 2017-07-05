@@ -148,6 +148,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.MUTATIONS, value);
   }
 
+  public void setFeatures(final String value) {
+    this.setOption(ConfigOption.FEATURES, value);
+  }
+  
   public void setExcludedMethods(final String value) {
     this.setOption(ConfigOption.EXCLUDED_METHOD, value);
   }

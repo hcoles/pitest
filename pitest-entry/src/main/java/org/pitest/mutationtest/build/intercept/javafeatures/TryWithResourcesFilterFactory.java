@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
-import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.Feature;
 
 public class TryWithResourcesFilterFactory implements MutationInterceptorFactory {
 
@@ -13,9 +13,15 @@ public class TryWithResourcesFilterFactory implements MutationInterceptorFactory
   }
 
   @Override
-  public MutationInterceptor createInterceptor(ReportOptions data,
-      ClassByteArraySource source) {
+  public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new TryWithResourcesFilter();
+  }
+  
+  @Override
+  public Feature provides() {
+    return Feature.named("FTRYWR")
+        .withOnByDefault(true)
+        .withDescription("Filters mutations in code generated for try with resources statements");
   }
 
 }

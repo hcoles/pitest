@@ -4,18 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
+import org.pitest.functional.SideEffect1;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
+import org.pitest.plugin.Feature;
 import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 
@@ -97,7 +101,6 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  @Ignore("while hackign")
   public void shouldNotAllowUserToCalculateCoverageForCoverageImplementation() {
     this.options.setTargetClasses(Glob.toGlobPredicates(Collections
         .singleton("/org/pitest/coverage")));
@@ -112,4 +115,30 @@ public class SettingsFactoryTest {
     this.testee.createCoverageOptions();
   }
 
+  @Test
+  @SuppressWarnings("unchecked")
+  public void shouldDescribeActiveFeatures() {
+    SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
+    SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
+    
+    this.options.setFeatures(Arrays.asList("+FSTATINIT"));
+    
+    this.testee.describeFeatures(enabled, disabled);
+    verify(enabled).apply(Feature.named("FSTATINIT"));
+    verify(disabled, never()).apply(Feature.named("FSTATINIT"));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void shouldDescribeDisabledFeatures() {
+    SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
+    SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
+    
+    this.options.setFeatures(Arrays.asList("-FSTATINIT"));
+    
+    this.testee.describeFeatures(enabled, disabled);
+    verify(enabled, never()).apply(Feature.named("FSTATINIT"));
+    verify(disabled).apply(Feature.named("FSTATINIT"));
+  }
+  
 }

@@ -128,6 +128,13 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "mutators")
   private ArrayList<String>           mutators;
+  
+  /**
+   * Mutation operators to apply
+   */
+  @Parameter(property = "features")
+  private ArrayList<String>           features;
+
 
   /**
    * Weighting to allow for timeouts
@@ -192,7 +199,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
-   * If set to 1 will analyse very slowly, but with string (jvm per mutant)
+   * If set to 1 will analyse very slowly, but with strong (jvm per mutant)
    * isolation.
    *
    */
@@ -576,5 +583,10 @@ public class AbstractPitMojo extends AbstractMojo {
   public ArrayList<String> getExcludedRunners() {
     return excludedRunners;
   }
+  
+  public ArrayList<String> getFeatures() {
+    return features;
+  }
+
   
 }

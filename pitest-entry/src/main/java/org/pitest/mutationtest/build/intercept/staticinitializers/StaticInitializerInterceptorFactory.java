@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
-import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
-import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.Feature;
 
 public class StaticInitializerInterceptorFactory implements MutationInterceptorFactory {
 
@@ -13,9 +13,14 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
   }
 
   @Override
-  public MutationInterceptor createInterceptor(ReportOptions data,
-      ClassByteArraySource source) {
+  public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new StaticInitializerInterceptor();
   }
 
+  @Override
+  public Feature provides() {
+    return Feature.named("FSTATI")
+        .withOnByDefault(true)
+        .withDescription("Filters mutations in static initializers and code called only from them");
+  }
 }
