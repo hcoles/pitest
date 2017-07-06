@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassByteArraySource;
@@ -29,11 +30,13 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.ClassPathByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -247,8 +250,8 @@ private int numberOfThreads() {
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
 
-    ClassByteArraySource bas = new ClassPathByteArraySource(
-        this.data.getClassPath());
+    ClassByteArraySource bas = fallbackToClassLoader(new ClassPathByteArraySource(
+        this.data.getClassPath()));
 
     TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
         .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
@@ -305,4 +308,24 @@ private int numberOfThreads() {
     return this.strategies.history();
   }
 
+  // For reasons not yet understood classes from rt.jar are not resolved for some
+  // projects during static analysis phase. For now fall back to the classloader when
+  // a class not provided by project classpath
+  private ClassByteArraySource fallbackToClassLoader(final ClassByteArraySource bas) {
+    final ClassByteArraySource clSource = ClassloaderByteArraySource.fromContext();
+    return new ClassByteArraySource() {
+      @Override
+      public Option<byte[]> getBytes(String clazz) {
+        Option<byte[]> maybeBytes = bas.getBytes(clazz);
+        if (maybeBytes.hasSome()) {
+          return maybeBytes;
+        }
+        LOG.log(Level.FINE, "Could not find " + clazz + " on classpath for analysis. Falling back to classloader");
+        return clSource.getBytes(clazz);
+      }
+      
+    };
+  }
+
+  
 }
