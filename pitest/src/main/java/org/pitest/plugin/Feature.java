@@ -1,29 +1,43 @@
 package org.pitest.plugin;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public final class Feature {
 
   private final boolean onByDefault;
   private final String  name;
   private final String  description;
+  private final List<FeatureParameter> params;
 
-  private Feature(boolean onByDefault, String name, String description) {
+  private Feature(boolean onByDefault, String name, String description, List<FeatureParameter> params) {
     this.onByDefault = onByDefault;
     this.name = name;
     this.description = description;
+    this.params = params;
   }
 
   public static Feature named(String name) {
-    return new Feature(false, name, "");
+    return new Feature(false, name, "", Collections.<FeatureParameter>emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {
-    return new Feature(onByDefault, this.name, this.description);
+    return new Feature(onByDefault, this.name, this.description, params);
   }
 
   public Feature withDescription(String description) {
-    return new Feature(this.onByDefault, this.name, description);
+    return new Feature(this.onByDefault, this.name, description, params);
   }
 
+
+  public Feature withParameter(FeatureParameter param) {
+    List<FeatureParameter> params = new ArrayList<FeatureParameter>();
+    params.addAll(this.params);
+    params.add(param);
+    return new Feature(onByDefault, this.name, this.description, params);
+  }
+  
   public String name() {
     return this.name;
   }
@@ -66,5 +80,6 @@ public final class Feature {
     }
     return true;
   }
+
 
 }

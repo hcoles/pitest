@@ -6,3 +6,5 @@ org.pitest.mutationtest.build.intercept.javafeatures.TryWithResourcesFilterFacto
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
+org.pitest.mutationtest.build.intercept.kotlin.KotlinFilterFactory
+org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory

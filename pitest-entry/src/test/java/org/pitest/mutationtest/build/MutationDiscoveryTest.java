@@ -12,14 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.classpath.CodeSource;
-import org.pitest.classpath.PathFilter;
-import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.config.PluginServices;
@@ -31,7 +26,6 @@ import org.pitest.mutationtest.engine.gregor.CoverageIgnore;
 import org.pitest.mutationtest.engine.gregor.DoNotMutate;
 import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.util.Glob;
 import org.pitest.util.ResourceFolderByteArraySource;
 
@@ -205,21 +199,13 @@ public class MutationDiscoveryTest {
         PluginServices.makeForContextLoader());
     final MutationInterceptor interceptor = settings.getInterceptor()
         .createInterceptor(data, source);
-    final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
-        new True<ClassPathRoot>());
-    final ProjectClassPaths cps = new ProjectClassPaths(data.getClassPath(),
-        data.createClassesFilter(), pf);
-
-    final CodeSource cs = new CodeSource(cps, null);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
         Prelude.or(data.getExcludedMethods()), data.getMutators());
     
     final MutationConfig config = new MutationConfig(engine, null);
 
-    final MutationFilter filter = settings.createMutationFilter()
-        .createFilter(data.getFreeFormProperties(), cs, 0);
-    return new MutationSource(config, filter, noTestPrioritisation(), source,
+    return new MutationSource(config, noTestPrioritisation(), source,
         interceptor);
   }
 

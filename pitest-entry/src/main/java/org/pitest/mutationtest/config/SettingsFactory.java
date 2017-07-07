@@ -25,8 +25,6 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
-import org.pitest.mutationtest.filter.CompoundFilterFactory;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParser;
 import org.pitest.plugin.FeatureSelector;
@@ -111,11 +109,6 @@ public class SettingsFactory {
     FCollection.forEach(disabledFeatures, disabled);
   }
 
-  public MutationFilterFactory createMutationFilter() {
-    final Collection<? extends MutationFilterFactory> filters = this.plugins
-        .findFilters();
-    return new CompoundFilterFactory(filters);
-  }
 
   public TestPrioritiserFactory getTestPrioritiser() {
     final Collection<? extends TestPrioritiserFactory> testPickers = this.plugins

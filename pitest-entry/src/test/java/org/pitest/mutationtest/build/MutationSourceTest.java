@@ -27,7 +27,6 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.process.LaunchOptions;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,8 +53,8 @@ public class MutationSourceTest {
   public void setUp() {
     when(this.engine.createMutator(any(ClassByteArraySource.class))).thenReturn(this.mutater);
     this.config = new MutationConfig(this.engine, new LaunchOptions(null));
-    this.testee = new MutationSource(this.config,
-        UnfilteredMutationFilter.INSTANCE, this.prioritiser, this.source, CompoundMutationInterceptor.nullInterceptor());
+    this.testee = new MutationSource(this.config, this.prioritiser
+        , this.source, CompoundMutationInterceptor.nullInterceptor());
   }
 
   @Test

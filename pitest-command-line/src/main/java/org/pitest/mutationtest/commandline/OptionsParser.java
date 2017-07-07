@@ -103,7 +103,6 @@ public class OptionsParser {
   private final OptionSpec<Float>                    timeoutFactorSpec;
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
-  private final OptionSpec<Integer>                  maxMutationsPerClassSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
   private final OptionSpec<String>                   outputFormatSpec;
@@ -167,10 +166,10 @@ public class OptionsParser {
         .ofType(Integer.class).defaultsTo(THREADS.getDefault(Integer.class))
         .describedAs("number of threads to use for testing");
 
-    this.maxMutationsPerClassSpec = parserAccepts(MAX_MUTATIONS_PER_CLASS)
+    parserAccepts(MAX_MUTATIONS_PER_CLASS)
         .withRequiredArg().ofType(Integer.class)
         .defaultsTo(MAX_MUTATIONS_PER_CLASS.getDefault(Integer.class))
-        .describedAs("max number of mutations to allow for each class");
+        .describedAs("No longer supported. Use CLASSLIMIT(limit[42]) feature instead");
 
     this.sourceDirSpec = parserAccepts(SOURCE_DIR).withRequiredArg()
         .ofType(File.class).withValuesSeparatedBy(',')
@@ -379,7 +378,6 @@ public class OptionsParser {
         this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setExcludedClasses(FCollection.map(
         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec.value(userArgs));
     data.setVerbose(userArgs.has(this.verboseSpec)
         && userArgs.valueOf(this.verboseSpec));
 

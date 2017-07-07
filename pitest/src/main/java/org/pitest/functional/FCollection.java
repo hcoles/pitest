@@ -35,7 +35,6 @@ public abstract class FCollection {
   public static <A, B> void mapTo(final Iterable<? extends A> as,
       final F<A, B> f, final Collection<? super B> bs) {
     if (as != null) {
-
       for (final A a : as) {
         bs.add(f.apply(a));
       }
