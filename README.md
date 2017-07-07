@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.2.2-SNAPSHOT
+### 1.2.3-SNAPSHOT
+
+Nothing yet - why not contribute?
+
+### 1.2.2
 
 * #367 - Static analysis cannot find core classes in some projects
 
@@ -21,7 +25,7 @@ Read all about it at http://pitest.org
 * #364 - Filter infinite loops via static analysis
 * #365 - Configuration system for plugins
 
-(Note #347 will **not** detect `javax.annoation.Generated` as it has only source retention.) 
+(Note #347 will **not** detect `javax.annotaion.Generated` as it has only source retention.) 
 
 ### 1.2.0
 
