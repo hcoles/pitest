@@ -343,14 +343,6 @@ public class ReportOptions {
     this.excludedMethods = excludedMethods;
   }
 
-  public int getMaxMutationsPerClass() {
-    return this.maxMutationsPerClass;
-  }
-
-  public void setMaxMutationsPerClass(final int maxMutationsPerClass) {
-    this.maxMutationsPerClass = maxMutationsPerClass;
-  }
-
   public void setVerbose(final boolean verbose) {
     this.verbose = verbose;
   }

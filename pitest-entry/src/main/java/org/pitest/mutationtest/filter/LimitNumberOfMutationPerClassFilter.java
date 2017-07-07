@@ -18,9 +18,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.mutationtest.build.InterceptorType;
+import org.pitest.mutationtest.build.MutationInterceptor;
+import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
+public class LimitNumberOfMutationPerClassFilter implements MutationInterceptor {
 
   private final int maxMutationsPerClass;
 
@@ -29,15 +33,15 @@ public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
   }
 
   @Override
-  public Collection<MutationDetails> filter(
-      final Collection<MutationDetails> mutations) {
+  public Collection<MutationDetails> intercept(
+      Collection<MutationDetails> mutations, Mutater m) {
     if (mutations.size() <= this.maxMutationsPerClass) {
       return mutations;
     } else {
       return createEvenlyDistributedSampling(mutations);
     }
   }
-
+  
   private Collection<MutationDetails> createEvenlyDistributedSampling(
       final Collection<MutationDetails> mutations) {
     final Collection<MutationDetails> filtered = new ArrayList<MutationDetails>(
@@ -57,5 +61,20 @@ public class LimitNumberOfMutationPerClassFilter implements MutationFilter {
     }
 
     return filtered;
+  }
+
+  @Override
+  public InterceptorType type() {
+    return InterceptorType.FILTER;
+  }
+
+  @Override
+  public void begin(ClassTree clazz) {
+    // noop
+  }
+
+  @Override
+  public void end() {
+    // noop
   }
 }

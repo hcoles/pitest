@@ -67,7 +67,6 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
-import org.pitest.mutationtest.filter.UnfilteredMutationFilter;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
@@ -377,8 +376,7 @@ public class TestMutationTesting {
     
     MutationInterceptor emptyIntercpetor = CompoundMutationInterceptor.nullInterceptor();
     
-    final MutationSource source = new MutationSource(mutationConfig,
-        UnfilteredMutationFilter.INSTANCE, new DefaultTestPrioritiser(
+    final MutationSource source = new MutationSource(mutationConfig, new DefaultTestPrioritiser(
             coverageData), bas, emptyIntercpetor);
 
     final WorkerFactory wf = new WorkerFactory(null,

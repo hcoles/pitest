@@ -165,7 +165,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data.setTargetClasses(predicateFor(MultipleMutations.class));
     this.data
     .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
-    this.data.setMaxMutationsPerClass(1);
+    this.data.setFeatures(Collections.singletonList("+CLASSLIMIT(limit[1])"));
     createAndRun();
     verifyResults(NO_COVERAGE);
   }

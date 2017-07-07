@@ -56,8 +56,7 @@ import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;  
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
@@ -260,9 +259,7 @@ private int numberOfThreads() {
     MutationInterceptor interceptor = this.settings.getInterceptor()
         .createInterceptor(this.data, bas);
     
-    final MutationSource source = new MutationSource(mutationConfig,
-        makeFilter().createFilter(this.data.getFreeFormProperties(), this.code,
-            this.data.getMaxMutationsPerClass()), testPrioritiser, bas, interceptor);
+    final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
@@ -280,10 +277,6 @@ private int numberOfThreads() {
         source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
-  }
-
-  private MutationFilterFactory makeFilter() {
-    return this.settings.createMutationFilter();
   }
 
   private void checkMutationsFound(final List<MutationAnalysisUnit> tus) {

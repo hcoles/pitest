@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.filter;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -9,17 +9,8 @@ public class LimitNumberOfMutationsPerClassFilterFactoryTest {
   private final LimitNumberOfMutationsPerClassFilterFactory testee = new LimitNumberOfMutationsPerClassFilterFactory();
 
   @Test
-  public void shouldFilterWhenNumberOfMutationsPerClassGreaterThanThanZero() {
-    assertTrue(this.testee.createFilter(null, null, 1) instanceof LimitNumberOfMutationPerClassFilter);
+  public void shouldBeOffByDefault() {
+    assertThat(testee.provides().isOnByDefault()).isFalse();
   }
-
-  @Test
-  public void shouldNotFilterWhenNumberOfMutationsPerClassIsZero() {
-    assertTrue(this.testee.createFilter(null, null, 0) instanceof UnfilteredMutationFilter);
-  }
-
-  @Test
-  public void shouldNotFilterWhenNumberOfMutationsPerClassLessThanZero() {
-    assertTrue(this.testee.createFilter(null, null, -1) instanceof UnfilteredMutationFilter);
-  }
+  
 }

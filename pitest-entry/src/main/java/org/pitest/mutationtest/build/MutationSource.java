@@ -26,7 +26,6 @@ import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.filter.MutationFilter;
 import org.pitest.util.Log;
 
 public class MutationSource {
@@ -35,17 +34,15 @@ public class MutationSource {
 
   private final MutationConfig       mutationConfig;
   private final TestPrioritiser      testPrioritiser;
-  private final MutationFilter       filter;
   private final ClassByteArraySource source;
   private final MutationInterceptor interceptor;
 
   public MutationSource(final MutationConfig mutationConfig,
-      final MutationFilter filter, final TestPrioritiser testPrioritiser,
+      final TestPrioritiser testPrioritiser,
       final ClassByteArraySource source,
       final MutationInterceptor interceptor) {
     this.mutationConfig = mutationConfig;
     this.testPrioritiser = testPrioritiser;
-    this.filter = filter;
     this.source = new CachingByteArraySource(source, 200);
     this.interceptor = interceptor;
   }
@@ -54,8 +51,8 @@ public class MutationSource {
 
     final Mutater m = this.mutationConfig.createMutator(this.source);
 
-    final Collection<MutationDetails> availableMutations = this.filter.filter(m
-        .findMutations(clazz));
+    final Collection<MutationDetails> availableMutations = m
+        .findMutations(clazz);
     
     if (availableMutations.isEmpty()) {
       return availableMutations;

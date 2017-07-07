@@ -9,7 +9,6 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
-import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
@@ -38,7 +37,6 @@ public class PluginServices {
     final List<ToolClasspathPlugin> l = new ArrayList<ToolClasspathPlugin>();
     l.addAll(findListeners());
     l.addAll(findGroupers());
-    l.addAll(findFilters());
     l.addAll(findTestPrioritisers());
     l.addAll(findInterceptors());
     return l;
@@ -61,10 +59,6 @@ public class PluginServices {
 
   Collection<? extends MutationGrouperFactory> findGroupers() {
     return ServiceLoader.load(MutationGrouperFactory.class, this.loader);
-  }
-
-  Collection<? extends MutationFilterFactory> findFilters() {
-    return ServiceLoader.load(MutationFilterFactory.class, this.loader);
   }
 
   Collection<? extends MutationResultListenerFactory> findListeners() {
