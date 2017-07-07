@@ -22,6 +22,7 @@ import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.plugin.Feature;
+import org.pitest.plugin.FeatureParameter;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.util.Log;
@@ -127,6 +128,9 @@ public class EntryPoint {
       @Override
       public void apply(Feature a) {
         Log.getLogger().info(String.format("%1$-16s",leader + a.name()) + a.description());
+        for (FeatureParameter each : a.params()) {
+          Log.getLogger().info(String.format("%1$-18s", "  [" + each.name() + "]") + each.description());
+        }
       }
       
     };

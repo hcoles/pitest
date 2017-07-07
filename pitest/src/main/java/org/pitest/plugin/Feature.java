@@ -49,6 +49,10 @@ public final class Feature {
   public boolean isOnByDefault() {
     return this.onByDefault;
   }
+  
+  public List<FeatureParameter> params() {
+    return this.params;
+  }
 
   @Override
   public int hashCode() {

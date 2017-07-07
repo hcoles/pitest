@@ -9,7 +9,8 @@ import org.pitest.plugin.FeatureParameter;
 
 public class LimitNumberOfMutationsPerClassFilterFactory implements MutationInterceptorFactory {
   
-  private final FeatureParameter limit = FeatureParameter.named("limit");
+  private final FeatureParameter limit = FeatureParameter.named("limit")
+      .withDescription("Integer value for maximum mutations to create per class");
 
   @Override
   public String description() {
