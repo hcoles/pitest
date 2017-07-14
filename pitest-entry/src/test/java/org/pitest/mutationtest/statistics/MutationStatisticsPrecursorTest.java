@@ -91,8 +91,9 @@ public class MutationStatisticsPrecursorTest {
   public void shouldCalculatePercentageDetected() {
     this.testee.registerResults(Arrays.asList(
         makeResult(DetectionStatus.SURVIVED),
+        makeResult(DetectionStatus.SURVIVED),
         makeResult(DetectionStatus.KILLED)));
-    assertEquals(50, this.testee.toStatistics().getPercentageDetected());
+    assertEquals(33.333332f, this.testee.toStatistics().getPercentageDetected(), 0f);
   }
   
   @Test
@@ -115,9 +116,10 @@ public class MutationStatisticsPrecursorTest {
   public void shouldReportTotalNumberOfMutationsWhenNoneGenerated() {
     this.testee.registerResults(Arrays.asList(
         makeResult(DetectionStatus.SURVIVED),
+        makeResult(DetectionStatus.SURVIVED),
         makeResult(DetectionStatus.KILLED)));
     final String[] actual = generateReportLines();
-    assertEquals(">> Generated 2 mutations Killed 1 (50%)", actual[0]);
+    assertEquals(">> Generated 3 mutations Killed 1 (33.333%)", actual[0]);
   }
 
   @Test

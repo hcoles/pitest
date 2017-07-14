@@ -49,23 +49,23 @@ public final class MutationStatistics {
     return getTotalMutations() - getTotalDetectedMutations();
   }
 
-  public long getPercentageDetected() {
+  public float getPercentageDetected() {
     if (getTotalMutations() == 0) {
-      return 100;
+      return 100f;
     }
 
     if (getTotalDetectedMutations() == 0) {
-      return 0;
+      return 0f;
     }
 
-    return Math.round((100f / getTotalMutations())
-        * getTotalDetectedMutations());
+    return (100f / getTotalMutations())
+        * getTotalDetectedMutations();
   }
 
   public void report(final PrintStream out) {
     out.println(">> Generated " + this.getTotalMutations()
         + " mutations Killed " + this.getTotalDetectedMutations() + " ("
-        + this.getPercentageDetected() + "%)");
+        + new DecimalFormat("#.###").format(this.getPercentageDetected()) + "%)");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
 
