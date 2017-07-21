@@ -20,41 +20,41 @@
    }
    
    .coverage_bar {
-    display : inline-block;
-    height : 1.1em;
-    width: 130px;
-    background: #FAA;
-    margin: 0 5px;
-    vertical-align: middle;
-    border: 1px solid #AAA;
-    position : relative;
-   }
+     display : inline-block;
+     height : 1.1em;
+     width: 130px;
+     background: #FAA;
+     margin: 0 5px;
+     vertical-align: middle;
+     border: 1px solid #AAA;
+     position : relative;
+    }
    
    .coverage_complete {
-    display : inline-block;
-    height : 100%;
-    background: #DFD;
-    float: left;
-   }
+     display : inline-block;
+     height : 100%;
+     background: #DFD;
+     float: left;
+    }
    
    .coverage_ledgend {
-        position : absolute;
-        height : 100%;
-        width : 100%;
-        left : 0;
-        top : 0;
-        text-align : center;
+     position : absolute;
+     height : 100%;
+     width : 100%;
+     left : 0;
+     top : 0;
+     text-align : center;
    }
    
    .line, .mut {
-        vertical-align : middle;
+     vertical-align : middle;
    }
    
    .coveragePercentage {
-    display: inline-block;
-    width: 3em;
-    text-align: right;
-   }
+     display: inline-block;
+     width: 3em;
+     text-align: right;
+    }
   </style>
   
 </head>
