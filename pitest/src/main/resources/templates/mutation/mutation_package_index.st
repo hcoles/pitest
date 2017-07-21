@@ -4,50 +4,50 @@
     <style type='text/css'>
     $css$
    
-   .tests{ 
-     width : 50%;
-     float : left;
+   .tests {
+     width: 50%;
+     float: left;
    }
    
-   .mutees{
-     float : right;
-     width : 50%;
+   .mutees {
+     float: right;
+     width: 50%;
    }
    
    .unit {
-     padding-top : 20px;
-     clear : both;
+     padding-top: 20px;
+     clear: both;
    }
    
    .coverage_bar {
-     display : inline-block;
-     height : 1.1em;
+     display: inline-block;
+     height: 1.1em;
      width: 130px;
      background: #FAA;
      margin: 0 5px;
      vertical-align: middle;
      border: 1px solid #AAA;
-     position : relative;
+     position: relative;
    }
    
    .coverage_complete {
-     display : inline-block;
-     height : 100%;
+     display: inline-block;
+     height: 100%;
      background: #DFD;
      float: left;
    }
    
    .coverage_legend {
-     position : absolute;
-     height : 100%;
-     width : 100%;
-     left : 0;
-     top : 0;
-     text-align : center;
+     position: absolute;
+     height: 100%;
+     width: 100%;
+     left: 0;
+     top: 0;
+     text-align: center;
    }
    
    .line, .mut {
-     vertical-align : middle;
+     vertical-align: middle;
    }
    
    .coverage_percentage {
