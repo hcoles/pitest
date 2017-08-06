@@ -27,7 +27,7 @@ class DependencyClassVisitor extends ClassVisitor {
 
   protected DependencyClassVisitor(final ClassVisitor visitor,
       final SideEffect1<DependencyAccess> typeReceiver) {
-    super(Opcodes.ASM5, visitor);
+    super(Opcodes.ASM6, visitor);
     this.typeReceiver = filterOutJavaLangObject(typeReceiver);
   }
 
@@ -70,7 +70,7 @@ class DependencyClassVisitor extends ClassVisitor {
     DependencyAnalysisMethodVisitor(final Member member,
         final MethodVisitor methodVisitor,
         final SideEffect1<DependencyAccess> typeReceiver) {
-      super(Opcodes.ASM5, methodVisitor);
+      super(Opcodes.ASM6, methodVisitor);
       this.typeReceiver = typeReceiver;
       this.member = member;
     }

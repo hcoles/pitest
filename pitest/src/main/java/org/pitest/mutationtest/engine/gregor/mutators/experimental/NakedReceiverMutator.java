@@ -68,7 +68,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
 
     ReplaceMethodCallWithObjectVisitor(final MutationContext context,
         final MethodVisitor writer, final MethodMutatorFactory factory) {
-      super(Opcodes.ASM5, writer);
+      super(Opcodes.ASM6, writer);
       this.factory = factory;
       this.context = context;
     }

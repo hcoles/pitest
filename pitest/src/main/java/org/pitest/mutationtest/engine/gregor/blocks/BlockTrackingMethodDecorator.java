@@ -36,7 +36,7 @@ public class BlockTrackingMethodDecorator extends MethodVisitor {
 
   public BlockTrackingMethodDecorator(final BlockCounter blockCounter,
       final MethodVisitor mv) {
-    super(Opcodes.ASM5, mv);
+    super(Opcodes.ASM6, mv);
     this.blockCounter = blockCounter;
   }
 

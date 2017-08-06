@@ -108,7 +108,7 @@ public class InstructionTrackingMethodVisitorTest {
     InstructionTrackingMethodVisitor testee;
 
     public Analyser(final String targetMethod) {
-      super(Opcodes.ASM4);
+      super(Opcodes.ASM6);
       this.targetMethod = targetMethod;
     }
 

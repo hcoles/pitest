@@ -29,7 +29,7 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
   public AbstractInsnMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM5, delegateMethodVisitor);
+    super(Opcodes.ASM6, delegateMethodVisitor);
     this.factory = factory;
     this.methodInfo = methodInfo;
     this.context = context;

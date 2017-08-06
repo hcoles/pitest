@@ -11,7 +11,7 @@ public class InstructionTrackingMethodVisitor extends MethodVisitor {
 
   public InstructionTrackingMethodVisitor(final MethodVisitor mv,
       final InstructionCounter count) {
-    super(Opcodes.ASM5, mv);
+    super(Opcodes.ASM6, mv);
     this.count = count;
   }
 

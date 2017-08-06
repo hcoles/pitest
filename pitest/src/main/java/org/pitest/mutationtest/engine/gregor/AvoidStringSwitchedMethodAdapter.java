@@ -30,7 +30,7 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
 
   public AvoidStringSwitchedMethodAdapter(final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM5, delegateMethodVisitor);
+    super(Opcodes.ASM6, delegateMethodVisitor);
     this.context = context;
   }
 

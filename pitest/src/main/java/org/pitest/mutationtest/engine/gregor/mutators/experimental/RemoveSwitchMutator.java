@@ -58,7 +58,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
 
     RemoveSwitchMethodVisitor(final MutationContext context,
         final MethodVisitor methodVisitor) {
-      super(Opcodes.ASM5, methodVisitor);
+      super(Opcodes.ASM6, methodVisitor);
       this.context = context;
     }
 

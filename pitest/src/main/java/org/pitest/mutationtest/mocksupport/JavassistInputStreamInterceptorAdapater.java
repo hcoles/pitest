@@ -25,7 +25,7 @@ public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
   private final String interceptorClass;
 
   public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0, Class<?> interceptor) {
-    super(Opcodes.ASM5, arg0);
+    super(Opcodes.ASM6, arg0);
     this.interceptorClass = classToName(interceptor);
   }
 
@@ -57,7 +57,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
   private final String interceptorClass;
 
   JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv, String interceptor) {
-    super(Opcodes.ASM5, mv);
+    super(Opcodes.ASM6, mv);
     interceptorClass = interceptor;
   }
 

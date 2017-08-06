@@ -136,7 +136,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
 
     private ReturnValuesMethodVisitor(final MutationContext context,
         final MethodInfo methodInfo, final MethodVisitor delegateVisitor) {
-      super(Opcodes.ASM5, delegateVisitor);
+      super(Opcodes.ASM6, delegateVisitor);
       this.context = context;
       this.methodInfo = methodInfo;
     }

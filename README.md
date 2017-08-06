@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.2.3-SNAPSHOT
 
-Nothing yet - why not contribute?
+* Update to ASM 6 for Java 9 support
 
 ### 1.2.2
 

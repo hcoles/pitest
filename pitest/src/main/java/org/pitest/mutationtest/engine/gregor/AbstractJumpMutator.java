@@ -38,7 +38,7 @@ public abstract class AbstractJumpMutator extends MethodVisitor {
 
   public AbstractJumpMutator(final MethodMutatorFactory factory,
       final MutationContext context, final MethodVisitor writer) {
-    super(Opcodes.ASM5, writer);
+    super(Opcodes.ASM6, writer);
     this.factory = factory;
     this.context = context;
   }
