@@ -82,7 +82,7 @@ class LoggingLineScanner extends MethodVisitor {
   private int                 currentLineNumber;
 
   LoggingLineScanner(final Set<Integer> lines, final Set<String> loggingClasses) {
-    super(Opcodes.ASM5);
+    super(Opcodes.ASM6);
     this.lines = lines;
     this.loggingClasses = loggingClasses;
   }

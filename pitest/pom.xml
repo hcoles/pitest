@@ -121,6 +121,15 @@
 									<shadedPattern>org.pitest.reloc.xstream</shadedPattern>
 								</relocation>
 							</relocations>
+                             <!-- shade plugin does not like ASM6 -->
+                             <filters>
+                                 <filter>
+                                     <artifact>*:*</artifact>
+                                     <excludes>
+                                         <exclude>module-info.class</exclude>
+                                     </excludes>
+                                 </filter>
+                             </filters>							
 						</configuration>
 					</execution>
 				</executions>

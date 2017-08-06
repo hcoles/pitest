@@ -172,7 +172,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
    *          to store detected line numbers
    */
   TryWithResourcesMethodVisitor(final Set<Integer> lines) {
-    super(Opcodes.ASM5);
+    super(Opcodes.ASM6);
     this.lines = lines;
   }
 

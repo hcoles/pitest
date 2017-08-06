@@ -32,7 +32,7 @@ public class AvoidAssertsMethodAdapter extends MethodVisitor {
 
   public AvoidAssertsMethodAdapter(final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM5, delegateMethodVisitor);
+    super(Opcodes.ASM6, delegateMethodVisitor);
     this.context = context;
   }
 

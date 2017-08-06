@@ -58,7 +58,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
       final MutationContext context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final F2<String, String, Boolean> filter) {
-    super(Opcodes.ASM5, writer);
+    super(Opcodes.ASM6, writer);
     this.factory = factory;
     this.filter = filter;
     this.context = context;

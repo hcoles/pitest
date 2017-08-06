@@ -101,7 +101,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
     ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
         ClassName annotation) {
-      super(Opcodes.ASM5, null);
+      super(Opcodes.ASM6, null);
       this.classInfo = classInfo;
       this.annotation = annotation;
     }
@@ -120,7 +120,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       if (name.equals("value")) {
         final List<Object> arrayValue = new ArrayList<Object>();
 
-        return new AnnotationVisitor(Opcodes.ASM5, null) {
+        return new AnnotationVisitor(Opcodes.ASM6, null) {
           @Override
           public void visit(String name, Object value) {
             arrayValue.add(simplify(value));
@@ -154,7 +154,7 @@ class InfoMethodVisitor extends MethodVisitor {
 
   InfoMethodVisitor(final ClassInfoBuilder classInfo,
       final MethodVisitor writer) {
-    super(Opcodes.ASM5, writer);
+    super(Opcodes.ASM6, writer);
     this.classInfo = classInfo;
   }
 

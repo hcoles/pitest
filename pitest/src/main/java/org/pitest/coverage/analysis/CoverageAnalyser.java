@@ -29,7 +29,7 @@ public class CoverageAnalyser extends MethodNode {
       final int probeOffset, final MethodVisitor mv, final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
-    super(Opcodes.ASM5, access, name, desc, signature, exceptions);
+    super(Opcodes.ASM6, access, name, desc, signature, exceptions);
     this.mv = mv;
     this.parent = parent;
     this.classId = classId;

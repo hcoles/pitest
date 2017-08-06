@@ -25,7 +25,7 @@ public abstract class MethodFilteringAdapter extends ClassVisitor {
 
   public MethodFilteringAdapter(final ClassVisitor writer,
       final F5<Integer, String, String, String, String[], Boolean> filter) {
-    super(Opcodes.ASM5, writer);
+    super(Opcodes.ASM6, writer);
     this.filter = filter;
   }
 
