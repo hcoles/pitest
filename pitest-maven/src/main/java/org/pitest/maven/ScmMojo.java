@@ -42,7 +42,10 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
  * modified or introduced locally based on the source control configured in
  * maven.
  */
-@Mojo(name = "scmMutationCoverage", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "scmMutationCoverage", 
+      defaultPhase = LifecyclePhase.VERIFY, 
+      requiresDependencyResolution = ResolutionScope.TEST,
+      threadSafe = true)
 public class ScmMojo extends AbstractPitMojo {
 
   @Component
