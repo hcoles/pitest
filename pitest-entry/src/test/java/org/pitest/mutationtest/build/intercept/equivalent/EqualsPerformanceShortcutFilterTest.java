@@ -36,20 +36,11 @@ public class EqualsPerformanceShortcutFilterTest {
   
   @Test
   public void shouldNotFilterShortCutMutantsNotInEqualsMethods() {
-    final List<MutationDetails> mutations = mutator
-        .findMutations(ClassName.fromClass(HasNonOveridingEquals.class));
-    assertThat(mutations).hasSize(2);
-
-    this.testee.begin(forClass(HasNonOveridingEquals.class));
-    final Collection<MutationDetails> actual = this.testee.intercept(mutations,
-        mutator);
-    this.testee.end();
-    
-    assertThat(actual).hasSize(2);
+    assertFiltersNMutations(HasNonOveridingEquals.class, 0);
   }
 
   @Test
-  public void shouldNotFilterGeneralMutantsInEqualMethods() {
+  public void shouldNotFilterGeneralMutantsInEqualMethods() {    
     final GregorMutater mutator = createMutator(
         ReturnValsMutator.RETURN_VALS_MUTATOR);
     final List<MutationDetails> mutations = mutator
@@ -61,23 +52,31 @@ public class EqualsPerformanceShortcutFilterTest {
         mutator);
     this.testee.end();
 
-    assertThat(actual).hasSize(1);
+    assertThat(actual).hasSize(1); 
   }
   
   @Test
   public void shouldFilterShortCutEqualsMutantsInEqualMethods() {
+    assertFiltersNMutations(HasShortCutEquals.class, 1);
+  }
+  
+  @Test
+  public void shouldNotFilterShortCutMutantsNotInGeneralMethods() {
+    assertFiltersNMutations(HasShortcutInGeneralMethod.class, 0);
+  }
+  
+  private void assertFiltersNMutations(Class<?> muteee, int n) {
     final List<MutationDetails> mutations = mutator
-        .findMutations(ClassName.fromClass(HasShortCutEquals.class));
-    assertThat(mutations).hasSize(12);
-
-    this.testee.begin(forClass(HasShortCutEquals.class));
+        .findMutations(ClassName.fromClass(muteee));
+  
+    this.testee.begin(forClass(muteee));
     final Collection<MutationDetails> actual = this.testee.intercept(mutations,
         mutator);
     this.testee.end();
     
-    assertThat(actual).hasSize(11);
+    assertThat(actual).hasSize(mutations.size() - n);
   }
-
+  
   GregorMutater createMutator(MethodMutatorFactory... factories) {
     final Collection<MethodMutatorFactory> mutators = Arrays.asList(factories);
     return createMutator(mutators);
@@ -108,6 +107,16 @@ class HasNonOveridingEquals {
     return false;
   }
 }
+
+class HasShortcutInGeneralMethod {
+  public boolean compare(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    return false;
+  }
+}
+
 
 class HasShortCutEquals {
   private String s;

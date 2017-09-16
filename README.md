@@ -11,6 +11,7 @@ Read all about it at http://pitest.org
 
 * Update to ASM 6 for Java 9 support
 * #388 - Mark maven plugin as threadsafe
+* #362 - Suppress common equivalent mutant in equals methods
 
 ### 1.2.2
 
