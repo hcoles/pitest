@@ -33,7 +33,7 @@ public class TestJUnitConfigurationForSpock {
   public void createTestee() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.pitest = new Pitest(Collections.singletonList(this.listener));
+    this.pitest = new Pitest(this.listener);
   }
 
   @Test

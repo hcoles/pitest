@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
@@ -33,10 +31,10 @@ public class Pitest {
 
   private static final Logger                LOG = Log.getLogger();
 
-  private final List<? extends TestListener> listeners;
+  private final TestListener listener;
 
-  public Pitest(final List<? extends TestListener> listeners) {
-    this.listeners = listeners;
+  public Pitest(final TestListener listener) {
+    this.listener = listener;
   }
 
   // entry point for mutation testing
@@ -78,27 +76,16 @@ public class Pitest {
   private void processResults(final List<TestResult> results) {
     for (final TestResult result : results) {
       final ResultType classifiedResult = classify(result);
-      FCollection.forEach(this.listeners,
-          classifiedResult.getListenerFunction(result));
+      classifiedResult.getListenerFunction(result).apply(listener);
     }
   }
 
   private void signalRunStartToAllListeners() {
-    FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onRunStart();
-      }
-    });
+    listener.onRunStart();
   }
 
   private void signalRunEndToAllListeners() {
-    FCollection.forEach(this.listeners, new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onRunEnd();
-      }
-    });
+    listener.onRunEnd();
   }
 
   private ResultType classify(final TestResult result) {

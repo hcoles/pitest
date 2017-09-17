@@ -7,7 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,14 +31,12 @@ public class TestPitest {
 
   @Mock
   private TestListener listener;
-  @Mock
-  private TestListener listener2;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
-    this.testee = new Pitest(Arrays.asList(this.listener, this.listener2));
+    this.testee = new Pitest(this.listener);
   }
 
   public static class PassingTest {
@@ -50,32 +47,27 @@ public class TestPitest {
   };
 
   @Test
-  public void shouldNotifyAllListenersOfRunStart() {
+  public void shouldNotifyListenerOfRunStart() {
     run(PassingTest.class);
     verify(this.listener).onRunStart();
-    verify(this.listener2).onRunStart();
   }
 
   @Test
-  public void shouldNotifyAllListenersOfTestStart() {
+  public void shouldNotifyListenerOfTestStart() {
     run(PassingTest.class);
     verify(this.listener).onTestStart(any(Description.class));
-    verify(this.listener2).onTestStart(any(Description.class));
   }
 
   @Test
-  public void shouldNotifyAllListenersOfTestSuccess() {
+  public void shouldNotifyListenerOfTestSuccess() {
     run(PassingTest.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
-    verify(this.listener2).onTestSuccess(any(TestResult.class));
   }
 
   @Test
-  public void shouldNotifyAllListenersOfRunEnd() {
-    ;
-  run(PassingTest.class);
-  verify(this.listener).onRunEnd();
-  verify(this.listener2).onRunEnd();
+  public void shouldNotifyListenerOfRunEnd() {
+    run(PassingTest.class);
+    verify(this.listener).onRunEnd();
   }
 
   @Test
@@ -109,7 +101,6 @@ public class TestPitest {
   public void shouldReportSuccessIfExpectedExceptionThrown() {
     run(ExpectedExceptionThrown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
-
   }
 
   public static class ExpectedExceptionNotThrown {

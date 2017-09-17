@@ -47,8 +47,7 @@ public class CoverageWorker {
 
       final Container c = new UnContainer();
 
-      final Pitest pit = new Pitest(
-          Collections.singletonList(new ErrorListener()));
+      final Pitest pit = new Pitest(new ErrorListener());
       pit.run(c, decoratedTests);
 
     } catch (final Exception ex) {

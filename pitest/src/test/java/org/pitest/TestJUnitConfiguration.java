@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +47,9 @@ import org.pitest.testapi.execute.containers.UnContainer;
 
 import com.example.JUnitParamsTest;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class TestJUnitConfiguration {
 
   private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
@@ -66,7 +66,7 @@ public class TestJUnitConfiguration {
     MockitoAnnotations.initMocks(this);
     this.container = new UnContainer();
 
-    this.pitest = new Pitest(Collections.singletonList(this.listener));
+    this.pitest = new Pitest(this.listener);
   }
 
   public static class SimpleJUnit4Test {

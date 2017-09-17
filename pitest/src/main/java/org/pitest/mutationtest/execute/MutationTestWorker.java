@@ -193,7 +193,7 @@ public class MutationTestWorker {
     try {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
 
-      final Pitest pit = new Pitest(Collections.singletonList(listener));
+      final Pitest pit = new Pitest(listener);
       pit.run(c, createEarlyExitTestGroup(tests));
 
       return createStatusTestPair(listener);
