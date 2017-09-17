@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.2.3-SNAPSHOT
+### 1.2.4-SNAPSHOT
+
+Nothing yet, why not contribute?
+
+### 1.2.3
 
 * Update to ASM 6 for Java 9 support
 * #388 - Mark maven plugin as threadsafe
