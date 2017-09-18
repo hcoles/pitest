@@ -11,7 +11,6 @@ import java.util.List;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.InstructionMatchers;
@@ -39,12 +38,14 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
   
+  // Looks fairly specifically for a conditional mutated to a unconditional
+  // rather than any always false condition
   static final SequenceMatcher<AbstractInsnNode> ALWAYS_FALSE = QueryStart
       .any(AbstractInsnNode.class)
+      .then(opCode(Opcodes.ALOAD))
+      .then(opCode(Opcodes.ALOAD))
+      .then(opCode(Opcodes.POP2))
       .then(opCode(Opcodes.GOTO).and(debug("goto")))
-      .then(isA(LabelNode.class).and(debug("label")))
-      .then(opCode(Opcodes.ICONST_1).and(debug("const")))
-      .then(opCode(Opcodes.IRETURN).and(debug("return")))
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(IGNORE)
@@ -95,8 +96,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private Boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
-    AbstractInsnNode mutatedInsns = tree.instructions().get(a.getInstructionIndex());
-    if (!InstructionMatchers.aConditionalJump().test(null, mutatedInsns)) {
+    if (!mutatesAConditionalJump(tree, a.getInstructionIndex())) {
       return false;
     }
     
@@ -105,6 +105,12 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     
     return ALWAYS_FALSE.matches(mutantEquals.instructions());
   }
+  
+  private boolean mutatesAConditionalJump(MethodTree tree, int index) {
+    AbstractInsnNode mutatedInsns = tree.instructions().get(index);
+    return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);   
+  }
+  
   private F<MutationDetails, Boolean> inEqualsMethod() {
     return new  F<MutationDetails, Boolean>() {
       @Override

@@ -65,6 +65,11 @@ public class EqualsPerformanceShortcutFilterTest {
     assertFiltersNMutations(HasShortcutInGeneralMethod.class, 0);
   }
   
+  @Test
+  public void shouldFilterShortCutEqualsInGenericisedClasses() {
+    assertFiltersNMutations(BrokenEqualsAndGenerics.class, 1);
+  }
+    
   private void assertFiltersNMutations(Class<?> muteee, int n) {
     final List<MutationDetails> mutations = mutator
         .findMutations(ClassName.fromClass(muteee));
@@ -144,3 +149,27 @@ class HasShortCutEquals {
   }
 
 }
+
+
+final class BrokenEqualsAndGenerics<A, B> {
+  public final A _1;
+  public final B _2;
+
+  private BrokenEqualsAndGenerics(A _1, B _2) {
+    this._1 = _1;
+    this._2 = _2;
+  }
+
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    return false;
+  }
+}
+
