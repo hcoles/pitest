@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -341,9 +342,9 @@ public class AbstractPitMojo extends AbstractMojo {
       MojoFailureException {
 
     switchLogging();
+    RunDecision shouldRun = shouldRun();
 
-    if (shouldRun()) {
-
+    if (shouldRun.shouldRun()) {
       for (final ToolClasspathPlugin each : this.plugins
           .findToolClasspathPlugins()) {
         this.getLog().info("Found plugin : " + each.description());
@@ -363,7 +364,10 @@ public class AbstractPitMojo extends AbstractMojo {
       }
 
     } else {
-      this.getLog().info("Skipping project");
+      this.getLog().info("Skipping project because:");
+      for (String reason : shouldRun.getReasons()) {
+        this.getLog().info("  - " + reason);
+      }
     }
   }
 
@@ -537,11 +541,26 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.exportLineCoverage;
   }
 
-  protected boolean shouldRun() {
-    return !this.skip 
-        && !this.skipTests
-        && !this.project.getPackaging().equalsIgnoreCase("pom")
-        && notEmptyProject.apply(project);
+  protected RunDecision shouldRun() {
+    RunDecision decision = new RunDecision();
+
+    if (this.skip) {
+      decision.addReason("Execution of PIT should be skipped.");
+    }
+
+    if (this.skipTests) {
+      decision.addReason("Test execution should be skipped (-DskipTests).");
+    }
+
+    if (this.project.getPackaging().equalsIgnoreCase("pom")) {
+      decision.addReason("Packaging is POM.");
+    }
+
+    if (!notEmptyProject.apply(project)) {
+      decision.addReason("Project has not tests, it is empty.");
+    }
+
+    return decision;
   }
 
   public String getMutationEngine() {
@@ -586,6 +605,22 @@ public class AbstractPitMojo extends AbstractMojo {
   
   public ArrayList<String> getFeatures() {
     return features;
+  }
+
+  static class RunDecision {
+    private List<String> reasons = new ArrayList<String>(4);
+
+    boolean shouldRun() {
+      return reasons.isEmpty();
+    }
+
+    public void addReason(String reason) {
+      reasons.add(reason);
+    }
+
+    public List<String> getReasons() {
+      return Collections.unmodifiableList(reasons);
+    }
   }
 
   
