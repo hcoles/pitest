@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.2.4-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #397 - Report reasons maven modules skipped
 
 ### 1.2.3
 
