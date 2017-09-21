@@ -10,6 +10,7 @@ Read all about it at http://pitest.org
 ### 1.2.4-SNAPSHOT
 
 * #397 - Report reasons maven modules skipped
+* #389 - Filter junk getClass null checks in lambdas
 
 ### 1.2.3
 
