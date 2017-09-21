@@ -25,6 +25,12 @@ public class ClassTreeTest {
     assertThat(testee.methods().map(toName())).containsExactly("<init>", "a", "b");
   }
   
+  @Test
+  public void toStringShouldPrintBytecode() {
+    ClassTree testee = ClassTree.fromBytes(bytesFor(ParseMe.class));
+    assertThat(testee.toString()).contains("ALOAD 0");
+  }
+  
   byte[] bytesFor(Class<?> clazz) {
     return source.getBytes(clazz.getName()).value();
   }

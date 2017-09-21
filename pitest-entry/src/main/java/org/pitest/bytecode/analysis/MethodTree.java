@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -40,6 +41,10 @@ public class MethodTree {
     return createInstructionList();
   }
   
+  public boolean isSynthetic() {
+    return (rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
+  }
+  
   public FunctionalList<AnnotationNode> annotations() {
     FunctionalList<AnnotationNode> annotaions = new MutableList<AnnotationNode>();
     if (rawNode.invisibleAnnotations != null) {
@@ -60,7 +65,5 @@ public class MethodTree {
     lazyInstructions = new MutableList<AbstractInsnNode>(list);
     return lazyInstructions;
   }
-
-
   
 }

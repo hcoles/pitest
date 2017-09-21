@@ -170,6 +170,15 @@ public class InstructionMatchers {
   }
   
   
+  public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        return c.retrieve(target).value() == t;
+      }
+    };
+  }
+  
   private static Match<AbstractInsnNode> storeJumpTarget(
       final SlotWrite<LabelNode> label) {
     return new Match<AbstractInsnNode>() {

@@ -36,6 +36,8 @@ import java.util.Map;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.pitest.functional.Option;
+import org.pitest.util.PitError;
 
 /**
  * A ClassWriter that computes the common super class of two classes without
@@ -183,6 +185,10 @@ public class ComputeClassWriter extends ClassWriter {
    * @return the ClassReader corresponding to 'type'.
    */
   private ClassReader typeInfo(final String type) {
-    return new ClassReader(this.bytes.getBytes(type).value());
+    Option<byte[]> maybeBytes = this.bytes.getBytes(type);
+    if (maybeBytes.hasNone()) {
+      throw new PitError("Could not find class defintiion for " + type);
+    }
+    return new ClassReader(maybeBytes.value());
   }
 }

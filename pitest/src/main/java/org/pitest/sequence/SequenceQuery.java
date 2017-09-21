@@ -149,12 +149,16 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
     this.start = state;
     this.debug = debug;
   }
+  
 
   @Override
   public boolean matches(List<T> sequence) {
-    Set<State<T>> currentState = new HashSet<State<T>>();
-    final Context<T> context = Context.start(sequence, debug);
+    return matches(sequence, Context.start(sequence, debug));
+  }
 
+  @Override
+  public boolean matches(List<T> sequence, Context<T> context) {
+    Set<State<T>> currentState = new HashSet<State<T>>();
     addstate(currentState, this.start);
 
     for (T t : sequence) {      
@@ -170,6 +174,7 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
     return isMatch(currentState);
   }
 
+  
   private static <T> void addstate(Set<State<T>> set, State<T> state) {
     if (state == null) {
       return;

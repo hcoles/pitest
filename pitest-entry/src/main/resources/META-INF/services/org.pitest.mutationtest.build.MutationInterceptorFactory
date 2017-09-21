@@ -1,8 +1,11 @@
+# Interceptor factories. If you add an entry here you probably should have a test case in MutationDiscoveryTest
+
 org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerInterceptorFactory
 org.pitest.mutationtest.build.intercept.staticinitializers.StaticInitializerFilterFactory
 org.pitest.mutationtest.build.intercept.annotations.ExcludedAnnotationInterceptorFactory
 org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.TryWithResourcesFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.ImplicitNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
