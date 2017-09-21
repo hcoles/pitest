@@ -1,9 +1,14 @@
 package org.pitest.bytecode.analysis;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
@@ -65,4 +70,13 @@ public class ClassTree {
   }
 
 
+  @Override
+  public String toString() {
+    StringWriter writer = new StringWriter();
+    rawNode.accept(new TraceClassVisitor(null, new Textifier(), new PrintWriter(
+        writer)));
+    return writer.toString();
+
+  }
+  
 }

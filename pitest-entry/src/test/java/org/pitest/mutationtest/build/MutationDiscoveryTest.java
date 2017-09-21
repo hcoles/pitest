@@ -147,6 +147,21 @@ public class MutationDiscoveryTest {
     assertEquals(2, actualDetails.size());
   }
   
+  @Test
+  public void shouldFilterImplicitNullChecksInLambdas() {
+    ClassName clazz = ClassName.fromString("implicitnullcheck/RemovedCallBug_javac");
+    
+    data.setMutators(Collections.singletonList("ALL"));
+    
+    Collection<MutationDetails> foundByDefault = findMutants(clazz);
+    
+    data.setFeatures(Collections.singletonList("-FINULL"));
+    
+    Collection<MutationDetails> foundWhenDisabled = findMutants(clazz);
+    
+    assertThat(foundWhenDisabled.size()).isGreaterThan(foundByDefault.size());
+  }
+  
   public static class AnnotatedToAvoidMethod {
     public int a() {
       return 1;
