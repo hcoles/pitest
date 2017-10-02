@@ -126,6 +126,11 @@
 		own unshaded copy for main process analysis purposes  -->
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>${asm.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>		
