@@ -126,7 +126,7 @@
 		own unshaded copy for main process analysis purposes  -->
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm-debug-all</artifactId>
+			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>		
 		
