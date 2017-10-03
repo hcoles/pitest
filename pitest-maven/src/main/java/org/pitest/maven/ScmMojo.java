@@ -121,7 +121,7 @@ public class ScmMojo extends AbstractPitMojo {
   }
 
   private void defaultTargetTestsToGroupNameIfNoValueSet() {
-    if (this.getTargetTests() == null) {
+    if (this.getTargetTests() == null || this.getTargetTests().isEmpty()) {
       this.targetTests = makeConcreteList(Collections.singletonList(this
           .getProject().getGroupId() + "*"));
     }
@@ -138,10 +138,21 @@ public class ScmMojo extends AbstractPitMojo {
     final File sourceRoot = new File(this.project.getBuild()
         .getSourceDirectory());
 
-    final List<String> modifiedPaths = findModifiedPaths();
+    final List<String> modifiedPaths = FCollection.map(findModifiedPaths(), pathByScmDir());
     return FCollection.flatMap(modifiedPaths, new PathToJavaClassConverter(
-        sourceRoot.getAbsolutePath()));
+            sourceRoot.getAbsolutePath()));
 
+  }
+
+  private F<String,String> pathByScmDir() {
+    return new F<String, String>() {
+
+      @Override
+      public String apply(final String a) {
+        return scmRootDir.getAbsolutePath() + "/" + a;
+      }
+
+    };
   }
 
   private List<String> findModifiedPaths() throws MojoExecutionException {
