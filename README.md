@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.2.5-SNAPSHOT
 
-Nothing yet - why not contribute?
+* #407 - SCM goal cannot be run from within module (thanks @sbuisson)
 
 ### 1.2.4
 
