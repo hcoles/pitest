@@ -10,21 +10,30 @@
   <artifactId>gwtmockito-sample</artifactId>
 
   <build>
-    <plugins>
- 	<plugin>
-	  <groupId>org.pitest</groupId>
-	  <artifactId>pitest-maven</artifactId>
-	  <version>${pit.version}</version>
-	  <configuration>
-	      <exportLineCoverage>true</exportLineCoverage>
-	      <outputFormats><value>XML</value></outputFormats>
-	      <maxMutationsPerClass>6</maxMutationsPerClass>
-	      <timestampedReports>false</timestampedReports>
-	      <targetClasses><param>sample*</param></targetClasses>
-	      <verbose>true</verbose>
-	  </configuration>
-	</plugin>
-    </plugins>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>2.4</version>
+              <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pit.version}</version>
+                <configuration>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    <outputFormats><value>XML</value></outputFormats>
+                    <maxMutationsPerClass>6</maxMutationsPerClass>
+                    <timestampedReports>false</timestampedReports>
+                    <targetClasses><param>sample*</param></targetClasses>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+      </plugins>
   </build>
 
 

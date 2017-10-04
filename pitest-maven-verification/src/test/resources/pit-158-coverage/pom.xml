@@ -28,15 +28,23 @@
 
 	<build>
 		<plugins>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 			    <version>${pit.version}</version>
 				<configuration>
 					<verbose>true</verbose>
-				    <outputFormats><value>XML</value></outputFormats>	
-				    <timestampedReports>false</timestampedReports>				
+				    <outputFormats><value>XML</value></outputFormats>
+				    <timestampedReports>false</timestampedReports>
 					<exportLineCoverage>true</exportLineCoverage>
 					<mutators>
 						<mutator>VOID_METHOD_CALLS</mutator>
