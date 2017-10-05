@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -156,6 +157,7 @@ public class PitMojoIT {
   @Test
   //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
+    assumeFalse(System.getProperty("java.version").equals("9"));
     File testDir = prepare("/pit-powermock");
     verifier.addCliOption("-DtimeoutConstant=10000");
     verifier.executeGoal("test");
@@ -329,6 +331,7 @@ public class PitMojoIT {
 
   @Test
   public void shouldWorkWithGWTMockito() throws Exception {
+    assumeFalse(System.getProperty("java.version").equals("9"));
     File testDir = prepare("/pit-183-gwtmockito");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");

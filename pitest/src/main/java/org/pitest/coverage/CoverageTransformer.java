@@ -32,7 +32,7 @@ public class CoverageTransformer implements ClassFileTransformer {
     final boolean include = shouldInclude(className);
     if (include) {
       try {
-        return transformBytes(loader, className, classfileBuffer);
+        return transformBytes(pickLoader(loader), className, classfileBuffer);
       } catch (final RuntimeException t) {
         System.err.println("RuntimeException while transforming  " + className);
         t.printStackTrace();
@@ -58,6 +58,13 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   private boolean shouldInclude(final String className) {
     return this.filter.apply(className);
+  }
+
+  private ClassLoader pickLoader(ClassLoader loader) {
+    if (loader != null) {
+      return loader;
+    }
+    return ClassLoader.getSystemClassLoader();
   }
 
 }
