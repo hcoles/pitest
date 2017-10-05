@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.report.html;
 
+import java.text.DecimalFormat;
+
 public class MutationTotals {
 
   private long numberOfFiles             = 0;
@@ -53,10 +55,10 @@ public class MutationTotals {
         .round((100f * this.numberOfLinesCovered) / this.numberOfLines);
   }
 
-  public int getMutationCoverage() {
-    return this.numberOfMutations == 0 ? 100
-        : Math.round((100f * this.numberOfMutationsDetected)
-            / this.numberOfMutations);
+  public String getMutationCoverage() {
+    return new DecimalFormat("#.###").format(this.numberOfMutations == 0 ? 100
+            : ((100f * this.numberOfMutationsDetected)
+            / this.numberOfMutations));
   }
 
   public void add(final MutationTotals data) {

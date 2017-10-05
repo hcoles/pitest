@@ -42,27 +42,27 @@ public class MutationTotalsTest {
 
   @Test
   public void shouldCorrectlyCalculateMutationCoverageWhenNoMutationsPresent() {
-    assertEquals(100, this.testee.getMutationCoverage());
+    assertEquals("100", this.testee.getMutationCoverage());
   }
 
   @Test
   public void shouldCorrectlyCalculateMutationCoverageWhenNoMutationsDetected() {
     this.testee.addMutations(100);
-    assertEquals(0, this.testee.getMutationCoverage());
+    assertEquals("0", this.testee.getMutationCoverage());
   }
 
   @Test
   public void shouldCorrectlyCalculateMutationsCoverageWhenAllMutationsDetected() {
     this.testee.addMutations(100);
     this.testee.addMutationsDetetcted(100);
-    assertEquals(100, this.testee.getMutationCoverage());
+    assertEquals("100", this.testee.getMutationCoverage());
   }
 
   @Test
   public void shouldCorrectlyCalculateMutationCoverageWhenSomeMutationUndetected() {
     this.testee.addMutations(63);
     this.testee.addMutationsDetetcted(20);
-    assertEquals(32, this.testee.getMutationCoverage());
+    assertEquals("31.746", this.testee.getMutationCoverage());
   }
 
   @Test
@@ -76,7 +76,7 @@ public class MutationTotalsTest {
     this.testee.add(extra);
     assertEquals(2, this.testee.getNumberOfFiles());
     assertEquals(50, this.testee.getLineCoverage());
-    assertEquals(33, this.testee.getMutationCoverage());
+    assertEquals("33.333", this.testee.getMutationCoverage());
   }
 
 }
