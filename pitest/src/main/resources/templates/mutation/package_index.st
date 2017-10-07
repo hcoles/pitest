@@ -1,62 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
-  
-    <style type='text/css'>
-    $css$
-   
-   .tests {
-     width: 50%;
-     float: left;
-   }
-   
-   .mutees {
-     float: right;
-     width: 50%;
-   }
-   
-   .unit {
-     padding-top: 20px;
-     clear: both;
-   }
-   
-   .coverage_bar {
-     display: inline-block;
-     height: 1.1em;
-     width: 130px;
-     background: #FAA;
-     margin: 0 5px;
-     vertical-align: middle;
-     border: 1px solid #AAA;
-     position: relative;
-   }
-   
-   .coverage_complete {
-     display: inline-block;
-     height: 100%;
-     background: #DFD;
-     float: left;
-   }
-   
-   .coverage_legend {
-     position: absolute;
-     height: 100%;
-     width: 100%;
-     left: 0;
-     top: 0;
-     text-align: center;
-   }
-   
-   .line, .mut {
-     vertical-align: middle;
-   }
-   
-   .coverage_percentage {
-     display: inline-block;
-     width: 3em;
-     text-align: right;
-   }
-  </style>
-  
+    <link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 <body>
 
@@ -74,8 +19,8 @@
     <tbody>
         <tr>
             <td>$packageData.totals.numberOfFiles$</td>
-            <td>$packageData.totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.totals.lineCoverage$%"></div><div class="coverage_legend">$packageData.totals.numberOfLinesCovered$/$packageData.totals.numberOfLines$</div></div></td>
-            <td>$packageData.totals.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete" style="width:$packageData.totals.mutationCoverage$%"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutations$</div></div></td>
+            <td>$packageData.totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.lineCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfLinesCovered$/$packageData.totals.numberOfLines$</div></div></td>
+            <td>$packageData.totals.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.mutationCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutations$</div></div></td>
         </tr>
     </tbody>
 </table>
@@ -94,8 +39,8 @@
 $packageData.summaryData:{ summary | 
         <tr>
             <td><a href="./$summary.fileName$.html">$summary.fileName$</a></td>
-            <td><div class="coverage_percentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.totals.lineCoverage$%"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
-            <td><div class="coverage_percentage">$summary.totals.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete" style="width:$summary.totals.mutationCoverage$%"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
+            <td><div class="coverage_percentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.lineCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
+            <td><div class="coverage_percentage">$summary.totals.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.mutationCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
         </tr>
 }$
      </tbody>

@@ -1,15 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
-<style type='text/css'>
-$css$
-
-.pop {outline:none; }
-.pop strong {line-height:30px;}
-.pop {text-decoration:none;}
-.pop span { z-index:10; display:none; padding:14px 20px; margin-top:-30px; margin-left:28px; width:800px; line-height:16px; word-wrap:break-word; border-radius:4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; -moz-box-shadow: 5px 5px 8px #CCC; -webkit-box-shadow: 5px 5px 8px #CCC; box-shadow: 5px 5px 8px #CCC; }
-.pop:hover span{ display:inline; position:absolute; color:#111; border:1px solid #DCA; background:#fffAF0;}
-</style>
-
+    <link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 <body>
 

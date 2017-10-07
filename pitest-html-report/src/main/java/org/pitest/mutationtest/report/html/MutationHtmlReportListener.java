@@ -181,6 +181,17 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   public void onRunEnd() {
     createIndexPages();
+    createCssFile();
+  }
+
+  private void createCssFile() {
+    final Writer cssWriter = this.outputStrategy.createWriterForFile("style.css");
+    try {
+      cssWriter.write(css);
+      cssWriter.close();
+    } catch (final IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private void createIndexPages() {
@@ -237,6 +248,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   @Override
   public void runEnd() {
     createIndexPages();
+    createCssFile();
   }
 
   @Override

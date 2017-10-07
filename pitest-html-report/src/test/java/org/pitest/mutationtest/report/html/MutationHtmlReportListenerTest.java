@@ -79,6 +79,12 @@ public class MutationHtmlReportListenerTest {
     verify(this.outputStrategy).createWriterForFile("index.html");
   }
 
+  @Test
+  public void shouldCreateACssFile() {
+    this.testee.onRunEnd();
+    verify(this.outputStrategy).createWriterForFile("style.css");
+  }
+
   @SuppressWarnings("unchecked")
   @Test
   public void shouldTryToLocateSourceFilesFromMutatedClasses() {
