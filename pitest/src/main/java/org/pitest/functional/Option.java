@@ -14,11 +14,12 @@
  */
 package org.pitest.functional;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-public abstract class Option<T> implements FunctionalIterable<T> {
+public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
 
   @SuppressWarnings({ "rawtypes" })
   private static final None NONE = new None();

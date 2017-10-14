@@ -14,14 +14,15 @@
  */
 package org.pitest.classinfo;
 
-import java.util.logging.Logger;
-
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
-public final class ClassName implements Comparable<ClassName> {
+import java.io.Serializable;
+import java.util.logging.Logger;
+
+public final class ClassName implements Comparable<ClassName>, Serializable {
 
   private static final Logger LOG = Log.getLogger();
   

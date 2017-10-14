@@ -16,11 +16,13 @@ package org.pitest.mutationtest.engine;
 
 import org.pitest.classinfo.ClassName;
 
+import java.io.Serializable;
+
 /**
  * The co-ordinates of a method within a class.
  *
  */
-public final class Location implements Comparable<Location> {
+public final class Location implements Comparable<Location>, Serializable {
 
   private final ClassName  clazz;
   private final MethodName method;

@@ -14,17 +14,18 @@
  */
 package org.pitest.mutationtest.engine;
 
+import org.pitest.classinfo.ClassName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.classinfo.ClassName;
-
 /**
  * Uniquely identifies a mutation
  */
-public final class MutationIdentifier implements Comparable<MutationIdentifier> {
+public final class MutationIdentifier implements Comparable<MutationIdentifier>, Serializable {
 
   /**
    * The location at which the mutation occurs

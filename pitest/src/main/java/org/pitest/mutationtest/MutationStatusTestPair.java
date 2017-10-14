@@ -16,7 +16,9 @@ package org.pitest.mutationtest;
 
 import org.pitest.functional.Option;
 
-public final class MutationStatusTestPair {
+import java.io.Serializable;
+
+public final class MutationStatusTestPair implements Serializable {
 
   private final int             numberOfTestsRun;
   private final DetectionStatus status;

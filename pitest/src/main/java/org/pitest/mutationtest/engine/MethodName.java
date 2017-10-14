@@ -1,6 +1,8 @@
 package org.pitest.mutationtest.engine;
 
-public class MethodName {
+import java.io.Serializable;
+
+public class MethodName implements Serializable {
 
   private final String name;
 
