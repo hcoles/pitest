@@ -22,10 +22,7 @@ import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -141,10 +138,6 @@ public class ObjectOutputStreamHistoryStoreTest {
         this.testee.initialize();
 
         assertFalse(this.testee.getHistoricResults().isEmpty());
-    }
-
-    private InputStream convertOutputStreamToInputStream(ByteArrayOutputStream os) {
-        return new ByteArrayInputStream(os.toByteArray());
     }
 
     private void recordClassPathWithTestee(
