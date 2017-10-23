@@ -33,11 +33,11 @@ body{
     background-color: #ffdddd;
 }
 
-.killed {
+.killed, .KILLED {
     background-color: #aaffaa;
 }
 
-.survived {
+.survived, .SURVIVED {
     background-color: #ffaaaa;
 }
 
