@@ -10,6 +10,9 @@ Read all about it at http://pitest.org
 ### 1.2.5-SNAPSHOT
 
 * #407 - SCM goal cannot be run from within module (thanks @sbuisson)
+* #256 - Inline style violate Content Security Policy (thanks @kiftio)
+* #403 - No css in the html report viewed from jenkins (thanks @kiftio)
+
 
 ### 1.2.4
 
