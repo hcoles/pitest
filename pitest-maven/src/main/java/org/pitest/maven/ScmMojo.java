@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -48,6 +50,8 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
       threadSafe = true)
 public class ScmMojo extends AbstractPitMojo {
 
+  private static final int NO_LIMIT = -1;
+
   @Component
   private ScmManager      manager;
 
@@ -65,6 +69,13 @@ public class ScmMojo extends AbstractPitMojo {
    */
   @Parameter(defaultValue = "false", property = "analyseLastCommit")
   private boolean analyseLastCommit;
+
+
+  @Parameter(property = "originBranch")
+  private String originBranch;
+
+  @Parameter(property = "destinationBranch", defaultValue = "master")
+  private String destinationBranch;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
@@ -155,19 +166,21 @@ public class ScmMojo extends AbstractPitMojo {
     };
   }
 
-  private List<String> findModifiedPaths() throws MojoExecutionException {
+  private Set<String> findModifiedPaths() throws MojoExecutionException {
     try {
-      final Set<ScmFileStatus> statusToInclude = makeStatusSet();
-      final List<String> modifiedPaths = new ArrayList<String>();
       final ScmRepository repository = this.manager
           .makeScmRepository(getSCMConnection());
       final File scmRoot = scmRoot();
       this.getLog().info("Scm root dir is " + scmRoot);
 
+      final Set<ScmFileStatus> statusToInclude = makeStatusSet();
+      final Set<String> modifiedPaths;
       if (analyseLastCommit) {
-        lastCommitChanges(statusToInclude, modifiedPaths, repository, scmRoot);
+        modifiedPaths = lastCommitChanges(statusToInclude, repository, scmRoot);
+      } else if (originBranch != null && destinationBranch != null) {
+        modifiedPaths = changesBetweenBranchs(originBranch, destinationBranch, statusToInclude, repository, scmRoot);
       } else {
-        localChanges(statusToInclude, modifiedPaths, repository, scmRoot);
+        modifiedPaths = localChanges(statusToInclude, repository, scmRoot);
       }
       return modifiedPaths;
     } catch (final ScmException e) {
@@ -176,35 +189,55 @@ public class ScmMojo extends AbstractPitMojo {
 
   }
 
-  private void lastCommitChanges(Set<ScmFileStatus> statusToInclude, List<String> modifiedPaths, ScmRepository repository, File scmRoot) throws ScmException {
+  private Set<String> lastCommitChanges(Set<ScmFileStatus> statusToInclude, ScmRepository repository, File scmRoot) throws ScmException {
     ChangeLogScmRequest scmRequest = new ChangeLogScmRequest(repository, new ScmFileSet(scmRoot));
     scmRequest.setLimit(1);
+    return pathsAffectedByChange(scmRequest, statusToInclude, 1);
+  }
 
+  private Set<String> changesBetweenBranchs(String origine, String destination, Set<ScmFileStatus> statusToInclude, ScmRepository repository, File scmRoot) throws ScmException {
+    ChangeLogScmRequest scmRequest = new ChangeLogScmRequest(repository, new ScmFileSet(scmRoot));
+    scmRequest.setScmBranch(new ScmBranch(destination + ".." + origine));
+    return pathsAffectedByChange(scmRequest, statusToInclude, NO_LIMIT);
+  }
+  
+  private Set<String> pathsAffectedByChange(ChangeLogScmRequest scmRequest, Set<ScmFileStatus> statusToInclude, int limit) throws ScmException {
+    Set<String> affected = new LinkedHashSet<String>();
     ChangeLogScmResult changeLogScmResult = this.manager.changeLog(scmRequest);
     if (changeLogScmResult.isSuccess()) {
-      List<ChangeSet> changeSets = changeLogScmResult.getChangeLog().getChangeSets();
-      if (!changeSets.isEmpty()) {
-        List<ChangeFile> files = changeSets.get(0).getFiles();
-
+      List<ChangeSet> changeSets = limit(changeLogScmResult.getChangeLog().getChangeSets(),limit);
+      for (ChangeSet change : changeSets) {
+        List<ChangeFile> files = change.getFiles();
         for (final ChangeFile changeFile : files) {
           if (statusToInclude.contains(changeFile.getAction())) {
-            modifiedPaths.add(changeFile.getName());
+            affected.add(changeFile.getName());
           }
         }
       }
     }
+    return affected;
   }
 
-  private void localChanges(Set<ScmFileStatus> statusToInclude, List<String> modifiedPaths, ScmRepository repository, File scmRoot) throws ScmException {
+
+  private Set<String> localChanges(Set<ScmFileStatus> statusToInclude, ScmRepository repository, File scmRoot) throws ScmException {
     final StatusScmResult status = this.manager.status(repository,
             new ScmFileSet(scmRoot));
-
+    Set<String> affected = new LinkedHashSet<String>();
     for (final ScmFile file : status.getChangedFiles()) {
       if (statusToInclude.contains(file.getStatus())) {
-        modifiedPaths.add(file.getPath());
+        affected.add(file.getPath());
       }
     }
+    return affected;
   }
+  
+  private List<ChangeSet> limit(List<ChangeSet> changeSets, int limit) {
+    if (limit < 0) {
+      return changeSets;
+    }
+    return changeSets.subList(0, limit);
+  }
+
 
   private Set<ScmFileStatus> makeStatusSet() {
     if ((this.include == null) || this.include.isEmpty()) {
