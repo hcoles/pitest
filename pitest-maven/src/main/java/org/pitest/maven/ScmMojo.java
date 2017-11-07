@@ -21,6 +21,7 @@ import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.changelog.ChangeLogScmRequest;
@@ -65,6 +66,13 @@ public class ScmMojo extends AbstractPitMojo {
    */
   @Parameter(defaultValue = "false", property = "analyseLastCommit")
   private boolean analyseLastCommit;
+
+
+  @Parameter(property = "originBranch")
+  private String originBranch;
+
+  @Parameter(property = "destinationBranch", defaultValue = "master")
+  private String destinationBranch;
 
   /**
    * Connection type to use when querying scm for changed files. Can either be
@@ -166,6 +174,8 @@ public class ScmMojo extends AbstractPitMojo {
 
       if (analyseLastCommit) {
         lastCommitChanges(statusToInclude, modifiedPaths, repository, scmRoot);
+      } else if (originBranch != null && destinationBranch != null) {
+        changesBetweenBranchs(originBranch, destinationBranch, statusToInclude, modifiedPaths, repository, scmRoot);
       } else {
         localChanges(statusToInclude, modifiedPaths, repository, scmRoot);
       }
@@ -189,6 +199,26 @@ public class ScmMojo extends AbstractPitMojo {
         for (final ChangeFile changeFile : files) {
           if (statusToInclude.contains(changeFile.getAction())) {
             modifiedPaths.add(changeFile.getName());
+          }
+        }
+      }
+    }
+  }
+
+  private void changesBetweenBranchs(String origine, String destination, Set<ScmFileStatus> statusToInclude, List<String> modifiedPaths, ScmRepository repository, File scmRoot) throws ScmException {
+    ChangeLogScmRequest scmRequest = new ChangeLogScmRequest(repository, new ScmFileSet(scmRoot));
+    scmRequest.setScmBranch(new ScmBranch(destination + ".." + origine));
+    ChangeLogScmResult changeLogScmResult = this.manager.changeLog(scmRequest);
+    if (changeLogScmResult.isSuccess()) {
+      List<ChangeSet> changeSets = changeLogScmResult.getChangeLog().getChangeSets();
+      if (!changeSets.isEmpty()) {
+        for (ChangeSet change : changeSets) {
+          List<ChangeFile> files = change.getFiles();
+
+          for (final ChangeFile changeFile : files) {
+            if (statusToInclude.contains(changeFile.getAction())) {
+              modifiedPaths.add(changeFile.getName());
+            }
           }
         }
       }
