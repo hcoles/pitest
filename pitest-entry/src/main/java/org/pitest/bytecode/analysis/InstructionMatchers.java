@@ -209,6 +209,11 @@ public class InstructionMatchers {
     };
   }
   
+  public static Match<AbstractInsnNode> jumpsTo(
+      final SlotWrite<LabelNode> label) {
+    return storeJumpTarget(label);
+  }  
+  
   public static Match<AbstractInsnNode> gotoLabel(
       final SlotWrite<LabelNode> loopEnd) {
         return opCode(Opcodes.GOTO).and(storeJumpTarget(loopEnd));

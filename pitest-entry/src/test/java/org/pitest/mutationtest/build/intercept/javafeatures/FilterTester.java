@@ -33,7 +33,11 @@ public class FilterTester {
   private final MutationInterceptor testee;
   private final Collection<MethodMutatorFactory> mutators;
   
-  FilterTester(String path, MutationInterceptor testee, Collection<MethodMutatorFactory> mutators) {
+  public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
+    this(path, testee, Arrays.asList(mutators));
+  }
+   
+  public FilterTester(String path, MutationInterceptor testee, Collection<MethodMutatorFactory> mutators) {
     this.mutators = mutators;
     this.testee = testee;
     this.path = path;
@@ -87,7 +91,9 @@ public class FilterTester {
     
 
     assertThat(actual)
-    .describedAs("Expected to filter out " + n + " mutants but fitlered " + (mutations.size() - actual.size()) + " for compiler " + s.compiler)
+    .describedAs("Expected to filter out " + n + " mutants but fitlered "
+                  + (mutations.size() - actual.size()) + " for compiler " + s.compiler
+                  + " " + s.clazz)
     .hasSize(mutations.size() - n);
   }
 
@@ -144,7 +150,6 @@ public class FilterTester {
     testee.end();
     return actual;
   }
-
 
 }
 
