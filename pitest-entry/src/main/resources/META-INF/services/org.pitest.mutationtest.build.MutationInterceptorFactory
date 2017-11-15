@@ -9,6 +9,8 @@ org.pitest.mutationtest.build.intercept.javafeatures.ImplicitNullCheckFilterFact
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
+org.pitest.mutationtest.build.intercept.timeout.AvoidForLoopCountersFilterFactory
 org.pitest.mutationtest.build.intercept.kotlin.KotlinFilterFactory
 org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilterFactory
+

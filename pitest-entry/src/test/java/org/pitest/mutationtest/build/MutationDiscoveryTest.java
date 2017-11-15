@@ -162,6 +162,17 @@ public class MutationDiscoveryTest {
     assertThat(foundWhenDisabled.size()).isGreaterThan(foundByDefault.size());
   }
   
+  @Test 
+  public void shouldFilterMutationsToForLoopIncrements() {
+    Collection<MutationDetails>  actual = findMutants(HasForLoop.class);
+    
+    data.setFeatures(Collections.singletonList("-FFLOOP"));
+    Collection<MutationDetails> actualWithoutFilter = findMutants(HasForLoop.class);
+        
+    assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
+  }
+
+  
   public static class AnnotatedToAvoidMethod {
     public int a() {
       return 1;
@@ -231,5 +242,13 @@ public class MutationDiscoveryTest {
         return Collections.emptyList();
       }
     };
+  }
+  
+  static class HasForLoop {
+    public void foo() {
+      for (int i = 0; i != 10; i++) {
+        System.out.println(i);
+      }
+    }
   }
 }
