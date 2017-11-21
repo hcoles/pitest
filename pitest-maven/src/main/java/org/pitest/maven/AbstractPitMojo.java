@@ -552,7 +552,7 @@ public class AbstractPitMojo extends AbstractMojo {
       decision.addReason("Test execution should be skipped (-DskipTests).");
     }
 
-    if (this.project.getPackaging().equalsIgnoreCase("pom")) {
+    if ("pom".equalsIgnoreCase(this.project.getPackaging())) {
       decision.addReason("Packaging is POM.");
     }
 
