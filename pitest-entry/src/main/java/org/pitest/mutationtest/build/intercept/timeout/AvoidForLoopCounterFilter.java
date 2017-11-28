@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.timeout;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
+import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJumpTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anILoadOf;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIStore;
@@ -133,12 +134,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   private static Match<AbstractInsnNode> targetInstruction(Slot<Integer> counterVariable) {
     return incrementsVariable(counterVariable.read()).and(isInstruction(MUTATED_INSTRUCTION.read()));
   }
-  
-  private static Match<AbstractInsnNode> aConditionalJumpTo(Slot<LabelNode> label) {
-    return jumpsTo(label.read()).and(aConditionalJump());
-  }
-
-  
+    
   @Override
   public InterceptorType type() {
     return InterceptorType.FILTER;
