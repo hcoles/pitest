@@ -21,6 +21,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
+import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotRead;
 import org.pitest.sequence.SlotWrite;
 
@@ -125,6 +126,11 @@ public class InstructionMatchers {
     };
   }
   
+  public static Match<AbstractInsnNode> aConditionalJumpTo(Slot<LabelNode> label) {
+    return jumpsTo(label.read()).and(aConditionalJump());
+  }
+
+  
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> writeNodeToSlot(final SlotWrite<T> slot, final Class<T> clazz) {
     return new Match<AbstractInsnNode>() {
       @Override
@@ -178,6 +184,22 @@ public class InstructionMatchers {
       }
     };
   }
+  
+  /**
+   * Records if a instruction matches the target, but always returns true
+   */
+  public static  Match<AbstractInsnNode> recordTarget(final SlotRead<AbstractInsnNode> target, final SlotWrite<Boolean> found) {
+    return new Match<AbstractInsnNode>() {
+      @Override
+      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
+        if (c.retrieve(target).value() == t) {
+          c.store(found, true);
+        }
+        return true;
+      }
+    };
+  }
+  
   
   private static Match<AbstractInsnNode> storeJumpTarget(
       final SlotWrite<LabelNode> label) {

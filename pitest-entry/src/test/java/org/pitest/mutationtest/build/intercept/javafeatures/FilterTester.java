@@ -1,12 +1,11 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.assertj.core.api.SoftAssertions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
@@ -47,23 +46,32 @@ public class FilterTester {
   public void assertLeavesNMutants(int n, String sample) {
     GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
+    
+    SoftAssertions softly = new SoftAssertions();
+    
     for (Sample s : samples(sample)) {
       List<MutationDetails> mutations = mutator.findMutations(s.className);
       Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
       
-      assertThat(actual)
+      softly.assertThat(actual)
       .describedAs("Wrong number of mutants  with " + s.compiler)
       .hasSize(n);
     }
     
+    softly.assertAll();
   }
 
   public void assertFiltersNMutationFromSample(int n, String sample) {
     GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
+    
+    SoftAssertions softly = new SoftAssertions();
+    
     for (Sample s : samples(sample)) {
-      assertFiltersNMutants(n, mutator, s);
+      assertFiltersNMutants(n, mutator, s, softly);
     }
+    
+    softly.assertAll();
   }
   
   public void assertFiltersNMutationFromClass(int n, Class<?> clazz) {
@@ -72,25 +80,31 @@ public class FilterTester {
     s.className = ClassName.fromClass(clazz);
     s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
     s.compiler = "current";
-    assertFiltersNMutants(n, mutateFromClassLoader(), s);
+    
+    
+    SoftAssertions softly = new SoftAssertions();
+    
+    assertFiltersNMutants(n, mutateFromClassLoader(), s, softly);
+    
+    softly.assertAll();
   }
 
 
 
-  private void assertFiltersNMutants(int n, GregorMutater mutator, Sample s) {
+  private void assertFiltersNMutants(int n, GregorMutater mutator, Sample s, SoftAssertions softly) {
     List<MutationDetails> mutations = mutator.findMutations(s.className);
     Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
     
-    assertThat(mutations.size()) 
+    softly.assertThat(mutations.size()) 
     .describedAs("Fewer mutations produced than expected with " + s.compiler + ". This test has a bug in it.\n" + s.clazz)
     .isGreaterThanOrEqualTo(n);
     
-    assertThat(mutations.size() == 0 && n == 0)
+    softly.assertThat(mutations.size() == 0 && n == 0)
     .describedAs("Expecting no mutations to be filtered, but none were produced")
     .isFalse();
     
 
-    assertThat(actual)
+    softly.assertThat(actual)
     .describedAs("Expected to filter out " + n + " mutants but fitlered "
                   + (mutations.size() - actual.size()) + " for compiler " + s.compiler
                   + " " + s.clazz)
