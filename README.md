@@ -13,6 +13,8 @@ Read all about it at http://pitest.org
 * #256 - Inline style violate Content Security Policy (thanks @kiftio)
 * #403 - No css in the html report viewed from jenkins (thanks @kiftio)
 * #409 - Mutate based on changes across branched (thanks @sbuisson) 
+* #418 - Avoid for loop increments
+* #424 - Avoid for each code
 
 ### 1.2.4
 
