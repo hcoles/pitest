@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.2.5-SNAPSHOT
+### 1.2.6-SNAPSHOT
+
+Nothing yet, why not help out?
+
+### 1.2.5
 
 * #407 - SCM goal cannot be run from within module (thanks @sbuisson)
 * #256 - Inline style violate Content Security Policy (thanks @kiftio)
