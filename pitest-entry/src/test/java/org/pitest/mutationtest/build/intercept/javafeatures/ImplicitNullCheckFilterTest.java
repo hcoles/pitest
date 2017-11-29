@@ -24,13 +24,8 @@ public class ImplicitNullCheckFilterTest {
   }
   
   @Test
-  public void doesNotFilterMutantsThatAlterGetClassInImplicitNullCheck() {
-    // Could probably filter this if we looked for POPs followed by an immediate
-    // call to an inner class constructor - but rare enough that it may not be worth the effort
-    //INVOKEVIRTUAL java/lang/Object.getClass ()Ljava/lang/Class;
-    //POP
-    //INVOKESPECIAL com/example/ImplicitNullCheck$Inner.<init> (Lcom/example/ImplicitNullCheck;)V
-    verifier.assertFiltersNMutationFromSample(0, "ImplicitNullCheck");
+  public void flteraMutantsThatAlterGetClassInImplicitNullCheck() {
+    verifier.assertFiltersNMutationFromSample(1, "ImplicitNullCheck");
   }
   
   @Test

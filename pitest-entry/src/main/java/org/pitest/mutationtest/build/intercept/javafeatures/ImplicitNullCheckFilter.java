@@ -11,6 +11,7 @@ import java.util.Collection;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
@@ -42,6 +43,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
       .any(AbstractInsnNode.class)
       .then(methodCallTo(ClassName.fromClass(Object.class), "getClass").and(isInstruction(MUTATED_INSTRUCTION.read())))
       .then(opCode(Opcodes.POP)) // immediate discard
+      .then(isA(LabelNode.class).negate()) // use presence of a label to indicate this was a programmer call to getClass
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(IGNORE)
@@ -73,10 +75,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
       public Boolean apply(MutationDetails a) {
         int instruction = a.getInstructionIndex();
         MethodTree method = currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
-        if (!method.isSynthetic()) {
-          return false;
-        }
-        
+ 
         AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
 
         Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);

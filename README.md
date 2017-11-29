@@ -15,6 +15,7 @@ Read all about it at http://pitest.org
 * #409 - Mutate based on changes across branched (thanks @sbuisson) 
 * #418 - Avoid for loop increments
 * #424 - Avoid for each code
+* #389 - Widen matching of implicit null checks
 
 ### 1.2.4
 
