@@ -2,6 +2,8 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,6 +44,25 @@ public class ForEachFilterTest {
     verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverField.class);
   }
   
+  @Test
+  public void filtersMutationsToForEachOverMethodReturn() {
+    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    // can mutate calls to iterator, hasNext and next
+    verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverMethodReturn.class);
+  }
+  
+  @Test
+  public void filtersMutationsToForEachOverCollections() {
+    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    // can mutate calls to iterator, hasNext and next
+    verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverCollection.class);
+  }
+  
+  @Test
+  public void doesNotFilterMutationsToForEachOverArrays() {
+    verifier.assertFiltersNMutationFromClass(0, HasForEachLoopOverArray.class);
+  }
+  
   
   @Test
   public void doesNotFilterMutationsToIndexedForLoopJumps() {
@@ -72,6 +93,31 @@ public class ForEachFilterTest {
     }
   }
   
+  public static class HasForEachLoopOverMethodReturn {
+    void foo() {
+      for (int each : Collections.singletonList(1)) {
+        System.out.println(each);
+      }
+    }
+  }
+  
+  public static class HasForEachLoopOverCollection {
+    void foo(Collection<Integer> c) {
+      for (int each : c) {
+        System.out.println(each);
+      }
+    }
+  }
+  
+  public static class HasForEachLoopOverArray {
+    void foo(int[] is) {
+      for (int each : is) {
+        System.out.println(each);
+      }
+    }
+  }
+  
+  
   static class HandRolledIteratorLoop {
     void foo(List<Integer> is) {
       Iterator<Integer> it = is.iterator();
@@ -81,5 +127,5 @@ public class ForEachFilterTest {
       }
     }
   }
-
+  
 }

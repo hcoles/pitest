@@ -8,11 +8,13 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
-import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -69,7 +71,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(methodCallTo(ClassName.fromString("java/util/List"), "iterator").and(mutationPoint()))
+        .then(aMethodCallReturningAnIterator().and(mutationPoint()))
         .then(opCode(Opcodes.ASTORE))
         .then(gotoLabel(loopEnd.write()))
         .then(aLabelNode(loopStart.write()))
@@ -82,18 +84,15 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(aConditionalJumpTo(loopStart).and(mutationPoint()).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
-  
-  private static Match<AbstractInsnNode> mutationPoint() {
-    return recordTarget(MUTATED_INSTRUCTION.read(), FOUND.write());
-  }
-  
+
+
   private static SequenceQuery<AbstractInsnNode> conditionAtEnd() {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(methodCallTo(ClassName.fromString("java/util/List"), "iterator").and(mutationPoint())) 
+        .then(aMethodCallReturningAnIterator().and(mutationPoint())) 
         .then(opCode(Opcodes.ASTORE))
         .then(aLabelNode(loopStart.write()))
         .then(opCode(Opcodes.ALOAD))
@@ -106,6 +105,15 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
+  private static Match<AbstractInsnNode> aMethodCallReturningAnIterator() {
+    return methodCallThatReturns(ClassName.fromClass(Iterator.class));
+  }
+  
+  private static Match<AbstractInsnNode> mutationPoint() {
+    return recordTarget(MUTATED_INSTRUCTION.read(), FOUND.write());
+  }
+  
+  
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
    return new Match<AbstractInsnNode>() {
     @Override

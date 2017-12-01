@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.2.6-SNAPSHOT
 
-Nothing yet, why not help out?
+* #425 - Broaden for-each detection
 
 ### 1.2.5
 
