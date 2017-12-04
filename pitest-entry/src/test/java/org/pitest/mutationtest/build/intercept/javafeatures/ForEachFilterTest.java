@@ -9,15 +9,15 @@ import java.util.List;
 
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 
 public class ForEachFilterTest {
   private static final String             PATH      = "foreach/{0}_{1}";
   
   ForEachLoopFilter testee = new ForEachLoopFilter();
-  FilterTester verifier = new FilterTester(PATH, testee, Mutator.all());  
+  FilterTester verifier = new FilterTester(PATH, testee, NullMutateEverything.asList());  
   
   @Test
   public void declaresTypeAsFilter() {
@@ -59,8 +59,9 @@ public class ForEachFilterTest {
   }
   
   @Test
-  public void doesNotFilterMutationsToForEachOverArrays() {
-    verifier.assertFiltersNMutationFromClass(0, HasForEachLoopOverArray.class);
+  public void filtersMutationsToForEachOverArrays() {
+    // arrayLength, IConst, Jump, IINC
+    verifier.assertFiltersNMutationFromSample(4, "HasForEachLoopOverArray");
   }
   
   

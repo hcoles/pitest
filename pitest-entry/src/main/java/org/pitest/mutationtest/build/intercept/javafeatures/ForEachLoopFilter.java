@@ -3,8 +3,11 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJumpTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anIStore;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
+import static org.pitest.bytecode.analysis.InstructionMatchers.incrementsVariable;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
@@ -55,7 +58,9 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private static final SequenceMatcher<AbstractInsnNode> ITERATOR_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())
       .or(conditionalAtStart())
-      .or(conditionAtEnd()) 
+      .or(conditionalAtEnd()) 
+      .or(arrayConditionalAtEnd())
+      .or(arrayConditionalAtStart())      
       .then(containMutation(FOUND))
       .compile(QueryParams.params(AbstractInsnNode.class)
         .withIgnores(IGNORE)
@@ -65,7 +70,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private ClassTree currentClass;
   
    
-  private static SequenceQuery<AbstractInsnNode> conditionalAtStart() {
+  private static SequenceQuery<AbstractInsnNode> conditionalAtEnd() {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
@@ -81,12 +86,12 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(labelNode(loopEnd.read()))
         .then(opCode(Opcodes.ALOAD))
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext").and(mutationPoint()))        
-        .then(aConditionalJumpTo(loopStart).and(mutationPoint()).and(mutationPoint()))
+        .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
 
-  private static SequenceQuery<AbstractInsnNode> conditionAtEnd() {
+  private static SequenceQuery<AbstractInsnNode> conditionalAtStart() {
     Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
@@ -102,9 +107,55 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "next").and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(opCode(Opcodes.GOTO).and(jumpsTo(loopStart.read())))
+        .then(labelNode(loopEnd.read()))
+        .zeroOrMore(QueryStart.match(anyInstruction()));
+  }
+  
+
+  private static SequenceQuery<AbstractInsnNode> arrayConditionalAtEnd() {
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
+    Slot<Integer> counter = Slot.create(Integer.class);    
+    return QueryStart
+        .any(AbstractInsnNode.class)
+        .zeroOrMore(QueryStart.match(anyInstruction()))
+        .then(opCode(Opcodes.ARRAYLENGTH).and(mutationPoint()))
+        .then(opCode(Opcodes.ISTORE))
+        .then(opCode(Opcodes.ICONST_0).and(mutationPoint()))
+        .then(anIStore(counter.write()).and(debug("store")))
+        .then(gotoLabel(loopEnd.write()))
+        .then(aLabelNode(loopStart.write()))
+        .zeroOrMore(QueryStart.match(anyInstruction()))
+        .then(incrementsVariable(counter.read()).and(mutationPoint()))
+        .then(labelNode(loopEnd.read()))   
+        .then(opCode(Opcodes.ILOAD))
+        .then(opCode(Opcodes.ILOAD))   
+        .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
+  private static SequenceQuery<AbstractInsnNode> arrayConditionalAtStart() {
+    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
+    Slot<Integer> counter = Slot.create(Integer.class);
+    return QueryStart
+        .any(AbstractInsnNode.class)
+        .zeroOrMore(QueryStart.match(anyInstruction()))
+        .then(opCode(Opcodes.ARRAYLENGTH).and(mutationPoint()))
+        .then(opCode(Opcodes.ISTORE))
+        .then(opCode(Opcodes.ICONST_0).and(mutationPoint()))
+        .then(anIStore(counter.write()).and(debug("store")))
+        .then(aLabelNode(loopStart.write()))
+        .then(opCode(Opcodes.ILOAD))
+        .then(opCode(Opcodes.ILOAD))
+        .then(aConditionalJump().and(jumpsTo(loopEnd.write())).and(mutationPoint()))
+        .zeroOrMore(QueryStart.match(anyInstruction()))
+        .then(incrementsVariable(counter.read()).and(mutationPoint()))
+        .then(opCode(Opcodes.GOTO).and(jumpsTo(loopStart.read())))
+        .zeroOrMore(QueryStart.match(anyInstruction()));
+  }
+
+  
   private static Match<AbstractInsnNode> aMethodCallReturningAnIterator() {
     return methodCallThatReturns(ClassName.fromClass(Iterator.class));
   }
