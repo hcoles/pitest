@@ -67,6 +67,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public void apply(final int opcode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP2);
         mv.visitInsn(Opcodes.LCONST_0);
         mv.visitInsn(Opcodes.LRETURN);
       }
@@ -84,6 +85,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public void apply(final int opcode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
         mv.visitInsn(Opcodes.FCONST_0);
         mv.visitInsn(Opcodes.FRETURN);
       }
@@ -101,6 +103,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP2);
         mv.visitInsn(Opcodes.DCONST_0);
         mv.visitInsn(Opcodes.DRETURN);
       }
@@ -119,6 +122,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
         mv.visitInsn(Opcodes.ICONST_0);
         mv.visitInsn(Opcodes.IRETURN);
       }
