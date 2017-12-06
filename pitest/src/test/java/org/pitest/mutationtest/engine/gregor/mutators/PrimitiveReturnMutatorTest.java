@@ -197,8 +197,4 @@ public class PrimitiveReturnMutatorTest extends MutatorTestBase {
     }
   }
   
-  private void assertMutantDescriptionIncludes(String string, Class<?> clazz) {
-    final Collection<MutationDetails> actual = findMutationsFor(clazz);
-    assertThat(actual.iterator().next().getDescription()).contains(string);
-  }
 }

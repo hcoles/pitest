@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -251,5 +252,10 @@ public abstract class MutatorTestBase {
         return a.getDescription().contains(value);
       }
     };
+  }
+  
+  protected void assertMutantDescriptionIncludes(String string, Class<?> clazz) {
+    final Collection<MutationDetails> actual = findMutationsFor(clazz);
+    assertThat(actual.iterator().next().getDescription()).contains(string);
   }
 }

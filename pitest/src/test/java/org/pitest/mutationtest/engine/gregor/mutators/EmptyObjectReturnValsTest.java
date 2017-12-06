@@ -3,7 +3,6 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -22,6 +21,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   public void replacesObjectReturnValuesWithNull() throws Exception {
     assertMutantCallableReturns(new ObjectReturn(),
         createFirstMutant(ObjectReturn.class), null);
+  }
+  
+  @Test
+  public void describesMutationsToObject() {
+    assertMutantDescriptionIncludes("replaced return value with null", ObjectReturn.class);
+    assertMutantDescriptionIncludes("ObjectReturn::call", ObjectReturn.class);
   }
 
   @Test
@@ -53,11 +58,22 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   } 
   
   @Test
+  public void describesMutationsToIntegers() {
+    assertMutantDescriptionIncludes("replaced Integer return value with 0", BoxedInteger.class);
+    assertMutantDescriptionIncludes("BoxedInteger::call", BoxedInteger.class);
+  }
+  
+  @Test
   public void mutatesBoxedBooleansToFalse() throws Exception {
     assertMutantCallableReturns(new BoxedBoolean(),
         createFirstMutant(BoxedBoolean.class), false);
   } 
   
+  @Test
+  public void describesMutationsToBooleans() {
+    assertMutantDescriptionIncludes("replaced Boolean return value with false", BoxedBoolean.class);
+    assertMutantDescriptionIncludes("BoxedBoolean::call", BoxedBoolean.class);
+  }
   
   @Test
   public void mutatesBoxedShortsToZero() throws Exception {
@@ -66,10 +82,22 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   } 
   
   @Test
+  public void describesMutationsToShorts() {
+    assertMutantDescriptionIncludes("replaced Short return value with 0", BoxedShort.class);
+    assertMutantDescriptionIncludes("BoxedShort::call", BoxedShort.class);
+  }
+  
+  @Test
   public void mutatesBoxedCharsToZero() throws Exception {
     assertMutantCallableReturns(new BoxedChar(),
         createFirstMutant(BoxedChar.class), (char)0);
   } 
+  
+  @Test
+  public void describesMutationsToChars() {
+    assertMutantDescriptionIncludes("replaced Character return value with 0", BoxedChar.class);
+    assertMutantDescriptionIncludes("BoxedChar::call", BoxedChar.class);
+  }
   
   @Test
   public void mutatesBoxedLongsToZero() throws Exception {
@@ -78,16 +106,34 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   } 
   
   @Test
+  public void describesMutationsToLongs() {
+    assertMutantDescriptionIncludes("replaced Long return value with 0", BoxedLong.class);
+    assertMutantDescriptionIncludes("BoxedLong::call", BoxedLong.class);
+  }
+  
+  @Test
   public void mutatesBoxedFloatsToZero() throws Exception {
     assertMutantCallableReturns(new BoxedFloat(),
         createFirstMutant(BoxedFloat.class), 0f);
   } 
   
   @Test
+  public void describesMutationsToFloats() {
+    assertMutantDescriptionIncludes("replaced Float return value with 0", BoxedFloat.class);
+    assertMutantDescriptionIncludes("BoxedFloat::call", BoxedFloat.class);
+  }
+  
+  @Test
   public void mutatesBoxedDoublesToZero() throws Exception {
     assertMutantCallableReturns(new BoxedDouble(),
         createFirstMutant(BoxedDouble.class), 0d);
   } 
+  
+  @Test
+  public void describesMutationsToDoubles() {
+    assertMutantDescriptionIncludes("replaced Double return value with 0", BoxedDouble.class);
+    assertMutantDescriptionIncludes("BoxedDouble::call", BoxedDouble.class);
+  }
   
   @Test
   public void mutatesBoxedIntegersToZeroWhenAnnotatedNotNull() throws Exception {
@@ -101,12 +147,18 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
         createFirstMutant(AString.class), "");
   } 
   
-  
   @Test
-  public void mutatesToOptionalEmpty() throws Exception {
-    assertMutantCallableReturns(new AnOptional(),
-        createFirstMutant(AnOptional.class), Optional.<String>empty());
-  } 
+  public void describesMutationsToString() {
+    assertMutantDescriptionIncludes("replaced return value with \"\"", AString.class);
+    assertMutantDescriptionIncludes("AString::call", AString.class);
+  }
+  
+// must build on java 7  
+//  @Test
+//  public void mutatesToOptionalEmpty() throws Exception {
+//    assertMutantCallableReturns(new AnOptional(),
+//        createFirstMutant(AnOptional.class), Optional.<String>empty());
+//  } 
   
   private static class ObjectReturn implements Callable<Object> {
     @Override
@@ -204,12 +256,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     }
   }
   
-  private static class AnOptional implements Callable<Optional<String>> {
-    @Override
-    public Optional<String> call() throws Exception {
-      return Optional.of("hello");
-    }
-  }
+//  private static class AnOptional implements Callable<Optional<String>> {
+//    @Override
+//    public Optional<String> call() throws Exception {
+//      return Optional.of("hello");
+//    }
+//  }
   
     
 }

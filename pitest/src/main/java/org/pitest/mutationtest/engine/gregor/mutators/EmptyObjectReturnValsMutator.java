@@ -161,7 +161,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public String decribe(final int opCode, final MethodInfo methodInfo) {
-        return "replaced Double return value with 0 for " + methodInfo.getDescription();
+        return "replaced Float return value with 0 for " + methodInfo.getDescription();
       }
     };
   }
