@@ -1,0 +1,223 @@
+package org.pitest.mutationtest.engine.gregor.mutators;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutationContext;
+import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
+
+public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
+
+  EMPTY_RETURN_VALUES;
+
+  @Override
+  public MethodVisitor create(final MutationContext context,
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+      return new AReturnMethodVisitor(this, methodInfo, context,
+          methodVisitor);
+  }
+
+  @Override
+  public String getGloballyUniqueId() {
+    return this.getClass().getName();
+  }
+
+  @Override
+  public String getName() {
+    return name();
+  }
+
+}
+
+class AReturnMethodVisitor extends AbstractInsnMutator {
+
+  
+  private static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<String,ZeroOperandMutation>();
+  static {
+    NON_NULL_MUTATIONS.put("java.lang.Integer", returnIntegerZero(Integer.class, "(I)Ljava/lang/Integer;", "replaced Integer return value with 0"));
+    NON_NULL_MUTATIONS.put("java.lang.Boolean", returnIntegerZero(Boolean.class, "(Z)Ljava/lang/Boolean;", "replaced Boolean return value with false"));  
+    NON_NULL_MUTATIONS.put("java.lang.Short", returnIntegerZero(Short.class, "(S)Ljava/lang/Short;",  "replaced Short return value with 0"));  
+    NON_NULL_MUTATIONS.put("java.lang.Character", returnIntegerZero(Character.class, "(C)Ljava/lang/Character;",  "replaced Character return value with 0"));   
+    NON_NULL_MUTATIONS.put("java.lang.Long", returnLongZero());  
+    NON_NULL_MUTATIONS.put("java.lang.Float", returnFloatZero()); 
+    NON_NULL_MUTATIONS.put("java.lang.Double", returnDoubleZero()); 
+    NON_NULL_MUTATIONS.put("java.lang.String", returnEmptyString());  
+    NON_NULL_MUTATIONS.put("java.util.Optional", returnEmptyOptional());     
+  }
+    
+  private boolean hasNotNullAnnotation;
+
+  
+  AReturnMethodVisitor(final MethodMutatorFactory factory,
+      final MethodInfo methodInfo, final MutationContext context,
+      final MethodVisitor writer) {
+    super(factory, methodInfo, context, writer); 
+  }
+  
+  @Override
+  public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+    hasNotNullAnnotation |= desc.endsWith("NotNull;");
+    return super.visitAnnotation(desc, visible);
+  }
+  
+  @Override
+  protected boolean canMutate(final int opcode) {
+    return super.canMutate(opcode) && (!hasNotNullAnnotation || canMutateToNonNull());
+  }
+  
+  @Override
+  protected Map<Integer, ZeroOperandMutation> getMutations() {
+    return Collections.singletonMap(Opcodes.ARETURN, areturnMutation());
+  }
+
+  private ZeroOperandMutation areturnMutation() {
+    ZeroOperandMutation toUse = NON_NULL_MUTATIONS.get(currentReturnType());
+    if (toUse != null) {
+      return toUse;
+    }
+    return nullReturn();
+  }
+  
+  private boolean canMutateToNonNull() {
+    return NON_NULL_MUTATIONS.containsKey(currentReturnType());
+  }
+  
+  private String currentReturnType() {
+    final Type t = Type.getReturnType(methodInfo().getMethodDescriptor());
+    return t.getClassName();
+  }
+
+  private static ZeroOperandMutation returnIntegerZero(final Class<?> owner, final String sig, final String msg) {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitInsn(Opcodes.ICONST_0);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ClassName.fromClass(owner).asInternalName(), "valueOf", sig, false);
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return msg + " for " + methodInfo.getDescription();
+      }
+    };
+  }
+
+  private static ZeroOperandMutation returnLongZero() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitInsn(Opcodes.LCONST_0);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ClassName.fromClass(Long.class).asInternalName(), "valueOf", "(J)Ljava/lang/Long;", false);        
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced Long return value with 0L for " + methodInfo.getDescription();
+      }
+
+    };
+  }
+  
+  
+  private static ZeroOperandMutation returnDoubleZero() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitInsn(Opcodes.DCONST_0);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ClassName.fromClass(Double.class).asInternalName(), "valueOf", "(D)Ljava/lang/Double;", false);        
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced Double return value with 0 for " + methodInfo.getDescription();
+      }
+    };
+  }
+  
+  private static ZeroOperandMutation returnFloatZero() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitInsn(Opcodes.FCONST_0);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ClassName.fromClass(Float.class).asInternalName(), "valueOf", "(F)Ljava/lang/Float;", false);        
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced Double return value with 0 for " + methodInfo.getDescription();
+      }
+    };
+  }
+  
+  
+  private static ZeroOperandMutation nullReturn() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitInsn(Opcodes.ACONST_NULL);
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return value with null for " + methodInfo.getDescription();
+      }
+
+    };
+  }
+  
+  
+  private static ZeroOperandMutation returnEmptyString() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitLdcInsn("");
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return value with \"\" for " + methodInfo.getDescription();
+      }
+    };
+  }
+  
+  
+  private static ZeroOperandMutation returnEmptyOptional() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Optional", "empty", "()Ljava/util/Optional;", false);  
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return value with Optional.empty for " + methodInfo.getDescription();
+      }
+    };
+  }
+
+
+
+}

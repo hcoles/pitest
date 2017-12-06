@@ -227,8 +227,8 @@ public abstract class MutatorTestBase {
     }
   }
 
-  protected Mutant createFirstMutant(
-      final Class<? extends Callable<String>> mutee) {
+  protected <T> Mutant createFirstMutant(
+      final Class<? extends Callable<T>> mutee) {
     final Collection<MutationDetails> actual = findMutationsFor(mutee);
     return getFirstMutant(actual);
   }
