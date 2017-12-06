@@ -2,8 +2,6 @@ package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Optional;
-
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -89,10 +87,11 @@ public class EquivalentReturnMutationFilterTest {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyString.class);
   }
   
-  @Test
-  public void filtersEquivalentOptionalMutants() {
-    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
-  }
+// can't include test as must build on java 7  
+//  @Test
+//  public void filtersEquivalentOptionalMutants() {
+//    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
+//  }
 }
 
 class ReturnsTrue {
@@ -174,8 +173,8 @@ class AlreadyReturnsEmptyString {
   }
 }
 
-class AlreadyReturnsEmptyOptional {
-  public Optional<String> a() {
-    return Optional.empty();
-  }
-}
+//class AlreadyReturnsEmptyOptional {
+//  public Optional<String> a() {
+//    return Optional.empty();
+//  }
+//}
