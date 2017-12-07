@@ -2,6 +2,9 @@ package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -84,11 +87,20 @@ public class EquivalentReturnMutationFilterTest {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsBoxedZeroDouble.class);
   }
   
-  
   @Test
   public void filtersEquivalentStringMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyString.class);
   }
+  
+  @Test
+  public void filtersEquivalentStringMutantsWhenEmptyStringHeldAsField() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyStringFromField.class);
+  }
+  
+  @Test
+  public void filtersEquivalentListMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyList.class);
+  }  
   
 // can't include test as must build on java 7  
 //  @Test
@@ -150,7 +162,7 @@ class AlreadyReturnsFloat0 {
     return 0;
   }
 }
-
+  
 class AlreadyReturnsDouble0 {
   public double a() {
     return 0;
@@ -175,6 +187,20 @@ class AlreadyReturnsEmptyString {
     return "";
   }
 }
+
+class AlreadyReturnsEmptyStringFromField {
+  static final String EMPTY = "";
+  public String a() {
+    return EMPTY;
+  }
+}
+
+class AlreadyReturnsEmptyList {
+  public List<Integer> a() {
+    return Collections.emptyList();
+  }
+}
+
 
 //class AlreadyReturnsEmptyOptional {
 //  public Optional<String> a() {

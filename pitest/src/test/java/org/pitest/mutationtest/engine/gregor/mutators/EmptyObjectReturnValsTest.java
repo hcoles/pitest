@@ -3,6 +3,8 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -146,6 +148,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     assertMutantDescriptionIncludes("AString::call", AString.class);
   }
   
+  @Test
+  public void mutatesListToEmptyList() throws Exception {
+    assertMutantCallableReturns(new AList(),
+        createFirstMutant(AList.class), Collections.<String>emptyList());
+  } 
+  
 // must build on java 7  
 //  @Test
 //  public void mutatesToOptionalEmpty() throws Exception {
@@ -248,6 +256,14 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
       return "hello";
     }
   }
+  
+  private static class AList implements Callable<List<String>> {
+    @Override
+    public List<String> call() throws Exception {
+      return Collections.singletonList("");
+    }
+  }
+    
   
 //  private static class AnOptional implements Callable<Optional<String>> {
 //    @Override

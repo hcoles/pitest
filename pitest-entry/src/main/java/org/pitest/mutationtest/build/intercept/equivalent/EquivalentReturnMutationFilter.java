@@ -159,7 +159,8 @@ class EmptyReturnsFilter implements MutationInterceptor {
         int mutatedInstruction = a.getInstructionIndex();
         return returnsZeroValue(method, mutatedInstruction)
             || returnsEmptyString(method, mutatedInstruction) 
-            || returnsEmptyOptional(method, mutatedInstruction);
+            || returnsEmptyOptional(method, mutatedInstruction)
+            || returnsEmptyList(method, mutatedInstruction);
       }
 
       private Boolean returnsZeroValue(MethodTree method,
@@ -187,7 +188,17 @@ class EmptyReturnsFilter implements MutationInterceptor {
           return call.owner.equals("java/util/Optional") && call.name.equals("empty");
         }
         return false;
-      }      
+      } 
+      
+      private boolean returnsEmptyList(MethodTree method,
+          int mutatedInstruction) {
+        AbstractInsnNode node = method.instructions().get(mutatedInstruction - 1);
+        if (node instanceof MethodInsnNode ) {
+          MethodInsnNode call = (MethodInsnNode) node;
+          return call.owner.equals("java/util/Collections") && call.name.equals("emptyList");
+        }
+        return false;
+      }       
 
     };
   }
