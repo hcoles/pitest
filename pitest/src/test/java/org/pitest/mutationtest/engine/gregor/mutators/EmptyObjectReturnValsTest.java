@@ -64,17 +64,10 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   }
   
   @Test
-  public void mutatesBoxedBooleansToFalse() throws Exception {
-    assertMutantCallableReturns(new BoxedBoolean(),
-        createFirstMutant(BoxedBoolean.class), false);
+  public void doesNotMutateBoolean() throws Exception {
+    assertNoMutants(BoxedBoolean.class);
   } 
-  
-  @Test
-  public void describesMutationsToBooleans() {
-    assertMutantDescriptionIncludes("replaced Boolean return value with false", BoxedBoolean.class);
-    assertMutantDescriptionIncludes("BoxedBoolean::call", BoxedBoolean.class);
-  }
-  
+    
   @Test
   public void mutatesBoxedShortsToZero() throws Exception {
     assertMutantCallableReturns(new BoxedShort(),

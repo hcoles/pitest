@@ -18,7 +18,8 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 /** 
- * Replaces primitive return values with 0/false.
+ * Replaces primitive return values with 0. Does not mutate boolean
+ * returns as these are handled by the BooleanFalseReturn mutator
  */
 public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
 
@@ -27,10 +28,19 @@ public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-
+      
+    if (!returnsBoolean(methodInfo)) {
       return new PrimitivesReturnValsMethodVisitor(this, methodInfo, context,
           methodVisitor);
+    } else {
+      return methodVisitor;
+    }
 
+  }
+
+  private boolean returnsBoolean(MethodInfo methodInfo) {
+    int sort = Type.getReturnType(methodInfo.getMethodDescriptor()).getSort();
+    return sort == Type.BOOLEAN;
   }
 
   @Override
@@ -135,8 +145,6 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       private String makeMessage(String methodDescriptor) {
         int sort = Type.getReturnType(methodDescriptor).getSort();
         switch (sort) {
-        case Type.BOOLEAN:
-          return "replaced boolean return with false";
         case Type.INT:
           return "replaced int return with 0";
         case Type.CHAR:

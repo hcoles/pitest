@@ -15,6 +15,14 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
+/**
+ * Mutates object return values to always return an "empty" value such
+ * as 0, Optional.none etc.
+ * 
+ * Does not mutate Booleans as this mutation is created by the BooleanFalseReturn
+ * mutator.
+ *
+ */
 public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
   EMPTY_RETURN_VALUES;
@@ -22,8 +30,18 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+    
+    if (!returnsBoolean(methodInfo)) {
       return new AReturnMethodVisitor(this, methodInfo, context,
           methodVisitor);
+    } else {
+      return methodVisitor;
+    }
+  }
+
+  private boolean returnsBoolean(MethodInfo methodInfo) {
+    Type type = Type.getReturnType(methodInfo.getMethodDescriptor());
+    return type.getClassName().equals("java.lang.Boolean");
   }
 
   @Override
@@ -39,12 +57,10 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 }
 
 class AReturnMethodVisitor extends AbstractInsnMutator {
-
   
   private static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<String,ZeroOperandMutation>();
   static {
     NON_NULL_MUTATIONS.put("java.lang.Integer", returnIntegerZero(Integer.class, "(I)Ljava/lang/Integer;", "replaced Integer return value with 0"));
-    NON_NULL_MUTATIONS.put("java.lang.Boolean", returnIntegerZero(Boolean.class, "(Z)Ljava/lang/Boolean;", "replaced Boolean return value with false"));  
     NON_NULL_MUTATIONS.put("java.lang.Short", returnIntegerZero(Short.class, "(S)Ljava/lang/Short;",  "replaced Short return value with 0"));  
     NON_NULL_MUTATIONS.put("java.lang.Character", returnIntegerZero(Character.class, "(C)Ljava/lang/Character;",  "replaced Character return value with 0"));   
     NON_NULL_MUTATIONS.put("java.lang.Long", returnLongZero());  

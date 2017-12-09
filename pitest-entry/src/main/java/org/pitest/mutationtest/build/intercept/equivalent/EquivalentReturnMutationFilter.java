@@ -22,6 +22,7 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 import org.pitest.plugin.Feature;
@@ -61,14 +62,16 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
 class PrimitiveEquivalentFilter implements MutationInterceptor {
   
-  private static final String PRIMITIVE_MUTATOR_ID = PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR.getGloballyUniqueId();
-  
+  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<Integer>();
   static {
     ZERO_CONSTANTS.add(Opcodes.ICONST_0);
     ZERO_CONSTANTS.add(Opcodes.LCONST_0);
     ZERO_CONSTANTS.add(Opcodes.FCONST_0);
     ZERO_CONSTANTS.add(Opcodes.DCONST_0);
+    
+    MUTATOR_IDS.add(PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR.getGloballyUniqueId());
+    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN.getGloballyUniqueId());
   }
   
   private ClassTree currentClass;
@@ -93,7 +96,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
     return new F<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
-        if (!a.getMutator().equals(PRIMITIVE_MUTATOR_ID)) {
+        if (!MUTATOR_IDS.contains(a.getMutator())) {
           return false;
         }
         int intructionBeforeReturn = a.getInstructionIndex() - 1;
@@ -113,7 +116,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
 
 class EmptyReturnsFilter implements MutationInterceptor {
   
-  private static final String MUTATOR_ID = EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES.getGloballyUniqueId();
+  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
   
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<Integer>();
   static {
@@ -121,6 +124,9 @@ class EmptyReturnsFilter implements MutationInterceptor {
     ZERO_CONSTANTS.add(Opcodes.LCONST_0);
     ZERO_CONSTANTS.add(Opcodes.FCONST_0);
     ZERO_CONSTANTS.add(Opcodes.DCONST_0);
+    
+    MUTATOR_IDS.add(EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES.getGloballyUniqueId());
+    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN.getGloballyUniqueId());
   }
   
   private ClassTree currentClass;
@@ -145,7 +151,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
     return new F<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
-        if (!a.getMutator().equals(MUTATOR_ID)) {
+        if (!MUTATOR_IDS.contains(a.getMutator())) {
           return false;
         }
 

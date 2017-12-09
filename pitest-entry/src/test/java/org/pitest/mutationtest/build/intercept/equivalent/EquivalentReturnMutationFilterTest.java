@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
+import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 
@@ -13,7 +14,9 @@ public class EquivalentReturnMutationFilterTest {
   
   MutationInterceptor testee = new EquivalentReturnMutationFilter().createInterceptor(null);
   
-  FilterTester verifier = new FilterTester("", testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR, EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);    
+  FilterTester verifier = new FilterTester("", testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR
+                                                     , EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES
+                                                     , BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);    
   
   @Test
   public void shouldDeclareTypeAsFilter() {

@@ -18,17 +18,10 @@ public class PrimitiveReturnMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void mutatesReturnTrueToReturnFalse() throws Exception {
-    assertMutantCallableReturns(new BooleanReturn(),
-        createFirstMutant(BooleanReturn.class), "false");
+  public void doesNotMutateBooleans() throws Exception {
+    assertNoMutants(BooleanReturn.class);
   }
-  
-  @Test
-  public void describesMutationsToBooleans() {
-    assertMutantDescriptionIncludes("replaced boolean return with false", BooleanReturn.class);
-    assertMutantDescriptionIncludes("BooleanReturn::mutable", BooleanReturn.class);
-  }
-  
+    
   @Test
   public void mutatesReturnToReturn0ForInts() throws Exception {
     assertMutantCallableReturns(new IntReturn(),

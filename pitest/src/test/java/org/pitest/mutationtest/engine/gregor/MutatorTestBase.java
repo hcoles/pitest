@@ -99,7 +99,7 @@ public abstract class MutatorTestBase {
 
   protected void assertNoMutants(final Class<?> mutee) {
     final Collection<MutationDetails> actual = findMutationsFor(mutee);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   protected <T> T mutateAndCall(final Callable<T> unmutated, final Mutant mutant) {
