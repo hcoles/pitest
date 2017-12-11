@@ -56,68 +56,68 @@ class MutateEveryThing extends MethodVisitor {
 
   @Override
   public void visitIincInsn(final int var, final int increment) {
-    mutate();
+    mutate("visitIincInsn");
   }
 
   public void visitInsn(int opcode) {
-    mutate();
+    mutate("visitInsn");
   }
 
   public void visitIntInsn(int opcode, int operand) {
-    mutate();
+    mutate("visitIntInsn");
   }
 
   public void visitVarInsn(int opcode, int var) {
-    mutate();
+    mutate("visitVarInsn");
   }
 
   public void visitTypeInsn(int opcode, String type) {
-    mutate();
+    mutate("visitTypeInsn");
   }
 
   public void visitFieldInsn(int opcode, String owner, String name,
       String desc) {
-    mutate();
+    mutate("visitFieldInsn");
   }
 
   public void visitMethodInsn(int opcode, String owner, String name,
       String desc, boolean itf) {
-    mutate();
+    mutate("visitMethodInsn");
   }
 
   public void visitInvokeDynamicInsn(String name, String desc, Handle bsm,
       Object... bsmArgs) {
-    mutate();
+    mutate("visitInvokeDynamicInsn");
   }
 
   public void visitJumpInsn(int opcode, Label label) {
-    mutate();
+    mutate("visitJumpInsn");
   }
 
   public void visitLdcInsn(Object cst) {
-    mutate();
+    mutate("visitLdcInsn");
   }
 
   public void visitTableSwitchInsn(int min, int max, Label dflt,
       Label... labels) {
-    mutate();
+    mutate("visitTableSwitchInsn");
   }
 
   public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
-    mutate();
+    mutate("visitLookupSwitchInsn");
   }
 
   public void visitMultiANewArrayInsn(String desc, int dims) {
-    mutate();
+    mutate("visitMultiANewArrayInsn");
   }
 
   public void visitTryCatchBlock(Label start, Label end, Label handler,
       String type) {
-    mutate();
+    mutate("visitTryCatchBlock");
   }
   
-  private void mutate() {
-    this.context.registerMutation(this.factory, "Null mutation");
+  private void mutate(String type) {
+    this.context.registerMutation(this.factory, "Null mutation to " + type);
   }
 
 }

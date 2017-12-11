@@ -14,6 +14,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
+import org.pitest.functional.Option;
+import org.pitest.mutationtest.engine.Location;
 
 public class ClassTree {
   
@@ -38,6 +40,10 @@ public class ClassTree {
     }
     lazyMethods = FCollection.map(rawNode.methods, toTree(name()));
     return lazyMethods;
+  }
+  
+  public Option<MethodTree> method(Location loc) {
+   return methods().findFirst(MethodMatchers.forLocation(loc));
   }
   
   public FunctionalList<AnnotationNode> annotations() {

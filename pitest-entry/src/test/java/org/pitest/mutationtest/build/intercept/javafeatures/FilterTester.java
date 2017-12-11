@@ -1,12 +1,17 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.SoftAssertions;
 import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
@@ -43,6 +48,41 @@ public class FilterTester {
   }
    
   
+  public void assertFiltersMutationAtNLocations(int n, Class<?> clazz) {
+    Sample s = makeSampleForCurrentCompiler(clazz);
+    assertFiltersMutationAtNLocations(n, s, mutateFromClassLoader());
+  }
+  
+  public void assertFiltersMutationAtNLocations(int n, Sample s, GregorMutater mutator) {
+    List<MutationDetails> mutations = mutator.findMutations(s.className);
+    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+   
+    Set<Loc> originalLocations = new LinkedHashSet<Loc>();
+    FCollection.mapTo(mutations, toLocation(s.clazz), originalLocations);
+    
+    Set<Loc> filteredLocations = new LinkedHashSet<Loc>();
+    FCollection.mapTo(actual, toLocation(s.clazz), filteredLocations);
+    
+    assertThat(filteredLocations)
+    .describedAs("Expected to filter %d locations from the %d in %s", n, originalLocations.size(), s.clazz.toString())
+    .hasSize(originalLocations.size() - n);
+
+  }
+  
+  private F<MutationDetails, Loc> toLocation(final ClassTree tree) {
+    return new F<MutationDetails, Loc>() {
+      @Override
+      public Loc apply(MutationDetails a) {
+        MethodTree method = tree.method(a.getId().getLocation()).value();
+        Loc l = new Loc();
+        l.index = a.getInstructionIndex();
+        l.node = method.instructions().get(a.getInstructionIndex());
+        return l;  
+      }
+      
+    };
+  }
+
   public void assertLeavesNMutants(int n, String sample) {
     GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
@@ -75,18 +115,22 @@ public class FilterTester {
   }
   
   public void assertFiltersNMutationFromClass(int n, Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Sample s = new Sample();
-    s.className = ClassName.fromClass(clazz);
-    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
-    s.compiler = "current";
-    
+    Sample s = makeSampleForCurrentCompiler(clazz);
     
     SoftAssertions softly = new SoftAssertions();
     
     assertFiltersNMutants(n, mutateFromClassLoader(), s, softly);
     
     softly.assertAll();
+  }
+
+  private Sample makeSampleForCurrentCompiler(Class<?> clazz) {
+    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    Sample s = new Sample();
+    s.className = ClassName.fromClass(clazz);
+    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    s.compiler = "current";
+    return s;
   }
 
 
