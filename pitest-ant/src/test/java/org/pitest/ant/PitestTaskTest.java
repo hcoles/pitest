@@ -86,6 +86,13 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--excludedClasses=String");
   }
+  
+  @Test
+  public void shouldPassExcludedTestClassesOptionToJavaTask() {
+    this.pitestTask.setExcludedTestClasses("String");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--excludedTestClasses=String");
+  }
 
   @Test
   public void shouldPassExcludedMethodsOptionToJavaTask() {

@@ -24,6 +24,7 @@ import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_TEST_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXPORT_LINE_COVERAGE;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.FEATURES;
@@ -105,6 +106,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedMethodsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
+  private final OptionSpec<String>                   excludedTestClassesSpec;  
   private final OptionSpec<String>                   outputFormatSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final OptionSpec<File>                     classPathFile;
@@ -227,7 +229,14 @@ public class OptionsParser {
         .ofType(String.class)
         .withValuesSeparatedBy(',')
         .describedAs(
-            "comma separated list of globs for classes to exclude when looking for both mutation target and tests");
+            "comma separated list of globs for classes to exclude when mutating");
+    
+    this.excludedTestClassesSpec = parserAccepts(EXCLUDED_TEST_CLASSES)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "comma separated list of globs of test classes to exclude");
 
     this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
         .ofType(Boolean.class).defaultsTo(true)
@@ -378,6 +387,8 @@ public class OptionsParser {
         this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setExcludedClasses(FCollection.map(
         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedTestClasses(FCollection.map(
+        this.excludedTestClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setVerbose(userArgs.has(this.verboseSpec)
         && userArgs.valueOf(this.verboseSpec));
 

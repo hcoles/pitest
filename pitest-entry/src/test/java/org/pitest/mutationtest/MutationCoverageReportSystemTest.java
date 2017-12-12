@@ -198,7 +198,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldExcludeFilteredTests() {
     this.data.setTargetTests(predicateFor("com.example.*FullyCoveredTestee*"));
     this.data.setTargetClasses(predicateFor("com.example.FullyCovered*"));
-    this.data.setExcludedClasses(predicateFor(FullyCoveredTesteeTest.class));
+    this.data.setExcludedTestClasses(predicateFor(FullyCoveredTesteeTest.class));
     createAndRun();
     verifyResults(NO_COVERAGE);
   }

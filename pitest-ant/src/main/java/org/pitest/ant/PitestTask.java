@@ -160,6 +160,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.EXCLUDED_CLASSES, value);
   }
 
+  public void setExcludedTestClasses(final String value) {
+    this.setOption(ConfigOption.EXCLUDED_TEST_CLASSES, value);
+  }
+  
   public void setAvoidCallsTo(final String value) {
     this.setOption(ConfigOption.AVOID_CALLS, value);
   }

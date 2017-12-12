@@ -98,9 +98,14 @@ public enum ConfigOption {
    */
   VERBOSE("verbose", false),
   /**
-   * Filter defining classes to exclude (both tests and mutees)
+   * Filter defining classes to exclude from mutation
    */
   EXCLUDED_CLASSES("excludedClasses"),
+  
+  /**
+   * Filter defining test classes to excludd
+   */
+  EXCLUDED_TEST_CLASSES("excludedTestClasses"),  
   /**
    * Formats in which to output results
    */

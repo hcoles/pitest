@@ -107,6 +107,8 @@ public class MojoToReportOptionsConverter {
         .getExcludedMethods()));
     data.setExcludedClasses(globStringsToPredicates(this.mojo
         .getExcludedClasses()));
+    data.setExcludedTestClasses(globStringsToPredicates(this.mojo
+        .getExcludedTestClasses()));
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 

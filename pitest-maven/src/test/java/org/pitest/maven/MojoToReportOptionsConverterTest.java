@@ -162,10 +162,10 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  public void testParsesListOfExcludedClassGlobsAndApplyTheseToTests() {
-    final String xml = "<excludedClasses>" + //
+  public void testParsesListOfExcludedTestClassGlobs() {
+    final String xml = "<excludedTestClasses>" + //
         "                      <param>foo*</param>" + //
-        "                  </excludedClasses>" + //
+        "                  </excludedTestClasses>" + //
         "                  <targetTests>" + //
         "                      <param>foo*</param>" + //
         "                      <param>bar*</param>" + //

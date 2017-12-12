@@ -229,8 +229,8 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeparatedListOfExcludedClassGlobsAndApplyTheseToTests() {
-    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+  public void shouldParseCommaSeparatedListOfExcludedTestClassGlobs() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
     assertFalse(testPredicate.apply("foo_anything"));
