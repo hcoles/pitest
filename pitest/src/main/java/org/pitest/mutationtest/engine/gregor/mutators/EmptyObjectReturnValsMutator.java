@@ -68,7 +68,8 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
     NON_NULL_MUTATIONS.put("java.lang.Double", returnDoubleZero()); 
     NON_NULL_MUTATIONS.put("java.lang.String", returnEmptyString());  
     NON_NULL_MUTATIONS.put("java.util.Optional", returnEmptyOptional()); 
-    NON_NULL_MUTATIONS.put("java.util.List", returnEmptyList());     
+    NON_NULL_MUTATIONS.put("java.util.List", returnEmptyList()); 
+    NON_NULL_MUTATIONS.put("java.util.Set", returnEmptySet());
   }
     
   private boolean hasNotNullAnnotation;
@@ -233,6 +234,22 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
     };
   }
+  
+  private static ZeroOperandMutation returnEmptySet() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP); 
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Collections", "emptySet", "()Ljava/util/Set;", false);  
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String decribe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return value with Collections.emptyList for " + methodInfo.getDescription();
+      }
+    };
+  }  
   
   private static ZeroOperandMutation returnEmptyOptional() {
     return new ZeroOperandMutation() {

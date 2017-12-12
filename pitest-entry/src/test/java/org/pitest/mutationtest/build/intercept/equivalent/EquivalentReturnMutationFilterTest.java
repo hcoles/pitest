@@ -6,6 +6,7 @@ import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnVa
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -120,6 +121,11 @@ public class EquivalentReturnMutationFilterTest {
   public void filtersEquivalentListMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyList.class);
   }  
+  
+  @Test
+  public void filtersEquivalentSetMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptySet.class);
+  }    
 
 // can't include test as must build on java 7  
 //  @Test
@@ -242,6 +248,12 @@ class AlreadyReturnsEmptyStringFromField {
 class AlreadyReturnsEmptyList {
   public List<Integer> a() {
     return Collections.emptyList();
+  }
+}
+
+class AlreadyReturnsEmptySet {
+  public Set<Integer> a() {
+    return Collections.emptySet();
   }
 }
 
