@@ -56,10 +56,17 @@ public class AbstractPitMojo extends AbstractMojo {
   private ArrayList<String>           excludedMethods;
 
   /**
-   * Classes not to mutate or run tests from
+   * Classes not to mutate
    */
   @Parameter(property = "excludedClasses")
   private ArrayList<String>           excludedClasses;
+  
+  /**
+   * Classes not to run tests from
+   */
+  @Parameter(property = "excludedTestClasses")
+  private ArrayList<String>           excludedTestClasses;
+
 
   /**
    * Globs to be matched against method calls. No mutations will be created on
@@ -475,6 +482,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public long getTimeoutConstant() {
     return this.timeoutConstant;
+  }
+
+  public ArrayList<String> getExcludedTestClasses() {
+    return excludedTestClasses;
   }
 
   public int getMaxMutationsPerClass() {
