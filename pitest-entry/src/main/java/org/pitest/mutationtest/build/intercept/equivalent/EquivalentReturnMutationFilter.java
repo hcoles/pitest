@@ -23,6 +23,7 @@ import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 import org.pitest.plugin.Feature;
@@ -50,7 +51,9 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
-    return new CompoundMutationInterceptor(Arrays.asList(new PrimitiveEquivalentFilter(), new EmptyReturnsFilter())) {
+    return new CompoundMutationInterceptor(Arrays.asList(new PrimitiveEquivalentFilter(), 
+        new EmptyReturnsFilter(), 
+        new HardCodedTrueEquivalentFilter())) {
       @Override
       public InterceptorType type() {
         return InterceptorType.FILTER;
@@ -59,6 +62,74 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
   }
 
 }
+
+class HardCodedTrueEquivalentFilter implements MutationInterceptor {
+  
+  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
+  private static final Set<Integer> TRUE_CONSTANTS = new HashSet<Integer>();
+  static {
+    TRUE_CONSTANTS.add(Opcodes.ICONST_1);
+    
+    MUTATOR_IDS.add(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN.getGloballyUniqueId());
+  }
+  
+  private ClassTree currentClass;
+
+  @Override
+  public InterceptorType type() {
+    return InterceptorType.FILTER;
+  }
+
+  @Override
+  public void begin(ClassTree clazz) {
+    currentClass = clazz;
+  }
+
+  @Override
+  public Collection<MutationDetails> intercept(
+      Collection<MutationDetails> mutations, Mutater m) {
+    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+  }
+
+  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new F<MutationDetails, Boolean>() {
+      @Override
+      public Boolean apply(MutationDetails a) {
+        if (!MUTATOR_IDS.contains(a.getMutator())) {
+          return false;
+        }
+        int instruction = a.getInstructionIndex();
+        MethodTree method = currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
+        return primitiveTrue(instruction, method) || boxedTrue(instruction, method);
+      }
+
+      private boolean primitiveTrue(int instruction, MethodTree method) {
+        return method.instructions().get(instruction - 1).getOpcode() == Opcodes.ICONST_1;
+      }
+
+      private boolean boxedTrue(int instruction, MethodTree method) {
+        return method.instructions().get(instruction - 2).getOpcode() == Opcodes.ICONST_1 && isValueOfCall(instruction - 1, method);
+      }
+
+    };
+    
+  }
+
+  @Override
+  public void end() {
+    currentClass = null;
+  }
+  
+  private boolean isValueOfCall(int instruction, MethodTree method) {
+    AbstractInsnNode abstractInsnNode = method.instructions().get(instruction);
+    if (abstractInsnNode instanceof MethodInsnNode) {
+      return ((MethodInsnNode) abstractInsnNode).name.equals("valueOf");
+    }
+    return false;
+  }
+   
+}
+
 
 class PrimitiveEquivalentFilter implements MutationInterceptor {
   
@@ -165,9 +236,15 @@ class EmptyReturnsFilter implements MutationInterceptor {
 
       private Boolean returnsZeroValue(MethodTree method,
           int mutatedInstruction) {
-        // look two steps back to skip (potential) valueOf call
-        int intructionBeforeReturn = mutatedInstruction - 2;
-        return ZERO_CONSTANTS.contains(method.instructions().get(intructionBeforeReturn).getOpcode());
+        return isValueOf(method.instructions().get(mutatedInstruction - 1))
+               && ZERO_CONSTANTS.contains(method.instructions().get(mutatedInstruction - 2).getOpcode());
+      }
+
+      private boolean isValueOf(AbstractInsnNode abstractInsnNode) {
+        if (abstractInsnNode instanceof MethodInsnNode) {
+          return ((MethodInsnNode) abstractInsnNode).name.equals("valueOf");
+        }
+        return false;
       }
 
       private boolean returnsEmptyString(MethodTree method,

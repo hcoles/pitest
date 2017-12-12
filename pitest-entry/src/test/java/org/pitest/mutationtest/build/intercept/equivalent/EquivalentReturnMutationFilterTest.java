@@ -1,6 +1,8 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
+import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +11,6 @@ import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
-import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 
@@ -19,7 +20,8 @@ public class EquivalentReturnMutationFilterTest {
   
   FilterTester verifier = new FilterTester("", testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR
                                                      , EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES
-                                                     , BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);    
+                                                     , BOOLEAN_FALSE_RETURN
+                                                     , BOOLEAN_TRUE_RETURN);    
   
   @Test
   public void shouldDeclareTypeAsFilter() {
@@ -28,10 +30,9 @@ public class EquivalentReturnMutationFilterTest {
   
   @Test
   public void doesNotFilterNonEquivalents() {
-    verifier.assertFiltersNMutationFromClass(0, ReturnsTrue.class);
+    verifier.assertFiltersNMutationFromClass(0, ReturnsWidget.class);
   }
   
-
   @Test
   public void filtersEquivalentPrimitiveIntMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsConstZero.class);
@@ -39,7 +40,14 @@ public class EquivalentReturnMutationFilterTest {
   
   @Test
   public void filtersEquivalentPrimitiveBooleanMutants() {
-    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsFalse.class);
+    verifier.assertFiltersMutationsFromMutator(BOOLEAN_FALSE_RETURN.getGloballyUniqueId()
+        , AlreadyReturnsFalse.class);
+  }
+  
+  @Test
+  public void filtersEquivalentPrimitiveBooleanTrueMutants() {
+    verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+        , ReturnsTrue.class);
   }
 
   @Test
@@ -60,6 +68,12 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void filtersEquivalentBoxedBooleanMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsBoxedFalse.class);
+  }
+  
+  @Test
+  public void filtersEquivalentBoxedBooleanTrueMutants() {
+    verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+        , AlreadyReturnsBoxedTrue.class);
   }
   
   @Test
@@ -88,6 +102,11 @@ public class EquivalentReturnMutationFilterTest {
   }
   
   @Test
+  public void doesNotFilterOtherSingleParamStaticMethodCalls() {
+    verifier.assertFiltersNMutationFromClass(0, CallsAnIntegerReturningStaticWith0.class);
+  }
+  
+  @Test
   public void filtersEquivalentStringMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyString.class);
   }
@@ -101,12 +120,20 @@ public class EquivalentReturnMutationFilterTest {
   public void filtersEquivalentListMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyList.class);
   }  
-  
+
 // can't include test as must build on java 7  
 //  @Test
 //  public void filtersEquivalentOptionalMutants() {
 //    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
 //  }
+}
+
+class Widget{}
+
+class ReturnsWidget {
+  public Widget a() {
+    return new Widget();
+  }
 }
 
 class ReturnsTrue {
@@ -127,6 +154,12 @@ class AlreadyReturnsBoxedFalse {
   }
 }
 
+class AlreadyReturnsBoxedTrue {
+  public Boolean a() {
+    return true;
+  }
+}
+
 class AlreadyReturnsFalse {
   public boolean a() {
     return false;
@@ -136,6 +169,17 @@ class AlreadyReturnsFalse {
 class AlreadyReturnsBoxedZeroInteger {
   public Integer a() {
     return 0;
+  }
+}
+
+class CallsAnIntegerReturningStaticWith0 {
+  
+  static Integer foo(int a) {
+    return 42;
+  }
+  
+  public Integer a() {
+    return foo(0);
   }
 }
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -75,12 +76,7 @@ public class FilterTester {
   }
   
   public void assertFiltersNMutationFromClass(int n, Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Sample s = new Sample();
-    s.className = ClassName.fromClass(clazz);
-    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
-    s.compiler = "current";
-    
+    Sample s = sampleForClass(clazz);
     
     SoftAssertions softly = new SoftAssertions();
     
@@ -89,15 +85,50 @@ public class FilterTester {
     softly.assertAll();
   }
 
+  public void assertFiltersMutationsFromMutator(String id, Class<?> clazz) {
+    Sample s = sampleForClass(clazz);
+    GregorMutater mutator = mutateFromClassLoader();
+    List<MutationDetails> mutations = mutator.findMutations(s.className);
+    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+    
+    SoftAssertions softly = new SoftAssertions();
+    checkHasNMutants(1, s, softly, mutations);
+    
+    List<MutationDetails> filteredOut = FCollection.filter(mutations, notIn(actual));
+    
+    softly.assertThat(filteredOut).describedAs("No mutants filtered").isNotEmpty();
+    softly.assertThat(filteredOut).have(mutatedBy(id));
+    softly.assertAll();
 
+  }
+
+  private Condition<? super MutationDetails> mutatedBy(final String id) {
+    return new  Condition<MutationDetails>() {
+      @Override
+      public boolean matches(MutationDetails value) {
+        return value.getId().getMutator().equals(id);
+      }
+      
+    };
+  }
+
+  private F<MutationDetails, Boolean> notIn(
+      final Collection<MutationDetails> actual) {
+    return new F<MutationDetails, Boolean>() {
+
+      @Override
+      public Boolean apply(MutationDetails a) {
+        return !actual.contains(a);
+      }
+      
+    };
+  }
 
   private void assertFiltersNMutants(int n, GregorMutater mutator, Sample s, SoftAssertions softly) {
     List<MutationDetails> mutations = mutator.findMutations(s.className);
     Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
     
-    softly.assertThat(mutations.size()) 
-    .describedAs("Fewer mutations produced than expected with " + s.compiler + ". This test has a bug in it.\n" + s.clazz)
-    .isGreaterThanOrEqualTo(n);
+    checkHasNMutants(n, s, softly, mutations);
     
     softly.assertThat(mutations.size() == 0 && n == 0)
     .describedAs("Expecting no mutations to be filtered, but none were produced")
@@ -105,10 +136,17 @@ public class FilterTester {
     
 
     softly.assertThat(actual)
-    .describedAs("Expected to filter out " + n + " mutants but fitlered "
+    .describedAs("Expected to filter out " + n + " mutants but filtered "
                   + (mutations.size() - actual.size()) + " for compiler " + s.compiler
                   + " " + s.clazz)
     .hasSize(mutations.size() - n);
+  }
+
+  private void checkHasNMutants(int n, Sample s, SoftAssertions softly,
+      List<MutationDetails> mutations) {
+    softly.assertThat(mutations.size()) 
+    .describedAs("Fewer mutations produced than expected with " + s.compiler + ". This test has a bug in it.\n" + s.clazz)
+    .isGreaterThanOrEqualTo(n);
   }
 
   private GregorMutater mutateFromResourceDir() {
@@ -165,6 +203,15 @@ public class FilterTester {
     return actual;
   }
 
+  
+  private Sample sampleForClass(Class<?> clazz) {
+    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    Sample s = new Sample();
+    s.className = ClassName.fromClass(clazz);
+    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    s.compiler = "current";
+    return s;
+  }
 }
 
 class Sample {
