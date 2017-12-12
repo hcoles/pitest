@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -58,7 +57,7 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
 class AReturnMethodVisitor extends AbstractInsnMutator {
   
-  private static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<String,ZeroOperandMutation>();
+  static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<String,ZeroOperandMutation>();
   static {
     NON_NULL_MUTATIONS.put("java.lang.Integer", returnIntegerZero(Integer.class, "(I)Ljava/lang/Integer;", "replaced Integer return value with 0"));
     NON_NULL_MUTATIONS.put("java.lang.Short", returnIntegerZero(Short.class, "(S)Ljava/lang/Short;",  "replaced Short return value with 0"));  
@@ -70,11 +69,9 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
     NON_NULL_MUTATIONS.put("java.util.Optional", returnEmptyOptional()); 
     NON_NULL_MUTATIONS.put("java.util.List", returnEmptyList()); 
     NON_NULL_MUTATIONS.put("java.util.Set", returnEmptySet());
+    NON_NULL_MUTATIONS.put("java.util.Collection", returnEmptyList());
   }
-    
-  private boolean hasNotNullAnnotation;
-
-  
+     
   AReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
@@ -82,14 +79,8 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
   }
   
   @Override
-  public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-    hasNotNullAnnotation |= desc.endsWith("NotNull;");
-    return super.visitAnnotation(desc, visible);
-  }
-  
-  @Override
   protected boolean canMutate(final int opcode) {
-    return super.canMutate(opcode) && (!hasNotNullAnnotation || canMutateToNonNull());
+    return super.canMutate(opcode) && canMutateToNonNull();
   }
   
   @Override
@@ -98,11 +89,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
   }
 
   private ZeroOperandMutation areturnMutation() {
-    ZeroOperandMutation toUse = NON_NULL_MUTATIONS.get(currentReturnType());
-    if (toUse != null) {
-      return toUse;
-    }
-    return nullReturn();
+    return NON_NULL_MUTATIONS.get(currentReturnType());
   }
   
   private boolean canMutateToNonNull() {
@@ -184,25 +171,6 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
     };
   }
   
-  
-  private static ZeroOperandMutation nullReturn() {
-    return new ZeroOperandMutation() {
-      @Override
-      public void apply(final int opCode, final MethodVisitor mv) {
-        mv.visitInsn(Opcodes.POP);
-        mv.visitInsn(Opcodes.ACONST_NULL);
-        mv.visitInsn(Opcodes.ARETURN);
-      }
-
-      @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
-        return "replaced return value with null for " + methodInfo.getDescription();
-      }
-
-    };
-  }
-  
-  
   private static ZeroOperandMutation returnEmptyString() {
     return new ZeroOperandMutation() {
       @Override
@@ -266,7 +234,4 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
     };
   }
-
-
-
 }

@@ -13,6 +13,7 @@ import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 
 public class EquivalentReturnMutationFilterTest {
@@ -21,6 +22,7 @@ public class EquivalentReturnMutationFilterTest {
   
   FilterTester verifier = new FilterTester("", testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR
                                                      , EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES
+                                                     , NullReturnValsMutator.NULL_RETURN_VALUES
                                                      , BOOLEAN_FALSE_RETURN
                                                      , BOOLEAN_TRUE_RETURN);    
   
@@ -32,6 +34,11 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void doesNotFilterNonEquivalents() {
     verifier.assertFiltersNMutationFromClass(0, ReturnsWidget.class);
+  }
+  
+  @Test
+  public void filtersNullEquivalentMutants() {
+    verifier.assertFiltersNMutationFromClass(1, ReturnsNull.class);
   }
   
   @Test
@@ -139,6 +146,12 @@ class Widget{}
 class ReturnsWidget {
   public Widget a() {
     return new Widget();
+  }
+}
+
+class ReturnsNull {
+  public Widget a() {
+    return null;
   }
 }
 

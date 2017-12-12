@@ -25,6 +25,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 import org.pitest.plugin.Feature;
 
@@ -52,6 +53,7 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new CompoundMutationInterceptor(Arrays.asList(new PrimitiveEquivalentFilter(), 
+        new NullReturnsFilter(),
         new EmptyReturnsFilter(), 
         new HardCodedTrueEquivalentFilter())) {
       @Override
@@ -277,3 +279,51 @@ class EmptyReturnsFilter implements MutationInterceptor {
     
 }
 
+class NullReturnsFilter implements MutationInterceptor {
+  
+  private static final String MUTATOR_ID = NullReturnValsMutator.NULL_RETURN_VALUES.getGloballyUniqueId();
+  
+  private ClassTree currentClass;
+
+  @Override
+  public InterceptorType type() {
+    return InterceptorType.FILTER;
+  }
+
+  @Override
+  public void begin(ClassTree clazz) {
+    currentClass = clazz;
+  }
+
+  @Override
+  public Collection<MutationDetails> intercept(
+      Collection<MutationDetails> mutations, Mutater m) {
+    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+  }
+
+  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new F<MutationDetails, Boolean>() {
+      @Override
+      public Boolean apply(MutationDetails a) {
+        if (!MUTATOR_ID.equals(a.getMutator())) {
+          return false;
+        }
+
+        MethodTree method = currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
+        int mutatedInstruction = a.getInstructionIndex();
+        return returnsNull(method, mutatedInstruction);
+      }
+
+      private Boolean returnsNull(MethodTree method,
+          int mutatedInstruction) {
+        return method.instructions().get(mutatedInstruction - 1).getOpcode() == Opcodes.ACONST_NULL;
+      }     
+    };
+  }
+
+  @Override
+  public void end() {
+    currentClass = null;
+  }
+    
+}

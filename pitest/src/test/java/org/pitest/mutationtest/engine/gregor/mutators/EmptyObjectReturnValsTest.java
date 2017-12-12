@@ -21,39 +21,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   }
 
   @Test
-  public void replacesObjectReturnValuesWithNull() throws Exception {
-    assertMutantCallableReturns(new ObjectReturn(),
-        createFirstMutant(ObjectReturn.class), null);
-  }
-  
-  @Test
-  public void describesMutationsToObject() {
-    assertMutantDescriptionIncludes("replaced return value with null", ObjectReturn.class);
-    assertMutantDescriptionIncludes("ObjectReturn::call", ObjectReturn.class);
-  }
-
-  @Test
-  public void doesNotMutateMethodsAnnotatedWithNotNull() throws Exception {
+  public void doesNotMutateObjectReturnValuesWithNoEmptyValueOption() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(
-        AnnotatedObjectReturn.class);
+        ObjectReturn.class);
     assertThat(actual).isEmpty();
   }
   
-  @Test
-  public void mutatesMethodsWithOtherAnnoations() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(
-        HasOtherAnnotation.class);
-    assertThat(actual).hasSize(1);
-  }
-
-  
-  @Test
-  public void doesNotMutateMethodsAnnotatedWithNotNullAndOthers() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(
-        MultipleAnnotatedObjectReturn.class);
-    assertThat(actual).isEmpty();
-  } 
-
   @Test
   public void mutatesBoxedIntegersToZero() throws Exception {
     assertMutantCallableReturns(new BoxedInteger(),
@@ -159,7 +132,13 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   public void mutatesSetToEmptySet() throws Exception {
     assertMutantCallableReturns(new ASet(),
         createFirstMutant(ASet.class), Collections.<String>emptySet());
-  } 
+  }
+  
+  @Test
+  public void mutatesCollectionsToEmptyList() throws Exception {
+    assertMutantCallableReturns(new ACollection(),
+        createFirstMutant(ACollection.class), Collections.<String>emptyList());
+  }   
   
 // must build on java 7  
 //  @Test
@@ -170,31 +149,6 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   
   private static class ObjectReturn implements Callable<Object> {
     @Override
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-
-  private static class AnnotatedObjectReturn implements Callable<Object> {
-    @Override
-    @NotNull
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-  
-  private static class HasOtherAnnotation implements Callable<Object> {
-    @Override
-    @SomethingElse
-    public String call() throws Exception {
-      return "";
-    }
-  }
-  
-  private static class MultipleAnnotatedObjectReturn implements Callable<Object> {
-    @Override
-    @NotNull
-    @SomethingElse
     public Object call() throws Exception {
       return "";
     }
@@ -278,7 +232,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     }
   }
     
-    
+  private static class ACollection implements Callable<Collection<String>> {
+    @Override
+    public Collection<String> call() throws Exception {
+      return Collections.singleton("");
+    }
+  }  
   
 //  private static class AnOptional implements Callable<Optional<String>> {
 //    @Override
@@ -288,12 +247,4 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
 //  }
   
     
-}
-
-@interface SomethingElse {
-  
-}
-
-@interface NotNull {
-
 }
