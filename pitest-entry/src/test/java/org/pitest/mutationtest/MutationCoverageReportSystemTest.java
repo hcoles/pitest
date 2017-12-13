@@ -38,8 +38,6 @@ import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.Generated;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 
@@ -145,6 +143,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
     this.data
     .setTargetClasses(predicateFor("com.example.LoadsResourcesFromClassPath*"));
+    this.data.setVerbose(true);
     createAndRun();
     verifyResults(KILLED);
   }
@@ -261,8 +260,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data
     .setTargetClasses(predicateFor("com.example.testng.FullyCovered*"));
     this.data.setVerbose(true);
-    createAndRun(new TestNGConfiguration(new TestGroupConfig(
-        Collections.<String> emptyList(), Collections.<String> emptyList())));
+    this.data.setTestPlugin("testng");
+    createAndRun();
     verifyResults(KILLED);
   }
 

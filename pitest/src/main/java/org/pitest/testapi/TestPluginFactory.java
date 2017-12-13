@@ -10,4 +10,6 @@ public interface TestPluginFactory extends ClientClasspathPlugin {
   Configuration createTestFrameworkConfiguration(TestGroupConfig config,
       ClassByteArraySource source, Collection<String> excludedRunners);
 
+  String name();
+
 }

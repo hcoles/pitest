@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
@@ -33,8 +32,6 @@ import org.pitest.plugin.ProvidesFeature;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
-import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
@@ -116,24 +113,14 @@ public class SettingsFactory {
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }
 
-  public Configuration getTestFrameworkPlugin() {
-
-    final Collection<? extends TestPluginFactory> testPlugins = this.plugins
-        .findTestFrameworkPlugins();
-    return firstOrDefault(testPlugins, new LegacyTestFrameworkPlugin())
-        .createTestFrameworkConfiguration(this.options.getGroupConfig(),
-            new ClassPathByteArraySource(this.options.getClassPath()),
-            this.options.getExcludedRunners());
-  }
-
   @SuppressWarnings("unchecked")
   public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(Prelude.and(
         this.options.getTargetClassesFilter(), not(commonClasses())),
-        this.getTestFrameworkPlugin(), this.options.isVerbose(),
+        this.options.createMinionSettings(), this.options.isVerbose(),
         this.options.getDependencyAnalysisMaxDistance());
   }
-  
+
   public CompoundInterceptorFactory getInterceptor() {
     final Collection<? extends MutationInterceptorFactory> interceptors = this.plugins
         .findInterceptors();

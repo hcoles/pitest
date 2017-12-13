@@ -15,15 +15,15 @@
 
 package org.pitest.coverage;
 
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.LaunchOptions;
-import org.pitest.testapi.Configuration;
 
 public interface CoverageGenerator {
 
   CoverageDatabase calculateCoverage();
 
-  Configuration getConfiguration();
-
+  TestPluginArguments getConfiguration();
+  
   LaunchOptions getLaunchOptions();
 
 }

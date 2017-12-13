@@ -62,6 +62,7 @@ import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
@@ -71,9 +72,8 @@ import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
-import org.pitest.simpletest.ConfigurationForTesting;
+import org.pitest.simpletest.SimpleTestPlugin;
 import org.pitest.simpletest.TestAnnotationForTesting;
-import org.pitest.testapi.Configuration;
 import org.pitest.util.Functions;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
@@ -85,14 +85,14 @@ import com.example.MutationsInNestedClassesTest;
 public class TestMutationTesting {
 
   private MutationAnalysisExecutor mae;
-  private Configuration            config;
+  private TestPluginArguments      config;
 
   private MetaDataExtractor        metaDataExtractor;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.config = new ConfigurationForTesting();
+    this.config = TestPluginArguments.defaults().withTestPlugin(SimpleTestPlugin.NAME);
     this.metaDataExtractor = new MetaDataExtractor();
     this.mae = new MutationAnalysisExecutor(1,
         Collections
@@ -383,6 +383,7 @@ public class TestMutationTesting {
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
             data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
             .getLocalClassPath());
+    
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
         new NullAnalyser(), source, new DefaultGrouper(0));
@@ -397,7 +398,7 @@ public class TestMutationTesting {
     return new CoverageOptions(data.getTargetClassesFilter(), this.config,
         data.isVerbose(), data.getDependencyAnalysisMaxDistance());
   }
-
+  
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor

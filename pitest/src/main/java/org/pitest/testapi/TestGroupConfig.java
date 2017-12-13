@@ -14,6 +14,7 @@
  */
 package org.pitest.testapi;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,19 @@ public class TestGroupConfig {
   public TestGroupConfig() {
     this(null, null);
   }
-
+  
+  public static TestGroupConfig emptyConfig() {
+    return new TestGroupConfig();
+  }
+  
+  public TestGroupConfig withExcludedGroups(String... excluded) {
+    return new TestGroupConfig(Arrays.asList(excluded), includedGroups);
+  }
+  
+  public TestGroupConfig withIncludedGroups(String... included) {
+    return new TestGroupConfig(excludedGroups, Arrays.asList(included));
+  }
+  
   public List<String> getExcludedGroups() {
     return this.excludedGroups;
   }

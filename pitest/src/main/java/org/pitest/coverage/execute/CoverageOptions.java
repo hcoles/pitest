@@ -16,18 +16,20 @@ package org.pitest.coverage.execute;
  */
 
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.testapi.Configuration;
+import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.util.Preconditions;
 
 public class CoverageOptions {
 
   private final Predicate<String> filter;
   private final boolean           verbose;
-  private final Configuration     pitConfig;
+  private final TestPluginArguments pitConfig;
   private final int               maxDependencyDistance;
 
   public CoverageOptions(final Predicate<String> filter,
-      final Configuration pitConfig, final boolean verbose,
+      final TestPluginArguments pitConfig, final boolean verbose,
       final int maxDependencyDistance) {
+    Preconditions.checkNotNull(pitConfig);
     this.filter = filter;
     this.verbose = verbose;
     this.pitConfig = pitConfig;
@@ -42,7 +44,7 @@ public class CoverageOptions {
     return this.verbose;
   }
 
-  public Configuration getPitConfig() {
+  public TestPluginArguments getPitConfig() {
     return this.pitConfig;
   }
 

@@ -130,6 +130,8 @@ public class ReportOptions {
   private int maxSurvivors;
   
   private Collection<String>             excludedRunners                = new ArrayList<String>();
+  
+  private String                         testPlugin                     = "junit";
 
   public boolean isVerbose() {
     return this.verbose;
@@ -579,6 +581,21 @@ public class ReportOptions {
     this.excludedRunners = excludedRunners;
   }
 
+  /**
+   * Creates a serializable subset of data for use in child processes
+   */
+  public TestPluginArguments createMinionSettings() {
+    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners());
+  }
+
+  public String getTestPlugin() {
+    return testPlugin;
+  }
+
+  public void setTestPlugin(String testPlugin) {
+    this.testPlugin = testPlugin;
+  }
+  
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses

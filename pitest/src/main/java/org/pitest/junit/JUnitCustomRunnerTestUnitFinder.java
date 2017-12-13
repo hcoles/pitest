@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -41,6 +42,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.Preconditions;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -51,6 +53,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private final Collection<String> excludedRunners;
   
   JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners) {
+    Preconditions.checkNotNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
   }
@@ -93,14 +96,25 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }  
   
   private List<String> getCategories(final Class<?> a) {   
-    return FCollection.map(Arrays.asList(a.getAnnotations()), toName());
+    Category[] c = a.getAnnotationsByType(Category.class);
+    return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
   }
 
-  private F<Annotation,String> toName() {
-    return new F<Annotation,String>() {
+  private F<Category, Iterable<String>> toCategoryNames() {
+    return new F<Category, Iterable<String>>() {
       @Override
-      public String apply(Annotation a) {
-        return a.annotationType().getName();
+      public Iterable<String> apply(Category a) {
+        return FCollection.map(Arrays.asList(a.value()),toName());
+      }
+      
+    };
+  }
+
+  private F<Class<?>,String> toName() {
+    return new F<Class<?>,String>() {
+      @Override
+      public String apply(Class<?> a) {
+        return a.getName();
       }    
     };
   }

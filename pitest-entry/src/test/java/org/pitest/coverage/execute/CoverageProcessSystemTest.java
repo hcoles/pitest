@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -27,14 +26,13 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.junit.JUnitCompatibleConfiguration;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.ExitCode;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
@@ -305,8 +303,8 @@ public class CoverageProcessSystemTest {
       }
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), TestPluginArguments.defaults(), true, -1);
+        
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
     final SocketFinder sf = new SocketFinder();
@@ -364,8 +362,8 @@ public class CoverageProcessSystemTest {
 
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
-        new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList()), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), TestPluginArguments.defaults(), true, -1);  
+    
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
       final LaunchOptions lo = new LaunchOptions(agent);

@@ -25,6 +25,7 @@ import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
+import org.pitest.util.Preconditions;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -34,6 +35,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
   
   public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
+    Preconditions.checkNotNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
   }
