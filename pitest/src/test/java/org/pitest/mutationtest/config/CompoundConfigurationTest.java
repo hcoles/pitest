@@ -15,8 +15,6 @@
 package org.pitest.mutationtest.config;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -28,12 +26,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
@@ -44,8 +40,7 @@ public class CompoundConfigurationTest {
 
   @Mock
   private Configuration         childOne;
-  @Mock
-  private TestClassIdentifier   testIdOne;
+
   @Mock
   private TestUnitFinder        testFinderOne;
   @Mock
@@ -53,8 +48,7 @@ public class CompoundConfigurationTest {
 
   @Mock
   private Configuration         childTwo;
-  @Mock
-  private TestClassIdentifier   testIdTwo;
+
   @Mock
   private TestUnitFinder        testFinderTwo;
   @Mock
@@ -63,8 +57,6 @@ public class CompoundConfigurationTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(this.childOne.testClassIdentifier()).thenReturn(this.testIdOne);
-    when(this.childTwo.testClassIdentifier()).thenReturn(this.testIdTwo);
     when(this.childOne.testUnitFinder()).thenReturn(this.testFinderOne);
     when(this.childTwo.testUnitFinder()).thenReturn(this.testFinderTwo);
     when(this.childOne.testSuiteFinder()).thenReturn(this.suiteFinderOne);
@@ -103,26 +95,6 @@ public class CompoundConfigurationTest {
     when(this.suiteFinderTwo.apply(any(Class.class))).thenReturn(
         Arrays.<Class<?>> asList(tc));
     assertEquals(Arrays.asList(tc), this.testee.testSuiteFinder().apply(tc));
-  }
-
-  @Test
-  public void shouldIdentifyClassAsATestClassWhenAChildIdentifiesItAsATest() {
-    final ClassInfo classInfoA = Mockito.mock(ClassInfo.class);
-    final ClassInfo classInfoB = Mockito.mock(ClassInfo.class);
-    when(this.testIdOne.isATestClass(classInfoA)).thenReturn(true);
-    when(this.testIdTwo.isATestClass(classInfoB)).thenReturn(true);
-
-    assertTrue(this.testee.testClassIdentifier().isATestClass(classInfoA));
-    assertTrue(this.testee.testClassIdentifier().isATestClass(classInfoB));
-  }
-
-  @Test
-  public void shouldNotIdentifyClassAsATestClassWhenNoChildIdentifiesItAsATest() {
-    final ClassInfo classInfo = Mockito.mock(ClassInfo.class);
-    when(this.testIdOne.isATestClass(classInfo)).thenReturn(false);
-    when(this.testIdTwo.isATestClass(classInfo)).thenReturn(false);
-
-    assertFalse(this.testee.testClassIdentifier().isATestClass(classInfo));
   }
 
   @Test

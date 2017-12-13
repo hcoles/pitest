@@ -37,7 +37,8 @@
 				    <outputFormats><value>XML</value></outputFormats>
 				    <maxMutationsPerClass>6</maxMutationsPerClass>
 				    <timestampedReports>false</timestampedReports>
-					<targetClasses><param>com.example*</param></targetClasses>
+                    <targetTests><param>com.example.*</param></targetTests>
+                    <targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>
 				</configuration>
 			</plugin>

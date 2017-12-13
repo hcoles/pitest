@@ -52,7 +52,7 @@ import junit.framework.TestSuite;
 
 public class TestJUnitConfiguration {
 
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
+  private  JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
                                                         new TestGroupConfig(), 
                                                         Collections.<String>emptyList());
   private Pitest                             pitest;
@@ -603,6 +603,33 @@ public class TestJUnitConfiguration {
   public void shouldRunOtherMethodsInAClassWithOneIgnoredTest() {
     run(HasOneMethodAnnotatedAsIgnored.class);
     verify(this.listener, times(2)).onTestSuccess((any(TestResult.class)));
+  }
+
+  @Test
+  public void doesNotRunExcludedCategories() {
+    exclude(ExcludeMe.class);
+    run(HasExcludedCategory.class);
+    verify(this.listener, never()).onTestStart(any(Description.class));
+  }
+  
+  @interface ExcludeMe {
+    
+  }
+  
+  @ExcludeMe
+  public static class HasExcludedCategory {
+    @Test
+    public void iAmExcluded() {
+
+    }
+  }
+  
+  private void exclude(Class<?> class1) {
+    List<String> exclude = Collections.singletonList(class1.getName());
+    List<String> include = Collections.emptyList();
+    testee = new JUnitCompatibleConfiguration(
+            new TestGroupConfig(include,exclude), 
+            Collections.<String>emptyList());
   }
 
   private void run(final Class<?> clazz) {

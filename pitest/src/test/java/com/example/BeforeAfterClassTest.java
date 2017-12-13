@@ -14,11 +14,11 @@ public class BeforeAfterClassTest {
 
   @Test
   public void shouldKillMutant1() {
-    assertEquals(1, CoveredByABeforeAfterClassTest.returnOne());
+    assertEquals(1, CoveredByABeforeAfterClass.returnOne());
   }
 
   @Test
   public void shouldKillMutantAgainButShouldNotBeRun() {
-    assertEquals(1, CoveredByABeforeAfterClassTest.returnOne());
+    assertEquals(1, CoveredByABeforeAfterClass.returnOne());
   }
 }
