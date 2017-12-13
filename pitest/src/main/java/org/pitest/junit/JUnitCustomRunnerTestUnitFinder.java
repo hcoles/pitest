@@ -96,7 +96,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }  
   
   private List<String> getCategories(final Class<?> a) {   
-    Category[] c = a.getAnnotationsByType(Category.class);
+    Category c = a.getAnnotation(Category.class);
     return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
   }
 
@@ -104,6 +104,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return new F<Category, Iterable<String>>() {
       @Override
       public Iterable<String> apply(Category a) {
+        if (a == null) {
+          return Collections.emptyList();
+        }
         return FCollection.map(Arrays.asList(a.value()),toName());
       }
       
