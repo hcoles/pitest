@@ -60,6 +60,13 @@ public class OptionsParserTest {
     when(this.filter.apply(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }
+  
+  @Test
+  public void shouldParseTestPlugin() {
+    final String value = "foo";
+    final ReportOptions actual = parseAddingRequiredArgs("--testPlugin", value);
+    assertEquals(value, actual.getTestPlugin());
+  }
 
   @Test
   public void shouldParseReportDir() {

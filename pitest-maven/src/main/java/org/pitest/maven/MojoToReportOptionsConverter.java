@@ -95,6 +95,7 @@ public class MojoToReportOptionsConverter {
           .getOutputDirectory()));
     }
 
+    data.setTestPlugin(this.mojo.getTestPlugin());
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());

@@ -30,7 +30,8 @@
 				<artifactId>pitest-maven</artifactId>
 				<version>${pit.version}</version>
 				<configuration>
-				    <outputFormats><value>XML</value></outputFormats>
+                    <testPlugin>testng</testPlugin>
+                    <outputFormats><value>XML</value></outputFormats>
 				    <maxMutationsPerClass>6</maxMutationsPerClass>
 				    <timestampedReports>false</timestampedReports>
 					<targetClasses><param>com.example*</param></targetClasses>

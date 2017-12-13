@@ -46,6 +46,7 @@ import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_PLUGIN;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
@@ -124,6 +125,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
   private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
+  private final OptionSpec<String>                   testPluginSpec;
 
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
 
@@ -133,6 +135,12 @@ public class OptionsParser {
 
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
+    
+    this.testPluginSpec = parserAccepts(TEST_PLUGIN)
+        .withRequiredArg()
+        .ofType(String.class)
+        .defaultsTo("junit")
+        .describedAs("test plugin to use");
 
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
@@ -357,6 +365,7 @@ public class OptionsParser {
    */
   private ParseResult parseCommandLine(final ReportOptions data,
       final OptionSet userArgs) {
+    data.setTestPlugin(userArgs.valueOf(this.testPluginSpec));
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(FCollection.map(
         this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));

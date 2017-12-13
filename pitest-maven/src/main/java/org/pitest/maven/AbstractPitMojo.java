@@ -36,6 +36,12 @@ public class AbstractPitMojo extends AbstractMojo {
   protected final PluginServices      plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
+  
+  /**
+   * Test plugin to use
+   */
+  @Parameter(property = "testPlugin", defaultValue = "junit")
+  private String testPlugin;
 
   /**
    * Classes to include in mutation test
@@ -618,6 +624,10 @@ public class AbstractPitMojo extends AbstractMojo {
     return features;
   }
 
+  public String getTestPlugin() {
+    return testPlugin;
+  }
+   
   static class RunDecision {
     private List<String> reasons = new ArrayList<String>(4);
 
@@ -634,5 +644,4 @@ public class AbstractPitMojo extends AbstractMojo {
     }
   }
 
-  
 }

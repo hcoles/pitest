@@ -377,6 +377,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("foo", actual.getFreeFormProperties().get("foo"));
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
+  
+  public void testParsesTestPlugin() {
+    final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
+    assertEquals("testng", actual.getTestPlugin());
+  }  
 
   private ReportOptions parseConfig(final String xml) {
     try {

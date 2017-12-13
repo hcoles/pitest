@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.pitest.testapi.TestGroupConfig.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
@@ -361,21 +363,26 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   
   @Test
   public void includesSuppliedCategories() {
-    include(Tagged.class);
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName()));
     final Collection<TestUnit> actual = findWithTestee(Tagged.class);
     assertThat(actual).hasSize(1);
   }
   
   @Test
   public void excludesSuppliedCategories() {
-    exclude(Tagged.class);
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName())
+        .withExcludedGroups(AnotherCategory.class.getName()));
     final Collection<TestUnit> actual = findWithTestee(Tagged.class);
     assertThat(actual).isEmpty();
   }
 
   @Test
   public void excludesInheritedCategories() {
-    exclude(Tagged.class);
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName())
+        .withExcludedGroups(AnotherCategory.class.getName()));
     final Collection<TestUnit> actual = findWithTestee(IndirectlyTagged.class);
     assertThat(actual).isEmpty();
   }
@@ -387,11 +394,15 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     assertThat(actual).isEmpty();
   }
   
-  static @interface ACategory {
+  static interface ACategory {
     
   }
   
-  @ACategory
+  static interface AnotherCategory {
+    
+  }
+
+  @Category({ACategory.class, AnotherCategory.class})
   public static class Tagged {
     @Test
     public void testTwo() {
@@ -414,20 +425,11 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
   
   
-  private void exclude(Class<?> class1) {
-    List<String> exclude = Collections.singletonList(class1.getName());
-    List<String> include = Collections.emptyList();
+  private void setConfig(TestGroupConfig config) {
     testee = new JUnitCustomRunnerTestUnitFinder(
-            new TestGroupConfig(include,exclude), Collections.<String>emptyList());
+        config, Collections.<String>emptyList()); 
   }
-  
-  private void include(Class<?> class1) {
-    List<String> include = Collections.singletonList(class1.getName());
-    List<String> exclude = Collections.emptyList();
-    testee = new JUnitCustomRunnerTestUnitFinder(
-            new TestGroupConfig(include,exclude), Collections.<String>emptyList());
-  }  
-  
+
   
   private void excludeRunner(Class<? extends Runner> class1) {
     List<String> include = Collections.<String>emptyList();

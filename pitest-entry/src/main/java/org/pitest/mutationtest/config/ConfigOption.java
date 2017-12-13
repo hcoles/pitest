@@ -19,6 +19,11 @@ import java.io.Serializable;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
+  
+  /**
+   * The test plugin to use
+   */
+  TEST_PLUGIN("testPlugin"),
 
   /**
    * The directory to write report sot
