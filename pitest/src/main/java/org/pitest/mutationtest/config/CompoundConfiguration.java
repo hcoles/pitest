@@ -23,7 +23,6 @@ import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
 
@@ -32,7 +31,6 @@ public class CompoundConfiguration implements Configuration {
   private final Iterable<Configuration>     configs;
   private final CompoundTestUnitFinder      testUnitFinder;
   private final CompoundTestSuiteFinder     suiteFinder;
-  private final CompoundTestClassIdentifier testIdentifier;
 
   public CompoundConfiguration(final Iterable<Configuration> configs) {
     this.configs = configs;
@@ -40,20 +38,6 @@ public class CompoundConfiguration implements Configuration {
         asTestUnitFinders()));
     this.suiteFinder = new CompoundTestSuiteFinder(FCollection.map(configs,
         asSuiteFinders()));
-    this.testIdentifier = new CompoundTestClassIdentifier(FCollection.map(
-        configs, asTestIdentifier()));
-  }
-
-  private static F<Configuration, TestClassIdentifier> asTestIdentifier() {
-
-    return new F<Configuration, TestClassIdentifier>() {
-      @Override
-      public TestClassIdentifier apply(final Configuration a) {
-        return a.testClassIdentifier();
-      }
-
-    };
-
   }
 
   private static F<Configuration, TestSuiteFinder> asSuiteFinders() {
@@ -84,11 +68,6 @@ public class CompoundConfiguration implements Configuration {
   @Override
   public TestSuiteFinder testSuiteFinder() {
     return this.suiteFinder;
-  }
-
-  @Override
-  public TestClassIdentifier testClassIdentifier() {
-    return this.testIdentifier;
   }
 
   @Override

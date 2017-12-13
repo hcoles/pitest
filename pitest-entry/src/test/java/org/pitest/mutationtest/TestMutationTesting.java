@@ -353,8 +353,7 @@ public class TestMutationTesting {
         data.createClassesFilter(), pf);
 
     final Timings timings = new Timings();
-    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
-        .testClassIdentifier());
+    final CodeSource code = new CodeSource(cps);
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
         null, coverageOptions, launchOptions, code, new NullCoverageExporter(),

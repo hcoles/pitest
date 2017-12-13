@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -43,7 +44,7 @@ import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 
 import com.example.BeforeAfterClassTest;
-import com.example.CoveredByABeforeAfterClassTest;
+import com.example.CoveredByABeforeAfterClass;
 import com.example.CoveredByEasyMock;
 import com.example.CoveredByJUnitThreeSuite;
 import com.example.CrashesJVMWhenMutated;
@@ -61,6 +62,11 @@ import com.example.MultipleMutations;
 public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   private static final int ONE_MINUTE = 60000;
+  
+  @Before
+  public void excludeTests() {
+    this.data.setExcludedClasses(predicateFor("*Test"));
+  }
 
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
@@ -319,7 +325,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
     setMutators("RETURN_VALS");
     this.data
-    .setTargetClasses(predicateFor(CoveredByABeforeAfterClassTest.class));
+    .setTargetClasses(predicateFor(CoveredByABeforeAfterClass.class));
     this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
 
     createAndRun();

@@ -32,7 +32,7 @@ public class SurefireConfigConverterTest {
 
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
-    assertThat(actual.getExcludedClasses()).hasSize(2);
+    assertThat(actual.getExcludedTestClasses()).hasSize(2);
   }
 
   @Test
@@ -42,7 +42,7 @@ public class SurefireConfigConverterTest {
 
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
-    Predicate<String> predicate = actual.getExcludedClasses().iterator().next();
+    Predicate<String> predicate = actual.getExcludedTestClasses().iterator().next();
     assertThat(predicate.apply("com.example.FailingTest")).isTrue();
     assertThat(predicate.apply("com.example.Test")).isFalse();
   }
@@ -50,12 +50,12 @@ public class SurefireConfigConverterTest {
   @Test
   public void shouldKeepExistingExclusions() throws Exception {
     this.surefireConfig = makeConfig("<excludes><exclude>A</exclude><exclude>B</exclude></excludes>");
-    this.options.setExcludedClasses(Collections
+    this.options.setExcludedTestClasses(Collections
         .<Predicate<String>> singletonList(new Glob("Foo")));
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
 
-    assertThat(actual.getExcludedClasses()).hasSize(3);
+    assertThat(actual.getExcludedTestClasses()).hasSize(3);
   }
 
   @Test

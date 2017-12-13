@@ -7,14 +7,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.CompoundTestUnitFinder;
-import org.pitest.testapi.BaseTestClassIdentifier;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
 
@@ -58,17 +55,6 @@ public class ConfigurationForTesting implements Configuration {
   @Override
   public TestSuiteFinder testSuiteFinder() {
     return new NoTestSuiteFinder();
-  }
-
-  @Override
-  public TestClassIdentifier testClassIdentifier() {
-    return new BaseTestClassIdentifier() {
-
-      @Override
-      public boolean isATestClass(final ClassInfo a) {
-        return a.hasAnnotation(TestAnnotationForTesting.class);
-      }
-    };
   }
 
   @Override

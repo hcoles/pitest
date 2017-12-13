@@ -114,8 +114,7 @@ public abstract class ReportTestBase {
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final Timings timings = new Timings();
-      final CodeSource code = new CodeSource(cps, coverageOptions
-          .getPitConfig().testClassIdentifier());
+      final CodeSource code = new CodeSource(cps);
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code,

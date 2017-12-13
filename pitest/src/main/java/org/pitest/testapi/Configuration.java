@@ -24,8 +24,6 @@ public interface Configuration {
 
   TestSuiteFinder testSuiteFinder();
 
-  TestClassIdentifier testClassIdentifier();
-
   Option<PitHelpError> verifyEnvironment();
 
 }
