@@ -98,23 +98,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED, SURVIVED);
   }
 
-  @Test
-  public void shouldKillMutationsInStaticInitializersWhenThereIsCoverageAndMutateStaticFlagIsSet() {
-    this.data.setMutateStaticInitializers(true);
-    this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
-    createAndRun();
-    verifyResults(KILLED);
-  }
-
-  @Test
-  public void shouldNotCreateMutationsInStaticInitializersWhenFlagNotSet() {
-    this.data.setMutateStaticInitializers(false);
-    this.data
-    .setTargetClasses(predicateFor("com.example.HasMutableStaticInitializer*"));
-    createAndRun();
-    verifyResults();
-  }
 
   @Test(expected = PitHelpError.class)
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
@@ -125,17 +108,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
         + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
     createAndRun();
     // should not get here
-  }
-
-  @Test
-  public void shouldOnlyRunTestsMathchingSuppliedFilter() {
-    this.data.setMutateStaticInitializers(true);
-    this.data
-    .setTargetClasses(predicateFor(com.example.HasMutableStaticInitializer.class));
-    this.data
-    .setTargetTests(predicateFor(com.example.HasMutableStaticInitializerTest.class));
-    createAndRun();
-    verifyResults(KILLED);
   }
 
   @Test
@@ -368,8 +340,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     
     this.data
     .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledOnlyFromInitializer.class));
-
-    this.data.setMutateStaticInitializers(false);
     
     createAndRun();
 
@@ -382,7 +352,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     
     this.data
     .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledFromInitializerAndElseWhere.class));
-    this.data.setMutateStaticInitializers(false);
     
     createAndRun();
 
@@ -396,7 +365,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     
     this.data
     .setTargetClasses(predicateFor(com.example.staticinitializers.NonPrivateMethodsCalledFromInitializerOnly.class));
-    this.data.setMutateStaticInitializers(false);
     
     createAndRun();
 
@@ -409,7 +377,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     
     this.data
     .setTargetClasses(predicateFor(com.example.staticinitializers.MethodsCalledInChainFromStaticInitializer.class));
-    this.data.setMutateStaticInitializers(false);
     
     createAndRun();
 

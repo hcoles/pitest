@@ -132,10 +132,6 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.THREADS, value);
   }
 
-  public void setMutateStaticInits(final String value) {
-    this.setOption(ConfigOption.MUTATE_STATIC_INITIALIZERS, value);
-  }
-
   public void setDetectInlinedCode(final String value) {
     this.setOption(ConfigOption.USE_INLINED_CODE_DETECTION, value);
   }

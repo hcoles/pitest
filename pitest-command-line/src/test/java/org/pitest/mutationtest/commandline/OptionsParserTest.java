@@ -122,31 +122,6 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenTrueSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits",
-        "true");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenFalseSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits=false");
-    assertFalse(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldNotCreateMutationsInStaticInitializerByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
-    assertFalse(actual.isMutateStaticInitializers());
-  }
-
-  @Test
   public void shouldNotDetectInlinedCodeByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs("");
     assertFalse(actual.isDetectInlinedCode());

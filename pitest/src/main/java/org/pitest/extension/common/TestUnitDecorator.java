@@ -36,6 +36,6 @@ public abstract class TestUnitDecorator implements TestUnit {
   }
 
   @Override
-  public abstract void execute(ClassLoader loader, ResultCollector rc);
+  public abstract void execute(ResultCollector rc);
 
 }

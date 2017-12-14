@@ -21,8 +21,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,7 +28,8 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
-import org.pitest.util.IsolationUtils;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class MultipleTestGroupTest {
 
@@ -57,11 +56,9 @@ public class MultipleTestGroupTest {
   public void shouldExecuteAllChildren() {
     this.testee = new MultipleTestGroup(Arrays.asList(this.emptyTestUnit,
         this.emptyTestUnit2));
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
-    verify(this.emptyTestUnit, times(1)).execute(
-        IsolationUtils.getContextClassLoader(), this.rc);
-    verify(this.emptyTestUnit2, times(1)).execute(
-        IsolationUtils.getContextClassLoader(), this.rc);
+    this.testee.execute(this.rc);
+    verify(this.emptyTestUnit, times(1)).execute(this.rc);
+    verify(this.emptyTestUnit2, times(1)).execute(this.rc);
   }
 
   @Test
@@ -69,11 +66,9 @@ public class MultipleTestGroupTest {
     when(this.rc.shouldExit()).thenReturn(true);
     this.testee = new MultipleTestGroup(Arrays.asList(this.emptyTestUnit,
         this.emptyTestUnit2));
-    this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
-    verify(this.emptyTestUnit, times(1)).execute(
-        IsolationUtils.getContextClassLoader(), this.rc);
-    verify(this.emptyTestUnit2, never()).execute(
-        IsolationUtils.getContextClassLoader(), this.rc);
+    this.testee.execute(this.rc);
+    verify(this.emptyTestUnit, times(1)).execute(this.rc);
+    verify(this.emptyTestUnit2, never()).execute(this.rc);
   }
 
   @Test

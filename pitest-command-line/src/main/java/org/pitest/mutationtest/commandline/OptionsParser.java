@@ -35,7 +35,6 @@ import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_LAUNCH_CLASSPA
 import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_SURVIVING;
-import static org.pitest.mutationtest.config.ConfigOption.MUTATE_STATIC_INITIALIZERS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
@@ -101,7 +100,6 @@ public class OptionsParser {
   private final OptionSpec<String>                   mutators;
   private final OptionSpec<String>                   features;
   private final OptionSpec<String>                   jvmArgs;
-  private final ArgumentAcceptingOptionSpec<Boolean> mutateStatics;
   private final OptionSpec<Float>                    timeoutFactorSpec;
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
@@ -196,13 +194,6 @@ public class OptionsParser {
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
         .describedAs("comma separated list of child JVM args");
-
-    this.mutateStatics = parserAccepts(MUTATE_STATIC_INITIALIZERS)
-        .withOptionalArg()
-        .ofType(Boolean.class)
-        .defaultsTo(true)
-        .describedAs(
-            "whether or not to generate mutations in static initializers");
 
     this.detectInlinedCode = parserAccepts(USE_INLINED_CODE_DETECTION)
         .withOptionalArg()
@@ -377,8 +368,6 @@ public class OptionsParser {
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
 
-    data.setMutateStaticInitializers(userArgs.has(this.mutateStatics)
-        && userArgs.valueOf(this.mutateStatics));
 
     data.setDetectInlinedCode(userArgs.has(this.detectInlinedCode)
         && userArgs.valueOf(this.detectInlinedCode));

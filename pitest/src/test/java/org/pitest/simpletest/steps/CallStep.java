@@ -35,8 +35,7 @@ public class CallStep implements TestStep {
   }
 
   @Override
-  public Object execute(final ClassLoader loader,
-      final Description testDescription, final Object target) {
+  public Object execute(final Description testDescription, final Object target) {
     try {
 
       final Method m2 = this.m.getMethod();

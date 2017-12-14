@@ -15,16 +15,10 @@
 package org.pitest.testng;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.testapi.foreignclassloader.Events;
-import org.pitest.util.ClassLoaderDetectionStrategy;
-import org.pitest.util.IsolationUtils;
-import org.pitest.util.Unchecked;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestContext;
@@ -53,48 +47,25 @@ public class TestNGTestUnit extends AbstractTestUnit {
     TESTNG.addInvokedMethodListener(new FailFast(LISTENER));
   }
   
-  private final ClassLoaderDetectionStrategy classloaderDetection;
   private final Class<?>                     clazz;
   private final TestGroupConfig              config;
  
   
   public TestNGTestUnit(
-      final ClassLoaderDetectionStrategy classloaderDetection,
       final Class<?> clazz, final TestGroupConfig config) {
     super(new org.pitest.testapi.Description("_", clazz));
     this.clazz = clazz;
-    this.classloaderDetection = classloaderDetection;
     this.config = config;
   }
 
-  public TestNGTestUnit(final Class<?> clazz, final TestGroupConfig config) {
-    this(IsolationUtils.loaderDetectionStrategy(), clazz, config);
-  }
-
   @Override
-  public void execute(final ClassLoader loader, final ResultCollector rc) {
+  public void execute(final ResultCollector rc) {
     synchronized (TESTNG) {
-      if (this.classloaderDetection.fromDifferentLoader(this.clazz, loader)) {
-        executeInForeignLoader(rc, loader);
-      } else {
         executeInCurrentLoader(rc);
-      }
     }
   }
 
-  private void executeInForeignLoader(ResultCollector rc, ClassLoader loader) {
-    @SuppressWarnings("unchecked")
-    Callable<List<String>> e = (Callable<List<String>>) IsolationUtils
-    .cloneForLoader(new ForeignClassLoaderTestNGExecutor(createSuite()),
-        loader);
-    try {
-      List<String> q = e.call();
-      Events.applyEvents(q, rc, this.getDescription());
-    } catch (Exception ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
 
-  }
 
   private void executeInCurrentLoader(final ResultCollector rc) {
     final TestNGAdapter listener = new TestNGAdapter(this.clazz,

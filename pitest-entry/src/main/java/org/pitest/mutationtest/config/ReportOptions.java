@@ -92,7 +92,6 @@ public class ReportOptions {
   private Collection<String>             features;
 
   private int                            dependencyAnalysisMaxDistance;
-  private boolean                        mutateStaticInitializers       = false;
 
   private final List<String>             jvmArgs                        = new ArrayList<String>();
   private int                            numberOfThreads                = 0;
@@ -272,14 +271,6 @@ public class ReportOptions {
   public void setTargetTests(
       final Collection<Predicate<String>> targetTestsPredicates) {
     this.targetTests = targetTestsPredicates;
-  }
-
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
-  }
-
-  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
-    this.mutateStaticInitializers = mutateStaticInitializers;
   }
 
   public int getNumberOfThreads() {
@@ -607,7 +598,6 @@ public class ReportOptions {
         + sourceDirs + ", classPathElements=" + classPathElements
         + ", mutators=" + mutators + ", features=" + features
         + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", mutateStaticInitializers=" + mutateStaticInitializers
         + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
         + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
         + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
