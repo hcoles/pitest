@@ -20,6 +20,13 @@ import java.util.List;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 
+/**
+ * This used to be an important concept that allowed tests
+ * to be executed in isolation from each other. It now
+ * serves almost no purpose but has not yet been fully removed
+ * from the codebase.
+ *
+ */
 public interface Container {
 
   List<TestResult> execute(TestUnit c);

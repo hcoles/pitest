@@ -52,8 +52,8 @@ public class SurefireConfigConverter {
   private void convertExcludes(ReportOptions option, Xpp3Dom configuration) {
     List<Predicate<String>> excludes = FCollection.map(
         extract("excludes", configuration), filenameToClassFilter());
-    excludes.addAll(option.getExcludedClasses());
-    option.setExcludedClasses(excludes);
+    excludes.addAll(option.getExcludedTestClasses());
+    option.setExcludedTestClasses(excludes);
   }
 
   private F<String, Predicate<String>> filenameToClassFilter() {

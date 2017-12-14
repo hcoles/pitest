@@ -101,7 +101,7 @@ public class DependencyFilterTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
 
       }
 

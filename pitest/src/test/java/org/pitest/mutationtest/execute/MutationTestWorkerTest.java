@@ -134,7 +134,7 @@ public class MutationTestWorkerTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription(), new AssertionFailedError());
       }
@@ -151,7 +151,7 @@ public class MutationTestWorkerTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription());
       }

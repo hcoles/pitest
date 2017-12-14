@@ -95,6 +95,7 @@ public class MojoToReportOptionsConverter {
           .getOutputDirectory()));
     }
 
+    data.setTestPlugin(this.mojo.getTestPlugin());
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
@@ -102,11 +103,12 @@ public class MojoToReportOptionsConverter {
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
 
-    data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
     data.setExcludedMethods(globStringsToPredicates(this.mojo
         .getExcludedMethods()));
     data.setExcludedClasses(globStringsToPredicates(this.mojo
         .getExcludedClasses()));
+    data.setExcludedTestClasses(globStringsToPredicates(this.mojo
+        .getExcludedTestClasses()));
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 

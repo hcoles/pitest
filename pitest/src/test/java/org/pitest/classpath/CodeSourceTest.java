@@ -1,13 +1,11 @@
 package org.pitest.classpath;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.functional.Option;
-import org.pitest.testapi.TestClassIdentifier;
 
 public class CodeSourceTest {
 
@@ -30,9 +27,6 @@ public class CodeSourceTest {
   @Mock
   private ProjectClassPaths   classPath;
 
-  @Mock
-  private TestClassIdentifier testIdentifer;
-
   private ClassInfo           foo;
 
   private ClassInfo           bar;
@@ -40,8 +34,7 @@ public class CodeSourceTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new CodeSource(this.classPath, this.repository,
-        this.testIdentifer);
+    this.testee = new CodeSource(this.classPath, this.repository);
     this.foo = makeClassInfo("Foo");
     this.bar = makeClassInfo("Bar");
   }
@@ -54,56 +47,21 @@ public class CodeSourceTest {
   }
 
   @Test
-  public void shouldIdentifyAllNonTestCodeOnClassPathWhenTestsPresentOnCodePath() {
-    when(this.testIdentifer.isATestClass(this.foo)).thenReturn(true);
-    when(this.classPath.code()).thenReturn(
-        Arrays.asList(this.foo.getName(), this.bar.getName()));
-
-    assertEquals(Arrays.asList(this.bar), this.testee.getCode());
-  }
-
-  @Test
   public void shouldIdentifyTestClassesOnTestPath() {
-    when(this.testIdentifer.isATestClass(this.foo)).thenReturn(true);
-    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(true);
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
-
-    assertEquals(Arrays.asList(this.foo), this.testee.getTests());
+    assertThat(this.testee.getTests()).containsExactly(foo, bar);
   }
 
   @Test
-  public void shouldOnlyIdentifyIncludedTestClassesOnTestPath() {
-    when(this.testIdentifer.isATestClass(any(ClassInfo.class)))
-        .thenReturn(true);
-    when(this.testIdentifer.isIncluded(this.foo)).thenReturn(true);
-    when(this.classPath.test()).thenReturn(
-        Arrays.asList(this.foo.getName(), this.bar.getName()));
-
-    assertEquals(Arrays.asList(this.foo), this.testee.getTests());
-  }
-
-  @Test
-  public void shouldNotIdentifyExcludedTestClassesOnTestPath() {
-    when(this.testIdentifer.isATestClass(any(ClassInfo.class)))
-        .thenReturn(true);
-    when(this.testIdentifer.isIncluded(any(ClassInfo.class))).thenReturn(false);
-    when(this.classPath.test()).thenReturn(
-        Arrays.asList(this.foo.getName(), this.bar.getName()));
-
-    assertEquals(Collections.emptyList(), this.testee.getTests());
-  }
-
-  @Test
-  public void shouldProvideNamesOfNonTestClasses() {
+  public void shouldProvideNamesOfCodeClasses() {
     final ClassInfo foo = makeClassInfo("Foo");
     final ClassInfo bar = makeClassInfo("Bar");
-    when(this.testIdentifer.isATestClass(foo)).thenReturn(true);
     when(this.classPath.code()).thenReturn(
         Arrays.asList(foo.getName(), bar.getName()));
 
-    assertEquals(new HashSet<ClassName>(Arrays.asList(ClassName.fromString("Bar"))),
-        this.testee.getCodeUnderTestNames());
+    assertThat(this.testee.getCodeUnderTestNames()).containsOnly(ClassName.fromString("Foo")
+        , ClassName.fromString("Bar"));
   }
 
   @Test

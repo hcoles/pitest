@@ -19,7 +19,7 @@ public class CallStepTest {
   public void shouldReturnSuppliedObject() {
     final CallStep testee = new CallStep(this.testMethod);
     assertSame(this,
-        testee.execute(this.getClass().getClassLoader(), null, this));
+        testee.execute(null, this));
   }
 
   public void testMethod() {

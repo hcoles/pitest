@@ -60,6 +60,13 @@ public class OptionsParserTest {
     when(this.filter.apply(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }
+  
+  @Test
+  public void shouldParseTestPlugin() {
+    final String value = "foo";
+    final ReportOptions actual = parseAddingRequiredArgs("--testPlugin", value);
+    assertEquals(value, actual.getTestPlugin());
+  }
 
   @Test
   public void shouldParseReportDir() {
@@ -112,31 +119,6 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfFeatures() {
     final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
     assertThat(actual.getFeatures()).contains("+FOO()", "-BAR(value=1 & value=2)");
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenTrueSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits",
-        "true");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenFalseSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits=false");
-    assertFalse(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldNotCreateMutationsInStaticInitializerByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
-    assertFalse(actual.isMutateStaticInitializers());
   }
 
   @Test
@@ -229,8 +211,8 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeparatedListOfExcludedClassGlobsAndApplyTheseToTests() {
-    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+  public void shouldParseCommaSeparatedListOfExcludedTestClassGlobs() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
     assertFalse(testPredicate.apply("foo_anything"));

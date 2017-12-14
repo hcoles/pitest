@@ -126,15 +126,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
 
-  public void testParsersMutateStaticInitializersFlag() {
-    assertTrue(parseConfig(
-        "<mutateStaticInitializers>true</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-    assertFalse(parseConfig(
-        "<mutateStaticInitializers>false</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-  }
-
   public void testParsesNumberOfThreads() {
     final ReportOptions actual = parseConfig("<threads>42</threads>");
     assertEquals(42, actual.getNumberOfThreads());
@@ -162,10 +153,10 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actualPredicate.apply("notfoobar"));
   }
 
-  public void testParsesListOfExcludedClassGlobsAndApplyTheseToTests() {
-    final String xml = "<excludedClasses>" + //
+  public void testParsesListOfExcludedTestClassGlobs() {
+    final String xml = "<excludedTestClasses>" + //
         "                      <param>foo*</param>" + //
-        "                  </excludedClasses>" + //
+        "                  </excludedTestClasses>" + //
         "                  <targetTests>" + //
         "                      <param>foo*</param>" + //
         "                      <param>bar*</param>" + //
@@ -377,6 +368,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("foo", actual.getFreeFormProperties().get("foo"));
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
+  
+  public void testParsesTestPlugin() {
+    final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
+    assertEquals("testng", actual.getTestPlugin());
+  }  
 
   private ReportOptions parseConfig(final String xml) {
     try {

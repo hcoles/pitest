@@ -18,7 +18,7 @@ import org.pitest.testapi.Description;
 
 public interface TestStep {
 
-  public Object execute(ClassLoader loader, Description testDescription,
+  public Object execute(Description testDescription,
       Object target);
 
 }

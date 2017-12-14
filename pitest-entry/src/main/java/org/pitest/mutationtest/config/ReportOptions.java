@@ -75,6 +75,9 @@ public class ReportOptions {
 
   private Collection<Predicate<String>>  excludedClasses                = Collections
       .emptyList();
+  
+  private Collection<Predicate<String>>  excludedTestClasses            = Collections
+      .emptyList();  
 
   private Collection<String>             codePaths;
 
@@ -89,7 +92,6 @@ public class ReportOptions {
   private Collection<String>             features;
 
   private int                            dependencyAnalysisMaxDistance;
-  private boolean                        mutateStaticInitializers       = false;
 
   private final List<String>             jvmArgs                        = new ArrayList<String>();
   private int                            numberOfThreads                = 0;
@@ -127,6 +129,8 @@ public class ReportOptions {
   private int maxSurvivors;
   
   private Collection<String>             excludedRunners                = new ArrayList<String>();
+  
+  private String                         testPlugin                     = "junit";
 
   public boolean isVerbose() {
     return this.verbose;
@@ -269,14 +273,6 @@ public class ReportOptions {
     this.targetTests = targetTestsPredicates;
   }
 
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
-  }
-
-  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
-    this.mutateStaticInitializers = mutateStaticInitializers;
-  }
-
   public int getNumberOfThreads() {
     return this.numberOfThreads;
   }
@@ -308,11 +304,13 @@ public class ReportOptions {
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
-      return this.getTargetClassesFilter(); // if no tests specified assume the
-      // target classes filter covers both
+      // If target tests is not explicitly set we assume that the
+      // target classes predicate covers both classes and tests
+      return Prelude.and(or(targetClasses),
+          not(isBlackListed(ReportOptions.this.excludedTestClasses)));      
     } else {
       return Prelude.and(or(this.targetTests),
-          not(isBlackListed(ReportOptions.this.excludedClasses)));
+          not(isBlackListed(ReportOptions.this.excludedTestClasses)));
     }
 
   }
@@ -351,6 +349,12 @@ public class ReportOptions {
       final Collection<Predicate<String>> excludedClasses) {
     this.excludedClasses = excludedClasses;
   }
+  
+  public void setExcludedTestClasses(
+      final Collection<Predicate<String>> excludedClasses) {
+    this.excludedTestClasses = excludedClasses;
+  }
+
 
   public void addOutputFormats(final Collection<String> formats) {
     this.outputs.addAll(formats);
@@ -363,7 +367,11 @@ public class ReportOptions {
   public Collection<Predicate<String>> getExcludedClasses() {
     return this.excludedClasses;
   }
-
+  
+  public Collection<Predicate<String>> getExcludedTestClasses() {
+    return this.excludedTestClasses;
+  }
+  
   public boolean shouldFailWhenNoMutations() {
     return this.failWhenNoMutations;
   }
@@ -564,32 +572,48 @@ public class ReportOptions {
     this.excludedRunners = excludedRunners;
   }
 
+  /**
+   * Creates a serializable subset of data for use in child processes
+   */
+  public TestPluginArguments createMinionSettings() {
+    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners());
+  }
+
+  public String getTestPlugin() {
+    return testPlugin;
+  }
+
+  public void setTestPlugin(String testPlugin) {
+    this.testPlugin = testPlugin;
+  }
+  
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses
         + ", excludedMethods=" + excludedMethods + ", excludedClasses="
-        + excludedClasses + ", codePaths=" + codePaths + ", reportDir="
-        + reportDir + ", historyInputLocation=" + historyInputLocation
+        + excludedClasses + ", excludedTestClasses=" + excludedTestClasses
+        + ", codePaths=" + codePaths + ", reportDir=" + reportDir
+        + ", historyInputLocation=" + historyInputLocation
         + ", historyOutputLocation=" + historyOutputLocation + ", sourceDirs="
         + sourceDirs + ", classPathElements=" + classPathElements
-        + ", mutators=" + mutators + ", dependencyAnalysisMaxDistance="
-        + dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + mutateStaticInitializers + ", jvmArgs=" + jvmArgs
-        + ", numberOfThreads=" + numberOfThreads + ", timeoutFactor="
-        + timeoutFactor + ", timeoutConstant=" + timeoutConstant
-        + ", targetTests=" + targetTests + ", loggingClasses=" + loggingClasses
-        + ", maxMutationsPerClass=" + maxMutationsPerClass + ", verbose="
-        + verbose + ", failWhenNoMutations=" + failWhenNoMutations
-        + ", outputs=" + outputs + ", groupConfig=" + groupConfig
-        + ", mutationUnitSize=" + mutationUnitSize
+        + ", mutators=" + mutators + ", features=" + features
+        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
+        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
+        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
+        + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
+        + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
+        + ", verbose=" + verbose + ", failWhenNoMutations="
+        + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
+        + groupConfig + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
         + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
         + exportLineCoverage + ", mutationThreshold=" + mutationThreshold
         + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
         + mutationEngine + ", javaExecutable=" + javaExecutable
-        + ", includeLaunchClasspath=" + includeLaunchClasspath
-        + ", properties=" + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners=" + excludedRunners 
-        + ", features=" + features + "]";
+        + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
+        + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
+        + excludedRunners + "]";
   }
-  
+
+
 }

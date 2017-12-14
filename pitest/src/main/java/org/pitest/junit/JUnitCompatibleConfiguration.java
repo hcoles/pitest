@@ -22,10 +22,10 @@ import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
+import org.pitest.util.Preconditions;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
@@ -35,6 +35,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
   
   public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
+    Preconditions.checkNotNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
   }
@@ -42,7 +43,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
-        new JUnitCustomRunnerTestUnitFinder(),
+        new JUnitCustomRunnerTestUnitFinder(config, excludedRunners),
         new ParameterisedJUnitTestFinder()));
   }
 
@@ -52,10 +53,6 @@ public class JUnitCompatibleConfiguration implements Configuration {
         new JUnit4SuiteFinder(), new RunnerSuiteFinder()));
   }
 
-  @Override
-  public TestClassIdentifier testClassIdentifier() {
-    return new JUnitTestClassIdentifier(this.config, this.excludedRunners);
-  }
 
   @Override
   public Option<PitHelpError> verifyEnvironment() {

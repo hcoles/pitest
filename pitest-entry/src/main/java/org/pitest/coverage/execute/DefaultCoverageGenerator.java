@@ -36,9 +36,9 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
-import org.pitest.testapi.Configuration;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
@@ -201,10 +201,10 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   @Override
-  public Configuration getConfiguration() {
+  public TestPluginArguments getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }
-
+  
   @Override
   public LaunchOptions getLaunchOptions() {
     return this.launchOptions;
