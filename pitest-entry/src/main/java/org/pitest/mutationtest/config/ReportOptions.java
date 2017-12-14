@@ -130,7 +130,7 @@ public class ReportOptions {
   
   private Collection<String>             excludedRunners                = new ArrayList<String>();
   
-  private String                         testPlugin                     = "junit";
+  private String                         testPlugin                     = "";
 
   public boolean isVerbose() {
     return this.verbose;

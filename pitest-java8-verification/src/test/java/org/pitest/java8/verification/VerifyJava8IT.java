@@ -13,8 +13,6 @@ import com.example.java8.Java8LambdaExpressionTest;
 
 public class VerifyJava8IT extends ReportTestBase { 
 
-  // Java 8 support
-
   /**
    * @author iirekm@gmail.com
    */
