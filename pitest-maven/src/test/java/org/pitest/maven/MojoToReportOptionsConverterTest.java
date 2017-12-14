@@ -126,15 +126,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
 
-  public void testParsersMutateStaticInitializersFlag() {
-    assertTrue(parseConfig(
-        "<mutateStaticInitializers>true</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-    assertFalse(parseConfig(
-        "<mutateStaticInitializers>false</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-  }
-
   public void testParsesNumberOfThreads() {
     final ReportOptions actual = parseConfig("<threads>42</threads>");
     assertEquals(42, actual.getNumberOfThreads());

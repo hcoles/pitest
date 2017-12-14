@@ -27,7 +27,7 @@ public class NoArgsInstantiateStepTest {
     final NoArgsInstantiateStep testee = new NoArgsInstantiateStep(
         NoArgsInstantiateStepTest.class);
     final NoArgsInstantiateStepTest actual = (NoArgsInstantiateStepTest) testee
-        .execute(this.getClass().getClassLoader(), null, null);
+        .execute(null, null);
     assertNotNull(actual);
   }
 

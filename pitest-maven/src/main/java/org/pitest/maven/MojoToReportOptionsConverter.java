@@ -103,7 +103,6 @@ public class MojoToReportOptionsConverter {
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
 
-    data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
     data.setExcludedMethods(globStringsToPredicates(this.mojo
         .getExcludedMethods()));
     data.setExcludedClasses(globStringsToPredicates(this.mojo

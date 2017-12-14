@@ -60,9 +60,8 @@ public class MutationTimeoutDecoratorTest {
   public void shouldCompleteNormallyWhenChildExecutesWithinAllowedTime() {
     when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(
         1000l);
-    this.testee.execute(null, this.rc);
-    verify(this.child).execute(any(ClassLoader.class),
-        any(ResultCollector.class));
+    this.testee.execute(this.rc);
+    verify(this.child).execute(any(ResultCollector.class));
     verify(this.sideEffect, never()).apply();
   }
 
@@ -76,12 +75,10 @@ public class MutationTimeoutDecoratorTest {
         Thread.sleep(100);
         return null;
       }
-    }).when(this.child).execute(any(ClassLoader.class),
-        any(ResultCollector.class));
+    }).when(this.child).execute(any(ResultCollector.class));
 
-    this.testee.execute(null, this.rc);
-    verify(this.child).execute(any(ClassLoader.class),
-        any(ResultCollector.class));
+    this.testee.execute(this.rc);
+    verify(this.child).execute(any(ResultCollector.class));
     verify(this.sideEffect).apply();
   }
 }

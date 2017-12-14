@@ -29,23 +29,6 @@ public abstract class IsolationUtils {
   private static final XStream                           XSTREAM_INSTANCE          = new XStream(
       new PitXmlDriver());
   private static final WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<ClassLoader, XStream>();
-  private static final ClassLoaderDetectionStrategy      LOADER_DETECTION_STRATEGY = new ClassLoaderDetectionStrategy() {
-
-    @Override
-                                                                                     public boolean fromDifferentLoader(
-        final Class<?> clazz,
-        final ClassLoader loader) {
-      return IsolationUtils
-          .fromIncompatibleLoader(
-              clazz,
-              loader);
-    }
-
-  };
-
-  public static ClassLoaderDetectionStrategy loaderDetectionStrategy() {
-    return LOADER_DETECTION_STRATEGY;
-  }
 
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();

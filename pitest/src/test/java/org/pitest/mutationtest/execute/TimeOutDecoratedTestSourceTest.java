@@ -76,7 +76,7 @@ public class TimeOutDecoratedTestSourceTest {
       private final Description description = new Description(name);
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
       }
 
       @Override

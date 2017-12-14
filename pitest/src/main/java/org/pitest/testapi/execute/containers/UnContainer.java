@@ -21,7 +21,6 @@ import java.util.List;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
-import org.pitest.util.IsolationUtils;
 
 public class UnContainer implements Container {
 
@@ -29,7 +28,7 @@ public class UnContainer implements Container {
   public List<TestResult> execute(final TestUnit group) {
     List<TestResult> results = new ArrayList<TestResult>(12);
     final ConcreteResultCollector rc = new ConcreteResultCollector(results);
-    group.execute(IsolationUtils.getContextClassLoader(), rc);
+    group.execute(rc);
     return results;
   }
 

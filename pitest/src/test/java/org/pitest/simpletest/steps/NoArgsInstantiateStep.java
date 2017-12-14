@@ -19,7 +19,6 @@ import java.lang.reflect.Modifier;
 import org.pitest.simpletest.CanNotCreateTestClassException;
 import org.pitest.simpletest.TestStep;
 import org.pitest.testapi.Description;
-import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry
@@ -38,11 +37,9 @@ public final class NoArgsInstantiateStep implements TestStep {
   }
 
   @Override
-  public Object execute(final ClassLoader loader,
-      final Description testDescription, final Object target) {
+  public Object execute(final Description testDescription, final Object target) {
     try {
-      final Class<?> c = IsolationUtils.convertForClassLoader(loader,
-          this.clazz);
+      final Class<?> c = this.clazz;
       if (Modifier.isAbstract(c.getModifiers())) {
         throw new CanNotCreateTestClassException(
             "Cannot instantiate the abstract class " + c.getName(), null);

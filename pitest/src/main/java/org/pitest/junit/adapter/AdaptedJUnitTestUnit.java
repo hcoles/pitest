@@ -17,9 +17,6 @@ package org.pitest.junit.adapter;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,28 +30,19 @@ import org.junit.runners.model.RunnerBuilder;
 import org.pitest.functional.Option;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
-import org.pitest.testapi.foreignclassloader.Events;
-import org.pitest.util.ClassLoaderDetectionStrategy;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
-import org.pitest.util.Unchecked;
 
 public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private static final Logger                LOG = Log.getLogger();
 
-  private final ClassLoaderDetectionStrategy loaderDetection;
   private final Class<?>                     clazz;
   private final Option<Filter>               filter;
 
-  public AdaptedJUnitTestUnit(final Class<?> clazz, final Option<Filter> filter) {
-    this(IsolationUtils.loaderDetectionStrategy(), clazz, filter);
-  }
 
-  AdaptedJUnitTestUnit(final ClassLoaderDetectionStrategy loaderDetection,
+  public AdaptedJUnitTestUnit(
       final Class<?> clazz, final Option<Filter> filter) {
     super(new org.pitest.testapi.Description(createName(clazz, filter), clazz));
-    this.loaderDetection = loaderDetection;
     this.clazz = clazz;
     this.filter = filter;
   }
@@ -69,21 +57,16 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   }
 
   @Override
-  public void execute(final ClassLoader loader, final ResultCollector rc) {
+  public void execute(final ResultCollector rc) {
 
     final Runner runner = createRunner(this.clazz);
     checkForErrorRunner(runner);
     filterIfRequired(rc, runner);
 
     try {
-      if (this.loaderDetection.fromDifferentLoader(runner.getClass(), loader)) {
-        executeInDifferentClassLoader(loader, rc, runner);
-
-      } else {
         final CustomRunnerExecutor nativeCe = new CustomRunnerExecutor(
             this.getDescription(), runner, rc);
         nativeCe.run();
-      }
 
     } catch (final Exception e) {
       LOG.log(Level.SEVERE, "Error while running adapter JUnit fixture "
@@ -131,33 +114,6 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
 
   private static RunnerBuilder createRunnerBuilder() {
     return new AllDefaultPossibilitiesBuilder(true);
-  }
-
-  private void executeInDifferentClassLoader(final ClassLoader loader,
-      final ResultCollector rc, final Runner runner)
-          throws IllegalAccessException, InvocationTargetException {
-
-    // must jump through hoops to run in different class loader
-    // when even our framework classes may be duplicated
-    // translate everything via strings
-    final ForeignClassLoaderCustomRunnerExecutor ce = new ForeignClassLoaderCustomRunnerExecutor(
-        runner);
-    @SuppressWarnings("unchecked")
-    Callable<List<String>> foreignCe = (Callable<List<String>>) IsolationUtils
-    .cloneForLoader(ce, loader);
-
-    try {
-      final List<String> q = foreignCe.call();
-      convertStringsToResults(rc, q);
-    } catch (Exception ex) {
-      throw Unchecked.translateCheckedException(ex);
-    }
-
-  }
-
-  private void convertStringsToResults(final ResultCollector rc,
-      final List<String> q) {
-    Events.applyEvents(q, rc, this.getDescription());
   }
 
   @Override
