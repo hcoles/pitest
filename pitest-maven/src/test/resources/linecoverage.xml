@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage>
+    <block classname="com.example.DividerTest" method="testDivide()V" number="0">
+        <tests>
+            <test name="com.example.DividerTest.testDivide(com.example.DividerTest)"/>
+        </tests>
+    </block>
+    <block classname="com.example.Divider" method="divide(DD)D" number="2">
+        <tests>
+            <test name="com.example.DividerTest.testDivide(com.example.DividerTest)"/>
+        </tests>
+    </block>
+    <block classname="com.example.DividerTest" method="&lt;init&gt;()V" number="0">
+        <tests>
+            <test name="com.example.DividerTest.testDivide(com.example.DividerTest)"/>
+        </tests>
+    </block>
+    <block classname="com.example.Divider" method="&lt;init&gt;()V" number="0">
+        <tests>
+            <test name="com.example.DividerTest.testDivide(com.example.DividerTest)"/>
+        </tests>
+    </block>
+    <block classname="com.example.Divider" method="divide(DD)D" number="0">
+        <tests>
+            <test name="com.example.DividerTest.testDivide(com.example.DividerTest)"/>
+        </tests>
+    </block>
+</coverage>
