@@ -9,9 +9,11 @@ Read all about it at http://pitest.org
 
 ### 1.2.6-SNAPSHOT
 
+* #196 - Raise minimum java version to 7
 * #425 - Broaden for-each detection
 * #428 - Add `excludedTestClasses` parameter
 * #379 - Remove support for mutating static initializers
+* #432 - Add export plugin functionality into pitest
 
 428 changes the existing behaviour of the excludedClasses filter. Previously this excluded classes from both being mutated and run as tests which may require changes for some people when upgrading.
 

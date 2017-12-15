@@ -16,3 +16,4 @@ org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EquivalentReturnMutationFilter
 
+org.pitest.plugin.export.MutantExportFactory

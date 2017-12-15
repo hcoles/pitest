@@ -53,6 +53,7 @@ public abstract class ReportTestBase {
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     this.data.setGroupConfig(new TestGroupConfig());    
+    this.data.setTestPlugin("junit");
   }
 
   protected MutationResultListenerFactory listenerFactory() {
