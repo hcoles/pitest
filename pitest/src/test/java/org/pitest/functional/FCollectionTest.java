@@ -63,7 +63,7 @@ public class FCollectionTest {
 
   @Test
   public void shouldApplyForEachToAllItems() {
-    final List<Integer> actual = new ArrayList<Integer>();
+    final List<Integer> actual = new ArrayList<>();
     final SideEffect1<Integer> e = new SideEffect1<Integer>() {
       @Override
       public void apply(final Integer a) {
@@ -164,7 +164,7 @@ public class FCollectionTest {
 
   @Test
   public void flattenShouldReturnCollectionContainingAllSuppliedValues() {
-    final Collection<Collection<Integer>> is = new ArrayList<Collection<Integer>>();
+    final Collection<Collection<Integer>> is = new ArrayList<>();
     is.add(Arrays.asList(1, 2, 3, 4, 5));
     is.add(Arrays.asList(6, 7, 8, 9));
     assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
@@ -204,7 +204,7 @@ public class FCollectionTest {
     this.is = Arrays.asList(1, 2, 3);
     final Map<Integer, Collection<Integer>> actual = FCollection.bucket(
         this.is, fortyTwo());
-    final Map<Integer, Collection<Integer>> expected = new HashMap<Integer, Collection<Integer>>();
+    final Map<Integer, Collection<Integer>> expected = new HashMap<>();
     expected.put(42, Arrays.asList(1, 2, 3));
     assertEquals(expected, actual);
   }
@@ -214,7 +214,7 @@ public class FCollectionTest {
     this.is = Arrays.asList(1, 2, 3);
     final Map<Integer, Collection<Integer>> actual = FCollection.bucket(
         this.is, Prelude.id(Integer.class));
-    final Map<Integer, Collection<Integer>> expected = new HashMap<Integer, Collection<Integer>>();
+    final Map<Integer, Collection<Integer>> expected = new HashMap<>();
     expected.put(1, Arrays.asList(1));
     expected.put(2, Arrays.asList(2));
     expected.put(3, Arrays.asList(3));

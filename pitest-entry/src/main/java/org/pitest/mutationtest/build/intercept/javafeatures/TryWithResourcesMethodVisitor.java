@@ -164,7 +164,7 @@ class TryWithResourcesMethodVisitor extends MethodVisitor {
 
   private final Set<Integer> lines;
 
-  private final List<Integer>        opcodesStack                 = new ArrayList<Integer>();
+  private final List<Integer>        opcodesStack                 = new ArrayList<>();
   private int                        currentLineNumber;
 
   /**

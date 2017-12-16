@@ -46,7 +46,7 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
     }
   }
 
-  private boolean canMutate(final int opcode) {
+  protected boolean canMutate(final int opcode) {
     return getMutations().containsKey(opcode);
   }
 
@@ -65,6 +65,10 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
 
   private void applyUnmutatedInstruction(final int opcode) {
     this.mv.visitInsn(opcode);
+  }
+  
+  protected MethodInfo methodInfo() {
+    return methodInfo;
   }
 
 }

@@ -49,7 +49,7 @@ public enum ConditionalsBoundaryMutator implements MethodMutatorFactory {
 class ConditionalsBoundaryMethodVisitor extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "changed conditional boundary";
-  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<Integer, Substitution>();
+  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<>();
 
   static {
     MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFLT, DESCRIPTION));

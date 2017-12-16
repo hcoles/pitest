@@ -184,6 +184,12 @@ public class MutationDiscoveryTest {
   }
 
 
+  @Test
+  public void filtersEquivalentReturnValsMutants() {
+    data.setMutators(Collections.singletonList("PRIMITIVE_RETURNS"));
+    Collection<MutationDetails>  actual = findMutants(AlreadyReturnsConstZero.class);
+    assertThat(actual).isEmpty();
+  }
   
   public static class AnnotatedToAvoidMethod {
     public int a() {
@@ -255,12 +261,18 @@ public class MutationDiscoveryTest {
       }
     };
   }
-  
+
   static class HasForLoop {
     public void foo() {
       for (int i = 0; i != 10; i++) {
         System.out.println(i);
       }
+    }
+  }
+
+  class AlreadyReturnsConstZero {
+    public int a() {
+      return 0;
     }
   }
 }

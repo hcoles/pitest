@@ -25,7 +25,7 @@ public class TryWithResourcesFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    lines = new HashSet<Integer>();
+    lines = new HashSet<>();
     for (MethodTree each : clazz.methods()) {
       checkMehod(each,lines);
     }

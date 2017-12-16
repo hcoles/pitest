@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -98,7 +99,7 @@ public abstract class MutatorTestBase {
 
   protected void assertNoMutants(final Class<?> mutee) {
     final Collection<MutationDetails> actual = findMutationsFor(mutee);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   protected <T> T mutateAndCall(final Callable<T> unmutated, final Mutant mutant) {
@@ -227,8 +228,8 @@ public abstract class MutatorTestBase {
     }
   }
 
-  protected Mutant createFirstMutant(
-      final Class<? extends Callable<String>> mutee) {
+  protected <T> Mutant createFirstMutant(
+      final Class<? extends Callable<T>> mutee) {
     final Collection<MutationDetails> actual = findMutationsFor(mutee);
     return getFirstMutant(actual);
   }
@@ -251,5 +252,10 @@ public abstract class MutatorTestBase {
         return a.getDescription().contains(value);
       }
     };
+  }
+  
+  protected void assertMutantDescriptionIncludes(String string, Class<?> clazz) {
+    final Collection<MutationDetails> actual = findMutationsFor(clazz);
+    assertThat(actual.iterator().next().getDescription()).contains(string);
   }
 }
