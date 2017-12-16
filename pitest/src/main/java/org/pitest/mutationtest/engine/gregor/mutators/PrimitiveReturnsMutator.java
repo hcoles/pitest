@@ -63,7 +63,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
     super(factory, methodInfo, context, writer); 
   }
 
-  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
+  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
 
   static {
     MUTATIONS.put(IRETURN, ireturnMutation());

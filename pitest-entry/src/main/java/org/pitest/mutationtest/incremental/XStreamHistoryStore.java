@@ -38,8 +38,8 @@ public class XStreamHistoryStore implements HistoryStore {
 
   private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
-  private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<MutationIdentifier, MutationStatusTestPair>();
-  private final Map<ClassName, ClassHistory>                    previousClassPath = new HashMap<ClassName, ClassHistory>();
+  private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<>();
+  private final Map<ClassName, ClassHistory>                    previousClassPath = new HashMap<>();
 
   public XStreamHistoryStore(final WriterFactory output,
       final Option<Reader> input) {

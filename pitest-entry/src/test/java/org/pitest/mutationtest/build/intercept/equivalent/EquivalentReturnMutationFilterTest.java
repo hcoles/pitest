@@ -270,7 +270,6 @@ class AlreadyReturnsEmptySet {
   }
 }
 
-
 //class AlreadyReturnsEmptyOptional {
 //  public Optional<String> a() {
 //    return Optional.empty();

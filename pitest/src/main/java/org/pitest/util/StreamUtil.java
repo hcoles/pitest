@@ -14,10 +14,10 @@ public abstract class StreamUtil {
 
   public static byte[] streamToByteArray(final InputStream in)
       throws IOException {
-    final ByteArrayOutputStream result = new ByteArrayOutputStream();
-    copy(in, result);
-    result.close();
-    return result.toByteArray();
+    try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+      copy(in, result);
+      return result.toByteArray();
+    }
   }
 
   public static InputStream copyStream(final InputStream in) throws IOException {

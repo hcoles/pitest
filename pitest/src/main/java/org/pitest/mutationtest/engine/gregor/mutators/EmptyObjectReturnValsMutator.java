@@ -57,7 +57,7 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
 class AReturnMethodVisitor extends AbstractInsnMutator {
   
-  static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<String,ZeroOperandMutation>();
+  static final Map<String, ZeroOperandMutation> NON_NULL_MUTATIONS = new HashMap<>();
   static {
     NON_NULL_MUTATIONS.put("java.lang.Integer", returnIntegerZero(Integer.class, "(I)Ljava/lang/Integer;", "replaced Integer return value with 0"));
     NON_NULL_MUTATIONS.put("java.lang.Short", returnIntegerZero(Short.class, "(S)Ljava/lang/Short;",  "replaced Short return value with 0"));  

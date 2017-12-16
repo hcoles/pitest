@@ -67,7 +67,7 @@ public abstract class FCollection {
   }
 
   private static <T> FunctionalList<T> emptyList() {
-    return new MutableList<T>();
+    return new MutableList<>();
   }
 
   public static <T> FunctionalList<T> filter(final Iterable<? extends T> xs,
@@ -120,7 +120,7 @@ public abstract class FCollection {
 
   public static <T> FunctionalCollection<T> flatten(
       final Iterable<? extends Iterable<? extends T>> ts) {
-    final MutableList<T> list = new MutableList<T>();
+    final MutableList<T> list = new MutableList<>();
     for (final Iterable<? extends T> it : ts) {
       for (final T each : it) {
         list.add(each);
@@ -131,13 +131,13 @@ public abstract class FCollection {
 
   public static <T> FunctionalList<List<T>> splitToLength(
       final int targetLength, final Iterable<T> ts) {
-    final FunctionalList<List<T>> list = new MutableList<List<T>>();
-    List<T> temp = new ArrayList<T>();
+    final FunctionalList<List<T>> list = new MutableList<>();
+    List<T> temp = new ArrayList<>();
     int i = 0;
     for (final T each : ts) {
       if (i == targetLength) {
         list.add(temp);
-        temp = new ArrayList<T>();
+        temp = new ArrayList<>();
         i = 0;
       }
       temp.add(each);
@@ -151,12 +151,12 @@ public abstract class FCollection {
 
   public static <A, B> Map<A, Collection<B>> bucket(final Iterable<B> bs,
       final F<B, A> f) {
-    final Map<A, Collection<B>> bucketed = new HashMap<A, Collection<B>>();
+    final Map<A, Collection<B>> bucketed = new HashMap<>();
     for (final B each : bs) {
       final A key = f.apply(each);
       Collection<B> existing = bucketed.get(key);
       if (existing == null) {
-        existing = new ArrayList<B>();
+        existing = new ArrayList<>();
         bucketed.put(key, existing);
       }
       existing.add(each);

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -67,8 +68,8 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
 class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   
-  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
-  private static final Set<Integer> TRUE_CONSTANTS = new HashSet<Integer>();
+  private static final Set<String> MUTATOR_IDS = new HashSet<>();
+  private static final Set<Integer> TRUE_CONSTANTS = new HashSet<>();
   static {
     TRUE_CONSTANTS.add(Opcodes.ICONST_1);
     
@@ -135,8 +136,8 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
 
 class PrimitiveEquivalentFilter implements MutationInterceptor {
   
-  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
-  private static final Set<Integer> ZERO_CONSTANTS = new HashSet<Integer>();
+  private static final Set<String> MUTATOR_IDS = new HashSet<>();
+  private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
   static {
     ZERO_CONSTANTS.add(Opcodes.ICONST_0);
     ZERO_CONSTANTS.add(Opcodes.LCONST_0);
@@ -189,9 +190,9 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
 
 class EmptyReturnsFilter implements MutationInterceptor {
   
-  private static final Set<String> MUTATOR_IDS = new HashSet<String>();
+  private static final Set<String> MUTATOR_IDS = new HashSet<>();
   
-  private static final Set<Integer> ZERO_CONSTANTS = new HashSet<Integer>();
+  private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
   static {
     ZERO_CONSTANTS.add(Opcodes.ICONST_0);
     ZERO_CONSTANTS.add(Opcodes.LCONST_0);
@@ -234,7 +235,9 @@ class EmptyReturnsFilter implements MutationInterceptor {
             || returnsEmptyString(method, mutatedInstruction) 
             || returns(method, mutatedInstruction, "java/util/Optional","empty")
             || returns(method, mutatedInstruction, "java/util/Collections","emptyList")   
-            || returns(method, mutatedInstruction, "java/util/Collections","emptySet");
+            || returns(method, mutatedInstruction, "java/util/Collections","emptySet")
+            || returns(method, mutatedInstruction, "java/util/List","of")
+            || returns(method, mutatedInstruction, "java/util/Set","of");         
       }
 
       private Boolean returnsZeroValue(MethodTree method,
@@ -254,11 +257,15 @@ class EmptyReturnsFilter implements MutationInterceptor {
         AbstractInsnNode node = method.instructions().get(mutatedInstruction - 1);
         if (node instanceof MethodInsnNode ) {
           MethodInsnNode call = (MethodInsnNode) node;
-          return call.owner.equals(owner) && call.name.equals(name);
+          return call.owner.equals(owner) && call.name.equals(name) && takesNoArguments(call.desc);
         }
         return false;
       }
 
+      private boolean takesNoArguments(String desc) {
+        return Type.getArgumentTypes(desc).length == 0;
+      }
+      
       private boolean returnsEmptyString(MethodTree method,
           int mutatedInstruction) {
         AbstractInsnNode node = method.instructions().get(mutatedInstruction - 1);

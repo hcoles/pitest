@@ -51,7 +51,7 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
 class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   private static final String                            MESSAGE   = "removed negation";
-  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
+  private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
 
   static {
     MUTATIONS.put(Opcodes.INEG, new InsnSubstitution(Opcodes.NOP, MESSAGE));
