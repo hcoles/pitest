@@ -14,8 +14,12 @@ Read all about it at http://pitest.org
 * #428 - Add `excludedTestClasses` parameter
 * #379 - Remove support for mutating static initializers
 * #432 - Add export plugin functionality into pitest
+* #427 - Better return values mutators
+* #429 - Simplify test api
 
 428 changes the existing behaviour of the excludedClasses filter. Previously this excluded classes from both being mutated and run as tests which may require changes for some people when upgrading.
+
+As a result of 429 TestNG tests will no longer be automatically detected - the new `testPlugin` parameter must be explicitly set to "testng".
 
 ### 1.2.5
 
