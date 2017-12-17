@@ -15,15 +15,15 @@ public final class QueryParams<T> {
   }
   
   public static <T> QueryParams<T> params() {
-    return new QueryParams<T>(Match.<T>never(), false);
+    return new QueryParams<>(Match.<T>never(), false);
   }
   
   public QueryParams<T> withIgnores(Match<T> ignore) {
-    return new QueryParams<T>(ignore, debug);
+    return new QueryParams<>(ignore, debug);
   }
   
   public QueryParams<T> withDebug(boolean debug) {
-    return new QueryParams<T>(ignoring, debug);
+    return new QueryParams<>(ignoring, debug);
   }
   
   public Match<T> ignoring() {

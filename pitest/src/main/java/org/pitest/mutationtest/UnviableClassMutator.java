@@ -57,7 +57,7 @@ class UnviableClassMethodVisitor extends AbstractInsnMutator {
 
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
-    final Map<Integer, ZeroOperandMutation> map = new HashMap<Integer, ZeroOperandMutation>();
+    final Map<Integer, ZeroOperandMutation> map = new HashMap<>();
     // map.put(Opcodes.ALOAD, new InsnSubstitution(Opcodes.TABLESWITCH,
     // "Made unviable class"));
     map.put(Opcodes.IRETURN, new InsnSubstitution(Opcodes.FCMPG,

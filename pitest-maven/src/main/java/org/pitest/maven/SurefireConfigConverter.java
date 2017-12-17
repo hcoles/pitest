@@ -68,7 +68,7 @@ public class SurefireConfigConverter {
   private List<String> extract(String childname, Xpp3Dom config) {
     final Xpp3Dom subelement = config.getChild(childname);
     if (subelement != null) {
-      List<String> result = new LinkedList<String>();
+      List<String> result = new LinkedList<>();
       final Xpp3Dom[] children = subelement.getChildren();
       for (Xpp3Dom child : children) {
         result.add(child.getValue());

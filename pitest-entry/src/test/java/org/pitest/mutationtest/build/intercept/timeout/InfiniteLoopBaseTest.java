@@ -91,9 +91,9 @@ public abstract class InfiniteLoopBaseTest {
     TraceMethodVisitor mv = new TraceMethodVisitor(new Textifier());
     
     mt.rawNode().accept(mv);
-    PrintWriter pw = new PrintWriter(bos);
-    mv.p.print(pw);
-    pw.close();
+    try (PrintWriter pw = new PrintWriter(bos)) {
+      mv.p.print(pw);
+    }
     
     return "Byte code is \n" + new String(bos.toByteArray());
   }

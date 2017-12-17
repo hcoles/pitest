@@ -133,11 +133,12 @@ public class JarCreatingJarFinderTest {
       throws IOException, FileNotFoundException {
     final Option<String> actual = this.testee.getJarLocation();
     final File f = new File(actual.value());
-    final JarInputStream jis = new JarInputStream(new FileInputStream(f));
-    final Manifest m = jis.getManifest();
-    final Attributes a = m.getMainAttributes();
-    final String am = a.getValue(key);
-    jis.close();
-    return am;
+    try (JarInputStream jis = new JarInputStream(new FileInputStream(f))) {
+      final Manifest m = jis.getManifest();
+      final Attributes a = m.getMainAttributes();
+      final String am = a.getValue(key);
+
+      return am;
+    }
   }
 }

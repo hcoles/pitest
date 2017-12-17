@@ -12,7 +12,7 @@ public class CachingByteArraySource implements ClassByteArraySource {
 
   public CachingByteArraySource(ClassByteArraySource child, int maxSize) {
     this.child = child;
-    this.cache = new FixedSizeHashMap<String,Option<byte[]>>(maxSize);
+    this.cache = new FixedSizeHashMap<>(maxSize);
   }
 
   @Override

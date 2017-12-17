@@ -344,7 +344,7 @@ public class CoverageProcessSystemTest {
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
       throws IOException, InterruptedException, ExecutionException {
 
-    final FunctionalList<CoverageResult> coveredClasses = new MutableList<CoverageResult>();
+    final FunctionalList<CoverageResult> coveredClasses = new MutableList<>();
 
     runCoverageProcess(test, coveredClasses);
     return coveredClasses;

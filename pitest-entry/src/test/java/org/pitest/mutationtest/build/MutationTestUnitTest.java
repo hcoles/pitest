@@ -51,8 +51,8 @@ public class MutationTestUnitTest {
     MockitoAnnotations.initMocks(this);
     this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(
         this.javaAgent));
-    this.mutations = new ArrayList<MutationDetails>();
-    this.tests = new ArrayList<ClassName>();
+    this.mutations = new ArrayList<>();
+    this.tests = new ArrayList<>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
         new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, this.timeout,
             false, null));

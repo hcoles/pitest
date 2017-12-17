@@ -16,7 +16,7 @@ import org.pitest.functional.Option;
 public class CompoundClassPathRoot implements ClassPathRoot,
     Iterable<ClassPathRoot> {
 
-  private final List<ClassPathRoot> roots = new ArrayList<ClassPathRoot>();
+  private final List<ClassPathRoot> roots = new ArrayList<>();
 
   public CompoundClassPathRoot(final List<ClassPathRoot> roots) {
     this.roots.addAll(wrapToAvoidIOOperations(roots));
@@ -35,7 +35,7 @@ public class CompoundClassPathRoot implements ClassPathRoot,
 
   @Override
   public Collection<String> classNames() {
-    final List<String> arrayList = new ArrayList<String>();
+    final List<String> arrayList = new ArrayList<>();
     for (final ClassPathRoot root : this.roots) {
       arrayList.addAll(root.classNames());
     }

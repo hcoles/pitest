@@ -16,7 +16,7 @@ public class CompoundInterceptorFactory {
   
   public CompoundInterceptorFactory(List<FeatureSetting> features,
       Collection<MutationInterceptorFactory> filters) {
-    this.features = new FeatureSelector<MutationInterceptorFactory>(features, filters);
+    this.features = new FeatureSelector<>(features, filters);
   }
 
   public MutationInterceptor createInterceptor(

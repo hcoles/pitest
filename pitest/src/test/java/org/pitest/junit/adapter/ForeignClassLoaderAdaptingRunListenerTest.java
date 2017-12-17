@@ -53,7 +53,7 @@ public class ForeignClassLoaderAdaptingRunListenerTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.queue = new ArrayList<String>();
+    this.queue = new ArrayList<>();
     this.pitDescription = DescriptionMother.createEmptyDescription("foo");
     this.testee = new ForeignClassLoaderAdaptingRunListener(this.queue);
   }

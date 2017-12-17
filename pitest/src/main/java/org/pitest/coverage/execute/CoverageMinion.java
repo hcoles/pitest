@@ -114,7 +114,6 @@ public class CoverageMinion {
 
   }
 
-  @SuppressWarnings("unchecked")
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
@@ -186,7 +185,7 @@ public class CoverageMinion {
       final SafeDataInputStream dis) {
     final int count = dis.readInt();
     LOG.fine("Expecting " + count + " tests classes from parent");
-    final List<ClassName> classes = new ArrayList<ClassName>(count);
+    final List<ClassName> classes = new ArrayList<>(count);
     for (int i = 0; i != count; i++) {
       classes.add(ClassName.fromString(dis.readString()));
     }

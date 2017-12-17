@@ -151,7 +151,6 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         || hasClassRuleAnnotations(clazz, methods);
   }
 
-  @SuppressWarnings("unchecked")
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
     if (CLASS_RULE.hasNone()) {

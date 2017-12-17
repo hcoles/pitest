@@ -205,16 +205,16 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     // yes, this is horrid
     final String location = FileUtil.randomFilename() + ".jar";
     try {
-      final FileOutputStream fos = new FileOutputStream(location);
-      final InputStream stream = IsolationUtils.getContextClassLoader()
-          .getResourceAsStream("outofcp.jar");
-      copy(stream, fos);
-      fos.close();
+      try (FileOutputStream fos = new FileOutputStream(location)) {
+        final InputStream stream = IsolationUtils.getContextClassLoader()
+             .getResourceAsStream("outofcp.jar");
+        copy(stream, fos);
+      }
 
       this.data.setTargetClasses(predicateFor("com.outofclasspath.*Mutee*"));
       this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
 
-      List<String> cp = new ArrayList<String>();
+      List<String> cp = new ArrayList<>();
       cp.addAll(ClassPath.getClassPathElementsAsPaths());
       cp.add(location);
 

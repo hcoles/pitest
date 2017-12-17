@@ -33,7 +33,7 @@ public class ForeignClassLoaderCustomRunnerExecutor implements
 
   @Override
   public List<String> call() { // NO_UCD
-    List<String> queue = new ArrayList<String>();
+    List<String> queue = new ArrayList<>();
     final RunNotifier rn = new RunNotifier();
     final RunListener listener = new ForeignClassLoaderAdaptingRunListener(
         queue);

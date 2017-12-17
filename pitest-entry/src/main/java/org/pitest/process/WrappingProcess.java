@@ -87,7 +87,7 @@ public class WrappingProcess {
       JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
       List<String> programArgs) {
 
-    List<String> cmd = new ArrayList<String>();
+    List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
     cmd.addAll(args);
 
@@ -109,7 +109,6 @@ public class WrappingProcess {
 
   private static void addLaunchJavaAgents(List<String> cmd) {
     RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-    @SuppressWarnings("unchecked")
     FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(),
         or(isJavaAgentParam(), isEnvironmentSetting()));
     cmd.addAll(agents);

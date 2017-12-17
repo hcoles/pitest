@@ -23,7 +23,7 @@ public class FindTestUnits {
 
   public List<TestUnit> findTestUnitsForAllSuppliedClasses(
       final Iterable<Class<?>> classes) {
-    final List<TestUnit> testUnits = new ArrayList<TestUnit>();
+    final List<TestUnit> testUnits = new ArrayList<>();
 
     for (final Class<?> c : classes) {
       final Collection<TestUnit> testUnitsFromClass = getTestUnits(c);
@@ -35,8 +35,8 @@ public class FindTestUnits {
   }
 
   private Collection<TestUnit> getTestUnits(final Class<?> suiteClass) {
-    final List<TestUnit> tus = new ArrayList<TestUnit>();
-    final Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
+    final List<TestUnit> tus = new ArrayList<>();
+    final Set<Class<?>> visitedClasses = new HashSet<>();
     findTestUnits(tus, visitedClasses, suiteClass);
     return tus;
   }

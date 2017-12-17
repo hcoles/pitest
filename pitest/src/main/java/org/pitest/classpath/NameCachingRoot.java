@@ -49,7 +49,7 @@ public class NameCachingRoot implements ClassPathRoot {
       }
     }
     Collection<String> names = child.classNames();
-    cache = new SoftReference<Collection<String>>(names);
+    cache = new SoftReference<>(names);
     return  names;
   }
 

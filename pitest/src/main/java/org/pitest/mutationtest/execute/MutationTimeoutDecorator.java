@@ -69,7 +69,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
   }
 
   private FutureTask<?> createFutureForChildTestUnit(final ResultCollector rc) {
-    final FutureTask<?> future = new FutureTask<Object>(createRunnable(rc), null);
+    final FutureTask<?> future = new FutureTask<>(createRunnable(rc), null);
     final Thread thread = new Thread(future);
     thread.setDaemon(true);
     thread.setName("mutationTestThread");

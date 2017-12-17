@@ -264,7 +264,7 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(new HashSet<String>(Arrays.asList("HTML")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -272,7 +272,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfOutputFormatsWhenSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
         "HTML,CSV");
-    assertEquals(new HashSet<String>(Arrays.asList("HTML", "CSV")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML", "CSV")),
         actual.getOutputFormats());
   }
 
@@ -504,7 +504,7 @@ public class OptionsParserTest {
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
-    final List<String> a = new ArrayList<String>();
+    final List<String> a = new ArrayList<>();
     a.addAll(Arrays.asList(args));
     addIfNotPresent(a, "--targetClasses");
     addIfNotPresent(a, "--reportDir");

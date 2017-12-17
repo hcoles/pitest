@@ -263,7 +263,7 @@ public class TestMutationTesting {
   public static class EatsMemoryWhenMutated {
     public static int loop() throws InterruptedException {
       int i = 1;
-      final List<String[]> vals = new ArrayList<String[]>();
+      final List<String[]> vals = new ArrayList<>();
       Thread.sleep(1500);
       do {
         i++;

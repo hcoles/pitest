@@ -33,7 +33,7 @@ import org.pitest.mutationtest.engine.MutationEngine;
  */
 public class GregorMutationEngine implements MutationEngine {
 
-  private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
+  private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<>();
   private final Predicate<MethodInfo>     methodFilter;
 
   public GregorMutationEngine(final MutationEngineConfiguration config) {

@@ -18,7 +18,7 @@ public class ForeignClassLoaderTestNGExecutor implements Callable<List<String>> 
 
   @Override
   public List<String> call() throws Exception {
-    List<String> queue = new ArrayList<String>();
+    List<String> queue = new ArrayList<>();
     final ForeignClassLoaderAdaptingListener listener = new ForeignClassLoaderAdaptingListener(queue);
     final TestNG testng = new TestNG(false);
     testng.setDefaultSuiteName(this.suite.getName());

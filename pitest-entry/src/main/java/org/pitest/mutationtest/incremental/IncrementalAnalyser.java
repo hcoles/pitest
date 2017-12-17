@@ -36,7 +36,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   private static Map<DetectionStatus, Long> createStatusMap() {
-    final EnumMap<DetectionStatus, Long> map = new EnumMap<DetectionStatus, Long>(DetectionStatus.class);
+    final EnumMap<DetectionStatus, Long> map = new EnumMap<>(DetectionStatus.class);
     for (final DetectionStatus each : DetectionStatus.values()) {
       map.put(each, 0L);
     }
@@ -47,7 +47,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   public Collection<MutationResult> analyse(
       final Collection<MutationDetails> mutation) {
 
-    final List<MutationResult> mrs = new ArrayList<MutationResult>(
+    final List<MutationResult> mrs = new ArrayList<>(
         mutation.size());
     for (final MutationDetails each : mutation) {
       final Option<MutationStatusTestPair> maybeResult = this.history

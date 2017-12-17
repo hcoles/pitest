@@ -26,7 +26,7 @@ public class UnContainer implements Container {
 
   @Override
   public List<TestResult> execute(final TestUnit group) {
-    List<TestResult> results = new ArrayList<TestResult>(12);
+    List<TestResult> results = new ArrayList<>(12);
     final ConcreteResultCollector rc = new ConcreteResultCollector(results);
     group.execute(rc);
     return results;

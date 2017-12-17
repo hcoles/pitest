@@ -35,15 +35,14 @@ import org.pitest.testapi.TestSuiteFinder;
 public class RunnerSuiteFinder implements TestSuiteFinder {
 
   @Override
-  @SuppressWarnings("unchecked")
   public List<Class<?>> apply(final Class<?> a) {
     try {
       final Runner runner = AdaptedJUnitTestUnit.createRunner(a);
 
-      final List<Description> allChildren = new ArrayList<Description>();
+      final List<Description> allChildren = new ArrayList<>();
       flattenChildren(allChildren, runner.getDescription());
 
-      final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(
+      final Set<Class<?>> classes = new LinkedHashSet<>(
           runner.getDescription().getChildren().size());
 
       final List<Description> suites = FCollection.filter(allChildren,
@@ -51,7 +50,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
 
       classes.remove(a);
-      return new ArrayList<Class<?>>(classes);
+      return new ArrayList<>(classes);
     } catch (RuntimeException ex) {
       // some runners (looking at you spock) can throw a runtime exception
       // when the getDescription method is called.

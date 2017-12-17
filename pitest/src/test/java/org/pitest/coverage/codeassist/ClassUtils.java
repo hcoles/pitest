@@ -19,11 +19,11 @@ public class ClassUtils {
 
   public static byte[] classAsBytes(final String className)
       throws ClassNotFoundException {
-    try {
-      final URL resource = ClassUtils.class.getClassLoader().getResource(
-          convertClassNameToFileName(className));
-      final BufferedInputStream stream = new BufferedInputStream(
-          resource.openStream());
+
+    final URL resource = ClassUtils.class.getClassLoader().getResource(
+        convertClassNameToFileName(className));
+    try (BufferedInputStream stream = new BufferedInputStream(
+        resource.openStream())) {
       final byte[] result = new byte[resource.openConnection()
                                      .getContentLength()];
 
@@ -33,9 +33,6 @@ public class ClassUtils {
         result[counter] = (byte) i;
         counter++;
       }
-
-      stream.close();
-
       return result;
     } catch (final IOException e) {
       throw new ClassNotFoundException("", e);

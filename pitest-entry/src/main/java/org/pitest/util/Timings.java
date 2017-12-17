@@ -38,7 +38,7 @@ public class Timings {
     }
   }
 
-  private final Map<Stage, TimeSpan> timings = new LinkedHashMap<Stage, TimeSpan>();
+  private final Map<Stage, TimeSpan> timings = new LinkedHashMap<>();
 
   public void registerStart(final Stage stage) {
     this.timings.put(stage, new TimeSpan(System.currentTimeMillis(), 0));

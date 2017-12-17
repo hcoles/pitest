@@ -15,7 +15,7 @@ import org.pitest.util.PitError;
 
 public class PluginFilter implements Predicate<String> {
 
-  private final Set<String> includedClassPathElement = new HashSet<String>();
+  private final Set<String> includedClassPathElement = new HashSet<>();
 
   public PluginFilter(final PluginServices plugin) {
     FCollection.mapTo(plugin.findClientClasspathPlugins(), classToLocation(),

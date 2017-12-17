@@ -35,7 +35,7 @@ public abstract class FArray {
   }
 
   public static <T> List<T> filter(final T[] xs, final F<T, Boolean> predicate) {
-    final List<T> dest = new ArrayList<T>();
+    final List<T> dest = new ArrayList<>();
     filter(xs, predicate, dest);
     return dest;
   }
@@ -69,7 +69,7 @@ public abstract class FArray {
   }
 
   private static <T> FunctionalList<T> emptyList() {
-    return new MutableList<T>();
+    return new MutableList<>();
   }
 
 }

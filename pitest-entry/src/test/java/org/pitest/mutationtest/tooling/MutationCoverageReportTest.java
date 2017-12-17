@@ -114,7 +114,6 @@ public class MutationCoverageReportTest {
     mockMutationEngine();
   }
 
-  @SuppressWarnings("unchecked")
   private void mockMutationEngine() {
     when(
         this.mutationFactory.createEngine(any(Predicate.class),
@@ -144,7 +143,6 @@ public class MutationCoverageReportTest {
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldRecordClassPath() {
     

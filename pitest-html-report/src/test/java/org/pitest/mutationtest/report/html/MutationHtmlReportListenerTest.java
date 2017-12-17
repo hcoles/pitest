@@ -58,7 +58,6 @@ public class MutationHtmlReportListenerTest {
   @Mock
   private ClassInfo                  classInfo;
 
-  @SuppressWarnings("unchecked")
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -85,7 +84,6 @@ public class MutationHtmlReportListenerTest {
     verify(this.outputStrategy).createWriterForFile("style.css");
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldTryToLocateSourceFilesFromMutatedClasses() {
     final String fileName = "foo.java";

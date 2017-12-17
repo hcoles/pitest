@@ -14,7 +14,7 @@ import org.pitest.classinfo.ClassName;
  */
 public class ClassMutationResults {
 
-  private final Collection<MutationResult> mutations = new ArrayList<MutationResult>();
+  private final Collection<MutationResult> mutations = new ArrayList<>();
 
   public ClassMutationResults(final Collection<MutationResult> mutations) {
     this.mutations.addAll(mutations);

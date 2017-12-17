@@ -33,7 +33,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
       ConfigOption.REPORT_DIR.getParamName(),
       ConfigOption.SOURCE_DIR.getParamName()        };
   
-  private final Map<String, String> options          = new HashMap<String, String>();
+  private final Map<String, String> options          = new HashMap<>();
   
   /**
    * Classpath to analyse

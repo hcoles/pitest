@@ -37,7 +37,7 @@ public class InputStreamLineIterableTest {
 
   @Before
   public void setUp() {
-    this.actual = new ArrayList<String>();
+    this.actual = new ArrayList<>();
     final StringReader input = new StringReader("1\n2\n3\n");
     this.testee = new InputStreamLineIterable(input);
   }

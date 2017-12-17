@@ -50,7 +50,6 @@ public class DirectoriesOnlyWalker extends DirectoryWalker {
       return foundDirs;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected boolean handleDirectory(File directory, int depth, Collection results) throws IOException {
         results.add(directory);

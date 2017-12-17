@@ -17,7 +17,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   private int                instructionIndex;
 
   private int                lastLineNumber;
-  private final Set<String>  mutationFindingDisabledReasons = new HashSet<String>();
+  private final Set<String>  mutationFindingDisabledReasons = new HashSet<>();
 
   MethodMutationContext(final ClassContext classContext, final Location location) {
     this.classContext = classContext;

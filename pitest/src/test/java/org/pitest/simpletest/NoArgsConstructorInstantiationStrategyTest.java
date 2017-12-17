@@ -42,7 +42,7 @@ public class NoArgsConstructorInstantiationStrategyTest {
 
   @Test
   public void shouldCreateSingleInstantiateTestStep() {
-    final List<NoArgsInstantiateStep> expected = new ArrayList<NoArgsInstantiateStep>();
+    final List<NoArgsInstantiateStep> expected = new ArrayList<>();
     expected.add(NoArgsInstantiateStep
         .instantiate(NoArgsConstructorInstantiationStrategyTest.class));
     assertEquals(expected,

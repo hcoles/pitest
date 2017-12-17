@@ -37,8 +37,8 @@ import org.pitest.util.PitError;
 
 public class BasicTestUnitFinder implements TestUnitFinder {
 
-  private final Set<InstantiationStrategy> instantiationStrategies = new LinkedHashSet<InstantiationStrategy>();
-  private final Set<MethodFinder>          testMethodFinders       = new LinkedHashSet<MethodFinder>();
+  private final Set<InstantiationStrategy> instantiationStrategies = new LinkedHashSet<>();
+  private final Set<MethodFinder>          testMethodFinders       = new LinkedHashSet<>();
 
   public BasicTestUnitFinder(
       final Collection<InstantiationStrategy> instantiationStrategies,
@@ -51,7 +51,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   public List<TestUnit> findTestUnits(final Class<?> testClass) {
     try {
 
-      final List<TestUnit> units = new ArrayList<TestUnit>();
+      final List<TestUnit> units = new ArrayList<>();
       final InstantiationStrategy instantiationStrategy = findInstantiationStrategy(testClass);
       final List<TestStep> instantiations = instantiationStrategy
           .instantiations(testClass);
@@ -84,7 +84,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       final TestStep instantiationStep, final String namePrefix,
       final Class<?> testClass, final TestMethod testMethod) {
 
-    final List<TestStep> steps = new ArrayList<TestStep>();
+    final List<TestStep> steps = new ArrayList<>();
 
     steps.add(instantiationStep);
     steps.add(new CallStep(testMethod));
@@ -118,7 +118,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
 
   private Collection<TestMethod> findTestMethods(final Class<?> clazz) {
 
-    final EqualitySet<TestMethod> set = new EqualitySet<TestMethod>(
+    final EqualitySet<TestMethod> set = new EqualitySet<>(
         new SignatureEqualityStrategy());
     final SideEffect1<TestMethod> addToSet = new SideEffect1<TestMethod>() {
       @Override

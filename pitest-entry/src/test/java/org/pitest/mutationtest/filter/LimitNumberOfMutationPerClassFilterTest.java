@@ -63,7 +63,7 @@ public class LimitNumberOfMutationPerClassFilterTest {
   }
 
   private Collection<MutationDetails> make(final Integer... ids) {
-    final List<MutationDetails> ms = new ArrayList<MutationDetails>();
+    final List<MutationDetails> ms = new ArrayList<>();
     for (final int each : ids) {
       ms.add(makeMutation(each));
     }

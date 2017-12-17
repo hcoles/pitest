@@ -117,7 +117,7 @@ public class OptionTest {
 
   @Test
   public void forEachShouldBeAppliedToAllValues() {
-    final Collection<String> actual = new ArrayList<String>();
+    final Collection<String> actual = new ArrayList<>();
     Option.some(FOO).forEach(Prelude.accumulateTo(actual));
     assertEquals(fooList(), actual);
   }

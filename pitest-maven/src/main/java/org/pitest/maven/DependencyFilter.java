@@ -34,7 +34,7 @@ import org.pitest.util.StringUtil;
 
 public class DependencyFilter implements Predicate<Artifact> {
 
-  private final Set<GroupIdPair> groups = new HashSet<GroupIdPair>();
+  private final Set<GroupIdPair> groups = new HashSet<>();
 
   public DependencyFilter(PluginServices plugins) {
     final Iterable<? extends ClientClasspathPlugin> runtimePlugins = plugins

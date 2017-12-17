@@ -113,7 +113,6 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldDescribeActiveFeatures() {
     SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
     SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
@@ -126,7 +125,6 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldDescribeDisabledFeatures() {
     SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
     SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);

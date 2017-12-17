@@ -250,7 +250,6 @@ public class ReportOptions {
     return this.targetClasses;
   }
 
-  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
     final Predicate<String> filter = Prelude.and(or(this.targetClasses),
         not(isBlackListed(ReportOptions.this.excludedClasses)));
@@ -301,7 +300,6 @@ public class ReportOptions {
     return this.targetTests;
   }
 
-  @SuppressWarnings("unchecked")
   public Predicate<String> getTargetTestsFilter() {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the

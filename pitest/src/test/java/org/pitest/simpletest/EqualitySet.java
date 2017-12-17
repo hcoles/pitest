@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class EqualitySet<T> implements Iterable<T> {
 
-  private final List<T>             members = new ArrayList<T>();
+  private final List<T>             members = new ArrayList<>();
   private final EqualityStrategy<T> equality;
 
   public EqualitySet(final EqualityStrategy<T> equality) {

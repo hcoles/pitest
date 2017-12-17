@@ -9,7 +9,7 @@ import java.util.Map;
 public class PackageSummaryData implements Comparable<PackageSummaryData> {
 
   private final String                               packageName;
-  private final Map<String, MutationTestSummaryData> fileNameToSummaryData = new HashMap<String, MutationTestSummaryData>();
+  private final Map<String, MutationTestSummaryData> fileNameToSummaryData = new HashMap<>();
 
   public PackageSummaryData(final String packageName) {
     this.packageName = packageName;
@@ -48,7 +48,7 @@ public class PackageSummaryData implements Comparable<PackageSummaryData> {
   }
 
   public List<MutationTestSummaryData> getSummaryData() {
-    final ArrayList<MutationTestSummaryData> values = new ArrayList<MutationTestSummaryData>(
+    final ArrayList<MutationTestSummaryData> values = new ArrayList<>(
         this.fileNameToSummaryData.values());
     Collections.sort(values, new MutationTestSummaryDataFileNameComparator());
     return values;

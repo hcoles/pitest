@@ -25,6 +25,7 @@ public final class MutableList<A> implements FunctionalList<A> {
 
   private final List<A> impl;
 
+  @SafeVarargs
   public MutableList(final A... as) { // NO_UCD
     this(Arrays.asList(as));
   }

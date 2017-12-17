@@ -11,12 +11,12 @@ import org.pitest.sequence.SequenceQuery.Repeat;
 public class QueryStart<T> {
     
   public static <T> SequenceQuery<T> match(Match<T> p) {
-    return new SequenceQuery<T>(new Literal<T>(p));
+    return new SequenceQuery<>(new Literal<>(p));
   }
   
   public static <T> SequenceQuery<T> any(Class<T> clazz) {
     Match<T> p = Match.always();
-    return new SequenceQuery<T>(new Repeat<T>(new Literal<T>(p)));
+    return new SequenceQuery<>(new Repeat<>(new Literal<>(p)));
   }
   
 }

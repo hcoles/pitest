@@ -20,7 +20,6 @@ import org.pitest.functional.Option;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
-import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry

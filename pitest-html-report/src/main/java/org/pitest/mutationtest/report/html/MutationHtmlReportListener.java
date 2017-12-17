@@ -59,8 +59,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
       Collection<String> mutatorNames, final SourceLocator... locators) {
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
-    this.sourceRoots = new HashSet<SourceLocator>(Arrays.asList(locators));
-    this.mutatorNames = new HashSet<String>(mutatorNames);
+    this.sourceRoots = new HashSet<>(Arrays.asList(locators));
+    this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
   }
 
@@ -76,12 +76,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private void generateAnnotatedSourceFile(
       final MutationTestSummaryData mutationMetaData) {
-    try {
 
-      final String fileName = mutationMetaData.getPackageName()
-          + File.separator + mutationMetaData.getFileName() + ".html";
 
-      final Writer writer = this.outputStrategy.createWriterForFile(fileName);
+    final String fileName = mutationMetaData.getPackageName()
+        + File.separator + mutationMetaData.getFileName() + ".html";
+
+    try (Writer writer = this.outputStrategy.createWriterForFile(fileName)) {
 
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
@@ -98,7 +98,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
       st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClasses());
 
       writer.write(st.toString());
-      writer.close();
+
 
     } catch (final IOException ex) {
       Log.getLogger().log(Level.WARNING, "Error while writing report", ex);
@@ -203,7 +203,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
 
-    final List<PackageSummaryData> psd = new ArrayList<PackageSummaryData>(
+    final List<PackageSummaryData> psd = new ArrayList<>(
         this.packageSummaryData.values());
     Collections.sort(psd);
     for (final PackageSummaryData psData : psd) {

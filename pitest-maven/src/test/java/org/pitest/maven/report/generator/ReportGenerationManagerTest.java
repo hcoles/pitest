@@ -60,7 +60,7 @@ public class ReportGenerationManagerTest {
 
   @Before
   public void setUp() {
-    this.reportGenerationStrategyList = new LinkedList<ReportGenerationStrategy>();
+    this.reportGenerationStrategyList = new LinkedList<>();
     this.reportGenerationStrategyList.add(this.xmlGenerator);
     this.reportGenerationStrategyList.add(this.htmlGenerator);
 
