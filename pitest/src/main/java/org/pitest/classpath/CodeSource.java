@@ -42,7 +42,7 @@ public class CodeSource implements ClassInfoSource {
   }
 
   public Set<ClassName> getCodeUnderTestNames() {
-    final Set<ClassName> codeClasses = new HashSet<ClassName>();
+    final Set<ClassName> codeClasses = new HashSet<>();
     FCollection.mapTo(getCode(), ClassInfo.toClassName(), codeClasses);
     return codeClasses;
   }

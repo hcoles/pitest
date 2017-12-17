@@ -34,7 +34,7 @@ public class PluginServices {
    * @return list of plugins
    */
   public Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
-    final List<ToolClasspathPlugin> l = new ArrayList<ToolClasspathPlugin>();
+    final List<ToolClasspathPlugin> l = new ArrayList<>();
     l.addAll(findListeners());
     l.addAll(findGroupers());
     l.addAll(findTestPrioritisers());
@@ -47,7 +47,7 @@ public class PluginServices {
    * under test at runtime
    */
   public Iterable<? extends ClientClasspathPlugin> findClientClasspathPlugins() {
-    final List<ClientClasspathPlugin> l = new ArrayList<ClientClasspathPlugin>();
+    final List<ClientClasspathPlugin> l = new ArrayList<>();
     l.addAll(findMutationEngines());
     l.addAll(findTestFrameworkPlugins());
     l.addAll(nullPlugins());

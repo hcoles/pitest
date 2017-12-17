@@ -68,7 +68,7 @@ public class MutationIdentifierTest {
   @Test
   public void shouldMatchWhenIndexesOverlap() {
     MutationIdentifier a = new MutationIdentifier(aLocation().build(),
-        new HashSet<Integer>(Arrays.asList(1, 2)), "M");
+        new HashSet<>(Arrays.asList(1, 2)), "M");
     MutationIdentifier b = new MutationIdentifier(aLocation().build(), 1, "M");
     assertTrue(a.matches(b));
   }

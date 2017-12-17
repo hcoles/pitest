@@ -39,7 +39,7 @@ public class ConfigurationForTesting implements Configuration {
   @Override
   public TestUnitFinder testUnitFinder() {
 
-    final Set<MethodFinder> tmfs = new LinkedHashSet<MethodFinder>();
+    final Set<MethodFinder> tmfs = new LinkedHashSet<>();
     tmfs.add(new TestFinder());
 
     final List<InstantiationStrategy> instantiationStrategies =

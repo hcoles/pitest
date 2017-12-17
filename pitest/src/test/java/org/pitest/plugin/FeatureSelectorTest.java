@@ -24,14 +24,14 @@ public class FeatureSelectorTest {
   @Test
   public void shouldSelectFeaturesThatAreOnByDefault() {
     ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
-    testee = new FeatureSelector<AFeature>(noSettings(), features(onByDefault));
+    testee = new FeatureSelector<>(noSettings(), features(onByDefault));
     
     assertThat(testee.getActiveFeatures()).contains(onByDefault);
   }
 
   @Test
   public void shouldSelectFeaturesThatAreOffByDefault() {
-    testee = new FeatureSelector<AFeature>(noSettings(), features(onByDefault, offByDefault));
+    testee = new FeatureSelector<>(noSettings(), features(onByDefault, offByDefault));
     
     assertThat(testee.getActiveFeatures()).containsOnly(onByDefault);
   }
@@ -39,7 +39,7 @@ public class FeatureSelectorTest {
   @Test
   public void shouldEnableFeaturesWhenRequested() {
     FeatureSetting enableBar = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<AFeature>(Arrays.asList(enableBar), features(onByDefault, offByDefault));
+    testee = new FeatureSelector<>(Arrays.asList(enableBar), features(onByDefault, offByDefault));
     
     assertThat(testee.getActiveFeatures()).containsOnly(offByDefault, onByDefault);
   }
@@ -47,7 +47,7 @@ public class FeatureSelectorTest {
   @Test
   public void shouldDisableFeaturesWhenRequested() {
     FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<AFeature>(Arrays.asList(disableFoo), features(onByDefault));
+    testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(onByDefault));
     
     assertThat(testee.getActiveFeatures()).isEmpty();
   }
@@ -57,13 +57,13 @@ public class FeatureSelectorTest {
     FeatureSetting wrong = new FeatureSetting("unknown", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
    
     thrown.expect(IllegalArgumentException.class);
-    testee = new FeatureSelector<AFeature>(Arrays.asList(wrong), features(onByDefault));
+    testee = new FeatureSelector<>(Arrays.asList(wrong), features(onByDefault));
   }
   
   @Test
   public void shouldProvideConfigurationForFeatureWhenProvided() {
     FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<AFeature>(Arrays.asList(fooConfig), features(onByDefault));
+    testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(onByDefault));
     
     assertThat(testee.getSettingForFeature("foo")).isEqualTo(fooConfig);
     assertThat(testee.getSettingForFeature("bar")).isNull();

@@ -56,7 +56,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator
 
 public final class Mutator {
 
-  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<String, Iterable<MethodMutatorFactory>>();
+  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
 
   static {
 
@@ -189,7 +189,7 @@ public final class Mutator {
 
   private static Collection<MethodMutatorFactory> combine(
       Collection<MethodMutatorFactory> a, Collection<MethodMutatorFactory> b) {
-    List<MethodMutatorFactory> l = new ArrayList<MethodMutatorFactory>(a);
+    List<MethodMutatorFactory> l = new ArrayList<>(a);
     l.addAll(b);
     return l;
   }
@@ -228,7 +228,7 @@ public final class Mutator {
 
   public static Collection<MethodMutatorFactory> fromStrings(
       final Collection<String> names) {
-    final Set<MethodMutatorFactory> unique = new TreeSet<MethodMutatorFactory>(
+    final Set<MethodMutatorFactory> unique = new TreeSet<>(
         compareId());
 
     FCollection.flatMapTo(names, fromString(), unique);

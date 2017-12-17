@@ -35,14 +35,11 @@ public abstract class ServiceLoader {
       final ClassLoader loader) throws IOException {
     final Enumeration<URL> e = loader.getResources("META-INF/services/"
         + ifc.getName());
-    final Collection<S> services = new ArrayList<S>();
+    final Collection<S> services = new ArrayList<>();
     while (e.hasMoreElements()) {
       final URL url = e.nextElement();
-      final InputStream is = url.openStream();
-      try {
+      try (InputStream is = url.openStream()) {
         createServicesFromStream(ifc, loader, services, is);
-      } finally {
-        is.close();
       }
     }
     return services;

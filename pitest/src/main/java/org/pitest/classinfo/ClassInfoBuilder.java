@@ -26,9 +26,9 @@ class ClassInfoBuilder {
   String                       outerClass;
   String                       superClass;
   String                       sourceFile;
-  final Set<Integer>           codeLines             = new HashSet<Integer>();
-  final Set<String>            annotations           = new HashSet<String>(0);
-  final Map<ClassName, Object> classAnnotationValues = new HashMap<ClassName, Object>(
+  final Set<Integer>           codeLines             = new HashSet<>();
+  final Set<String>            annotations           = new HashSet<>(0);
+  final Map<ClassName, Object> classAnnotationValues = new HashMap<>(
                                                          0);
 
   public void registerCodeLine(final int line) {

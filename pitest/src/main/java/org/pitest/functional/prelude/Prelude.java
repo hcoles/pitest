@@ -33,24 +33,26 @@ import org.pitest.functional.predicate.Predicate;
  */
 public abstract class Prelude {
 
+  @SafeVarargs
   public static final <A> And<A> and(final F<A, Boolean>... ps) {
-    return new And<A>(Arrays.asList(ps));
+    return new And<>(Arrays.asList(ps));
   }
 
   public static final <A> And<A> and(final Iterable<? extends F<A, Boolean>> ps) {
-    return new And<A>(ps);
+    return new And<>(ps);
   }
 
   public static final <A> Not<A> not(final F<A, Boolean> p) {
-    return new Not<A>(p);
+    return new Not<>(p);
   }
 
+  @SafeVarargs
   public static final <A> Or<A> or(final Predicate<A>... ps) {
-    return new Or<A>(Arrays.asList(ps));
+    return new Or<>(Arrays.asList(ps));
   }
 
   public static final <A> Or<A> or(final Iterable<Predicate<A>> ps) {
-    return new Or<A>(ps);
+    return new Or<>(ps);
   }
 
   public static final <A> SideEffect1<A> accumulateTo(

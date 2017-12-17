@@ -30,7 +30,7 @@ public class ControlFlowAnalyser {
   private static final int LIKELY_NUMBER_OF_LINES_PER_BLOCK = 7;
 
   public static List<Block> analyze(final MethodNode mn) {
-    final List<Block> blocks = new ArrayList<Block>(mn.instructions.size());
+    final List<Block> blocks = new ArrayList<>(mn.instructions.size());
 
     final Set<AbstractInsnNode> jumpTargets = findJumpTargets(mn.instructions);
 
@@ -80,7 +80,7 @@ public class ControlFlowAnalyser {
   }
 
   private static HashSet<Integer> smallSet() {
-    return new HashSet<Integer>(LIKELY_NUMBER_OF_LINES_PER_BLOCK);
+    return new HashSet<>(LIKELY_NUMBER_OF_LINES_PER_BLOCK);
   }
 
   private static boolean isInstruction(final AbstractInsnNode ins) {
@@ -117,7 +117,7 @@ public class ControlFlowAnalyser {
   }
 
   private static Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
-    final Set<AbstractInsnNode> jumpTargets = new HashSet<AbstractInsnNode>();
+    final Set<AbstractInsnNode> jumpTargets = new HashSet<>();
     final ListIterator<AbstractInsnNode> it = instructions.iterator();
     while (it.hasNext()) {
       final AbstractInsnNode o = it.next();

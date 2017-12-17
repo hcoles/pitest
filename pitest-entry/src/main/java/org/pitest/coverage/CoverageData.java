@@ -46,9 +46,9 @@ public class CoverageData implements CoverageDatabase {
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
-  private final Map<BlockLocation, Set<TestInfo>>             blockCoverage = new LinkedHashMap<BlockLocation, Set<TestInfo>>();
-  private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<BlockLocation, Set<Integer>>();
-  private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<ClassName, Map<ClassLine, Set<TestInfo>>>();
+  private final Map<BlockLocation, Set<TestInfo>>             blockCoverage = new LinkedHashMap<>();
+  private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<>();
+  private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
   private final Map<String, Collection<ClassInfo>>            classesForFile;
 
   private final CodeSource                                    code;
@@ -91,7 +91,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-    final Set<TestInfo> tis = new TreeSet<TestInfo>(
+    final Set<TestInfo> tis = new TreeSet<>(
         new TestInfoNameComparator());
     tis.addAll(FCollection.filter(this.blockCoverage.entrySet(), isFor(clazz))
         .flatMap(toTests()));
@@ -111,7 +111,7 @@ public class CoverageData implements CoverageDatabase {
   private void addTestsToBlockMap(final TestInfo ti, BlockLocation each) {
     Set<TestInfo> tests = this.blockCoverage.get(each);
     if (tests == null) {
-      tests = new TreeSet<TestInfo>(new TestInfoNameComparator());
+      tests = new TreeSet<>(new TestInfoNameComparator());
       this.blockCoverage.put(each, tests);
     }
     tests.add(ti);
@@ -165,7 +165,7 @@ public class CoverageData implements CoverageDatabase {
   private BigInteger generateCoverageNumber(
       final Map<ClassLine, Set<TestInfo>> coverage) {
     BigInteger coverageNumber = BigInteger.ZERO;
-    final Set<ClassName> testClasses = new HashSet<ClassName>();
+    final Set<ClassName> testClasses = new HashSet<>();
     FCollection.flatMapTo(coverage.values(), testsToClassName(), testClasses);
 
     for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
@@ -281,7 +281,7 @@ public class CoverageData implements CoverageDatabase {
     List<Entry<BlockLocation, Set<TestInfo>>> tests = FCollection.filter(
         this.blockCoverage.entrySet(), isFor(clazz));
 
-    Map<ClassLine, Set<TestInfo>> linesToTests = new LinkedHashMap<ClassLine, Set<TestInfo>>(
+    Map<ClassLine, Set<TestInfo>> linesToTests = new LinkedHashMap<>(
         0);
 
     for (Entry<BlockLocation, Set<TestInfo>> each : tests) {
@@ -301,7 +301,7 @@ public class CoverageData implements CoverageDatabase {
     ClassLine cl = new ClassLine(clazz, line);
     Set<TestInfo> tis = linesToTests.get(cl);
     if (tis == null) {
-      tis = new TreeSet<TestInfo>(new TestInfoNameComparator());
+      tis = new TreeSet<>(new TestInfoNameComparator());
       tis.addAll(each.getValue());
       linesToTests.put(new ClassLine(clazz, line), tis);
     }

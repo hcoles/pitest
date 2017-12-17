@@ -63,8 +63,8 @@ public class MutationTestMinionTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.mutations = new ArrayList<MutationDetails>();
-    this.tests = new ArrayList<ClassName>();
+    this.mutations = new ArrayList<>();
+    this.tests = new ArrayList<>();
 
     this.args = new MinionArguments(this.mutations, this.tests,  this.engine,
         this.timeoutStrategy, false, TestPluginArguments.defaults());

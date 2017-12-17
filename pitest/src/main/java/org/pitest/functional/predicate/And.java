@@ -25,7 +25,7 @@ import org.pitest.functional.F;
  */
 public class And<A> implements Predicate<A> {
 
-  private final Set<F<A, Boolean>> ps = new LinkedHashSet<F<A, Boolean>>();
+  private final Set<F<A, Boolean>> ps = new LinkedHashSet<>();
 
   public And(final Iterable<? extends F<A, Boolean>> ps) {
     for (final F<A, Boolean> each : ps) {

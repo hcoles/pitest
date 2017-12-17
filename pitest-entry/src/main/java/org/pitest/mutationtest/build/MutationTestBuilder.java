@@ -51,7 +51,7 @@ public class MutationTestBuilder {
 
   public List<MutationAnalysisUnit> createMutationTestUnits(
       final Collection<ClassName> codeClasses) {
-    final List<MutationAnalysisUnit> tus = new ArrayList<MutationAnalysisUnit>();
+    final List<MutationAnalysisUnit> tus = new ArrayList<>();
 
     final List<MutationDetails> mutations = FCollection.flatMap(codeClasses,
         classToMutations());
@@ -110,7 +110,7 @@ public class MutationTestBuilder {
 
   private MutationAnalysisUnit makeUnanalysedUnit(
       final Collection<MutationDetails> needAnalysis) {
-    final Set<ClassName> uniqueTestClasses = new HashSet<ClassName>();
+    final Set<ClassName> uniqueTestClasses = new HashSet<>();
     FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
         uniqueTestClasses);
 

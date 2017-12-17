@@ -19,7 +19,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public class LoggingCallsFilter implements MutationInterceptor {
   
-  private final Set<String>   loggingClasses = new HashSet<String>();
+  private final Set<String>   loggingClasses = new HashSet<>();
   private Set<Integer> lines;
   
   public LoggingCallsFilter(Collection<String> loggingClasses) {
@@ -33,7 +33,7 @@ public class LoggingCallsFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    lines = new HashSet<Integer>();
+    lines = new HashSet<>();
     for (MethodTree each : clazz.methods()) {
       findLoggingLines(each,lines);
     }

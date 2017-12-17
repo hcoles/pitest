@@ -10,7 +10,7 @@ public final class FeatureSetting {
 
   private final String feature;
   private final ToggleStatus status;
-  private final Map<String,List<String>> settings = new HashMap<String,List<String>>();
+  private final Map<String,List<String>> settings = new HashMap<>();
   
   public FeatureSetting(String feature, ToggleStatus status, Map<String, List<String>> settings) {
     this.feature = feature;

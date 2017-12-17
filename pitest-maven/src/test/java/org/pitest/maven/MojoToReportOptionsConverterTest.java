@@ -226,7 +226,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testDefaultsToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseConfig("");
-    assertEquals(new HashSet<String>(Arrays.asList("HTML")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -236,7 +236,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>CSV</param>" + //
         "                  </outputFormats>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(new HashSet<String>(Arrays.asList("HTML", "CSV")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML", "CSV")),
         actual.getOutputFormats());
   }
 
@@ -330,7 +330,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
       throws DependencyResolutionRequiredException {
     final String sep = File.pathSeparator;
 
-    final Set<Artifact> artifacts = new HashSet<Artifact>();
+    final Set<Artifact> artifacts = new HashSet<>();
     final Artifact dependency = Mockito.mock(Artifact.class);
     when(dependency.getGroupId()).thenReturn("group");
     when(dependency.getArtifactId()).thenReturn("artifact");
@@ -378,7 +378,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     try {
       final String pom = createPomWithConfiguration(xml);
       final AbstractPitMojo mojo = createPITMojo(pom);
-      @SuppressWarnings("unchecked")
       Predicate<Artifact> filter = Mockito.mock(Predicate.class);
       when(
           this.surefireConverter.update(any(ReportOptions.class),

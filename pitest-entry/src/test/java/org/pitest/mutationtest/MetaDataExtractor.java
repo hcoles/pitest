@@ -22,10 +22,10 @@ import org.pitest.functional.FCollection;
 
 public class MetaDataExtractor implements MutationResultListener {
 
-  private final List<MutationResult> data = new ArrayList<MutationResult>();
+  private final List<MutationResult> data = new ArrayList<>();
 
   public List<DetectionStatus> getDetectionStatus() {
-    final List<DetectionStatus> dss = new ArrayList<DetectionStatus>();
+    final List<DetectionStatus> dss = new ArrayList<>();
     for (final MutationResult each : this.data) {
       dss.add(each.getStatus());
     }
@@ -33,7 +33,7 @@ public class MetaDataExtractor implements MutationResultListener {
   }
 
   public List<Integer> getLineNumbers() {
-    final List<Integer> dss = new ArrayList<Integer>();
+    final List<Integer> dss = new ArrayList<>();
     for (final MutationResult each : this.data) {
       dss.add(each.getDetails().getLineNumber());
     }

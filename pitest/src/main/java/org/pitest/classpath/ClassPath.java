@@ -66,7 +66,7 @@ public class ClassPath {
   private static List<ClassPathRoot> createRoots(final Collection<File> files) {
     File lastFile = null;
     try {
-      final List<ClassPathRoot> rs = new ArrayList<ClassPathRoot>();
+      final List<ClassPathRoot> rs = new ArrayList<>();
 
       for (final File f : files) {
         lastFile = f;
@@ -95,15 +95,13 @@ public class ClassPath {
   }
 
   public byte[] getClassData(final String classname) throws IOException {
-    InputStream is = this.root.getData(classname);
-    if (is != null) {
-      try {
+    try (InputStream is = this.root.getData(classname)) {
+      if (is != null) {
         return StreamUtil.streamToByteArray(is);
-      } finally {
-        is.close();
+      } else {
+        return null;
       }
     }
-    return null;
   }
 
   public URL findResource(final String name) {
@@ -115,7 +113,7 @@ public class ClassPath {
   }
 
   public static Collection<String> getClassPathElementsAsPaths() {
-    final Set<String> filesAsString = new LinkedHashSet<String>();
+    final Set<String> filesAsString = new LinkedHashSet<>();
     FCollection.mapTo(getClassPathElementsAsFiles(), fileToString(),
         filesAsString);
     return filesAsString;
@@ -123,7 +121,7 @@ public class ClassPath {
 
 
   public static Collection<File> getClassPathElementsAsFiles() {
-    final Set<File> us = new LinkedHashSet<File>();
+    final Set<File> us = new LinkedHashSet<>();
     FCollection.mapTo(getClassPathElementsAsAre(), stringToCanonicalFile(), us);
     return us;
   }
@@ -181,7 +179,7 @@ public class ClassPath {
     if (classPath != null) {
       return Arrays.asList(classPath.split(separator));
     } else {
-      return new ArrayList<String>();
+      return new ArrayList<>();
     }
 
   }

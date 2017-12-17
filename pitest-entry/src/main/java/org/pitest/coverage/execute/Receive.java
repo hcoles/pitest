@@ -21,8 +21,8 @@ import sun.pitest.CodeCoverageStore;
 
 final class Receive implements ReceiveStrategy {
 
-  private final Map<Integer, ClassName>     classIdToName = new ConcurrentHashMap<Integer, ClassName>();
-  private final Map<Long, BlockLocation>    probeToBlock  = new ConcurrentHashMap<Long, BlockLocation>();
+  private final Map<Integer, ClassName>     classIdToName = new ConcurrentHashMap<>();
+  private final Map<Long, BlockLocation>    probeToBlock  = new ConcurrentHashMap<>();
 
   private final SideEffect1<CoverageResult> handler;
 
@@ -69,7 +69,7 @@ final class Receive implements ReceiveStrategy {
     final Description d = is.read(Description.class);
     final int numberOfResults = is.readInt();
 
-    final Set<BlockLocation> hits = new HashSet<BlockLocation>(numberOfResults);
+    final Set<BlockLocation> hits = new HashSet<>(numberOfResults);
 
     for (int i = 0; i != numberOfResults; i++) {
       readProbeHit(is, hits);

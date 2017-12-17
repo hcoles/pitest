@@ -55,10 +55,9 @@ public class MojoToReportOptionsConverter {
     this.surefireConverter = surefireConverter;
   }
 
-  @SuppressWarnings("unchecked")
   public ReportOptions convert() {
 
-    final List<String> classPath = new ArrayList<String>();
+    final List<String> classPath = new ArrayList<>();
 
     try {
       classPath.addAll(this.mojo.getProject().getTestClasspathElements());
@@ -84,7 +83,6 @@ public class MojoToReportOptionsConverter {
 
   }
 
-  @SuppressWarnings("unchecked")
   private ReportOptions parseReportOptions(final List<String> classPath) {
     final ReportOptions data = new ReportOptions();
 
@@ -126,7 +124,7 @@ public class MojoToReportOptionsConverter {
       data.setLoggingClasses(this.mojo.getAvoidCallsTo());
     }
 
-    final List<String> sourceRoots = new ArrayList<String>();
+    final List<String> sourceRoots = new ArrayList<>();
     sourceRoots.addAll(this.mojo.getProject().getCompileSourceRoots());
     sourceRoots.addAll(this.mojo.getProject().getTestCompileSourceRoots());
 
@@ -196,7 +194,6 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<Plugin> lookupPlugin(String key) {
-    @SuppressWarnings("unchecked")
     List<Plugin> plugins = this.mojo.getProject().getBuildPlugins();
     return FCollection.filter(plugins, hasKey(key));
   }
@@ -279,7 +276,7 @@ public class MojoToReportOptionsConverter {
     File outputDir = new File(outputDirName);
     if (outputDir.exists()) {
       DirectoryClassPathRoot root = new DirectoryClassPathRoot(outputDir);
-      Set<String> occupiedPackages = new HashSet<String>();
+      Set<String> occupiedPackages = new HashSet<>();
       FCollection.mapTo(root.classNames(), classToPackageGlob(),
           occupiedPackages);
       return occupiedPackages;

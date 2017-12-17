@@ -32,7 +32,7 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private final F<MethodInfo, Boolean>    filter;
   private final ClassContext              context;
-  private final Set<MethodMutatorFactory> methodMutators = new HashSet<MethodMutatorFactory>();
+  private final Set<MethodMutatorFactory> methodMutators = new HashSet<>();
 
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
       final ClassContext context, final F<MethodInfo, Boolean> filter,

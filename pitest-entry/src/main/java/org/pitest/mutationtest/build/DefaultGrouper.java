@@ -24,7 +24,7 @@ public class DefaultGrouper implements MutationGrouper {
       final Collection<MutationDetails> mutations) {
     final Map<ClassName, Collection<MutationDetails>> bucketed = FCollection
         .bucket(mutations, byClass());
-    final List<List<MutationDetails>> chunked = new ArrayList<List<MutationDetails>>();
+    final List<List<MutationDetails>> chunked = new ArrayList<>();
     for (final Collection<MutationDetails> each : bucketed.values()) {
       shrinkToMaximumUnitSize(chunked, each);
     }
@@ -41,7 +41,7 @@ public class DefaultGrouper implements MutationGrouper {
         chunked.add(ms);
       }
     } else {
-      chunked.add(new ArrayList<MutationDetails>(each));
+      chunked.add(new ArrayList<>(each));
     }
   }
 

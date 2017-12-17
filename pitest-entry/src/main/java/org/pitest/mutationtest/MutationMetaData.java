@@ -36,8 +36,8 @@ public final class MutationMetaData {
 
   public Collection<ClassMutationResults> toClassResults() {
     Collections.sort(this.mutations, comparator());
-    final List<ClassMutationResults> cmrs = new ArrayList<ClassMutationResults>();
-    final List<MutationResult> buffer = new ArrayList<MutationResult>();
+    final List<ClassMutationResults> cmrs = new ArrayList<>();
+    final List<MutationResult> buffer = new ArrayList<>();
     ClassName cn = null;
     for (final MutationResult each : this.mutations) {
       if ((cn != null) && !each.getDetails().getClassName().equals(cn)) {

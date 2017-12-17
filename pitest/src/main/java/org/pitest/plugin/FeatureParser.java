@@ -34,7 +34,7 @@ public class FeatureParser {
   }
   
   private Map<String, List<String>> parseConfig(String a) {
-    Map<String, List<String>> vals = new HashMap<String, List<String>>();
+    Map<String, List<String>> vals = new HashMap<>();
     int confStart = a.indexOf('(') + 1;
     int end = a.indexOf(')');
     if (confStart != -1 && confStart < end) {
@@ -52,7 +52,7 @@ public class FeatureParser {
       String key = pairs[i].trim();
       List<String> current = vals.get(key);
       if (current == null) {
-        current = new ArrayList<String>();
+        current = new ArrayList<>();
       }
       current.add(pairs[i + 1].trim());
      vals.put(key, current); 

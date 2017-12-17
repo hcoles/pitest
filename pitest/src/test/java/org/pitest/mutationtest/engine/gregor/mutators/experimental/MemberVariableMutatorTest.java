@@ -78,7 +78,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   @Test
   public void shouldRemoveAssignmentToFinalMemberVariable() throws Exception {
     final Mutant mutant = getFirstMutant(HasFinalMemberVariable.class);
-    assertMutantCallableReturns(new MutantStarter<Integer>(
+    assertMutantCallableReturns(new MutantStarter<>(
         HasFinalMemberVariable.class), mutant, null);
   }
 
@@ -149,7 +149,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
     // Property member2 is mutated (as shown by the reflection stuff, but
     // constant will be inlined by the compiler!
     final Mutant mutant = getFirstMutant(HasConstantFinalPrimitiveMemberVariable.class);
-    assertMutantCallableReturns(new MutantStarter<String>(
+    assertMutantCallableReturns(new MutantStarter<>(
         HasConstantFinalPrimitiveMemberVariable.class), mutant, "42-0");
   }
 
