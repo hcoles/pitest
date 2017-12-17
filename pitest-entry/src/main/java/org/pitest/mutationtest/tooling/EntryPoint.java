@@ -125,7 +125,7 @@ public class EntryPoint {
   }
 
   private void selectTestPlugin(ReportOptions data) {
-    if (data.getTestPlugin().equals("")) {
+    if (data.getTestPlugin() == null || data.getTestPlugin().equals("")) {
       if (junit5PluginIsOnClasspath()) {
         data.setTestPlugin("junit5");
       } else {

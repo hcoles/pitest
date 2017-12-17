@@ -40,7 +40,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Test plugin to use
    */
-  @Parameter(property = "testPlugin", defaultValue = "junit")
+  @Parameter(property = "testPlugin", defaultValue = "")
   private String testPlugin;
 
   /**
@@ -319,7 +319,7 @@ public class AbstractPitMojo extends AbstractMojo {
    * Value pairs may be used by pitest plugins.
    */
   @Parameter
-  private Map<String, String>         environmentVariables = new HashMap<String, String>();
+  private Map<String, String>         environmentVariables = new HashMap<>();
 
   /**
    * <i>Internal</i>: Project to interact with.
@@ -629,7 +629,7 @@ public class AbstractPitMojo extends AbstractMojo {
   }
    
   static class RunDecision {
-    private List<String> reasons = new ArrayList<String>(4);
+    private List<String> reasons = new ArrayList<>(4);
 
     boolean shouldRun() {
       return reasons.isEmpty();

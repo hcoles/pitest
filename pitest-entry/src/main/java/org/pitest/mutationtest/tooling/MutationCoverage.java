@@ -180,7 +180,7 @@ private int numberOfThreads() {
   private List<MutationResultListener> createConfig(final long t0,
       final CoverageDatabase coverageData,
       final MutationStatisticsListener stats, final MutationEngine engine) {
-    final List<MutationResultListener> ls = new ArrayList<MutationResultListener>();
+    final List<MutationResultListener> ls = new ArrayList<>();
 
     ls.add(stats);
 
@@ -209,7 +209,7 @@ private int numberOfThreads() {
 
   private Set<ClassName> getAllClassesAndTests(
       final CoverageDatabase coverageData) {
-    final Set<ClassName> names = new HashSet<ClassName>();
+    final Set<ClassName> names = new HashSet<>();
     for (final ClassName each : this.code.getCodeUnderTestNames()) {
       names.add(each);
       FCollection.mapTo(coverageData.getTestsForClass(each),

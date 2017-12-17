@@ -93,21 +93,21 @@ public class ReportOptions {
 
   private int                            dependencyAnalysisMaxDistance;
 
-  private final List<String>             jvmArgs                        = new ArrayList<String>();
+  private final List<String>             jvmArgs                        = new ArrayList<>();
   private int                            numberOfThreads                = 0;
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                           timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
   private Collection<Predicate<String>>  targetTests;
 
-  private Collection<String>             loggingClasses                 = new ArrayList<String>();
+  private Collection<String>             loggingClasses                 = new ArrayList<>();
 
   private int                            maxMutationsPerClass;
 
   private boolean                        verbose                        = false;
   private boolean                        failWhenNoMutations            = false;
 
-  private final Collection<String>       outputs                        = new LinkedHashSet<String>();
+  private final Collection<String>       outputs                        = new LinkedHashSet<>();
 
   private TestGroupConfig                groupConfig;
 
@@ -128,7 +128,7 @@ public class ReportOptions {
 
   private int maxSurvivors;
   
-  private Collection<String>             excludedRunners                = new ArrayList<String>();
+  private Collection<String>             excludedRunners                = new ArrayList<>();
   
   private String                         testPlugin                     = "";
 
@@ -586,7 +586,7 @@ public class ReportOptions {
   public void setTestPlugin(String testPlugin) {
     this.testPlugin = testPlugin;
   }
-  
+
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses
@@ -612,8 +612,7 @@ public class ReportOptions {
         + mutationEngine + ", javaExecutable=" + javaExecutable
         + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
         + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
-        + excludedRunners + "]";
+        + excludedRunners + ", testPlugin=" + testPlugin + "]";
   }
-
-
+  
 }
