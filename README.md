@@ -7,7 +7,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.2.6-SNAPSHOT
+### 1.3.0-SNAPSHOT
 
 * #196 - Raise minimum java version to 7
 * #425 - Broaden for-each detection
