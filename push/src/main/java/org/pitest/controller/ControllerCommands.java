@@ -19,13 +19,13 @@ public class ControllerCommands implements ControllerCommandsMXBean {
 
   @Override
   public Command pull(String name) {
-    return pool.assign(name);
+    return pool.next(name);
   }
 
-  @Override
-  public void goodbye(String name) {
-    pool.unassignMinion(name);
-  }
+  //@Override
+  //public void goodbye(String name) {
+  //  pool.unassignMinion(name);
+ // }
 
   @Override
   public void report(String name, Status status) {

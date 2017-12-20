@@ -1,18 +1,13 @@
 package org.pitest.controller;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.pitest.minion.commands.Action;
 import org.pitest.minion.commands.Command;
-import org.pitest.minion.commands.MutId;
 import org.pitest.minion.commands.Status;
-import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class MinionPool {
   
@@ -23,11 +18,12 @@ public class MinionPool {
   private final Map<String, MinionHandle> minions = new ConcurrentHashMap<>();
   
   private final Map<String, Job> inProgress = new ConcurrentHashMap<>();
-  private final ConcurrentLinkedQueue<MutationIdentifier> work = new ConcurrentLinkedQueue<>();
+  private final WorkScheduler planner;
   
-  public MinionPool(int size, MinionFactory factory) {
+  public MinionPool(int size, MinionFactory factory, WorkScheduler planner) {
     this.size = size;
     this.factory = factory;
+    this.planner = planner;
   }
   
   public void start() throws IOException {
@@ -42,10 +38,10 @@ public class MinionPool {
       if (each.getValue().isOverdue(now)) {
         MinionHandle handle = minions.get(each.getKey());
         handle.kill();
-        System.out.println(each.getValue().work.getId() + " timed out");
-        inProgress.remove(each.getKey());
-        minions.remove(each.getKey());
+        System.out.println(each.getValue().work + " timed out");
+        unassignMinion(each.getKey());
         factory.requestNewMinion(this);
+        planner.done(each.getKey(),each.getValue().work, Status.TIMED_OUT);
       }
     }
   }
@@ -61,28 +57,27 @@ public class MinionPool {
     starting.remove(name);
   }
   
-  public void submit(Collection<MutationIdentifier> work) {
-    this.work.addAll(work);
-  }
 
-  public Command assign(String name) {
-    MutationIdentifier id = work.poll();
-    if (id != null) {
-      Command c = new Command(toOpenType(id), "", Action.ANALYSE);
-      inProgress.put(name, new Job(System.currentTimeMillis(), c, 1000));
-      return c;
-    } else {
-      return Command.die();
-    }
+  public Command next(String name) {
+    Command c = planner.next(name);
+    // FIXME need to size command execution times.
+    this.inProgress.put(name, new Job(System.currentTimeMillis(), c, 1000));
+    return c;
   }
   
   public void report(String name, Status status) {
     Job job = inProgress.remove(name);
     System.out.println(job.work.getId() + " done"); 
+    planner.done(name,job.work, status);
+    
+    if(job.work.getAction() == Action.DIE) {
+      unassignMinion(name);
+    }
+    
   }
   
   
-  public void unassignMinion(String name) {
+  private void unassignMinion(String name) {
     Job job = inProgress.remove(name);
     if (job != null) {
       System.out.println(job.work + " was poison");
@@ -110,10 +105,5 @@ public class MinionPool {
  }
 
 
-  private static MutId toOpenType(MutationIdentifier id) {
-    Location l = id.getLocation();
-    return new MutId(id.getClassName().asJavaName(), l.getMethodName().name(),
-        l.getMethodDesc(), id.getFirstIndex(), id.getMutator());
-  }
 
 }

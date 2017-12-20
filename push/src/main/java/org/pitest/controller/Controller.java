@@ -5,6 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,9 +21,15 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
-import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.coverage.TestInfo;
+import org.pitest.functional.Option;
+import org.pitest.functional.predicate.False;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.util.Unchecked;
 
 public class Controller {
@@ -36,14 +43,23 @@ public class Controller {
       JMXConnectorServer server = createJmxConnectorServer(myPort);
       server.start();
       
-      MinionPool pool = new MinionPool(2, new MinionFactory(myPort));
+      
+      GregorEngineFactory eng = new GregorEngineFactory();
+      MutationEngine engine = eng.createEngine(False.<String>instance(), null);
+      
+      Mutater m = engine.createMutator(ClassloaderByteArraySource.fromContext());
+      
+      Collection<MutationDetails> toDo = m.findMutations(ClassName.fromClass(Controller.class));
+      TestInfo one = new TestInfo("one", "m", 1, Option.<ClassName>none(), 2);
+      TestInfo two = new TestInfo("two", "m", 1, Option.<ClassName>none(), 2);      
+      for (MutationDetails i : toDo ) {
+        i.addTestsInOrder(Arrays.asList(one,two));
+      }
+      
+      WorkScheduler workScheduler =  new DeafultWorkScheduler(toDo, sysOutListener());
+      MinionPool pool = new MinionPool(2, new MinionFactory(myPort), workScheduler);
       registerMXBean(pool);
-      
-      Location l = Location.location(ClassName.fromString(""), MethodName.fromString(""), "");
-      MutationIdentifier id = new MutationIdentifier(l, 1, "");
-      MutationIdentifier death = new MutationIdentifier(l, 1, "death");
-      
-      pool.submit(Arrays.asList(id,death,id,death,id,id,death,id,id));
+
       
       pool.start();
       
@@ -52,7 +68,8 @@ public class Controller {
       
       scheduler.scheduleAtFixedRate(runPerge(pool), 0, 2, TimeUnit.SECONDS);
       
-      System.in.read();
+     
+      workScheduler.awaitCompletion(); 
       
       scheduler.shutdownNow();
 
@@ -62,6 +79,18 @@ public class Controller {
     } catch (IOException | MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
       throw Unchecked.translateCheckedException(e);
     }
+  }
+
+  private static ResultListener sysOutListener() {
+    return new ResultListener() {
+
+      @Override
+      public void report(MutationResult r) {
+       System.out.println(r);
+        
+      }
+      
+    };
   }
 
   private static Runnable runPerge(final MinionPool pool) {

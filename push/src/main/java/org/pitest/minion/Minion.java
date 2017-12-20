@@ -17,10 +17,10 @@ import org.pitest.util.Unchecked;
 public class Minion {
 
   public static void main(String[] args) {
-
+    int controllerPort = Integer.parseInt(args[0]);
+    String name = args[1];
+    
     try {
-      int controllerPort = Integer.parseInt(args[0]);
-      String name = args[1];
             
       System.out.println("Waiting...");
       
@@ -29,22 +29,17 @@ public class Minion {
 
       boolean run = true;
       while (run) {
+        System.out.println(name + " is polling");
         Command work = controller.pull(name);
         switch (work.getAction()) {
         case DIE :
           System.out.println(name + " will die");
           run = false;
+          controller.report(name, Status.OK);
           break;
         case ANALYSE :
           System.out.println(name + " is doing " + work);
-          if (work.getId().getOperator().equals("death")) {
-            for (int i = 0; i != Integer.MIN_VALUE; i++) {
-              Thread.sleep(1);
-              //System.out.println("s");
-            }
-          } else {
-            Thread.sleep(100);
-          }
+
           
           controller.report(name, Status.OK);
           break;
@@ -55,17 +50,14 @@ public class Minion {
              
       Thread.sleep(1000);
       
-      controller.goodbye(name);
+    //  controller.goodbye(name);
       
-  //    server.stop();
-      
-     // Thread.sleep(Long.MAX_VALUE);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     } 
     
-    System.out.println("bye bye");
+    System.out.println("bye bye " + name);
   }
 
   private static ControllerCommandsMXBean connectToController(int controllerPort) {

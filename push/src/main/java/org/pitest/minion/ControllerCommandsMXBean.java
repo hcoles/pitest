@@ -9,7 +9,7 @@ public interface ControllerCommandsMXBean {
   
   Command pull(String name);
   
-  void goodbye(String name);
+ // void goodbye(String name);
 
   void report(String name, Status status);
 
