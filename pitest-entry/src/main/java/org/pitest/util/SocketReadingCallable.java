@@ -25,31 +25,24 @@ class SocketReadingCallable implements Callable<ExitCode> {
 
   @Override
   public ExitCode call() throws Exception {
-    final Socket clientSocket = this.socket.accept();
-    ExitCode exitCode = ExitCode.UNKNOWN_ERROR;
-    try {
-      final BufferedInputStream bif = new BufferedInputStream(
-          clientSocket.getInputStream());
+    try (Socket clientSocket = this.socket.accept()) {
+      try (BufferedInputStream bif = new BufferedInputStream(
+          clientSocket.getInputStream())) {
 
-      sendDataToMinion(clientSocket);
+        sendDataToMinion(clientSocket);
 
-      final SafeDataInputStream is = new SafeDataInputStream(bif);
-      exitCode = receiveResults(is);
-
-      bif.close();
-
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
+        final SafeDataInputStream is = new SafeDataInputStream(bif);
+        return receiveResults(is);
+      } catch (final IOException e) {
+        throw Unchecked.translateCheckedException(e);
+      }
     } finally {
       try {
-        clientSocket.close();
         this.socket.close();
       } catch (final IOException e) {
         throw Unchecked.translateCheckedException(e);
       }
     }
-
-    return exitCode;
   }
 
   private void sendDataToMinion(final Socket clientSocket) throws IOException {
