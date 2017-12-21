@@ -7,9 +7,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.3.1-SNAPSHOT
+### 1.3.2-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.3.1
+
+* #434 - XStream security warning
 
 ### 1.3.0
 
