@@ -133,7 +133,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldNotMutateMethodsMatchingExclusionPredicate() {
     this.data.setTargetClasses(predicateFor("com.example.HasExcludedMethods*"));
-    this.data.setExcludedMethods(predicateFor("excludeMe"));
+    this.data.setExcludedMethods(Arrays.asList("excludeMe"));
     createAndRun();
     verifyResults();
   }

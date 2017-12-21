@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,6 @@ import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
@@ -203,13 +203,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>bar*</param>" + //
         "                      <param>car</param>" + //
         "                  </excludedMethods>";
-    final ReportOptions actual = parseConfig(xml);
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+    final ReportOptions options = parseConfig(xml);
+    final Collection<String> actual = options.getExcludedMethods();
+    assertThat(actual).containsExactlyInAnyOrder("foo*", "bar*", "car");
   }
 
   public void testParsesVerboseFlag() {

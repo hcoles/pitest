@@ -70,7 +70,7 @@ public class ReportOptions {
           "org.apache.commons.logging");
 
   private Collection<Predicate<String>>  targetClasses;
-  private Collection<Predicate<String>>  excludedMethods                = Collections
+  private Collection<String>             excludedMethods                = Collections
       .emptyList();
 
   private Collection<Predicate<String>>  excludedClasses                = Collections
@@ -330,12 +330,12 @@ public class ReportOptions {
     this.loggingClasses = loggingClasses;
   }
 
-  public Collection<Predicate<String>> getExcludedMethods() {
+  public Collection<String> getExcludedMethods() {
     return this.excludedMethods;
   }
 
   public void setExcludedMethods(
-      final Collection<Predicate<String>> excludedMethods) {
+      final Collection<String> excludedMethods) {
     this.excludedMethods = excludedMethods;
   }
 

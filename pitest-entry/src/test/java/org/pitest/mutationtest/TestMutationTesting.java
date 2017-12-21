@@ -48,7 +48,6 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
@@ -365,7 +364,7 @@ public class TestMutationTesting {
         ClassInfo.toClassName());
 
     final MutationEngine engine = new GregorEngineFactory()
-    .createEngineWithMutators(False.<String> instance(), mutators);
+    .createEngineWithMutators(Collections.<String>emptyList(), mutators);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         launchOptions);

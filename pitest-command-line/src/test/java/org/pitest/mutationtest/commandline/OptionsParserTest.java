@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -247,12 +246,9 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
         "foo*,bar*,car");
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+    final Collection<String> actualPredicate = actual
+        .getExcludedMethods();
+    assertThat(actualPredicate).containsExactlyInAnyOrder("foo*", "bar*", "car");
   }
 
   @Test

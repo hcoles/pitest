@@ -381,8 +381,7 @@ public class OptionsParser {
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
-    data.setExcludedMethods(FCollection.map(
-        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
     data.setExcludedClasses(FCollection.map(
         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setExcludedTestClasses(FCollection.map(
