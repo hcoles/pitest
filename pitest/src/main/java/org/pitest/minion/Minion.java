@@ -27,6 +27,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.False;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.minion.commands.Command;
+import org.pitest.minion.commands.MinionConfig;
 import org.pitest.minion.commands.MutId;
 import org.pitest.minion.commands.Status;
 import org.pitest.minion.commands.Test;
@@ -48,6 +49,7 @@ import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Configuration;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
@@ -69,9 +71,11 @@ public class Minion {
 
   public static void main(String[] args) {
     int controllerPort = Integer.parseInt(args[0]);
+    
     String name = args[1];
-    String testPluginName = args[2];
-    String engineName = args[3];
+       
+    ControllerCommandsMXBean controller = connectToController(controllerPort);
+    MinionConfig config = controller.hello(name);
     
     enablePowerMockSupport();
     
@@ -82,12 +86,17 @@ public class Minion {
         IsolationUtils.getContextClassLoader()), CACHE_SIZE);
     
     
-    MutationEngineFactory ef = settings.createEngine(engineName);
+    MutationEngineFactory ef = settings.createEngine(config.getEngineName());
     MutationEngine engine = ef.createEngine(False.<String>instance(), null);
     Mutater mutator = engine.createMutator(byteSource);
     
-    Configuration testPlugin = settings.getTestFrameworkPlugin(TestPluginArguments.defaults().withTestPlugin(testPluginName), byteSource);
-    ControllerCommandsMXBean controller = connectToController(controllerPort);
+    
+    
+    TestGroupConfig groupconfig = new TestGroupConfig()
+        .withExcludedGroups(config.getExcludedGroups())
+        .withIncludedGroups(config.getIncludedGroups());
+    TestPluginArguments testConfig = new TestPluginArguments(config.getTestPluginName(), groupconfig, Arrays.asList(config.getExcludedRunners()));
+    Configuration testPlugin = settings.getTestFrameworkPlugin(testConfig, byteSource);    
     final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(byteSource);
     TestSource tests = new TestSource(testPlugin);
     
@@ -137,7 +146,7 @@ class MinionWorker {
   ClassLoader loader = IsolationUtils.getContextClassLoader();
   
 
-  public MinionWorker(String name, F3<ClassName, ClassLoader, byte[], Boolean> hotswap, Mutater engine, TestSource testPlugin, ControllerCommandsMXBean controller) {
+  MinionWorker(String name, F3<ClassName, ClassLoader, byte[], Boolean> hotswap, Mutater engine, TestSource testPlugin, ControllerCommandsMXBean controller) {
     this.name = name;
     this.engine = engine;
     this.testPlugin = testPlugin;
@@ -150,8 +159,6 @@ class MinionWorker {
       
       System.out.println("Waiting...");
       
-      controller.hello(name);
-
       boolean run = true;
       while (run) {
         System.out.println(name + " is polling");

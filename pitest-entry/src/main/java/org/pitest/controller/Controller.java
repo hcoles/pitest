@@ -6,6 +6,7 @@ import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.pitest.minion.commands.MinionConfig;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.process.LaunchOptions;
@@ -31,20 +33,23 @@ public class Controller {
   private final File                  baseDir;
   private final TestPluginArguments   pitConfig;
   private final String                mutationEngine;
+  private final List<String>          excludedMethods;
+  private final List<String>          mutators;
   private final boolean               verbose;
   private final LaunchOptions         config;
-
-  
   
   
   public Controller(String classPath, File baseDir,
-      TestPluginArguments pitConfig, String mutationEngine, boolean verbose,
+      TestPluginArguments pitConfig, String mutationEngine,
+      List<String> excludedMethods, List<String> mutators, boolean verbose,
       LaunchOptions config) {
     super();
     this.classPath = classPath;
     this.baseDir = baseDir;
     this.pitConfig = pitConfig;
     this.mutationEngine = mutationEngine;
+    this.mutators = mutators;
+    this.excludedMethods = excludedMethods;
     this.verbose = verbose;
     this.config = config;
   }
@@ -56,13 +61,24 @@ public class Controller {
       // but we only do this once
       int myPort = findPort();
       System.out.println("Controller on " + myPort);
+      
+      MinionConfig minionConf = new MinionConfig(pitConfig.getTestPlugin(), 
+          mutationEngine, 
+          pitConfig.getGroupConfig().getExcludedGroups().toArray(new String[0]), 
+          pitConfig.getGroupConfig().getIncludedGroups().toArray(new String[0]),
+          pitConfig.getExcludedRunners().toArray(new String[0]),
+          mutators.toArray(new String[0]),
+          excludedMethods.toArray(new String[0])
+          );
+      
+      
       JMXConnectorServer server = createJmxConnectorServer(myPort);
       server.start();
       
       
       WorkScheduler workScheduler =  new DeafultWorkScheduler(mutations, listener);
-      MinionPool pool = new MinionPool(2, new MinionFactory(myPort, classPath, baseDir, pitConfig, mutationEngine, verbose, config), workScheduler);
-      registerMXBean(pool);
+      MinionPool pool = new MinionPool(2, new MinionFactory(myPort, classPath, baseDir, verbose, config), workScheduler);
+      registerMXBean(pool, minionConf);
 
       
       pool.start();
@@ -105,7 +121,7 @@ public class Controller {
     return JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbs);
   }
   
-  private static void registerMXBean(MinionPool pool)
+  private static void registerMXBean(MinionPool pool, MinionConfig minionConf)
       throws MalformedObjectNameException, InstanceAlreadyExistsException,
       MBeanRegistrationException, NotCompliantMBeanException {
     MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -113,7 +129,7 @@ public class Controller {
     ObjectName mxbeanName = new ObjectName(
         "org.pitest.minion:type=ControllerCommands");
 
-    ControllerCommands mxbean = new ControllerCommands(pool);
+    ControllerCommands mxbean = new ControllerCommands(pool, minionConf);
 
     mbs.registerMBean(mxbean, mxbeanName);
   }

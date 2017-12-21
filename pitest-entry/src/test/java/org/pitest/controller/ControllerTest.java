@@ -1,10 +1,10 @@
 package org.pitest.controller;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
@@ -48,8 +48,10 @@ public class ControllerTest {
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     LaunchOptions launch = new LaunchOptions(agent);
     
+    List<String> excludedMethods = Collections.emptyList();
+    List<String> mutators = Collections.singletonList("STRONGER");
     
-    new Controller(cp.getLocalClassPath(), baseDir, tp, "gregor", true, launch).process(toDo, sysOutListener());
+    new Controller(cp.getLocalClassPath(), baseDir, tp, "gregor", excludedMethods, mutators, true, launch).process(toDo, sysOutListener());
   }
   
   private static ResultListener sysOutListener() {

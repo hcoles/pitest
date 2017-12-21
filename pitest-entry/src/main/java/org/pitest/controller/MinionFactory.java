@@ -16,7 +16,6 @@ import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.minion.Minion;
-import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
@@ -29,8 +28,6 @@ public class MinionFactory {
   private final int controllerPort;
   private final String                classPath;
   private final File                  baseDir;
-  private final TestPluginArguments   pitConfig;
-  private final String                mutationEngine;
   private final boolean               verbose;
   private final LaunchOptions         config;
   
@@ -41,15 +38,11 @@ public class MinionFactory {
   public MinionFactory(int controllerPort, 
       String classPath, 
       File baseDir,
-      TestPluginArguments pitConfig,
-      String mutationEngine,
       boolean verbose, 
       LaunchOptions config) {
     this.controllerPort = controllerPort;
     this.classPath = classPath;
     this.baseDir = baseDir;
-    this.pitConfig = pitConfig;
-    this.mutationEngine = mutationEngine;
     this.verbose = verbose;
     this.config = config;
   }
@@ -65,7 +58,7 @@ public class MinionFactory {
         
     // TODO configure the test plugin
     
-    List<String> programArgs = Arrays.asList("" + controllerPort, name, pitConfig.getTestPlugin(), mutationEngine);
+    List<String> programArgs = Arrays.asList("" + controllerPort, name);
     
     ProcessBuilder processBuilder = createProcessBuilder(
         args.getJavaExecutable(), args.getJvmArgs(),
