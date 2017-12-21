@@ -36,6 +36,10 @@ public final class TestInfo {
     this.blocks = blocksCovered;
   }
 
+  public String getDefiningClass() {
+    return definingClass;
+  }
+  
   public String getName() {
     return this.name;
   }

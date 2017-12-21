@@ -6,14 +6,14 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F3;
 import org.pitest.util.Unchecked;
 
-class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
+public class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
 
   private final ClassByteArraySource byteSource;
   private byte[]                     lastClassPreMutation;
   private ClassName                  lastMutatedClass;
   private ClassLoader                lastUsedLoader;
 
-  HotSwap(final ClassByteArraySource byteSource) {
+  public HotSwap(final ClassByteArraySource byteSource) {
     this.byteSource = byteSource;
   }
 

@@ -6,10 +6,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.pitest.coverage.TestInfo;
 import org.pitest.minion.commands.Action;
 import org.pitest.minion.commands.Command;
 import org.pitest.minion.commands.MutId;
 import org.pitest.minion.commands.Status;
+import org.pitest.minion.commands.Test;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -56,7 +58,7 @@ public class DeafultWorkScheduler implements WorkScheduler {
     WorkItem wi = current.get(worker);
     switch (c.getAction()) {
     case ANALYSE:
-      if (result != Status.OK || !wi.testsRemain()) {
+      if (result != Status.TEST_FAILED || !wi.testsRemain()) {
         current.remove(worker);
         reportResult(result, wi, c);
       }
@@ -75,7 +77,6 @@ public class DeafultWorkScheduler implements WorkScheduler {
 
     }
 
-
   }
   
 
@@ -86,7 +87,7 @@ public class DeafultWorkScheduler implements WorkScheduler {
   }
 
   private void reportResult(Status result, WorkItem wi, Command c) {
-    MutationStatusTestPair status = new MutationStatusTestPair(wi.test + 1, toMutationStatus(result), c.getTest());
+    MutationStatusTestPair status = new MutationStatusTestPair(wi.test + 1, toMutationStatus(result), c.getTest().getName());
     MutationResult r = new MutationResult(wi.id, status);
     listener.report(r);
   }
@@ -98,9 +99,9 @@ public class DeafultWorkScheduler implements WorkScheduler {
     return DetectionStatus.MEMORY_ERROR;
     case TIMED_OUT :
       return DetectionStatus.TIMED_OUT;
-    case OK :
+    case TEST_PASSED :
       return DetectionStatus.SURVIVED;
-    case NO_OK :
+    case TEST_FAILED :
       return DetectionStatus.KILLED;
     default :
       throw new IllegalStateException();  
@@ -112,8 +113,9 @@ public class DeafultWorkScheduler implements WorkScheduler {
     MutationDetails id;
     int test;
     
-    String nextTest() {
-      String nextTest = id.getTestsInOrder().get(test).getName();
+    Test nextTest() {
+      TestInfo ti = id.getTestsInOrder().get(test);
+      Test nextTest = new Test(ti.getDefiningClass(), ti.getName());
       test = test + 1;
       return nextTest;
     }

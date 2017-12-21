@@ -147,7 +147,6 @@ public class MutationTestMinion {
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }
 
-  @SuppressWarnings("unchecked")
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude

@@ -49,7 +49,7 @@ public class MutationTestBuilder {
     this.grouper = grouper;
   }
 
-  public List<MutationAnalysisUnit> createMutationTestUnits(
+  public List<MutationDetails> createMutationTestUnits(
       final Collection<ClassName> codeClasses) {
     final List<MutationAnalysisUnit> tus = new ArrayList<>();
 

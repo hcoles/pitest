@@ -71,6 +71,8 @@ public class EntryPoint {
       Log.getLogger().info("---------------------------------------------------------------------------");      
     }
     
+      
+    
     selectTestPlugin(data);
     
     final ClassPath cp = data.getClassPath();
@@ -123,6 +125,7 @@ public class EntryPoint {
     }
 
   }
+
 
   private void selectTestPlugin(ReportOptions data) {
     if (data.getTestPlugin() == null || data.getTestPlugin().equals("")) {

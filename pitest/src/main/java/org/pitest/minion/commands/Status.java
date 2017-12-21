@@ -1,5 +1,5 @@
 package org.pitest.minion.commands;
 
 public enum Status {
-  OK, NO_OK, MEMORY_ERROR, TIMED_OUT
+  TEST_PASSED, TEST_FAILED, MEMORY_ERROR, TIMED_OUT, ACK
 }

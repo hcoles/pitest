@@ -1,10 +1,10 @@
 package org.pitest.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,20 +20,36 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.coverage.TestInfo;
-import org.pitest.functional.Option;
-import org.pitest.functional.predicate.False;
-import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
+import org.pitest.process.LaunchOptions;
 import org.pitest.util.Unchecked;
 
 public class Controller {
-  public static void main(String[] args) {
+
+  private final String                classPath;
+  private final File                  baseDir;
+  private final TestPluginArguments   pitConfig;
+  private final String                mutationEngine;
+  private final boolean               verbose;
+  private final LaunchOptions         config;
+
+  
+  
+  
+  public Controller(String classPath, File baseDir,
+      TestPluginArguments pitConfig, String mutationEngine, boolean verbose,
+      LaunchOptions config) {
+    super();
+    this.classPath = classPath;
+    this.baseDir = baseDir;
+    this.pitConfig = pitConfig;
+    this.mutationEngine = mutationEngine;
+    this.verbose = verbose;
+    this.config = config;
+  }
+
+  public void process(Collection<MutationDetails> mutations, ResultListener listener) {
 
     try {
       // slight chance another process will steal the port before we use it
@@ -44,20 +60,8 @@ public class Controller {
       server.start();
       
       
-      GregorEngineFactory eng = new GregorEngineFactory();
-      MutationEngine engine = eng.createEngine(False.<String>instance(), null);
-      
-      Mutater m = engine.createMutator(ClassloaderByteArraySource.fromContext());
-      
-      Collection<MutationDetails> toDo = m.findMutations(ClassName.fromClass(Controller.class));
-      TestInfo one = new TestInfo("one", "m", 1, Option.<ClassName>none(), 2);
-      TestInfo two = new TestInfo("two", "m", 1, Option.<ClassName>none(), 2);      
-      for (MutationDetails i : toDo ) {
-        i.addTestsInOrder(Arrays.asList(one,two));
-      }
-      
-      WorkScheduler workScheduler =  new DeafultWorkScheduler(toDo, sysOutListener());
-      MinionPool pool = new MinionPool(2, new MinionFactory(myPort), workScheduler);
+      WorkScheduler workScheduler =  new DeafultWorkScheduler(mutations, listener);
+      MinionPool pool = new MinionPool(2, new MinionFactory(myPort, classPath, baseDir, pitConfig, mutationEngine, verbose, config), workScheduler);
       registerMXBean(pool);
 
       
@@ -73,25 +77,15 @@ public class Controller {
       
       scheduler.shutdownNow();
 
-
       server.stop();
-
-    } catch (IOException | MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
+      
+      
+    } catch (Exception e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
+  
 
-  private static ResultListener sysOutListener() {
-    return new ResultListener() {
-
-      @Override
-      public void report(MutationResult r) {
-       System.out.println(r);
-        
-      }
-      
-    };
-  }
 
   private static Runnable runPerge(final MinionPool pool) {
     return new Runnable() {
@@ -99,7 +93,6 @@ public class Controller {
       public void run() {
         pool.pergeZombies();
       }
-      
     };
   }
 
