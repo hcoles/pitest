@@ -101,8 +101,8 @@ public class MojoToReportOptionsConverter {
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
 
-    data.setExcludedMethods(globStringsToPredicates(this.mojo
-        .getExcludedMethods()));
+    data.setExcludedMethods(this.mojo
+        .getExcludedMethods());
     data.setExcludedClasses(globStringsToPredicates(this.mojo
         .getExcludedClasses()));
     data.setExcludedTestClasses(globStringsToPredicates(this.mojo

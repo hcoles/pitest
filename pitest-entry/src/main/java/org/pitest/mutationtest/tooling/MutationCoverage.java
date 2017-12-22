@@ -38,7 +38,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -122,7 +121,7 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     final MutationEngine engine = this.strategies.factory().createEngine(
-        Prelude.or(this.data.getExcludedMethods()),
+        this.data.getExcludedMethods(),
         this.data.getMutators());
 
     final MutationResultListener config = new CompoundTestListener(createConfig(t0, coverageData,

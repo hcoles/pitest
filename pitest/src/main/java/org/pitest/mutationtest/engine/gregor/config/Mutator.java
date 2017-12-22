@@ -126,7 +126,7 @@ public final class Mutator {
 
     /**
      * Removes conditional statements so that guarded statements always execute
-     * The EQUAL version ignores LT,LE,GT,GE, which is the default behavior,
+     * The EQUAL version ignores LT,LE,GT,GE, which is the default behaviour,
      * ORDER version mutates only those.
      */
 
@@ -145,6 +145,7 @@ public final class Mutator {
     add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
     add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
     add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
+    addGroup("RETURNS", betterReturns());
     
     /**
      * Experimental mutator that removed assignments to member variables.
@@ -174,6 +175,7 @@ public final class Mutator {
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
     addGroup("ALL", all());
+    addGroup("NEW_DEFAULTS", newDefaults());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -205,6 +207,27 @@ public final class Mutator {
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
+  }
+  
+  /**
+   * Proposed new defaults - replaced the RETURN_VALS mutator with the new more stable set
+   */
+  public static Collection<MethodMutatorFactory> newDefaults() {
+    return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
+        MathMutator.MATH_MUTATOR,
+        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+  }
+  
+  
+  public static Collection<MethodMutatorFactory> betterReturns() {
+    return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
+        BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
+        PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
+        EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
+        NullReturnValsMutator.NULL_RETURN_VALUES);
   }
 
   private static Collection<MethodMutatorFactory> group(

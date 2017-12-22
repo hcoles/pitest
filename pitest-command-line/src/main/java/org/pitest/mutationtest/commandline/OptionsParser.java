@@ -381,8 +381,7 @@ public class OptionsParser {
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
-    data.setExcludedMethods(FCollection.map(
-        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
     data.setExcludedClasses(FCollection.map(
         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setExcludedTestClasses(FCollection.map(
@@ -429,9 +428,7 @@ public class OptionsParser {
           ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
     }
     if (userArgs.has(this.classPathFile)) {
-      BufferedReader classPathFileBR = null;
-      try {
-        classPathFileBR = new BufferedReader(new FileReader(userArgs.valueOf(this.classPathFile).getAbsoluteFile()));
+      try (BufferedReader classPathFileBR = new BufferedReader(new FileReader(userArgs.valueOf(this.classPathFile).getAbsoluteFile()))) {
         String element;
         while ((element = classPathFileBR.readLine()) != null) {
           elements.add(element);
@@ -439,15 +436,6 @@ public class OptionsParser {
       } catch (IOException ioe) {
         LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - "
                 + ioe.getMessage());
-      } finally {
-        try {
-          if (classPathFileBR != null) {
-            classPathFileBR.close();
-          }
-        } catch (IOException ex) {
-          LOG.warning("Error while closing the class path file's buffered reader:" + userArgs.valueOf(this.classPathFile)
-                  .getAbsolutePath() + " - " + ex.getMessage());
-        }
       }
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));

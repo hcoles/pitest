@@ -15,7 +15,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
 import org.pitest.mutationtest.config.PluginServices;
@@ -245,7 +244,7 @@ public class MutationDiscoveryTest {
         .createInterceptor(data, source);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
-        Prelude.or(data.getExcludedMethods()), data.getMutators());
+       data.getExcludedMethods(), data.getMutators());
     
     final MutationConfig config = new MutationConfig(engine, null);
 
