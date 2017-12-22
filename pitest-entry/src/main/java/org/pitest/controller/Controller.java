@@ -6,7 +6,6 @@ import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +23,7 @@ import javax.management.remote.JMXServiceURL;
 import org.pitest.minion.commands.MinionConfig;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.execute.MutationEngineArguments;
 import org.pitest.process.LaunchOptions;
 import org.pitest.util.Unchecked;
 
@@ -32,26 +32,22 @@ public class Controller {
   private final String                classPath;
   private final File                  baseDir;
   private final TestPluginArguments   pitConfig;
-  private final String                mutationEngine;
-  private final List<String>          excludedMethods;
-  private final List<String>          mutators;
+  private final MutationEngineArguments  mutationEngine;
   private final boolean               verbose;
   private final LaunchOptions         config;
+  private final int threads;
   
   
-  public Controller(String classPath, File baseDir,
-      TestPluginArguments pitConfig, String mutationEngine,
-      List<String> excludedMethods, List<String> mutators, boolean verbose,
+  public Controller(int threads, String classPath, File baseDir,
+      TestPluginArguments pitConfig, MutationEngineArguments mutationEngine, boolean verbose,
       LaunchOptions config) {
-    super();
     this.classPath = classPath;
     this.baseDir = baseDir;
     this.pitConfig = pitConfig;
     this.mutationEngine = mutationEngine;
-    this.mutators = mutators;
-    this.excludedMethods = excludedMethods;
     this.verbose = verbose;
     this.config = config;
+    this.threads = threads;
   }
 
   public void process(Collection<MutationDetails> mutations, ResultListener listener) {
@@ -63,12 +59,12 @@ public class Controller {
       System.out.println("Controller on " + myPort);
       
       MinionConfig minionConf = new MinionConfig(pitConfig.getTestPlugin(), 
-          mutationEngine, 
+          mutationEngine.getMutationEngine(), 
           pitConfig.getGroupConfig().getExcludedGroups().toArray(new String[0]), 
           pitConfig.getGroupConfig().getIncludedGroups().toArray(new String[0]),
           pitConfig.getExcludedRunners().toArray(new String[0]),
-          mutators.toArray(new String[0]),
-          excludedMethods.toArray(new String[0])
+          mutationEngine.mutatorsArray(),
+          mutationEngine.excludedMethodsArray()
           );
       
       
@@ -77,7 +73,7 @@ public class Controller {
       
       
       WorkScheduler workScheduler =  new DeafultWorkScheduler(mutations, listener);
-      MinionPool pool = new MinionPool(2, new MinionFactory(myPort, classPath, baseDir, verbose, config), workScheduler);
+      MinionPool pool = new MinionPool(threads, new MinionFactory(myPort, classPath, baseDir, verbose, config), workScheduler);
       registerMXBean(pool, minionConf);
 
       

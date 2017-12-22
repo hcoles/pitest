@@ -1,97 +1,127 @@
 package org.pitest.mutationtest.execute;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.pitest.controller.Controller;
+import org.pitest.controller.ResultListener;
+import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.ClassMutationResults;
-import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationAnalyser;
+import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.build.MutationAnalysisUnit;
+import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.process.LaunchOptions;
 import org.pitest.util.Log;
-import org.pitest.util.Unchecked;
 
 public class MutationAnalysisExecutor {
 
   private static final Logger                LOG = Log.getLogger();
 
-  private final List<MutationResultListener> listeners;
-  private final ThreadPoolExecutor           executor;
-
-  public MutationAnalysisExecutor(int numberOfThreads,
-      List<MutationResultListener> listeners) {
-    this.listeners = listeners;
-    this.executor = new ThreadPoolExecutor(numberOfThreads, numberOfThreads,
-        10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-        Executors.defaultThreadFactory());
+  
+  public MutationAnalysisExecutor(
+      MutationAnalyser analyser,
+      int threads, MutationResultListener listener,
+      String classPath, File baseDir, TestPluginArguments pitConfig,
+      MutationEngineArguments mutationArgs, boolean verbose, LaunchOptions config) {
+    this.analyser = analyser;
+    this.listener = listener;
+    this.classPath = classPath;
+    this.baseDir = baseDir;
+    this.pitConfig = pitConfig;
+    this.mutationArgs = mutationArgs;
+    this.verbose = verbose;
+    this.config = config;
+    this.threads = threads;
   }
 
+  private final String                classPath;
+  private final File                  baseDir;
+  private final TestPluginArguments   pitConfig;
+  private final MutationEngineArguments         mutationArgs;
+
+  private final boolean               verbose;
+  private final LaunchOptions         config;
+  private final int threads;
+  
+  private final MutationResultListener listener;
+
+  private MutationAnalyser analyser;
+  
+  
   // entry point for mutation testing
-  public void run(final List<MutationAnalysisUnit> testUnits) {
+  public void run(final List<MutationDetails> mutations) {
 
-    LOG.fine("Running " + testUnits.size() + " units");
+    LOG.fine("Analysing " + mutations.size() + " mutations");
 
-    signalRunStartToAllListeners();
+    listener.runStart();
+    
+    Collection<MutationResult> analysedMutations = analyser.analyse(mutations);
+    
+    final Collection<MutationDetails> needAnalysis = FCollection.filter(
+        analysedMutations, statusNotKnown()).map(resultToDetails());
 
-    List<Future<MutationMetaData>> results = new ArrayList<>(
-        testUnits.size());
+    final List<MutationResult> analysed = FCollection.filter(analysedMutations,
+        Prelude.not(statusNotKnown()));
+    
+    reportReadyAnalysedResults(analysed);
 
-    for (final MutationAnalysisUnit unit : testUnits) {
-      results.add(this.executor.submit(unit));
-    }
+    // What thread are results coming in on?
 
-    this.executor.shutdown();
+    
+    Controller controller = new Controller(threads, classPath, baseDir, pitConfig, mutationArgs, verbose, config);
+    controller.process(needAnalysis, listen());
+    
 
-    try {
-      processResult(results);
-    } catch (InterruptedException e) {
-      throw Unchecked.translateCheckedException(e);
-    } catch (ExecutionException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
-
-    signalRunEndToAllListeners();
+    listener.runEnd();
 
   }
 
-  private void processResult(List<Future<MutationMetaData>> results)
-      throws InterruptedException, ExecutionException {
-    for (Future<MutationMetaData> f : results) {
-      MutationMetaData r = f.get();
-      for (MutationResultListener l : this.listeners) {
-        for (final ClassMutationResults cr : r.toClassResults()) {
-          l.handleMutationResult(cr);
-        }
+
+  private void reportReadyAnalysedResults(final List<MutationResult> analysed) {
+    for (MutationResult each : analysed ) {
+      ClassMutationResults cmr = new ClassMutationResults(Collections.singletonList(each));
+      listener.handleMutationResult(cmr);
+    }
+  }
+  
+  
+  private static F<MutationResult, MutationDetails> resultToDetails() {
+    return new F<MutationResult, MutationDetails>() {
+      @Override
+      public MutationDetails apply(final MutationResult a) {
+        return a.getDetails();
       }
-    }
+    };
   }
 
-  private void signalRunStartToAllListeners() {
-    FCollection.forEach(this.listeners,
-        new SideEffect1<MutationResultListener>() {
-          @Override
-          public void apply(final MutationResultListener a) {
-            a.runStart();
-          }
-        });
+  private static F<MutationResult, Boolean> statusNotKnown() {
+    return new F<MutationResult, Boolean>() {
+      @Override
+      public Boolean apply(final MutationResult a) {
+        return a.getStatus() == DetectionStatus.NOT_STARTED;
+      }
+    };
   }
 
-  private void signalRunEndToAllListeners() {
-    FCollection.forEach(this.listeners,
-        new SideEffect1<MutationResultListener>() {
-          @Override
-          public void apply(final MutationResultListener a) {
-            a.runEnd();
-          }
-        });
+  
+
+  private ResultListener listen() {
+    return new ResultListener() {
+      @Override
+      public void report(MutationResult r) {
+          ClassMutationResults cmr = new ClassMutationResults(Collections.singletonList(r));
+          listener.handleMutationResult(cmr);        
+      }  
+    };
   }
+
 
 }

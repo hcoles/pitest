@@ -19,6 +19,7 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
+import org.pitest.mutationtest.execute.MutationEngineArguments;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 
@@ -50,8 +51,9 @@ public class ControllerTest {
     
     List<String> excludedMethods = Collections.emptyList();
     List<String> mutators = Collections.singletonList("STRONGER");
+    MutationEngineArguments args = new MutationEngineArguments( "gregor", excludedMethods, mutators);
     
-    new Controller(cp.getLocalClassPath(), baseDir, tp, "gregor", excludedMethods, mutators, true, launch).process(toDo, sysOutListener());
+    new Controller(3, cp.getLocalClassPath(), baseDir, tp, args, true, launch).process(toDo, sysOutListener());
   }
   
   private static ResultListener sysOutListener() {

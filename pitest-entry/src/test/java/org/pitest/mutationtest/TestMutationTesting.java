@@ -22,6 +22,7 @@ import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.SystemTest;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.PathFilter;
@@ -52,22 +54,21 @@ import org.pitest.functional.predicate.False;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
-import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.DefaultTestPrioritiser;
-import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
+import org.pitest.mutationtest.execute.MutationEngineArguments;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
@@ -93,10 +94,21 @@ public class TestMutationTesting {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.config = TestPluginArguments.defaults().withTestPlugin(SimpleTestPlugin.NAME);
+        
     this.metaDataExtractor = new MetaDataExtractor();
-    this.mae = new MutationAnalysisExecutor(1,
-        Collections
-            .<MutationResultListener> singletonList(this.metaDataExtractor));
+    
+    ClassPath cp = new ClassPath();
+    File baseDir = new File(".");
+    TestPluginArguments tp = TestPluginArguments.defaults();
+    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
+    LaunchOptions launch = new LaunchOptions(agent);
+    
+    List<String> excludedMethods = Collections.emptyList();
+    List<String> mutators = Collections.singletonList("STRONGER");
+    MutationEngineArguments args = new MutationEngineArguments( "gregor", excludedMethods, mutators);
+    
+    
+   // this.mae = new MutationAnalysisExecutor(new NullAnalyser(), 1, this.metaDataExtractor, cp.getLocalClassPath(), baseDir, tp, args, false, launch);
   }
 
   public static class NoMutations {
@@ -378,19 +390,17 @@ public class TestMutationTesting {
     final MutationSource source = new MutationSource(mutationConfig, new DefaultTestPrioritiser(
             coverageData), bas, emptyIntercpetor);
 
-    final WorkerFactory wf = new WorkerFactory(null,
-        coverageOptions.getPitConfig(), mutationConfig,
-        new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
-            data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
-            .getLocalClassPath());
     
 
-    final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        new NullAnalyser(), source, new DefaultGrouper(0));
+    final MutationTestBuilder builder = new MutationTestBuilder(source);
 
-    final List<MutationAnalysisUnit> tus = builder
+    final List<MutationDetails> tus = builder
         .createMutationTestUnits(codeClasses);
-
+    File baseDir = new File(".");
+    MutationEngineArguments args = null;// new MutationEngineArguments( "gregor", Collections.<String>emptyList(), mutators);
+    
+    this.mae = new MutationAnalysisExecutor(new NullAnalyser(), 1, metaDataExtractor, data.getClassPath().getLocalClassPath(), baseDir, config, null, data.isVerbose(), launchOptions);
+    
     this.mae.run(tus);
   }
 

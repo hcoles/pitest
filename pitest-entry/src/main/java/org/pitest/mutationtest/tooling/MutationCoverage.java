@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,18 +46,17 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.build.MutationAnalysisUnit;
-import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
-import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.TestPrioritiser;
-import org.pitest.mutationtest.build.WorkerFactory;
+import org.pitest.mutationtest.config.CompoundTestListener;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.execute.MutationAnalysisExecutor;  
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
+import org.pitest.mutationtest.execute.MutationEngineArguments;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
@@ -125,19 +125,19 @@ public class MutationCoverage {
         Prelude.or(this.data.getExcludedMethods()),
         this.data.getMutators());
 
-    final List<MutationResultListener> config = createConfig(t0, coverageData,
-        stats, engine);
+    final MutationResultListener config = new CompoundTestListener(createConfig(t0, coverageData,
+        stats, engine));
 
     history().initialize();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
   
-    final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData,
+    final List<MutationDetails> tus = findMutationsAndAssignTests(coverageData,
         engine);
     
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
-    LOG.info("Created  " + tus.size() + " mutation test units");
+    LOG.info("Found  " + tus.size() + " mutations");
     checkMutationsFound(tus);
 
     recordClassPath(coverageData);
@@ -147,8 +147,17 @@ public class MutationCoverage {
     LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB)
         + " mb");
 
-    final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(
-        numberOfThreads(), config);
+    List<String> excludedMethods = Collections.emptyList();
+    
+    final MutationAnalyser analyser = new IncrementalAnalyser(
+        new DefaultCodeHistory(this.code, history()), coverageData);
+    
+    MutationEngineArguments args = new MutationEngineArguments( data.getMutationEngine(), excludedMethods, data.getMutators());
+    
+    
+    final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(analyser,
+        
+        numberOfThreads(), config, code.getClassPath().getLocalClassPath(), baseDir, data.createMinionSettings(), args,  data.isVerbose(), coverage().getLaunchOptions());
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
    
     
@@ -249,8 +258,7 @@ private int numberOfThreads() {
     }
   }
 
-  private List<MutationAnalysisUnit> buildMutationTests(
-      final CoverageDatabase coverageData, final MutationEngine engine) {
+  private List<MutationDetails> findMutationsAndAssignTests(final CoverageDatabase coverageData, final MutationEngine engine) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -267,25 +275,23 @@ private int numberOfThreads() {
     
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
-    final MutationAnalyser analyser = new IncrementalAnalyser(
-        new DefaultCodeHistory(this.code, history()), coverageData);
 
-    final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
-        .getConfiguration(), mutationConfig,
-        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
-            .getClassPath().getLocalClassPath());
-
-    MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
-        this.data.getFreeFormProperties(), this.code,
-        this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser,
-        source, grouper);
+//    final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
+//        .getConfiguration(), mutationConfig,
+//        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
+//            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
+//            .getClassPath().getLocalClassPath());
+//
+//    MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
+//        this.data.getFreeFormProperties(), this.code,
+//        this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
+    
+    final MutationTestBuilder builder = new MutationTestBuilder(source);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
 
-  private void checkMutationsFound(final List<MutationAnalysisUnit> tus) {
+  private void checkMutationsFound(final List<MutationDetails> tus) {
     if (tus.isEmpty()) {
       if (this.data.shouldFailWhenNoMutations()) {
         throw new PitHelpError(Help.NO_MUTATIONS_FOUND);

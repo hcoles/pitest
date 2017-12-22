@@ -14,72 +14,34 @@
  */
 package org.pitest.mutationtest.build;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.TestInfo;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationAnalyser;
-import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MutationTestBuilder {
 
   private final MutationSource   mutationSource;
-  private final MutationAnalyser analyser;
-  private final WorkerFactory    workerFactory;
-  private final MutationGrouper  grouper;
 
-  public MutationTestBuilder(final WorkerFactory workerFactory,
-      final MutationAnalyser analyser, final MutationSource mutationSource,
-      final MutationGrouper grouper) {
+  public MutationTestBuilder(final MutationSource mutationSource) {
 
     this.mutationSource = mutationSource;
-    this.analyser = analyser;
-    this.workerFactory = workerFactory;
-    this.grouper = grouper;
   }
 
-  public List<MutationDetails> createMutationTestUnits(
-      final Collection<ClassName> codeClasses) {
-    final List<MutationAnalysisUnit> tus = new ArrayList<>();
+  public List<MutationDetails> createMutationTestUnits(final Collection<ClassName> codeClasses) {
+   // final List<MutationAnalysisUnit> tus = new ArrayList<>();
 
     final List<MutationDetails> mutations = FCollection.flatMap(codeClasses,
         classToMutations());
 
     Collections.sort(mutations, comparator());
-
-    final Collection<MutationResult> analysedMutations = this.analyser
-        .analyse(mutations);
-
-    final Collection<MutationDetails> needAnalysis = FCollection.filter(
-        analysedMutations, statusNotKnown()).map(resultToDetails());
-
-    final List<MutationResult> analysed = FCollection.filter(analysedMutations,
-        Prelude.not(statusNotKnown()));
-
-    if (!analysed.isEmpty()) {
-      tus.add(makePreAnalysedUnit(analysed));
-    }
-
-    if (!needAnalysis.isEmpty()) {
-      for (final Collection<MutationDetails> ms : this.grouper.groupMutations(
-          codeClasses, needAnalysis)) {
-        tus.add(makeUnanalysedUnit(ms));
-      }
-    }
-
-    Collections.sort(tus, new AnalysisPriorityComparator());
-    return tus;
+    
+    return mutations;
   }
 
   private Comparator<MutationDetails> comparator() {
@@ -103,47 +65,6 @@ public class MutationTestBuilder {
     };
   }
 
-  private MutationAnalysisUnit makePreAnalysedUnit(
-      final List<MutationResult> analysed) {
-    return new KnownStatusMutationTestUnit(analysed);
-  }
 
-  private MutationAnalysisUnit makeUnanalysedUnit(
-      final Collection<MutationDetails> needAnalysis) {
-    final Set<ClassName> uniqueTestClasses = new HashSet<>();
-    FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
-        uniqueTestClasses);
-
-    return new MutationTestUnit(needAnalysis, uniqueTestClasses,
-        this.workerFactory);
-  }
-
-  private static F<MutationResult, MutationDetails> resultToDetails() {
-    return new F<MutationResult, MutationDetails>() {
-      @Override
-      public MutationDetails apply(final MutationResult a) {
-        return a.getDetails();
-      }
-    };
-  }
-
-  private static F<MutationResult, Boolean> statusNotKnown() {
-    return new F<MutationResult, Boolean>() {
-      @Override
-      public Boolean apply(final MutationResult a) {
-        return a.getStatus() == DetectionStatus.NOT_STARTED;
-      }
-    };
-  }
-
-  private static F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return new F<MutationDetails, Iterable<ClassName>>() {
-      @Override
-      public Iterable<ClassName> apply(final MutationDetails a) {
-        return FCollection.map(a.getTestsInOrder(),
-            TestInfo.toDefiningClassName());
-      }
-    };
-  }
 
 }
