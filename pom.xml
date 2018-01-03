@@ -66,6 +66,7 @@
 		<module>pitest-command-line</module>
 		<module>pitest-html-report</module>
 		<module>pitest-maven-verification</module>
+		<module>pitest-aggregator</module>
 	</modules>
 
 	<prerequisites>

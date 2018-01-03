@@ -8,7 +8,7 @@
         <lineNumber>77</lineNumber>
         <mutator>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</mutator>
         <index>61</index>
-        <killingTest>com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.thingworx.analytics.cybertron.timeseries.streaming.SmallScaleOrderedWeightedValueSamplerTest)</killingTest>
+        <killingTest>com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)</killingTest>
         <description>Replaced long multiplication with division</description>
         <block>27</block>
     </mutation>
