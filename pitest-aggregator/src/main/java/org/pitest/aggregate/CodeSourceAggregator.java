@@ -1,8 +1,6 @@
 package org.pitest.aggregate;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,13 +17,8 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.junit.JUnitCompatibleConfiguration;
-import org.pitest.mutationtest.config.CompoundConfiguration;
 import org.pitest.mutationtest.config.DefaultCodePathPredicate;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
-import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.testng.TestNGConfiguration;
 import org.pitest.util.Glob;
 
 class CodeSourceAggregator {
@@ -37,7 +30,7 @@ class CodeSourceAggregator {
   }
 
   public CodeSource createCodeSource() {
-    return new CodeSource(createProjectClassPaths(), createConfiguration().testClassIdentifier());
+    return new CodeSource(createProjectClassPaths());
   }
 
   private ProjectClassPaths createProjectClassPaths() {
@@ -63,14 +56,5 @@ class CodeSourceAggregator {
     }
     return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
   }
-
-  private Configuration createConfiguration() {
-    // TODO is this the best way to create this configuration for test class
-    // identification?
-    final Collection<Configuration> configurations = Arrays.asList(new JUnitCompatibleConfiguration(new TestGroupConfig(), new ArrayList<String>()),
-        new TestNGConfiguration(new TestGroupConfig()));
-    final Configuration config = new CompoundConfiguration(configurations);
-    return config;
-  }
-
+  
 }
