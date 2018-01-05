@@ -1,15 +1,14 @@
 package org.pitest.mutationtest.execute;
 
 import java.util.Collection;
-import java.util.List;
 
 public class MutationEngineArguments {
   private final String mutationEngine;
-  private final List<String> excludedMethods;
+  private final Collection<String> excludedMethods;
   private final Collection<String> mutators;
   
   public MutationEngineArguments(String mutationEngine,
-      List<String> excludedMethods, Collection<String> mutators) {
+      Collection<String> excludedMethods, Collection<String> mutators) {
     this.mutationEngine = mutationEngine;
     this.excludedMethods = excludedMethods;
     this.mutators = mutators;
@@ -19,7 +18,7 @@ public class MutationEngineArguments {
     return mutationEngine;
   }
 
-  public List<String> getExcludedMethods() {
+  public Collection<String> getExcludedMethods() {
     return excludedMethods;
   }
 

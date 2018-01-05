@@ -65,6 +65,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void excludeTests() {
     this.data.setExcludedClasses(predicateFor("*Test"));
     this.data.setTestPlugin("junit");
+    setMutators("DEFAULTS");
   }
 
   @Test

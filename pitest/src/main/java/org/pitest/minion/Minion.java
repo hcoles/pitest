@@ -1,5 +1,6 @@
 package org.pitest.minion;
 
+import static java.util.Arrays.asList;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.False;
+import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.minion.commands.Command;
 import org.pitest.minion.commands.MinionConfig;
@@ -67,7 +68,7 @@ public class Minion {
   
   // We maintain a small cache to avoid reading byte code off disk more than once
   // Size is arbitrary but assumed to be large enough to cover likely max number of inner classes
-  private static final int CACHE_SIZE = 12;
+  private static final int CACHE_SIZE = 24;
 
   public static void main(String[] args) {
     int controllerPort = Integer.parseInt(args[0]);
@@ -87,7 +88,7 @@ public class Minion {
     
     
     MutationEngineFactory ef = settings.createEngine(config.getEngineName());
-    MutationEngine engine = ef.createEngine(False.<String>instance(), null);
+    MutationEngine engine = ef.createEngine(asList(config.getExcludedMethods()), asList(config.getMutators()));
     Mutater mutator = engine.createMutator(byteSource);
     
     
@@ -106,6 +107,7 @@ public class Minion {
         
     System.out.println("bye bye " + name);
   }
+
 
   private static ControllerCommandsMXBean connectToController(int controllerPort) {
     JMXServiceURL url;
@@ -198,10 +200,17 @@ class MinionWorker {
     
     Test test = work.getTest();          
     Class<?> clazz = Class.forName(test.getClazz());
-    TestUnit t = testPlugin.test(clazz, test.getName());
-    MutationStatusTestPair result = doTestsDetectMutation(createNewContainer(),Collections.singletonList(t));
-    Status s = resultToStatus(result);
-    
+    Option<TestUnit> t = testPlugin.test(clazz, test.getName());
+    final Status s;
+    if (t.hasSome()) {
+      MutationStatusTestPair result = doTestsDetectMutation(createNewContainer(),Collections.singletonList(t.value()));
+      s = resultToStatus(result);
+    } else {
+      // mutation prevented construction of the test which counts as failure
+      // unfortunately programming errors in pitest could also get us into this situation
+      s = Status.TEST_FAILED;
+    }
+
     controller.report(name, s);
   }
   
@@ -277,12 +286,12 @@ class TestSource {
     finder = new FindTestUnits(config);
   }
   
-  TestUnit test(Class<?> clazz, String name) {
+  Option<TestUnit> test(Class<?> clazz, String name) {
     // FIXME - hugely inefficient
     Iterable<Class<?>> search = Arrays.<Class<?>>asList(clazz);
     List<TestUnit> allTests = finder.findTestUnitsForAllSuppliedClasses(search);
     System.out.println(allTests.size());
-    return FCollection.findFirst(allTests, named(name)).value();
+    return FCollection.findFirst(allTests, named(name));
   }
 
   private F<TestUnit, Boolean> named(final String name) {

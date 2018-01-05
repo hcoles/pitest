@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,9 +44,11 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.config.CompoundTestListener;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -79,8 +80,11 @@ public class MutationCoverage {
   private final SettingsFactory    settings;
 
   public MutationCoverage(final MutationStrategies strategies,
-      final File baseDir, final CodeSource code, final ReportOptions data,
-      final SettingsFactory settings, final Timings timings) {
+      final File baseDir, 
+      final CodeSource code, 
+      final ReportOptions data,
+      final SettingsFactory settings, 
+      final Timings timings) {
     this.strategies = strategies;
     this.data = data;
     this.settings = settings;
@@ -146,22 +150,28 @@ public class MutationCoverage {
     LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB)
         + " mb");
 
-    List<String> excludedMethods = Collections.emptyList();
     
     final MutationAnalyser analyser = new IncrementalAnalyser(
         new DefaultCodeHistory(this.code, history()), coverageData);
     
-    MutationEngineArguments args = new MutationEngineArguments( data.getMutationEngine(), excludedMethods, data.getMutators());
+    MutationEngineArguments args = new MutationEngineArguments(data.getMutationEngine(), data.getExcludedMethods(), data.getMutators());
     
     
-    final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(analyser,
-        
-        numberOfThreads(), config, code.getClassPath().getLocalClassPath(), baseDir, data.createMinionSettings(), args,  data.isVerbose(), coverage().getLaunchOptions());
+    TimeoutLengthStrategy timeout = new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(), data.getTimeoutConstant());
+    final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(analyser,       
+        numberOfThreads(), 
+        config, 
+        code.getClassPath().getLocalClassPath(), 
+        baseDir, 
+        data.createMinionSettings(), 
+        args, 
+        data.isVerbose(), 
+        coverage().getLaunchOptions(), 
+        timeout);
+  
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
-   
     
     mae.run(tus);
-    
     
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
 
@@ -273,18 +283,7 @@ private int numberOfThreads() {
         .createInterceptor(this.data, bas);
     
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
-
-
-//    final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
-//        .getConfiguration(), mutationConfig,
-//        new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-//            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
-//            .getClassPath().getLocalClassPath());
-//
-//    MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
-//        this.data.getFreeFormProperties(), this.code,
-//        this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
-    
+   
     final MutationTestBuilder builder = new MutationTestBuilder(source);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());

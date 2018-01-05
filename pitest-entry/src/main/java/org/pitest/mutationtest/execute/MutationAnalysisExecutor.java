@@ -16,6 +16,8 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.process.LaunchOptions;
@@ -24,23 +26,6 @@ import org.pitest.util.Log;
 public class MutationAnalysisExecutor {
 
   private static final Logger                LOG = Log.getLogger();
-
-  
-  public MutationAnalysisExecutor(
-      MutationAnalyser analyser,
-      int threads, MutationResultListener listener,
-      String classPath, File baseDir, TestPluginArguments pitConfig,
-      MutationEngineArguments mutationArgs, boolean verbose, LaunchOptions config) {
-    this.analyser = analyser;
-    this.listener = listener;
-    this.classPath = classPath;
-    this.baseDir = baseDir;
-    this.pitConfig = pitConfig;
-    this.mutationArgs = mutationArgs;
-    this.verbose = verbose;
-    this.config = config;
-    this.threads = threads;
-  }
 
   private final String                classPath;
   private final File                  baseDir;
@@ -53,8 +38,28 @@ public class MutationAnalysisExecutor {
   
   private final MutationResultListener listener;
 
-  private MutationAnalyser analyser;
+  private final MutationAnalyser analyser;
+  private final TimeoutLengthStrategy timeout;
   
+  
+  public MutationAnalysisExecutor(
+      MutationAnalyser analyser,
+      int threads, MutationResultListener listener,
+      String classPath, File baseDir, TestPluginArguments pitConfig,
+      MutationEngineArguments mutationArgs, boolean verbose, LaunchOptions config, TimeoutLengthStrategy timeout) {
+    this.analyser = analyser;
+    this.listener = listener;
+    this.classPath = classPath;
+    this.baseDir = baseDir;
+    this.pitConfig = pitConfig;
+    this.mutationArgs = mutationArgs;
+    this.verbose = verbose;
+    this.config = config;
+    this.threads = threads;
+    this.timeout = timeout;
+  }
+
+
   
   // entry point for mutation testing
   public void run(final List<MutationDetails> mutations) {
@@ -63,7 +68,7 @@ public class MutationAnalysisExecutor {
 
     listener.runStart();
     
-    Collection<MutationResult> analysedMutations = analyser.analyse(mutations);
+    Collection<MutationResult> analysedMutations = FCollection.map(analyser.analyse(mutations), uncovered());
     
     final Collection<MutationDetails> needAnalysis = FCollection.filter(
         analysedMutations, statusNotKnown()).map(resultToDetails());
@@ -74,14 +79,28 @@ public class MutationAnalysisExecutor {
     reportReadyAnalysedResults(analysed);
 
     // What thread are results coming in on?
+    // do we need to collect them to the main thread?
 
-    
-    Controller controller = new Controller(threads, classPath, baseDir, pitConfig, mutationArgs, verbose, config);
+    Controller controller = new Controller(threads, classPath, baseDir, pitConfig, mutationArgs, verbose, config, timeout);
     controller.process(needAnalysis, listen());
     
 
     listener.runEnd();
 
+  }
+
+
+  private F<MutationResult, MutationResult> uncovered() {
+    return new F<MutationResult, MutationResult> () {
+      @Override
+      public MutationResult apply(MutationResult a) {
+        if (a.getStatus().equals(DetectionStatus.NOT_STARTED) && a.getDetails().getTestsInOrder().isEmpty()) {
+          return new MutationResult(a.getDetails(), new MutationStatusTestPair(0,DetectionStatus.NO_COVERAGE) );
+        }
+        return a;
+      }
+      
+    };
   }
 
 

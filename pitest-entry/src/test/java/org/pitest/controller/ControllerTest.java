@@ -12,8 +12,8 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.False;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -32,7 +32,7 @@ public class ControllerTest {
   public void test() {
     
     GregorEngineFactory eng = new GregorEngineFactory();
-    MutationEngine engine = eng.createEngine(False.<String>instance(), null);
+    MutationEngine engine = eng.createEngine(Collections.<String>emptyList(), null);
     
     Mutater m = engine.createMutator(ClassloaderByteArraySource.fromContext());
     
@@ -52,8 +52,9 @@ public class ControllerTest {
     List<String> excludedMethods = Collections.emptyList();
     List<String> mutators = Collections.singletonList("STRONGER");
     MutationEngineArguments args = new MutationEngineArguments( "gregor", excludedMethods, mutators);
+    PercentAndConstantTimeoutStrategy to = new PercentAndConstantTimeoutStrategy(20, 1);
     
-    new Controller(3, cp.getLocalClassPath(), baseDir, tp, args, true, launch).process(toDo, sysOutListener());
+    new Controller(3, cp.getLocalClassPath(), baseDir, tp, args, true, launch, to).process(toDo, sysOutListener());
   }
   
   private static ResultListener sysOutListener() {

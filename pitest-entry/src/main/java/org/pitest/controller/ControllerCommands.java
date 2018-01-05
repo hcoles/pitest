@@ -17,18 +17,22 @@ public class ControllerCommands implements ControllerCommandsMXBean {
 
   @Override
   public MinionConfig hello(String name) {
+    System.out.println("hello on thread " + Thread.currentThread());
+    
     pool.join(name);
     return minionConf;
   }
 
   @Override
   public Command pull(String name) {
+    System.out.println("pull on thread " + Thread.currentThread());
     return pool.next(name);
   }
 
 
   @Override
   public void report(String name, Status status) {
+    System.out.println("report on thread " + Thread.currentThread());
     pool.report(name, status);    
   }
 

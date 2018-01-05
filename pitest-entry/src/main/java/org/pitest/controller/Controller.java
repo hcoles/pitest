@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -21,6 +22,7 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.pitest.minion.commands.MinionConfig;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.execute.MutationEngineArguments;
@@ -36,11 +38,12 @@ public class Controller {
   private final boolean               verbose;
   private final LaunchOptions         config;
   private final int threads;
+  private final TimeoutLengthStrategy timeout;
   
   
   public Controller(int threads, String classPath, File baseDir,
       TestPluginArguments pitConfig, MutationEngineArguments mutationEngine, boolean verbose,
-      LaunchOptions config) {
+      LaunchOptions config, TimeoutLengthStrategy timeout) {
     this.classPath = classPath;
     this.baseDir = baseDir;
     this.pitConfig = pitConfig;
@@ -48,6 +51,7 @@ public class Controller {
     this.verbose = verbose;
     this.config = config;
     this.threads = threads;
+    this.timeout = timeout;
   }
 
   public void process(Collection<MutationDetails> mutations, ResultListener listener) {
@@ -57,6 +61,7 @@ public class Controller {
       // but we only do this once
       int myPort = findPort();
       System.out.println("Controller on " + myPort);
+      System.out.println("Controller " + Thread.currentThread());
       
       MinionConfig minionConf = new MinionConfig(pitConfig.getTestPlugin(), 
           mutationEngine.getMutationEngine(), 
@@ -72,8 +77,10 @@ public class Controller {
       server.start();
       
       
-      WorkScheduler workScheduler =  new DeafultWorkScheduler(mutations, listener);
+      WorkScheduler workScheduler =  new DeafultWorkScheduler(mutations, listener, timeout);
       MinionPool pool = new MinionPool(threads, new MinionFactory(myPort, classPath, baseDir, verbose, config), workScheduler);
+     
+      // FIXME this is global
       registerMXBean(pool, minionConf);
 
       
@@ -82,14 +89,18 @@ public class Controller {
       ScheduledExecutorService scheduler =
           Executors.newScheduledThreadPool(1);
       
-      scheduler.scheduleAtFixedRate(runPerge(pool), 0, 2, TimeUnit.SECONDS);
+      scheduler.scheduleAtFixedRate(runPerge(pool), 0, 4, TimeUnit.SECONDS);
       
      
       workScheduler.awaitCompletion(); 
       
+      System.out.println("Stopping");
+      
       scheduler.shutdownNow();
-
       server.stop();
+      unregisterMXBean();
+      
+      System.out.println("done");
       
       
     } catch (Exception e) {
@@ -98,6 +109,12 @@ public class Controller {
   }
   
 
+
+  private void unregisterMXBean() throws MBeanRegistrationException, InstanceNotFoundException {
+    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+    mbs.unregisterMBean(beanName());
+    
+  }
 
   private static Runnable runPerge(final MinionPool pool) {
     return new Runnable() {
@@ -121,13 +138,24 @@ public class Controller {
       throws MalformedObjectNameException, InstanceAlreadyExistsException,
       MBeanRegistrationException, NotCompliantMBeanException {
     MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-
-    ObjectName mxbeanName = new ObjectName(
-        "org.pitest.minion:type=ControllerCommands");
-
+  
+    ObjectName mxbeanName = beanName();
+    
     ControllerCommands mxbean = new ControllerCommands(pool, minionConf);
 
     mbs.registerMBean(mxbean, mxbeanName);
+  }
+  
+
+  
+  private static ObjectName beanName() {
+   try {
+    return new ObjectName(
+          "org.pitest.minion:type=ControllerCommands");
+  } catch (MalformedObjectNameException e) {
+    throw Unchecked.translateCheckedException(e);
+  }
+
   }
   
   

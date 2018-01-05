@@ -15,6 +15,7 @@ import org.pitest.minion.commands.Test;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -25,32 +26,42 @@ public class DeafultWorkScheduler implements WorkScheduler {
   private final Map<String, WorkItem> current = new ConcurrentHashMap<>();
   
   private final ResultListener listener;
-  
+  private final TimeoutLengthStrategy timeoutCalc;
 
-  public DeafultWorkScheduler(Collection<MutationDetails> backlog, ResultListener listener) {
+  public DeafultWorkScheduler(Collection<MutationDetails> backlog, ResultListener listener, TimeoutLengthStrategy tls) {
     this.listener = listener;
     this.backlog.addAll(backlog);
+    this.timeoutCalc = tls;
   }
 
   @Override
-  public Command next(String worker) {
+  public Work next(String worker) {
     WorkItem oldWi = current.get(worker);
     if (oldWi != null) {
-      Command c = new Command(toOpenType(oldWi.id.getId()), oldWi.nextTest(), Action.ANALYSE);
-      return c;
+      return makeWork(oldWi);
     } else {
       MutationDetails md = backlog.poll();
       if (md == null) {
-        return Command.die();
+        current.put(worker, new WorkItem()); // fixme need to represent death
+        return Work.untimed(Command.die());
         
       } else {
         WorkItem wi = new WorkItem();
         wi.id = md;
         wi.test = 0;
-        current.put(worker, wi);   
-        return new Command(toOpenType(wi.id.getId()), wi.nextTest(), Action.ANALYSE);    
+        current.put(worker, wi);  
+        return makeWork(wi);
+        
       }
     }
+  }
+
+  private Work makeWork(WorkItem oldWi) {
+    TestInfo ti = oldWi.nextTest();
+    Test t = new Test(ti.getDefiningClass(), ti.getName());
+    Command c = new Command(toOpenType(oldWi.id.getId()), t, Action.ANALYSE);
+    int timeAllowed = (int)timeoutCalc.getAllowedTime(ti.getTime());
+    return Work.of(timeAllowed, c);
   }
   
   @Override
@@ -58,6 +69,10 @@ public class DeafultWorkScheduler implements WorkScheduler {
     WorkItem wi = current.get(worker);
     switch (c.getAction()) {
     case ANALYSE:
+      if (wi == null ) {
+        throw new IllegalStateException("No work found for " + worker + " but reported " + c + " and " + result);
+      }
+      
       if (result != Status.TEST_FAILED || !wi.testsRemain()) {
         current.remove(worker);
         reportResult(result, wi, c);
@@ -87,7 +102,7 @@ public class DeafultWorkScheduler implements WorkScheduler {
   }
 
   private void reportResult(Status result, WorkItem wi, Command c) {
-    MutationStatusTestPair status = new MutationStatusTestPair(wi.test + 1, toMutationStatus(result), c.getTest().getName());
+    MutationStatusTestPair status = new MutationStatusTestPair(wi.test, toMutationStatus(result), c.getTest().getName());
     MutationResult r = new MutationResult(wi.id, status);
     listener.report(r);
   }
@@ -103,6 +118,8 @@ public class DeafultWorkScheduler implements WorkScheduler {
       return DetectionStatus.SURVIVED;
     case TEST_FAILED :
       return DetectionStatus.KILLED;
+    case UNEXPECTED_ERROR :
+      return DetectionStatus.RUN_ERROR;
     default :
       throw new IllegalStateException();  
     }
@@ -113,11 +130,12 @@ public class DeafultWorkScheduler implements WorkScheduler {
     MutationDetails id;
     int test;
     
-    Test nextTest() {
+    TestInfo nextTest() {
       TestInfo ti = id.getTestsInOrder().get(test);
-      Test nextTest = new Test(ti.getDefiningClass(), ti.getName());
+      //Test nextTest = new Test(ti.getDefiningClass(), ti.getName());
       test = test + 1;
-      return nextTest;
+      //return nextTest;
+      return ti;
     }
     
    

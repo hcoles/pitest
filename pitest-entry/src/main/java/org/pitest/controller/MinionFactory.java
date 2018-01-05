@@ -64,6 +64,7 @@ public class MinionFactory {
         args.getJavaExecutable(), args.getJvmArgs(),
         Minion.class, programArgs,
         args.getJavaAgentFinder())
+        //.redirectOutput(new File("/tmp/log.txt"));
         .inheritIO();
 
     configureProcessBuilder(processBuilder, args.getWorkingDir(),
