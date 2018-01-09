@@ -12,9 +12,9 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public class CompoundMutationInterceptor implements MutationInterceptor {
 
-  private final List<MutationInterceptor> children = new ArrayList<MutationInterceptor>();
+  private final List<MutationInterceptor> children = new ArrayList<>();
 
-  public CompoundMutationInterceptor(List<MutationInterceptor> interceptors) {
+  public CompoundMutationInterceptor(List<? extends MutationInterceptor> interceptors) {
     this.children.addAll(interceptors);
     Collections.sort(children, sortByType());
   }

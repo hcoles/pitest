@@ -18,7 +18,6 @@ import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
@@ -39,11 +38,6 @@ public class TestNGConfiguration implements Configuration {
   @Override
   public TestSuiteFinder testSuiteFinder() {
     return new NoTestSuiteFinder();
-  }
-
-  @Override
-  public TestClassIdentifier testClassIdentifier() {
-    return new TestNGTestClassIdentifier();
   }
 
   @Override

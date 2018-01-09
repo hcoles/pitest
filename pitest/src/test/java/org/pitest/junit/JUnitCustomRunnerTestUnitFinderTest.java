@@ -14,16 +14,17 @@
  */
 package org.pitest.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.pitest.testapi.TestGroupConfig.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.Collections;
+import java.util.List;
 
 import org.jmock.MockObjectTestCase;
 import org.junit.AfterClass;
@@ -31,9 +32,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.junit.runner.Runner;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite;
@@ -42,10 +46,14 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.mockito.MockitoAnnotations;
 import org.pitest.junit.RunnerSuiteFinderTest.ThrowsOnDiscoverySuite;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 
 import com.example.JUnitParamsTest;
 import com.example.TheoryTest;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class JUnitCustomRunnerTestUnitFinderTest {
 
@@ -54,7 +62,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new JUnitCustomRunnerTestUnitFinder();
+    this.testee = new JUnitCustomRunnerTestUnitFinder(new TestGroupConfig(), Collections.<String>emptyList());
   }
 
   @Test
@@ -352,5 +360,83 @@ public class JUnitCustomRunnerTestUnitFinderTest {
       fail();
     }
   }
+  
+  @Test
+  public void includesSuppliedCategories() {
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(Tagged.class);
+    assertThat(actual).hasSize(1);
+  }
+  
+  @Test
+  public void excludesSuppliedCategories() {
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName())
+        .withExcludedGroups(AnotherCategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(Tagged.class);
+    assertThat(actual).isEmpty();
+  }
 
+  @Test
+  public void excludesInheritedCategories() {
+    setConfig(emptyConfig()
+        .withIncludedGroups(ACategory.class.getName())
+        .withExcludedGroups(AnotherCategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(IndirectlyTagged.class);
+    assertThat(actual).isEmpty();
+  }
+
+  @Test
+  public void excludesRunnersWhenRequested() {
+    excludeRunner(BlockJUnit4ClassRunner.class);
+    final Collection<TestUnit> actual = findWithTestee(HasExplicitRunner.class);
+    assertThat(actual).isEmpty();
+  }
+  
+  static interface ACategory {
+    
+  }
+  
+  static interface AnotherCategory {
+    
+  }
+
+  @Category({ACategory.class, AnotherCategory.class})
+  public static class Tagged {
+    @Test
+    public void testTwo() {
+    }
+  }
+  
+  public static class IndirectlyTagged extends Tagged {
+    @Test
+    public void test() {
+    }
+  }
+  
+  
+  @RunWith(BlockJUnit4ClassRunner.class)
+  public static class HasExplicitRunner {
+    @Test
+    public void foo() {
+      
+    }
+  }
+  
+  
+  private void setConfig(TestGroupConfig config) {
+    testee = new JUnitCustomRunnerTestUnitFinder(
+        config, Collections.<String>emptyList()); 
+  }
+
+  
+  private void excludeRunner(Class<? extends Runner> class1) {
+    List<String> include = Collections.<String>emptyList();
+    List<String> exclude = Collections.<String>emptyList();
+    testee = new JUnitCustomRunnerTestUnitFinder(
+            new TestGroupConfig(include,exclude), Collections.singletonList(class1.getName()));
+  }
+
+  
 }

@@ -1,6 +1,6 @@
 package com.example;
 
-public class CoveredByABeforeAfterClassTest {
+public class CoveredByABeforeAfterClass {
   public static int returnOne() {
     return 1;
   }

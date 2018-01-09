@@ -53,7 +53,7 @@ public final class MutationIdentifier implements Comparable<MutationIdentifier> 
   public MutationIdentifier(final Location location,
       final Collection<Integer> indexes, final String mutatorUniqueId) {
     this.location = location;
-    this.indexes = new ArrayList<Integer>(indexes);
+    this.indexes = new ArrayList<>(indexes);
     this.mutator = mutatorUniqueId;
   }
 

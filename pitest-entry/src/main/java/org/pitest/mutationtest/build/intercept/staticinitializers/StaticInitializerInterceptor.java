@@ -69,7 +69,6 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     isStaticInitCode = null;
   }
   
-  @SuppressWarnings("unchecked")
   private void analyseClass(ClassTree tree) {
     Option<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
         

@@ -42,12 +42,12 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
   }
 
   @Override
-  public void execute(final ClassLoader loader, final ResultCollector rc) {
+  public void execute(final ResultCollector rc) {
 
     final long maxTime = this.timeOutStrategy
         .getAllowedTime(this.executionTime);
 
-    final FutureTask<?> future = createFutureForChildTestUnit(loader, rc);
+    final FutureTask<?> future = createFutureForChildTestUnit(rc);
     executeFutureWithTimeOut(maxTime, future, rc);
     if (!future.isDone()) {
       this.timeOutSideEffect.apply();
@@ -68,10 +68,8 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
     }
   }
 
-  private FutureTask<?> createFutureForChildTestUnit(final ClassLoader loader,
-      final ResultCollector rc) {
-    final FutureTask<?> future = new FutureTask<Object>(createRunnable(loader,
-        rc), null);
+  private FutureTask<?> createFutureForChildTestUnit(final ResultCollector rc) {
+    final FutureTask<?> future = new FutureTask<>(createRunnable(rc), null);
     final Thread thread = new Thread(future);
     thread.setDaemon(true);
     thread.setName("mutationTestThread");
@@ -79,14 +77,13 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
     return future;
   }
 
-  private Runnable createRunnable(final ClassLoader loader,
-      final ResultCollector rc) {
+  private Runnable createRunnable(final ResultCollector rc) {
     return new Runnable() {
 
       @Override
       public void run() {
         try {
-          child().execute(loader, rc);
+          child().execute(rc);
         } catch (final Throwable ex) {
           rc.notifyEnd(child().getDescription(), ex);
         }

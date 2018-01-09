@@ -17,12 +17,15 @@ package org.pitest.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -35,21 +38,32 @@ import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.Preconditions;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   @SuppressWarnings("rawtypes")
   private static final Option<Class> CLASS_RULE = findClassRuleClass();
+  
+  private final TestGroupConfig config;
+  private final Collection<String> excludedRunners;
+  
+  JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners) {
+    Preconditions.checkNotNull(config);
+    this.config = config;
+    this.excludedRunners = excludedRunners;
+  }
 
   @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
 
-    if (isNotARunnableTest(runner, clazz.getName())) {
+    if (isExcluded(runner) || isNotARunnableTest(runner, clazz.getName()) || !isIncluded(clazz)) {
       return Collections.emptyList();
     }
 
@@ -60,6 +74,52 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
     }
+  }
+
+  private boolean isExcluded(Runner runner) {
+    return excludedRunners.contains(runner.getClass().getName());
+  }
+  
+  private boolean isIncluded(final Class<?> a) {
+    return isIncludedCategory(a) && !isExcludedCategory(a);
+  }
+
+  
+  private boolean isIncludedCategory(final Class<?> a) {
+    final List<String> included = this.config.getIncludedGroups();
+    return included.isEmpty() || !Collections.disjoint(included, getCategories(a));
+  }
+
+  private boolean isExcludedCategory(final Class<?> a) {
+    final List<String> excluded = this.config.getExcludedGroups();
+    return !excluded.isEmpty() && !Collections.disjoint(excluded, getCategories(a));
+  }  
+  
+  private List<String> getCategories(final Class<?> a) {   
+    Category c = a.getAnnotation(Category.class);
+    return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
+  }
+
+  private F<Category, Iterable<String>> toCategoryNames() {
+    return new F<Category, Iterable<String>>() {
+      @Override
+      public Iterable<String> apply(Category a) {
+        if (a == null) {
+          return Collections.emptyList();
+        }
+        return FCollection.map(Arrays.asList(a.value()),toName());
+      }
+      
+    };
+  }
+
+  private F<Class<?>,String> toName() {
+    return new F<Class<?>,String>() {
+      @Override
+      public String apply(Class<?> a) {
+        return a.getName();
+      }    
+    };
   }
 
   private boolean isNotARunnableTest(final Runner runner,
@@ -91,7 +151,6 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         || hasClassRuleAnnotations(clazz, methods);
   }
 
-  @SuppressWarnings("unchecked")
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
     if (CLASS_RULE.hasNone()) {

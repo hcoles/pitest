@@ -34,7 +34,7 @@ public final class MutationDetails {
   private final int                 block;
   private final int                 lineNumber;
   private final String              description;
-  private final ArrayList<TestInfo> testsInOrder = new ArrayList<TestInfo>();
+  private final ArrayList<TestInfo> testsInOrder = new ArrayList<>();
   private final boolean             isInFinallyBlock;
   private final PoisonStatus        poison;
 

@@ -60,7 +60,6 @@ public class CompoundMutationInterceptorTest {
     verify(filterChild).begin(aClass);  
   }
   
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldChainModifiedMutantListsThroughChildrenInCorrectOrder() {
 

@@ -13,34 +13,34 @@ public class SequenceQuery<T> {
   }
 
   public SequenceQuery<T> then(Match<T> next) {
-    return then(new SequenceQuery<T>(new Literal<T>(next)));
+    return then(new SequenceQuery<>(new Literal<>(next)));
   }
 
   public SequenceQuery<T> then(SequenceQuery<T> next) {
-    final Concat<T> concat = new Concat<T>(this.token, next.token);
-    return new SequenceQuery<T>(concat);
+    final Concat<T> concat = new Concat<>(this.token, next.token);
+    return new SequenceQuery<>(concat);
   }
 
   public SequenceQuery<T> or(SequenceQuery<T> next) {
-    final Or<T> or = new Or<T>(this.token, next.token);
-    return new SequenceQuery<T>(or);
+    final Or<T> or = new Or<>(this.token, next.token);
+    return new SequenceQuery<>(or);
   }
 
   public SequenceQuery<T> thenAnyOf(SequenceQuery<T> left,
       SequenceQuery<T> right) {
-    final Or<T> or = new Or<T>(left.token, right.token);
-    final Concat<T> concat = new Concat<T>(this.token, or);
-    return new SequenceQuery<T>(concat);
+    final Or<T> or = new Or<>(left.token, right.token);
+    final Concat<T> concat = new Concat<>(this.token, or);
+    return new SequenceQuery<>(concat);
   }
 
   public SequenceQuery<T> zeroOrMore(SequenceQuery<T> next) {
-    final Concat<T> concat = new Concat<T>(this.token, new Repeat<T>(next.token));
-    return new SequenceQuery<T>(concat);
+    final Concat<T> concat = new Concat<>(this.token, new Repeat<>(next.token));
+    return new SequenceQuery<>(concat);
   }
   
   public SequenceQuery<T> oneOrMore(SequenceQuery<T> next) {
-    final Concat<T> concat = new Concat<T>(this.token, new Plus<T>(next.token));
-    return new SequenceQuery<T>(concat);
+    final Concat<T> concat = new Concat<>(this.token, new Plus<>(next.token));
+    return new SequenceQuery<>(concat);
   }
   
   public SequenceMatcher<T> compile() {
@@ -49,7 +49,7 @@ public class SequenceQuery<T> {
 
   @SuppressWarnings("unchecked")
   public SequenceMatcher<T> compile(QueryParams<T> params) {
-    return new NFASequenceMatcher<T>(params.ignoring(), 
+    return new NFASequenceMatcher<>(params.ignoring(), 
         this.token.make(EndMatch.MATCH), params.isDebug());
   }
 
@@ -66,7 +66,7 @@ public class SequenceQuery<T> {
 
     @Override
     public State<T> make(State<T> andThen) {
-      return new Consume<T>(this.c, andThen);
+      return new Consume<>(this.c, andThen);
     }
   }
 
@@ -83,7 +83,7 @@ public class SequenceQuery<T> {
     public State<T> make(State<T> andThen) {
       final State<T> l = this.left.make(andThen);
       final State<T> r = this.right.make(andThen);
-      return new Split<T>(l, r);
+      return new Split<>(l, r);
     }
 
   }
@@ -112,9 +112,9 @@ public class SequenceQuery<T> {
 
     @Override
     public State<T> make(State<T> andThen) {
-      final Split<T> placeHolder = new Split<T>(null, null);
+      final Split<T> placeHolder = new Split<>(null, null);
       final State<T> right = this.r.make(placeHolder);
-      final Split<T> split = new Split<T>(right, andThen);
+      final Split<T> split = new Split<>(right, andThen);
 
       placeHolder.out1 = split;
       return placeHolder;
@@ -131,7 +131,7 @@ public class SequenceQuery<T> {
 
     @Override
     public State<T> make(State<T> andThen) {
-      final Concat<T> concat = new Concat<T>(this.r, new Repeat<T>(this.r));
+      final Concat<T> concat = new Concat<>(this.r, new Repeat<>(this.r));
       return concat.make(andThen);
     }
   }
@@ -158,7 +158,7 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
   @Override
   public boolean matches(List<T> sequence, Context<T> context) {
-    Set<State<T>> currentState = new HashSet<State<T>>();
+    Set<State<T>> currentState = new HashSet<>();
     addstate(currentState, this.start);
 
     for (T t : sequence) {      
@@ -191,7 +191,7 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
   private static <T> Set<State<T>> step(Context<T> context, Set<State<T>> currentState, T c) {
 
-    final Set<State<T>> nextStates = new HashSet<State<T>>();
+    final Set<State<T>> nextStates = new HashSet<>();
     for (final State<T> each : currentState) {
       if (each instanceof Consume) {
         final Consume<T> consume = (Consume<T>) each;

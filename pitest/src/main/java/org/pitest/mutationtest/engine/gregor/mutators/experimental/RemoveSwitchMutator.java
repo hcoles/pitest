@@ -24,7 +24,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
-    List<MethodMutatorFactory> variations = new ArrayList<MethodMutatorFactory>();
+    List<MethodMutatorFactory> variations = new ArrayList<>();
     for (int i = 0; i != 100; i++) {
       variations.add(new RemoveSwitchMutator(i));
     }

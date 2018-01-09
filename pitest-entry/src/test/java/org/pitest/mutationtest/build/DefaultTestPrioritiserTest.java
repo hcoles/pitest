@@ -84,7 +84,7 @@ public class DefaultTestPrioritiserTest {
   }
 
   private List<TestInfo> makeTestInfos(final Integer... times) {
-    return new ArrayList<TestInfo>(FCollection.map(Arrays.asList(times),
+    return new ArrayList<>(FCollection.map(Arrays.asList(times),
         timeToTestInfo()));
   }
 

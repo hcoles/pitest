@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class PackageSummaryMap {
 
-  private final Map<String, PackageSummaryData> packageSummaryData = new TreeMap<String, PackageSummaryData>();
+  private final Map<String, PackageSummaryData> packageSummaryData = new TreeMap<>();
 
   private PackageSummaryData getPackageSummaryData(final String packageName) {
     PackageSummaryData psData;

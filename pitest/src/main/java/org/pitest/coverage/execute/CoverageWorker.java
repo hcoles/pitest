@@ -69,7 +69,7 @@ public class CoverageWorker {
 
   private static List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
       final CoverageReceiver queue) {
-    final List<TestUnit> decorated = new ArrayList<TestUnit>(plainTests.size());
+    final List<TestUnit> decorated = new ArrayList<>(plainTests.size());
     for (final TestUnit each : plainTests) {
       decorated.add(new CoverageDecorator(queue, each));
     }

@@ -34,7 +34,7 @@ class DependencyFilter {
   private F<TestUnit, Boolean> isWithinReach() {
 
     return new F<TestUnit, Boolean>() {
-      private final Map<String, Boolean> cache = new HashMap<String, Boolean>();
+      private final Map<String, Boolean> cache = new HashMap<>();
 
       @Override
       public Boolean apply(final TestUnit testUnit) {

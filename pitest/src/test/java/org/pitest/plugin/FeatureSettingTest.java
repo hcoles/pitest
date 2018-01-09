@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FeatureSettingTest {
   
   FeatureSetting testee;
-  private Map<String, List<String>> values = new HashMap<String, List<String>>();
+  private Map<String, List<String>> values = new HashMap<>();
   
   @Rule
   public ExpectedException thrown = ExpectedException.none();

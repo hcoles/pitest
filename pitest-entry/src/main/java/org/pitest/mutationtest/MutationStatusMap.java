@@ -31,7 +31,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MutationStatusMap {
 
-  private final Map<MutationDetails, MutationStatusTestPair> mutationMap = new HashMap<MutationDetails, MutationStatusTestPair>();
+  private final Map<MutationDetails, MutationStatusTestPair> mutationMap = new HashMap<>();
 
   public void setStatusForMutation(final MutationDetails mutation,
       final DetectionStatus status) {

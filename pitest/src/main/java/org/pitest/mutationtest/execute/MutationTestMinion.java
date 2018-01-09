@@ -34,6 +34,9 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.config.ClientPluginServices;
+import org.pitest.mutationtest.config.MinionSettings;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
@@ -56,11 +59,13 @@ public class MutationTestMinion {
 
   private final SafeDataInputStream dis;
   private final Reporter            reporter;
+  private final MinionSettings      plugins;
 
-  public MutationTestMinion(final SafeDataInputStream dis,
+  public MutationTestMinion(MinionSettings plugins, final SafeDataInputStream dis,
       final Reporter reporter) {
     this.dis = dis;
     this.reporter = reporter;
+    this.plugins = plugins;
   }
 
   public void run() {
@@ -83,7 +88,7 @@ public class MutationTestMinion {
           paramsFromParent.engine.createMutator(byteSource), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
-          paramsFromParent.testClasses, paramsFromParent.pitConfig);
+          paramsFromParent.testClasses, createTestPlugin(paramsFromParent.pitConfig));
       
       worker.run(paramsFromParent.mutations, this.reporter,
           new TimeOutDecoratedTestSource(paramsFromParent.timeoutStrategy,
@@ -96,6 +101,10 @@ public class MutationTestMinion {
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
 
+  }
+  
+  private Configuration createTestPlugin(TestPluginArguments pitConfig) {
+    return plugins.getTestFrameworkPlugin(pitConfig, ClassloaderByteArraySource.fromContext());
   }
 
   public static void main(final String[] args) {
@@ -114,8 +123,9 @@ public class MutationTestMinion {
 
       final Reporter reporter = new DefaultReporter(s.getOutputStream());
       addMemoryWatchDog(reporter);
-
-      final MutationTestMinion instance = new MutationTestMinion(dis, reporter);
+      ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+      MinionSettings factory = new MinionSettings(plugins);
+      final MutationTestMinion instance = new MutationTestMinion(factory, dis, reporter);
       instance.run();
     } catch (final Throwable ex) {
       ex.printStackTrace(System.out);

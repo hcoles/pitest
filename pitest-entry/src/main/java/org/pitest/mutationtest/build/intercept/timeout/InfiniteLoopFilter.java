@@ -50,7 +50,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
       Collection<MutationDetails> mutations, Mutater m) {
     Map<Location,Collection<MutationDetails>> buckets = FCollection.bucket(mutations, mutationToLocation());
     
-    List<MutationDetails> willTimeout = new ArrayList<MutationDetails>();
+    List<MutationDetails> willTimeout = new ArrayList<>();
     for (Entry<Location, Collection<MutationDetails>> each : buckets.entrySet() ) {
       willTimeout.addAll(findTimeoutMutants(each.getKey(), each.getValue(), m));
     }
@@ -68,7 +68,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
       return Collections.emptyList();
     }
     
-    List<MutationDetails> timeouts = new ArrayList<MutationDetails>();
+    List<MutationDetails> timeouts = new ArrayList<>();
     for ( MutationDetails each : mutations ) {
       // avoid cost of static analysis by first checking mutant is on
       // on instruction that could affect looping

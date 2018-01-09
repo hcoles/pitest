@@ -63,7 +63,7 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   public void willReplaceCallToMethodWithDifferentGenericTypeDueToTypeErasure()
       throws Exception {
     Mutant mutant = getFirstMutant(CallsMethodsWithGenericTypes.class);
-    Foo<String> receiver = new Foo<String>("3");
+    Foo<String> receiver = new Foo<>("3");
     assertMutantCallableReturns(new CallsMethodsWithGenericTypes(receiver),
         mutant, receiver);
   }
@@ -132,7 +132,7 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
     }
 
     public Foo<Integer> returnsFooInteger() {
-      return new Foo<Integer>(2);
+      return new Foo<>(2);
     }
   }
 

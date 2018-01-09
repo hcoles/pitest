@@ -32,14 +32,19 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
@@ -51,7 +56,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator
 
 public final class Mutator {
 
-  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<String, Iterable<MethodMutatorFactory>>();
+  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
 
   static {
 
@@ -121,7 +126,7 @@ public final class Mutator {
 
     /**
      * Removes conditional statements so that guarded statements always execute
-     * The EQUAL version ignores LT,LE,GT,GE, which is the default behavior,
+     * The EQUAL version ignores LT,LE,GT,GE, which is the default behaviour,
      * ORDER version mutates only those.
      */
 
@@ -135,6 +140,13 @@ public final class Mutator {
         Choice.ORDER, false));
     addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
 
+    add("TRUE_RETURNS", BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN);
+    add("FALSE_RETURNS", BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);
+    add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
+    add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
+    add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
+    addGroup("RETURNS", betterReturns());
+    
     /**
      * Experimental mutator that removed assignments to member variables.
      */
@@ -163,6 +175,7 @@ public final class Mutator {
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
     addGroup("ALL", all());
+    addGroup("NEW_DEFAULTS", newDefaults());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -178,7 +191,7 @@ public final class Mutator {
 
   private static Collection<MethodMutatorFactory> combine(
       Collection<MethodMutatorFactory> a, Collection<MethodMutatorFactory> b) {
-    List<MethodMutatorFactory> l = new ArrayList<MethodMutatorFactory>(a);
+    List<MethodMutatorFactory> l = new ArrayList<>(a);
     l.addAll(b);
     return l;
   }
@@ -194,6 +207,27 @@ public final class Mutator {
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
+  }
+  
+  /**
+   * Proposed new defaults - replaced the RETURN_VALS mutator with the new more stable set
+   */
+  public static Collection<MethodMutatorFactory> newDefaults() {
+    return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
+        MathMutator.MATH_MUTATOR,
+        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+  }
+  
+  
+  public static Collection<MethodMutatorFactory> betterReturns() {
+    return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
+        BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
+        PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
+        EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
+        NullReturnValsMutator.NULL_RETURN_VALUES);
   }
 
   private static Collection<MethodMutatorFactory> group(
@@ -217,7 +251,7 @@ public final class Mutator {
 
   public static Collection<MethodMutatorFactory> fromStrings(
       final Collection<String> names) {
-    final Set<MethodMutatorFactory> unique = new TreeSet<MethodMutatorFactory>(
+    final Set<MethodMutatorFactory> unique = new TreeSet<>(
         compareId());
 
     FCollection.flatMapTo(names, fromString(), unique);

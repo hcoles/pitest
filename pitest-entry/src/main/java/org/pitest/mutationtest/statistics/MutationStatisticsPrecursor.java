@@ -11,7 +11,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationResult;
 
 class MutationStatisticsPrecursor {
-  private final Map<String, ScorePrecursor> mutatorTotalMap  = new HashMap<String, ScorePrecursor>();
+  private final Map<String, ScorePrecursor> mutatorTotalMap  = new HashMap<>();
   private long                              numberOfTestsRun = 0;
 
   public void registerResults(final Collection<MutationResult> results) {

@@ -19,6 +19,6 @@ import java.util.List;
 
 public class ClassWithInitialisedField {
 
-  public final List<Integer> f = new ArrayList<Integer>();
+  public final List<Integer> f = new ArrayList<>();
 
 }

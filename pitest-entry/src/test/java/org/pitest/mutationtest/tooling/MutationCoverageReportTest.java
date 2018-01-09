@@ -43,7 +43,6 @@ import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -114,10 +113,9 @@ public class MutationCoverageReportTest {
     mockMutationEngine();
   }
 
-  @SuppressWarnings("unchecked")
   private void mockMutationEngine() {
     when(
-        this.mutationFactory.createEngine(any(Predicate.class),
+        this.mutationFactory.createEngine(anyCollection(),
             anyCollection())).thenReturn(
                 this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
@@ -144,7 +142,6 @@ public class MutationCoverageReportTest {
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldRecordClassPath() {
     

@@ -107,7 +107,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
     @Override
     public String call() throws Exception {
 
-      this.list = new ArrayList<String>();
+      this.list = new ArrayList<>();
 
       return "" + this.list;
     }

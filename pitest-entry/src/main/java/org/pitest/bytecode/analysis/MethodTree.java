@@ -46,7 +46,7 @@ public class MethodTree {
   }
   
   public FunctionalList<AnnotationNode> annotations() {
-    FunctionalList<AnnotationNode> annotaions = new MutableList<AnnotationNode>();
+    FunctionalList<AnnotationNode> annotaions = new MutableList<>();
     if (rawNode.invisibleAnnotations != null) {
       annotaions.addAll(rawNode.invisibleAnnotations);
     }
@@ -57,12 +57,12 @@ public class MethodTree {
   }
 
   private FunctionalList<AbstractInsnNode> createInstructionList() {
-    List<AbstractInsnNode> list = new LinkedList<AbstractInsnNode>();
+    List<AbstractInsnNode> list = new LinkedList<>();
     ListIterator<AbstractInsnNode> it = rawNode.instructions.iterator();
     while (it.hasNext()) {
         list.add(it.next());
     }
-    lazyInstructions = new MutableList<AbstractInsnNode>(list);
+    lazyInstructions = new MutableList<>(list);
     return lazyInstructions;
   }
   

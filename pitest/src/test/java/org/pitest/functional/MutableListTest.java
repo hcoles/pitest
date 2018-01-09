@@ -40,7 +40,7 @@ public class MutableListTest {
 
   @Before
   public void setUp() {
-    this.testee = new MutableList<Integer>();
+    this.testee = new MutableList<>();
   }
 
   @Test
@@ -112,7 +112,7 @@ public class MutableListTest {
   public void retainAllShouldRetainOnlySuppliedValues() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
     assertTrue(this.testee.retainAll(Arrays.asList(1, 2)));
-    assertEquals(new MutableList<Integer>(1, 2), this.testee);
+    assertEquals(new MutableList<>(1, 2), this.testee);
   }
 
   @Test
@@ -139,7 +139,7 @@ public class MutableListTest {
   @Test
   public void shouldApplyForEachToAllEntreis() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
-    final Collection<Integer> actual = new ArrayList<Integer>();
+    final Collection<Integer> actual = new ArrayList<>();
     this.testee.forEach(Prelude.accumulateTo(actual));
     assertEquals(actual, Arrays.asList(1, 2, 3));
   }
@@ -159,7 +159,7 @@ public class MutableListTest {
   @Test
   public void shouldApplyFlatMapToAllEntries() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
-    assertEquals(new MutableList<Integer>(1, 2, 3),
+    assertEquals(new MutableList<>(1, 2, 3),
         this.testee.flatMap(Prelude.asList(Integer.class)));
   }
 

@@ -53,7 +53,6 @@ public class DependencyExtractor {
     this.classToBytes = classToBytes;
   }
 
-  @SuppressWarnings("unchecked")
   public Collection<String> extractCallDependenciesForPackages(
       final String clazz, final Predicate<String> targetPackages)
           throws IOException {
@@ -111,7 +110,7 @@ public class DependencyExtractor {
 
     final Map<String, List<DependencyAccess>> classesToAccesses = groupDependenciesByClass(extractRelevantDependencies(
         clazz, filter));
-    final Set<String> dependencies = new HashSet<String>(
+    final Set<String> dependencies = new HashSet<>(
         classesToAccesses.keySet());
 
     dependencies.removeAll(visited);
@@ -132,7 +131,7 @@ public class DependencyExtractor {
       final Set<String> classes, final TreeSet<String> visited,
       final Predicate<DependencyAccess> filter) throws IOException {
 
-    final Set<String> deps = new HashSet<String>();
+    final Set<String> deps = new HashSet<>();
     for (final String each : classes) {
       final Set<String> childDependencies = extractCallDependencies(each,
           visited, filter, currentDepth + 1);
@@ -144,7 +143,7 @@ public class DependencyExtractor {
   private Set<DependencyAccess> extractRelevantDependencies(final String clazz,
       final Predicate<DependencyAccess> filter) throws IOException {
     final List<DependencyAccess> dependencies = extract(clazz, filter);
-    final Set<DependencyAccess> relevantDependencies = new TreeSet<DependencyAccess>(
+    final Set<DependencyAccess> relevantDependencies = new TreeSet<>(
         equalDestinationComparator());
     FCollection.filter(dependencies, filter, relevantDependencies);
     return relevantDependencies;
@@ -160,7 +159,6 @@ public class DependencyExtractor {
     };
   }
 
-  @SuppressWarnings("unchecked")
   private List<DependencyAccess> extract(final String clazz,
       final Predicate<DependencyAccess> filter) throws IOException {
     final Option<byte[]> bytes = this.classToBytes.getBytes(clazz);
@@ -169,7 +167,7 @@ public class DependencyExtractor {
       return Collections.emptyList();
     }
     final ClassReader reader = new ClassReader(bytes.value());
-    final List<DependencyAccess> dependencies = new ArrayList<DependencyAccess>();
+    final List<DependencyAccess> dependencies = new ArrayList<>();
 
     final SideEffect1<DependencyAccess> se = constructCollectingSideEffectForVisitor(
         dependencies, and(not(nameIsEqual(clazz)), filter));
@@ -181,7 +179,7 @@ public class DependencyExtractor {
 
   private Map<String, List<DependencyAccess>> groupDependenciesByClass(
       final Set<DependencyAccess> relevantDependencies) {
-    final List<DependencyAccess> sortedByClass = new ArrayList<DependencyAccess>(
+    final List<DependencyAccess> sortedByClass = new ArrayList<>(
         relevantDependencies.size());
     Collections.sort(sortedByClass, classNameComparator());
 
@@ -200,7 +198,7 @@ public class DependencyExtractor {
 
         List<DependencyAccess> list = map.get(access.getDest().getOwner());
         if (list == null) {
-          list = new ArrayList<DependencyAccess>();
+          list = new ArrayList<>();
         }
         list.add(access);
         map.put(access.getDest().getOwner(), list);

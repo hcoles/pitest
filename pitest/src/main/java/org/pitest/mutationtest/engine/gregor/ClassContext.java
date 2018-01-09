@@ -32,7 +32,7 @@ class ClassContext implements BlockCounter {
   private String                      sourceFile;
 
   private Option<MutationIdentifier>  target       = Option.none();
-  private final List<MutationDetails> mutations    = new ArrayList<MutationDetails>();
+  private final List<MutationDetails> mutations    = new ArrayList<>();
 
   private final ConcreteBlockCounter  blockCounter = new ConcreteBlockCounter();
 

@@ -35,7 +35,7 @@ import sun.pitest.CodeCoverageStore;
 
 public final class JavassistCoverageInterceptor {
   
-  private static final Map<String, String> COMPUTE_CACHE = new ConcurrentHashMap<String, String>();
+  private static final Map<String, String> COMPUTE_CACHE = new ConcurrentHashMap<>();
 
   private JavassistCoverageInterceptor() {
 
@@ -60,10 +60,10 @@ public final class JavassistCoverageInterceptor {
 
   private static byte[] getOriginalBytes(final Object classPath,
       final String name) throws IOException {
-    InputStream is = returnNormalBytes(classPath,name);
-    byte[] bs = StreamUtil.streamToByteArray(is);
-    is.close();
-    return bs;
+    try (InputStream is = returnNormalBytes(classPath,name)) {
+      byte[] bs = StreamUtil.streamToByteArray(is);
+      return bs;
+    }
   }
   
   private static byte[] transformBytes(final ClassLoader loader,

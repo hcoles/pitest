@@ -32,7 +32,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
   }
   
    public List<T> selectFeatures(List<FeatureSetting> features, Collection<T> filters) {
-    List<T> factories = new ArrayList<T>(filters);
+    List<T> factories = new ArrayList<>(filters);
     Map<String, Collection<T>> featureMap = FCollection.bucket(factories, byFeatureName());
     
     List<T> active = FCollection.filter(factories, isOnByDefault());

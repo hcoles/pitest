@@ -62,16 +62,14 @@ public abstract class Option<T> implements FunctionalIterable<T> {
     FCollection.mapTo(this, f, bs);
   }
   
-  @SuppressWarnings("unchecked")
   public static <T> Option<T> some(final T value) {
     if (value == null) {
       return NONE;
     } else {
-      return new Some<T>(value);
+      return new Some<>(value);
     }
   }
 
-  @SuppressWarnings("unchecked")
   public static <T> None<T> none() {
     return NONE;
   }

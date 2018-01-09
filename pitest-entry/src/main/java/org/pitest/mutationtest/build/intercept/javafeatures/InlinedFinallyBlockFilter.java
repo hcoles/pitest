@@ -52,7 +52,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    final List<MutationDetails> combined = new ArrayList<MutationDetails>(
+    final List<MutationDetails> combined = new ArrayList<>(
         mutations.size());
     final Map<LineMutatorPair, Collection<MutationDetails>> mutatorLinebuckets = bucket(
         mutations, toLineMutatorPair());
@@ -134,7 +134,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   private static MutationDetails makeCombinedMutant(
       final Collection<MutationDetails> value) {
     final MutationDetails first = value.iterator().next();
-    final Set<Integer> indexes = new HashSet<Integer>();
+    final Set<Integer> indexes = new HashSet<>();
     mapTo(value, mutationToIndex(), indexes);
 
     final MutationIdentifier id = new MutationIdentifier(first.getId()

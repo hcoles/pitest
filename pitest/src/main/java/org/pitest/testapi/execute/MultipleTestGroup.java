@@ -32,9 +32,9 @@ public final class MultipleTestGroup extends AbstractTestUnit {
   }
 
   @Override
-  public void execute(final ClassLoader loader, final ResultCollector rc) {
+  public void execute(final ResultCollector rc) {
     for (final TestUnit each : this.children) {
-      each.execute(loader, rc);
+      each.execute(rc);
       if (rc.shouldExit()) {
         break;
       }

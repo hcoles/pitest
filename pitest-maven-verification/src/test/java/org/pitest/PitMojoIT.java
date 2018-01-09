@@ -157,7 +157,7 @@ public class PitMojoIT {
   @Test
   //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
-    assumeFalse(System.getProperty("java.version").equals("9"));
+    skipOnJava9();
     File testDir = prepare("/pit-powermock");
     verifier.addCliOption("-DtimeoutConstant=10000");
     verifier.executeGoal("test");
@@ -331,7 +331,7 @@ public class PitMojoIT {
 
   @Test
   public void shouldWorkWithGWTMockito() throws Exception {
-    assumeFalse(System.getProperty("java.version").equals("9"));
+    skipOnJava9();
     File testDir = prepare("/pit-183-gwtmockito");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
@@ -344,6 +344,10 @@ public class PitMojoIT {
         .contains(
             "<mutation detected='false' status='SURVIVED'><sourceFile>MyWidget.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
+
+  private void skipOnJava9() {
+    assumeFalse(System.getProperty("java.version").startsWith("9"));
   }
 
   @Test

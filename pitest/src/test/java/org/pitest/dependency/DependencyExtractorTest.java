@@ -173,10 +173,10 @@ public class DependencyExtractorTest {
 
   private void assertCollectionEquals(final Collection<String> expected,
       final Collection<String> actual) {
-    final Set<String> expectedSet = new HashSet<String>();
+    final Set<String> expectedSet = new HashSet<>();
     expectedSet.addAll(expected);
 
-    final Set<String> actualSet = new HashSet<String>();
+    final Set<String> actualSet = new HashSet<>();
     actualSet.addAll(actual);
 
     assertEquals(expectedSet, actualSet);
@@ -184,7 +184,7 @@ public class DependencyExtractorTest {
   }
 
   private Set<String> asSet(final String... values) {
-    final Set<String> set = new HashSet<String>();
+    final Set<String> set = new HashSet<>();
     set.addAll(Arrays.asList(values));
     return set;
   }

@@ -15,7 +15,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
 import org.pitest.mutationtest.config.PluginServices;
@@ -184,6 +183,12 @@ public class MutationDiscoveryTest {
   }
 
 
+  @Test
+  public void filtersEquivalentReturnValsMutants() {
+    data.setMutators(Collections.singletonList("PRIMITIVE_RETURNS"));
+    Collection<MutationDetails>  actual = findMutants(AlreadyReturnsConstZero.class);
+    assertThat(actual).isEmpty();
+  }
   
   public static class AnnotatedToAvoidMethod {
     public int a() {
@@ -239,7 +244,7 @@ public class MutationDiscoveryTest {
         .createInterceptor(data, source);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
-        Prelude.or(data.getExcludedMethods()), data.getMutators());
+       data.getExcludedMethods(), data.getMutators());
     
     final MutationConfig config = new MutationConfig(engine, null);
 
@@ -255,12 +260,18 @@ public class MutationDiscoveryTest {
       }
     };
   }
-  
+
   static class HasForLoop {
     public void foo() {
       for (int i = 0; i != 10; i++) {
         System.out.println(i);
       }
+    }
+  }
+
+  class AlreadyReturnsConstZero {
+    public int a() {
+      return 0;
     }
   }
 }

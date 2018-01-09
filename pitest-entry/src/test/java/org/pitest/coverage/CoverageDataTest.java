@@ -169,7 +169,6 @@ public class CoverageDataTest {
         .longValue());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReturnNonZeroCoverageIdWhenTestsCoverClass() {
 
@@ -302,8 +301,8 @@ public class CoverageDataTest {
 
   private HashMap<BlockLocation, Set<Integer>> makeCoverageMapForBlock(
       BlockLocationBuilder blocks, Integer... lines) {
-    HashMap<BlockLocation, Set<Integer>> map = new HashMap<BlockLocation, Set<Integer>>();
-    Set<Integer> s = new HashSet<Integer>();
+    HashMap<BlockLocation, Set<Integer>> map = new HashMap<>();
+    Set<Integer> s = new HashSet<>();
     s.addAll(Arrays.asList(lines));
     map.put(blocks.build(), s);
     return map;

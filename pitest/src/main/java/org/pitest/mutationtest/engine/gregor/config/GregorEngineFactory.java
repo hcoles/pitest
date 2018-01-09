@@ -24,19 +24,20 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.util.Glob;
 
 public final class GregorEngineFactory implements MutationEngineFactory {
 
   @Override
   public MutationEngine createEngine(
-      final Predicate<String> excludedMethods,
+      final Collection<String> excludedMethods,
       final Collection<String> mutators) {
     return createEngineWithMutators(excludedMethods,
            createMutatorListFromArrayOrUseDefaults(mutators));
   }
 
   public MutationEngine createEngineWithMutators(
-      final Predicate<String> excludedMethods,
+      final Collection<String> excludedMethods,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
     final Predicate<MethodInfo> filter = Prelude.not(stringToMethodInfoPredicate(excludedMethods));
@@ -56,12 +57,13 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   }
 
   private static F<MethodInfo, Boolean> stringToMethodInfoPredicate(
-      final Predicate<String> excludedMethods) {
+      final Collection<String> excludedMethods) {
+    final Predicate<String> excluded = Prelude.or(Glob.toGlobPredicates(excludedMethods));
     return new Predicate<MethodInfo>() {
 
       @Override
       public Boolean apply(final MethodInfo a) {
-        return excludedMethods.apply(a.getName());
+        return excluded.apply(a.getName());
       }
 
     };

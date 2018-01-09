@@ -20,7 +20,6 @@ import org.pitest.functional.Option;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
-import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry
@@ -40,23 +39,22 @@ public class SteppedTestUnit extends AbstractTestUnit {
   }
 
   @Override
-  public void execute(final ClassLoader loader, final ResultCollector rc) {
+  public void execute(final ResultCollector rc) {
     if (!this.steps().isEmpty()) {
-      executeStepsAndReport(loader, rc);
+      executeStepsAndReport(rc);
     } else {
       rc.notifySkipped(this.getDescription());
     }
 
   }
 
-  private void executeStepsAndReport(final ClassLoader loader,
-      final ResultCollector rc) {
+  private void executeStepsAndReport(final ResultCollector rc) {
     rc.notifyStart(this.getDescription());
     Object o = null;
     Throwable tResult = null;
     try {
       for (final TestStep s : this.steps) {
-        o = s.execute(loader, getDescription(), o);
+        o = s.execute(getDescription(), o);
       }
     } catch (final TestExecutionException tee) {
       tResult = tee.getCause();
@@ -64,19 +62,17 @@ public class SteppedTestUnit extends AbstractTestUnit {
       tResult = t;
     }
 
-    tResult = updateResultForExpectations(loader, tResult);
+    tResult = updateResultForExpectations(tResult);
 
     rc.notifyEnd(this.getDescription(), tResult);
   }
 
-  private Throwable updateResultForExpectations(final ClassLoader loader,
-      final Throwable tResult) {
+  private Throwable updateResultForExpectations(final Throwable tResult) {
     if (this.expected.hasSome()) {
       if (tResult == null) {
         return new java.lang.AssertionError("Expected exception "
             + this.expected);
-      } else if (IsolationUtils.convertForClassLoader(loader,
-          this.expected.value()).isAssignableFrom(tResult.getClass())) {
+      } else if (this.expected.value().isAssignableFrom(tResult.getClass())) {
         return null;
       }
     }

@@ -79,7 +79,6 @@ public class MutationTestWorkerTest {
         new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationNotDetected() throws IOException {
     final MutationDetails mutantOne = makeMutant("foo", 1);
@@ -96,7 +95,6 @@ public class MutationTestWorkerTest {
 
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationNotViable() throws IOException {
     final MutationDetails mutantOne = makeMutant("foo", 1);
@@ -112,7 +110,6 @@ public class MutationTestWorkerTest {
         new MutationStatusTestPair(0, DetectionStatus.NON_VIABLE));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReportWhenMutationKilledByTest() throws IOException {
     final MutationDetails mutantOne = makeMutant("foo", 1);
@@ -134,7 +131,7 @@ public class MutationTestWorkerTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription(), new AssertionFailedError());
       }
@@ -151,7 +148,7 @@ public class MutationTestWorkerTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
         rc.notifyStart(getDescription());
         rc.notifyEnd(getDescription());
       }

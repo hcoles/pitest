@@ -32,7 +32,7 @@ import org.objectweb.asm.Opcodes;
 public class BlockTrackingMethodDecorator extends MethodVisitor {
 
   private final BlockCounter blockCounter;
-  private final Set<Label>   handlers = new HashSet<Label>();
+  private final Set<Label>   handlers = new HashSet<>();
 
   public BlockTrackingMethodDecorator(final BlockCounter blockCounter,
       final MethodVisitor mv) {

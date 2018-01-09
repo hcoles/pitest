@@ -29,9 +29,9 @@ import org.pitest.mutationtest.MutationResult;
 public class MutationTestSummaryData {
 
   private final String                     fileName;
-  private final Set<String>                mutators  = new HashSet<String>();
-  private final Collection<MutationResult> mutations = new ArrayList<MutationResult>();
-  private final Set<ClassInfo>             classes   = new HashSet<ClassInfo>();
+  private final Set<String>                mutators  = new HashSet<>();
+  private final Collection<MutationResult> mutations = new ArrayList<>();
+  private final Set<ClassInfo>             classes   = new HashSet<>();
 
   private long                             numberOfCoveredLines;
 
@@ -74,7 +74,7 @@ public class MutationTestSummaryData {
   }
 
   public Collection<TestInfo> getTests() {
-    final Set<TestInfo> uniqueTests = new HashSet<TestInfo>();
+    final Set<TestInfo> uniqueTests = new HashSet<>();
     FCollection.flatMapTo(this.mutations, mutationToTargettedTests(),
         uniqueTests);
     return uniqueTests;

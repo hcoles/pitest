@@ -35,8 +35,8 @@ import org.pitest.functional.SideEffect1;
 public class DependencyClassVisitorTest {
 
   private DependencyClassVisitor      testee;
-  private final Set<String>           gatheredDependencies = new HashSet<String>();
-  private final Set<DependencyAccess> gatheredAccess       = new HashSet<DependencyAccess>();
+  private final Set<String>           gatheredDependencies = new HashSet<>();
+  private final Set<DependencyAccess> gatheredAccess       = new HashSet<>();
   private final ClassPath             cp                   = new ClassPath();
 
   @Before
@@ -105,7 +105,7 @@ public class DependencyClassVisitorTest {
   }
 
   private Set<String> classesToNames(final Class<?>... classes) {
-    final Set<String> set = new HashSet<String>();
+    final Set<String> set = new HashSet<>();
     FCollection.mapTo(Arrays.asList(classes), classToJvmName(), set);
     return set;
   }

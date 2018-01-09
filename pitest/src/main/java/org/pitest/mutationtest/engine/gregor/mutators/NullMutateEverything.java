@@ -60,29 +60,31 @@ class MutateEveryThing extends MethodVisitor {
   }
 
   public void visitInsn(int opcode) {
-    mutate("visitInsn");
+    if (opcode != Opcodes.RETURN) {
+      mutate("visitInsn", opcode);
+    }
   }
 
   public void visitIntInsn(int opcode, int operand) {
-    mutate("visitIntInsn");
+    mutate("visitIntInsn", opcode);
   }
 
   public void visitVarInsn(int opcode, int var) {
-    mutate("visitVarInsn");
+    mutate("visitVarInsn", opcode);
   }
 
   public void visitTypeInsn(int opcode, String type) {
-    mutate("visitTypeInsn");
+    mutate("visitTypeInsn", opcode);
   }
 
   public void visitFieldInsn(int opcode, String owner, String name,
       String desc) {
-    mutate("visitFieldInsn");
+    mutate("visitFieldInsn", opcode);
   }
 
   public void visitMethodInsn(int opcode, String owner, String name,
       String desc, boolean itf) {
-    mutate("visitMethodInsn");
+    mutate("visitMethodInsn", opcode);
   }
 
   public void visitInvokeDynamicInsn(String name, String desc, Handle bsm,
@@ -91,7 +93,7 @@ class MutateEveryThing extends MethodVisitor {
   }
 
   public void visitJumpInsn(int opcode, Label label) {
-    mutate("visitJumpInsn");
+    mutate("visitJumpInsn", opcode);
   }
 
   public void visitLdcInsn(Object cst) {
@@ -116,8 +118,16 @@ class MutateEveryThing extends MethodVisitor {
     mutate("visitTryCatchBlock");
   }
   
-  private void mutate(String type) {
-    this.context.registerMutation(this.factory, "Null mutation to " + type);
+  private void mutate(String string, int opcode) {
+    mutate("Null mutation in " + string + " with " + opcode);
   }
-
+  
+  private void mutate() {
+    mutate("Null mutation");
+  }
+  
+  private void mutate(String string) {
+    this.context.registerMutation(this.factory, string);
+  }
+  
 }

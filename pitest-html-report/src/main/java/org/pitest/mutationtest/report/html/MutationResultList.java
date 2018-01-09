@@ -30,7 +30,7 @@ import org.pitest.mutationtest.MutationResult;
 
 public class MutationResultList implements FunctionalIterable<MutationResult> {
 
-  private final List<MutationResult> impl = new ArrayList<MutationResult>();
+  private final List<MutationResult> impl = new ArrayList<>();
 
   public MutationResultList(final Collection<MutationResult> results) {
     this.impl.addAll(results);
@@ -38,15 +38,15 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
 
   public List<MutationGrouping> groupMutationsByLine() {
     sortMutationsIntoLineOrder();
-    final List<MutationGrouping> groups = new ArrayList<MutationGrouping>();
-    List<MutationResult> sublist = new ArrayList<MutationResult>();
+    final List<MutationGrouping> groups = new ArrayList<>();
+    List<MutationResult> sublist = new ArrayList<>();
     int lastLineNumber = -1;
     for (final MutationResult each : this.impl) {
       if ((lastLineNumber != each.getDetails().getLineNumber())
           && !sublist.isEmpty()) {
         groups.add(new MutationGrouping(lastLineNumber, "Line "
             + lastLineNumber, sublist));
-        sublist = new ArrayList<MutationResult>();
+        sublist = new ArrayList<>();
       }
       sublist.add(each);
       lastLineNumber = each.getDetails().getLineNumber();

@@ -20,6 +20,7 @@ import org.pitest.functional.SideEffect1;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.plugin.Feature;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 
@@ -34,11 +35,7 @@ public class SettingsFactoryTest {
   @Before
   public void setUp() {
     this.testee = new SettingsFactory(this.options, this.plugins);
-  }
-
-  @Test
-  public void shouldReturnTheLegacyTestFrameworkPluginWhenNoOtherOnClasspath() {
-    assertTrue(this.testee.getTestFrameworkPlugin() != null);
+    options.setGroupConfig(new TestGroupConfig());
   }
 
   @Test
@@ -116,7 +113,6 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldDescribeActiveFeatures() {
     SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
     SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
@@ -129,7 +125,6 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldDescribeDisabledFeatures() {
     SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
     SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);

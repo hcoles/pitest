@@ -43,10 +43,10 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public class GregorMutater implements Mutater {
 
-  private final Map<String, String>       computeCache   = new HashMap<String, String>();
+  private final Map<String, String>       computeCache   = new HashMap<>();
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
-  private final Set<MethodMutatorFactory> mutators       = new HashSet<MethodMutatorFactory>();
+  private final Set<MethodMutatorFactory> mutators       = new HashSet<>();
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
@@ -126,7 +126,6 @@ public class GregorMutater implements Mutater {
     };
   }
 
-  @SuppressWarnings("unchecked")
   private Predicate<MethodInfo> filterMethods() {
     return and(this.filter, filterSyntheticMethods(),
         not(isGeneratedEnumMethod()), not(isGroovyClass()));

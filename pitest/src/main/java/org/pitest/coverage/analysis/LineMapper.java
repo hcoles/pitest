@@ -27,7 +27,7 @@ public class LineMapper implements LineMap {
   @Override
   public Map<BlockLocation, Set<Integer>> mapLines(final ClassName clazz) {
 
-    final Map<BlockLocation, Set<Integer>> map = new HashMap<BlockLocation, Set<Integer>>();
+    final Map<BlockLocation, Set<Integer>> map = new HashMap<>();
 
     final Option<byte[]> maybeBytes = this.source.fetchClassBytes(clazz);
     // classes generated at runtime eg by mocking frameworks

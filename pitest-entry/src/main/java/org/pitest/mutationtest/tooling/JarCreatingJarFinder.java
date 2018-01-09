@@ -94,11 +94,11 @@ public class JarCreatingJarFinder implements JavaAgent {
     global.putValue(CAN_REDEFINE_CLASSES, "true");
     global.putValue(CAN_SET_NATIVE_METHOD, "true");
 
-    final JarOutputStream jos = new JarOutputStream(fos, m);
-    addClass(HotSwapAgent.class, jos);
-    addClass(CodeCoverageStore.class, jos);
-    addClass(InvokeReceiver.class, jos);
-    jos.close();
+    try (JarOutputStream jos = new JarOutputStream(fos, m)) {
+      addClass(HotSwapAgent.class, jos);
+      addClass(CodeCoverageStore.class, jos);
+      addClass(InvokeReceiver.class, jos);
+    }
   }
 
   private String getBootClassPath(final File mylocation) {

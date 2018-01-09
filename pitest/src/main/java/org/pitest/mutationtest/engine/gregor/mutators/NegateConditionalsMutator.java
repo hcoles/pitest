@@ -49,7 +49,7 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
 class ConditionalMethodVisitor extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "negated conditional";
-  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<Integer, Substitution>();
+  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<>();
 
   static {
     MUTATIONS.put(Opcodes.IFEQ, new Substitution(Opcodes.IFNE, DESCRIPTION));

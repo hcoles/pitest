@@ -1,7 +1,6 @@
 package org.pitest.classpath;
 
 import static org.pitest.functional.FCollection.flatMap;
-import static org.pitest.functional.prelude.Prelude.and;
 import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.Collection;
@@ -18,7 +17,6 @@ import org.pitest.classinfo.TestToClassMapper;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.testapi.TestClassIdentifier;
 
 /**
  * Provides access to code and tests on the classpath
@@ -27,37 +25,31 @@ public class CodeSource implements ClassInfoSource {
 
   private final ProjectClassPaths   classPath;
   private final Repository          classRepository;
-  private final TestClassIdentifier testIdentifier;
 
-  public CodeSource(final ProjectClassPaths classPath,
-      final TestClassIdentifier testIdentifier) {
+  public CodeSource(final ProjectClassPaths classPath) {
     this(classPath, new Repository(new ClassPathByteArraySource(
-        classPath.getClassPath())), testIdentifier);
+        classPath.getClassPath())));
   }
 
   CodeSource(final ProjectClassPaths classPath,
-      final Repository classRepository, final TestClassIdentifier testIdentifier) {
+      final Repository classRepository) {
     this.classPath = classPath;
     this.classRepository = classRepository;
-    this.testIdentifier = testIdentifier;
   }
 
   public Collection<ClassInfo> getCode() {
-    return FCollection.flatMap(this.classPath.code(), nameToClassInfo())
-        .filter(not(isWithinATestClass()));
+    return FCollection.flatMap(this.classPath.code(), nameToClassInfo());
   }
 
   public Set<ClassName> getCodeUnderTestNames() {
-    final Set<ClassName> codeClasses = new HashSet<ClassName>();
+    final Set<ClassName> codeClasses = new HashSet<>();
     FCollection.mapTo(getCode(), ClassInfo.toClassName(), codeClasses);
     return codeClasses;
   }
 
-  @SuppressWarnings("unchecked")
   public List<ClassInfo> getTests() {
     return flatMap(this.classPath.test(), nameToClassInfo()).filter(
-        and(isWithinATestClass(), isIncludedClass(),
-            not(ClassInfo.matchIfAbstract())));
+                    not(ClassInfo.matchIfAbstract()));
   }
 
   public ClassPath getClassPath() {
@@ -91,26 +83,4 @@ public class CodeSource implements ClassInfoSource {
     return new NameToClassInfo(this.classRepository);
   }
 
-  private F<ClassInfo, Boolean> isWithinATestClass() {
-    return new F<ClassInfo, Boolean>() {
-
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return CodeSource.this.testIdentifier.isATestClass(a);
-      }
-
-    };
-
-  }
-
-  private F<ClassInfo, Boolean> isIncludedClass() {
-    return new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return CodeSource.this.testIdentifier.isIncluded(a);
-      }
-
-    };
-
-  }
 }

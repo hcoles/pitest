@@ -49,7 +49,6 @@ public class DependencyFilterTest {
     this.tus = Arrays.asList(this.aTestUnit, this.anotherTestUnit);
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldNotPerformAnalysisWhenDependencyDistanceIsLessThan0()
       throws IOException {
@@ -61,7 +60,6 @@ public class DependencyFilterTest {
         anyString(), any(Predicate.class));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReturnOnlyTestUnitsForClassesWithinReach()
       throws IOException {
@@ -79,7 +77,6 @@ public class DependencyFilterTest {
 
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldNotRecalculateDependenciesForAlreadyAnalysedClasses()
       throws IOException {
@@ -101,7 +98,7 @@ public class DependencyFilterTest {
     return new TestUnit() {
 
       @Override
-      public void execute(final ClassLoader loader, final ResultCollector rc) {
+      public void execute(final ResultCollector rc) {
 
       }
 

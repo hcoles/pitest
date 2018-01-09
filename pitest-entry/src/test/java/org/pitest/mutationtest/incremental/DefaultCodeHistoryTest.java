@@ -32,9 +32,9 @@ public class DefaultCodeHistoryTest {
   @Mock
   private ClassInfoSource                                       classInfoSource;
 
-  private final Map<ClassName, ClassHistory>                    historicClassPath = new HashMap<ClassName, ClassHistory>();
+  private final Map<ClassName, ClassHistory>                    historicClassPath = new HashMap<>();
 
-  private final Map<MutationIdentifier, MutationStatusTestPair> results           = new HashMap<MutationIdentifier, MutationStatusTestPair>();
+  private final Map<MutationIdentifier, MutationStatusTestPair> results           = new HashMap<>();
 
   @Before
   public void setUp() {

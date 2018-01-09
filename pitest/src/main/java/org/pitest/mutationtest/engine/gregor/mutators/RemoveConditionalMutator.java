@@ -39,7 +39,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
-    final List<MethodMutatorFactory> variations = new ArrayList<MethodMutatorFactory>();
+    final List<MethodMutatorFactory> variations = new ArrayList<>();
     final Choice[] allChoices = { Choice.EQUAL, Choice.ORDER };
     final boolean[] arrWith = { true, false };
     for (final Choice c : allChoices) {

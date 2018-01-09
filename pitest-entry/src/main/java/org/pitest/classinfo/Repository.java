@@ -24,8 +24,8 @@ import org.pitest.functional.Option;
 public class Repository implements ClassInfoSource {
 
   private final HashFunction              hashFunction;
-  private final Map<ClassName, ClassInfo> knownClasses   = new HashMap<ClassName, ClassInfo>();
-  private final Set<ClassName>            unknownClasses = new HashSet<ClassName>();
+  private final Map<ClassName, ClassInfo> knownClasses   = new HashMap<>();
+  private final Set<ClassName>            unknownClasses = new HashSet<>();
   private final ClassByteArraySource      source;
 
   public Repository(final ClassByteArraySource source) {

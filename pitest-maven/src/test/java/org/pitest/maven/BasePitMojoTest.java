@@ -57,12 +57,11 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   @Mock
   protected PluginServices      plugins;
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.initMocks(this);
-    this.classPath = new ArrayList<String>(FCollection.map(
+    this.classPath = new ArrayList<>(FCollection.map(
         ClassPath.getClassPathElementsAsFiles(), fileToString()));
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");
@@ -123,12 +122,12 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
     configureMojo(pitMojo, pluginConfiguration);
 
-    final Map<String, Artifact> pluginArtifacts = new HashMap<String, Artifact>();
+    final Map<String, Artifact> pluginArtifacts = new HashMap<>();
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
 
     setVariableValueToObject(pitMojo, "project", this.project);
 
-    ArrayList<String> elements = new ArrayList<String>();
+    ArrayList<String> elements = new ArrayList<>();
     setVariableValueToObject(pitMojo, "additionalClasspathElements", elements);
 
   }

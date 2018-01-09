@@ -52,8 +52,8 @@ public class SurefireConfigConverter {
   private void convertExcludes(ReportOptions option, Xpp3Dom configuration) {
     List<Predicate<String>> excludes = FCollection.map(
         extract("excludes", configuration), filenameToClassFilter());
-    excludes.addAll(option.getExcludedClasses());
-    option.setExcludedClasses(excludes);
+    excludes.addAll(option.getExcludedTestClasses());
+    option.setExcludedTestClasses(excludes);
   }
 
   private F<String, Predicate<String>> filenameToClassFilter() {
@@ -68,7 +68,7 @@ public class SurefireConfigConverter {
   private List<String> extract(String childname, Xpp3Dom config) {
     final Xpp3Dom subelement = config.getChild(childname);
     if (subelement != null) {
-      List<String> result = new LinkedList<String>();
+      List<String> result = new LinkedList<>();
       final Xpp3Dom[] children = subelement.getChildren();
       for (Xpp3Dom child : children) {
         result.add(child.getValue());

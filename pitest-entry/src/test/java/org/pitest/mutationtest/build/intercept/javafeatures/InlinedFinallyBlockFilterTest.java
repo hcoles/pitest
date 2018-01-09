@@ -82,13 +82,13 @@ public class InlinedFinallyBlockFilterTest {
 
   private MutationDetails makeMutantInHandlerBlock(final int line,
       final int block, final String mutator, final Collection<Integer> indexes) {
-    return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
+    return new MutationDetails(makeId(new HashSet<>(indexes), mutator),
         "file", "desc", line, block, true, PoisonStatus.NORMAL);
   }
 
   private MutationDetails makeMutant(final int line, final int block,
       final String mutator, final Collection<Integer> indexes) {
-    return new MutationDetails(makeId(new HashSet<Integer>(indexes), mutator),
+    return new MutationDetails(makeId(new HashSet<>(indexes), mutator),
         "file", "desc", line, block);
   }
 

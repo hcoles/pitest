@@ -33,7 +33,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
       ConfigOption.REPORT_DIR.getParamName(),
       ConfigOption.SOURCE_DIR.getParamName()        };
   
-  private final Map<String, String> options          = new HashMap<String, String>();
+  private final Map<String, String> options          = new HashMap<>();
   
   /**
    * Classpath to analyse
@@ -132,10 +132,6 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.THREADS, value);
   }
 
-  public void setMutateStaticInits(final String value) {
-    this.setOption(ConfigOption.MUTATE_STATIC_INITIALIZERS, value);
-  }
-
   public void setDetectInlinedCode(final String value) {
     this.setOption(ConfigOption.USE_INLINED_CODE_DETECTION, value);
   }
@@ -160,6 +156,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.EXCLUDED_CLASSES, value);
   }
 
+  public void setExcludedTestClasses(final String value) {
+    this.setOption(ConfigOption.EXCLUDED_TEST_CLASSES, value);
+  }
+  
   public void setAvoidCallsTo(final String value) {
     this.setOption(ConfigOption.AVOID_CALLS, value);
   }

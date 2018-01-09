@@ -28,7 +28,7 @@ import org.pitest.testapi.TestUnit;
 
 public class TimeOutDecoratedTestSource {
 
-  private final Map<String, TestUnit> allTests = new HashMap<String, TestUnit>();
+  private final Map<String, TestUnit> allTests = new HashMap<>();
   private final TimeoutLengthStrategy timeoutStrategy;
   private final Reporter              r;
 

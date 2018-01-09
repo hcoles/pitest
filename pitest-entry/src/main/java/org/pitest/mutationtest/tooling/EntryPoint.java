@@ -71,6 +71,8 @@ public class EntryPoint {
       Log.getLogger().info("---------------------------------------------------------------------------");      
     }
     
+    selectTestPlugin(data);
+    
     final ClassPath cp = data.getClassPath();
 
     final Option<Reader> reader = data.createHistoryReader();
@@ -94,8 +96,7 @@ public class EntryPoint {
         settings.getJavaExecutable(), data.getJvmArgs(), environmentVariables);
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
-    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
-        .testClassIdentifier());
+    final CodeSource code = new CodeSource(cps);
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
@@ -121,6 +122,25 @@ public class EntryPoint {
       historyWriter.close();
     }
 
+  }
+
+  private void selectTestPlugin(ReportOptions data) {
+    if (data.getTestPlugin() == null || data.getTestPlugin().equals("")) {
+      if (junit5PluginIsOnClasspath()) {
+        data.setTestPlugin("junit5");
+      } else {
+        data.setTestPlugin("junit");
+      }
+    }
+  }
+
+  private boolean junit5PluginIsOnClasspath() {
+    try {
+      Class.forName("org.pitest.junit5.JUnit5TestPluginFactory");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 
   private SideEffect1<Feature> asInfo(final String leader) {

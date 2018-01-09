@@ -18,6 +18,7 @@ import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -50,10 +51,10 @@ public class MutationTestUnitTest {
     MockitoAnnotations.initMocks(this);
     this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(
         this.javaAgent));
-    this.mutations = new ArrayList<MutationDetails>();
-    this.tests = new ArrayList<ClassName>();
+    this.mutations = new ArrayList<>();
+    this.tests = new ArrayList<>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
-        new WorkerFactory(null, this.config, this.mutationConfig, this.timeout,
+        new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, this.timeout,
             false, null));
   }
 

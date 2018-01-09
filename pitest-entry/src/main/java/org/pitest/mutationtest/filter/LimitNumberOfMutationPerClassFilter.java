@@ -44,7 +44,7 @@ public class LimitNumberOfMutationPerClassFilter implements MutationInterceptor 
   
   private Collection<MutationDetails> createEvenlyDistributedSampling(
       final Collection<MutationDetails> mutations) {
-    final Collection<MutationDetails> filtered = new ArrayList<MutationDetails>(
+    final Collection<MutationDetails> filtered = new ArrayList<>(
         this.maxMutationsPerClass);
     final int step = (mutations.size() / this.maxMutationsPerClass);
     final Iterator<MutationDetails> it = mutations.iterator();

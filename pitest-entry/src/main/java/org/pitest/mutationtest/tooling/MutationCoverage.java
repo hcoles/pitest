@@ -37,7 +37,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -56,7 +55,7 @@ import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.execute.MutationAnalysisExecutor;  
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
@@ -122,7 +121,7 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     final MutationEngine engine = this.strategies.factory().createEngine(
-        Prelude.or(this.data.getExcludedMethods()),
+        this.data.getExcludedMethods(),
         this.data.getMutators());
 
     final List<MutationResultListener> config = createConfig(t0, coverageData,
@@ -180,7 +179,7 @@ private int numberOfThreads() {
   private List<MutationResultListener> createConfig(final long t0,
       final CoverageDatabase coverageData,
       final MutationStatisticsListener stats, final MutationEngine engine) {
-    final List<MutationResultListener> ls = new ArrayList<MutationResultListener>();
+    final List<MutationResultListener> ls = new ArrayList<>();
 
     ls.add(stats);
 
@@ -209,7 +208,7 @@ private int numberOfThreads() {
 
   private Set<ClassName> getAllClassesAndTests(
       final CoverageDatabase coverageData) {
-    final Set<ClassName> names = new HashSet<ClassName>();
+    final Set<ClassName> names = new HashSet<>();
     for (final ClassName each : this.code.getCodeUnderTestNames()) {
       names.add(each);
       FCollection.mapTo(coverageData.getTestsForClass(each),

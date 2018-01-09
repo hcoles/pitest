@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPath;
 import org.pitest.functional.F3;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -42,7 +41,6 @@ import org.pitest.testapi.execute.MultipleTestGroup;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.testapi.execute.containers.ConcreteResultCollector;
 import org.pitest.testapi.execute.containers.UnContainer;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
 public class MutationTestWorker {
@@ -138,10 +136,9 @@ public class MutationTestWorker {
           + mutatedClass.getDetails().getMethod());
     }
 
-    final ClassLoader activeloader = pickClassLoaderForMutant(mutationId);
-    final Container c = createNewContainer(activeloader);
+    final Container c = createNewContainer();
     final long t0 = System.currentTimeMillis();
-    if (this.hotswap.apply(mutationId.getClassName(), activeloader,
+    if (this.hotswap.apply(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {
         LOG.fine("replaced class with mutant in "
@@ -156,31 +153,21 @@ public class MutationTestWorker {
     return mutationDetected;
   }
 
-  private static Container createNewContainer(final ClassLoader activeloader) {
+  private static Container createNewContainer() {
     final Container c = new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
-        List<TestResult> results = new ArrayList<TestResult>();
+        List<TestResult> results = new ArrayList<>();
         final ExitingResultCollector rc = new ExitingResultCollector(
             new ConcreteResultCollector(results));
-        group.execute(activeloader, rc);
+        group.execute(rc);
         return results;
       }
     };
     return c;
   }
 
-  private ClassLoader pickClassLoaderForMutant(final MutationDetails mutant) {
-    if (mutant.mayPoisonJVM()) {
-      if (DEBUG) {
-        LOG.fine("Creating new classloader for static initializer");
-      }
-      return new DefaultPITClassloader(new ClassPath(),
-          IsolationUtils.bootClassLoader());
-    } else {
-      return this.loader;
-    }
-  }
+
 
   @Override
   public String toString() {

@@ -47,7 +47,7 @@ public class ClassTree {
   }
   
   public FunctionalList<AnnotationNode> annotations() {
-    FunctionalList<AnnotationNode> annotaions = new MutableList<AnnotationNode>();
+    FunctionalList<AnnotationNode> annotaions = new MutableList<>();
     if (rawNode.invisibleAnnotations != null) {
       annotaions.addAll(rawNode.invisibleAnnotations);
     }

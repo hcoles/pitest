@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -59,6 +58,13 @@ public class OptionsParserTest {
     MockitoAnnotations.initMocks(this);
     when(this.filter.apply(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
+  }
+  
+  @Test
+  public void shouldParseTestPlugin() {
+    final String value = "foo";
+    final ReportOptions actual = parseAddingRequiredArgs("--testPlugin", value);
+    assertEquals(value, actual.getTestPlugin());
   }
 
   @Test
@@ -112,31 +118,6 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfFeatures() {
     final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
     assertThat(actual.getFeatures()).contains("+FOO()", "-BAR(value=1 & value=2)");
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenTrueSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits",
-        "true");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenFalseSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits=false");
-    assertFalse(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldNotCreateMutationsInStaticInitializerByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
-    assertFalse(actual.isMutateStaticInitializers());
   }
 
   @Test
@@ -229,8 +210,8 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseCommaSeparatedListOfExcludedClassGlobsAndApplyTheseToTests() {
-    final ReportOptions actual = parseAddingRequiredArgs("--excludedClasses",
+  public void shouldParseCommaSeparatedListOfExcludedTestClassGlobs() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
     assertFalse(testPredicate.apply("foo_anything"));
@@ -265,12 +246,9 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
         "foo*,bar*,car");
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+    final Collection<String> actualPredicate = actual
+        .getExcludedMethods();
+    assertThat(actualPredicate).containsExactlyInAnyOrder("foo*", "bar*", "car");
   }
 
   @Test
@@ -282,7 +260,7 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(new HashSet<String>(Arrays.asList("HTML")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -290,7 +268,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfOutputFormatsWhenSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
         "HTML,CSV");
-    assertEquals(new HashSet<String>(Arrays.asList("HTML", "CSV")),
+    assertEquals(new HashSet<>(Arrays.asList("HTML", "CSV")),
         actual.getOutputFormats());
   }
 
@@ -522,7 +500,7 @@ public class OptionsParserTest {
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
-    final List<String> a = new ArrayList<String>();
+    final List<String> a = new ArrayList<>();
     a.addAll(Arrays.asList(args));
     addIfNotPresent(a, "--targetClasses");
     addIfNotPresent(a, "--reportDir");

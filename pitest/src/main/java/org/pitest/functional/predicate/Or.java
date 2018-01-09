@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class Or<A> implements Predicate<A> {
 
-  private final Set<Predicate<A>> ps = new LinkedHashSet<Predicate<A>>();
+  private final Set<Predicate<A>> ps = new LinkedHashSet<>();
 
   public Or(final Iterable<Predicate<A>> ps) {
     for (final Predicate<A> each : ps) {

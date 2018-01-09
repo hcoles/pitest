@@ -20,7 +20,7 @@ package org.pitest.testapi;
  */
 public interface TestUnit {
 
-  void execute(ClassLoader loader, ResultCollector rc);
+  void execute(ResultCollector rc);
 
   Description getDescription();
 

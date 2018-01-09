@@ -27,7 +27,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
 public class MutatorTest {
 
-  @SuppressWarnings("unchecked")
   @Test
   public void shouldReturnRequestedMutators() {
     assertThat(parseStrings("MATH", "INVERT_NEGS")).containsAll(

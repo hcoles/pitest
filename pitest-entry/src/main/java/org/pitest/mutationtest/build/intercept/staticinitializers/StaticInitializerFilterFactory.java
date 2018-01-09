@@ -1,6 +1,5 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
-import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
@@ -15,9 +14,6 @@ public class StaticInitializerFilterFactory implements MutationInterceptorFactor
 
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
-    if (params.data().isMutateStaticInitializers()) {
-      return CompoundMutationInterceptor.nullInterceptor();
-    }
     return new StaticInitializerFilter();
   }
 

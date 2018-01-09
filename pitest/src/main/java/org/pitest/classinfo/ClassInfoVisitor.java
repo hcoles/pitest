@@ -118,7 +118,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     @Override
     public AnnotationVisitor visitArray(String name) {
       if (name.equals("value")) {
-        final List<Object> arrayValue = new ArrayList<Object>();
+        final List<Object> arrayValue = new ArrayList<>();
 
         return new AnnotationVisitor(Opcodes.ASM6, null) {
           @Override

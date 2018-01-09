@@ -202,7 +202,7 @@ public class ScmMojo extends AbstractPitMojo {
   }
   
   private Set<String> pathsAffectedByChange(ChangeLogScmRequest scmRequest, Set<ScmFileStatus> statusToInclude, int limit) throws ScmException {
-    Set<String> affected = new LinkedHashSet<String>();
+    Set<String> affected = new LinkedHashSet<>();
     ChangeLogScmResult changeLogScmResult = this.manager.changeLog(scmRequest);
     if (changeLogScmResult.isSuccess()) {
       List<ChangeSet> changeSets = limit(changeLogScmResult.getChangeLog().getChangeSets(),limit);
@@ -222,7 +222,7 @@ public class ScmMojo extends AbstractPitMojo {
   private Set<String> localChanges(Set<ScmFileStatus> statusToInclude, ScmRepository repository, File scmRoot) throws ScmException {
     final StatusScmResult status = this.manager.status(repository,
             new ScmFileSet(scmRoot));
-    Set<String> affected = new LinkedHashSet<String>();
+    Set<String> affected = new LinkedHashSet<>();
     for (final ScmFile file : status.getChangedFiles()) {
       if (statusToInclude.contains(file.getStatus())) {
         affected.add(file.getPath());
@@ -241,10 +241,10 @@ public class ScmMojo extends AbstractPitMojo {
 
   private Set<ScmFileStatus> makeStatusSet() {
     if ((this.include == null) || this.include.isEmpty()) {
-      return new HashSet<ScmFileStatus>(Arrays.asList(
+      return new HashSet<>(Arrays.asList(
           ScmStatus.ADDED.getStatus(), ScmStatus.MODIFIED.getStatus()));
     }
-    final Set<ScmFileStatus> s = new HashSet<ScmFileStatus>();
+    final Set<ScmFileStatus> s = new HashSet<>();
     FCollection.mapTo(this.include, stringToMavenScmStatus(), s);
     return s;
   }
@@ -300,7 +300,7 @@ public class ScmMojo extends AbstractPitMojo {
    * A bug in maven 2 requires that all list fields declare a concrete list type
    */
   private static ArrayList<String> makeConcreteList(List<String> list) {
-    return new ArrayList<String>(list);
+    return new ArrayList<>(list);
   }
 
 }
