@@ -17,12 +17,13 @@ package org.pitest.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -48,14 +49,18 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   @SuppressWarnings("rawtypes")
   private static final Option<Class> CLASS_RULE = findClassRuleClass();
-  
+
+
   private final TestGroupConfig config;
   private final Collection<String> excludedRunners;
-  
-  JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners) {
+  private final Collection<String> includedTestMethods;
+
+  JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners,
+                                  final Collection<String> includedTestMethods) {
     Preconditions.checkNotNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
+    this.includedTestMethods = includedTestMethods;
   }
 
   @Override
@@ -69,11 +74,26 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
         && !shouldTreatAsOneUnit(clazz, runner)) {
-      return splitIntoFilteredUnits(runner.getDescription());
+      List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
+      return filterUnitsByMethod(filteredUnits);
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
           clazz, Option.<Filter> none()));
     }
+  }
+
+  private List<TestUnit> filterUnitsByMethod(List<TestUnit> filteredUnits) {
+    if (this.includedTestMethods.isEmpty()) {
+      return filteredUnits;
+    }
+
+    List<TestUnit> units = new ArrayList<>();
+    for (TestUnit unit: filteredUnits) {
+      if (this.includedTestMethods.contains(unit.getDescription().getName().split("\\(")[0])) {
+        units.add(unit);
+      }
+    }
+    return units;
   }
 
   private boolean isExcluded(Runner runner) {

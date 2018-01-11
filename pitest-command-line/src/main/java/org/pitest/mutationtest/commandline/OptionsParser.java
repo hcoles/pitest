@@ -31,6 +31,7 @@ import static org.pitest.mutationtest.config.ConfigOption.FEATURES;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_INPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATION;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
+import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_TEST_METHODS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_LAUNCH_CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
@@ -113,6 +114,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
+  private final OptionSpec<String>                   includedTestMethodsSpec;
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
@@ -282,6 +284,10 @@ public class OptionsParser {
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("TestNG groups/JUnit categories to include");
 
+    this.includedTestMethodsSpec = parserAccepts(INCLUDED_TEST_METHODS).withRequiredArg()
+            .ofType(String.class).withValuesSeparatedBy(',')
+            .describedAs("Test methods that should be included for challenging the mutants");
+
     this.excludedGroupsSpec = parserAccepts(EXCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("TestNG groups/JUnit categories to include");
@@ -409,6 +415,8 @@ public class OptionsParser {
     setClassPath(userArgs, data);
 
     setTestGroups(userArgs, data);
+
+    data.setIncludedTestMethods(this.includedTestMethodsSpec.values(userArgs));
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
 
     if (userArgs.has("?")) {

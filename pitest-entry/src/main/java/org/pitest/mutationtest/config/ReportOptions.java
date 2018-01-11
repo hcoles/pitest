@@ -129,6 +129,7 @@ public class ReportOptions {
   private int maxSurvivors;
   
   private Collection<String>             excludedRunners                = new ArrayList<>();
+  private Collection<String>             includedTestMethods            = new ArrayList<>();
   
   private String                         testPlugin                     = "";
 
@@ -566,15 +567,24 @@ public class ReportOptions {
     return excludedRunners;
   }
 
+  public Collection<String> getIncludedTestMethods() {
+    return includedTestMethods;
+  }
+
   public void setExcludedRunners(Collection<String> excludedRunners) {
     this.excludedRunners = excludedRunners;
+  }
+
+  public void setIncludedTestMethods(Collection<String> includedTestMethods) {
+    this.includedTestMethods = includedTestMethods;
   }
 
   /**
    * Creates a serializable subset of data for use in child processes
    */
   public TestPluginArguments createMinionSettings() {
-    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners());
+    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners(),
+            this.getIncludedTestMethods());
   }
 
   public String getTestPlugin() {
@@ -610,7 +620,8 @@ public class ReportOptions {
         + mutationEngine + ", javaExecutable=" + javaExecutable
         + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
         + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
-        + excludedRunners + ", testPlugin=" + testPlugin + "]";
+        + excludedRunners + ", testPlugin=" + testPlugin + ", includedTestMethods="
+        + includedTestMethods + "]";
   }
   
 }

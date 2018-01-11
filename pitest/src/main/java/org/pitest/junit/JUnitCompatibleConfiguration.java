@@ -31,19 +31,22 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   private final TestGroupConfig config;
   private final Collection<String> excludedRunners;
+  private final Collection<String> includedTestMethods;
 
   private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
   
-  public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
+  public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners,
+                                      Collection<String> includedTestMethods) {
     Preconditions.checkNotNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
+    this.includedTestMethods = includedTestMethods;
   }
 
   @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
-        new JUnitCustomRunnerTestUnitFinder(config, excludedRunners),
+        new JUnitCustomRunnerTestUnitFinder(config, excludedRunners, includedTestMethods),
         new ParameterisedJUnitTestFinder()));
   }
 

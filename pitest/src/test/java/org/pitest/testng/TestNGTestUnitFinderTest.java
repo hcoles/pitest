@@ -34,7 +34,7 @@ public class TestNGTestUnitFinderTest {
   public void setUp() {
     final TestGroupConfig config = new TestGroupConfig(
         Collections.<String> emptyList(), Collections.<String> emptyList());
-    this.testee = new TestNGTestUnitFinder(config);
+    this.testee = new TestNGTestUnitFinder(config, Collections.<String> emptyList());
   }
 
   @Test

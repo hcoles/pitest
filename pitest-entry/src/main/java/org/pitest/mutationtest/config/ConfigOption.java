@@ -137,6 +137,10 @@ public enum ConfigOption {
    */
   INCLUDED_GROUPS("includedGroups"),
   /**
+   * Test methods that should be included for challenging the mutants
+   */
+  INCLUDED_TEST_METHODS("includedTestMethods"),
+  /**
    * TestNG groupsJUnit categories to exclude
    */
   EXCLUDED_GROUPS("excludedGroups"),

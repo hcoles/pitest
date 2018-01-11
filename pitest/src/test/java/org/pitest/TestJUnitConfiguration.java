@@ -54,6 +54,7 @@ public class TestJUnitConfiguration {
 
   private  JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
                                                         new TestGroupConfig(), 
+                                                        Collections.<String>emptyList(),
                                                         Collections.<String>emptyList());
   private Pitest                             pitest;
   private Container                          container;
@@ -629,7 +630,7 @@ public class TestJUnitConfiguration {
     List<String> include = Collections.emptyList();
     testee = new JUnitCompatibleConfiguration(
             new TestGroupConfig(include,exclude), 
-            Collections.<String>emptyList());
+            Collections.<String>emptyList(), Collections.<String>emptyList());
   }
 
   private void run(final Class<?> clazz) {

@@ -15,7 +15,8 @@ public class JUnitCompatibleConfigurationTest {
   @Before
   public void setUp() throws Exception {
 
-    this.testee = new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList());
+    this.testee = new JUnitCompatibleConfiguration(new TestGroupConfig(), Collections.<String>emptyList(),
+            Collections.<String>emptyList());
   }
 
   @Test
