@@ -70,11 +70,6 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldRemoveDslMethods() throws Exception {
-    FunctionalList<MutationDetails> mutations = findMutationsFor(
-        HasDslMethodCall.class);
-    // stringbuilder matches pattern for a dsl
-    assertThat(mutations).hasSize(3);
-
     final Mutant mutant = getFirstMutant(HasDslMethodCall.class);
     assertMutantCallableReturns(new HasDslMethodCall(), mutant, "HasDslMethodCall [i=3]");
   }

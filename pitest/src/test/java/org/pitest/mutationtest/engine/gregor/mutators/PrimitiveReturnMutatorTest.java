@@ -23,6 +23,18 @@ public class PrimitiveReturnMutatorTest extends MutatorTestBase {
   }
     
   @Test
+  public void mutatesReturnTo0ForBytes() throws Exception {
+    assertMutantCallableReturns(new ByteReturn(),
+        createFirstMutant(ByteReturn.class), "0");
+  }
+  
+  @Test
+  public void describesMutationsToBytes() {
+    assertMutantDescriptionIncludes("replaced byte return with 0", ByteReturn.class);
+    assertMutantDescriptionIncludes("ByteReturn::mutable", ByteReturn.class);
+  }
+  
+  @Test
   public void mutatesReturnToReturn0ForInts() throws Exception {
     assertMutantCallableReturns(new IntReturn(),
         createFirstMutant(IntReturn.class), "0");
@@ -103,6 +115,17 @@ public class PrimitiveReturnMutatorTest extends MutatorTestBase {
   private static class BooleanReturn implements Callable<String> {
     public boolean mutable() {
       return true;
+    }
+
+    @Override
+    public String call() throws Exception {
+      return "" + mutable();
+    }
+  }
+  
+  private static class ByteReturn implements Callable<String> {
+    public byte mutable() {
+      return 101;
     }
 
     @Override

@@ -145,6 +145,8 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       private String makeMessage(String methodDescriptor) {
         int sort = Type.getReturnType(methodDescriptor).getSort();
         switch (sort) {
+        case Type.BYTE:
+          return "replaced byte return with 0";        
         case Type.INT:
           return "replaced int return with 0";
         case Type.CHAR:
