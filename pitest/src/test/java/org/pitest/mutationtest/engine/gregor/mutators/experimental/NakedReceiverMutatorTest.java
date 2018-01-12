@@ -16,7 +16,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.NAKED_RECEIVER;
 
 import java.util.ArrayList;
@@ -24,9 +23,7 @@ import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class NakedReceiverMutatorTest extends MutatorTestBase {

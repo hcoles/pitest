@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.3.2-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #439 - Primitives return mutator doesn't handle bytes
 
 ### 1.3.1
 
