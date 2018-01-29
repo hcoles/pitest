@@ -110,10 +110,10 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>Covered.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='false' status='NO_COVERAGE'><sourceFile>Covered.java</sourceFile>");
+            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>Covered.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
@@ -126,10 +126,10 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>Covered.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='false' status='NO_COVERAGE'><sourceFile>Covered.java</sourceFile>");
+            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>Covered.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
@@ -145,13 +145,13 @@ public class PitMojoIT {
     assertThat(coverage).contains("Covered");
     assertThat(actual)
         .contains(
-            "<mutation detected='false' status='NO_COVERAGE'><sourceFile>NotCovered.java</sourceFile>");
+            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
     assertThat(actual)
         .doesNotContain(
-            "<mutation detected='true' status='KILLED'><sourceFile>NotCovered.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>NotCovered.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>Covered.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>Covered.java</sourceFile>");
   }
 
   @Test
@@ -166,15 +166,15 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>PowerMockAgentCallFoo.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>PowerMockCallFoo.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>PowerMockCallFoo.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
-    assertThat(actual).doesNotContain("<mutation detected='false' status='NO_COVERAGE'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile><mutatedClass>com.example.PowerMockCallsOwnMethod</mutatedClass><mutatedMethod>branchedCode</mutatedMethod>");
+    assertThat(actual).doesNotContain("<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>PowerMockCallsOwnMethod.java</sourceFile><mutatedClass>com.example.PowerMockCallsOwnMethod</mutatedClass><mutatedMethod>branchedCode</mutatedMethod>");
   }
 
   @Test
@@ -187,7 +187,7 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>MyRequest.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='2'><sourceFile>MyRequest.java</sourceFile>");
   }
 
   /*
@@ -326,7 +326,7 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='false' status='NO_COVERAGE'><sourceFile>NotCovered.java</sourceFile>");
+            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
   }
 
   @Test
@@ -339,10 +339,10 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
         .contains(
-            "<mutation detected='true' status='KILLED'><sourceFile>MyWidget.java</sourceFile>");
+            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>MyWidget.java</sourceFile>");
     assertThat(actual)
         .contains(
-            "<mutation detected='false' status='SURVIVED'><sourceFile>MyWidget.java</sourceFile>");
+            "<mutation detected='false' status='SURVIVED' numberOfTestsRun='7'><sourceFile>MyWidget.java</sourceFile>");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
@@ -359,7 +359,7 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual)
             .contains(
-                    "<mutation detected='true' status='KILLED'><sourceFile>SomeClass.java</sourceFile>");
+                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>SomeClass.java</sourceFile>");
     assertThat(actual).doesNotContain("status='NO_COVERAGE'");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }

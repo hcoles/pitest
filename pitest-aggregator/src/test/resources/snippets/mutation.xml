@@ -1,0 +1,12 @@
+<mutation detected="true" status="KILLED" numberOfTestsRun="1">
+	<sourceFile>OrderedWeightedValueSampler.java</sourceFile>
+	<mutatedClass>com.mycompany.OrderedWeightedValueSampler</mutatedClass>
+	<mutatedMethod>&lt;init&gt;</mutatedMethod>
+	<methodDescription>(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V</methodDescription>
+	<lineNumber>77</lineNumber>
+	<mutator>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</mutator>
+	<index>61</index>
+	<killingTest>com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)</killingTest>
+	<description>Replaced long multiplication with division</description>
+	<block>27</block>
+</mutation>
