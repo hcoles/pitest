@@ -35,11 +35,11 @@ abstract class DataLoader<T> {
       throw new IllegalArgumentException("Null or empty filesToLoad");
     }
 
-    this.filesToLoad = Collections.unmodifiableSet(new HashSet<File>(filesToLoad));
+    this.filesToLoad = Collections.unmodifiableSet(new HashSet<>(filesToLoad));
   }
 
   public Set<T> loadData() throws ReportAggregationException {
-    final Set<T> data = new HashSet<T>();
+    final Set<T> data = new HashSet<>();
 
     for (final File file : filesToLoad) {
       data.addAll(loadData(file));
@@ -53,7 +53,7 @@ abstract class DataLoader<T> {
     if (!dataLocation.exists() || !dataLocation.isFile()) {
       throw new ReportAggregationException(dataLocation.getAbsolutePath() + " does not exist or is not a file");
     }
-    final Set<T> data = new HashSet<T>();
+    final Set<T> data = new HashSet<>();
     try {
       final InputStream inputStream = new BufferedInputStream(new FileInputStream(dataLocation));
 
@@ -99,7 +99,7 @@ abstract class DataLoader<T> {
 
   // converts the contents of a node into a map
   static Map<String, Object> nodeMap(final Node node) {
-    final HashMap<String, Object> map = new HashMap<String, Object>();
+    final HashMap<String, Object> map = new HashMap<>();
 
     final NamedNodeMap attrs = node.getAttributes();
     for (int i = 0; i < attrs.getLength(); i++) {
@@ -122,7 +122,7 @@ abstract class DataLoader<T> {
           map.put(child.getNodeName(), tc);
         } else {
           // may have test nodes
-          final List<String> tests = new ArrayList<String>();
+          final List<String> tests = new ArrayList<>();
           final NodeList testNodeList = child.getChildNodes();
           for (int j = 0; j < testNodeList.getLength(); j++) {
             final Node testNode = testNodeList.item(j);

@@ -29,7 +29,7 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
   private static final String STATUS              = "status";
   private static final String KILLING_TEST        = "killingTest";
 
-  public MutationResultDataLoader(final Collection<File> filesToLoad) {
+  MutationResultDataLoader(final Collection<File> filesToLoad) {
     super(filesToLoad);
   }
 

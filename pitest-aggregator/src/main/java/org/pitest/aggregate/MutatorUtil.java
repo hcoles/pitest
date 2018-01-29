@@ -9,7 +9,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 final class MutatorUtil {
 
-  private static Map<String, MethodMutatorFactory> factories = new ConcurrentHashMap<String, MethodMutatorFactory>();
+  private static Map<String, MethodMutatorFactory> factories = new ConcurrentHashMap<>();
 
   @SuppressWarnings("unchecked")
   static MethodMutatorFactory loadMutator(final String className) {

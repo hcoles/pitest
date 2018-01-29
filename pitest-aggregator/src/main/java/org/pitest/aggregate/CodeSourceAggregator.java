@@ -25,7 +25,7 @@ class CodeSourceAggregator {
 
   private final Collection<File> compiledCodeDirectories;
 
-  public CodeSourceAggregator(final Collection<File> compiledCodeDirectories) {
+  CodeSourceAggregator(final Collection<File> compiledCodeDirectories) {
     this.compiledCodeDirectories = Collections.unmodifiableCollection(compiledCodeDirectories);
   }
 
@@ -42,19 +42,23 @@ class CodeSourceAggregator {
   }
 
   private Predicate<String> createClassPredicate() {
-    final Collection<String> classes = new HashSet<String>();
+    final Collection<String> classes = new HashSet<>();
     for (final File buildOutputDirectory : compiledCodeDirectories) {
       if (buildOutputDirectory.exists()) {
         final DirectoryClassPathRoot dcRoot = new DirectoryClassPathRoot(buildOutputDirectory);
-        classes.addAll(FCollection.map(dcRoot.classNames(), new F<String, String>() {
-          @Override
-          public String apply(final String a) {
-            return ClassName.fromString(a).getPackage().asJavaName() + ".*";
-          }
-        }));
+        classes.addAll(FCollection.map(dcRoot.classNames(), toPredicate()));
       }
     }
     return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
+  }
+
+  private F<String, String> toPredicate() {
+    return new F<String, String>() {
+      @Override
+      public String apply(final String a) {
+        return ClassName.fromString(a).getPackage().asJavaName() + ".*";
+      }
+    };
   }
   
 }

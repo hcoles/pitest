@@ -137,7 +137,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldOnlyRunTestsInIncludedTestMethods() {
-    List<String> includedMethods = new ArrayList<String>();
+    List<String> includedMethods = new ArrayList<>();
     includedMethods.add("includeGroup");
     includedMethods.add("excludeGroup");
 

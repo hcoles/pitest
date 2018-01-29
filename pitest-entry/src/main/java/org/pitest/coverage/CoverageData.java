@@ -46,7 +46,7 @@ public class CoverageData implements CoverageDatabase {
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
-  private final Map<BlockLocation, Set<TestInfo>>             blockCoverage = new LinkedHashMap<>();
+  private final Map<BlockLocation, Set<TestInfo>>             blockCoverage;
   private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<>();
   private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
   private final Map<String, Collection<ClassInfo>>            classesForFile;
@@ -58,6 +58,12 @@ public class CoverageData implements CoverageDatabase {
   private boolean                                             hasFailedTest = false;
 
   public CoverageData(final CodeSource code, final LineMap lm) {
+    this(code, lm, new LinkedHashMap<BlockLocation, Set<TestInfo>>());
+  }
+
+  
+  public CoverageData(final CodeSource code, final LineMap lm, Map<BlockLocation, Set<TestInfo>> blockCoverage) {
+    this.blockCoverage = blockCoverage;
     this.code = code;
     this.lm = lm;
     this.classesForFile = FCollection.bucket(this.code.getCode(),

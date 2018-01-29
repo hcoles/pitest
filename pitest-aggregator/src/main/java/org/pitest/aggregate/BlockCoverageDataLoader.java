@@ -19,7 +19,7 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
 
   private static final String OPEN_PAREN = "(";
 
-  public BlockCoverageDataLoader(final Collection<File> filesToLoad) {
+  BlockCoverageDataLoader(final Collection<File> filesToLoad) {
     super(filesToLoad);
   }
 

@@ -60,28 +60,36 @@ public class PitAggregationMojo extends PitReportMojo {
   }
 
   @Override
-  protected void executeReport(final Locale locale) throws MavenReportException {
+  protected void executeReport(final Locale locale)
+      throws MavenReportException {
     try {
       final Collection<MavenProject> allProjects = findDependencies();
 
-      final ReportAggregator.Builder reportAggregationBuilder = ReportAggregator.builder();
+      final ReportAggregator.Builder reportAggregationBuilder = ReportAggregator
+          .builder();
 
       for (final MavenProject proj : allProjects) {
         addProjectFiles(reportAggregationBuilder, proj);
       }
 
       final ReportAggregator reportAggregator = reportAggregationBuilder
-          .resultOutputStrategy(new DirectoryResultOutputStrategy(getReportsDirectory().getAbsolutePath(), new UndatedReportDirCreationStrategy())).build();
+          .resultOutputStrategy(new DirectoryResultOutputStrategy(
+              getReportsDirectory().getAbsolutePath(),
+              new UndatedReportDirCreationStrategy()))
+          .build();
 
       reportAggregator.aggregateReport();
     } catch (final Exception e) {
       throw new MavenReportException(e.getMessage(), e);
     }
   }
-  
-  private void addProjectFiles(final ReportAggregator.Builder reportAggregationBuilder, final MavenProject proj) throws IOException, Exception {
+
+  private void addProjectFiles(
+      final ReportAggregator.Builder reportAggregationBuilder,
+      final MavenProject proj) throws IOException, Exception {
     final File projectBaseDir = proj.getBasedir();
-    List<File> files = getProjectFilesByFilter(projectBaseDir, MUTATION_RESULT_FILTER);
+    List<File> files = getProjectFilesByFilter(projectBaseDir,
+        MUTATION_RESULT_FILTER);
     for (final File file : files) {
       reportAggregationBuilder.addMutationResultsFile(file);
     }
@@ -89,7 +97,8 @@ public class PitAggregationMojo extends PitReportMojo {
     for (final File file : files) {
       reportAggregationBuilder.addLineCoverageFile(file);
     }
-    files = convertToRootDirs(proj.getCompileSourceRoots(), proj.getTestCompileSourceRoots());
+    files = convertToRootDirs(proj.getCompileSourceRoots(),
+        proj.getTestCompileSourceRoots());
     for (final File file : files) {
       reportAggregationBuilder.addSourceCodeDirectory(file);
     }
@@ -99,9 +108,9 @@ public class PitAggregationMojo extends PitReportMojo {
     }
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   private List<File> convertToRootDirs(final List... directoryLists) {
-    final List<String> roots = new ArrayList<String>();
+    final List<String> roots = new ArrayList<>();
     for (final List directoryList : directoryLists) {
       roots.addAll(directoryList);
     }
@@ -113,30 +122,35 @@ public class PitAggregationMojo extends PitReportMojo {
     });
   }
 
-  @SuppressWarnings("unchecked")
-  private List<File> getProjectFilesByFilter(final File projectBaseDir, final String filter) throws IOException {
+  private List<File> getProjectFilesByFilter(final File projectBaseDir,
+      final String filter) throws IOException {
     final List<File> files = FileUtils.getFiles(projectBaseDir, filter, "");
     return files == null ? new ArrayList<File>() : files;
   }
 
   @SuppressWarnings("unchecked")
-  private List<File> getCompiledDirs(final MavenProject project) throws Exception {
-    final List<String> sourceRoots = new ArrayList<String>();
-    for (final Object artifactObj : FCollection.filter(project.getPluginArtifactMap().values(),
-        new DependencyFilter(new PluginServices(PitAggregationMojo.class.getClassLoader())))) {
+  private List<File> getCompiledDirs(final MavenProject project)
+      throws Exception {
+    final List<String> sourceRoots = new ArrayList<>();
+    for (final Object artifactObj : FCollection
+        .filter(project.getPluginArtifactMap().values(), new DependencyFilter(
+            new PluginServices(PitAggregationMojo.class.getClassLoader())))) {
 
       final Artifact artifact = (Artifact) artifactObj;
       sourceRoots.add(artifact.getFile().getAbsolutePath());
     }
     return convertToRootDirs(project.getTestClasspathElements(),
-        Arrays.asList(project.getBuild().getOutputDirectory(), project.getBuild().getTestOutputDirectory()), sourceRoots);
+        Arrays.asList(project.getBuild().getOutputDirectory(),
+            project.getBuild().getTestOutputDirectory()),
+        sourceRoots);
   }
 
   // this method comes from
   // https://github.com/jacoco/jacoco/blob/master/jacoco-maven-plugin/src/org/jacoco/maven/ReportAggregateMojo.java
   private List<MavenProject> findDependencies() {
-    final List<MavenProject> result = new ArrayList<MavenProject>();
-    final List<String> scopeList = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_TEST);
+    final List<MavenProject> result = new ArrayList<>();
+    final List<String> scopeList = Arrays.asList(Artifact.SCOPE_COMPILE,
+        Artifact.SCOPE_RUNTIME, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_TEST);
     for (final Object dependencyObject : getProject().getDependencies()) {
       final Dependency dependency = (Dependency) dependencyObject;
       if (scopeList.contains(dependency.getScope())) {
@@ -153,7 +167,9 @@ public class PitAggregationMojo extends PitReportMojo {
   // https://github.com/jacoco/jacoco/blob/master/jacoco-maven-plugin/src/org/jacoco/maven/ReportAggregateMojo.java
   private MavenProject findProjectFromReactor(final Dependency d) {
     for (final MavenProject p : reactorProjects) {
-      if (p.getGroupId().equals(d.getGroupId()) && p.getArtifactId().equals(d.getArtifactId()) && p.getVersion().equals(d.getVersion())) {
+      if (p.getGroupId().equals(d.getGroupId())
+          && p.getArtifactId().equals(d.getArtifactId())
+          && p.getVersion().equals(d.getVersion())) {
         return p;
       }
     }

@@ -1,7 +1,6 @@
 package org.pitest.aggregate;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,12 +42,12 @@ public final class ReportAggregator {
     this.resultOutputStrategy = resultOutputStrategy;
     this.blockCoverageLoader = new BlockCoverageDataLoader(lineCoverageFiles);
     this.mutationLoader = new MutationResultDataLoader(mutationFiles);
-    this.sourceCodeDirectories = Collections.unmodifiableCollection(new HashSet<File>(sourceCodeDirs));
-    this.codeSourceAggregator = new CodeSourceAggregator(new HashSet<File>(compiledCodeDirs));
+    this.sourceCodeDirectories = Collections.unmodifiableCollection(new HashSet<>(sourceCodeDirs));
+    this.codeSourceAggregator = new CodeSourceAggregator(new HashSet<>(compiledCodeDirs));
   }
 
   public void aggregateReport() throws ReportAggregationException {
-    final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<MutationResult>(mutationLoader.loadData()));
+    final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(mutationLoader.loadData()));
 
     final MutationResultListener mutationResultListener = createResultListener(mutationMetaData);
 
@@ -65,7 +64,13 @@ public final class ReportAggregator {
 
     final CodeSource codeSource = codeSourceAggregator.createCodeSource();
     final CoverageDatabase coverageDatabase = calculateCoverage(codeSource, mutationMetaData);
-    final Collection<String> mutatorNames = new HashSet<String>(FCollection.flatMap(mutationMetaData.getMutations(), new F<MutationResult, List<String>>() {
+    final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
+
+    return new MutationHtmlReportListener(coverageDatabase, resultOutputStrategy, mutatorNames, sourceLocator);
+  }
+
+  private static F<MutationResult, List<String>> resultToMutatorName() {
+    return new F<MutationResult, List<String>>() {
       @Override
       public List<String> apply(final MutationResult a) {
         try {
@@ -75,38 +80,36 @@ public final class ReportAggregator {
           throw new RuntimeException("Cannot convert to mutator: " + a.getDetails().getMutator(), e);
         }
       }
-    }));
-
-    return new MutationHtmlReportListener(coverageDatabase, resultOutputStrategy, mutatorNames, sourceLocator);
+    };
   }
 
   private CoverageData calculateCoverage(final CodeSource codeSource, final MutationMetaData metadata) throws ReportAggregationException {
     final Collection<BlockCoverage> coverageData = blockCoverageLoader.loadData();
     try {
-      final CoverageData coverage = new CoverageData(codeSource, new LineMapper(codeSource));
-
-      if (!coverageData.isEmpty()) {
-        final Map<BlockLocation, Set<TestInfo>> blockCoverageMap = new HashMap<BlockLocation, Set<TestInfo>>();
-
-        for (final BlockCoverage blockData : coverageData) {
-          blockCoverageMap.put(blockData.getBlock(), new HashSet<TestInfo>(FCollection.map(blockData.getTests(), new F<String, TestInfo>() {
-            @Override
-            public TestInfo apply(final String a) {
-              return new TestInfo(null, a, 0, Option.some(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
-            }
-          })));
-
-          final Field bcMap = CoverageData.class.getDeclaredField("blockCoverage");
-          bcMap.setAccessible(true);
-          bcMap.set(coverage, blockCoverageMap);
-        }
-      }
-
-      return coverage;
-
+      Map<BlockLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
+      return new CoverageData(codeSource, new LineMapper(codeSource),blockCoverageMap);
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
     }
+  }
+
+  private Map<BlockLocation, Set<TestInfo>> blocksToMap(
+      final Collection<BlockCoverage> coverageData) {
+    final Map<BlockLocation, Set<TestInfo>> blockCoverageMap = new HashMap<>();
+
+    for (final BlockCoverage blockData : coverageData) {
+      blockCoverageMap.put(blockData.getBlock(), new HashSet<>(FCollection.map(blockData.getTests(), toTestInfo(blockData))));
+    }
+    return blockCoverageMap;
+  }
+
+  private F<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
+    return new F<String, TestInfo>() {
+      @Override
+      public TestInfo apply(final String a) {
+        return new TestInfo(null, a, 0, Option.some(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
+      }
+    };
   }
 
   public static Builder builder() {
@@ -115,10 +118,10 @@ public final class ReportAggregator {
 
   public static class Builder {
     private ResultOutputStrategy resultOutputStrategy;
-    private final Set<File>      lineCoverageFiles       = new HashSet<File>();
-    private final Set<File>      mutationResultsFiles    = new HashSet<File>();
-    private final Set<File>      sourceCodeDirectories   = new HashSet<File>();
-    private final Set<File>      compiledCodeDirectories = new HashSet<File>();
+    private final Set<File>      lineCoverageFiles       = new HashSet<>();
+    private final Set<File>      mutationResultsFiles    = new HashSet<>();
+    private final Set<File>      sourceCodeDirectories   = new HashSet<>();
+    private final Set<File>      compiledCodeDirectories = new HashSet<>();
 
     public Builder resultOutputStrategy(final ResultOutputStrategy resultOutputStrategy) {
       this.resultOutputStrategy = resultOutputStrategy;
