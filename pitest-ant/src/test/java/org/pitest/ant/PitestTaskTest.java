@@ -233,6 +233,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassIncludedTestMethodsOptionToJavaTask() {
+    this.pitestTask.setIncludedTestMethods("footest");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--includedTestMethods=footest");
+  }
+
+  @Test
   public void shouldPassMutableCodePathsToJavaTask() {
     this.pitestTask.setMutableCodePaths("foo");
     this.pitestTask.execute(this.java);

@@ -329,6 +329,14 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldParseCommaSeparatedListOfIncludedTestMethods() {
+    final ReportOptions actual = parseAddingRequiredArgs("--includedTestMethods",
+            "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual
+        .getIncludedTestMethods());
+  }
+
+  @Test
   public void shouldParseMutationUnitSize() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationUnitSize",
         "50");

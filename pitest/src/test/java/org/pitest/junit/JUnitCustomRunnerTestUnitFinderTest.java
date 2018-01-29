@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.pitest.testapi.TestGroupConfig.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +63,18 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new JUnitCustomRunnerTestUnitFinder(new TestGroupConfig(), Collections.<String>emptyList());
+    this.testee = new JUnitCustomRunnerTestUnitFinder(new TestGroupConfig(), Collections.<String>emptyList(),
+            Collections.<String>emptyList());
+  }
+
+  @Test
+  public void shouldFindTheoryTestViaMethodNameTest() {
+    List<String> includedMethods = new ArrayList<>();
+    includedMethods.add("testTheory1");
+    includedMethods.add("testTheory3");
+    setIncludedTestMethods(includedMethods);
+    final Collection<TestUnit> actual = findWithTestee(TheoryTest.class);
+    assertEquals(2, actual.size());
   }
 
   @Test
@@ -427,7 +439,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   
   private void setConfig(TestGroupConfig config) {
     testee = new JUnitCustomRunnerTestUnitFinder(
-        config, Collections.<String>emptyList()); 
+        config, Collections.<String>emptyList(), Collections.<String>emptyList());
   }
 
   
@@ -435,7 +447,15 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     List<String> include = Collections.<String>emptyList();
     List<String> exclude = Collections.<String>emptyList();
     testee = new JUnitCustomRunnerTestUnitFinder(
-            new TestGroupConfig(include,exclude), Collections.singletonList(class1.getName()));
+            new TestGroupConfig(include,exclude), Collections.singletonList(class1.getName()),
+            Collections.<String>emptyList());
+  }
+
+  private void setIncludedTestMethods(Collection<String> includedTestMethods) {
+    List<String> include = Collections.<String>emptyList();
+    List<String> exclude = Collections.<String>emptyList();
+    testee = new JUnitCustomRunnerTestUnitFinder(
+            new TestGroupConfig(include,exclude), Collections.<String>emptyList(), includedTestMethods);
   }
 
   

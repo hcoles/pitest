@@ -14,6 +14,7 @@
  */
 package org.pitest.testng;
 
+import java.util.Collection;
 import org.pitest.extension.common.NoTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
@@ -25,14 +26,16 @@ import org.pitest.testapi.TestUnitFinder;
 public class TestNGConfiguration implements Configuration {
 
   private final TestGroupConfig config;
+  private final Collection<String> includedTestMethods;
 
-  public TestNGConfiguration(final TestGroupConfig config) {
+  public TestNGConfiguration(final TestGroupConfig config, final Collection<String> includedTestMethods) {
     this.config = config;
+    this.includedTestMethods = includedTestMethods;
   }
 
   @Override
   public TestUnitFinder testUnitFinder() {
-    return new TestNGTestUnitFinder(this.config);
+    return new TestNGTestUnitFinder(this.config, this.includedTestMethods);
   }
 
   @Override

@@ -16,8 +16,8 @@ public class TestNGPlugin implements TestPluginFactory {
 
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
-      ClassByteArraySource source, Collection<String> excludedRunners) {
-    return new TestNGConfiguration(config);
+      ClassByteArraySource source, Collection<String> excludedRunner, Collection<String> includedTestMethods) {
+    return new TestNGConfiguration(config, includedTestMethods);
   }
 
   @Override

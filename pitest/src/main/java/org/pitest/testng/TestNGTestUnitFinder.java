@@ -15,6 +15,7 @@
 package org.pitest.testng;
 
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,17 +29,17 @@ import org.pitest.testapi.TestUnitFinder;
 public class TestNGTestUnitFinder implements TestUnitFinder {
 
   private final TestGroupConfig config;
+  private final Collection<String> includedTestMethods;
 
-  public TestNGTestUnitFinder(final TestGroupConfig config) {
+  public TestNGTestUnitFinder(final TestGroupConfig config, final Collection<String> includedTestMethods) {
     this.config = config;
+    this.includedTestMethods = includedTestMethods;
   }
 
   @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz) {
-
     if (!isAbstract(clazz) && (hasClassAnnotation(clazz) || hasMethodAnnotation(clazz))) {
-      return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz,
-          this.config));
+      return Collections.<TestUnit> singletonList(new TestNGTestUnit(clazz, this.config, this.includedTestMethods));
     }
     return Collections.emptyList();
 

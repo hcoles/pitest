@@ -211,6 +211,11 @@ public class AbstractPitMojo extends AbstractMojo {
   private ArrayList<String>           includedGroups;
 
   /**
+   * Test methods that should be included for challenging the mutants
+   */
+  @Parameter(property = "includedTestMethods")
+  private ArrayList<String>           includedTestMethods;
+  /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
    * If set to 1 will analyse very slowly, but with strong (jvm per mutant)
@@ -528,6 +533,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public List<String> getIncludedGroups() {
     return this.includedGroups;
+  }
+
+  public List<String> getIncludedTestMethods() {
+    return this.includedTestMethods;
   }
 
   public int getMutationUnitSize() {

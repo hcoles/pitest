@@ -256,6 +256,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         .getIncludedGroups());
   }
 
+  public void testParsesTestMethodsToInclude() {
+    final ReportOptions actual = parseConfig("<includedTestMethods><value>foo</value><value>bar</value></includedTestMethods>");
+    assertEquals(Arrays.asList("foo", "bar"), actual
+            .getIncludedTestMethods());
+  }
+
   public void testMaintainsOrderOfClassPath() {
     final ReportOptions actual = parseConfig("<includedGroups><value>foo</value><value>bar</value></includedGroups>");
     assertEquals(this.classPath, actual.getClassPathElements());

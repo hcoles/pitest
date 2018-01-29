@@ -18,7 +18,7 @@ public class SimpleTestPlugin implements TestPluginFactory {
 
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
-      ClassByteArraySource source, Collection<String> excludedRunners) {
+      ClassByteArraySource source, Collection<String> excludedRunners, Collection<String> includedMethods) {
     return new ConfigurationForTesting();
   }
 

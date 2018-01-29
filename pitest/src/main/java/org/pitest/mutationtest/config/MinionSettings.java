@@ -30,7 +30,8 @@ public class MinionSettings {
       if (each.name().equals(options.getTestPlugin())) {
         return each.createTestFrameworkConfiguration(options.getGroupConfig(),
             source,
-            options.getExcludedRunners());
+            options.getExcludedRunners(),
+            options.getIncludedTestMethods());
       }
     }
     throw new PitError("Could not load requested test plugin "

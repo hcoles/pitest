@@ -33,9 +33,9 @@ public class JUnitTestPlugin implements TestPluginFactory {
 
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
-      ClassByteArraySource source, Collection<String> excludedRunners) {
+      ClassByteArraySource source, Collection<String> excludedRunners, Collection<String> includedTestMethods) {
     Preconditions.checkNotNull(config);
-    return new JUnitCompatibleConfiguration(config, excludedRunners);
+    return new JUnitCompatibleConfiguration(config, excludedRunners, includedTestMethods);
   }
 
   @Override

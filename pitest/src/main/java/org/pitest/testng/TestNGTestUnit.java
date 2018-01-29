@@ -14,8 +14,11 @@
  */
 package org.pitest.testng;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
+import java.util.List;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestGroupConfig;
@@ -27,6 +30,7 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
@@ -41,7 +45,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
   // needs to be static as jmockit assumes only a single instance per jvm
   private static final TestNG                TESTNG = new TestNG(false);
   private static final MutableTestListenerWrapper LISTENER = new MutableTestListenerWrapper();
-  
+
   static {
     TESTNG.addListener(LISTENER);
     TESTNG.addInvokedMethodListener(new FailFast(LISTENER));
@@ -49,13 +53,16 @@ public class TestNGTestUnit extends AbstractTestUnit {
   
   private final Class<?>                     clazz;
   private final TestGroupConfig              config;
- 
-  
+  private final Collection<String> includedTestMethods;
+
+
+
   public TestNGTestUnit(
-      final Class<?> clazz, final TestGroupConfig config) {
+          final Class<?> clazz, final TestGroupConfig config, Collection<String> includedTestMethods) {
     super(new org.pitest.testapi.Description("_", clazz));
     this.clazz = clazz;
     this.config = config;
+    this.includedTestMethods = includedTestMethods;
   }
 
   @Override
@@ -93,6 +100,16 @@ public class TestNGTestUnit extends AbstractTestUnit {
     test.setName(this.clazz.getName());
     final XmlClass xclass = new XmlClass(this.clazz.getName());
     test.setXmlClasses(Collections.singletonList(xclass));
+
+    if (!this.includedTestMethods.isEmpty()) {
+      List<XmlInclude> xmlIncludedTestMethods = new ArrayList<>();
+      for (String includedTestMethod : includedTestMethods) {
+        XmlInclude includedMethod = new XmlInclude(includedTestMethod);
+        xmlIncludedTestMethods.add(includedMethod);
+      }
+      xclass.setIncludedMethods(xmlIncludedTestMethods);
+    }
+
     if (!this.config.getExcludedGroups().isEmpty()) {
       suite.setExcludedGroups(this.config.getExcludedGroups());
     }

@@ -19,9 +19,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -43,19 +46,21 @@ public class TestNGTestUnitTest {
   @Mock
   private ResultCollector rc;
 
-  private TestNGTestUnit  testee;
-  private TestGroupConfig config;
+  private TestNGTestUnit     testee;
+  private TestGroupConfig    config;
+  private Collection<String> includedTestMethods;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.config = new TestGroupConfig(Collections.<String> emptyList(),
         Collections.<String> emptyList());
+    this.includedTestMethods = Collections.emptyList();
   }
 
   @Test
   public void shouldReportTestClassStart() {
-    this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee = new TestNGTestUnit(Passes.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyStart(this.testee.getDescription());
   }
@@ -63,7 +68,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldReportTestMethodStart() {
-    this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee = new TestNGTestUnit(Passes.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyStart(
         new Description("passes", Passes.class));
@@ -71,7 +76,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldReportTestEndWithoutErorWhenTestRunsSuccessfully() {
-    this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee = new TestNGTestUnit(Passes.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1))
     .notifyEnd(new Description("passes", Passes.class));
@@ -79,7 +84,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldReportTestEndWithThrowableWhenTestFails() {
-    this.testee = new TestNGTestUnit(Fails.class, this.config);
+    this.testee = new TestNGTestUnit(Fails.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyEnd(
         eq(new Description("fails", Fails.class)),
@@ -88,7 +93,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldSkipPassingTestsAfterAFailure() {
-    this.testee = new TestNGTestUnit(Fails.class, this.config);
+    this.testee = new TestNGTestUnit(Fails.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("passes", Fails.class)));
@@ -97,9 +102,9 @@ public class TestNGTestUnitTest {
   // we have static state so history may affect results
   @Test
   public void shouldRunTestsInNextTestClassAferFailure() {
-    new TestNGTestUnit(Fails.class, this.config).execute(Mockito.mock(ResultCollector.class));
+    new TestNGTestUnit(Fails.class, this.config, this.includedTestMethods).execute(Mockito.mock(ResultCollector.class));
     
-    this.testee = new TestNGTestUnit(Passes.class, this.config);
+    this.testee = new TestNGTestUnit(Passes.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     
     verify(this.rc, times(1))
@@ -110,7 +115,7 @@ public class TestNGTestUnitTest {
   public void shouldNotRunTestsInExcludedGroups() {
     final TestGroupConfig excludeConfig = new TestGroupConfig(
         Arrays.asList("exclude"), Collections.<String> emptyList());
-    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
+    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyEnd(
         new Description("includeGroup", HasGroups.class));
@@ -122,7 +127,7 @@ public class TestNGTestUnitTest {
   public void shouldOnlyRunTestsInIncludedGroups() {
     final TestGroupConfig excludeConfig = new TestGroupConfig(
         Collections.<String> emptyList(), Arrays.asList("include"));
-    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig);
+    this.testee = new TestNGTestUnit(HasGroups.class, excludeConfig, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyEnd(
         new Description("includeGroup", HasGroups.class));
@@ -131,8 +136,22 @@ public class TestNGTestUnitTest {
   }
 
   @Test
+  public void shouldOnlyRunTestsInIncludedTestMethods() {
+    List<String> includedMethods = new ArrayList<String>();
+    includedMethods.add("includeGroup");
+    includedMethods.add("excludeGroup");
+
+    this.testee = new TestNGTestUnit(HasGroups.class, this.config, includedMethods);
+    this.testee.execute(this.rc);
+    verify(this.rc, times(1)).notifyEnd(
+            new Description("includeGroup", HasGroups.class));
+    verify(this.rc, times(1)).notifyEnd(
+            new Description("excludeGroup", HasGroups.class));
+  }
+
+  @Test
   public void shouldReportTestSkipped() {
-    this.testee = new TestNGTestUnit(Skips.class, this.config);
+    this.testee = new TestNGTestUnit(Skips.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("skip", Skips.class)));
