@@ -9,6 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.3.2-SNAPSHOT
 
+* #438 - Filter tests at method level (thanks @ftrautsch)
 * #439 - Primitives return mutator doesn't handle bytes
 
 ### 1.3.1
