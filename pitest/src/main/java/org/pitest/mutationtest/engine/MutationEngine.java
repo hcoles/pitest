@@ -40,5 +40,11 @@ public interface MutationEngine {
    * @return a list of mutator names
    */
   Collection<String> getMutatorNames();
+  
+  /**
+   * Returns the name of this engine
+   * @return The engine name
+   */
+  String getName();
 
 }

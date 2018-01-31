@@ -121,11 +121,7 @@ class MutateEveryThing extends MethodVisitor {
   private void mutate(String string, int opcode) {
     mutate("Null mutation in " + string + " with " + opcode);
   }
-  
-  private void mutate() {
-    mutate("Null mutation");
-  }
-  
+    
   private void mutate(String string) {
     this.context.registerMutation(this.factory, string);
   }

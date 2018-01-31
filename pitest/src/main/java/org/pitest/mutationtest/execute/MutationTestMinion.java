@@ -34,9 +34,11 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.F3;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
@@ -84,8 +86,11 @@ public class MutationTestMinion {
       final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(
           byteSource);
       
+      MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
+      
+      
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          paramsFromParent.engine.createMutator(byteSource), loader);
+          engine.createMutator(byteSource), loader);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, createTestPlugin(paramsFromParent.pitConfig));
@@ -101,6 +106,10 @@ public class MutationTestMinion {
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
 
+  }
+  
+  private MutationEngine createEngine(String engine, EngineArguments args) {
+    return plugins.createEngine(engine).createEngine(args);
   }
   
   private Configuration createTestPlugin(TestPluginArguments pitConfig) {

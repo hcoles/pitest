@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
@@ -54,8 +55,9 @@ public class MutationTestUnitTest {
     this.mutations = new ArrayList<>();
     this.tests = new ArrayList<>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
-        new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, this.timeout,
+        new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, EngineArguments.arguments(), this.timeout,
             false, null));
+    
   }
 
   @Test

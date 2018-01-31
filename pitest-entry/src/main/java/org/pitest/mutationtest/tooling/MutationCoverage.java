@@ -121,10 +121,10 @@ public class MutationCoverage {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
-    final MutationEngine engine = this.strategies.factory().createEngine(
-        EngineArguments.arguments()
-          .withExcludedMethods(data.getExcludedMethods())
-          .withMutators(data.getMutators()));
+    EngineArguments args = EngineArguments.arguments()
+        .withExcludedMethods(data.getExcludedMethods())
+        .withMutators(data.getMutators());
+    final MutationEngine engine = this.strategies.factory().createEngine(args);
 
     final List<MutationResultListener> config = createConfig(t0, coverageData,
         stats, engine);
@@ -133,7 +133,7 @@ public class MutationCoverage {
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData,
-        engine);
+        engine, args);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -245,7 +245,7 @@ private int numberOfThreads() {
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(
-      final CoverageDatabase coverageData, final MutationEngine engine) {
+      final CoverageDatabase coverageData, final MutationEngine engine, EngineArguments args) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -266,7 +266,7 @@ private int numberOfThreads() {
         new DefaultCodeHistory(this.code, history()), coverageData);
 
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
-        .getConfiguration(), mutationConfig,
+        .getConfiguration(), mutationConfig, args,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());

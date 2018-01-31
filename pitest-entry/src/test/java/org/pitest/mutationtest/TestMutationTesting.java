@@ -63,9 +63,7 @@ import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
@@ -131,7 +129,7 @@ public class TestMutationTesting {
   @Test
   public void shouldKillAllCoveredMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        Mutator.byName("RETURN_VALS"));
+        "RETURN_VALS");
     verifyResults(KILLED);
   }
 
@@ -155,7 +153,7 @@ public class TestMutationTesting {
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
     run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
-        Mutator.byName("RETURN_VALS"));
+        "RETURN_VALS");
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
@@ -175,7 +173,7 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
-    run(NoMutations.class, NoMutationsTest.class, Mutator.byName("RETURN_VALS"));
+    run(NoMutations.class, NoMutationsTest.class, "RETURN_VALS");
     verifyResults();
   }
 
@@ -185,7 +183,7 @@ public class TestMutationTesting {
 
   @Test
   public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
-    run(ThreeMutations.class, NoTests.class, Mutator.byName("RETURN_VALS"));
+    run(ThreeMutations.class, NoTests.class, "RETURN_VALS");
     verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
@@ -219,7 +217,7 @@ public class TestMutationTesting {
   @Test(timeout = 30000)
   public void shouldDetectAndEscapeFromInfiniteLoopsCausedByMutations() {
     run(InfiniteLoop.class, InfiniteLoopTest.class,
-        Mutator.byName("INCREMENTS"));
+        "INCREMENTS");
     verifyResults(KILLED, TIMED_OUT);
   }
 
@@ -238,7 +236,7 @@ public class TestMutationTesting {
     // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutationOnly.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
-        Mutator.byName("RETURN_VALS"));
+        "RETURN_VALS");
     verifyResults(KILLED);
   }
 
@@ -251,9 +249,10 @@ public class TestMutationTesting {
   }
 
   @Test
+  @Ignore("no longer possible to serialize arbritrary mutators to child")
   public void shouldDetectUnviableMutations() {
     run(OneMutationOnly.class, UnviableMutationsTest.class,
-        Collections.singleton(new UnviableClassMutator()));
+        "UNVIABLE_CLASS_MUTATOR");
     verifyResults(NON_VIABLE, NON_VIABLE);
 
   }
@@ -286,7 +285,7 @@ public class TestMutationTesting {
   @Test(timeout = 30000)
   public void shouldRecoverFromOutOfMemoryError() {
     run(EatsMemoryWhenMutated.class, EatsMemoryTest.class,
-        Mutator.byName("INCREMENTS"));
+        "INCREMENTS");
     verifyResults(KILLED, MEMORY_ERROR);
   }
 
@@ -295,7 +294,7 @@ public class TestMutationTesting {
     // see http://code.google.com/p/pitestrunner/issues/detail?id=17 for full
     // description of this issue
     run(MutationsInNestedClasses.class, MutationsInNestedClassesTest.class,
-        Mutator.byName("RETURN_VALS"));
+        "RETURN_VALS");
     verifyResults(SURVIVED, SURVIVED);
   }
 
@@ -303,12 +302,12 @@ public class TestMutationTesting {
   @Ignore("too brittle")
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        Mutator.byName("RETURN_VALS"));
+        "RETURN_VALS");
     verifyLineNumbers(111);
   }
 
   private void run(final Class<?> clazz, final Class<?> test,
-      final Collection<? extends MethodMutatorFactory> mutators) {
+      final String ... mutators) {
 
     final ReportOptions data = new ReportOptions();
 
@@ -326,7 +325,7 @@ public class TestMutationTesting {
     final JavaAgent agent = new JarCreatingJarFinder();
 
     try {
-      createEngineAndRun(data, agent, mutators);
+      createEngineAndRun(data, agent, Arrays.asList(mutators));
     } finally {
       agent.close();
     }
@@ -334,7 +333,7 @@ public class TestMutationTesting {
 
   private void createEngineAndRun(final ReportOptions data,
       final JavaAgent agent,
-      final Collection<? extends MethodMutatorFactory> mutators) {
+      final Collection<String> mutators) {
 
     // data.setConfiguration(this.config);
     final CoverageOptions coverageOptions = createCoverageOptions(data);
@@ -361,8 +360,10 @@ public class TestMutationTesting {
     final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
         ClassInfo.toClassName());
 
-    final MutationEngine engine = new GregorEngineFactory()
-    .createEngineWithMutators(Collections.<String>emptyList(), mutators);
+    EngineArguments arguments = EngineArguments.arguments()
+        .withMutators(mutators);
+    
+    final MutationEngine engine = new GregorEngineFactory().createEngine(arguments);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
         launchOptions);
@@ -375,11 +376,14 @@ public class TestMutationTesting {
     final MutationSource source = new MutationSource(mutationConfig, new DefaultTestPrioritiser(
             coverageData), bas, emptyIntercpetor);
 
+
     final WorkerFactory wf = new WorkerFactory(null,
-        coverageOptions.getPitConfig(), mutationConfig,
+        coverageOptions.getPitConfig(), mutationConfig, arguments,
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
             data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
             .getLocalClassPath());
+    
+    
     
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,

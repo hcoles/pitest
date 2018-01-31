@@ -69,4 +69,9 @@ public class GregorMutationEngine implements MutationEngine {
     };
   }
 
+  @Override
+  public String getName() {
+    return "gregor";
+  }
+
 }
