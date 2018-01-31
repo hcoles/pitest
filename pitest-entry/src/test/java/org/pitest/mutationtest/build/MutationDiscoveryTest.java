@@ -14,7 +14,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
 import org.pitest.mutationtest.config.PluginServices;
@@ -26,7 +26,6 @@ import org.pitest.mutationtest.engine.gregor.CoverageIgnore;
 import org.pitest.mutationtest.engine.gregor.DoNotMutate;
 import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.util.Glob;
 import org.pitest.util.ResourceFolderByteArraySource;
 
 /**
@@ -40,8 +39,7 @@ public class MutationDiscoveryTest {
   
   @Before
   public void setUp() {
-    Predicate<String> match = new Glob("com.example.*");
-    data.setTargetClasses(Collections.singleton(match));
+    data.setTargetClasses(Collections.singleton("com.example.*"));
   }
 
   @Test
@@ -226,8 +224,7 @@ public class MutationDiscoveryTest {
 
   
   private Collection<MutationDetails> findMutants(Class<?> clazz) {
-    Predicate<String> glob = new Glob(clazz.getName());
-    this.data.setTargetClasses(Collections.singleton(glob));
+    this.data.setTargetClasses(Collections.singleton(clazz.getName()));
     this.cbas = ClassloaderByteArraySource.fromContext();
     return findMutants(ClassName.fromClass(clazz));
   }
@@ -244,7 +241,8 @@ public class MutationDiscoveryTest {
         .createInterceptor(data, source);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
-       data.getExcludedMethods(), data.getMutators());
+        EngineArguments.arguments().withExcludedMethods(data.getExcludedMethods())
+        .withMutators(data.getMutators()));
     
     final MutationConfig config = new MutationConfig(engine, null);
 

@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -25,7 +26,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -299,11 +299,11 @@ public class CoverageProcessSystemTest {
   public void shouldFailWithExitCode() throws Exception {
     final SideEffect1<CoverageResult> noOpHandler = new SideEffect1<CoverageResult>() {
       @Override
-      public void apply(final CoverageResult a) {
+      public void apply(final CoverageResult a) { 
       }
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), TestPluginArguments.defaults(), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
         
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
@@ -362,7 +362,7 @@ public class CoverageProcessSystemTest {
 
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), TestPluginArguments.defaults(), true, -1);  
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);  
     
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
@@ -412,16 +412,12 @@ public class CoverageProcessSystemTest {
     };
   }
 
-  private Predicate<String> coverOnlyTestees() {
-
-    return new Predicate<String>() {
-
-      @Override
-      public Boolean apply(final String a) {
-        return a.contains("Testee") && !a.endsWith("Test");
-      }
-
-    };
+  private List<String> coverOnlyTestees() {
+    return Arrays.asList("*Testee*");
+  }
+  
+  private List<String> excludeTests() {
+    return Arrays.asList("*Test");
   }
 
   private F<CoverageResult, Boolean> coverage(final String testName,

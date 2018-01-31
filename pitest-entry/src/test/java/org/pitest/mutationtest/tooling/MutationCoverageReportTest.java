@@ -45,6 +45,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -115,8 +116,7 @@ public class MutationCoverageReportTest {
 
   private void mockMutationEngine() {
     when(
-        this.mutationFactory.createEngine(anyCollection(),
-            anyCollection())).thenReturn(
+        this.mutationFactory.createEngine(any(EngineArguments.class))).thenReturn(
                 this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
     .thenReturn(this.mutater);

@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.pitest.functional.F;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
@@ -29,11 +30,9 @@ import org.pitest.util.Glob;
 public final class GregorEngineFactory implements MutationEngineFactory {
 
   @Override
-  public MutationEngine createEngine(
-      final Collection<String> excludedMethods,
-      final Collection<String> mutators) {
-    return createEngineWithMutators(excludedMethods,
-           createMutatorListFromArrayOrUseDefaults(mutators));
+  public MutationEngine createEngine(EngineArguments args) {
+    return createEngineWithMutators(args.excludedMethods(),
+           createMutatorListFromArrayOrUseDefaults(args.mutators()));
   }
 
   public MutationEngine createEngineWithMutators(

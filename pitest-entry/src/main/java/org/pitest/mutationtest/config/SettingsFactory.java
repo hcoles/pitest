@@ -1,7 +1,5 @@
 package org.pitest.mutationtest.config;
 
-import static org.pitest.functional.prelude.Prelude.not;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +13,6 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
@@ -32,7 +29,6 @@ import org.pitest.plugin.ProvidesFeature;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
-import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.StringUtil;
@@ -112,13 +108,13 @@ public class SettingsFactory {
         .findTestPrioritisers();
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }
-
+  
   public CoverageOptions createCoverageOptions() {
-    return new CoverageOptions(Prelude.and(
-        this.options.getTargetClassesFilter(), not(commonClasses())),
+    return new CoverageOptions(
+        this.options.getTargetClasses(), this.options.getExcludedClasses(),
         this.options.createMinionSettings(), this.options.isVerbose(),
         this.options.getDependencyAnalysisMaxDistance());
-  }
+  }  
 
   public CompoundInterceptorFactory getInterceptor() {
     final Collection<? extends MutationInterceptorFactory> interceptors = this.plugins
@@ -156,21 +152,6 @@ public class SettingsFactory {
         return a.equalsIgnoreCase(other);
       }
     };
-  }
-
-  private static F<String, Boolean> commonClasses() {
-    return Prelude.or(
-        glob("java/*"), 
-        glob("sun/*"),
-        glob("org/junt"), 
-        glob("junit/"), 
-        glob("org/pitest/coverage"),
-        glob("org/pitest/reloc"), 
-        glob("org/pitest/boot"));
-  }
-
-  private static Glob glob(String match) {
-    return new Glob(match);
   }
   
   private static <T> T firstOrDefault(final Collection<? extends T> found,

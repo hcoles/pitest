@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.config.MinionSettings;
@@ -73,7 +74,7 @@ public class MutationTestMinionTest {
     .thenReturn(this.mutater);
     
     MutationEngineFactory factory = Mockito.mock(MutationEngineFactory.class);
-    when(factory.createEngine(any(Collection.class), any(Collection.class))).thenReturn(engine);
+    when(factory.createEngine(any(EngineArguments.class))).thenReturn(engine);
     
     when(this.settings.createEngine(any(String.class))).thenReturn(factory);
     

@@ -69,11 +69,11 @@ public class ReportOptions {
           "org.slf4j",
           "org.apache.commons.logging");
 
-  private Collection<Predicate<String>>  targetClasses;
+  private Collection<String>             targetClasses;
   private Collection<String>             excludedMethods                = Collections
       .emptyList();
 
-  private Collection<Predicate<String>>  excludedClasses                = Collections
+  private Collection<String>             excludedClasses                = Collections
       .emptyList();
   
   private Collection<Predicate<String>>  excludedTestClasses            = Collections
@@ -247,13 +247,14 @@ public class ReportOptions {
     };
   }
 
-  public Collection<Predicate<String>> getTargetClasses() {
+  public Collection<String> getTargetClasses() {
     return this.targetClasses;
   }
 
+  
   public Predicate<String> getTargetClassesFilter() {
-    final Predicate<String> filter = Prelude.and(or(this.targetClasses),
-        not(isBlackListed(ReportOptions.this.excludedClasses)));
+    final Predicate<String> filter = Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
+        not(isBlackListed(Glob.toGlobPredicates(ReportOptions.this.excludedClasses))));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -264,7 +265,7 @@ public class ReportOptions {
     }
   }
 
-  public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
+  public void setTargetClasses(final Collection<String> targetClasses) {
     this.targetClasses = targetClasses;
   }
 
@@ -305,15 +306,14 @@ public class ReportOptions {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the
       // target classes predicate covers both classes and tests
-      return Prelude.and(or(targetClasses),
+      return Prelude.and(or(Glob.toGlobPredicates(targetClasses)),
           not(isBlackListed(ReportOptions.this.excludedTestClasses)));      
     } else {
       return Prelude.and(or(this.targetTests),
           not(isBlackListed(ReportOptions.this.excludedTestClasses)));
     }
-
   }
-
+  
   private static Predicate<String> isBlackListed(
       final Collection<Predicate<String>> excludedClasses) {
         return or(excludedClasses);
@@ -345,7 +345,7 @@ public class ReportOptions {
   }
 
   public void setExcludedClasses(
-      final Collection<Predicate<String>> excludedClasses) {
+      final Collection<String> excludedClasses) {
     this.excludedClasses = excludedClasses;
   }
   
@@ -363,7 +363,7 @@ public class ReportOptions {
     return this.outputs;
   }
 
-  public Collection<Predicate<String>> getExcludedClasses() {
+  public Collection<String> getExcludedClasses() {
     return this.excludedClasses;
   }
   

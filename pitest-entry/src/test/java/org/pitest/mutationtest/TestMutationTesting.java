@@ -73,7 +73,6 @@ import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.simpletest.SimpleTestPlugin;
 import org.pitest.simpletest.TestAnnotationForTesting;
-import org.pitest.util.Functions;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
 
@@ -318,8 +317,7 @@ public class TestMutationTesting {
     data.setTargetTests(tests);
     data.setDependencyAnalysisMaxDistance(-1);
 
-    final Set<Predicate<String>> mutees = Collections.singleton(Functions
-        .startsWith(clazz.getName()));
+    final Set<String> mutees = Collections.singleton(clazz.getName() + "*");
     data.setTargetClasses(mutees);
 
     data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
@@ -394,7 +392,7 @@ public class TestMutationTesting {
   }
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {
-    return new CoverageOptions(data.getTargetClassesFilter(), this.config,
+    return new CoverageOptions(data.getTargetClasses(),data.getExcludedClasses(), this.config,
         data.isVerbose(), data.getDependencyAnalysisMaxDistance());
   }
   

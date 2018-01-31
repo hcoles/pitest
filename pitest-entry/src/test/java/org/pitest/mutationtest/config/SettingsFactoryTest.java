@@ -17,11 +17,9 @@ import org.mockito.Mockito;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.SideEffect1;
-import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 import org.pitest.util.PitError;
 
 public class SettingsFactoryTest {
@@ -91,25 +89,18 @@ public class SettingsFactoryTest {
 
   @Test
   public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
-    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("java/Integer")));
+    this.options.setTargetClasses(Collections
+        .singleton("java/Integer"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("java/Integer"));
   }
 
   @Test
   public void shouldNotAllowUserToCalculateCoverageForCoverageImplementation() {
-    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("/org/pitest/coverage")));
+    this.options.setTargetClasses(Collections
+        .singleton("/org/pitest/coverage"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
     assertFalse(actual.getFilter().apply("org/pitest/coverage"));
-  }
-
-  @Test(expected = PitHelpError.class)
-  public void shouldNotAllowUserToMakePITMutateItself() {
-    this.options.setTargetClasses(Glob.toGlobPredicates(Collections
-        .singleton("org.pitest.*")));
-    this.testee.createCoverageOptions();
   }
 
   @Test

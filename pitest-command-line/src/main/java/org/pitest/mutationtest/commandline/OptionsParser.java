@@ -364,8 +364,7 @@ public class OptionsParser {
       final OptionSet userArgs) {
     data.setTestPlugin(userArgs.valueOf(this.testPluginSpec));
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
-    data.setTargetClasses(FCollection.map(
-        this.targetClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setTargetClasses(this.targetClassesSpec.values(userArgs));
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
@@ -388,8 +387,7 @@ public class OptionsParser {
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
     data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
-    data.setExcludedClasses(FCollection.map(
-        this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedClasses(this.excludedClassesSpec.values(userArgs));
     data.setExcludedTestClasses(FCollection.map(
         this.excludedTestClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setVerbose(userArgs.has(this.verboseSpec)

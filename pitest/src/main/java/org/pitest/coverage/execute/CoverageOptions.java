@@ -1,5 +1,9 @@
 package org.pitest.coverage.execute;
 
+import java.util.Collection;
+
+import org.pitest.functional.F;
+
 /*
  * Copyright 2010 Henry Coles
  *
@@ -16,28 +20,34 @@ package org.pitest.coverage.execute;
  */
 
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.util.Glob;
 import org.pitest.util.Preconditions;
 
 public class CoverageOptions {
 
-  private final Predicate<String> filter;
+  private final Collection<String>      include;
+  private final Collection<String>      exclude;  
   private final boolean           verbose;
   private final TestPluginArguments pitConfig;
   private final int               maxDependencyDistance;
 
-  public CoverageOptions(final Predicate<String> filter,
+  public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
       final TestPluginArguments pitConfig, final boolean verbose,
       final int maxDependencyDistance) {
     Preconditions.checkNotNull(pitConfig);
-    this.filter = filter;
+    this.include = include;
+    this.exclude = exclude;
     this.verbose = verbose;
     this.pitConfig = pitConfig;
     this.maxDependencyDistance = maxDependencyDistance;
   }
 
   public Predicate<String> getFilter() {
-    return this.filter;
+    return Prelude.and(Prelude.or(Glob.toGlobPredicates(include)), 
+        Prelude.not(Prelude.or(Glob.toGlobPredicates(exclude))), 
+        Prelude.not(commonClasses()));
   }
 
   public boolean isVerbose() {
@@ -51,5 +61,18 @@ public class CoverageOptions {
   public int getDependencyAnalysisMaxDistance() {
     return this.maxDependencyDistance;
   }
+  
+  private static F<String, Boolean> commonClasses() {
+    return Prelude.or(
+        glob("java/*"), 
+        glob("sun/*"),
+        glob("org/pitest/coverage/*"),
+        glob("org/pitest/reloc/*"), 
+        glob("org/pitest/boot/*"));
+  }
+
+  private static Glob glob(String match) {
+    return new Glob(match);
+  } 
 
 }

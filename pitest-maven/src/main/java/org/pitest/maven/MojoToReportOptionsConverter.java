@@ -103,8 +103,7 @@ public class MojoToReportOptionsConverter {
 
     data.setExcludedMethods(this.mojo
         .getExcludedMethods());
-    data.setExcludedClasses(globStringsToPredicates(this.mojo
-        .getExcludedClasses()));
+    data.setExcludedClasses(this.mojo.getExcludedClasses());
     data.setExcludedTestClasses(globStringsToPredicates(this.mojo
         .getExcludedTestClasses()));
     data.setNumberOfThreads(this.mojo.getThreads());
@@ -256,17 +255,17 @@ public class MojoToReportOptionsConverter {
       }
   }  
   
-  private Collection<Predicate<String>> determineTargetClasses() {
+  private Collection<String> determineTargetClasses() {
     return useConfiguredTargetClassesOrFindOccupiedPackages(this.mojo.getTargetClasses());
   }
 
-  private Collection<Predicate<String>> useConfiguredTargetClassesOrFindOccupiedPackages(
+  private Collection<String> useConfiguredTargetClassesOrFindOccupiedPackages(
       final Collection<String> filters) {
     if (!hasValue(filters)) {
       this.mojo.getLog().info("Defaulting target classes to match packages in build directory");
-      return FCollection.map(findOccupiedPackages(), Glob.toGlobPredicate());
+      return findOccupiedPackages();
     } else {
-      return FCollection.map(filters, Glob.toGlobPredicate());
+      return filters;
     }
   }
   

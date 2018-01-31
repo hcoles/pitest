@@ -141,7 +141,7 @@ public abstract class ReportTestBase {
   }
 
   private CoverageOptions createCoverageOptions(TestPluginArguments configuration) {
-    return new CoverageOptions(this.data.getTargetClassesFilter(),
+    return new CoverageOptions(this.data.getTargetClasses(),this.data.getExcludedClasses(),
         configuration, this.data.isVerbose(),
         this.data.getDependencyAnalysisMaxDistance());
   }
