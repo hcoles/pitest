@@ -5,6 +5,8 @@ import java.math.BigInteger;
 
 public final class HierarchicalClassId implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+
   private final ClassIdentifier classId;
   private final String          hierarchicalHash;
 

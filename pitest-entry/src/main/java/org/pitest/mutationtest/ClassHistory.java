@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 public class ClassHistory implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+
   private final HierarchicalClassId id;
   private final String              coverageId;
 

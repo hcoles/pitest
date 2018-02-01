@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public final class ClassIdentifier implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+ 
   private final long      hash;
   private final ClassName name;
 

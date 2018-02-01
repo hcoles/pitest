@@ -31,13 +31,4 @@ public abstract class IsolationUtils {
     }
   }
 
-  public static Class<?> convertForClassLoader(final ClassLoader loader,
-      final Class<?> clazz) {
-    if (clazz.getClassLoader() != loader) {
-      return convertForClassLoader(loader, clazz.getName());
-    } else {
-      return clazz;
-    }
-
-  }
 }
