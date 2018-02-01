@@ -1,8 +1,9 @@
 package org.pitest.classinfo;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public final class HierarchicalClassId {
+public final class HierarchicalClassId implements Serializable {
 
   private final ClassIdentifier classId;
   private final String          hierarchicalHash;

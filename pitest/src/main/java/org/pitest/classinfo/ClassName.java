@@ -14,13 +14,13 @@
  */
 package org.pitest.classinfo;
 
-import java.io.Serializable;
-import java.util.logging.Logger;
-
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
+
+import java.io.Serializable;
+import java.util.logging.Logger;
 
 public final class ClassName implements Comparable<ClassName>, Serializable {
 

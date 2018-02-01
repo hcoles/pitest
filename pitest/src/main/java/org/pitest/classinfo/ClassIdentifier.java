@@ -1,6 +1,8 @@
 package org.pitest.classinfo;
 
-public final class ClassIdentifier {
+import java.io.Serializable;
+
+public final class ClassIdentifier implements Serializable {
 
   private final long      hash;
   private final ClassName name;
