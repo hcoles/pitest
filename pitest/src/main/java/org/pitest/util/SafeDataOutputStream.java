@@ -106,16 +106,11 @@ public class SafeDataOutputStream {
   }
 
   private byte[] toByteArray(Serializable value) throws IOException {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    ObjectOutput out = null;
-    try {
-      out = new ObjectOutputStream(bos);   
+    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+      ObjectOutput out = new ObjectOutputStream(bos);
       out.writeObject(value);
       out.flush();
-      byte[] bs = bos.toByteArray();
-      return bs;
-    } finally {
-      bos.close();
+      return bos.toByteArray();
     }
   }
 
