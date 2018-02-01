@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
-  
   private static final long serialVersionUID = 1L;
 
   @SuppressWarnings({ "rawtypes" })
