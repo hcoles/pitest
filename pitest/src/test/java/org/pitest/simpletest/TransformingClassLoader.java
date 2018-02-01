@@ -16,7 +16,7 @@ package org.pitest.simpletest;
 
 import org.pitest.classpath.ClassPath;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
-import org.pitest.util.IsolationUtils;
+import org.pitest.util.XStreamCloning;
 
 public class TransformingClassLoader extends DefaultPITClassloader {
 
@@ -25,7 +25,7 @@ public class TransformingClassLoader extends DefaultPITClassloader {
 
   public TransformingClassLoader(final Transformation transformation,
       final IsolationStrategy isolationStrategy) {
-    this(new ClassPath(), transformation, isolationStrategy, IsolationUtils
+    this(new ClassPath(), transformation, isolationStrategy, XStreamCloning
         .bootClassLoader());
   }
 

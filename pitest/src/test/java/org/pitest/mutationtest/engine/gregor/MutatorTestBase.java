@@ -43,8 +43,8 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
 import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
+import org.pitest.util.XStreamCloning;
 
 public abstract class MutatorTestBase {
 
@@ -138,7 +138,7 @@ public abstract class MutatorTestBase {
   @SuppressWarnings("unchecked")
   private <T> T runInClassLoader(final ClassLoader loader,
       final Callable<T> callable) throws Exception {
-    final Callable<T> c = (Callable<T>) IsolationUtils.cloneForLoader(callable,
+    final Callable<T> c = (Callable<T>) XStreamCloning.cloneForLoader(callable,
         loader);
     return c.call();
 

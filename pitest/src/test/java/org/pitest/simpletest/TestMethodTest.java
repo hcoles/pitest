@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.pitest.reflection.Reflection;
-import org.pitest.util.IsolationUtils;
+import org.pitest.util.XStreamCloning;
 
 public class TestMethodTest {
 
@@ -19,7 +19,7 @@ public class TestMethodTest {
       final Method m = Reflection.publicMethod(this.getClass(),
           "shouldCloneViaXStreamWithoutError");
       final TestMethod testee = new TestMethod(m, IOException.class);
-      final TestMethod actual = (TestMethod) IsolationUtils.clone(testee);
+      final TestMethod actual = (TestMethod) XStreamCloning.clone(testee);
       assertEquals(actual.getMethod(), testee.getMethod());
     } catch (final Throwable t) {
       fail();

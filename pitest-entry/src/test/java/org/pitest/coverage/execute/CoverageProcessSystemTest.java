@@ -34,8 +34,8 @@ import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.ExitCode;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.XStreamCloning;
 
 import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
 import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
@@ -253,9 +253,9 @@ public class CoverageProcessSystemTest {
     @Test
     public void testFoo() {
       final ClassLoader cl = new DefaultPITClassloader(new ClassPath(),
-          IsolationUtils.bootClassLoader());
+          XStreamCloning.bootClassLoader());
       final Testee testee = new Testee();
-      final Runnable r = (Runnable) IsolationUtils.cloneForLoader(testee, cl);
+      final Runnable r = (Runnable) XStreamCloning.cloneForLoader(testee, cl);
       r.run();
     }
 

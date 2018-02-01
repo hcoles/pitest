@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnitState;
-import org.pitest.util.IsolationUtils;
+import org.pitest.util.XStreamCloning;
 
 public class TestResultTest {
 
@@ -15,7 +15,7 @@ public class TestResultTest {
     try {
       final TestResult testee = new TestResult((Description) null, null,
           TestUnitState.FINISHED);
-      IsolationUtils.clone(testee);
+      XStreamCloning.clone(testee);
     } catch (final Throwable t) {
       fail();
     }

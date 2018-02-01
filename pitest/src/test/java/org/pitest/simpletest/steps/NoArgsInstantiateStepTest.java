@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.pitest.util.IsolationUtils;
+import org.pitest.util.XStreamCloning;
 
 public class NoArgsInstantiateStepTest {
 
@@ -37,7 +37,7 @@ public class NoArgsInstantiateStepTest {
     try {
       final NoArgsInstantiateStep testee = new NoArgsInstantiateStep(
           NoArgsInstantiateStepTest.class);
-      IsolationUtils.clone(testee);
+      XStreamCloning.clone(testee);
     } catch (final Throwable t) {
       fail();
     }

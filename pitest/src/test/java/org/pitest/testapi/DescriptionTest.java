@@ -6,7 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.pitest.util.IsolationUtils;
+import org.pitest.util.XStreamCloning;
 
 public class DescriptionTest {
 
@@ -16,7 +16,7 @@ public class DescriptionTest {
   public void shouldCloneViaXStreamWithoutError() throws Exception {
     try {
       this.testee = new Description("foo", IOException.class);
-      final Description actual = (Description) IsolationUtils
+      final Description actual = (Description) XStreamCloning
           .clone(this.testee);
 
       assertEquals(this.testee, actual);
