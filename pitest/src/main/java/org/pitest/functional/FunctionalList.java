@@ -14,9 +14,10 @@
  */
 package org.pitest.functional;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface FunctionalList<T> extends FunctionalCollection<T>, List<T> {
+public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Serializable {
 
   @Override
   FunctionalList<T> filter(F<T, Boolean> predicate);

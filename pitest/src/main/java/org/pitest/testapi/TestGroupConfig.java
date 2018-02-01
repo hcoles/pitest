@@ -14,12 +14,15 @@
  */
 package org.pitest.testapi;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TestGroupConfig {
+public class TestGroupConfig implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private final List<String> excludedGroups;
   private final List<String> includedGroups;
 

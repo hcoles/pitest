@@ -14,12 +14,16 @@
  */
 package org.pitest.coverage;
 
+import java.io.Serializable;
+
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 
-public final class TestInfo {
+public final class TestInfo implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private final String            name;
   private final String            definingClass;
 

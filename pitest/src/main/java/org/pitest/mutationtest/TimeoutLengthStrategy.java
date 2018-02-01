@@ -15,7 +15,9 @@
 
 package org.pitest.mutationtest;
 
-public interface TimeoutLengthStrategy {
+import java.io.Serializable;
+
+public interface TimeoutLengthStrategy extends Serializable {
 
   long getAllowedTime(long normalDuration);
 

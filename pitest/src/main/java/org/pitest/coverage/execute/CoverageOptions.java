@@ -1,5 +1,6 @@
 package org.pitest.coverage.execute;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.pitest.functional.F;
@@ -25,8 +26,10 @@ import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.util.Glob;
 import org.pitest.util.Preconditions;
 
-public class CoverageOptions {
+public class CoverageOptions implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private final Collection<String>      include;
   private final Collection<String>      exclude;  
   private final boolean           verbose;

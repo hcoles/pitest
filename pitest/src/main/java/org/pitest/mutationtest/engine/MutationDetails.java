@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.engine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,9 @@ import org.pitest.util.StringUtil;
 /**
  * Captures all data relating to a mutant.
  */
-public final class MutationDetails {
+public final class MutationDetails implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
 
   private final MutationIdentifier  id;
   private final String              filename;

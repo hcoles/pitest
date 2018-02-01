@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 public final class MutableList<A> implements FunctionalList<A> {
-
+  
+  private static final long serialVersionUID = 1L;
+  
   private final List<A> impl;
 
   @SafeVarargs

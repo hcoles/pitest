@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.execute;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.pitest.classinfo.ClassName;
@@ -22,7 +23,9 @@ import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public class MinionArguments {
+public class MinionArguments implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
 
   final Collection<MutationDetails> mutations;
   final Collection<ClassName>       testClasses;

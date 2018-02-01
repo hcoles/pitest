@@ -14,9 +14,13 @@
  */
 package org.pitest.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 
 public class SafeDataInputStream {
 
@@ -36,18 +40,30 @@ public class SafeDataInputStream {
 
   public String readString() {
     try {
+      return new String(readBytes(), "UTF-8");
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+  
+  public byte[] readBytes() {
+    try {
       final int length = this.dis.readInt();
       final byte[] data = new byte[length];
       this.dis.readFully(data);
-      return new String(data, "UTF-8");
+      return data;
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T read(final Class<T> type) {
-    return (T) IsolationUtils.fromXml(readString());
+  public <T extends Serializable> T read(final Class<T> type) {
+    try {
+      return (T) deserialize(readBytes());
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
   }
 
   public void close() {
@@ -79,6 +95,21 @@ public class SafeDataInputStream {
       return this.dis.readLong();
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
+    }
+  }
+  
+  private Object deserialize(byte[] bytes) throws IOException {
+    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+    ObjectInput in = null;
+    try {
+      in = new ObjectInputStream(bis);
+      return in.readObject(); 
+    } catch (ClassNotFoundException e) {
+      throw Unchecked.translateCheckedException(e);
+    } finally {
+        if (in != null) {
+          in.close();
+        }
     }
   }
 
