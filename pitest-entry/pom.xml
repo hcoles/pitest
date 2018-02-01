@@ -144,6 +144,7 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.4.8</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.pitest</groupId>

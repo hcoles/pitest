@@ -19,8 +19,8 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
-import org.pitest.mutationtest.incremental.XStreamHistoryStore;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.process.JavaAgent;
@@ -103,7 +103,7 @@ public class EntryPoint {
         baseDir, coverageOptions, launchOptions, code,
         settings.createCoverageExporter(), timings, !data.isVerbose());
 
-    final HistoryStore history = new XStreamHistoryStore(historyWriter, reader);
+    final HistoryStore history = new ObjectOutputStreamHistoryStore(historyWriter, reader);
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
