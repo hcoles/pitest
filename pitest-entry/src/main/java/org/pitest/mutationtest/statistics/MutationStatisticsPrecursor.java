@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.function.Function;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationResult;
@@ -61,8 +61,8 @@ class MutationStatisticsPrecursor {
     };
   }
 
-  private static F2<Long, Score, Long> addTotals() {
-    return new F2<Long, Score, Long>() {
+  private static BiFunction<Long, Score, Long> addTotals() {
+    return new BiFunction<Long, Score, Long>() {
 
       @Override
       public Long apply(final Long a, final Score b) {
@@ -72,8 +72,8 @@ class MutationStatisticsPrecursor {
     };
   }
 
-  private static F2<Long, Score, Long> addDetectedTotals() {
-    return new F2<Long, Score, Long>() {
+  private static BiFunction<Long, Score, Long> addDetectedTotals() {
+    return new BiFunction<Long, Score, Long>() {
 
       @Override
       public Long apply(final Long a, final Score b) {

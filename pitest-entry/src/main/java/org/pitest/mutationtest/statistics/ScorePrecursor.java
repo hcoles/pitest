@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import java.util.function.Function;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 
@@ -47,8 +47,8 @@ class ScorePrecursor {
     };
   }
 
-  private F2<Long, StatusCount, Long> addTotals() {
-    return new F2<Long, StatusCount, Long>() {
+  private BiFunction<Long, StatusCount, Long> addTotals() {
+    return new BiFunction<Long, StatusCount, Long>() {
 
       @Override
       public Long apply(final Long a, final StatusCount b) {

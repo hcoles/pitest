@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -150,7 +151,7 @@ public class FCollectionTest {
   @Test
   public void foldShouldFoldValues() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    final F2<Integer, Integer, Integer> f = new F2<Integer, Integer, Integer>() {
+    final BiFunction<Integer, Integer, Integer> f = new BiFunction<Integer, Integer, Integer>() {
 
       @Override
       public Integer apply(final Integer a, final Integer b) {

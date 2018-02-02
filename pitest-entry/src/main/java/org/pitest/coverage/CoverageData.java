@@ -31,7 +31,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import java.util.function.Function;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
@@ -220,8 +220,8 @@ public class CoverageData implements CoverageDatabase {
     return FCollection.fold(numberCoveredLines(), 0, allClasses());
   }
 
-  private F2<Integer, ClassInfo, Integer> numberLines() {
-    return new F2<Integer, ClassInfo, Integer>() {
+  private BiFunction<Integer, ClassInfo, Integer> numberLines() {
+    return new BiFunction<Integer, ClassInfo, Integer>() {
 
       @Override
       public Integer apply(final Integer a, final ClassInfo clazz) {
@@ -247,8 +247,8 @@ public class CoverageData implements CoverageDatabase {
         description.getQualifiedName(), executionTime, testee, linesCovered);
   }
 
-  private F2<Integer, ClassName, Integer> numberCoveredLines() {
-    return new F2<Integer, ClassName, Integer>() {
+  private BiFunction<Integer, ClassName, Integer> numberCoveredLines() {
+    return new BiFunction<Integer, ClassName, Integer>() {
 
       @Override
       public Integer apply(final Integer a, final ClassName clazz) {

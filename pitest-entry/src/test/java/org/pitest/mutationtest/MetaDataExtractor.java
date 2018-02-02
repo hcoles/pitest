@@ -17,7 +17,7 @@ package org.pitest.mutationtest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 
 public class MetaDataExtractor implements MutationResultListener {
@@ -41,7 +41,7 @@ public class MetaDataExtractor implements MutationResultListener {
   }
 
   public int getNumberOfTestsRun() {
-    final F2<Integer, MutationResult, Integer> sum = new F2<Integer, MutationResult, Integer>() {
+    final BiFunction<Integer, MutationResult, Integer> sum = new BiFunction<Integer, MutationResult, Integer>() {
       @Override
       public Integer apply(final Integer a, final MutationResult b) {
         return a + b.getNumberOfTestsRun();

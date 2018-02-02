@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -110,7 +111,7 @@ public abstract class FCollection {
 
   }
 
-  public static <A, B> A fold(final F2<A, B, A> f, final A z,
+  public static <A, B> A fold(final BiFunction<A, B, A> f, final A z,
       final Iterable<? extends B> xs) {
     A p = z;
     for (final B x : xs) {

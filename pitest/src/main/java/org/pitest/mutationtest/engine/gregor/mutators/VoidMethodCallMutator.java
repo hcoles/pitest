@@ -16,7 +16,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.objectweb.asm.MethodVisitor;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -42,8 +42,8 @@ public enum VoidMethodCallMutator implements MethodMutatorFactory {
     return name();
   }
 
-  private static F2<String, String, Boolean> voidMethods() {
-    return new F2<String, String, Boolean>() {
+  private static BiFunction<String, String, Boolean> voidMethods() {
+    return new BiFunction<String, String, Boolean>() {
 
       @Override
       public Boolean apply(final String name, final String desc) {

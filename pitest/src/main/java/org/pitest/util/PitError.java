@@ -18,7 +18,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 
 public final class PitError extends RuntimeException {
@@ -62,8 +62,8 @@ public final class PitError extends RuntimeException {
     return sb.toString();
   }
 
-  private static F2<StringBuilder, String, StringBuilder> append() {
-    return new F2<StringBuilder, String, StringBuilder>() {
+  private static BiFunction<StringBuilder, String, StringBuilder> append() {
+    return new BiFunction<StringBuilder, String, StringBuilder>() {
       private int position = 0;
 
       @Override

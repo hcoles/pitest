@@ -34,7 +34,7 @@ import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import java.util.function.Function;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
@@ -188,9 +188,9 @@ public class DependencyExtractor {
 
   }
 
-  private static F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
+  private static BiFunction<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>> addDependenciesToMap() {
 
-    return new F2<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>>() {
+    return new BiFunction<Map<String, List<DependencyAccess>>, DependencyAccess, Map<String, List<DependencyAccess>>>() {
       @Override
       public Map<String, List<DependencyAccess>> apply(
           final Map<String, List<DependencyAccess>> map,

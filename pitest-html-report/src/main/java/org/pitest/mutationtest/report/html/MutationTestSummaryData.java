@@ -22,7 +22,7 @@ import java.util.Set;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.TestInfo;
 import java.util.function.Function;
-import org.pitest.functional.F2;
+import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
 
@@ -104,8 +104,8 @@ public class MutationTestSummaryData {
     return FCollection.fold(accumulateCodeLines(), 0, this.classes);
   }
 
-  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
-    return new F2<Integer, ClassInfo, Integer>() {
+  private BiFunction<Integer, ClassInfo, Integer> accumulateCodeLines() {
+    return new BiFunction<Integer, ClassInfo, Integer>() {
 
       @Override
       public Integer apply(final Integer a, final ClassInfo b) {
