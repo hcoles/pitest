@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.3.2-SNAPSHOT
+### 1.3.3-SNAPSHOT
+
+Nothing yet, why not contribute?
+
+### 1.3.2
 
 * #433 - Aggregate reports via maven (thanks @rchargel)
 * #438 - Filter tests at method level (thanks @ftrautsch)
