@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -9,7 +10,6 @@ import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
@@ -101,8 +101,8 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private static F<MethodTree, Boolean> isPrivateStatic() {
-    return new  F<MethodTree, Boolean>() {
+  private static Function<MethodTree, Boolean> isPrivateStatic() {
+    return new  Function<MethodTree, Boolean>() {
       @Override
       public Boolean apply(MethodTree a) {
         return (a.rawNode().access & Opcodes.ACC_STATIC) != 0
@@ -114,8 +114,8 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
 
   
-  private static F<MethodInsnNode, Predicate<MethodTree>> toPredicate() {   
-    return new F<MethodInsnNode, Predicate<MethodTree>> () {
+  private static Function<MethodInsnNode, Predicate<MethodTree>> toPredicate() {   
+    return new Function<MethodInsnNode, Predicate<MethodTree>> () {
       @Override
       public Predicate<MethodTree> apply(MethodInsnNode a) {
         return matchesCall(a);
@@ -135,8 +135,8 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private F<MethodInsnNode, Boolean> calls(final ClassName self) {
-    return new F<MethodInsnNode, Boolean>() {
+  private Function<MethodInsnNode, Boolean> calls(final ClassName self) {
+    return new Function<MethodInsnNode, Boolean>() {
       @Override
       public Boolean apply(MethodInsnNode a) {
         return a.owner.equals(self.asInternalName());
@@ -145,8 +145,8 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private <T extends AbstractInsnNode> F<AbstractInsnNode,Option<T>> is(final Class<T> clazz) {
-    return new  F<AbstractInsnNode,Option<T>>() {
+  private <T extends AbstractInsnNode> Function<AbstractInsnNode,Option<T>> is(final Class<T> clazz) {
+    return new  Function<AbstractInsnNode,Option<T>>() {
       @SuppressWarnings("unchecked")
       @Override
       public Option<T> apply(AbstractInsnNode a) {
@@ -170,8 +170,8 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
 
-  private F<MutationDetails, MutationDetails> setStaticInitializerFlag() {
-    return new F<MutationDetails, MutationDetails>() {
+  private Function<MutationDetails, MutationDetails> setStaticInitializerFlag() {
+    return new Function<MutationDetails, MutationDetails>() {
       @Override
       public MutationDetails apply(MutationDetails a) {
         return a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);

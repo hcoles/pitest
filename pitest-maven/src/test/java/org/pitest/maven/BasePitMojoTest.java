@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
@@ -77,8 +77,8 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         Collections.emptyList());
   }
 
-  private F<File, String> fileToString() {
-    return new F<File, String>() {
+  private Function<File, String> fileToString() {
+    return new Function<File, String>() {
 
       @Override
       public String apply(final File a) {

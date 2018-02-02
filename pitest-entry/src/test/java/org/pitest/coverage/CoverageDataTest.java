@@ -43,7 +43,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -260,8 +260,8 @@ public class CoverageDataTest {
     assertEquals(4, actual.getNumberOfCoveredLines());
   }
 
-  private static F<TestInfo, Integer> testInfoToExecutionTime() {
-    return new F<TestInfo, Integer>() {
+  private static Function<TestInfo, Integer> testInfoToExecutionTime() {
+    return new Function<TestInfo, Integer>() {
       @Override
       public Integer apply(final TestInfo a) {
         return a.getTime();
@@ -269,8 +269,8 @@ public class CoverageDataTest {
     };
   }
 
-  private static F<TestInfo, String> testInfoToString() {
-    return new F<TestInfo, String>() {
+  private static Function<TestInfo, String> testInfoToString() {
+    return new Function<TestInfo, String>() {
       @Override
       public String apply(final TestInfo a) {
         return a.getName();

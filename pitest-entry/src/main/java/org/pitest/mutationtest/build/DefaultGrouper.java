@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -45,8 +45,8 @@ public class DefaultGrouper implements MutationGrouper {
     }
   }
 
-  private static F<MutationDetails, ClassName> byClass() {
-    return new F<MutationDetails, ClassName>() {
+  private static Function<MutationDetails, ClassName> byClass() {
+    return new Function<MutationDetails, ClassName>() {
       @Override
       public ClassName apply(final MutationDetails a) {
         return a.getClassName();

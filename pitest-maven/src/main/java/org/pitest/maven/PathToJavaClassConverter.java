@@ -3,7 +3,7 @@ package org.pitest.maven;
 import java.io.File;
 import java.util.Collections;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 
 /**
  * Converts paths to java class names globs if they are within the supplied
@@ -15,7 +15,7 @@ import org.pitest.functional.F;
  * with the supplied filenames.
  *
  */
-class PathToJavaClassConverter implements F<String, Iterable<String>> {
+class PathToJavaClassConverter implements Function<String, Iterable<String>> {
 
   private final String sourceRoot;
 

@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Function;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
@@ -73,7 +73,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public FunctionalList<String> filter(final F<String, Boolean> predicate) {
+  public FunctionalList<String> filter(final Function<String, Boolean> predicate) {
     return FCollection.filter(this, predicate);
   }
 
@@ -83,22 +83,22 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final F<String, B> f) {
+  public <B> FunctionalList<B> map(final Function<String, B> f) {
     return FCollection.map(this, f);
   }
 
   @Override
-  public <B> void mapTo(final F<String, B> f, final Collection<? super B> bs) {
+  public <B> void mapTo(final Function<String, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
 
   @Override
-  public <B> FunctionalList<B> flatMap(final F<String, ? extends Iterable<B>> f) {
+  public <B> FunctionalList<B> flatMap(final Function<String, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
   @Override
-  public boolean contains(final F<String, Boolean> predicate) {
+  public boolean contains(final Function<String, Boolean> predicate) {
     return FCollection.contains(this, predicate);
   }
 

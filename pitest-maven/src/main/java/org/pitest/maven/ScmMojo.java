@@ -31,7 +31,7 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
@@ -155,8 +155,8 @@ public class ScmMojo extends AbstractPitMojo {
 
   }
 
-  private F<String,String> pathByScmDir() {
-    return new F<String, String>() {
+  private Function<String,String> pathByScmDir() {
+    return new Function<String, String>() {
 
       @Override
       public String apply(final String a) {
@@ -249,8 +249,8 @@ public class ScmMojo extends AbstractPitMojo {
     return s;
   }
 
-  private static F<String, ScmFileStatus> stringToMavenScmStatus() {
-    return new F<String, ScmFileStatus>() {
+  private static Function<String, ScmFileStatus> stringToMavenScmStatus() {
+    return new Function<String, ScmFileStatus>() {
       @Override
       public ScmFileStatus apply(final String a) {
         return ScmStatus.valueOf(a.toUpperCase()).getStatus();

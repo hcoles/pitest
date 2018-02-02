@@ -14,13 +14,13 @@
  */
 package org.pitest.util;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.predicate.Predicate;
 
 public abstract class Functions {
 
-  public static F<String, String> classNameToJVMClassName() {
-    return new F<String, String>() {
+  public static Function<String, String> classNameToJVMClassName() {
+    return new Function<String, String>() {
 
       @Override
       public String apply(final String a) {
@@ -30,8 +30,8 @@ public abstract class Functions {
     };
   }
 
-  public static F<String, String> jvmClassToClassName() {
-    return new F<String, String>() {
+  public static Function<String, String> jvmClassToClassName() {
+    return new Function<String, String>() {
 
       @Override
       public String apply(final String a) {
@@ -41,8 +41,8 @@ public abstract class Functions {
     };
   }
 
-  public static F<Class<?>, String> classToName() {
-    return new F<Class<?>, String>() {
+  public static Function<Class<?>, String> classToName() {
+    return new Function<Class<?>, String>() {
       @Override
       public String apply(final Class<?> clazz) {
         return clazz.getName();
@@ -61,9 +61,9 @@ public abstract class Functions {
     };
   }
 
-  public static <T extends Enum<T>> F<String, T> stringToEnum(
+  public static <T extends Enum<T>> Function<String, T> stringToEnum(
       final Class<T> clazz) {
-    return new F<String, T>() {
+    return new Function<String, T>() {
       @Override
       public T apply(final String name) {
         return Enum.valueOf(clazz, name);

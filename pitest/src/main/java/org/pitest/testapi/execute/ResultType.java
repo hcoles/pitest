@@ -14,7 +14,7 @@
  */
 package org.pitest.testapi.execute;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
@@ -54,14 +54,14 @@ public enum ResultType {
   });
 
   private interface ResultToListenerSideEffect extends
-  F<TestResult, SideEffect1<TestListener>> {
+  Function<TestResult, SideEffect1<TestListener>> {
   };
 
   ResultType(final ResultToListenerSideEffect f) {
     this.function = f;
   }
 
-  private final F<TestResult, SideEffect1<TestListener>> function;
+  private final Function<TestResult, SideEffect1<TestListener>> function;
 
   public SideEffect1<TestListener> getListenerFunction(final TestResult result) {
     return this.function.apply(result);

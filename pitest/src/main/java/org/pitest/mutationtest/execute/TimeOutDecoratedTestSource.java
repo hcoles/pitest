@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
@@ -50,8 +50,8 @@ public class TimeOutDecoratedTestSource {
     return FCollection.flatMap(testsInOrder, testToTestUnit());
   }
 
-  private F<TestInfo, Option<TestUnit>> testToTestUnit() {
-    return new F<TestInfo, Option<TestUnit>>() {
+  private Function<TestInfo, Option<TestUnit>> testToTestUnit() {
+    return new Function<TestInfo, Option<TestUnit>>() {
 
       @Override
       public Option<TestUnit> apply(final TestInfo a) {

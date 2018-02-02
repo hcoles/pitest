@@ -14,7 +14,7 @@
  */
 package org.pitest.classinfo;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -93,8 +93,8 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
             - suffixLength));
   }
 
-  public static F<String, ClassName> stringToClassName() {
-    return new F<String, ClassName>() {
+  public static Function<String, ClassName> stringToClassName() {
+    return new Function<String, ClassName>() {
       @Override
       public ClassName apply(final String clazz) {
         return ClassName.fromString(clazz);
@@ -102,13 +102,13 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
     };
   }
 
-  public static F<ClassName, Option<Class<?>>> nameToClass() {
+  public static Function<ClassName, Option<Class<?>>> nameToClass() {
     return nameToClass(IsolationUtils.getContextClassLoader());
   }
 
-  public static F<ClassName, Option<Class<?>>> nameToClass(
+  public static Function<ClassName, Option<Class<?>>> nameToClass(
       final ClassLoader loader) {
-    return new F<ClassName, Option<Class<?>>>() {
+    return new Function<ClassName, Option<Class<?>>>() {
 
       @Override
       public Option<Class<?>> apply(final ClassName className) {

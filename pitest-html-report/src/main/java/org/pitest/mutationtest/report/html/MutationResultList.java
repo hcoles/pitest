@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
@@ -72,19 +72,19 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public boolean contains(final F<MutationResult, Boolean> predicate) {
+  public boolean contains(final Function<MutationResult, Boolean> predicate) {
     return FCollection.contains(this.impl, predicate);
   }
 
   @Override
   public FunctionalList<MutationResult> filter(
-      final F<MutationResult, Boolean> predicate) {
+      final Function<MutationResult, Boolean> predicate) {
     return FCollection.filter(this, predicate);
   }
 
   @Override
   public <B> FunctionalList<B> flatMap(
-      final F<MutationResult, ? extends Iterable<B>> f) {
+      final Function<MutationResult, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
@@ -99,12 +99,12 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final F<MutationResult, B> f) {
+  public <B> FunctionalList<B> map(final Function<MutationResult, B> f) {
     return FCollection.map(this, f);
   }
 
   @Override
-  public <B> void mapTo(final F<MutationResult, B> f,
+  public <B> void mapTo(final Function<MutationResult, B> f,
       final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }

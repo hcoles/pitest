@@ -16,7 +16,7 @@ package org.pitest.mutationtest.engine.gregor.config;
 
 import java.util.Collection;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
@@ -55,7 +55,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
 
   }
 
-  private static F<MethodInfo, Boolean> stringToMethodInfoPredicate(
+  private static Function<MethodInfo, Boolean> stringToMethodInfoPredicate(
       final Collection<String> excludedMethods) {
     final Predicate<String> excluded = Prelude.or(Glob.toGlobPredicates(excludedMethods));
     return new Predicate<MethodInfo>() {

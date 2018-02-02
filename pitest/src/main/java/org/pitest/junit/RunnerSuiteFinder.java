@@ -24,7 +24,7 @@ import java.util.Set;
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
@@ -77,8 +77,8 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
     };
   }
 
-  private static F<Description, Option<Class<?>>> descriptionToTestClass() {
-    return new F<Description, Option<Class<?>>>() {
+  private static Function<Description, Option<Class<?>>> descriptionToTestClass() {
+    return new Function<Description, Option<Class<?>>>() {
 
       @Override
       public Option<Class<?>> apply(final Description a) {

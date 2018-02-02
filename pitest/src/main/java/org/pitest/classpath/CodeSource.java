@@ -14,7 +14,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.NameToClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 
@@ -79,7 +79,7 @@ public class CodeSource implements ClassInfoSource {
     return this.classRepository.fetchClass(clazz);
   }
 
-  private F<ClassName, Option<ClassInfo>> nameToClassInfo() {
+  private Function<ClassName, Option<ClassInfo>> nameToClassInfo() {
     return new NameToClassInfo(this.classRepository);
   }
 

@@ -7,6 +7,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -16,7 +17,6 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
@@ -86,8 +86,8 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     return inEquals.filter(Prelude.not(isShortcutEquals(maybeEquals.value(), m)));
   }
 
-  private F<MutationDetails, Boolean> isShortcutEquals(final MethodTree tree, final Mutater m) {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isShortcutEquals(final MethodTree tree, final Mutater m) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         return shortCutEquals(tree,a, m);
@@ -111,8 +111,8 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);   
   }
   
-  private F<MutationDetails, Boolean> inEqualsMethod() {
-    return new  F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> inEqualsMethod() {
+    return new  Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         Location loc = a.getId().getLocation();

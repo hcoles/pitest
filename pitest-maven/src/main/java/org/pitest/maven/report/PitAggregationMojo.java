@@ -17,7 +17,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.pitest.aggregate.ReportAggregator;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.maven.DependencyFilter;
 import org.pitest.mutationtest.config.DirectoryResultOutputStrategy;
@@ -114,7 +114,7 @@ public class PitAggregationMojo extends PitReportMojo {
     for (final List directoryList : directoryLists) {
       roots.addAll(directoryList);
     }
-    return FCollection.map(roots, new F<String, File>() {
+    return FCollection.map(roots, new Function<String, File>() {
       @Override
       public File apply(final String a) {
         return new File(a);

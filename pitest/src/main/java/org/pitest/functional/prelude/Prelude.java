@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.And;
 import org.pitest.functional.predicate.Not;
@@ -34,15 +34,15 @@ import org.pitest.functional.predicate.Predicate;
 public abstract class Prelude {
 
   @SafeVarargs
-  public static final <A> And<A> and(final F<A, Boolean>... ps) {
+  public static final <A> And<A> and(final Function<A, Boolean>... ps) {
     return new And<>(Arrays.asList(ps));
   }
 
-  public static final <A> And<A> and(final Iterable<? extends F<A, Boolean>> ps) {
+  public static final <A> And<A> and(final Iterable<? extends Function<A, Boolean>> ps) {
     return new And<>(ps);
   }
 
-  public static final <A> Not<A> not(final F<A, Boolean> p) {
+  public static final <A> Not<A> not(final Function<A, Boolean> p) {
     return new Not<>(p);
   }
 
@@ -78,8 +78,8 @@ public abstract class Prelude {
     };
   }
 
-  public static final <A> F<A, A> id() {
-    return new F<A, A>() {
+  public static final <A> Function<A, A> id() {
+    return new Function<A, A>() {
       @Override
       public A apply(final A a) {
         return a;
@@ -87,7 +87,7 @@ public abstract class Prelude {
     };
   }
 
-  public static final <A> F<A, A> id(final Class<A> type) {
+  public static final <A> Function<A, A> id(final Class<A> type) {
     return id();
   }
 
@@ -158,8 +158,8 @@ public abstract class Prelude {
     };
   }
 
-  public static <T> F<T, Iterable<T>> asList(final Class<T> type) {
-    return new F<T, Iterable<T>>() {
+  public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
+    return new Function<T, Iterable<T>>() {
 
       @Override
       public Iterable<T> apply(final T a) {

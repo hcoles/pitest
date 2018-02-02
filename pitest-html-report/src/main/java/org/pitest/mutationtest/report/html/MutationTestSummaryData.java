@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
@@ -129,8 +129,8 @@ public class MutationTestSummaryData {
     return count;
   }
 
-  private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
-    return new F<MutationResult, Iterable<TestInfo>>() {
+  private Function<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
+    return new Function<MutationResult, Iterable<TestInfo>>() {
 
       @Override
       public Iterable<TestInfo> apply(final MutationResult a) {

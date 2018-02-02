@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
@@ -93,8 +93,8 @@ public class MutationTestBuilder {
     };
   }
 
-  private F<ClassName, Iterable<MutationDetails>> classToMutations() {
-    return new F<ClassName, Iterable<MutationDetails>>() {
+  private Function<ClassName, Iterable<MutationDetails>> classToMutations() {
+    return new Function<ClassName, Iterable<MutationDetails>>() {
       @Override
       public Iterable<MutationDetails> apply(final ClassName a) {
         return MutationTestBuilder.this.mutationSource.createMutations(a);
@@ -118,8 +118,8 @@ public class MutationTestBuilder {
         this.workerFactory);
   }
 
-  private static F<MutationResult, MutationDetails> resultToDetails() {
-    return new F<MutationResult, MutationDetails>() {
+  private static Function<MutationResult, MutationDetails> resultToDetails() {
+    return new Function<MutationResult, MutationDetails>() {
       @Override
       public MutationDetails apply(final MutationResult a) {
         return a.getDetails();
@@ -127,8 +127,8 @@ public class MutationTestBuilder {
     };
   }
 
-  private static F<MutationResult, Boolean> statusNotKnown() {
-    return new F<MutationResult, Boolean>() {
+  private static Function<MutationResult, Boolean> statusNotKnown() {
+    return new Function<MutationResult, Boolean>() {
       @Override
       public Boolean apply(final MutationResult a) {
         return a.getStatus() == DetectionStatus.NOT_STARTED;
@@ -136,8 +136,8 @@ public class MutationTestBuilder {
     };
   }
 
-  private static F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return new F<MutationDetails, Iterable<ClassName>>() {
+  private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
+    return new Function<MutationDetails, Iterable<ClassName>>() {
       @Override
       public Iterable<ClassName> apply(final MutationDetails a) {
         return FCollection.map(a.getTestsInOrder(),

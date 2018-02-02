@@ -13,7 +13,7 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
@@ -52,8 +52,8 @@ class CodeSourceAggregator {
     return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
   }
 
-  private F<String, String> toPredicate() {
-    return new F<String, String>() {
+  private Function<String, String> toPredicate() {
+    return new Function<String, String>() {
       @Override
       public String apply(final String a) {
         return ClassName.fromString(a).getPackage().asJavaName() + ".*";

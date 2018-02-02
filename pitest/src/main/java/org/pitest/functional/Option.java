@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Function;
 
 public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   private static final long serialVersionUID = 1L;
@@ -35,17 +36,17 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   public abstract boolean hasSome();
 
   @Override
-  public boolean contains(final F<T, Boolean> predicate) {
+  public boolean contains(final Function<T, Boolean> predicate) {
     return FCollection.contains(this, predicate);
   }
 
   @Override
-  public FunctionalList<T> filter(final F<T, Boolean> predicate) {
+  public FunctionalList<T> filter(final Function<T, Boolean> predicate) {
     return FCollection.filter(this, predicate);
   }
 
   @Override
-  public <B> FunctionalList<B> flatMap(final F<T, ? extends Iterable<B>> f) {
+  public <B> FunctionalList<B> flatMap(final Function<T, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
@@ -55,12 +56,12 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final F<T, B> f) {
+  public <B> FunctionalList<B> map(final Function<T, B> f) {
     return FCollection.map(this, f);
   }
 
   @Override
-  public <B> void mapTo(final F<T, B> f, final Collection<? super B> bs) {
+  public <B> void mapTo(final Function<T, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
   

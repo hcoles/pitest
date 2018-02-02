@@ -31,7 +31,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ClassMutationResults;
@@ -157,8 +157,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return FCollection.map(classes, classInfoToJavaName());
   }
 
-  private F<ClassInfo, String> classInfoToJavaName() {
-    return new F<ClassInfo, String>() {
+  private Function<ClassInfo, String> classInfoToJavaName() {
+    return new Function<ClassInfo, String>() {
 
       @Override
       public String apply(final ClassInfo a) {

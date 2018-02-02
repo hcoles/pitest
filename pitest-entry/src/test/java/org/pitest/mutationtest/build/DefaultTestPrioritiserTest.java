@@ -18,7 +18,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -73,8 +73,8 @@ public class DefaultTestPrioritiserTest {
         FCollection.map(actual, toTime()));
   }
 
-  private F<TestInfo, Integer> toTime() {
-    return new F<TestInfo, Integer>() {
+  private Function<TestInfo, Integer> toTime() {
+    return new Function<TestInfo, Integer>() {
       @Override
       public Integer apply(TestInfo a) {
         return a.getTime();
@@ -88,8 +88,8 @@ public class DefaultTestPrioritiserTest {
         timeToTestInfo()));
   }
 
-  private F<Integer, TestInfo> timeToTestInfo() {
-    return new F<Integer, TestInfo>() {
+  private Function<Integer, TestInfo> timeToTestInfo() {
+    return new Function<Integer, TestInfo>() {
       @Override
       public TestInfo apply(final Integer a) {
         return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);

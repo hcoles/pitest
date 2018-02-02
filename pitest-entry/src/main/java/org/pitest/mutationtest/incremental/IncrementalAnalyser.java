@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.DetectionStatus;
@@ -120,8 +120,8 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   }
 
-  private static F<TestInfo, Boolean> testIsCalled(final String testName) {
-    return new F<TestInfo, Boolean>() {
+  private static Function<TestInfo, Boolean> testIsCalled(final String testName) {
+    return new Function<TestInfo, Boolean>() {
       @Override
       public Boolean apply(final TestInfo a) {
         return a.getName().equals(testName);

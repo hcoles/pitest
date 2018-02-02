@@ -17,7 +17,7 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -69,8 +69,8 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isAnImplicitNullCheck()));
   }
 
-  private F<MutationDetails, Boolean> isAnImplicitNullCheck() {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isAnImplicitNullCheck() {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         int instruction = a.getInstructionIndex();

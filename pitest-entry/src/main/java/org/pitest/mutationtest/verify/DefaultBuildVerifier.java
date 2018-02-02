@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
@@ -54,8 +54,8 @@ public class DefaultBuildVerifier implements BuildVerifier {
     }
   }
 
-  private static F<ClassInfo, Boolean> aConcreteClass() {
-    return new F<ClassInfo, Boolean>() {
+  private static Function<ClassInfo, Boolean> aConcreteClass() {
+    return new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(final ClassInfo a) {
         return !a.isInterface();
@@ -63,8 +63,8 @@ public class DefaultBuildVerifier implements BuildVerifier {
     };
   }
   
-  private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
-    return new F<ClassInfo, Boolean>() {
+  private static Function<ClassInfo, Boolean> aClassWithLineNumbers() {
+    return new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(final ClassInfo a) {
         return a.getNumberOfCodeLines() != 0;
@@ -84,8 +84,8 @@ public class DefaultBuildVerifier implements BuildVerifier {
     };
   }
   
-  private static F<ClassInfo, Boolean> isNotSynthetic() {
-    return new F<ClassInfo, Boolean>() {
+  private static Function<ClassInfo, Boolean> isNotSynthetic() {
+    return new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(ClassInfo a) {
         return !a.isSynthetic();

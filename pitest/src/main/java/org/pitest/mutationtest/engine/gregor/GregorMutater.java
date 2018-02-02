@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -31,7 +32,6 @@ import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.ComputeClassWriter;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
@@ -67,9 +67,9 @@ public class GregorMutater implements Mutater {
 
   }
 
-  private F<byte[], Iterable<MutationDetails>> findMutations(
+  private Function<byte[], Iterable<MutationDetails>> findMutations(
       final ClassContext context) {
-    return new F<byte[], Iterable<MutationDetails>>() {
+    return new Function<byte[], Iterable<MutationDetails>>() {
       @Override
       public Iterable<MutationDetails> apply(final byte[] bytes) {
         return findMutationsForBytes(context, bytes);
@@ -131,7 +131,7 @@ public class GregorMutater implements Mutater {
         not(isGeneratedEnumMethod()), not(isGroovyClass()));
   }
 
-  private static F<MethodInfo, Boolean> isGroovyClass() {
+  private static Function<MethodInfo, Boolean> isGroovyClass() {
     return new Predicate<MethodInfo>() {
       @Override
       public Boolean apply(final MethodInfo a) {

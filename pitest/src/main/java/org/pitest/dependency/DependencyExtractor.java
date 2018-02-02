@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -62,8 +62,8 @@ public class DependencyExtractor {
         and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
   }
 
-  private static F<String, Boolean> notSuppliedClass(final String clazz) {
-    return new F<String, Boolean>() {
+  private static Function<String, Boolean> notSuppliedClass(final String clazz) {
+    return new Function<String, Boolean>() {
 
       @Override
       public Boolean apply(final String a) {
@@ -73,9 +73,9 @@ public class DependencyExtractor {
     };
   }
 
-  private static F<String, Boolean> asJVMNamePredicate(
+  private static Function<String, Boolean> asJVMNamePredicate(
       final Predicate<String> predicate) {
-    return new F<String, Boolean>() {
+    return new Function<String, Boolean>() {
 
       @Override
       public Boolean apply(final String a) {

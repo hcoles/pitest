@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Log;
@@ -140,8 +140,8 @@ public class ClassPath {
         new ClassPathRoot[0]));
   }
   
-  private static F<File, Boolean> exists() {
-    return new F<File, Boolean>() {
+  private static Function<File, Boolean> exists() {
+    return new Function<File, Boolean>() {
       @Override
       public Boolean apply(final File a) {
         return a.exists() && a.canRead();
@@ -149,8 +149,8 @@ public class ClassPath {
     };
   }
 
-  private static F<File, String> fileToString() {
-    return new F<File, String>() {
+  private static Function<File, String> fileToString() {
+    return new Function<File, String>() {
       @Override
       public String apply(File file) {
         return file.getPath();
@@ -158,8 +158,8 @@ public class ClassPath {
     };
   }
   
-  private static F<String, File> stringToCanonicalFile() {
-    return new F<String, File>() {
+  private static Function<String, File> stringToCanonicalFile() {
+    return new Function<String, File>() {
       @Override
       public File apply(String fileAsString) {
         try {

@@ -25,7 +25,7 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -129,8 +129,8 @@ public class MutationStatisticsPrecursorTest {
     assertEquals(">> Ran 43 tests (21.5 tests per mutation)", actual[1]);
   }
 
-  private F<Score, Boolean> hasResultForMutator(final String mutator) {
-    return new F<Score, Boolean>() {
+  private Function<Score, Boolean> hasResultForMutator(final String mutator) {
+    return new Function<Score, Boolean>() {
 
       @Override
       public Boolean apply(final Score a) {

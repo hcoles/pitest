@@ -21,7 +21,7 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.SourceLocator;
@@ -29,9 +29,9 @@ import org.pitest.mutationtest.SourceLocator;
 public class DirectorySourceLocator implements SourceLocator {
 
   private final File                    root;
-  private final F<File, Option<Reader>> fileToReader;
+  private final Function<File, Option<Reader>> fileToReader;
 
-  private static class FileToReader implements F<File, Option<Reader>> {
+  private static class FileToReader implements Function<File, Option<Reader>> {
 
     @Override
     public Option<Reader> apply(final File f) {
@@ -48,7 +48,7 @@ public class DirectorySourceLocator implements SourceLocator {
   };
 
   DirectorySourceLocator(final File root,
-      final F<File, Option<Reader>> fileToReader) {
+      final Function<File, Option<Reader>> fileToReader) {
     this.root = root;
     this.fileToReader = fileToReader;
   }
@@ -69,9 +69,9 @@ public class DirectorySourceLocator implements SourceLocator {
     }
   }
 
-  private F<String, Iterable<Reader>> classNameToSourceFileReader(
+  private Function<String, Iterable<Reader>> classNameToSourceFileReader(
       final String fileName) {
-    return new F<String, Iterable<Reader>>() {
+    return new Function<String, Iterable<Reader>>() {
 
       @Override
       public Iterable<Reader> apply(final String className) {

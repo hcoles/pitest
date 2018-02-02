@@ -15,7 +15,7 @@ import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -86,8 +86,8 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
     return infiniteLoopMatcher().matches(mutantMethod.value().instructions());
   }
   
-  private F<MutationDetails, Location> mutationToLocation() {
-    return new F<MutationDetails, Location>() {
+  private Function<MutationDetails, Location> mutationToLocation() {
+    return new Function<MutationDetails, Location>() {
       @Override
       public Location apply(MutationDetails a) {
         return a.getId().getLocation();

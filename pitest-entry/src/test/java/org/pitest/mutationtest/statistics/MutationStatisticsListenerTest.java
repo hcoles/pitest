@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
@@ -54,8 +54,8 @@ public class MutationStatisticsListenerTest {
         hasResultForMutator(mutator));
   }
 
-  private F<Score, Boolean> hasResultForMutator(final String mutator) {
-    return new F<Score, Boolean>() {
+  private Function<Score, Boolean> hasResultForMutator(final String mutator) {
+    return new Function<Score, Boolean>() {
 
       @Override
       public Boolean apply(final Score a) {

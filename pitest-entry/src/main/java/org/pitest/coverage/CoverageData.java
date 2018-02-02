@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -137,8 +137,8 @@ public class CoverageData implements CoverageDatabase {
     return FCollection.map(this.blockCoverage.entrySet(), toBlockCoverage());
   }
 
-  private static F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
-    return new F<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage>() {
+  private static Function<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
+    return new Function<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage>() {
       @Override
       public BlockCoverage apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
@@ -181,8 +181,8 @@ public class CoverageData implements CoverageDatabase {
     return coverageNumber;
   }
 
-  private F<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
-    return new F<Set<TestInfo>, Iterable<ClassName>>() {
+  private Function<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
+    return new Function<Set<TestInfo>, Iterable<ClassName>>() {
       @Override
       public Iterable<ClassName> apply(final Set<TestInfo> a) {
         return FCollection.map(a, TestInfo.toDefiningClassName());
@@ -190,9 +190,9 @@ public class CoverageData implements CoverageDatabase {
     };
   }
 
-  private static F<ClassInfo, String> keyFromClassInfo() {
+  private static Function<ClassInfo, String> keyFromClassInfo() {
 
-    return new F<ClassInfo, String>() {
+    return new Function<ClassInfo, String>() {
       @Override
       public String apply(final ClassInfo c) {
         return keyFromSourceAndPackage(c.getSourceFileName(), c.getName()
@@ -336,8 +336,8 @@ public class CoverageData implements CoverageDatabase {
     this.hasFailedTest = true;
   }
 
-  private F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>> toTests() {
-    return new F<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>>() {
+  private Function<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>> toTests() {
+    return new Function<Entry<BlockLocation, Set<TestInfo>>, Iterable<TestInfo>>() {
       @Override
       public Iterable<TestInfo> apply(Entry<BlockLocation, Set<TestInfo>> a) {
         return a.getValue();

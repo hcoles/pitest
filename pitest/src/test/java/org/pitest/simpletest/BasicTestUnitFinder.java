@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
@@ -105,8 +105,8 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private F<InstantiationStrategy, Boolean> canInstantiate(final Class<?> clazz) {
-    return new F<InstantiationStrategy, Boolean>() {
+  private Function<InstantiationStrategy, Boolean> canInstantiate(final Class<?> clazz) {
+    return new Function<InstantiationStrategy, Boolean>() {
 
       @Override
       public Boolean apply(final InstantiationStrategy a) {
@@ -127,7 +127,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
       }
     };
     final Collection<Method> methods = Reflection.allMethods(clazz);
-    for (final F<Method, Option<TestMethod>> mf : this.testMethodFinders) {
+    for (final Function<Method, Option<TestMethod>> mf : this.testMethodFinders) {
       FCollection.flatMap(methods, mf).forEach(addToSet);
     }
 

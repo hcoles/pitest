@@ -35,7 +35,7 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
@@ -236,8 +236,8 @@ public class ReportOptions {
         FCollection.map(this.classPathElements, stringToFile()));
   }
 
-  private static F<String, File> stringToFile() {
-    return new F<String, File>() {
+  private static Function<String, File> stringToFile() {
+    return new Function<String, File>() {
 
       @Override
       public File apply(final String a) {

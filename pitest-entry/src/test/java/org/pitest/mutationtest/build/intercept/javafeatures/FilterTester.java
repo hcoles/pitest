@@ -16,7 +16,7 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.True;
@@ -70,8 +70,8 @@ public class FilterTester {
 
   }
   
-  private F<MutationDetails, Loc> toLocation(final ClassTree tree) {
-    return new F<MutationDetails, Loc>() {
+  private Function<MutationDetails, Loc> toLocation(final ClassTree tree) {
+    return new Function<MutationDetails, Loc>() {
       @Override
       public Loc apply(MutationDetails a) {
         MethodTree method = tree.method(a.getId().getLocation()).value();
@@ -161,9 +161,9 @@ public class FilterTester {
     };
   }
 
-  private F<MutationDetails, Boolean> notIn(
+  private Function<MutationDetails, Boolean> notIn(
       final Collection<MutationDetails> actual) {
-    return new F<MutationDetails, Boolean>() {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         return !actual.contains(a);
@@ -213,7 +213,7 @@ public class FilterTester {
   
   
   private List<Sample> samples(final String sample) {
-    F<String, Option<Sample>> toPair = new F<String, Option<Sample>>() {
+    Function<String, Option<Sample>> toPair = new Function<String, Option<Sample>>() {
       @Override
       public Option<Sample> apply(String compiler) {
         String clazz = makeClassName(sample, compiler);

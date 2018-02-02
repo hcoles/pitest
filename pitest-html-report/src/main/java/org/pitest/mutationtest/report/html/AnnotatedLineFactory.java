@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
@@ -53,8 +53,8 @@ public class AnnotatedLineFactory {
 
   }
 
-  private F<String, Line> stringToAnnotatedLine() {
-    return new F<String, Line>() {
+  private Function<String, Line> stringToAnnotatedLine() {
+    return new Function<String, Line>() {
       private int lineNumber = 1;
 
       @Override
@@ -73,8 +73,8 @@ public class AnnotatedLineFactory {
     return this.mutations.filter(isAtLineNumber(lineNumber));
   }
 
-  private F<MutationResult, Boolean> isAtLineNumber(final int lineNumber) {
-    return new F<MutationResult, Boolean>() {
+  private Function<MutationResult, Boolean> isAtLineNumber(final int lineNumber) {
+    return new Function<MutationResult, Boolean>() {
 
       @Override
       public Boolean apply(final MutationResult result) {
@@ -98,7 +98,7 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isCodeLine(final int line) {
-    final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
+    final Function<ClassInfo, Boolean> predicate = new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(final ClassInfo a) {
         return a.isCodeLine(line);
@@ -108,7 +108,7 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isLineCovered(final int line) {
-    final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
+    final Function<ClassInfo, Boolean> predicate = new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(final ClassInfo a) {
         return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(

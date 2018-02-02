@@ -2,6 +2,7 @@ package org.pitest.bytecode.analysis;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.function.Function;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -10,7 +11,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
@@ -57,8 +57,8 @@ public class ClassTree {
     return annotaions;
   }
   
-  private static F<MethodNode, MethodTree> toTree(final ClassName name) {
-    return new F<MethodNode, MethodTree>() {
+  private static Function<MethodNode, MethodTree> toTree(final ClassName name) {
+    return new Function<MethodNode, MethodTree>() {
       @Override
       public MethodTree apply(MethodNode a) {
         return new MethodTree(name,a);

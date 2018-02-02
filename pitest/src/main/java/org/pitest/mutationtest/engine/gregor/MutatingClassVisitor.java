@@ -22,7 +22,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodVisitor;
@@ -30,12 +30,12 @@ import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator
 
 class MutatingClassVisitor extends ClassVisitor {
 
-  private final F<MethodInfo, Boolean>    filter;
+  private final Function<MethodInfo, Boolean>    filter;
   private final ClassContext              context;
   private final Set<MethodMutatorFactory> methodMutators = new HashSet<>();
 
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
-      final ClassContext context, final F<MethodInfo, Boolean> filter,
+      final ClassContext context, final Function<MethodInfo, Boolean> filter,
       final Collection<MethodMutatorFactory> mutators) {
     super(Opcodes.ASM6, delegateClassVisitor);
     this.context = context;

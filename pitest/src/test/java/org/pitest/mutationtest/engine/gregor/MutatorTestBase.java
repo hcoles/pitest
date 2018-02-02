@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -33,7 +34,6 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
@@ -149,8 +149,8 @@ public abstract class MutatorTestBase {
     return details.map(createMutant());
   }
 
-  private F<MutationDetails, Mutant> createMutant() {
-    return new F<MutationDetails, Mutant>() {
+  private Function<MutationDetails, Mutant> createMutant() {
+    return new Function<MutationDetails, Mutant>() {
 
       @Override
       public Mutant apply(final MutationDetails a) {
@@ -206,8 +206,8 @@ public abstract class MutatorTestBase {
     }
   }
 
-  private F<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
-    return new F<Mutant, String>() {
+  private Function<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
+    return new Function<Mutant, String>() {
 
       @Override
       public String apply(final Mutant mutant) {
@@ -245,8 +245,8 @@ public abstract class MutatorTestBase {
     };
   }
 
-  protected F<MutationDetails, Boolean> descriptionContaining(final String value) {
-    return new F<MutationDetails, Boolean>() {
+  protected Function<MutationDetails, Boolean> descriptionContaining(final String value) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(final MutationDetails a) {
         return a.getDescription().contains(value);

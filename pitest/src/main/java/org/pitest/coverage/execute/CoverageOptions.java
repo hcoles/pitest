@@ -3,7 +3,7 @@ package org.pitest.coverage.execute;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 
 /*
  * Copyright 2010 Henry Coles
@@ -65,7 +65,7 @@ public class CoverageOptions implements Serializable {
     return this.maxDependencyDistance;
   }
   
-  private static F<String, Boolean> commonClasses() {
+  private static Function<String, Boolean> commonClasses() {
     return Prelude.or(
         glob("java/*"), 
         glob("sun/*"),

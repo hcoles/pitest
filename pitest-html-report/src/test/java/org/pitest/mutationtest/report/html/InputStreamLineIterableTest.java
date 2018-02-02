@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 
@@ -74,8 +74,8 @@ public class InputStreamLineIterableTest {
     assertFalse(this.testee.contains(isEqualTo("10")));
   }
   
-  private F<String, Option<String>> mapIfNotTwo() {
-    return new F<String, Option<String>>() {
+  private Function<String, Option<String>> mapIfNotTwo() {
+    return new Function<String, Option<String>>() {
       @Override
       public Option<String> apply(final String a) {
         if (a.equals("2")) {

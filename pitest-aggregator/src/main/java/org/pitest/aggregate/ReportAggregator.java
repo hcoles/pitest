@@ -17,7 +17,7 @@ import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ClassMutationResults;
@@ -69,8 +69,8 @@ public final class ReportAggregator {
     return new MutationHtmlReportListener(coverageDatabase, resultOutputStrategy, mutatorNames, sourceLocator);
   }
 
-  private static F<MutationResult, List<String>> resultToMutatorName() {
-    return new F<MutationResult, List<String>>() {
+  private static Function<MutationResult, List<String>> resultToMutatorName() {
+    return new Function<MutationResult, List<String>>() {
       @Override
       public List<String> apply(final MutationResult a) {
         try {
@@ -103,8 +103,8 @@ public final class ReportAggregator {
     return blockCoverageMap;
   }
 
-  private F<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
-    return new F<String, TestInfo>() {
+  private Function<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
+    return new Function<String, TestInfo>() {
       @Override
       public TestInfo apply(final String a) {
         return new TestInfo(null, a, 0, Option.some(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());

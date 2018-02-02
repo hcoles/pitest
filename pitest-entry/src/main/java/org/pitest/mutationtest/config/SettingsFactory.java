@@ -9,7 +9,7 @@ import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
@@ -123,9 +123,9 @@ public class SettingsFactory {
     return new CompoundInterceptorFactory(parser.parseFeatures(options.getFeatures()), new ArrayList<>(interceptors));
   }
   
-  private static F<MutationResultListenerFactory, Boolean> nameMatches(
+  private static Function<MutationResultListenerFactory, Boolean> nameMatches(
       final Iterable<String> outputFormats) {
-    return new F<MutationResultListenerFactory, Boolean>() {
+    return new Function<MutationResultListenerFactory, Boolean>() {
       @Override
       public Boolean apply(final MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
@@ -168,8 +168,8 @@ public class SettingsFactory {
 
   
 
-  private static F<ProvidesFeature, Feature> toFeature() {
-    return new F<ProvidesFeature, Feature>() {
+  private static Function<ProvidesFeature, Feature> toFeature() {
+    return new Function<ProvidesFeature, Feature>() {
       @Override
       public Feature apply(ProvidesFeature a) {
         return a.provides();

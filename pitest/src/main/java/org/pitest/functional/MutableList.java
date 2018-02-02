@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Function;
 
 public final class MutableList<A> implements FunctionalList<A> {
   
@@ -106,17 +107,17 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public boolean contains(final F<A, Boolean> predicate) {
+  public boolean contains(final Function<A, Boolean> predicate) {
     return FCollection.contains(this, predicate);
   }
 
   @Override
-  public FunctionalList<A> filter(final F<A, Boolean> predicate) {
+  public FunctionalList<A> filter(final Function<A, Boolean> predicate) {
     return FCollection.filter(this, predicate);
   }
 
   @Override
-  public <B> FunctionalList<B> flatMap(final F<A, ? extends Iterable<B>> f) {
+  public <B> FunctionalList<B> flatMap(final Function<A, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
@@ -126,17 +127,17 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final F<A, B> f) {
+  public <B> FunctionalList<B> map(final Function<A, B> f) {
     return FCollection.map(this, f);
   }
 
   @Override
-  public <B> void mapTo(final F<A, B> f, final Collection<? super B> bs) {
+  public <B> void mapTo(final Function<A, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
   
   @Override
-  public Option<A> findFirst(F<A, Boolean> predicate) {
+  public Option<A> findFirst(Function<A, Boolean> predicate) {
     return FCollection.findFirst(impl, predicate);
   }
 

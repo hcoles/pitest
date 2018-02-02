@@ -18,7 +18,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.F;
+import java.util.function.Function;
 
 public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
   
@@ -29,8 +29,8 @@ public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
     this.interceptorClass = classToName(interceptor);
   }
 
-  public static F<ClassWriter, ClassVisitor> inputStreamAdapterSupplier(final Class<?> interceptor) {
-    return new F<ClassWriter, ClassVisitor>() {
+  public static Function<ClassWriter, ClassVisitor> inputStreamAdapterSupplier(final Class<?> interceptor) {
+    return new Function<ClassWriter, ClassVisitor>() {
       @Override
       public ClassVisitor apply(ClassWriter a) {
         return new JavassistInputStreamInterceptorAdapater(a, interceptor);

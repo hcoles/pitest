@@ -23,7 +23,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import org.apache.maven.artifact.Artifact;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
@@ -43,8 +43,8 @@ public class DependencyFilter implements Predicate<Artifact> {
     findVendorIdForGroups();
   }
 
-  private static F<ClientClasspathPlugin, GroupIdPair> artifactToPair() {
-    return new F<ClientClasspathPlugin, GroupIdPair>() {
+  private static Function<ClientClasspathPlugin, GroupIdPair> artifactToPair() {
+    return new Function<ClientClasspathPlugin, GroupIdPair>() {
 
       @Override
       public GroupIdPair apply(final ClientClasspathPlugin a) {

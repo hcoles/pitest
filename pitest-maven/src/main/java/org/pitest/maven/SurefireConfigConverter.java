@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -56,8 +56,8 @@ public class SurefireConfigConverter {
     option.setExcludedTestClasses(excludes);
   }
 
-  private F<String, Predicate<String>> filenameToClassFilter() {
-    return new F<String, Predicate<String>>() {
+  private Function<String, Predicate<String>> filenameToClassFilter() {
+    return new Function<String, Predicate<String>>() {
       @Override
       public Predicate<String> apply(String a) {
         return new Glob(a.replace(".java", "").replace("/", "."));

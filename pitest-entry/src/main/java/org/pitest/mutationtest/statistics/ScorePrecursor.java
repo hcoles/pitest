@@ -3,7 +3,7 @@ package org.pitest.mutationtest.statistics;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
@@ -36,8 +36,8 @@ class ScorePrecursor {
         FCollection.filter(this.counts.values(), isDetected()));
   }
 
-  private static F<StatusCount, Boolean> isDetected() {
-    return new F<StatusCount, Boolean>() {
+  private static Function<StatusCount, Boolean> isDetected() {
+    return new Function<StatusCount, Boolean>() {
 
       @Override
       public Boolean apply(final StatusCount a) {

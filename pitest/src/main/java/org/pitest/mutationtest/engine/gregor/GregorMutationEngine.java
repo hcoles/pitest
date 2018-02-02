@@ -19,7 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.Mutater;
@@ -58,8 +58,8 @@ public class GregorMutationEngine implements MutationEngine {
     return FCollection.map(this.mutationOperators, toName());
   }
 
-  private static F<MethodMutatorFactory, String> toName() {
-    return new F<MethodMutatorFactory, String>() {
+  private static Function<MethodMutatorFactory, String> toName() {
+    return new Function<MethodMutatorFactory, String>() {
 
       @Override
       public String apply(final MethodMutatorFactory a) {

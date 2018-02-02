@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.Collection;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 
 /**
@@ -58,8 +58,8 @@ public class NameCachingRoot implements ClassPathRoot {
     return child.cacheLocation();
   }
 
-  public static F<ClassPathRoot, ClassPathRoot> toCachingRoot() {
-     return new F<ClassPathRoot, ClassPathRoot>() {
+  public static Function<ClassPathRoot, ClassPathRoot> toCachingRoot() {
+     return new Function<ClassPathRoot, ClassPathRoot>() {
       @Override
       public ClassPathRoot apply(ClassPathRoot a) {
         // ugly hack to determine where caching will be useful

@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -21,7 +22,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPath;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageResult;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
@@ -320,7 +320,7 @@ public class CoverageProcessSystemTest {
 
   private ClassPath classPathWithoutJUnit() {
     FunctionalList<File> cpWithoutJUnit = FCollection.filter(
-        ClassPath.getClassPathElementsAsFiles(), new F<File, Boolean>() {
+        ClassPath.getClassPathElementsAsFiles(), new Function<File, Boolean>() {
           @Override
           public Boolean apply(File file) {
             return !file.getName().contains("junit");
@@ -330,8 +330,8 @@ public class CoverageProcessSystemTest {
     return new ClassPath(cpWithoutJUnit);
   }
 
-  private F<CoverageResult, Boolean> failingTest() {
-    return new F<CoverageResult, Boolean>() {
+  private Function<CoverageResult, Boolean> failingTest() {
+    return new Function<CoverageResult, Boolean>() {
 
       @Override
       public Boolean apply(final CoverageResult a) {
@@ -381,16 +381,16 @@ public class CoverageProcessSystemTest {
     }
   }
 
-  private F<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
-    return new F<CoverageResult, Boolean>() {
+  private Function<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
+    return new Function<CoverageResult, Boolean>() {
 
       @Override
       public Boolean apply(final CoverageResult a) {
         return FCollection.contains(a.getCoverage(), resultFor(class1));
       }
 
-      private F<BlockLocation, Boolean> resultFor(final Class<?> class1) {
-        return new F<BlockLocation, Boolean>() {
+      private Function<BlockLocation, Boolean> resultFor(final Class<?> class1) {
+        return new Function<BlockLocation, Boolean>() {
 
           @Override
           public Boolean apply(final BlockLocation a) {
@@ -403,8 +403,8 @@ public class CoverageProcessSystemTest {
     };
   }
 
-  private F<CoverageResult, Boolean> coverageFor(final BlockLocation location) {
-    return new F<CoverageResult, Boolean>() {
+  private Function<CoverageResult, Boolean> coverageFor(final BlockLocation location) {
+    return new Function<CoverageResult, Boolean>() {
       @Override
       public Boolean apply(final CoverageResult a) {
         return a.getCoverage().contains(location);
@@ -420,9 +420,9 @@ public class CoverageProcessSystemTest {
     return Arrays.asList("*Test");
   }
 
-  private F<CoverageResult, Boolean> coverage(final String testName,
+  private Function<CoverageResult, Boolean> coverage(final String testName,
       final int numberOfBlocks) {
-    return new F<CoverageResult, Boolean>() {
+    return new Function<CoverageResult, Boolean>() {
 
       @Override
       public Boolean apply(final CoverageResult a) {
@@ -445,17 +445,17 @@ public class CoverageProcessSystemTest {
     return coveredClasses.contains(hitsBlock(testName, block));
   }
 
-  private F<CoverageResult, Boolean> hitsBlock(final String testName,
+  private Function<CoverageResult, Boolean> hitsBlock(final String testName,
       final int block) {
-    return new F<CoverageResult, Boolean>() {
+    return new Function<CoverageResult, Boolean>() {
       @Override
       public Boolean apply(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (FCollection.contains(a.getCoverage(), hasBlock(block)));
       }
 
-      private F<BlockLocation, Boolean> hasBlock(final int block) {
-        return new F<BlockLocation, Boolean>() {
+      private Function<BlockLocation, Boolean> hasBlock(final int block) {
+        return new Function<BlockLocation, Boolean>() {
           @Override
           public Boolean apply(BlockLocation a) {
             System.out.println(a);

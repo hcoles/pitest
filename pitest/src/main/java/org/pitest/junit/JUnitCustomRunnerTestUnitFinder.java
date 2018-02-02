@@ -33,7 +33,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
@@ -120,8 +120,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
   }
 
-  private F<Category, Iterable<String>> toCategoryNames() {
-    return new F<Category, Iterable<String>>() {
+  private Function<Category, Iterable<String>> toCategoryNames() {
+    return new Function<Category, Iterable<String>>() {
       @Override
       public Iterable<String> apply(Category a) {
         if (a == null) {
@@ -133,8 +133,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     };
   }
 
-  private F<Class<?>,String> toName() {
-    return new F<Class<?>,String>() {
+  private Function<Class<?>,String> toName() {
+    return new Function<Class<?>,String>() {
       @Override
       public String apply(Class<?> a) {
         return a.getName();
@@ -213,8 +213,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   }
 
-  private F<Description, TestUnit> descriptionToTestUnit() {
-    return new F<Description, TestUnit>() {
+  private Function<Description, TestUnit> descriptionToTestUnit() {
+    return new Function<Description, TestUnit>() {
 
       @Override
       public TestUnit apply(final Description a) {
@@ -224,8 +224,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     };
   }
 
-  private F<Description, Boolean> isTest() {
-    return new F<Description, Boolean>() {
+  private Function<Description, Boolean> isTest() {
+    return new Function<Description, Boolean>() {
 
       @Override
       public Boolean apply(final Description a) {

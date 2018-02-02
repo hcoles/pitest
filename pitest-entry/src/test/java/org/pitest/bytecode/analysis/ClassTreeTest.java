@@ -7,7 +7,7 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 
 public class ClassTreeTest {
   
@@ -35,8 +35,8 @@ public class ClassTreeTest {
     return source.getBytes(clazz.getName()).value();
   }
 
- private static F<MethodTree,String> toName() {
-  return new  F<MethodTree,String>() {
+ private static Function<MethodTree,String> toName() {
+  return new  Function<MethodTree,String>() {
     @Override
     public String apply(MethodTree a) {
       return a.rawNode().name;

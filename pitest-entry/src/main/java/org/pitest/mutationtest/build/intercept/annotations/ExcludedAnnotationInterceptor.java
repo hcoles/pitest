@@ -3,12 +3,12 @@ package org.pitest.mutationtest.build.intercept.annotations;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.objectweb.asm.tree.AnnotationNode;
 import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.predicate.Predicate;
@@ -46,8 +46,8 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     }
   }
 
-  private F<MethodTree, Boolean> hasAvoidedAnnotation() {
-    return new F<MethodTree, Boolean>() {
+  private Function<MethodTree, Boolean> hasAvoidedAnnotation() {
+    return new Function<MethodTree, Boolean>() {
       @Override
       public Boolean apply(MethodTree a) {
         return a.annotations().contains(avoidedAnnotation());
@@ -55,8 +55,8 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     };
   }
 
-  private F<AnnotationNode, Boolean> avoidedAnnotation() {
-    return new F<AnnotationNode, Boolean>() {
+  private Function<AnnotationNode, Boolean> avoidedAnnotation() {
+    return new Function<AnnotationNode, Boolean>() {
       @Override
       public Boolean apply(AnnotationNode a) {
         return shouldAvoid(a.desc);

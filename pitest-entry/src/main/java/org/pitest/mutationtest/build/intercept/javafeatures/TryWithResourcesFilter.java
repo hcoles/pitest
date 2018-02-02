@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -41,8 +41,8 @@ public class TryWithResourcesFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isOnMarkedLine()));
   }
   
-  private F<MutationDetails, Boolean> isOnMarkedLine() {
-    return new  F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isOnMarkedLine() {
+    return new  Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         return lines.contains(a.getClassLine().getLineNumber());

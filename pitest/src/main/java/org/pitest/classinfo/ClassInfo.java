@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 
@@ -151,8 +151,8 @@ public class ClassInfo {
     return getSuperClass().value().descendsFrom(clazz);
   }
 
-  public static F<ClassInfo, Boolean> matchIfAbstract() {
-    return new F<ClassInfo, Boolean>() {
+  public static Function<ClassInfo, Boolean> matchIfAbstract() {
+    return new Function<ClassInfo, Boolean>() {
       @Override
       public Boolean apply(final ClassInfo a) {
         return a.isAbstract();
@@ -166,8 +166,8 @@ public class ClassInfo {
     return this.id.getName().asJavaName();
   }
 
-  public static F<ClassInfo, ClassName> toClassName() {
-    return new F<ClassInfo, ClassName>() {
+  public static Function<ClassInfo, ClassName> toClassName() {
+    return new Function<ClassInfo, ClassName>() {
       @Override
       public ClassName apply(final ClassInfo a) {
         return a.getName();
@@ -176,8 +176,8 @@ public class ClassInfo {
     };
   }
 
-  public static F<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return new F<ClassInfo, HierarchicalClassId>() {
+  public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
+    return new Function<ClassInfo, HierarchicalClassId>() {
       @Override
       public HierarchicalClassId apply(final ClassInfo a) {
         return a.getHierarchicalId();

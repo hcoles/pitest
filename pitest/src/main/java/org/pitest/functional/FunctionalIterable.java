@@ -16,18 +16,19 @@ package org.pitest.functional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 public interface FunctionalIterable<A> extends Iterable<A> {
 
   void forEach(SideEffect1<A> e);
 
-  <B> List<B> map(F<A, B> f);
+  <B> List<B> map(Function<A, B> f);
 
-  <B> void mapTo(F<A, B> f, Collection<? super B> bs);
+  <B> void mapTo(Function<A, B> f, Collection<? super B> bs);
 
-  <B> List<B> flatMap(F<A, ? extends Iterable<B>> f);
+  <B> List<B> flatMap(Function<A, ? extends Iterable<B>> f);
 
-  List<A> filter(F<A, Boolean> predicate);
+  List<A> filter(Function<A, Boolean> predicate);
 
-  boolean contains(F<A, Boolean> predicate);
+  boolean contains(Function<A, Boolean> predicate);
 }

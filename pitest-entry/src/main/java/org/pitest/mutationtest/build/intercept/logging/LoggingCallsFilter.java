@@ -9,7 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -49,8 +49,8 @@ public class LoggingCallsFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isOnLoggingLine()));
   }
 
-  private F<MutationDetails, Boolean> isOnLoggingLine() {
-    return new  F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isOnLoggingLine() {
+    return new  Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         return lines.contains(a.getClassLine().getLineNumber());
@@ -63,8 +63,8 @@ public class LoggingCallsFilter implements MutationInterceptor {
     lines = null;
   }
   
-  private static F<String, String> correctFormat() {
-    return new F<String, String>() {
+  private static Function<String, String> correctFormat() {
+    return new Function<String, String>() {
       @Override
       public String apply(String a) {
         return a.replace('.', '/');
@@ -95,8 +95,8 @@ class LoggingLineScanner extends MethodVisitor {
     }
   }
   
-  private static F<String, Boolean> matches(final String owner) {
-    return new F<String, Boolean>() {
+  private static Function<String, Boolean> matches(final String owner) {
+    return new Function<String, Boolean>() {
       @Override
       public Boolean apply(final String a) {
         return owner.startsWith(a);

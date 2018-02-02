@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 
 /**
@@ -21,8 +21,8 @@ public class FeatureParser {
     return FCollection.map(config, stringToSettings());
   }
 
-  private F<String, FeatureSetting> stringToSettings() {
-    return new F<String, FeatureSetting>() {
+  private Function<String, FeatureSetting> stringToSettings() {
+    return new Function<String, FeatureSetting>() {
       @Override
       public FeatureSetting apply(String a) {
         String text = a.trim();

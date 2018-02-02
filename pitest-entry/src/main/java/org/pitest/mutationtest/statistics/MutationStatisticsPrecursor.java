@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
@@ -51,8 +51,8 @@ class MutationStatisticsPrecursor {
     return FCollection.map(this.mutatorTotalMap.values(), toScore());
   }
 
-  private static F<ScorePrecursor, Score> toScore() {
-    return new F<ScorePrecursor, Score>() {
+  private static Function<ScorePrecursor, Score> toScore() {
+    return new Function<ScorePrecursor, Score>() {
       @Override
       public Score apply(ScorePrecursor a) {
         return a.toScore();

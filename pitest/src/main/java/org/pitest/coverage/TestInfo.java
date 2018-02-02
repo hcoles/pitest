@@ -17,7 +17,7 @@ package org.pitest.coverage;
 import java.io.Serializable;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 
 public final class TestInfo implements Serializable {
@@ -57,8 +57,8 @@ public final class TestInfo implements Serializable {
     return this.name;
   }
 
-  public static F<TestInfo, String> toName() {
-    return new F<TestInfo, String>() {
+  public static Function<TestInfo, String> toName() {
+    return new Function<TestInfo, String>() {
       @Override
       public String apply(final TestInfo a) {
         return a.getName();
@@ -67,8 +67,8 @@ public final class TestInfo implements Serializable {
     };
   }
 
-  public static F<TestInfo, ClassName> toDefiningClassName() {
-    return new F<TestInfo, ClassName>() {
+  public static Function<TestInfo, ClassName> toDefiningClassName() {
+    return new Function<TestInfo, ClassName>() {
 
       @Override
       public ClassName apply(final TestInfo a) {

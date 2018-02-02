@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Functional programming style operations for plain old Java iterables.
@@ -33,7 +34,7 @@ public abstract class FCollection {
   }
 
   public static <A, B> void mapTo(final Iterable<? extends A> as,
-      final F<A, B> f, final Collection<? super B> bs) {
+      final Function<A, B> f, final Collection<? super B> bs) {
     if (as != null) {
       for (final A a : as) {
         bs.add(f.apply(a));
@@ -42,14 +43,14 @@ public abstract class FCollection {
   }
 
   public static <A, B> FunctionalList<B> map(final Iterable<? extends A> as,
-      final F<A, B> f) {
+      final Function<A, B> f) {
     final FunctionalList<B> bs = emptyList();
     mapTo(as, f, bs);
     return bs;
   }
 
   public static <A, B> void flatMapTo(final Iterable<? extends A> as,
-      final F<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
+      final Function<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
     if (as != null) {
       for (final A a : as) {
         for (final B each : f.apply(a)) {
@@ -60,7 +61,7 @@ public abstract class FCollection {
   }
 
   public static <A, B> FunctionalList<B> flatMap(
-      final Iterable<? extends A> as, final F<A, ? extends Iterable<B>> f) {
+      final Iterable<? extends A> as, final Function<A, ? extends Iterable<B>> f) {
     final FunctionalList<B> bs = emptyList();
     flatMapTo(as, f, bs);
     return bs;
@@ -71,14 +72,14 @@ public abstract class FCollection {
   }
 
   public static <T> FunctionalList<T> filter(final Iterable<? extends T> xs,
-      final F<T, Boolean> predicate) {
+      final Function<T, Boolean> predicate) {
     final FunctionalList<T> dest = emptyList();
     filter(xs, predicate, dest);
     return dest;
   }
 
   public static <T> void filter(final Iterable<? extends T> xs,
-      final F<T, Boolean> predicate, final Collection<? super T> dest) {
+      final Function<T, Boolean> predicate, final Collection<? super T> dest) {
     for (final T x : xs) {
       if (predicate.apply(x)) {
         dest.add(x);
@@ -88,7 +89,7 @@ public abstract class FCollection {
   
 
   public static <T> Option<T> findFirst(final Iterable<? extends T> xs,
-      final F<T, Boolean> predicate) {
+      final Function<T, Boolean> predicate) {
     for (final T x : xs) {
       if (predicate.apply(x)) {
         return Option.some(x);
@@ -99,7 +100,7 @@ public abstract class FCollection {
   
 
   public static <T> boolean contains(final Iterable<? extends T> xs,
-      final F<T, Boolean> predicate) {
+      final Function<T, Boolean> predicate) {
     for (final T x : xs) {
       if (predicate.apply(x)) {
         return true;
@@ -150,7 +151,7 @@ public abstract class FCollection {
   }
 
   public static <A, B> Map<A, Collection<B>> bucket(final Iterable<B> bs,
-      final F<B, A> f) {
+      final Function<B, A> f) {
     final Map<A, Collection<B>> bucketed = new HashMap<>();
     for (final B each : bs) {
       final A key = f.apply(each);

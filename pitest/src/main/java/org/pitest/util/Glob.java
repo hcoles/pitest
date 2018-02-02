@@ -17,7 +17,7 @@ package org.pitest.util;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 
@@ -38,8 +38,8 @@ public class Glob implements Predicate<String> {
     return this.regex.matcher(seq).matches();
   }
 
-  public static F<String, Predicate<String>> toGlobPredicate() {
-    return new F<String, Predicate<String>>() {
+  public static Function<String, Predicate<String>> toGlobPredicate() {
+    return new Function<String, Predicate<String>>() {
       @Override
       public Glob apply(final String glob) {
         return new Glob(glob);

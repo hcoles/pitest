@@ -13,12 +13,12 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -121,8 +121,8 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     return !mutationsInHandlerBlock.isEmpty();
   }
 
-  private static F<MutationDetails, Boolean> isInFinallyHandler() {
-    return new F<MutationDetails, Boolean>() {
+  private static Function<MutationDetails, Boolean> isInFinallyHandler() {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(final MutationDetails a) {
         return a.isInFinallyBlock();
@@ -144,8 +144,8 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
         first.getLineNumber(), first.getBlock());
   }
 
-  private static F<MutationDetails, Integer> mutationToIndex() {
-    return new F<MutationDetails, Integer>() {
+  private static Function<MutationDetails, Integer> mutationToIndex() {
+    return new Function<MutationDetails, Integer>() {
       @Override
       public Integer apply(final MutationDetails a) {
         return a.getFirstIndex();
@@ -153,8 +153,8 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     };
   }
 
-  private static F<MutationDetails, Integer> mutationToBlock() {
-    return new F<MutationDetails, Integer>() {
+  private static Function<MutationDetails, Integer> mutationToBlock() {
+    return new Function<MutationDetails, Integer>() {
       @Override
       public Integer apply(final MutationDetails a) {
         return a.getBlock();
@@ -162,8 +162,8 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     };
   }
 
-  private static F<MutationDetails, LineMutatorPair> toLineMutatorPair() {
-    return new F<MutationDetails, LineMutatorPair>() {
+  private static Function<MutationDetails, LineMutatorPair> toLineMutatorPair() {
+    return new Function<MutationDetails, LineMutatorPair>() {
       @Override
       public LineMutatorPair apply(final MutationDetails a) {
         return new LineMutatorPair(a.getLineNumber(), a.getMutator());

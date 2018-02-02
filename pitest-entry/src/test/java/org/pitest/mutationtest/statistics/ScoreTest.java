@@ -22,7 +22,7 @@ import java.io.PrintStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.util.StringUtil;
@@ -135,9 +135,9 @@ public class ScoreTest {
     }
   }
 
-  private F<StatusCount, Boolean> countFor(final DetectionStatus each,
+  private Function<StatusCount, Boolean> countFor(final DetectionStatus each,
       final int count) {
-    return new F<StatusCount, Boolean>() {
+    return new Function<StatusCount, Boolean>() {
 
       @Override
       public Boolean apply(final StatusCount a) {

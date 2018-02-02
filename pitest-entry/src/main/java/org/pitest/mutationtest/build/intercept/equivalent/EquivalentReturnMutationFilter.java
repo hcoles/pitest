@@ -13,7 +13,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
@@ -94,8 +94,8 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
   }
 
-  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
@@ -166,8 +166,8 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
   }
 
-  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
@@ -221,8 +221,8 @@ class EmptyReturnsFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
   }
 
-  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
@@ -308,8 +308,8 @@ class NullReturnsFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
   }
 
-  private F<MutationDetails, Boolean> isEquivalent(Mutater m) {
-    return new F<MutationDetails, Boolean>() {
+  private Function<MutationDetails, Boolean> isEquivalent(Mutater m) {
+    return new Function<MutationDetails, Boolean>() {
       @Override
       public Boolean apply(MutationDetails a) {
         if (!MUTATOR_ID.equals(a.getMutator())) {

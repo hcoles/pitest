@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
@@ -268,8 +268,8 @@ public final class Mutator {
     };
   }
 
-  private static F<String, Iterable<MethodMutatorFactory>> fromString() {
-    return new F<String, Iterable<MethodMutatorFactory>>() {
+  private static Function<String, Iterable<MethodMutatorFactory>> fromString() {
+    return new Function<String, Iterable<MethodMutatorFactory>>() {
       @Override
       public Iterable<MethodMutatorFactory> apply(final String a) {
         Iterable<MethodMutatorFactory> i = MUTATORS.get(a);

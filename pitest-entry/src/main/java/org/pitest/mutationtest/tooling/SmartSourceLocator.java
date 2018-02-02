@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.Reader;
 import java.util.Collection;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -35,7 +35,7 @@ public class SmartSourceLocator implements SourceLocator {
         collectChildren(0));
     childDirs.addAll(roots);
 
-    final F<File, SourceLocator> fileToSourceLocator = new F<File, SourceLocator>() {
+    final Function<File, SourceLocator> fileToSourceLocator = new Function<File, SourceLocator>() {
       @Override
       public SourceLocator apply(final File a) {
         return new DirectorySourceLocator(a);
@@ -44,8 +44,8 @@ public class SmartSourceLocator implements SourceLocator {
     this.children = FCollection.map(childDirs, fileToSourceLocator);
   }
 
-  private F<File, Collection<File>> collectChildren(final int depth) {
-    return new F<File, Collection<File>>() {
+  private Function<File, Collection<File>> collectChildren(final int depth) {
+    return new Function<File, Collection<File>>() {
       @Override
       public Collection<File> apply(final File a) {
         return collectDirectories(a, depth);
@@ -64,7 +64,7 @@ public class SmartSourceLocator implements SourceLocator {
   }
 
   private static Collection<File> listFirstLevelDirectories(final File root) {
-    final F<File, Boolean> p = new F<File, Boolean>() {
+    final Function<File, Boolean> p = new Function<File, Boolean>() {
       @Override
       public Boolean apply(final File a) {
         return a.isDirectory();

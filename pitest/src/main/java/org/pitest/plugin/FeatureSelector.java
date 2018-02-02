@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 
 public class FeatureSelector<T extends ProvidesFeature> {
@@ -55,8 +55,8 @@ public class FeatureSelector<T extends ProvidesFeature> {
     return active;
   }
 
-  private F<T, Boolean> isOnByDefault() {
-    return new  F<T, Boolean>() {
+  private Function<T, Boolean> isOnByDefault() {
+    return new  Function<T, Boolean>() {
       @Override
       public Boolean apply(T a) {
         return a.provides().isOnByDefault();
@@ -64,8 +64,8 @@ public class FeatureSelector<T extends ProvidesFeature> {
     };
   }
 
-  private F<T, String> byFeatureName() {
-    return new  F<T, String>() {
+  private Function<T, String> byFeatureName() {
+    return new  Function<T, String>() {
       @Override
       public String apply(T a) {
         return a.provides().name();
@@ -73,8 +73,8 @@ public class FeatureSelector<T extends ProvidesFeature> {
     };
   }
   
-  private F<FeatureSetting, String> byFeature() {
-    return new  F<FeatureSetting, String>() {
+  private Function<FeatureSetting, String> byFeature() {
+    return new  Function<FeatureSetting, String>() {
       @Override
       public String apply(FeatureSetting a) {
         return a.feature();

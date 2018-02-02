@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 
 public class DirectorySourceLocatorTest {
@@ -35,7 +35,7 @@ public class DirectorySourceLocatorTest {
   private File                   root;
 
   @Mock
-  F<File, Option<Reader>>        locator;
+  Function<File, Option<Reader>>        locator;
 
   @Before
   public void setUp() {

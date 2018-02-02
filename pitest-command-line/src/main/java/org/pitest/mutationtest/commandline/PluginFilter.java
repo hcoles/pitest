@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
@@ -22,8 +22,8 @@ public class PluginFilter implements Predicate<String> {
         this.includedClassPathElement);
   }
 
-  private static F<ClientClasspathPlugin, String> classToLocation() {
-    return new F<ClientClasspathPlugin, String>() {
+  private static Function<ClientClasspathPlugin, String> classToLocation() {
+    return new Function<ClientClasspathPlugin, String>() {
       @Override
       public String apply(final ClientClasspathPlugin a) {
         try {

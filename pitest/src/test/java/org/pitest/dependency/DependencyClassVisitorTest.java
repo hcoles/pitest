@@ -28,7 +28,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.dependency.DependencyAccess.Member;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 
@@ -110,8 +110,8 @@ public class DependencyClassVisitorTest {
     return set;
   }
 
-  private F<Class<?>, String> classToJvmName() {
-    return new F<Class<?>, String>() {
+  private Function<Class<?>, String> classToJvmName() {
+    return new Function<Class<?>, String>() {
       @Override
       public String apply(final Class<?> a) {
         return a.getName().replace(".", "/");

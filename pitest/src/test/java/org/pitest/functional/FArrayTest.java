@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
@@ -57,7 +58,7 @@ public class FArrayTest {
 
   @Test
   public void shouldApplyFlatMapToAllItems() {
-    final F<Integer, Collection<Integer>> f = new F<Integer, Collection<Integer>>() {
+    final Function<Integer, Collection<Integer>> f = new Function<Integer, Collection<Integer>>() {
       @Override
       public List<Integer> apply(final Integer a) {
         return Arrays.asList(a, a);
@@ -74,8 +75,8 @@ public class FArrayTest {
         FArray.flatMap(null, objectToObjectIterable()));
   }
 
-  private F<Object, Option<Object>> objectToObjectIterable() {
-    return new F<Object, Option<Object>>() {
+  private Function<Object, Option<Object>> objectToObjectIterable() {
+    return new Function<Object, Option<Object>>() {
       @Override
       public Option<Object> apply(final Object a) {
         return Option.some(a);

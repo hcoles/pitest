@@ -23,7 +23,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.Parameterized;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
@@ -58,8 +58,8 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
     return result;
   }
 
-  private F<Description, TestUnit> parameterizedToTestUnit(final Class<?> clazz) {
-    return new F<Description, TestUnit>() {
+  private Function<Description, TestUnit> parameterizedToTestUnit(final Class<?> clazz) {
+    return new Function<Description, TestUnit>() {
 
       @Override
       public TestUnit apply(final Description a) {

@@ -1,9 +1,9 @@
 package org.pitest.classinfo;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.Option;
 
-public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
+public class NameToClassInfo implements Function<ClassName, Option<ClassInfo>> {
 
   private final ClassInfoSource repository;
 

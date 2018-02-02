@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureSelector;
@@ -28,10 +28,10 @@ public class CompoundInterceptorFactory {
   }
 
   
-  private static F<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
+  private static Function<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
       final FeatureSelector<MutationInterceptorFactory> features, final ReportOptions data, final ClassByteArraySource source) {  
         
-    return new F<MutationInterceptorFactory, MutationInterceptor>() {
+    return new Function<MutationInterceptorFactory, MutationInterceptor>() {
       @Override
       public MutationInterceptor apply(MutationInterceptorFactory a) {
         return a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, source));

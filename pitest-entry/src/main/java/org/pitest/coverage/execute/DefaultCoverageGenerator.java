@@ -30,7 +30,7 @@ import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
@@ -145,8 +145,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private static F<ClassInfo, String> classInfoToName() {
-    return new F<ClassInfo, String>() {
+  private static Function<ClassInfo, String> classInfoToName() {
+    return new Function<ClassInfo, String>() {
       @Override
       public String apply(final ClassInfo a) {
         return a.getName().asInternalName();

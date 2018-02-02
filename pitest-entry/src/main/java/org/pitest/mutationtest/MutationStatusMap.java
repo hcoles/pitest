@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -73,8 +73,8 @@ public class MutationStatusMap {
     return this.mutationMap.keySet();
   }
 
-  private static F<Entry<MutationDetails, MutationStatusTestPair>, MutationResult> detailsToMutationResults() {
-    return new F<Entry<MutationDetails, MutationStatusTestPair>, MutationResult>() {
+  private static Function<Entry<MutationDetails, MutationStatusTestPair>, MutationResult> detailsToMutationResults() {
+    return new Function<Entry<MutationDetails, MutationStatusTestPair>, MutationResult>() {
 
       @Override
       public MutationResult apply(
@@ -85,8 +85,8 @@ public class MutationStatusMap {
     };
   }
 
-  private static F<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
-    return new F<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails>() {
+  private static Function<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
+    return new Function<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails>() {
 
       @Override
       public MutationDetails apply(
@@ -117,8 +117,8 @@ public class MutationStatusMap {
 
   }
 
-  private static F<MutationDetails, Boolean> hasNoCoverage() {
-    return new F<MutationDetails, Boolean>() {
+  private static Function<MutationDetails, Boolean> hasNoCoverage() {
+    return new Function<MutationDetails, Boolean>() {
 
       @Override
       public Boolean apply(final MutationDetails a) {
