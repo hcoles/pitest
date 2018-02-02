@@ -1,7 +1,7 @@
 package org.pitest.bytecode.analysis;
 
 import java.util.function.Function;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -13,7 +13,7 @@ public class AnalysisFunctions {
         final Location methodLocation = method.asLocation();
         return new Predicate<MutationDetails>() {
           @Override
-          public Boolean test(MutationDetails a) {
+          public boolean test(MutationDetails a) {
             return methodLocation.equals(a.getId().getLocation());
           }
         };

@@ -25,7 +25,7 @@ import java.util.List;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
@@ -362,7 +362,7 @@ public class TestGregorMutater extends MutatorTestBase {
   private static Predicate<MutationDetails> isInFinallyBlock() {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(final MutationDetails a) {
+      public boolean test(final MutationDetails a) {
         return a.isInFinallyBlock();
       }
 

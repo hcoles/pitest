@@ -14,6 +14,8 @@
  */
 package org.pitest.functional.predicate;
 
+import java.util.function.Predicate;
+
 /**
  * @author henry
  *
@@ -27,7 +29,7 @@ public final class Not<A> implements Predicate<A> {
   }
 
   @Override
-  public Boolean test(final A a) {
+  public boolean test(final A a) {
     return !this.p.test(a);
   }
 

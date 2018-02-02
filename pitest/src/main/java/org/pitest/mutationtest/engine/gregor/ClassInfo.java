@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.pitest.functional.FArray;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class ClassInfo {
 
@@ -33,7 +33,7 @@ public class ClassInfo {
   private static Predicate<String> isAGroovyClass() {
     return new Predicate<String>() {
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return a.startsWith("groovy/lang/")
             || a.startsWith("org/codehaus/groovy/runtime");
       }

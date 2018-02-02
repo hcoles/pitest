@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.testapi.TestUnit;
 import org.pitest.util.Unchecked;
 
@@ -36,7 +36,7 @@ class DependencyFilter {
       private final Map<String, Boolean> cache = new HashMap<>();
 
       @Override
-      public Boolean test(final TestUnit testUnit) {
+      public boolean test(final TestUnit testUnit) {
         final String testClass = testUnit.getDescription().getFirstTestClass();
         try {
           if (this.cache.containsKey(testClass)) {

@@ -34,7 +34,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -201,7 +201,7 @@ public class MojoToReportOptionsConverter {
   private static Predicate<Plugin> hasKey(final String key) {
     return new Predicate<Plugin>() {
       @Override
-      public Boolean test(Plugin a) {
+      public boolean test(Plugin a) {
         return a.getKey().equals(key);
       }
     };

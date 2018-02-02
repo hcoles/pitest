@@ -15,7 +15,7 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classpath.ClassPathRoot;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class DefaultDependencyPathPredicate implements Predicate<ClassPathRoot> {
 
@@ -24,7 +24,7 @@ public class DefaultDependencyPathPredicate implements Predicate<ClassPathRoot> 
   }
 
   @Override
-  public Boolean test(final ClassPathRoot a) {
+  public boolean test(final ClassPathRoot a) {
     return a.cacheLocation().hasSome()
         && isADependencyPath(a.cacheLocation().value());
   }

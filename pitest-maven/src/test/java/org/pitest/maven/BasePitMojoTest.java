@@ -35,7 +35,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.config.PluginServices;
 

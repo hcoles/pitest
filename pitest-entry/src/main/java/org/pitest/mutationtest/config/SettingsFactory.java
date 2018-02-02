@@ -12,7 +12,7 @@ import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
@@ -127,7 +127,7 @@ public class SettingsFactory {
       final Iterable<String> outputFormats) {
     return new Predicate<MutationResultListenerFactory>() {
       @Override
-      public Boolean test(final MutationResultListenerFactory a) {
+      public boolean test(final MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
       }
     };
@@ -148,7 +148,7 @@ public class SettingsFactory {
   private static Predicate<String> equalsIgnoreCase(final String other) {
     return new Predicate<String>() {
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return a.equalsIgnoreCase(other);
       }
     };

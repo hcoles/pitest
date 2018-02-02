@@ -15,7 +15,7 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classpath.ClassPathRoot;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class PathNamePredicate implements Predicate<ClassPathRoot> {
 
@@ -26,7 +26,7 @@ public class PathNamePredicate implements Predicate<ClassPathRoot> {
   }
 
   @Override
-  public Boolean test(final ClassPathRoot classPathRoot) {
+  public boolean test(final ClassPathRoot classPathRoot) {
     return cacheLocationOptionExists(classPathRoot)
         && cacheLocationMatchesFilter(classPathRoot);
   }

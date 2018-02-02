@@ -23,7 +23,7 @@ import java.io.PrintStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.util.StringUtil;
 
@@ -140,7 +140,7 @@ public class ScoreTest {
     return new Predicate<StatusCount>() {
 
       @Override
-      public Boolean test(final StatusCount a) {
+      public boolean test(final StatusCount a) {
         return a.getStatus().equals(each) && (a.getCount() == count);
       }
 

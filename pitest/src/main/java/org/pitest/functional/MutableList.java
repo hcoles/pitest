@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public final class MutableList<A> implements FunctionalList<A> {
   

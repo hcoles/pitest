@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class Glob implements Predicate<String> {
 
@@ -81,7 +81,7 @@ public class Glob implements Predicate<String> {
   }
 
   @Override
-  public Boolean test(final String value) {
+  public boolean test(final String value) {
     return matches(value);
   }
 

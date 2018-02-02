@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
 import java.util.function.Function;
+import java.util.function.Predicate;
+
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.And;
 import org.pitest.functional.predicate.Not;
 import org.pitest.functional.predicate.Or;
-import org.pitest.functional.predicate.Predicate;
 
 /**
  * @author henry
@@ -125,7 +125,7 @@ public abstract class Prelude {
   public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
     return new Predicate<T>() {
       @Override
-      public Boolean test(final T o) {
+      public boolean test(final T o) {
         return o.longValue() > value.longValue();
       }
     };
@@ -134,7 +134,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isEqualTo(final T value) {
     return new Predicate<T>() {
       @Override
-      public Boolean test(final T o) {
+      public boolean test(final T o) {
         return o.equals(value);
       }
     };
@@ -143,7 +143,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isNotNull() {
     return new Predicate<T>() {
       @Override
-      public Boolean test(final T o) {
+      public boolean test(final T o) {
         return (o != null);
       }
     };
@@ -152,7 +152,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isNull() {
     return new Predicate<T>() {
       @Override
-      public Boolean test(final T o) {
+      public boolean test(final T o) {
         return (o == null);
       }
     };

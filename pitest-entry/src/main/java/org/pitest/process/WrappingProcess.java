@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 
 public class WrappingProcess {
 
@@ -117,7 +117,7 @@ public class WrappingProcess {
   private static Predicate<String> isEnvironmentSetting() {
     return new Predicate<String>() {
       @Override
-      public Boolean test(String a) {
+      public boolean test(String a) {
         return a.startsWith("-D");
       }
     };
@@ -126,7 +126,7 @@ public class WrappingProcess {
   private static Predicate<String> isJavaAgentParam() {
     return new Predicate<String>() {
       @Override
-      public Boolean test(String a) {
+      public boolean test(String a) {
         return a.toLowerCase().startsWith("-javaagent");
       }
     };

@@ -1,10 +1,10 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -27,7 +27,7 @@ class StaticInitializerFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isInStaticInitCode() {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         return a.isInStaticInitializer();
       }
     };

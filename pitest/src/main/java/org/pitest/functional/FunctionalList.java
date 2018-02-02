@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Serializable {
 

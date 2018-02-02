@@ -17,7 +17,7 @@ package org.pitest.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 /**
  * @author henry
@@ -36,7 +36,7 @@ public class IsAnnotatedWith implements Predicate<AccessibleObject> {
   }
 
   @Override
-  public Boolean test(final AccessibleObject a) {
+  public boolean test(final AccessibleObject a) {
     return a.isAnnotationPresent(this.clazz);
   }
 

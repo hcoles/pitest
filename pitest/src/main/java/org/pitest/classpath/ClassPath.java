@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
@@ -143,7 +143,7 @@ public class ClassPath {
   private static Predicate<File> exists() {
     return new Predicate<File>() {
       @Override
-      public Boolean test(final File a) {
+      public boolean test(final File a) {
         return a.exists() && a.canRead();
       }
     };

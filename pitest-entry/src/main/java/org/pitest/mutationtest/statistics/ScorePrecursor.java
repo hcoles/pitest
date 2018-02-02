@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 
 class ScorePrecursor {
@@ -40,7 +40,7 @@ class ScorePrecursor {
     return new Predicate<StatusCount>() {
 
       @Override
-      public Boolean test(final StatusCount a) {
+      public boolean test(final StatusCount a) {
         return a.getStatus().isDetected();
       }
 

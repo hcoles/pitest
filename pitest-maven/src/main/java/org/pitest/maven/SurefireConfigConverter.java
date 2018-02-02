@@ -8,7 +8,7 @@ import java.util.List;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;

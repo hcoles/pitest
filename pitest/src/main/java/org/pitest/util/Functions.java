@@ -15,7 +15,7 @@
 package org.pitest.util;
 
 import java.util.function.Function;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public abstract class Functions {
 
@@ -54,7 +54,7 @@ public abstract class Functions {
   public static Predicate<String> startsWith(final String filter) {
     return new Predicate<String>() {
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return a.startsWith(filter);
       }
 

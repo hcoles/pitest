@@ -15,7 +15,7 @@ import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.DefaultCodePathPredicate;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;

@@ -19,7 +19,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -166,7 +166,7 @@ public class FilterTester {
       final Collection<MutationDetails> actual) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         return !actual.contains(a);
       }
       

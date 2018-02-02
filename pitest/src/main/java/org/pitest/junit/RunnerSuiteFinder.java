@@ -20,14 +20,14 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.testapi.TestSuiteFinder;
@@ -70,7 +70,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   private static Predicate<Description> isSuiteMethodRunner(final Runner runner) {
     return new Predicate<Description>() {
       @Override
-      public Boolean test(final Description a) {
+      public boolean test(final Description a) {
         return SuiteMethod.class.isAssignableFrom(runner.getClass());
       }
 
@@ -96,7 +96,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   private static Predicate<Description> isSuite() {
     return new Predicate<Description>() {
       @Override
-      public Boolean test(final Description a) {
+      public boolean test(final Description a) {
         return a.isSuite();
       }
 

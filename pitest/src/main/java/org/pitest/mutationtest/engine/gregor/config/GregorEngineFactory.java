@@ -15,8 +15,8 @@
 package org.pitest.mutationtest.engine.gregor.config;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -60,7 +60,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
     return new Predicate<MethodInfo>() {
 
       @Override
-      public Boolean test(final MethodInfo a) {
+      public boolean test(final MethodInfo a) {
         return excluded.test(a.getName());
       }
 

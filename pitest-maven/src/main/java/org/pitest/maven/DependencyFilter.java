@@ -25,7 +25,7 @@ import java.util.jar.Manifest;
 import org.apache.maven.artifact.Artifact;
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.Log;
@@ -113,7 +113,7 @@ public class DependencyFilter implements Predicate<Artifact> {
   }
 
   @Override
-  public Boolean test(final Artifact a) {
+  public boolean test(final Artifact a) {
     final GroupIdPair p = new GroupIdPair(a.getGroupId(), a.getArtifactId());
     return this.groups.contains(p);
   }

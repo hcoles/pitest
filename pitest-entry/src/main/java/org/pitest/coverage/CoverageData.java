@@ -34,7 +34,7 @@ import java.util.function.Function;
 import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.testapi.Description;
 import org.pitest.util.Log;
 
@@ -349,7 +349,7 @@ public class CoverageData implements CoverageDatabase {
       final ClassName clazz) {
     return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
       @Override
-      public Boolean test(Entry<BlockLocation, Set<TestInfo>> a) {
+      public boolean test(Entry<BlockLocation, Set<TestInfo>> a) {
         return a.getKey().isFor(clazz);
       }
     };

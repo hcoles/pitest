@@ -13,7 +13,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
@@ -123,7 +123,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private static Predicate<TestInfo> testIsCalled(final String testName) {
     return new Predicate<TestInfo>() {
       @Override
-      public Boolean test(final TestInfo a) {
+      public boolean test(final TestInfo a) {
         return a.getName().equals(testName);
       }
 

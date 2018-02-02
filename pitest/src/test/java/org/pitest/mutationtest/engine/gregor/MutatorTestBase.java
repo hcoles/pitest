@@ -36,7 +36,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -238,7 +238,7 @@ public abstract class MutatorTestBase {
     return new Predicate<MethodInfo>() {
 
       @Override
-      public Boolean test(final MethodInfo a) {
+      public boolean test(final MethodInfo a) {
         return a.getName().equals("call");
       }
 
@@ -248,7 +248,7 @@ public abstract class MutatorTestBase {
   protected Predicate<MutationDetails> descriptionContaining(final String value) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(final MutationDetails a) {
+      public boolean test(final MutationDetails a) {
         return a.getDescription().contains(value);
       }
     };

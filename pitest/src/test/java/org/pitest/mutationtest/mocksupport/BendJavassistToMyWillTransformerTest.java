@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.util.IsolationUtils;
 
 public class BendJavassistToMyWillTransformerTest {

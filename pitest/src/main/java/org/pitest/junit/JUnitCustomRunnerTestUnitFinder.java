@@ -36,7 +36,7 @@ import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -229,7 +229,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return new Predicate<Description>() {
 
       @Override
-      public Boolean test(final Description a) {
+      public boolean test(final Description a) {
         return a.isTest();
       }
 

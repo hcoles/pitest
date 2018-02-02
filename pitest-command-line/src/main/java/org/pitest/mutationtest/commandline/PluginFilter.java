@@ -8,7 +8,7 @@ import java.util.Set;
 
 import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.PitError;
@@ -44,7 +44,7 @@ public class PluginFilter implements Predicate<String> {
   }
 
   @Override
-  public Boolean test(final String a) {
+  public boolean test(final String a) {
     return this.includedClassPathElement.contains(a);
   }
 

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -125,7 +125,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   private static Predicate<MutationDetails> isInFinallyHandler() {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(final MutationDetails a) {
+      public boolean test(final MutationDetails a) {
         return a.isInFinallyBlock();
       }
 

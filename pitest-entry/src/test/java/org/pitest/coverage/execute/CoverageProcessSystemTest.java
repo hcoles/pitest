@@ -25,7 +25,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -322,7 +322,7 @@ public class CoverageProcessSystemTest {
     FunctionalList<File> cpWithoutJUnit = FCollection.filter(
         ClassPath.getClassPathElementsAsFiles(), new Predicate<File>() {
           @Override
-          public Boolean test(File file) {
+          public boolean test(File file) {
             return !file.getName().contains("junit");
           }
         });
@@ -334,7 +334,7 @@ public class CoverageProcessSystemTest {
     return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean test(final CoverageResult a) {
+      public boolean test(final CoverageResult a) {
         return !a.isGreenTest();
       }
 
@@ -385,7 +385,7 @@ public class CoverageProcessSystemTest {
     return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean test(final CoverageResult a) {
+      public boolean test(final CoverageResult a) {
         return FCollection.contains(a.getCoverage(), resultFor(class1));
       }
 
@@ -393,7 +393,7 @@ public class CoverageProcessSystemTest {
         return new Predicate<BlockLocation>() {
 
           @Override
-          public Boolean test(final BlockLocation a) {
+          public boolean test(final BlockLocation a) {
 
             return a.isFor(ClassName.fromClass(class1));
           }
@@ -406,7 +406,7 @@ public class CoverageProcessSystemTest {
   private Predicate<CoverageResult> coverageFor(final BlockLocation location) {
     return new Predicate<CoverageResult>() {
       @Override
-      public Boolean test(final CoverageResult a) {
+      public boolean test(final CoverageResult a) {
         return a.getCoverage().contains(location);
       }
     };
@@ -425,7 +425,7 @@ public class CoverageProcessSystemTest {
     return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean test(final CoverageResult a) {
+      public boolean test(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (a.getNumberOfCoveredBlocks() == numberOfBlocks);
       }
@@ -449,7 +449,7 @@ public class CoverageProcessSystemTest {
       final int block) {
     return new Predicate<CoverageResult>() {
       @Override
-      public Boolean test(final CoverageResult a) {
+      public boolean test(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (FCollection.contains(a.getCoverage(), hasBlock(block)));
       }
@@ -457,7 +457,7 @@ public class CoverageProcessSystemTest {
       private Predicate<BlockLocation> hasBlock(final int block) {
         return new Predicate<BlockLocation>() {
           @Override
-          public Boolean test(BlockLocation a) {
+          public boolean test(BlockLocation a) {
             System.out.println(a);
             return a.getBlock() == block;
           }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.functional.FArray;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 /**
  * @author henry
@@ -66,7 +66,7 @@ public abstract class Reflection {
       final String name) {
     final Predicate<Method> p = new Predicate<Method>() {
       @Override
-      public Boolean test(final Method a) {
+      public boolean test(final Method a) {
         return a.getName().equals(name);
       }
 

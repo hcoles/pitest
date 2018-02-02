@@ -22,11 +22,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
@@ -131,7 +131,7 @@ public class MutationTestBuilder {
   private static Predicate<MutationResult> statusNotKnown() {
     return new Predicate<MutationResult>() {
       @Override
-      public Boolean test(final MutationResult a) {
+      public boolean test(final MutationResult a) {
         return a.getStatus() == DetectionStatus.NOT_STARTED;
       }
     };

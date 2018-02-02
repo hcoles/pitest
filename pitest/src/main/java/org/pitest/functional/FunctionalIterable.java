@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public interface FunctionalIterable<A> extends Iterable<A> {
 

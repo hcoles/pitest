@@ -16,6 +16,7 @@ package org.pitest.functional.predicate;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * @author henry
@@ -32,7 +33,7 @@ public class Or<A> implements Predicate<A> {
   }
 
   @Override
-  public Boolean test(final A a) {
+  public boolean test(final A a) {
     for (final Predicate<A> each : this.ps) {
       if (each.test(a)) {
         return true;

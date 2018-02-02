@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -14,7 +15,6 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.InterceptorParameters;
@@ -97,7 +97,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
           return false;
         }
@@ -169,7 +169,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
           return false;
         }
@@ -224,7 +224,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         if (!MUTATOR_IDS.contains(a.getMutator())) {
           return false;
         }
@@ -311,7 +311,7 @@ class NullReturnsFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         if (!MUTATOR_ID.equals(a.getMutator())) {
           return false;
         }

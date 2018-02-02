@@ -16,7 +16,7 @@ package org.pitest.mutationtest.engine.gregor;
 
 import java.util.Collection;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public interface MutationEngineConfiguration {
 

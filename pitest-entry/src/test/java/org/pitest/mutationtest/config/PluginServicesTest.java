@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory;
 import org.pitest.mutationtest.report.csv.CSVReportFactory;
@@ -34,7 +34,7 @@ public class PluginServicesTest {
   private static Predicate<Object> theClass(final Class<?> clss) {
     return new Predicate<Object>() {
       @Override
-      public Boolean test(Object a) {
+      public boolean test(Object a) {
         return a.getClass().equals(clss);
       }
 

@@ -25,7 +25,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class InputStreamLineIterable implements FunctionalIterable<String> {
 

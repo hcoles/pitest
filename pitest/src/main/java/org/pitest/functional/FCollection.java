@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 /**
  * Functional programming style operations for plain old Java iterables.

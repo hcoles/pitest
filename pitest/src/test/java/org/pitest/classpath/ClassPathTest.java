@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.prelude.Prelude;
 
 public class ClassPathTest {
@@ -88,7 +88,7 @@ public class ClassPathTest {
     return new Predicate<ClassPathRoot>() {
 
       @Override
-      public Boolean test(final ClassPathRoot a) {
+      public boolean test(final ClassPathRoot a) {
         return a.cacheLocation().value().equals(value);
       }
 

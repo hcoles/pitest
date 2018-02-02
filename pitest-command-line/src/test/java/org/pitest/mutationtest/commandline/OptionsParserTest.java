@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -500,7 +500,7 @@ public class OptionsParserTest {
   private Predicate<String> gregorClass() {
     return new Predicate<String>() {
       @Override
-      public Boolean test(String s) {
+      public boolean test(String s) {
         return GregorMutationEngine.class.getName().equals(s);
       }
     };

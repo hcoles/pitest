@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class FeatureSelector<T extends ProvidesFeature> {
 
@@ -59,7 +59,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
   private Predicate<T> isOnByDefault() {
     return new Predicate<T>() {
       @Override
-      public Boolean test(T a) {
+      public boolean test(T a) {
         return a.provides().isOnByDefault();
       }
     };

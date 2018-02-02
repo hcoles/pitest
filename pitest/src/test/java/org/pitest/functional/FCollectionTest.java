@@ -21,7 +21,7 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.PitError;
@@ -55,7 +55,7 @@ public class FCollectionTest {
   public void shouldReturnOnlyMatchesToPredicate() {
     final Predicate<Integer> p = new Predicate<Integer>() {
       @Override
-      public Boolean test(final Integer a) {
+      public boolean test(final Integer a) {
         return a <= 2;
       }
     };
@@ -136,7 +136,7 @@ public class FCollectionTest {
     final Predicate<Integer> predicate = new Predicate<Integer>() {
 
       @Override
-      public Boolean test(final Integer a) {
+      public boolean test(final Integer a) {
         if (a == 2) {
           throw new PitError("Did not shortcut");
         }

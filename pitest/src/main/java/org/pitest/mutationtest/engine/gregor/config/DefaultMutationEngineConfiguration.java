@@ -16,7 +16,7 @@ package org.pitest.mutationtest.engine.gregor.config;
 
 import java.util.Collection;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationEngineConfiguration;

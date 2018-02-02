@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 abstract class TestInfo {
 
@@ -45,7 +45,7 @@ abstract class TestInfo {
   public static Predicate<ClassInfo> isATest() {
     return new Predicate<ClassInfo>() {
       @Override
-      public Boolean test(final ClassInfo clazz) {
+      public boolean test(final ClassInfo clazz) {
         return isATest(clazz);
       }
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
@@ -63,7 +63,7 @@ class ClassContext implements BlockCounter {
   private static Predicate<MutationDetails> hasId(final MutationIdentifier id) {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(final MutationDetails a) {
+      public boolean test(final MutationDetails a) {
         return a.matchesId(id);
       }
 
@@ -86,7 +86,7 @@ class ClassContext implements BlockCounter {
       final MutationIdentifier newId) {
     return new Predicate<MutationIdentifier>() {
       @Override
-      public Boolean test(final MutationIdentifier a) {
+      public boolean test(final MutationIdentifier a) {
         return a.matches(newId);
       }
     };

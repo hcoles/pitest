@@ -28,7 +28,7 @@ import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.reflection.Reflection;
 import org.pitest.simpletest.steps.CallStep;
 import org.pitest.testapi.Description;
@@ -110,7 +110,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     return new Predicate<InstantiationStrategy>() {
 
       @Override
-      public Boolean test(final InstantiationStrategy a) {
+      public boolean test(final InstantiationStrategy a) {
         return a.canInstantiate(clazz);
       }
 

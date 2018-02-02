@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MutationStatusMap {
@@ -102,7 +102,7 @@ public class MutationStatusMap {
     return new Predicate<Entry<MutationDetails, MutationStatusTestPair>>() {
 
       @Override
-      public Boolean test(
+      public boolean test(
           final Entry<MutationDetails, MutationStatusTestPair> a) {
         return a.getValue().getStatus().equals(status);
       }
@@ -121,7 +121,7 @@ public class MutationStatusMap {
     return new Predicate<MutationDetails>() {
 
       @Override
-      public Boolean test(final MutationDetails a) {
+      public boolean test(final MutationDetails a) {
         return a.getTestsInOrder().isEmpty();
       }
 

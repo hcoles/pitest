@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
@@ -37,7 +38,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 
@@ -65,7 +65,7 @@ public class DependencyExtractor {
     return new Predicate<String>() {
 
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return !Functions.jvmClassToClassName().apply(a).equals(clazz);
       }
 
@@ -77,7 +77,7 @@ public class DependencyExtractor {
     return new Predicate<String>() {
 
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return predicate.test(Functions.jvmClassToClassName().apply(a));
       }
 
@@ -219,7 +219,7 @@ public class DependencyExtractor {
   private static Predicate<DependencyAccess> nameIsEqual(final String clazz) {
     return new Predicate<DependencyAccess>() {
       @Override
-      public Boolean test(final DependencyAccess a) {
+      public boolean test(final DependencyAccess a) {
         return a.getDest().getOwner().equals(clazz);
       }
     };

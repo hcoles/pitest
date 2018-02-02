@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -11,7 +12,6 @@ import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -53,7 +53,7 @@ public class LoggingCallsFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isOnLoggingLine() {
     return new  Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         return lines.contains(a.getClassLine().getLineNumber());
       }  
     };
@@ -99,7 +99,7 @@ class LoggingLineScanner extends MethodVisitor {
   private static Predicate<String> matches(final String owner) {
     return new Predicate<String>() {
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return owner.startsWith(a);
       }
     };

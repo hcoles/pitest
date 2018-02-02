@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +33,6 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -125,7 +125,7 @@ public class CoverageMinion {
       final Predicate<String> child) {
     return new Predicate<String>() {
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return child.test(a.replace("/", "."));
       }
 

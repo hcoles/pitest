@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
@@ -14,7 +15,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.NameToClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 

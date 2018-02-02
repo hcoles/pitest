@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 import sun.pitest.CodeCoverageStore;
 

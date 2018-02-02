@@ -24,7 +24,7 @@ import java.util.function.Function;
 import org.objectweb.asm.Opcodes;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class ClassInfo {
 
@@ -155,7 +155,7 @@ public class ClassInfo {
   public static Predicate<ClassInfo> matchIfAbstract() {
     return new Predicate<ClassInfo>() {
       @Override
-      public Boolean test(final ClassInfo a) {
+      public boolean test(final ClassInfo a) {
         return a.isAbstract();
       }
 

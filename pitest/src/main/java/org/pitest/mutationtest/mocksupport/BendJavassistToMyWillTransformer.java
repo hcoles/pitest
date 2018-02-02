@@ -9,7 +9,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import java.util.function.Function;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
 

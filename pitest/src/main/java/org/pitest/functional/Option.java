@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 
 public abstract class Option<T> implements FunctionalIterable<T>, Serializable {

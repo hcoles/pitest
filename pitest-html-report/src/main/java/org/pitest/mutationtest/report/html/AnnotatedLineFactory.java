@@ -26,7 +26,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
@@ -78,7 +78,7 @@ public class AnnotatedLineFactory {
     return new Predicate<MutationResult>() {
 
       @Override
-      public Boolean test(final MutationResult result) {
+      public boolean test(final MutationResult result) {
         return result.getDetails().getLineNumber() == lineNumber;
       }
 
@@ -105,7 +105,7 @@ public class AnnotatedLineFactory {
   private boolean isLineCovered(final int line) {
     final Predicate<ClassInfo> predicate = new Predicate<ClassInfo>() {
       @Override
-      public Boolean test(final ClassInfo a) {
+      public boolean test(final ClassInfo a) {
         return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
             new ClassLine(a.getName().asInternalName(), line)).isEmpty();
       }

@@ -1,10 +1,10 @@
 package org.pitest.mutationtest.build.intercept.kotlin;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -50,7 +50,7 @@ public class KotlinFilter implements MutationInterceptor  {
   private static Predicate<MutationDetails> isKotlinJunkMutation() {
     return new  Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         return a.getFilename().toLowerCase().endsWith(".kt") && a.getLineNumber() == 0;
       }
     };

@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.reflection.Reflection;
 
 public class SignatureEqualityStrategyTest {
@@ -35,14 +35,14 @@ public class SignatureEqualityStrategyTest {
   public void shouldConsiderMethodsWithSameNameButDifferentSignaturesNotEqual() {
     final Predicate<Method> noargs = new Predicate<Method>() {
       @Override
-      public Boolean test(final Method a) {
+      public boolean test(final Method a) {
         return a.getName().equals("foo") && (a.getParameterTypes().length == 0);
       }
     };
 
     final Predicate<Method> onearg = new Predicate<Method>() {
       @Override
-      public Boolean test(final Method a) {
+      public boolean test(final Method a) {
         return a.getName().equals("foo") && (a.getParameterTypes().length == 1);
       }
     };
@@ -70,7 +70,7 @@ public class SignatureEqualityStrategyTest {
   private TestMethod createTestMethod(final String name) {
     final Predicate<Method> p = new Predicate<Method>() {
       @Override
-      public Boolean test(final Method a) {
+      public boolean test(final Method a) {
         return a.getName().equals(name);
       }
 

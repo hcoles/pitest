@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -35,7 +36,6 @@ import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -119,7 +119,7 @@ public class GregorMutater implements Mutater {
     return new Predicate<MethodMutatorFactory>() {
 
       @Override
-      public Boolean test(final MethodMutatorFactory a) {
+      public boolean test(final MethodMutatorFactory a) {
         return id.getMutator().equals(a.getGloballyUniqueId());
       }
 
@@ -134,7 +134,7 @@ public class GregorMutater implements Mutater {
   private static Predicate<MethodInfo> isGroovyClass() {
     return new Predicate<MethodInfo>() {
       @Override
-      public Boolean test(final MethodInfo a) {
+      public boolean test(final MethodInfo a) {
         return a.isInGroovyClass();
       }
 
@@ -145,7 +145,7 @@ public class GregorMutater implements Mutater {
     return new Predicate<MethodInfo>() {
 
       @Override
-      public Boolean test(final MethodInfo a) {
+      public boolean test(final MethodInfo a) {
         // filter out synthetic methods,
         // except lambda$... methods, which contain code from lambda expressions
         return !a.isSynthetic() || a.getName().startsWith("lambda$");
@@ -157,7 +157,7 @@ public class GregorMutater implements Mutater {
   private static Predicate<MethodInfo> isGeneratedEnumMethod() {
     return new Predicate<MethodInfo>() {
       @Override
-      public Boolean test(final MethodInfo a) {
+      public boolean test(final MethodInfo a) {
         return a.isGeneratedEnumMethod();
       }
     };

@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -13,7 +14,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -94,7 +94,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MutationDetails> isInStaticInitializer() {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean test(MutationDetails a) {
+      public boolean test(MutationDetails a) {
         return a.getId().getLocation().getMethodName().equals(CLINIT);
       }
       
@@ -104,7 +104,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MethodTree> isPrivateStatic() {
     return new  Predicate<MethodTree>() {
       @Override
-      public Boolean test(MethodTree a) {
+      public boolean test(MethodTree a) {
         return (a.rawNode().access & Opcodes.ACC_STATIC) != 0
             && (a.rawNode().access & Opcodes.ACC_PRIVATE) != 0;
       }
@@ -127,7 +127,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {   
     return new Predicate<MethodTree> () {     
       @Override
-      public Boolean test(MethodTree a) {
+      public boolean test(MethodTree a) {
         return a.rawNode().name.equals(call.name) 
             && a.rawNode().desc.equals(call.desc);
       }
@@ -138,7 +138,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private Predicate<MethodInsnNode> calls(final ClassName self) {
     return new Predicate<MethodInsnNode>() {
       @Override
-      public Boolean test(MethodInsnNode a) {
+      public boolean test(MethodInsnNode a) {
         return a.owner.equals(self.asInternalName());
       }
       
@@ -163,7 +163,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private Predicate<MethodTree> nameEquals(final String name) {
     return new Predicate<MethodTree>() {
       @Override
-      public Boolean test(MethodTree a) {
+      public boolean test(MethodTree a) {
         return a.rawNode().name.equals(name);
       }  
     };

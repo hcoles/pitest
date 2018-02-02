@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.pitest.classpath.ClassPathByteArraySource;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.functional.predicate.True;
 
 public class DependencyExtractorTest {
@@ -137,7 +137,7 @@ public class DependencyExtractorTest {
     return new Predicate<DependencyAccess>() {
 
       @Override
-      public Boolean test(final DependencyAccess a) {
+      public boolean test(final DependencyAccess a) {
         return !a.getDest().getOwner().startsWith("java");
       }
 
@@ -149,7 +149,7 @@ public class DependencyExtractorTest {
     return new Predicate<String>() {
 
       @Override
-      public Boolean test(final String a) {
+      public boolean test(final String a) {
         return a.contains(subString);
       }
 
@@ -164,7 +164,7 @@ public class DependencyExtractorTest {
   private Predicate<DependencyAccess> excludeMethodsCalledOne() {
     return new Predicate<DependencyAccess>() {
       @Override
-      public Boolean test(final DependencyAccess a) {
+      public boolean test(final DependencyAccess a) {
         return !a.getSource().getName().equals("one");
       }
 
