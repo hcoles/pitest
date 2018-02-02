@@ -54,7 +54,7 @@ public abstract class Functions {
   public static Predicate<String> startsWith(final String filter) {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(final String a) {
+      public Boolean test(final String a) {
         return a.startsWith(filter);
       }
 

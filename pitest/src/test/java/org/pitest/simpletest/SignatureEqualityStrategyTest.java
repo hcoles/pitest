@@ -35,14 +35,14 @@ public class SignatureEqualityStrategyTest {
   public void shouldConsiderMethodsWithSameNameButDifferentSignaturesNotEqual() {
     final Predicate<Method> noargs = new Predicate<Method>() {
       @Override
-      public Boolean apply(final Method a) {
+      public Boolean test(final Method a) {
         return a.getName().equals("foo") && (a.getParameterTypes().length == 0);
       }
     };
 
     final Predicate<Method> onearg = new Predicate<Method>() {
       @Override
-      public Boolean apply(final Method a) {
+      public Boolean test(final Method a) {
         return a.getName().equals("foo") && (a.getParameterTypes().length == 1);
       }
     };
@@ -70,7 +70,7 @@ public class SignatureEqualityStrategyTest {
   private TestMethod createTestMethod(final String name) {
     final Predicate<Method> p = new Predicate<Method>() {
       @Override
-      public Boolean apply(final Method a) {
+      public Boolean test(final Method a) {
         return a.getName().equals(name);
       }
 

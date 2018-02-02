@@ -45,7 +45,7 @@ abstract class TestInfo {
   public static Predicate<ClassInfo> isATest() {
     return new Predicate<ClassInfo>() {
       @Override
-      public Boolean apply(final ClassInfo clazz) {
+      public Boolean test(final ClassInfo clazz) {
         return isATest(clazz);
       }
 

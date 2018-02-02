@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
 public final class MutableList<A> implements FunctionalList<A> {
   
   private static final long serialVersionUID = 1L;
@@ -107,12 +109,12 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public boolean contains(final Function<A, Boolean> predicate) {
+  public boolean contains(final Predicate<A> predicate) {
     return FCollection.contains(this, predicate);
   }
 
   @Override
-  public FunctionalList<A> filter(final Function<A, Boolean> predicate) {
+  public FunctionalList<A> filter(final Predicate<A> predicate) {
     return FCollection.filter(this, predicate);
   }
 
@@ -137,7 +139,7 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
   
   @Override
-  public Option<A> findFirst(Function<A, Boolean> predicate) {
+  public Option<A> findFirst(Predicate<A> predicate) {
     return FCollection.findFirst(impl, predicate);
   }
 

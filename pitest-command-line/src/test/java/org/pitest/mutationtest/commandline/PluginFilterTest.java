@@ -21,13 +21,13 @@ public class PluginFilterTest {
   @Test
   public void shouldExcludeHtmlReportPlugin() throws Exception {
     String pluginLocation = getClassLocationAsCanonicalPath(HtmlReportFactory.class);
-    assertFalse(this.testee.apply(pluginLocation));
+    assertFalse(this.testee.test(pluginLocation));
   }
 
   @Test
   public void shouldIncludeMutationEngine() throws Exception {
     String pluginLocation = getClassLocationAsCanonicalPath(GregorMutationEngine.class);
-    assertTrue(this.testee.apply(pluginLocation));
+    assertTrue(this.testee.test(pluginLocation));
   }
 
   private String getClassLocationAsCanonicalPath(Class<?> clazz)

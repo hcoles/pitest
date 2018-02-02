@@ -32,9 +32,9 @@ public class Or<A> implements Predicate<A> {
   }
 
   @Override
-  public Boolean apply(final A a) {
+  public Boolean test(final A a) {
     for (final Predicate<A> each : this.ps) {
-      if (each.apply(a)) {
+      if (each.test(a)) {
         return true;
       }
     }

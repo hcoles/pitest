@@ -17,13 +17,14 @@ package org.pitest.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
-
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -33,9 +34,9 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -224,11 +225,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     };
   }
 
-  private Function<Description, Boolean> isTest() {
-    return new Function<Description, Boolean>() {
+  private Predicate<Description> isTest() {
+    return new Predicate<Description>() {
 
       @Override
-      public Boolean apply(final Description a) {
+      public Boolean test(final Description a) {
         return a.isTest();
       }
 

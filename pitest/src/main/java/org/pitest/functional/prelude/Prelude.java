@@ -34,15 +34,15 @@ import org.pitest.functional.predicate.Predicate;
 public abstract class Prelude {
 
   @SafeVarargs
-  public static final <A> And<A> and(final Function<A, Boolean>... ps) {
+  public static final <A> And<A> and(final Predicate<A>... ps) {
     return new And<>(Arrays.asList(ps));
   }
 
-  public static final <A> And<A> and(final Iterable<? extends Function<A, Boolean>> ps) {
+  public static final <A> And<A> and(final Iterable<? extends Predicate<A>> ps) {
     return new And<>(ps);
   }
 
-  public static final <A> Not<A> not(final Function<A, Boolean> p) {
+  public static final <A> Not<A> not(final Predicate<A> p) {
     return new Not<>(p);
   }
 
@@ -125,7 +125,7 @@ public abstract class Prelude {
   public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
     return new Predicate<T>() {
       @Override
-      public Boolean apply(final T o) {
+      public Boolean test(final T o) {
         return o.longValue() > value.longValue();
       }
     };
@@ -134,7 +134,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isEqualTo(final T value) {
     return new Predicate<T>() {
       @Override
-      public Boolean apply(final T o) {
+      public Boolean test(final T o) {
         return o.equals(value);
       }
     };
@@ -143,7 +143,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isNotNull() {
     return new Predicate<T>() {
       @Override
-      public Boolean apply(final T o) {
+      public Boolean test(final T o) {
         return (o != null);
       }
     };
@@ -152,7 +152,7 @@ public abstract class Prelude {
   public static <T> Predicate<T> isNull() {
     return new Predicate<T>() {
       @Override
-      public Boolean apply(final T o) {
+      public Boolean test(final T o) {
         return (o == null);
       }
     };

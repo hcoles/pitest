@@ -19,31 +19,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
 /**
  * Slightly functional style operations for arrays.
  */
 public abstract class FArray {
 
-  public static <T> void filter(final T[] xs, final Function<T, Boolean> predicate,
+  public static <T> void filter(final T[] xs, final Predicate<T> predicate,
       final Collection<T> dest) {
     if (xs != null) {
       for (final T x : xs) {
-        if (predicate.apply(x)) {
+        if (predicate.test(x)) {
           dest.add(x);
         }
       }
     }
   }
 
-  public static <T> List<T> filter(final T[] xs, final Function<T, Boolean> predicate) {
+  public static <T> List<T> filter(final T[] xs, final Predicate<T> predicate) {
     final List<T> dest = new ArrayList<>();
     filter(xs, predicate, dest);
     return dest;
   }
 
-  public static <T> boolean contains(final T[] xs, final Function<T, Boolean> predicate) {
+  public static <T> boolean contains(final T[] xs, final Predicate<T> predicate) {
     for (final T x : xs) {
-      if (predicate.apply(x)) {
+      if (predicate.test(x)) {
         return true;
       }
     }

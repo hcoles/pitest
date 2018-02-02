@@ -62,7 +62,7 @@ public class IgnoreCoreClassesTest {
   }
 
   private void assertIgnored(final String clazz) {
-    assertFalse(this.testee.apply(makeAccessFor(clazz)));
+    assertFalse(this.testee.test(makeAccessFor(clazz)));
   }
 
   private void assertIgnored(final Class<?> clazz) {
@@ -71,12 +71,12 @@ public class IgnoreCoreClassesTest {
 
   @Test
   public void shouldIgnoreJavaX() {
-    assertFalse(this.testee.apply(makeAccessFor(SocketFactory.class)));
+    assertFalse(this.testee.test(makeAccessFor(SocketFactory.class)));
   }
 
   @Test
   public void shouldNotIgnoreOtherPackages() {
-    assertTrue(this.testee.apply(makeAccessFor(Foo.class)));
+    assertTrue(this.testee.test(makeAccessFor(Foo.class)));
   }
 
   private DependencyAccess makeAccessFor(final Class<?> clazz) {

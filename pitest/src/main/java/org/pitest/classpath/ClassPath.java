@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Log;
@@ -140,10 +140,10 @@ public class ClassPath {
         new ClassPathRoot[0]));
   }
   
-  private static Function<File, Boolean> exists() {
-    return new Function<File, Boolean>() {
+  private static Predicate<File> exists() {
+    return new Predicate<File>() {
       @Override
-      public Boolean apply(final File a) {
+      public Boolean test(final File a) {
         return a.exists() && a.canRead();
       }
     };

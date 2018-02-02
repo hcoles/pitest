@@ -35,9 +35,9 @@ public class IgnoreCoreClasses implements Predicate<DependencyAccess> {
   }
 
   @Override
-  public Boolean apply(final DependencyAccess a) {
+  public Boolean test(final DependencyAccess a) {
     final String owner = a.getDest().getOwner().replace("/", ".");
-    return this.impl.apply(owner);
+    return this.impl.test(owner);
   }
 
 }

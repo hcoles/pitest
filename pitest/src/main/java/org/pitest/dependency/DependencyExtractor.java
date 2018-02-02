@@ -28,13 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
-import java.util.function.Function;
-import java.util.function.BiFunction;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
@@ -62,24 +61,24 @@ public class DependencyExtractor {
         and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
   }
 
-  private static Function<String, Boolean> notSuppliedClass(final String clazz) {
-    return new Function<String, Boolean>() {
+  private static Predicate<String> notSuppliedClass(final String clazz) {
+    return new Predicate<String>() {
 
       @Override
-      public Boolean apply(final String a) {
+      public Boolean test(final String a) {
         return !Functions.jvmClassToClassName().apply(a).equals(clazz);
       }
 
     };
   }
 
-  private static Function<String, Boolean> asJVMNamePredicate(
+  private static Predicate<String> asJVMNamePredicate(
       final Predicate<String> predicate) {
-    return new Function<String, Boolean>() {
+    return new Predicate<String>() {
 
       @Override
-      public Boolean apply(final String a) {
-        return predicate.apply(Functions.jvmClassToClassName().apply(a));
+      public Boolean test(final String a) {
+        return predicate.test(Functions.jvmClassToClassName().apply(a));
       }
 
     };
@@ -220,7 +219,7 @@ public class DependencyExtractor {
   private static Predicate<DependencyAccess> nameIsEqual(final String clazz) {
     return new Predicate<DependencyAccess>() {
       @Override
-      public Boolean apply(final DependencyAccess a) {
+      public Boolean test(final DependencyAccess a) {
         return a.getDest().getOwner().equals(clazz);
       }
     };
@@ -232,7 +231,7 @@ public class DependencyExtractor {
     final SideEffect1<DependencyAccess> se = new SideEffect1<DependencyAccess>() {
       @Override
       public void apply(final DependencyAccess a) {
-        if (predicate.apply(a)) {
+        if (predicate.test(a)) {
           dependencies.add(a);
         }
       }

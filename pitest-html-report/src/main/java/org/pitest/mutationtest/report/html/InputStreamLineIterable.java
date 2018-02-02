@@ -25,6 +25,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 
 public class InputStreamLineIterable implements FunctionalIterable<String> {
 
@@ -73,7 +74,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public FunctionalList<String> filter(final Function<String, Boolean> predicate) {
+  public FunctionalList<String> filter(final Predicate<String> predicate) {
     return FCollection.filter(this, predicate);
   }
 
@@ -98,7 +99,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public boolean contains(final Function<String, Boolean> predicate) {
+  public boolean contains(final Predicate<String> predicate) {
     return FCollection.contains(this, predicate);
   }
 

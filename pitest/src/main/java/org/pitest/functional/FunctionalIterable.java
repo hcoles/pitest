@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
 public interface FunctionalIterable<A> extends Iterable<A> {
 
   void forEach(SideEffect1<A> e);
@@ -28,7 +30,7 @@ public interface FunctionalIterable<A> extends Iterable<A> {
 
   <B> List<B> flatMap(Function<A, ? extends Iterable<B>> f);
 
-  List<A> filter(Function<A, Boolean> predicate);
+  List<A> filter(Predicate<A> predicate);
 
-  boolean contains(Function<A, Boolean> predicate);
+  boolean contains(Predicate<A> predicate);
 }

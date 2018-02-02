@@ -28,7 +28,7 @@ public class True<A> implements Predicate<A> {
   }
 
   @Override
-  public Boolean apply(final A a) {
+  public Boolean test(final A a) {
     return true;
   }
 

@@ -35,14 +35,14 @@ public class PathNamePredicateTest {
     final ClassPathRoot root = new DirectoryClassPathRoot(testFile);
     this.testee = new PathNamePredicate(Prelude.isEqualTo(testFile
         .getAbsolutePath()));
-    assertThat(this.testee.apply(root), is(true));
+    assertThat(this.testee.test(root), is(true));
   }
 
   @Test
   public void shouldNotMatchRootsWithNonMatchingNames() {
     final ClassPathRoot root = new DirectoryClassPathRoot(new File("/foo/bar/"));
     this.testee = new PathNamePredicate(Prelude.isEqualTo("phoee"));
-    assertFalse(this.testee.apply(root));
+    assertFalse(this.testee.test(root));
   }
 
 }

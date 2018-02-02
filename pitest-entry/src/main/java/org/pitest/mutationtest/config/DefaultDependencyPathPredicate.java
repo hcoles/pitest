@@ -24,7 +24,7 @@ public class DefaultDependencyPathPredicate implements Predicate<ClassPathRoot> 
   }
 
   @Override
-  public Boolean apply(final ClassPathRoot a) {
+  public Boolean test(final ClassPathRoot a) {
     return a.cacheLocation().hasSome()
         && isADependencyPath(a.cacheLocation().value());
   }

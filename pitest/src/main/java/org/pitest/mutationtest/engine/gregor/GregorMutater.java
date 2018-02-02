@@ -119,7 +119,7 @@ public class GregorMutater implements Mutater {
     return new Predicate<MethodMutatorFactory>() {
 
       @Override
-      public Boolean apply(final MethodMutatorFactory a) {
+      public Boolean test(final MethodMutatorFactory a) {
         return id.getMutator().equals(a.getGloballyUniqueId());
       }
 
@@ -131,10 +131,10 @@ public class GregorMutater implements Mutater {
         not(isGeneratedEnumMethod()), not(isGroovyClass()));
   }
 
-  private static Function<MethodInfo, Boolean> isGroovyClass() {
+  private static Predicate<MethodInfo> isGroovyClass() {
     return new Predicate<MethodInfo>() {
       @Override
-      public Boolean apply(final MethodInfo a) {
+      public Boolean test(final MethodInfo a) {
         return a.isInGroovyClass();
       }
 
@@ -145,7 +145,7 @@ public class GregorMutater implements Mutater {
     return new Predicate<MethodInfo>() {
 
       @Override
-      public Boolean apply(final MethodInfo a) {
+      public Boolean test(final MethodInfo a) {
         // filter out synthetic methods,
         // except lambda$... methods, which contain code from lambda expressions
         return !a.isSynthetic() || a.getName().startsWith("lambda$");
@@ -157,7 +157,7 @@ public class GregorMutater implements Mutater {
   private static Predicate<MethodInfo> isGeneratedEnumMethod() {
     return new Predicate<MethodInfo>() {
       @Override
-      public Boolean apply(final MethodInfo a) {
+      public Boolean test(final MethodInfo a) {
         return a.isGeneratedEnumMethod();
       }
     };

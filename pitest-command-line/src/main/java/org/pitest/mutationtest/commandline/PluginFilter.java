@@ -44,7 +44,7 @@ public class PluginFilter implements Predicate<String> {
   }
 
   @Override
-  public Boolean apply(final String a) {
+  public Boolean test(final String a) {
     return this.includedClassPathElement.contains(a);
   }
 

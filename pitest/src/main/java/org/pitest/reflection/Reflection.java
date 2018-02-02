@@ -66,7 +66,7 @@ public abstract class Reflection {
       final String name) {
     final Predicate<Method> p = new Predicate<Method>() {
       @Override
-      public Boolean apply(final Method a) {
+      public Boolean test(final Method a) {
         return a.getName().equals(name);
       }
 

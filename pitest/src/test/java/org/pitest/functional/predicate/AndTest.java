@@ -11,37 +11,37 @@ public class AndTest {
   @Test
   public void shouldReturnFalseWhenSuppliedNoPredicate() {
     final And<Object> testee = and();
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenGivenTrue() {
     final And<Object> testee = and(True.all());
-    assertTrue(testee.apply(null));
+    assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeFalseWhenGivenFalse() {
     final And<Object> testee = and(False.instance());
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenGivenTrueAndTrue() {
     final And<Object> testee = and(True.all(), True.all());
-    assertTrue(testee.apply(null));
+    assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeFalseWhenGivenTrueAndFalse() {
     final And<Object> testee = and(True.all(), False.instance());
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
   @Test
   public void shouldBeFalseWhenGivenFalseAndFalse() {
     final And<Object> testee = and(False.instance(), False.instance());
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
 }

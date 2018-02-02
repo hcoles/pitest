@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -102,7 +102,7 @@ public class MutationStatusMap {
     return new Predicate<Entry<MutationDetails, MutationStatusTestPair>>() {
 
       @Override
-      public Boolean apply(
+      public Boolean test(
           final Entry<MutationDetails, MutationStatusTestPair> a) {
         return a.getValue().getStatus().equals(status);
       }
@@ -117,11 +117,11 @@ public class MutationStatusMap {
 
   }
 
-  private static Function<MutationDetails, Boolean> hasNoCoverage() {
-    return new Function<MutationDetails, Boolean>() {
+  private static Predicate<MutationDetails> hasNoCoverage() {
+    return new Predicate<MutationDetails>() {
 
       @Override
-      public Boolean apply(final MutationDetails a) {
+      public Boolean test(final MutationDetails a) {
         return a.getTestsInOrder().isEmpty();
       }
 

@@ -81,7 +81,7 @@ public class Glob implements Predicate<String> {
   }
 
   @Override
-  public Boolean apply(final String value) {
+  public Boolean test(final String value) {
     return matches(value);
   }
 

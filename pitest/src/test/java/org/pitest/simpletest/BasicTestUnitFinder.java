@@ -23,11 +23,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.reflection.Reflection;
 import org.pitest.simpletest.steps.CallStep;
 import org.pitest.testapi.Description;
@@ -105,11 +106,11 @@ public class BasicTestUnitFinder implements TestUnitFinder {
     }
   }
 
-  private Function<InstantiationStrategy, Boolean> canInstantiate(final Class<?> clazz) {
-    return new Function<InstantiationStrategy, Boolean>() {
+  private Predicate<InstantiationStrategy> canInstantiate(final Class<?> clazz) {
+    return new Predicate<InstantiationStrategy>() {
 
       @Override
-      public Boolean apply(final InstantiationStrategy a) {
+      public Boolean test(final InstantiationStrategy a) {
         return a.canInstantiate(clazz);
       }
 

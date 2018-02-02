@@ -238,17 +238,17 @@ public abstract class MutatorTestBase {
     return new Predicate<MethodInfo>() {
 
       @Override
-      public Boolean apply(final MethodInfo a) {
+      public Boolean test(final MethodInfo a) {
         return a.getName().equals("call");
       }
 
     };
   }
 
-  protected Function<MutationDetails, Boolean> descriptionContaining(final String value) {
-    return new Function<MutationDetails, Boolean>() {
+  protected Predicate<MutationDetails> descriptionContaining(final String value) {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(final MutationDetails a) {
+      public Boolean test(final MutationDetails a) {
         return a.getDescription().contains(value);
       }
     };

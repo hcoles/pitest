@@ -582,7 +582,7 @@ public class AbstractPitMojo extends AbstractMojo {
       decision.addReason("Packaging is POM.");
     }
 
-    if (!notEmptyProject.apply(project)) {
+    if (!notEmptyProject.test(project)) {
       decision.addReason("Project has no tests, it is empty.");
     }
 

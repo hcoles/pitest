@@ -260,7 +260,7 @@ public class ReportOptions {
   }
 
   private void checkNotTryingToMutateSelf(final Predicate<String> filter) {
-    if (filter.apply(Pitest.class.getName())) {
+    if (filter.test(Pitest.class.getName())) {
       throw new PitHelpError(Help.BAD_FILTER);
     }
   }

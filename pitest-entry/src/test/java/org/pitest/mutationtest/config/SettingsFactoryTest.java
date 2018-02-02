@@ -92,7 +92,7 @@ public class SettingsFactoryTest {
     this.options.setTargetClasses(Collections
         .singleton("java/Integer"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("java/Integer"));
+    assertFalse(actual.getFilter().test("java/Integer"));
   }
 
   @Test
@@ -100,7 +100,7 @@ public class SettingsFactoryTest {
     this.options.setTargetClasses(Collections
         .singleton("/org/pitest/coverage"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("org/pitest/coverage"));
+    assertFalse(actual.getFilter().test("org/pitest/coverage"));
   }
 
   @Test

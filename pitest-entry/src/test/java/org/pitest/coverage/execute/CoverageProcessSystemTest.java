@@ -13,7 +13,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -26,6 +25,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -320,9 +320,9 @@ public class CoverageProcessSystemTest {
 
   private ClassPath classPathWithoutJUnit() {
     FunctionalList<File> cpWithoutJUnit = FCollection.filter(
-        ClassPath.getClassPathElementsAsFiles(), new Function<File, Boolean>() {
+        ClassPath.getClassPathElementsAsFiles(), new Predicate<File>() {
           @Override
-          public Boolean apply(File file) {
+          public Boolean test(File file) {
             return !file.getName().contains("junit");
           }
         });
@@ -330,11 +330,11 @@ public class CoverageProcessSystemTest {
     return new ClassPath(cpWithoutJUnit);
   }
 
-  private Function<CoverageResult, Boolean> failingTest() {
-    return new Function<CoverageResult, Boolean>() {
+  private Predicate<CoverageResult> failingTest() {
+    return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean apply(final CoverageResult a) {
+      public Boolean test(final CoverageResult a) {
         return !a.isGreenTest();
       }
 
@@ -381,19 +381,19 @@ public class CoverageProcessSystemTest {
     }
   }
 
-  private Function<CoverageResult, Boolean> coverageFor(final Class<?> class1) {
-    return new Function<CoverageResult, Boolean>() {
+  private Predicate<CoverageResult> coverageFor(final Class<?> class1) {
+    return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean apply(final CoverageResult a) {
+      public Boolean test(final CoverageResult a) {
         return FCollection.contains(a.getCoverage(), resultFor(class1));
       }
 
-      private Function<BlockLocation, Boolean> resultFor(final Class<?> class1) {
-        return new Function<BlockLocation, Boolean>() {
+      private Predicate<BlockLocation> resultFor(final Class<?> class1) {
+        return new Predicate<BlockLocation>() {
 
           @Override
-          public Boolean apply(final BlockLocation a) {
+          public Boolean test(final BlockLocation a) {
 
             return a.isFor(ClassName.fromClass(class1));
           }
@@ -403,10 +403,10 @@ public class CoverageProcessSystemTest {
     };
   }
 
-  private Function<CoverageResult, Boolean> coverageFor(final BlockLocation location) {
-    return new Function<CoverageResult, Boolean>() {
+  private Predicate<CoverageResult> coverageFor(final BlockLocation location) {
+    return new Predicate<CoverageResult>() {
       @Override
-      public Boolean apply(final CoverageResult a) {
+      public Boolean test(final CoverageResult a) {
         return a.getCoverage().contains(location);
       }
     };
@@ -420,12 +420,12 @@ public class CoverageProcessSystemTest {
     return Arrays.asList("*Test");
   }
 
-  private Function<CoverageResult, Boolean> coverage(final String testName,
+  private Predicate<CoverageResult> coverage(final String testName,
       final int numberOfBlocks) {
-    return new Function<CoverageResult, Boolean>() {
+    return new Predicate<CoverageResult>() {
 
       @Override
-      public Boolean apply(final CoverageResult a) {
+      public Boolean test(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (a.getNumberOfCoveredBlocks() == numberOfBlocks);
       }
@@ -445,19 +445,19 @@ public class CoverageProcessSystemTest {
     return coveredClasses.contains(hitsBlock(testName, block));
   }
 
-  private Function<CoverageResult, Boolean> hitsBlock(final String testName,
+  private Predicate<CoverageResult> hitsBlock(final String testName,
       final int block) {
-    return new Function<CoverageResult, Boolean>() {
+    return new Predicate<CoverageResult>() {
       @Override
-      public Boolean apply(final CoverageResult a) {
+      public Boolean test(final CoverageResult a) {
         return a.getTestUnitDescription().getName().startsWith(testName)
             && (FCollection.contains(a.getCoverage(), hasBlock(block)));
       }
 
-      private Function<BlockLocation, Boolean> hasBlock(final int block) {
-        return new Function<BlockLocation, Boolean>() {
+      private Predicate<BlockLocation> hasBlock(final int block) {
+        return new Predicate<BlockLocation>() {
           @Override
-          public Boolean apply(BlockLocation a) {
+          public Boolean test(BlockLocation a) {
             System.out.println(a);
             return a.getBlock() == block;
           }

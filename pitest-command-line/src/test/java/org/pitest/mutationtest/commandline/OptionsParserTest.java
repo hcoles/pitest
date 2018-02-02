@@ -56,7 +56,7 @@ public class OptionsParserTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(this.filter.apply(any(String.class))).thenReturn(true);
+    when(this.filter.test(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }
   
@@ -79,9 +79,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -180,9 +180,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -190,13 +190,13 @@ public class OptionsParserTest {
     ReportOptions actual = parseAddingRequiredArgs("--targetTest",
             "~foo\\w*,~bar.*");
     Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
     actual = parseAddingRequiredArgs("--targetTest",
             "~.*?foo\\w*,~bar.*");
     actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -204,9 +204,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -214,8 +214,8 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
-    assertFalse(testPredicate.apply("foo_anything"));
-    assertTrue(testPredicate.apply("bar_anything"));
+    assertFalse(testPredicate.test("foo_anything"));
+    assertTrue(testPredicate.test("bar_anything"));
   }
 
   @Test
@@ -224,8 +224,8 @@ public class OptionsParserTest {
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
 
     final Predicate<String> targetPredicate = actual.getTargetClassesFilter();
-    assertFalse(targetPredicate.apply("foo_anything"));
-    assertTrue(targetPredicate.apply("bar_anything"));
+    assertFalse(targetPredicate.test("foo_anything"));
+    assertTrue(targetPredicate.test("bar_anything"));
   }
 
   @Test
@@ -500,7 +500,7 @@ public class OptionsParserTest {
   private Predicate<String> gregorClass() {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(String s) {
+      public Boolean test(String s) {
         return GregorMutationEngine.class.getName().equals(s);
       }
     };

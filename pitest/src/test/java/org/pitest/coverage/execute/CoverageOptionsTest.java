@@ -17,45 +17,45 @@ public class CoverageOptionsTest {
   public void shouldIncludeTargettedClasses() {
     testee = new CoverageOptions(Collections.singletonList("com/example/*"), Collections.<String>emptyList(), pitConfig, false, 0);
 
-    assertThat(testee.getFilter().apply("com/example/Foo")).isTrue();
+    assertThat(testee.getFilter().test("com/example/Foo")).isTrue();
   }  
   
   @Test
   public void shouldExcludeExcludedClasses() {
     testee = new CoverageOptions(Collections.singletonList("com/example/*"), Collections.singletonList("com/example/NotMe"), pitConfig, false, 0);
 
-    assertThat(testee.getFilter().apply("com/example/Foo")).isTrue();
-    assertThat(testee.getFilter().apply("com/example/NotMe")).isFalse();    
+    assertThat(testee.getFilter().test("com/example/Foo")).isTrue();
+    assertThat(testee.getFilter().test("com/example/NotMe")).isFalse();    
   }   
   
   @Test
   public void shouldNotCoverJDKClassesWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("java/lang/Integer")).isFalse();
+    assertThat(testee.getFilter().test("java/lang/Integer")).isFalse();
   }
   
   @Test
   public void shouldNotCoverSunClassesWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("sun/foo/Bar")).isFalse();
+    assertThat(testee.getFilter().test("sun/foo/Bar")).isFalse();
   }
   
   @Test
   public void shouldNotCoverJUnitWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("sun/foo/Bar")).isFalse();
+    assertThat(testee.getFilter().test("sun/foo/Bar")).isFalse();
   }
   
   @Test
   public void shouldNotCoverPitestBootWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("org/pitest/boot/HotSwapAgent")).isFalse();
+    assertThat(testee.getFilter().test("org/pitest/boot/HotSwapAgent")).isFalse();
   }
 
   @Test
   public void shouldNotCoverPitestCoverageWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("org/pitest/coverage/execute/Minion")).isFalse();
+    assertThat(testee.getFilter().test("org/pitest/coverage/execute/Minion")).isFalse();
   }
   
   @Test
   public void shouldNotCoverPitestRelocWhenFilterIsBroad() {
-    assertThat(testee.getFilter().apply("org/pitest/reloc/Foo")).isFalse();
+    assertThat(testee.getFilter().test("org/pitest/reloc/Foo")).isFalse();
   }  
   
 }

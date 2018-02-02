@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
+
 public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   private static final long serialVersionUID = 1L;
 
@@ -36,12 +39,12 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   public abstract boolean hasSome();
 
   @Override
-  public boolean contains(final Function<T, Boolean> predicate) {
+  public boolean contains(final Predicate<T> predicate) {
     return FCollection.contains(this, predicate);
   }
 
   @Override
-  public FunctionalList<T> filter(final Function<T, Boolean> predicate) {
+  public FunctionalList<T> filter(final Predicate<T> predicate) {
     return FCollection.filter(this, predicate);
   }
 

@@ -198,10 +198,10 @@ public class MojoToReportOptionsConverter {
     return FCollection.filter(plugins, hasKey(key));
   }
 
-  private static Function<Plugin, Boolean> hasKey(final String key) {
-    return new Function<Plugin, Boolean>() {
+  private static Predicate<Plugin> hasKey(final String key) {
+    return new Predicate<Plugin>() {
       @Override
-      public Boolean apply(Plugin a) {
+      public Boolean test(Plugin a) {
         return a.getKey().equals(key);
       }
     };

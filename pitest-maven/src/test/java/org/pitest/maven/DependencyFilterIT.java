@@ -44,14 +44,14 @@ public class DependencyFilterIT {
   public void shouldAllowPitestCore() {
     when(this.artifact.getGroupId()).thenReturn("org.pitest");
     when(this.artifact.getArtifactId()).thenReturn("pitest");
-    assertTrue(this.testee.apply(this.artifact));
+    assertTrue(this.testee.test(this.artifact));
   }
 
   @Test
   public void shouldNotAllowHtmlReport() {
     when(this.artifact.getGroupId()).thenReturn("org.pitest");
     when(this.artifact.getArtifactId()).thenReturn("pitest-html-report");
-    assertFalse(this.testee.apply(this.artifact));
+    assertFalse(this.testee.test(this.artifact));
   }
 
 }

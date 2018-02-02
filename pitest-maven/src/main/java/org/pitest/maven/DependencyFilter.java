@@ -113,7 +113,7 @@ public class DependencyFilter implements Predicate<Artifact> {
   }
 
   @Override
-  public Boolean apply(final Artifact a) {
+  public Boolean test(final Artifact a) {
     final GroupIdPair p = new GroupIdPair(a.getGroupId(), a.getArtifactId());
     return this.groups.contains(p);
   }

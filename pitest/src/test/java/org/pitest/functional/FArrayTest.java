@@ -43,7 +43,7 @@ public class FArrayTest {
   public void shouldReturnOnlyMatchesToPredicate() {
     final Predicate<Integer> p = new Predicate<Integer>() {
       @Override
-      public Boolean apply(final Integer a) {
+      public Boolean test(final Integer a) {
         return a <= 2;
       }
     };
@@ -103,7 +103,7 @@ public class FArrayTest {
     final Predicate<Integer> predicate = new Predicate<Integer>() {
 
       @Override
-      public Boolean apply(final Integer a) {
+      public Boolean test(final Integer a) {
         if (a == 2) {
           throw new PitError("Did not shortcut");
         }

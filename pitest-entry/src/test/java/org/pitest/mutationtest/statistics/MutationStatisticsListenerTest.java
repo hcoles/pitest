@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -54,11 +54,11 @@ public class MutationStatisticsListenerTest {
         hasResultForMutator(mutator));
   }
 
-  private Function<Score, Boolean> hasResultForMutator(final String mutator) {
-    return new Function<Score, Boolean>() {
+  private Predicate<Score> hasResultForMutator(final String mutator) {
+    return new Predicate<Score>() {
 
       @Override
-      public Boolean apply(final Score a) {
+      public Boolean test(final Score a) {
         return a.getMutatorName().equals(mutator);
       }
     };

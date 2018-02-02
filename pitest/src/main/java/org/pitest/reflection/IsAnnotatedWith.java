@@ -36,7 +36,7 @@ public class IsAnnotatedWith implements Predicate<AccessibleObject> {
   }
 
   @Override
-  public Boolean apply(final AccessibleObject a) {
+  public Boolean test(final AccessibleObject a) {
     return a.isAnnotationPresent(this.clazz);
   }
 

@@ -18,10 +18,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
 public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Serializable {
 
   @Override
-  FunctionalList<T> filter(Function<T, Boolean> predicate);
+  FunctionalList<T> filter(Predicate<T> predicate);
   
   @Override
   <B> FunctionalList<B> flatMap(Function<T, ? extends Iterable<B>> f);
@@ -29,5 +31,5 @@ public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Ser
   @Override
   <B> FunctionalList<B> map(Function<T, B> f);
   
-  Option<T> findFirst(Function<T, Boolean> predicate);
+  Option<T> findFirst(Predicate<T> predicate);
 }

@@ -21,11 +21,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import org.junit.Test;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
@@ -359,10 +359,10 @@ public class TestGregorMutater extends MutatorTestBase {
   }
   
   
-  private static Function<MutationDetails, Boolean> isInFinallyBlock() {
-    return new Function<MutationDetails, Boolean>() {
+  private static Predicate<MutationDetails> isInFinallyBlock() {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(final MutationDetails a) {
+      public Boolean test(final MutationDetails a) {
         return a.isInFinallyBlock();
       }
 

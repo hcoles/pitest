@@ -120,7 +120,7 @@ public class ClassInfoTest {
   public void matchIfAbstractShouldReturnTrueForAbstractClasses() {
     this.data.access = Opcodes.ACC_ABSTRACT;
     makeTestee();
-    assertTrue(ClassInfo.matchIfAbstract().apply(this.testee));
+    assertTrue(ClassInfo.matchIfAbstract().test(this.testee));
   }
 
   private void makeTestee() {

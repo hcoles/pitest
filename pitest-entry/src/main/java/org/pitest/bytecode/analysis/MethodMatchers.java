@@ -13,7 +13,7 @@ public class MethodMatchers {
   public static Predicate<MethodTree> named(final String name) {
     return new Predicate<MethodTree>() {
       @Override
-      public Boolean apply(MethodTree a) {
+      public Boolean test(MethodTree a) {
         return a.rawNode().name.equals(name);
       }
     };
@@ -22,7 +22,7 @@ public class MethodMatchers {
   public static Predicate<MethodTree> forLocation(final Location location) {
     return new Predicate<MethodTree>() {
       @Override
-      public Boolean apply(MethodTree a) {
+      public Boolean test(MethodTree a) {
         return a.asLocation().equals(location);
       }
     };

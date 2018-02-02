@@ -64,14 +64,7 @@ public class SmartSourceLocator implements SourceLocator {
   }
 
   private static Collection<File> listFirstLevelDirectories(final File root) {
-    final Function<File, Boolean> p = new Function<File, Boolean>() {
-      @Override
-      public Boolean apply(final File a) {
-        return a.isDirectory();
-      }
-
-    };
-    return FArray.filter(root.listFiles(), p);
+    return FArray.filter(root.listFiles(), a -> a.isDirectory());
   }
 
   @Override

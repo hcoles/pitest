@@ -26,6 +26,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationResult;
 
 public class MutationResultList implements FunctionalIterable<MutationResult> {
@@ -72,13 +73,13 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public boolean contains(final Function<MutationResult, Boolean> predicate) {
+  public boolean contains(final Predicate<MutationResult> predicate) {
     return FCollection.contains(this.impl, predicate);
   }
 
   @Override
   public FunctionalList<MutationResult> filter(
-      final Function<MutationResult, Boolean> predicate) {
+      final Predicate<MutationResult> predicate) {
     return FCollection.filter(this, predicate);
   }
 

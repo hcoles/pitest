@@ -26,6 +26,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
@@ -73,11 +74,11 @@ public class AnnotatedLineFactory {
     return this.mutations.filter(isAtLineNumber(lineNumber));
   }
 
-  private Function<MutationResult, Boolean> isAtLineNumber(final int lineNumber) {
-    return new Function<MutationResult, Boolean>() {
+  private Predicate<MutationResult> isAtLineNumber(final int lineNumber) {
+    return new Predicate<MutationResult>() {
 
       @Override
-      public Boolean apply(final MutationResult result) {
+      public Boolean test(final MutationResult result) {
         return result.getDetails().getLineNumber() == lineNumber;
       }
 
@@ -98,19 +99,13 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isCodeLine(final int line) {
-    final Function<ClassInfo, Boolean> predicate = new Function<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return a.isCodeLine(line);
-      }
-    };
-    return FCollection.contains(this.classesInFile, predicate);
+    return FCollection.contains(this.classesInFile, a -> a.isCodeLine(line));
   }
 
   private boolean isLineCovered(final int line) {
-    final Function<ClassInfo, Boolean> predicate = new Function<ClassInfo, Boolean>() {
+    final Predicate<ClassInfo> predicate = new Predicate<ClassInfo>() {
       @Override
-      public Boolean apply(final ClassInfo a) {
+      public Boolean test(final ClassInfo a) {
         return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
             new ClassLine(a.getName().asInternalName(), line)).isEmpty();
       }

@@ -19,11 +19,12 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.objectweb.asm.Opcodes;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 
 public class ClassInfo {
 
@@ -151,10 +152,10 @@ public class ClassInfo {
     return getSuperClass().value().descendsFrom(clazz);
   }
 
-  public static Function<ClassInfo, Boolean> matchIfAbstract() {
-    return new Function<ClassInfo, Boolean>() {
+  public static Predicate<ClassInfo> matchIfAbstract() {
+    return new Predicate<ClassInfo>() {
       @Override
-      public Boolean apply(final ClassInfo a) {
+      public Boolean test(final ClassInfo a) {
         return a.isAbstract();
       }
 

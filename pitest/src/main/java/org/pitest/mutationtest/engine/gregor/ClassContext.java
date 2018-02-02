@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockCounter;
@@ -60,10 +60,10 @@ class ClassContext implements BlockCounter {
     return FCollection.filter(this.mutations, hasId(id));
   }
 
-  private static Function<MutationDetails, Boolean> hasId(final MutationIdentifier id) {
-    return new Function<MutationDetails, Boolean>() {
+  private static Predicate<MutationDetails> hasId(final MutationIdentifier id) {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(final MutationDetails a) {
+      public Boolean test(final MutationDetails a) {
         return a.matchesId(id);
       }
 
@@ -82,11 +82,11 @@ class ClassContext implements BlockCounter {
     return getTargetMutation().contains(idMatches(newId));
   }
 
-  private static Function<MutationIdentifier, Boolean> idMatches(
+  private static Predicate<MutationIdentifier> idMatches(
       final MutationIdentifier newId) {
-    return new Function<MutationIdentifier, Boolean>() {
+    return new Predicate<MutationIdentifier>() {
       @Override
-      public Boolean apply(final MutationIdentifier a) {
+      public Boolean test(final MutationIdentifier a) {
         return a.matches(newId);
       }
     };

@@ -88,7 +88,7 @@ public class ClassPathTest {
     return new Predicate<ClassPathRoot>() {
 
       @Override
-      public Boolean apply(final ClassPathRoot a) {
+      public Boolean test(final ClassPathRoot a) {
         return a.cacheLocation().value().equals(value);
       }
 

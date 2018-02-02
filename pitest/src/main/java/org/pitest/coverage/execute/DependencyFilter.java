@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pitest.dependency.DependencyExtractor;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.testapi.TestUnit;
@@ -31,13 +30,13 @@ class DependencyFilter {
     }
   }
 
-  private Function<TestUnit, Boolean> isWithinReach() {
+  private Predicate<TestUnit> isWithinReach() {
 
-    return new Function<TestUnit, Boolean>() {
+    return new Predicate<TestUnit>() {
       private final Map<String, Boolean> cache = new HashMap<>();
 
       @Override
-      public Boolean apply(final TestUnit testUnit) {
+      public Boolean test(final TestUnit testUnit) {
         final String testClass = testUnit.getDescription().getFirstTestClass();
         try {
           if (this.cache.containsKey(testClass)) {

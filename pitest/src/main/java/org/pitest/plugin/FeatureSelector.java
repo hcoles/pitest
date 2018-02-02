@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 
 public class FeatureSelector<T extends ProvidesFeature> {
 
@@ -55,10 +56,10 @@ public class FeatureSelector<T extends ProvidesFeature> {
     return active;
   }
 
-  private Function<T, Boolean> isOnByDefault() {
-    return new  Function<T, Boolean>() {
+  private Predicate<T> isOnByDefault() {
+    return new Predicate<T>() {
       @Override
-      public Boolean apply(T a) {
+      public Boolean test(T a) {
         return a.provides().isOnByDefault();
       }
     };

@@ -22,8 +22,8 @@ import java.io.PrintStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.util.StringUtil;
 
@@ -135,12 +135,12 @@ public class ScoreTest {
     }
   }
 
-  private Function<StatusCount, Boolean> countFor(final DetectionStatus each,
+  private Predicate<StatusCount> countFor(final DetectionStatus each,
       final int count) {
-    return new Function<StatusCount, Boolean>() {
+    return new Predicate<StatusCount>() {
 
       @Override
-      public Boolean apply(final StatusCount a) {
+      public Boolean test(final StatusCount a) {
         return a.getStatus().equals(each) && (a.getCount() == count);
       }
 

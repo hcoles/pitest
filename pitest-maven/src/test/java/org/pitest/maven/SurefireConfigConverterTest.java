@@ -43,8 +43,8 @@ public class SurefireConfigConverterTest {
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
     Predicate<String> predicate = actual.getExcludedTestClasses().iterator().next();
-    assertThat(predicate.apply("com.example.FailingTest")).isTrue();
-    assertThat(predicate.apply("com.example.Test")).isFalse();
+    assertThat(predicate.test("com.example.FailingTest")).isTrue();
+    assertThat(predicate.test("com.example.Test")).isFalse();
   }
 
   @Test

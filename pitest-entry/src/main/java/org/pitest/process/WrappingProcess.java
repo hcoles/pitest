@@ -117,7 +117,7 @@ public class WrappingProcess {
   private static Predicate<String> isEnvironmentSetting() {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(String a) {
+      public Boolean test(String a) {
         return a.startsWith("-D");
       }
     };
@@ -126,7 +126,7 @@ public class WrappingProcess {
   private static Predicate<String> isJavaAgentParam() {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(String a) {
+      public Boolean test(String a) {
         return a.toLowerCase().startsWith("-javaagent");
       }
     };

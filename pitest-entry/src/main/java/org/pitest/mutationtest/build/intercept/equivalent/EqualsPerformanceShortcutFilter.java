@@ -7,7 +7,6 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -20,6 +19,7 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -86,10 +86,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     return inEquals.filter(Prelude.not(isShortcutEquals(maybeEquals.value(), m)));
   }
 
-  private Function<MutationDetails, Boolean> isShortcutEquals(final MethodTree tree, final Mutater m) {
-    return new Function<MutationDetails, Boolean>() {
+  private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         return shortCutEquals(tree,a, m);
       }
     };
@@ -111,10 +111,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);   
   }
   
-  private Function<MutationDetails, Boolean> inEqualsMethod() {
-    return new  Function<MutationDetails, Boolean>() {
+  private Predicate<MutationDetails> inEqualsMethod() {
+    return new  Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         Location loc = a.getId().getLocation();
         return loc.getMethodDesc().equals("(Ljava/lang/Object;)Z")
             && loc.getMethodName().equals(MethodName.fromString("equals"));

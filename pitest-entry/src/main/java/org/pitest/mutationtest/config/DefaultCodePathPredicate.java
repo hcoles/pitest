@@ -20,7 +20,7 @@ import org.pitest.functional.predicate.Predicate;
 public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
 
   @Override
-  public Boolean apply(final ClassPathRoot a) {
+  public Boolean test(final ClassPathRoot a) {
     return a.cacheLocation().hasSome()
         && !isATestPath(a.cacheLocation().value())
         && !isADependencyPath(a.cacheLocation().value());

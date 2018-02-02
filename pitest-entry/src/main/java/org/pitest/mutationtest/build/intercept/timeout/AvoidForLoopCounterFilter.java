@@ -26,8 +26,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -151,10 +151,10 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(mutatesAForLoopCounter()));
   }
 
-  private Function<MutationDetails, Boolean> mutatesAForLoopCounter() {
-    return new Function<MutationDetails, Boolean>() {
+  private Predicate<MutationDetails> mutatesAForLoopCounter() {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         int instruction = a.getInstructionIndex();
         MethodTree method = currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
         AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);

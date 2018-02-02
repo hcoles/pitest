@@ -137,7 +137,7 @@ public class DependencyExtractorTest {
     return new Predicate<DependencyAccess>() {
 
       @Override
-      public Boolean apply(final DependencyAccess a) {
+      public Boolean test(final DependencyAccess a) {
         return !a.getDest().getOwner().startsWith("java");
       }
 
@@ -149,7 +149,7 @@ public class DependencyExtractorTest {
     return new Predicate<String>() {
 
       @Override
-      public Boolean apply(final String a) {
+      public Boolean test(final String a) {
         return a.contains(subString);
       }
 
@@ -164,7 +164,7 @@ public class DependencyExtractorTest {
   private Predicate<DependencyAccess> excludeMethodsCalledOne() {
     return new Predicate<DependencyAccess>() {
       @Override
-      public Boolean apply(final DependencyAccess a) {
+      public Boolean test(final DependencyAccess a) {
         return !a.getSource().getName().equals("one");
       }
 

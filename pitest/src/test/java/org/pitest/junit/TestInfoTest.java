@@ -41,7 +41,7 @@ public class TestInfoTest {
     class JU3Test extends TestCase {
 
     }
-    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(JU3Test.class)));
   }
 
   @Test
@@ -49,17 +49,17 @@ public class TestInfoTest {
     class JU3Test extends TestSuite {
 
     }
-    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(JU3Test.class)));
   }
 
   @Test
   public void isATestShouldReturnTrueForJUnit4Tests() {
-    assertTrue(TestInfo.isATest().apply(fetchClass(TestInfoTest.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(TestInfoTest.class)));
   }
 
   @Test
   public void isATestShouldReturnFalseForNonTests() {
-    assertFalse(TestInfo.isATest().apply(fetchClass(String.class)));
+    assertFalse(TestInfo.isATest().test(fetchClass(String.class)));
   }
 
   static class Nested {

@@ -12,7 +12,7 @@ public class TrueTest {
 
   @Test
   public void shouldAlwaysBeTrue() {
-    assertTrue(True.all().apply(null));
+    assertTrue(True.all().test(null));
   }
 
 }

@@ -13,7 +13,7 @@ public class AnalysisFunctions {
         final Location methodLocation = method.asLocation();
         return new Predicate<MutationDetails>() {
           @Override
-          public Boolean apply(MutationDetails a) {
+          public Boolean test(MutationDetails a) {
             return methodLocation.equals(a.getId().getLocation());
           }
         };

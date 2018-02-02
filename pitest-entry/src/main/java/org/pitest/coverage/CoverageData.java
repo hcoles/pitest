@@ -349,7 +349,7 @@ public class CoverageData implements CoverageDatabase {
       final ClassName clazz) {
     return new Predicate<Entry<BlockLocation, Set<TestInfo>>>() {
       @Override
-      public Boolean apply(Entry<BlockLocation, Set<TestInfo>> a) {
+      public Boolean test(Entry<BlockLocation, Set<TestInfo>> a) {
         return a.getKey().isFor(clazz);
       }
     };

@@ -14,23 +14,21 @@
  */
 package org.pitest.functional.predicate;
 
-import java.util.function.Function;
-
 /**
  * @author henry
  *
  */
 public final class Not<A> implements Predicate<A> {
 
-  private final Function<A, Boolean> p;
+  private final Predicate<A> p;
 
-  public Not(final Function<A, Boolean> p) {
+  public Not(final Predicate<A> p) {
     this.p = p;
   }
 
   @Override
-  public Boolean apply(final A a) {
-    return !this.p.apply(a);
+  public Boolean test(final A a) {
+    return !this.p.test(a);
   }
 
 }

@@ -38,14 +38,14 @@ public class DefaultDependencyPathPredicateTest {
   public void shouldTreatJarFilesAsDependencies() {
     final ClassPathRoot archiveRoot = new ArchiveClassPathRoot(new File(
         "foo.jar"));
-    assertTrue(this.testee.apply(archiveRoot));
+    assertTrue(this.testee.test(archiveRoot));
   }
 
   @Test
   public void shouldNotTreatDirectoriesAsDependencies() {
     final ClassPathRoot archiveRoot = new DirectoryClassPathRoot(new File(
         "foo/bar/"));
-    assertFalse(this.testee.apply(archiveRoot));
+    assertFalse(this.testee.test(archiveRoot));
   }
 
 }

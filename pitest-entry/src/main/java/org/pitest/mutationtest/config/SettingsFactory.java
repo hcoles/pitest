@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
 
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.Predicate;
@@ -86,7 +86,7 @@ public class SettingsFactory {
   
   public void describeFeatures(SideEffect1<Feature> enabled, SideEffect1<Feature> disabled) {
     FeatureParser parser = new FeatureParser();
-    Collection<ProvidesFeature> available = new ArrayList<ProvidesFeature>(this.plugins.findInterceptors());
+    Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findInterceptors());
     List<FeatureSetting> settings = parser.parseFeatures(options.getFeatures());
     FeatureSelector<ProvidesFeature> selector = new FeatureSelector<>(settings, available);
     
@@ -123,11 +123,11 @@ public class SettingsFactory {
     return new CompoundInterceptorFactory(parser.parseFeatures(options.getFeatures()), new ArrayList<>(interceptors));
   }
   
-  private static Function<MutationResultListenerFactory, Boolean> nameMatches(
+  private static Predicate<MutationResultListenerFactory> nameMatches(
       final Iterable<String> outputFormats) {
-    return new Function<MutationResultListenerFactory, Boolean>() {
+    return new Predicate<MutationResultListenerFactory>() {
       @Override
-      public Boolean apply(final MutationResultListenerFactory a) {
+      public Boolean test(final MutationResultListenerFactory a) {
         return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
       }
     };
@@ -148,7 +148,7 @@ public class SettingsFactory {
   private static Predicate<String> equalsIgnoreCase(final String other) {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(final String a) {
+      public Boolean test(final String a) {
         return a.equalsIgnoreCase(other);
       }
     };

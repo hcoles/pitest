@@ -70,7 +70,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   private static Predicate<Description> isSuiteMethodRunner(final Runner runner) {
     return new Predicate<Description>() {
       @Override
-      public Boolean apply(final Description a) {
+      public Boolean test(final Description a) {
         return SuiteMethod.class.isAssignableFrom(runner.getClass());
       }
 
@@ -96,7 +96,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   private static Predicate<Description> isSuite() {
     return new Predicate<Description>() {
       @Override
-      public Boolean apply(final Description a) {
+      public Boolean test(final Description a) {
         return a.isSuite();
       }
 

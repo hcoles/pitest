@@ -3,14 +3,15 @@ package org.pitest.mutationtest.build.intercept.logging;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -49,10 +50,10 @@ public class LoggingCallsFilter implements MutationInterceptor {
     return FCollection.filter(mutations, Prelude.not(isOnLoggingLine()));
   }
 
-  private Function<MutationDetails, Boolean> isOnLoggingLine() {
-    return new  Function<MutationDetails, Boolean>() {
+  private Predicate<MutationDetails> isOnLoggingLine() {
+    return new  Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         return lines.contains(a.getClassLine().getLineNumber());
       }  
     };
@@ -95,10 +96,10 @@ class LoggingLineScanner extends MethodVisitor {
     }
   }
   
-  private static Function<String, Boolean> matches(final String owner) {
-    return new Function<String, Boolean>() {
+  private static Predicate<String> matches(final String owner) {
+    return new Predicate<String>() {
       @Override
-      public Boolean apply(final String a) {
+      public Boolean test(final String a) {
         return owner.startsWith(a);
       }
     };

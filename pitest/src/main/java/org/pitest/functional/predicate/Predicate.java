@@ -14,12 +14,12 @@
  */
 package org.pitest.functional.predicate;
 
-import java.util.function.Function;
-
 /**
  * @author henry
  *
  */
-public interface Predicate<A> extends Function<A, Boolean> {
+public interface Predicate<A> {
+  
+  Boolean test(A a);
 
 }

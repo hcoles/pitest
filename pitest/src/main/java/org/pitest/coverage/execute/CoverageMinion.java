@@ -125,8 +125,8 @@ public class CoverageMinion {
       final Predicate<String> child) {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(final String a) {
-        return child.apply(a.replace("/", "."));
+      public Boolean test(final String a) {
+        return child.test(a.replace("/", "."));
       }
 
     };

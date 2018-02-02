@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
@@ -16,9 +17,9 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -161,11 +162,11 @@ public class FilterTester {
     };
   }
 
-  private Function<MutationDetails, Boolean> notIn(
+  private Predicate<MutationDetails> notIn(
       final Collection<MutationDetails> actual) {
-    return new Function<MutationDetails, Boolean>() {
+    return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         return !actual.contains(a);
       }
       

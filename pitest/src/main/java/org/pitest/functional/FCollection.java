@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.pitest.functional.predicate.Predicate;
+
 /**
  * Functional programming style operations for plain old Java iterables.
  */
@@ -73,16 +75,16 @@ public abstract class FCollection {
   }
 
   public static <T> FunctionalList<T> filter(final Iterable<? extends T> xs,
-      final Function<T, Boolean> predicate) {
+      final Predicate<T> predicate) {
     final FunctionalList<T> dest = emptyList();
     filter(xs, predicate, dest);
     return dest;
   }
 
   public static <T> void filter(final Iterable<? extends T> xs,
-      final Function<T, Boolean> predicate, final Collection<? super T> dest) {
+      final Predicate<T> predicate, final Collection<? super T> dest) {
     for (final T x : xs) {
-      if (predicate.apply(x)) {
+      if (predicate.test(x)) {
         dest.add(x);
       }
     }
@@ -90,9 +92,9 @@ public abstract class FCollection {
   
 
   public static <T> Option<T> findFirst(final Iterable<? extends T> xs,
-      final Function<T, Boolean> predicate) {
+      final Predicate<T> predicate) {
     for (final T x : xs) {
-      if (predicate.apply(x)) {
+      if (predicate.test(x)) {
         return Option.some(x);
       }
     }
@@ -101,9 +103,9 @@ public abstract class FCollection {
   
 
   public static <T> boolean contains(final Iterable<? extends T> xs,
-      final Function<T, Boolean> predicate) {
+      final Predicate<T> predicate) {
     for (final T x : xs) {
-      if (predicate.apply(x)) {
+      if (predicate.test(x)) {
         return true;
       }
     }

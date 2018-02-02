@@ -94,17 +94,17 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MutationDetails> isInStaticInitializer() {
     return new Predicate<MutationDetails>() {
       @Override
-      public Boolean apply(MutationDetails a) {
+      public Boolean test(MutationDetails a) {
         return a.getId().getLocation().getMethodName().equals(CLINIT);
       }
       
     };
   }
 
-  private static Function<MethodTree, Boolean> isPrivateStatic() {
-    return new  Function<MethodTree, Boolean>() {
+  private static Predicate<MethodTree> isPrivateStatic() {
+    return new  Predicate<MethodTree>() {
       @Override
-      public Boolean apply(MethodTree a) {
+      public Boolean test(MethodTree a) {
         return (a.rawNode().access & Opcodes.ACC_STATIC) != 0
             && (a.rawNode().access & Opcodes.ACC_PRIVATE) != 0;
       }
@@ -127,7 +127,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {   
     return new Predicate<MethodTree> () {     
       @Override
-      public Boolean apply(MethodTree a) {
+      public Boolean test(MethodTree a) {
         return a.rawNode().name.equals(call.name) 
             && a.rawNode().desc.equals(call.desc);
       }
@@ -135,10 +135,10 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private Function<MethodInsnNode, Boolean> calls(final ClassName self) {
-    return new Function<MethodInsnNode, Boolean>() {
+  private Predicate<MethodInsnNode> calls(final ClassName self) {
+    return new Predicate<MethodInsnNode>() {
       @Override
-      public Boolean apply(MethodInsnNode a) {
+      public Boolean test(MethodInsnNode a) {
         return a.owner.equals(self.asInternalName());
       }
       
@@ -163,7 +163,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private Predicate<MethodTree> nameEquals(final String name) {
     return new Predicate<MethodTree>() {
       @Override
-      public Boolean apply(MethodTree a) {
+      public Boolean test(MethodTree a) {
         return a.rawNode().name.equals(name);
       }  
     };
