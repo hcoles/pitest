@@ -9,12 +9,12 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.codec.binary.Base64;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
@@ -123,7 +123,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   private <T> T deserialize(String string, Class<T> clazz) throws IOException {
     try {
       final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-          Base64.decodeBase64(string));
+          Base64.getDecoder().decode(string));
       final ObjectInputStream objectInputStream = new ObjectInputStream(
           byteArrayInputStream);
       return clazz.cast(objectInputStream.readObject());
