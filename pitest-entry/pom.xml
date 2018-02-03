@@ -134,11 +134,6 @@
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency>
 		<!-- for the xstream history store. cannot used shaded version -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>

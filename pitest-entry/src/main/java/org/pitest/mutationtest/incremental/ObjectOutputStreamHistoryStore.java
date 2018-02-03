@@ -138,7 +138,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
       final ObjectOutputStream objectOutputStream = new ObjectOutputStream(
           byteArrayOutputStream);
       objectOutputStream.writeObject(t);
-      return Base64.encodeBase64String(byteArrayOutputStream.toByteArray());
+      return Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
