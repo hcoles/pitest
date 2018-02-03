@@ -16,7 +16,7 @@ public class AndTest {
 
   @Test
   public void shouldBeTrueWhenGivenTrue() {
-    final And<Object> testee = and(True.all());
+    final And<Object> testee = and(i -> true);
     assertTrue(testee.test(null));
   }
 
@@ -28,13 +28,13 @@ public class AndTest {
 
   @Test
   public void shouldBeTrueWhenGivenTrueAndTrue() {
-    final And<Object> testee = and(True.all(), True.all());
+    final And<Object> testee = and(i -> true, i -> true);
     assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeFalseWhenGivenTrueAndFalse() {
-    final And<Object> testee = and(True.all(), False.instance());
+    final And<Object> testee = and( i -> true, i -> false);
     assertFalse(testee.test(null));
   }
 

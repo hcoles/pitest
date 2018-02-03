@@ -114,7 +114,7 @@ public class ClassPath {
 
   public static Collection<String> getClassPathElementsAsPaths() {
     final Set<String> filesAsString = new LinkedHashSet<>();
-    FCollection.mapTo(getClassPathElementsAsFiles(), fileToString(),
+    FCollection.mapTo(getClassPathElementsAsFiles(), file -> file.getPath(),
         filesAsString);
     return filesAsString;
   }
@@ -141,35 +141,18 @@ public class ClassPath {
   }
   
   private static Predicate<File> exists() {
-    return new Predicate<File>() {
-      @Override
-      public boolean test(final File a) {
-        return a.exists() && a.canRead();
-      }
-    };
+    return a -> a.exists() && a.canRead();
   }
 
-  private static Function<File, String> fileToString() {
-    return new Function<File, String>() {
-      @Override
-      public String apply(File file) {
-        return file.getPath();
-      }
-    };
-  }
-  
   private static Function<String, File> stringToCanonicalFile() {
-    return new Function<String, File>() {
-      @Override
-      public File apply(String fileAsString) {
+    return fileAsString -> {
         try {
           return new File(fileAsString).getCanonicalFile();
         } catch (final IOException ex) {
           throw new PitError("Error transforming classpath element "
               + fileAsString, ex);
         }
-      }
-    };
+      };
   }
 
   /** FIXME move somewhere common */

@@ -15,7 +15,6 @@ import java.util.Map;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.ScmException;
@@ -30,7 +29,6 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 
@@ -54,7 +52,7 @@ public class ScmMojoTest extends BasePitMojoTest {
   public void setUp() throws Exception {
     super.setUp();
     this.testee = new ScmMojo(this.executionStrategy, this.manager,
-        this.filter, this.plugins, false, True.<MavenProject>all());
+        this.filter, this.plugins, false,  i -> true);
     this.testee.setScmRootDir(new File("foo"));
     when(this.project.getBuild()).thenReturn(this.build);
     when(this.build.getSourceDirectory()).thenReturn("foo");

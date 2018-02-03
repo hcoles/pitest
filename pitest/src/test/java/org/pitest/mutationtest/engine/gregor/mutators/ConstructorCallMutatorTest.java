@@ -23,9 +23,7 @@ import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutatorTest.HasVoidMethodCall;
@@ -66,7 +64,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldNotRemoveCallsToSuper() throws Exception {
-    createTesteeWith(True.<MethodInfo> all(),
+    createTesteeWith(i -> true,
         ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
     assertFalse(findMutationsFor(HasConstructorCall.class).contains(
         descriptionContaining("java/lang/Object::<init>")));
@@ -94,7 +92,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldNotRemoveCallsToDelegateContructor() throws Exception {
-    createTesteeWith(True.<MethodInfo> all(),
+    createTesteeWith(i -> true,
         ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
     assertFalse(findMutationsFor(HasDelegateConstructorCall.class).contains(
         descriptionContaining("HasDelegateConstructorCall::<init>")));

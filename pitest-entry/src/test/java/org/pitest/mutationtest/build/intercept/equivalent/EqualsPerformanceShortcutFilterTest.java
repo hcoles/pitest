@@ -11,11 +11,9 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
@@ -88,7 +86,7 @@ public class EqualsPerformanceShortcutFilterTest {
   }
 
   GregorMutater createMutator(Collection<MethodMutatorFactory> factories) {
-    return new GregorMutater(this.source, True.<MethodInfo> all(), factories);
+    return new GregorMutater(this.source, m -> true, factories);
   }
 
   ClassTree forClass(Class<?> clazz) {

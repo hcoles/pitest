@@ -22,11 +22,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.pitest.classpath.ClassPathByteArraySource;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 
 public class DependencyExtractorTest {
 
@@ -72,7 +71,7 @@ public class DependencyExtractorTest {
     constructWithDepthOf(1);
     final Collection<String> actual = this.testee
         .extractCallDependenciesForPackages(Foo.class.getName(),
-            True.<String> all());
+            s -> true);
     final Set<String> expected = asSet(classToJvmName(Bar.class),
         classToJvmName(Car.class));
     assertCollectionEquals(expected, actual);
@@ -84,7 +83,7 @@ public class DependencyExtractorTest {
     constructWithDepthOf(2);
     final Collection<String> actual = this.testee
         .extractCallDependenciesForPackages(Foo.class.getName(),
-            True.<String> all());
+            s -> true);
     final Set<String> expected = asSet(classToJvmName(Bar.class),
         classToJvmName(Car.class), classToJvmName(Far.class));
     assertCollectionEquals(expected, actual);
@@ -95,7 +94,7 @@ public class DependencyExtractorTest {
     constructWithDepthOf(0);
     final Collection<String> actual = this.testee
         .extractCallDependenciesForPackages(Foo.class.getName(),
-            True.<String> all());
+            s -> true);
     final List<String> expected = Arrays.asList(classToJvmName(Bar.class),
         classToJvmName(Car.class), classToJvmName(Far.class),
         classToJvmName(VeryFar.class));
@@ -127,7 +126,7 @@ public class DependencyExtractorTest {
     constructWithDepthOf(0);
     final Collection<String> actual = this.testee
         .extractCallDependenciesForPackages(CyclicFoo.class.getName(),
-            True.<String> all());
+            s -> true);
     final List<String> expected = Arrays
         .asList(classToJvmName(CyclicBar.class));
     assertCollectionEquals(expected, actual);

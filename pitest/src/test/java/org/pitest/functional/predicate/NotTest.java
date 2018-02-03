@@ -17,7 +17,7 @@ public class NotTest {
 
   @Test
   public void shouldInvertTrue() {
-    assertFalse(not(True.all()).test(null));
+    assertFalse(not(i -> true).test(null));
   }
 
   @Test

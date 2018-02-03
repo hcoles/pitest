@@ -26,10 +26,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
 
@@ -247,7 +245,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Test
   @Ignore("functionality moving to filter")
   public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
-    createTesteeWith(True.<MethodInfo> all(),
+    createTesteeWith(i -> true,
         NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
     assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
 

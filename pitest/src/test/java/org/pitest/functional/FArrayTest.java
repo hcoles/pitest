@@ -12,11 +12,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.util.PitError;
 
 /**
@@ -30,7 +29,7 @@ public class FArrayTest {
   @Test
   public void shouldReturnAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = Arrays.asList(this.is);
-    assertEquals(expected, FArray.filter(this.is, True.all()));
+    assertEquals(expected, FArray.filter(this.is, i -> true));
   }
 
   @Test
@@ -53,7 +52,7 @@ public class FArrayTest {
 
   @Test
   public void shouldReturnEmptyListWhenGivenNull() {
-    assertEquals(Collections.emptyList(), FArray.filter(null, True.all()));
+    assertEquals(Collections.emptyList(), FArray.filter(null,  i -> true));
   }
 
   @Test
@@ -94,7 +93,7 @@ public class FArrayTest {
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
     final Integer[] xs = { 1, 2, 3 };
-    assertTrue(FArray.contains(xs, True.all()));
+    assertTrue(FArray.contains(xs,  i -> true));
   }
 
   @Test

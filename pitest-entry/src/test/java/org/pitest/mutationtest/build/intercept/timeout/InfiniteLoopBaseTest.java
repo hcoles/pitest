@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
@@ -17,10 +18,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.Option;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
 
@@ -121,7 +119,7 @@ public abstract class InfiniteLoopBaseTest {
 
   GregorMutater createMutator(MethodMutatorFactory ...factories) {
     Collection<MethodMutatorFactory> mutators = asList(factories);
-    return new GregorMutater(source, True.<MethodInfo> all(), mutators);
+    return new GregorMutater(source, m -> true, mutators);
   }
 
 }

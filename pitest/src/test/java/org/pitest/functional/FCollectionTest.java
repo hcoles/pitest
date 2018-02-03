@@ -17,12 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.PitError;
 
@@ -42,7 +41,7 @@ public class FCollectionTest {
   @Test
   public void shouldReturnsAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = this.is;
-    assertEquals(expected, FCollection.filter(this.is, True.all()));
+    assertEquals(expected, FCollection.filter(this.is,  i -> true));
   }
 
   @Test
@@ -127,7 +126,7 @@ public class FCollectionTest {
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    assertTrue(FCollection.contains(xs, True.all()));
+    assertTrue(FCollection.contains(xs,  i -> true));
   }
 
   @Test

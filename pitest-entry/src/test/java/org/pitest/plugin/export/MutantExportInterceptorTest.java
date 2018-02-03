@@ -11,11 +11,9 @@ import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
@@ -32,7 +30,7 @@ public class MutantExportInterceptorTest {
   @Before
   public void setUp() {
     Collection<MethodMutatorFactory> mutators = Mutator.defaults();
-    mutator = new GregorMutater(source, True.<MethodInfo>all(), mutators);
+    mutator = new GregorMutater(source, m -> true, mutators);
     testee = new MutantExportInterceptor(fileSystem, source, "target");
   }
 

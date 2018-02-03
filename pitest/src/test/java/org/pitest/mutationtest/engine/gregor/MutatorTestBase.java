@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -36,8 +37,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
@@ -85,11 +84,11 @@ public abstract class MutatorTestBase {
 
   protected void createTesteeWith(
       final Collection<MethodMutatorFactory> mutators) {
-    createTesteeWith(True.<MethodInfo> all(), mutators);
+    createTesteeWith(i -> true, mutators);
   }
 
   protected void createTesteeWith(final MethodMutatorFactory... mutators) {
-    createTesteeWith(True.<MethodInfo> all(), mutators);
+    createTesteeWith(i -> true, mutators);
   }
 
   protected <T> void assertMutantCallableReturns(final Callable<T> unmutated,

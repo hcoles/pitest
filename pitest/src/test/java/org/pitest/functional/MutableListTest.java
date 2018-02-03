@@ -26,13 +26,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class MutableListTest {
 
@@ -221,7 +220,7 @@ public class MutableListTest {
   @Test
   public void shouldImplementFindFirst() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
-    assertEquals(Option.some(1), testee.findFirst(True.<Integer>all()));
+    assertEquals(Option.some(1), testee.findFirst(i -> true));
     assertEquals(Option.none(), testee.findFirst(False.<Integer>instance()));
   }
 }

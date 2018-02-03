@@ -16,7 +16,7 @@ public class OrTest {
 
   @Test
   public void shouldBeTrueWhenGivenTrue() {
-    final Or<Object> testee = or(True.all());
+    final Or<Object> testee = or( i -> true);
     assertTrue(testee.test(null));
   }
 
@@ -28,13 +28,13 @@ public class OrTest {
 
   @Test
   public void shouldBeTrueWhenTrueOrTrue() {
-    final Or<Object> testee = or(True.all(), True.all());
+    final Or<Object> testee = or( i -> true,  i -> true);
     assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenTrueOrFalse() {
-    final Or<Object> testee = or(True.all(), False.instance());
+    final Or<Object> testee = or( i -> true, False.instance());
     assertTrue(testee.test(null));
   }
 

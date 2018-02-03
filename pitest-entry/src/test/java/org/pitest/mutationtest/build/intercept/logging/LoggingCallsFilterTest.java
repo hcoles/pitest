@@ -14,12 +14,10 @@ import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
@@ -33,7 +31,7 @@ public class LoggingCallsFilterTest {
   public void setUp() {
     ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     Collection<MethodMutatorFactory> mutators = Mutator.defaults();
-    mutator = new GregorMutater(source, True.<MethodInfo>all(), mutators);
+    mutator = new GregorMutater(source, m -> true, mutators);
   }
 
   @Test

@@ -21,12 +21,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -154,7 +153,7 @@ public class TestGregorMutater extends MutatorTestBase {
   @Test
   public void shouldNotMutateGroovyClasses() {
     createTesteeWith(new ResourceFolderByteArraySource(),
-        True.<MethodInfo> all(), Mutator.all());
+        i -> true, Mutator.all());
     final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode");
     assertTrue(actualDetails.isEmpty());
   }
@@ -162,7 +161,7 @@ public class TestGregorMutater extends MutatorTestBase {
   @Test
   public void shouldNotMutateGroovyClosures() {
     createTesteeWith(new ResourceFolderByteArraySource(),
-        True.<MethodInfo> all(), Mutator.all());
+        i -> true, Mutator.all());
     final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode$_mapToString_closure2");
     assertTrue(actualDetails.isEmpty());
   }
@@ -353,7 +352,7 @@ public class TestGregorMutater extends MutatorTestBase {
   @Test
   public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
     createTesteeWith(new ResourceFolderByteArraySource(),
-        True.<MethodInfo> all(), Mutator.byName("REMOVE_CONDITIONALS"));
+        i -> true, Mutator.byName("REMOVE_CONDITIONALS"));
     final Collection<MutationDetails> actualDetails = findMutationsFor("Java7SwitchOnString");
     assertThat(actualDetails).isEmpty();
   }

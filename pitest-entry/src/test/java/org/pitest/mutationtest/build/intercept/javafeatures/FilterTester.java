@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
@@ -19,13 +20,10 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import java.util.function.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
 
@@ -199,11 +197,11 @@ public class FilterTester {
   }
 
   private GregorMutater mutateFromResourceDir() {
-    return new GregorMutater(source, True.<MethodInfo>all(), mutators);
+    return new GregorMutater(source, m -> true, mutators);
   }
   
   private GregorMutater mutateFromClassLoader() {
-    return new GregorMutater( ClassloaderByteArraySource.fromContext(), True.<MethodInfo>all(), mutators);
+    return new GregorMutater( ClassloaderByteArraySource.fromContext(), m -> true, mutators);
   }
   
   

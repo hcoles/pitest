@@ -27,7 +27,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.OtherClassLoaderClassPathRoot;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.True;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
 
@@ -68,7 +67,7 @@ public class CoverageTransformerTest {
   public void shouldTransformClasseMatchingPredicate()
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
-        True.<String> all());
+        s -> true);
     final byte[] bs = this.bytes.getBytes(String.class.getName()).value();
     assertFalse(Arrays.equals(bs,
         testee.transform(null, "anything", null, null, bs)));
@@ -110,7 +109,7 @@ public class CoverageTransformerTest {
   private byte[] transform(final Class<?> clazz)
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
-        True.<String> all());
+        s -> true);
     final byte[] bs = testee.transform(this.loader, clazz.getName(), null,
         null, this.bytes.getBytes(clazz.getName()).value());
     return bs;
