@@ -20,55 +20,24 @@ import java.util.function.Predicate;
 public abstract class Functions {
 
   public static Function<String, String> classNameToJVMClassName() {
-    return new Function<String, String>() {
-
-      @Override
-      public String apply(final String a) {
-        return a.replace(".", "/");
-      }
-
-    };
+    return a -> a.replace(".", "/");
   }
 
   public static Function<String, String> jvmClassToClassName() {
-    return new Function<String, String>() {
-
-      @Override
-      public String apply(final String a) {
-        return a.replace("/", ".");
-      }
-
-    };
+    return a -> a.replace("/", ".");
   }
 
   public static Function<Class<?>, String> classToName() {
-    return new Function<Class<?>, String>() {
-      @Override
-      public String apply(final Class<?> clazz) {
-        return clazz.getName();
-      }
-    };
+    return clazz -> clazz.getName();
 
   }
 
   public static Predicate<String> startsWith(final String filter) {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(final String a) {
-        return a.startsWith(filter);
-      }
-
-    };
+    return a -> a.startsWith(filter);
   }
 
   public static <T extends Enum<T>> Function<String, T> stringToEnum(
       final Class<T> clazz) {
-    return new Function<String, T>() {
-      @Override
-      public T apply(final String name) {
-        return Enum.valueOf(clazz, name);
-      }
-
-    };
+    return name -> Enum.valueOf(clazz, name);
   }
 }

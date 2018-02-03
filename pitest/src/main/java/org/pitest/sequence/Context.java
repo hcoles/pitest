@@ -7,7 +7,7 @@ import java.util.Map;
 import org.pitest.functional.Option;
 
 public class Context<T> {
-  
+
   private final boolean debug;
   private final Map<Slot<?>, Object> slots;
   private final List<T> sequence;
@@ -23,34 +23,34 @@ public class Context<T> {
   public static <T> Context<T> start(List<T> sequence) {
     return start(sequence, false);
   }
-  
+
   public static <T> Context<T> start(List<T> sequence, boolean debug) {
     return new Context<>(new HashMap<Slot<?>, Object>(), sequence, -1, debug);
   }
-  
+
   public <S> boolean store(SlotWrite<S> slot, S value) {
-    slots.put(slot.slot(), value);
+    this.slots.put(slot.slot(), value);
     return true;
   }
-  
+
   @SuppressWarnings("unchecked")
   public <S> Option<S> retrieve(SlotRead<S> slot) {
-    return (Option<S>) Option.some(slots.get(slot.slot()));
+    return (Option<S>) Option.some(this.slots.get(slot.slot()));
   }
-  
-  
+
+
   void moveForward() {
-    position = position + 1;
+    this.position = this.position + 1;
   }
 
   public int position() {
-    return position;
+    return this.position;
   }
 
   public void debug(String msg) {
-    if (debug) {
-      System.out.println(msg + " at " + position + " for " + sequence.get(position));
+    if (this.debug) {
+      System.out.println(msg + " at " + this.position + " for " + this.sequence.get(this.position));
     }
   }
-  
+
 }

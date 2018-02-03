@@ -1,7 +1,8 @@
 package org.pitest.mutationtest.engine.gregor;
 
-import org.pitest.functional.FArray;
 import java.util.function.Predicate;
+
+import org.pitest.functional.FArray;
 
 public class ClassInfo {
 
@@ -31,13 +32,8 @@ public class ClassInfo {
   }
 
   private static Predicate<String> isAGroovyClass() {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(final String a) {
-        return a.startsWith("groovy/lang/")
-            || a.startsWith("org/codehaus/groovy/runtime");
-      }
-    };
+    return a -> a.startsWith("groovy/lang/")
+        || a.startsWith("org/codehaus/groovy/runtime");
   }
 
   public int getVersion() {

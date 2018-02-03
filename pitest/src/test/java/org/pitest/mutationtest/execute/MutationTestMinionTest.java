@@ -50,7 +50,7 @@ public class MutationTestMinionTest {
 
   @Mock
   private Mutater                     mutater;
-  
+
   @Mock
   private MinionSettings              settings;
 
@@ -72,13 +72,13 @@ public class MutationTestMinionTest {
     when(this.is.read(MinionArguments.class)).thenReturn(this.args);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
     .thenReturn(this.mutater);
-    
-    MutationEngineFactory factory = Mockito.mock(MutationEngineFactory.class);
-    when(factory.createEngine(any(EngineArguments.class))).thenReturn(engine);
-    
+
+    final MutationEngineFactory factory = Mockito.mock(MutationEngineFactory.class);
+    when(factory.createEngine(any(EngineArguments.class))).thenReturn(this.engine);
+
     when(this.settings.createEngine(any(String.class))).thenReturn(factory);
-    
-    this.testee = new MutationTestMinion(settings, this.is, this.reporter);
+
+    this.testee = new MutationTestMinion(this.settings, this.is, this.reporter);
   }
 
   @Test

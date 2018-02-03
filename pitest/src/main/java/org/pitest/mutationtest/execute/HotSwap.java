@@ -52,7 +52,7 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
 
   private void restoreForLoader(ClassLoader loader)
       throws ClassNotFoundException {
-    Class<?> clazz = Class.forName(this.lastMutatedClass.asJavaName(), false,
+    final Class<?> clazz = Class.forName(this.lastMutatedClass.asJavaName(), false,
         loader);
     HotSwapAgent.hotSwap(clazz, this.lastClassPreMutation);
   }

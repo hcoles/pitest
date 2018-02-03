@@ -3,9 +3,9 @@ package org.pitest.mutationtest.engine;
 import java.io.Serializable;
 
 public class MethodName implements Serializable {
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   private final String name;
 
   MethodName(final String name) {

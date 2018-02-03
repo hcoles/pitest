@@ -20,7 +20,7 @@ public abstract class Match<T> {
       }
     };
   }
-  
+
   public static <T> Match<T> never() {
     return new Match<T>() {
       @Override
@@ -38,7 +38,7 @@ public abstract class Match<T> {
       }
     };
   }
-  
+
   public Match<T> and(final Match<T> other) {
       final Match<T> self = this;
       return new Match<T>() {
@@ -48,7 +48,7 @@ public abstract class Match<T> {
         }
       };
   }
-  
+
   public Match<T> negate() {
     final Match<T> self = this;
     return new Match<T>() {

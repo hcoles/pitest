@@ -66,9 +66,9 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
   private void applyUnmutatedInstruction(final int opcode) {
     this.mv.visitInsn(opcode);
   }
-  
+
   protected MethodInfo methodInfo() {
-    return methodInfo;
+    return this.methodInfo;
   }
 
 }

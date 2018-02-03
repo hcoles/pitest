@@ -17,8 +17,8 @@ package org.pitest.util;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
-
 import java.util.function.BiFunction;
+
 import org.pitest.functional.FCollection;
 
 public final class PitError extends RuntimeException {

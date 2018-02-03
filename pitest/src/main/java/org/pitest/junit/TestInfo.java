@@ -14,11 +14,12 @@
  */
 package org.pitest.junit;
 
+import java.util.function.Predicate;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
-import java.util.function.Predicate;
 
 abstract class TestInfo {
 
@@ -43,13 +44,7 @@ abstract class TestInfo {
   }
 
   public static Predicate<ClassInfo> isATest() {
-    return new Predicate<ClassInfo>() {
-      @Override
-      public boolean test(final ClassInfo clazz) {
-        return isATest(clazz);
-      }
-
-    };
+    return clazz -> isATest(clazz);
   }
 
   private static boolean isJUnit3Test(final ClassInfo clazz) {

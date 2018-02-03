@@ -1,12 +1,12 @@
 package org.pitest.coverage.execute;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.util.Log;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ErrorListener implements TestListener {
   private static final Logger LOG = Log.getLogger();

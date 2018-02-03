@@ -133,26 +133,12 @@ public class DependencyExtractorTest {
   }
 
   private Predicate<DependencyAccess> ignoreCoreClasses() {
-    return new Predicate<DependencyAccess>() {
-
-      @Override
-      public boolean test(final DependencyAccess a) {
-        return !a.getDest().getOwner().startsWith("java");
-      }
-
-    };
+    return a -> !a.getDest().getOwner().startsWith("java");
 
   }
 
   private Predicate<String> includeOnlyThingsCalled(final String subString) {
-    return new Predicate<String>() {
-
-      @Override
-      public boolean test(final String a) {
-        return a.contains(subString);
-      }
-
-    };
+    return a -> a.contains(subString);
   }
 
   private void constructWithDepthOf(final int depth) {
@@ -161,13 +147,7 @@ public class DependencyExtractorTest {
   }
 
   private Predicate<DependencyAccess> excludeMethodsCalledOne() {
-    return new Predicate<DependencyAccess>() {
-      @Override
-      public boolean test(final DependencyAccess a) {
-        return !a.getSource().getName().equals("one");
-      }
-
-    };
+    return a -> !a.getSource().getName().equals("one");
   }
 
   private void assertCollectionEquals(final Collection<String> expected,

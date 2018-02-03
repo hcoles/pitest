@@ -24,7 +24,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
-    List<MethodMutatorFactory> variations = new ArrayList<>();
+    final List<MethodMutatorFactory> variations = new ArrayList<>();
     for (int i = 0; i != 100; i++) {
       variations.add(new RemoveSwitchMutator(i));
     }
@@ -66,7 +66,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     public void visitTableSwitchInsn(final int i, final int i1,
         final Label defaultLabel, final Label... labels) {
       if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate()) {
-        Label[] newLabels = labels.clone();
+        final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
         super.visitTableSwitchInsn(i, i1, defaultLabel, newLabels);
       } else {
@@ -78,7 +78,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     public void visitLookupSwitchInsn(final Label defaultLabel,
         final int[] ints, final Label[] labels) {
       if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate()) {
-        Label[] newLabels = labels.clone();
+        final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
         super.visitLookupSwitchInsn(defaultLabel, ints, newLabels);
       } else {

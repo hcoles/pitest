@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
-
 import java.util.function.Function;
-import org.pitest.functional.FCollection;
 import java.util.function.Predicate;
+
+import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.PitError;

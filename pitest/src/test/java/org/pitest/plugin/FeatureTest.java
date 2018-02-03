@@ -1,10 +1,10 @@
 package org.pitest.plugin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class FeatureTest {
 
@@ -12,7 +12,7 @@ public class FeatureTest {
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(Feature.class).verify();
   }
-  
+
   @Test
   public void shouldUseOnlyNameForEquality() {
     assertThat(Feature.named("foo"))

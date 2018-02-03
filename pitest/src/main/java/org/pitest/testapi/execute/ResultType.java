@@ -15,6 +15,7 @@
 package org.pitest.testapi.execute;
 
 import java.util.function.Function;
+
 import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
@@ -25,33 +26,13 @@ import org.pitest.testapi.TestResult;
  */
 public enum ResultType {
 
-  PASS(new ResultToListenerSideEffect() {
-    @Override
-    public SideEffect1<TestListener> apply(final TestResult a) {
-      return success(a);
-    }
-  }),
+  PASS(a -> success(a)),
 
-  FAIL(new ResultToListenerSideEffect() {
-    @Override
-    public SideEffect1<TestListener> apply(final TestResult a) {
-      return failure(a);
-    }
-  }),
+  FAIL(a -> failure(a)),
 
-  SKIPPED(new ResultToListenerSideEffect() {
-    @Override
-    public SideEffect1<TestListener> apply(final TestResult a) {
-      return skipped(a);
-    }
-  }),
+  SKIPPED(a -> skipped(a)),
 
-  STARTED(new ResultToListenerSideEffect() {
-    @Override
-    public SideEffect1<TestListener> apply(final TestResult a) {
-      return started(a);
-    }
-  });
+  STARTED(a -> started(a));
 
   private interface ResultToListenerSideEffect extends
   Function<TestResult, SideEffect1<TestListener>> {
@@ -68,39 +49,19 @@ public enum ResultType {
   };
 
   public static SideEffect1<TestListener> success(final TestResult result) {
-    return new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onTestSuccess(result);
-      }
-    };
+    return a -> a.onTestSuccess(result);
   }
 
   public static SideEffect1<TestListener> failure(final TestResult result) {
-    return new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onTestFailure(result);
-      }
-    };
+    return a -> a.onTestFailure(result);
   }
 
   public static SideEffect1<TestListener> skipped(final TestResult result) {
-    return new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onTestSkipped(result);
-      }
-    };
+    return a -> a.onTestSkipped(result);
   }
 
   public static SideEffect1<TestListener> started(final TestResult result) {
-    return new SideEffect1<TestListener>() {
-      @Override
-      public void apply(final TestListener a) {
-        a.onTestStart(result.getDescription());
-      }
-    };
+    return a -> a.onTestStart(result.getDescription());
   }
 
 }

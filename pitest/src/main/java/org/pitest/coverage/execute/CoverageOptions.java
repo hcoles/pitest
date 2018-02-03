@@ -28,9 +28,9 @@ import org.pitest.util.Preconditions;
 public class CoverageOptions implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final Collection<String>      include;
-  private final Collection<String>      exclude;  
+  private final Collection<String>      exclude;
   private final boolean           verbose;
   private final TestPluginArguments pitConfig;
   private final int               maxDependencyDistance;
@@ -47,8 +47,8 @@ public class CoverageOptions implements Serializable {
   }
 
   public Predicate<String> getFilter() {
-    return Prelude.and(Prelude.or(Glob.toGlobPredicates(include)), 
-        Prelude.not(Prelude.or(Glob.toGlobPredicates(exclude))), 
+    return Prelude.and(Prelude.or(Glob.toGlobPredicates(this.include)),
+        Prelude.not(Prelude.or(Glob.toGlobPredicates(this.exclude))),
         Prelude.not(commonClasses()));
   }
 
@@ -63,18 +63,18 @@ public class CoverageOptions implements Serializable {
   public int getDependencyAnalysisMaxDistance() {
     return this.maxDependencyDistance;
   }
-  
+
   private static Predicate<String> commonClasses() {
     return Prelude.or(
-        glob("java/*"), 
+        glob("java/*"),
         glob("sun/*"),
         glob("org/pitest/coverage/*"),
-        glob("org/pitest/reloc/*"), 
+        glob("org/pitest/reloc/*"),
         glob("org/pitest/boot/*"));
   }
 
   private static Glob glob(String match) {
     return new Glob(match);
-  } 
+  }
 
 }

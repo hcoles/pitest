@@ -34,9 +34,9 @@ public class TestNGAdapter implements ITestListener {
     this.description = d;
     this.clazz = clazz;
   }
-  
+
   public boolean hasHadFailure() {
-    return hasHadFailure;
+    return this.hasHadFailure;
   }
 
   @Override

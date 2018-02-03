@@ -28,7 +28,7 @@ public class ClassloaderByteArraySource implements ClassByteArraySource {
   public ClassloaderByteArraySource(final ClassLoader loader) {
     this.cp = new ClassPath(new OtherClassLoaderClassPathRoot(loader));
   }
-  
+
   public static ClassloaderByteArraySource fromContext() {
     return new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
   }

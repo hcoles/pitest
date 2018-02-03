@@ -25,13 +25,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.CoverageDatabase;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.ClassMutationResults;
@@ -68,7 +68,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     try {
       return FileUtil.readToString(IsolationUtils.getContextClassLoader()
           .getResourceAsStream("templates/mutation/style.css"));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
     }
     return "";
@@ -158,14 +158,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   private Function<ClassInfo, String> classInfoToJavaName() {
-    return new Function<ClassInfo, String>() {
-
-      @Override
-      public String apply(final ClassInfo a) {
-        return a.getName().asJavaName();
-      }
-
-    };
+    return a -> a.getName().asJavaName();
   }
 
   private Option<Reader> findSourceFile(final Collection<String> classes,
@@ -187,7 +180,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private void createCssFile() {
     final Writer cssWriter = this.outputStrategy.createWriterForFile("style.css");
     try {
-      cssWriter.write(css);
+      cssWriter.write(this.css);
       cssWriter.close();
     } catch (final IOException e) {
       e.printStackTrace();

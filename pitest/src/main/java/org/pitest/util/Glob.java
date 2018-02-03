@@ -15,11 +15,11 @@
 package org.pitest.util;
 
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 
 public class Glob implements Predicate<String> {
 
@@ -39,12 +39,7 @@ public class Glob implements Predicate<String> {
   }
 
   public static Function<String, Predicate<String>> toGlobPredicate() {
-    return new Function<String, Predicate<String>>() {
-      @Override
-      public Glob apply(final String glob) {
-        return new Glob(glob);
-      }
-    };
+    return glob -> new Glob(glob);
   }
 
   public static Collection<Predicate<String>> toGlobPredicates(

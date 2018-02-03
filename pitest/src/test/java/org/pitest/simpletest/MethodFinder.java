@@ -16,8 +16,8 @@
 package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
-
 import java.util.function.Function;
+
 import org.pitest.functional.Option;
 
 public interface MethodFinder extends Function<Method, Option<TestMethod>> {

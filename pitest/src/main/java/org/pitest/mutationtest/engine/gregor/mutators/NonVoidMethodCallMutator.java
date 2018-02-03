@@ -15,8 +15,9 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.objectweb.asm.MethodVisitor;
 import java.util.function.BiFunction;
+
+import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -43,14 +44,7 @@ public enum NonVoidMethodCallMutator implements MethodMutatorFactory {
   }
 
   private BiFunction<String, String, Boolean> nonVoidMethods() {
-    return new BiFunction<String, String, Boolean>() {
-
-      @Override
-      public Boolean apply(final String name, final String desc) {
-        return !MethodInfo.isVoid(desc);
-      }
-
-    };
+    return (name, desc) -> !MethodInfo.isVoid(desc);
   }
 
 }

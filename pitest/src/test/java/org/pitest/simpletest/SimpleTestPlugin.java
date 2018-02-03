@@ -8,7 +8,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestPluginFactory;
 
 public class SimpleTestPlugin implements TestPluginFactory {
-  
+
   public static final String NAME = "fortestingonly";
 
   @Override

@@ -3,13 +3,13 @@ package org.pitest.mutationtest.mocksupport;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
 
@@ -33,7 +33,7 @@ public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
       final ClassWriter writer = new ClassWriter(
           FrameOptions.pickFlags(classfileBuffer));
 
-      reader.accept(transformation.apply(writer),
+      reader.accept(this.transformation.apply(writer),
           ClassReader.EXPAND_FRAMES);
       return writer.toByteArray();
     } else {

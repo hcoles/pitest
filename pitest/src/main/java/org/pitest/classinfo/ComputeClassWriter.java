@@ -185,7 +185,7 @@ public class ComputeClassWriter extends ClassWriter {
    * @return the ClassReader corresponding to 'type'.
    */
   private ClassReader typeInfo(final String type) {
-    Option<byte[]> maybeBytes = this.bytes.getBytes(type);
+    final Option<byte[]> maybeBytes = this.bytes.getBytes(type);
     if (maybeBytes.hasNone()) {
       throw new PitError("Could not find class defintiion for " + type);
     }

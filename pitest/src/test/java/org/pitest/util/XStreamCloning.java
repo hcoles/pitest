@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 public class XStreamCloning {
-  
+
   private static final XStream                           XSTREAM_INSTANCE          = new XStream(
       new PitXmlDriver());
   private static final WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<>();

@@ -17,6 +17,7 @@ package org.pitest.testng;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.Option;

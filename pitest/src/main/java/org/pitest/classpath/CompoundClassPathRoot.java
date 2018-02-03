@@ -84,5 +84,5 @@ public class CompoundClassPathRoot implements ClassPathRoot,
     return FCollection.map(roots, NameCachingRoot.toCachingRoot());
   }
 
-  
+
 }

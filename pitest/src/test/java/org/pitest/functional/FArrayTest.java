@@ -40,12 +40,7 @@ public class FArrayTest {
 
   @Test
   public void shouldReturnOnlyMatchesToPredicate() {
-    final Predicate<Integer> p = new Predicate<Integer>() {
-      @Override
-      public boolean test(final Integer a) {
-        return a <= 2;
-      }
-    };
+    final Predicate<Integer> p = a -> a <= 2;
     final List<Integer> expected = Arrays.asList(1, 2);
     assertEquals(expected, FArray.filter(this.is, p));
   }
@@ -57,12 +52,7 @@ public class FArrayTest {
 
   @Test
   public void shouldApplyFlatMapToAllItems() {
-    final Function<Integer, Collection<Integer>> f = new Function<Integer, Collection<Integer>>() {
-      @Override
-      public List<Integer> apply(final Integer a) {
-        return Arrays.asList(a, a);
-      }
-    };
+    final Function<Integer, Collection<Integer>> f = a -> Arrays.asList(a, a);
     final Collection<Integer> expected = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4,
         5, 5);
     assertEquals(expected, FArray.flatMap(this.is, f));
@@ -75,13 +65,7 @@ public class FArrayTest {
   }
 
   private Function<Object, Option<Object>> objectToObjectIterable() {
-    return new Function<Object, Option<Object>>() {
-      @Override
-      public Option<Object> apply(final Object a) {
-        return Option.some(a);
-      }
-
-    };
+    return a -> Option.some(a);
   }
 
   @Test
@@ -99,16 +83,11 @@ public class FArrayTest {
   @Test
   public void containsShouldStopProcessingOnFirstMatch() {
     final Integer[] xs = { 1, 2, 3 };
-    final Predicate<Integer> predicate = new Predicate<Integer>() {
-
-      @Override
-      public boolean test(final Integer a) {
-        if (a == 2) {
-          throw new PitError("Did not shortcut");
-        }
-        return a == 1;
+    final Predicate<Integer> predicate = a -> {
+      if (a == 2) {
+        throw new PitError("Did not shortcut");
       }
-
+      return a == 1;
     };
     FArray.contains(xs, predicate);
     // pass

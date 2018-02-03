@@ -69,12 +69,7 @@ public class GregorMutater implements Mutater {
 
   private Function<byte[], Iterable<MutationDetails>> findMutations(
       final ClassContext context) {
-    return new Function<byte[], Iterable<MutationDetails>>() {
-      @Override
-      public Iterable<MutationDetails> apply(final byte[] bytes) {
-        return findMutationsForBytes(context, bytes);
-      }
-    };
+    return bytes -> findMutationsForBytes(context, bytes);
   }
 
   private Collection<MutationDetails> findMutationsForBytes(
@@ -116,14 +111,7 @@ public class GregorMutater implements Mutater {
 
   private static Predicate<MethodMutatorFactory> isMutatorFor(
       final MutationIdentifier id) {
-    return new Predicate<MethodMutatorFactory>() {
-
-      @Override
-      public boolean test(final MethodMutatorFactory a) {
-        return id.getMutator().equals(a.getGloballyUniqueId());
-      }
-
-    };
+    return a -> id.getMutator().equals(a.getGloballyUniqueId());
   }
 
   private Predicate<MethodInfo> filterMethods() {
@@ -132,35 +120,15 @@ public class GregorMutater implements Mutater {
   }
 
   private static Predicate<MethodInfo> isGroovyClass() {
-    return new Predicate<MethodInfo>() {
-      @Override
-      public boolean test(final MethodInfo a) {
-        return a.isInGroovyClass();
-      }
-
-    };
+    return a -> a.isInGroovyClass();
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {
-    return new Predicate<MethodInfo>() {
-
-      @Override
-      public boolean test(final MethodInfo a) {
-        // filter out synthetic methods,
-        // except lambda$... methods, which contain code from lambda expressions
-        return !a.isSynthetic() || a.getName().startsWith("lambda$");
-      }
-
-    };
+    return a -> !a.isSynthetic() || a.getName().startsWith("lambda$");
   }
 
   private static Predicate<MethodInfo> isGeneratedEnumMethod() {
-    return new Predicate<MethodInfo>() {
-      @Override
-      public boolean test(final MethodInfo a) {
-        return a.isGeneratedEnumMethod();
-      }
-    };
+    return a -> a.isGeneratedEnumMethod();
   }
 
 }

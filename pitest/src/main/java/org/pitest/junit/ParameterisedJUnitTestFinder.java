@@ -17,13 +17,13 @@ package org.pitest.junit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.Parameterized;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
@@ -59,15 +59,8 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
   }
 
   private Function<Description, TestUnit> parameterizedToTestUnit(final Class<?> clazz) {
-    return new Function<Description, TestUnit>() {
-
-      @Override
-      public TestUnit apply(final Description a) {
-        return new AdaptedJUnitTestUnit(clazz,
-            Option.<Filter> some(new ParameterisedTestFilter(a.toString())));
-      }
-
-    };
+    return a -> new AdaptedJUnitTestUnit(clazz,
+        Option.<Filter> some(new ParameterisedTestFilter(a.toString())));
   }
 
   private boolean isParameterizedTest(final Runner runner) {

@@ -16,8 +16,6 @@ package org.pitest.junit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +23,9 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.util.IsolationUtils;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestInfoTest {
 

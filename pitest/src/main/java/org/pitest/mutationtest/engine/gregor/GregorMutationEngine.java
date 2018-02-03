@@ -17,11 +17,11 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 
@@ -59,14 +59,7 @@ public class GregorMutationEngine implements MutationEngine {
   }
 
   private static Function<MethodMutatorFactory, String> toName() {
-    return new Function<MethodMutatorFactory, String>() {
-
-      @Override
-      public String apply(final MethodMutatorFactory a) {
-        return a.getName();
-      }
-
-    };
+    return a -> a.getName();
   }
 
   @Override

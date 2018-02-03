@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-
 import java.util.function.Predicate;
 
 /**
@@ -89,7 +88,7 @@ public abstract class FCollection {
       }
     }
   }
-  
+
 
   public static <T> Option<T> findFirst(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
@@ -100,7 +99,7 @@ public abstract class FCollection {
     }
     return Option.none();
   }
-  
+
 
   public static <T> boolean contains(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {

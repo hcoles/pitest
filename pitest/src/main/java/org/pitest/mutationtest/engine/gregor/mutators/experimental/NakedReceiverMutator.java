@@ -15,6 +15,9 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import static org.objectweb.asm.Opcodes.POP;
+import static org.objectweb.asm.Opcodes.POP2;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -22,9 +25,6 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
-
-import static org.objectweb.asm.Opcodes.POP;
-import static org.objectweb.asm.Opcodes.POP2;
 
 /**
  * Mutator for non-void methods whos return type matches
@@ -48,15 +48,18 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
 
   NAKED_RECEIVER;
 
+  @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new ReplaceMethodCallWithObjectVisitor(context, methodVisitor, this);
   }
 
+  @Override
   public String getGloballyUniqueId() {
     return this.getClass().getName();
   }
 
+  @Override
   public String getName() {
     return name();
   }
@@ -80,7 +83,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
         final MutationIdentifier newId = this.context
             .registerMutation(this.factory,
                 "replaced call to " + owner + "::" + name + " with receiver");
-        if (context.shouldMutate(newId)) {
+        if (this.context.shouldMutate(newId)) {
           popMethodArgumentsFromStack(desc);
           return;
         }
@@ -96,8 +99,8 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
     }
 
     private void popMethodArgumentsFromStack(String desc) {
-      Type[] argumentTypes = Type.getArgumentTypes(desc);
-      for (Type argType : argumentTypes) {
+      final Type[] argumentTypes = Type.getArgumentTypes(desc);
+      for (final Type argType : argumentTypes) {
         popArgument(argType);
       }
     }
@@ -109,7 +112,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
         this.mv.visitInsn(POP);
       }
     }
-    
+
     private boolean isNonStaticCall(int opcode) {
       return Opcodes.INVOKESTATIC != opcode;
     }

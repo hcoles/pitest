@@ -23,10 +23,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
-import java.util.function.Function;
 import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 
@@ -73,17 +73,13 @@ public class InputStreamLineIterableTest {
   public void shouldReturnFalseWhenContainsCalledAndPredicateDoesNotMatch() {
     assertFalse(this.testee.contains(isEqualTo("10")));
   }
-  
-  private Function<String, Option<String>> mapIfNotTwo() {
-    return new Function<String, Option<String>>() {
-      @Override
-      public Option<String> apply(final String a) {
-        if (a.equals("2")) {
-          return Option.none();
-        }
-        return Option.some(a);
-      }
 
+  private Function<String, Option<String>> mapIfNotTwo() {
+    return a -> {
+      if (a.equals("2")) {
+        return Option.none();
+      }
+      return Option.some(a);
     };
   }
 

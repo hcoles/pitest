@@ -29,12 +29,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -59,7 +59,7 @@ public class OptionsParserTest {
     when(this.filter.test(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }
-  
+
   @Test
   public void shouldParseTestPlugin() {
     final String value = "foo";
@@ -113,7 +113,7 @@ public class OptionsParserTest {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.name(),
         MathMutator.MATH_MUTATOR.name()), actual.getMutators());
   }
-  
+
   @Test
   public void shouldParseCommaSeparatedListOfFeatures() {
     final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
@@ -283,15 +283,15 @@ public class OptionsParserTest {
 
   @Test
   public void shouldAcceptFileWithListOfAdditionalClassPathElements() {
-    ClassLoader classLoader = getClass().getClassLoader();
-    File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
+    final ClassLoader classLoader = getClass().getClassLoader();
+    final File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
     final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
 	    classPathFile.getAbsolutePath());
     final Collection<String> actual = ro.getClassPathElements();
     assertTrue(actual.contains("C:/foo"));
     assertTrue(actual.contains("/etc/bar"));
   }
-  
+
   @Test
   public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
     assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
@@ -299,7 +299,7 @@ public class OptionsParserTest {
     assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
         .shouldFailWhenNoMutations());
   }
-  
+
   @Test
   public void shouldFailWhenNoMutationsSetByDefault() {
     assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
@@ -378,7 +378,7 @@ public class OptionsParserTest {
         "42");
     assertEquals(42, actual.getMutationThreshold());
   }
-  
+
   @Test
   public void shouldParseMaximumAllowedSurvivingMutants() {
     final ReportOptions actual = parseAddingRequiredArgs("--maxSurviving",
@@ -498,12 +498,7 @@ public class OptionsParserTest {
   }
 
   private Predicate<String> gregorClass() {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(String s) {
-        return GregorMutationEngine.class.getName().equals(s);
-      }
-    };
+    return s -> GregorMutationEngine.class.getName().equals(s);
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

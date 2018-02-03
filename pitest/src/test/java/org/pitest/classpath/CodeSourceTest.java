@@ -50,7 +50,7 @@ public class CodeSourceTest {
   public void shouldIdentifyTestClassesOnTestPath() {
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
-    assertThat(this.testee.getTests()).containsExactly(foo, bar);
+    assertThat(this.testee.getTests()).containsExactly(this.foo, this.bar);
   }
 
   @Test

@@ -57,14 +57,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
   private static Predicate<MethodInfo> stringToMethodInfoPredicate(
       final Collection<String> excludedMethods) {
     final Predicate<String> excluded = Prelude.or(Glob.toGlobPredicates(excludedMethods));
-    return new Predicate<MethodInfo>() {
-
-      @Override
-      public boolean test(final MethodInfo a) {
-        return excluded.test(a.getName());
-      }
-
-    };
+    return a -> excluded.test(a.getName());
   }
 
   @Override

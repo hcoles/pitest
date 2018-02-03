@@ -50,7 +50,7 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   public void shouldNotMutateVoidMethodCall() throws Exception {
     assertNoMutants(HasVoidMethodCall.class);
   }
-  
+
   @Test
   public void shouldNotMutateStaticMethodCall() {
     assertNoMutants(HasStaticMethodCallWithSameType.class);
@@ -59,8 +59,8 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   @Test
   public void willReplaceCallToMethodWithDifferentGenericTypeDueToTypeErasure()
       throws Exception {
-    Mutant mutant = getFirstMutant(CallsMethodsWithGenericTypes.class);
-    Foo<String> receiver = new Foo<>("3");
+    final Mutant mutant = getFirstMutant(CallsMethodsWithGenericTypes.class);
+    final Foo<String> receiver = new Foo<>("3");
     assertMutantCallableReturns(new CallsMethodsWithGenericTypes(receiver),
         mutant, receiver);
   }
@@ -72,14 +72,15 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
   }
 
   private static class HasStringMethodCall implements Callable<String> {
-    private String arg;
+    private final String arg;
 
     public HasStringMethodCall(String arg) {
       this.arg = arg;
     }
 
+    @Override
     public String call() throws Exception {
-      return arg.toLowerCase();
+      return this.arg.toLowerCase();
     }
   }
 
@@ -96,14 +97,15 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   private static class CallsMethodsWithGenericTypes
       implements Callable<Foo<?>> {
-    private Foo<String> myArg;
+    private final Foo<String> myArg;
 
     public CallsMethodsWithGenericTypes(Foo<String> myArg) {
       this.myArg = myArg;
     }
 
+    @Override
     public Foo<?> call() {
-      return myArg.returnsFooInteger();
+      return this.myArg.returnsFooInteger();
     }
   }
 
@@ -116,8 +118,13 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
       return new HasStaticMethodCallWithSameType();
     }
   }
-  
+
   static class Foo<T> extends ArrayList<T> {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     public Foo(T arg) {
       super(singletonList(arg));
@@ -143,18 +150,19 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
     public int nonDsl(final int newVal) {
       this.i += newVal;
-      return i;
+      return this.i;
     }
 
+    @Override
     public String call() throws Exception {
-      HasDslMethodCall dsl = this;
+      final HasDslMethodCall dsl = this;
       dsl.chain(1).nonDsl(3);
       return "" + dsl;
     }
 
     @Override
     public String toString() {
-      return "HasDslMethodCall [i=" + i + "]";
+      return "HasDslMethodCall [i=" + this.i + "]";
     }
 
   }

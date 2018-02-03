@@ -56,13 +56,8 @@ public class LocationMother {
   }
 
   private static Generator<LocationBuilder, Location> locationSeed() {
-    return new Generator<LocationBuilder, Location>() {
-      @Override
-      public Location generate(LocationBuilder b) {
-        return Location.location(b._Class(),
-            MethodName.fromString(b._Method()), b._MethodDescription());
-      }
-    };
+    return b -> Location.location(b._Class(),
+        MethodName.fromString(b._Method()), b._MethodDescription());
   }
 
   public static MutationIdentifierBuilder aMutationId() {
@@ -71,11 +66,6 @@ public class LocationMother {
   }
 
   private static Generator<MutationIdentifierBuilder, MutationIdentifier> idSeed() {
-    return new Generator<MutationIdentifierBuilder, MutationIdentifier>() {
-      @Override
-      public MutationIdentifier generate(MutationIdentifierBuilder b) {
-        return new MutationIdentifier(b._Location(), b._Index(), b._Mutator());
-      }
-    };
+    return b -> new MutationIdentifier(b._Location(), b._Index(), b._Mutator());
   }
 }

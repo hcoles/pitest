@@ -95,7 +95,7 @@ public class CoverageTransformerTest {
   }
 
   protected void printRaw(final Class<?> clazz) throws IOException {
-    OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(
+    final OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(
         IsolationUtils.getContextClassLoader());
     printClass(StreamUtil.streamToByteArray(r.getData(clazz.getName())));
   }

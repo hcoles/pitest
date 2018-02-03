@@ -75,7 +75,7 @@ public enum DetectionStatus {
 
   /**
    * Converts a process exit code to a mutation status
-   * 
+   *
    * @param exitCode
    *          Exit code to convert
    * @return The status corresponding to the exit code

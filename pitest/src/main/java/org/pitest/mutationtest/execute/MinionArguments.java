@@ -24,7 +24,7 @@ import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MinionArguments implements Serializable {
-  
+
   private static final long serialVersionUID = 1L;
 
   final Collection<MutationDetails> mutations;

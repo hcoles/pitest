@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -98,15 +98,15 @@ public class TestNGTestUnitTest {
     verify(this.rc, times(1)).notifySkipped(
         eq(new Description("passes", Fails.class)));
   }
-  
+
   // we have static state so history may affect results
   @Test
   public void shouldRunTestsInNextTestClassAferFailure() {
     new TestNGTestUnit(Fails.class, this.config, this.includedTestMethods).execute(Mockito.mock(ResultCollector.class));
-    
+
     this.testee = new TestNGTestUnit(Passes.class, this.config, this.includedTestMethods);
     this.testee.execute(this.rc);
-    
+
     verify(this.rc, times(1))
     .notifyEnd(new Description("passes", Passes.class));;
   }
@@ -137,7 +137,7 @@ public class TestNGTestUnitTest {
 
   @Test
   public void shouldOnlyRunTestsInIncludedTestMethods() {
-    List<String> includedMethods = new ArrayList<>();
+    final List<String> includedMethods = new ArrayList<>();
     includedMethods.add("includeGroup");
     includedMethods.add("excludeGroup");
 

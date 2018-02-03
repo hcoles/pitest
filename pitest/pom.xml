@@ -161,26 +161,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>classycle-maven-plugin</artifactId>
-				<version>0.4</version>
-				<executions>
-					<execution>
-						<id>verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<dependencyDefinition>
-								show allResults
-								check absenceOfPackageCycles &gt; 3 in org.pitest.*
-							</dependencyDefinition>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 
 		<resources>

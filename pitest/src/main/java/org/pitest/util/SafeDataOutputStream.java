@@ -46,7 +46,7 @@ public class SafeDataOutputStream {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
+
 
   public void writeBytes(final byte[] data) {
     try {
@@ -56,7 +56,7 @@ public class SafeDataOutputStream {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
+
   public <T extends Serializable> void write(final T value) {
     try {
       writeBytes(toByteArray(value));
@@ -64,7 +64,7 @@ public class SafeDataOutputStream {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
+
   public void flush() {
     try {
       this.dos.flush();
@@ -107,12 +107,12 @@ public class SafeDataOutputStream {
 
   private byte[] toByteArray(Serializable value) throws IOException {
     try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-      ObjectOutput out = new ObjectOutputStream(bos);
+      final ObjectOutput out = new ObjectOutputStream(bos);
       out.writeObject(value);
       out.flush();
       return bos.toByteArray();
     }
   }
 
-  
+
 }

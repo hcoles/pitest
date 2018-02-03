@@ -34,7 +34,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   private final Collection<String> includedTestMethods;
 
   private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
-  
+
   public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners,
                                       Collection<String> includedTestMethods) {
     Preconditions.checkNotNull(config);
@@ -46,7 +46,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
-        new JUnitCustomRunnerTestUnitFinder(config, excludedRunners, includedTestMethods),
+        new JUnitCustomRunnerTestUnitFinder(this.config, this.excludedRunners, this.includedTestMethods),
         new ParameterisedJUnitTestFinder()));
   }
 

@@ -76,16 +76,16 @@ public class Pitest {
   private void processResults(final List<TestResult> results) {
     for (final TestResult result : results) {
       final ResultType classifiedResult = classify(result);
-      classifiedResult.getListenerFunction(result).apply(listener);
+      classifiedResult.getListenerFunction(result).apply(this.listener);
     }
   }
 
   private void signalRunStartToAllListeners() {
-    listener.onRunStart();
+    this.listener.onRunStart();
   }
 
   private void signalRunEndToAllListeners() {
-    listener.onRunEnd();
+    this.listener.onRunEnd();
   }
 
   private ResultType classify(final TestResult result) {

@@ -6,13 +6,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.lang.instrument.IllegalClassFormatException;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import java.util.function.Predicate;
 import org.pitest.util.IsolationUtils;
 
 public class BendJavassistToMyWillTransformerTest {
@@ -47,6 +47,6 @@ public class BendJavassistToMyWillTransformerTest {
     assertFalse(null == this.testee.transform(null, "foo", null, null,
         this.bytes));
   }
-  
+
 
 }

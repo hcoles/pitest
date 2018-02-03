@@ -21,13 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
-
 import java.util.function.Predicate;
 
 public final class MutableList<A> implements FunctionalList<A> {
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   private final List<A> impl;
 
   @SafeVarargs
@@ -137,10 +136,10 @@ public final class MutableList<A> implements FunctionalList<A> {
   public <B> void mapTo(final Function<A, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
-  
+
   @Override
   public Option<A> findFirst(Predicate<A> predicate) {
-    return FCollection.findFirst(impl, predicate);
+    return FCollection.findFirst(this.impl, predicate);
   }
 
 

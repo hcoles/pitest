@@ -59,17 +59,12 @@ public class MutationDetailsMother {
   }
 
   private static Generator<MutationDetailsBuilder, MutationDetails> seed() {
-    return new Generator<MutationDetailsBuilder, MutationDetails>() {
-
-      @Override
-      public MutationDetails generate(MutationDetailsBuilder b) {
-        MutationDetails md = new MutationDetails(b._Id(), b._Filename(),
-            b._Description(), b._LineNumber(), b._Block(),
-            b._IsInFinallyBlock(), b._Poison());
-        md.addTestsInOrder(b._TestsInOrder());
-        return md;
-      }
-
+    return b -> {
+      final MutationDetails md = new MutationDetails(b._Id(), b._Filename(),
+          b._Description(), b._LineNumber(), b._Block(),
+          b._IsInFinallyBlock(), b._Poison());
+      md.addTestsInOrder(b._TestsInOrder());
+      return md;
     };
   }
 

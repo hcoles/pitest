@@ -24,11 +24,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.functional.SideEffect1;
-import java.util.function.Predicate;
 import org.pitest.reflection.Reflection;
 import org.pitest.simpletest.steps.CallStep;
 import org.pitest.testapi.Description;
@@ -107,26 +107,14 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   private Predicate<InstantiationStrategy> canInstantiate(final Class<?> clazz) {
-    return new Predicate<InstantiationStrategy>() {
-
-      @Override
-      public boolean test(final InstantiationStrategy a) {
-        return a.canInstantiate(clazz);
-      }
-
-    };
+    return a -> a.canInstantiate(clazz);
   }
 
   private Collection<TestMethod> findTestMethods(final Class<?> clazz) {
 
     final EqualitySet<TestMethod> set = new EqualitySet<>(
         new SignatureEqualityStrategy());
-    final SideEffect1<TestMethod> addToSet = new SideEffect1<TestMethod>() {
-      @Override
-      public void apply(final TestMethod a) {
-        set.add(a);
-      }
-    };
+    final SideEffect1<TestMethod> addToSet = a -> set.add(a);
     final Collection<Method> methods = Reflection.allMethods(clazz);
     for (final Function<Method, Option<TestMethod>> mf : this.testMethodFinders) {
       FCollection.flatMap(methods, mf).forEach(addToSet);

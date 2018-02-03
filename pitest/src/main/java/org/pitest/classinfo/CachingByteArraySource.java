@@ -6,7 +6,7 @@ import java.util.Map;
 import org.pitest.functional.Option;
 
 public class CachingByteArraySource implements ClassByteArraySource {
-  
+
   private final ClassByteArraySource child;
   private final Map<String,Option<byte[]>> cache;
 
@@ -17,15 +17,15 @@ public class CachingByteArraySource implements ClassByteArraySource {
 
   @Override
   public Option<byte[]> getBytes(String clazz) {
-    Option<byte[]> maybeBytes = cache.get(clazz);
+    Option<byte[]> maybeBytes = this.cache.get(clazz);
     if (maybeBytes != null) {
       return maybeBytes;
     }
-    
-    maybeBytes  = child.getBytes(clazz);
-    cache.put(clazz, maybeBytes);
+
+    maybeBytes  = this.child.getBytes(clazz);
+    this.cache.put(clazz, maybeBytes);
     return maybeBytes;
-    
+
   }
 
 }
@@ -38,6 +38,6 @@ class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {
   private static final long serialVersionUID = 2648931151905594122L;
   @Override
   protected boolean removeEldestEntry(Map.Entry <K,V> eldest) {
-    return size() > maxsize;
+    return size() > this.maxsize;
 }
 };

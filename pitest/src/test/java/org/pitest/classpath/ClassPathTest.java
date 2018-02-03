@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
-import java.util.function.Predicate;
 import org.pitest.functional.prelude.Prelude;
 
 public class ClassPathTest {
@@ -85,14 +85,7 @@ public class ClassPathTest {
   }
 
   private Predicate<ClassPathRoot> rootIsEqualTo(final String value) {
-    return new Predicate<ClassPathRoot>() {
-
-      @Override
-      public boolean test(final ClassPathRoot a) {
-        return a.cacheLocation().value().equals(value);
-      }
-
-    };
+    return a -> a.cacheLocation().value().equals(value);
   }
 
 }

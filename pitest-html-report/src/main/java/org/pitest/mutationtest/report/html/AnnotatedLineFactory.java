@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.ClassLine;
@@ -26,7 +27,6 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
@@ -75,14 +75,7 @@ public class AnnotatedLineFactory {
   }
 
   private Predicate<MutationResult> isAtLineNumber(final int lineNumber) {
-    return new Predicate<MutationResult>() {
-
-      @Override
-      public boolean test(final MutationResult result) {
-        return result.getDetails().getLineNumber() == lineNumber;
-      }
-
-    };
+    return result -> result.getDetails().getLineNumber() == lineNumber;
   }
 
   private LineStatus lineCovered(final int line) {
@@ -103,13 +96,8 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isLineCovered(final int line) {
-    final Predicate<ClassInfo> predicate = new Predicate<ClassInfo>() {
-      @Override
-      public boolean test(final ClassInfo a) {
-        return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
-            new ClassLine(a.getName().asInternalName(), line)).isEmpty();
-      }
-    };
+    final Predicate<ClassInfo> predicate = a -> !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
+        new ClassLine(a.getName().asInternalName(), line)).isEmpty();
     return FCollection.contains(this.classesInFile, predicate);
 
   }

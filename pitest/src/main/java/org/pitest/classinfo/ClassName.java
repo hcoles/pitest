@@ -14,19 +14,19 @@
  */
 package org.pitest.classinfo;
 
+import java.io.Serializable;
 import java.util.function.Function;
+import java.util.logging.Logger;
+
 import org.pitest.functional.Option;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
-
-import java.io.Serializable;
-import java.util.logging.Logger;
 
 public final class ClassName implements Comparable<ClassName>, Serializable {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = Log.getLogger();
-  
+
   private static final ClassName OBJECT = new ClassName("java/lang/Object");
   private static final ClassName STRING = new ClassName("java/lang/String");
 
@@ -39,9 +39,9 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
   public static ClassName fromClass(final Class<?> clazz) {
     return ClassName.fromString(clazz.getName());
   }
-  
+
   public static ClassName fromString(final String clazz) {
-    String name = clazz.replace('.', '/');
+    final String name = clazz.replace('.', '/');
     if (name.equals(OBJECT.asInternalName())) {
       return OBJECT;
     }
@@ -94,12 +94,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
   }
 
   public static Function<String, ClassName> stringToClassName() {
-    return new Function<String, ClassName>() {
-      @Override
-      public ClassName apply(final String clazz) {
-        return ClassName.fromString(clazz);
-      }
-    };
+    return clazz -> ClassName.fromString(clazz);
   }
 
   public static Function<ClassName, Option<Class<?>>> nameToClass() {
@@ -108,31 +103,26 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
 
   public static Function<ClassName, Option<Class<?>>> nameToClass(
       final ClassLoader loader) {
-    return new Function<ClassName, Option<Class<?>>>() {
-
-      @Override
-      public Option<Class<?>> apply(final ClassName className) {
-        try {
-          final Class<?> clazz = Class.forName(className.asJavaName(), false,
-              loader);
-          return Option.<Class<?>> some(clazz);
-        } catch (final ClassNotFoundException e) {
-          LOG.warning("Could not load " + className
-              + " (ClassNotFoundException: " + e.getMessage() + ")");
-          return Option.none();
-        } catch (final NoClassDefFoundError e) {
-          LOG.warning("Could not load " + className
-              + " (NoClassDefFoundError: " + e.getMessage() + ")");
-          return Option.none();
-        } catch (final LinkageError e) {
-          LOG.warning("Could not load " + className + " " + e.getMessage());
-          return Option.none();
-        } catch (final SecurityException e) {
-          LOG.warning("Could not load " + className + " " + e.getMessage());
-          return Option.none();
-        }
+    return className -> {
+      try {
+        final Class<?> clazz = Class.forName(className.asJavaName(), false,
+            loader);
+        return Option.<Class<?>> some(clazz);
+      } catch (final ClassNotFoundException e1) {
+        LOG.warning("Could not load " + className
+            + " (ClassNotFoundException: " + e1.getMessage() + ")");
+        return Option.none();
+      } catch (final NoClassDefFoundError e2) {
+        LOG.warning("Could not load " + className
+            + " (NoClassDefFoundError: " + e2.getMessage() + ")");
+        return Option.none();
+      } catch (final LinkageError e3) {
+        LOG.warning("Could not load " + className + " " + e3.getMessage());
+        return Option.none();
+      } catch (final SecurityException e4) {
+        LOG.warning("Could not load " + className + " " + e4.getMessage());
+        return Option.none();
       }
-
     };
   }
 

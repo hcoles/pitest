@@ -20,12 +20,12 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
-import java.util.function.Predicate;
 
 public class InputStreamLineIterable implements FunctionalIterable<String> {
 

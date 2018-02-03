@@ -26,7 +26,7 @@ public class FrameOptions {
   }
 
   public static boolean needsFrames(byte[] bs) {
-    short majorVersion = (short) (((bs[6] & 0xFF) << 8) | (bs[7] & 0xFF));
+    final short majorVersion = (short) (((bs[6] & 0xFF) << 8) | (bs[7] & 0xFF));
     return majorVersion >= JAVA_7;
   }
 

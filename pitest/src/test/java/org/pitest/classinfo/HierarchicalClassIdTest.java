@@ -1,8 +1,8 @@
 package org.pitest.classinfo;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class HierarchicalClassIdTest {
 

@@ -22,7 +22,7 @@ import java.util.List;
 public class TestGroupConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final List<String> excludedGroups;
   private final List<String> includedGroups;
 
@@ -37,19 +37,19 @@ public class TestGroupConfig implements Serializable {
   public TestGroupConfig() {
     this(null, null);
   }
-  
+
   public static TestGroupConfig emptyConfig() {
     return new TestGroupConfig();
   }
-  
+
   public TestGroupConfig withExcludedGroups(String... excluded) {
-    return new TestGroupConfig(Arrays.asList(excluded), includedGroups);
+    return new TestGroupConfig(Arrays.asList(excluded), this.includedGroups);
   }
-  
+
   public TestGroupConfig withIncludedGroups(String... included) {
-    return new TestGroupConfig(excludedGroups, Arrays.asList(included));
+    return new TestGroupConfig(this.excludedGroups, Arrays.asList(included));
   }
-  
+
   public List<String> getExcludedGroups() {
     return this.excludedGroups;
   }

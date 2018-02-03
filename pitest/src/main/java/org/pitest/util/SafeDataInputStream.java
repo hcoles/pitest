@@ -45,7 +45,7 @@ public class SafeDataInputStream {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
+
   public byte[] readBytes() {
     try {
       final int length = this.dis.readInt();
@@ -97,14 +97,14 @@ public class SafeDataInputStream {
       throw Unchecked.translateCheckedException(e);
     }
   }
-  
+
   private Object deserialize(byte[] bytes) throws IOException {
-    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+    final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
     ObjectInput in = null;
     try {
       in = new ObjectInputStream(bis);
-      return in.readObject(); 
-    } catch (ClassNotFoundException e) {
+      return in.readObject();
+    } catch (final ClassNotFoundException e) {
       throw Unchecked.translateCheckedException(e);
     } finally {
         if (in != null) {

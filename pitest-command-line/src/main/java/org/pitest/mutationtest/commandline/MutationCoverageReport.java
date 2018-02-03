@@ -79,12 +79,12 @@ public class MutationCoverageReport {
           + threshold + " survivors allowed");
     }
   }
-  
+
   private static CombinedStatistics runReport(ReportOptions data,
       PluginServices plugins) {
 
-    EntryPoint e = new EntryPoint();
-    AnalysisResult result = e.execute(null, data, plugins,
+    final EntryPoint e = new EntryPoint();
+    final AnalysisResult result = e.execute(null, data, plugins,
         new HashMap<String, String>());
     if (result.getError().hasSome()) {
       throw Unchecked.translateCheckedException(result.getError().value());

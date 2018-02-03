@@ -12,8 +12,8 @@ import org.pitest.classpath.ClassPathRoot;
 import org.pitest.functional.Option;
 
 public class ResourceFolderByteArraySource implements ClassByteArraySource {
-  
-  
+
+
   @Override
   public Option<byte[]> getBytes(final String classname) {
     final ClassPath cp = new ClassPath(new ResourceFolderClassPathroot());

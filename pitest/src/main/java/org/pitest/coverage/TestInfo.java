@@ -15,15 +15,15 @@
 package org.pitest.coverage;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
-import java.util.function.Function;
 import org.pitest.functional.Option;
 
 public final class TestInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final String            name;
   private final String            definingClass;
 
@@ -58,24 +58,11 @@ public final class TestInfo implements Serializable {
   }
 
   public static Function<TestInfo, String> toName() {
-    return new Function<TestInfo, String>() {
-      @Override
-      public String apply(final TestInfo a) {
-        return a.getName();
-      }
-
-    };
+    return a -> a.getName();
   }
 
   public static Function<TestInfo, ClassName> toDefiningClassName() {
-    return new Function<TestInfo, ClassName>() {
-
-      @Override
-      public ClassName apply(final TestInfo a) {
-        return ClassName.fromString(a.definingClass);
-      }
-
-    };
+    return a -> ClassName.fromString(a.definingClass);
   }
 
   public boolean directlyHits(final ClassName targetClass) {
@@ -121,7 +108,7 @@ public final class TestInfo implements Serializable {
     }
     return true;
   }
-  
+
   private static String internIfNotNull(final String string) {
     if (string == null) {
       return null;

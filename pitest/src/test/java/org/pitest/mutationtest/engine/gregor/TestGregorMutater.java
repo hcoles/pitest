@@ -348,7 +348,7 @@ public class TestGregorMutater extends MutatorTestBase {
                                                                     // by
                                                                     // target?
   }
-  
+
   @Test
   public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
     createTesteeWith(new ResourceFolderByteArraySource(),
@@ -356,16 +356,10 @@ public class TestGregorMutater extends MutatorTestBase {
     final Collection<MutationDetails> actualDetails = findMutationsFor("Java7SwitchOnString");
     assertThat(actualDetails).isEmpty();
   }
-  
-  
-  private static Predicate<MutationDetails> isInFinallyBlock() {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(final MutationDetails a) {
-        return a.isInFinallyBlock();
-      }
 
-    };
+
+  private static Predicate<MutationDetails> isInFinallyBlock() {
+    return a -> a.isInFinallyBlock();
   }
 
   private void assertTwoMutationsInDifferentBlocks(

@@ -120,17 +120,12 @@ public abstract class MutatorTestBase {
   }
 
   private Transformation createTransformation(final Mutant mutant) {
-    return new Transformation() {
-
-      @Override
-      public byte[] transform(final String name, final byte[] bytes) {
-        if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
-          return mutant.getBytes();
-        } else {
-          return bytes;
-        }
+    return (name, bytes) -> {
+      if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
+        return mutant.getBytes();
+      } else {
+        return bytes;
       }
-
     };
   }
 
@@ -149,14 +144,7 @@ public abstract class MutatorTestBase {
   }
 
   private Function<MutationDetails, Mutant> createMutant() {
-    return new Function<MutationDetails, Mutant>() {
-
-      @Override
-      public Mutant apply(final MutationDetails a) {
-        return MutatorTestBase.this.engine.getMutation(a.getId());
-      }
-
-    };
+    return a -> MutatorTestBase.this.engine.getMutation(a.getId());
   }
 
   protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
@@ -181,7 +169,7 @@ public abstract class MutatorTestBase {
 
   }
 
-  protected void printMutant(final Mutant mutant) {    
+  protected void printMutant(final Mutant mutant) {
      final ClassReader reader = new ClassReader(mutant.getBytes());
      reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
          System.out)), ClassReader.EXPAND_FRAMES);
@@ -206,14 +194,7 @@ public abstract class MutatorTestBase {
   }
 
   private Function<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
-    return new Function<Mutant, String>() {
-
-      @Override
-      public String apply(final Mutant mutant) {
-        return mutateAndCall(mutee, mutant);
-      }
-
-    };
+    return mutant -> mutateAndCall(mutee, mutant);
   }
 
   protected void assertMutantsAreFrom(
@@ -234,25 +215,13 @@ public abstract class MutatorTestBase {
   }
 
   protected Predicate<MethodInfo> mutateOnlyCallMethod() {
-    return new Predicate<MethodInfo>() {
-
-      @Override
-      public boolean test(final MethodInfo a) {
-        return a.getName().equals("call");
-      }
-
-    };
+    return a -> a.getName().equals("call");
   }
 
   protected Predicate<MutationDetails> descriptionContaining(final String value) {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(final MutationDetails a) {
-        return a.getDescription().contains(value);
-      }
-    };
+    return a -> a.getDescription().contains(value);
   }
-  
+
   protected void assertMutantDescriptionIncludes(String string, Class<?> clazz) {
     final Collection<MutationDetails> actual = findMutationsFor(clazz);
     assertThat(actual.iterator().next().getDescription()).contains(string);

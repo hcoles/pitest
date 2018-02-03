@@ -57,34 +57,17 @@ public abstract class Prelude {
 
   public static final <A> SideEffect1<A> accumulateTo(
       final Collection<A> collection) {
-    return new SideEffect1<A>() {
-
-      @Override
-      public void apply(final A a) {
-        collection.add(a);
-      }
-
-    };
+    return a -> collection.add(a);
 
   }
 
   public static <A, B> SideEffect1<A> putToMap(final Map<A, B> map,
       final B value) {
-    return new SideEffect1<A>() {
-      @Override
-      public void apply(final A key) {
-        map.put(key, value);
-      }
-    };
+    return key -> map.put(key, value);
   }
 
   public static final <A> Function<A, A> id() {
-    return new Function<A, A>() {
-      @Override
-      public A apply(final A a) {
-        return a;
-      }
-    };
+    return a -> a;
   }
 
   public static final <A> Function<A, A> id(final Class<A> type) {
@@ -105,77 +88,35 @@ public abstract class Prelude {
   }
 
   public static final <T> SideEffect1<T> printTo(final PrintStream stream) {
-    return new SideEffect1<T>() {
-      @Override
-      public void apply(final T a) {
-        stream.print(a);
-      }
-    };
+    return a -> stream.print(a);
   }
 
   public static <T> SideEffect1<T> printWith(final T t) {
-    return new SideEffect1<T>() {
-      @Override
-      public void apply(final T a) {
-        System.out.print(t + " : " + a);
-      }
-    };
+    return a -> System.out.print(t + " : " + a);
   }
 
   public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
-    return new Predicate<T>() {
-      @Override
-      public boolean test(final T o) {
-        return o.longValue() > value.longValue();
-      }
-    };
+    return o -> o.longValue() > value.longValue();
   }
 
   public static <T> Predicate<T> isEqualTo(final T value) {
-    return new Predicate<T>() {
-      @Override
-      public boolean test(final T o) {
-        return o.equals(value);
-      }
-    };
+    return o -> o.equals(value);
   }
 
   public static <T> Predicate<T> isNotNull() {
-    return new Predicate<T>() {
-      @Override
-      public boolean test(final T o) {
-        return (o != null);
-      }
-    };
+    return o -> (o != null);
   }
 
   public static <T> Predicate<T> isNull() {
-    return new Predicate<T>() {
-      @Override
-      public boolean test(final T o) {
-        return (o == null);
-      }
-    };
+    return o -> (o == null);
   }
 
   public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
-    return new Function<T, Iterable<T>>() {
-
-      @Override
-      public Iterable<T> apply(final T a) {
-        return Collections.singletonList(a);
-      }
-
-    };
+    return a -> Collections.singletonList(a);
   }
 
   public static <T> SideEffect1<T> noSideEffect(final Class<T> clazz) {
-    return new SideEffect1<T>() {
-
-      @Override
-      public void apply(final T a) {
-      }
-
+    return a -> {
     };
   }
 }

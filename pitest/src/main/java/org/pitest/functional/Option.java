@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
-
 import java.util.function.Predicate;
 
 
@@ -67,7 +66,7 @@ public abstract class Option<T> implements FunctionalIterable<T>, Serializable {
   public <B> void mapTo(final Function<T, B> f, final Collection<? super B> bs) {
     FCollection.mapTo(this, f, bs);
   }
-  
+
   public static <T> Option<T> some(final T value) {
     if (value == null) {
       return NONE;

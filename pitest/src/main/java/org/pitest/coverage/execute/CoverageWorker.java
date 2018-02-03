@@ -57,14 +57,8 @@ public class CoverageWorker {
   }
 
   private static Comparator<TestUnit> testComparator() {
-    return new Comparator<TestUnit>() {
-      @Override
-      public int compare(final TestUnit o1, final TestUnit o2) {
-        return o1.getDescription().getQualifiedName()
-            .compareTo(o2.getDescription().getQualifiedName());
-      }
-
-    };
+    return (o1, o2) -> o1.getDescription().getQualifiedName()
+        .compareTo(o2.getDescription().getQualifiedName());
   }
 
   private static List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,

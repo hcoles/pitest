@@ -2,7 +2,9 @@ package org.pitest.classpath;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,14 +27,14 @@ public class CompoundClassPathRootTest {
 
   @Mock
   private ClassPathRoot         child2;
-  
+
   @Mock
   private IOHeavyRoot           heavyChild;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    this.testee = new CompoundClassPathRoot(Arrays.asList(this.child1,heavyChild,
+    this.testee = new CompoundClassPathRoot(Arrays.asList(this.child1,this.heavyChild,
         this.child2));
   }
 
@@ -72,7 +74,7 @@ public class CompoundClassPathRootTest {
     when(this.child1.getResource(any(String.class))).thenReturn(url);
     assertThat(this.testee.getResource("Foo")).isSameAs(url);
   }
-  
+
   @Test
   public void shouldNotQueryHeavyRootsForClassesTheyDoNotContain() throws IOException {
     when(this.child1.classNames()).thenReturn(Collections.singletonList("Foo"));
@@ -80,13 +82,13 @@ public class CompoundClassPathRootTest {
     when(this.child2.classNames()).thenReturn(Collections.singletonList("Bar"));
 
 
-    testee.getData("Bar");
-    verify(heavyChild,never()).getData("Bar");
-    
-    testee.getData("Heavy");    
-    verify(heavyChild).getData("Heavy");
+    this.testee.getData("Bar");
+    verify(this.heavyChild,never()).getData("Bar");
+
+    this.testee.getData("Heavy");
+    verify(this.heavyChild).getData("Heavy");
   }
 
 }
 
- 
+

@@ -18,9 +18,9 @@ package org.pitest.mutationtest.execute;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.pitest.coverage.TestInfo;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
@@ -51,22 +51,17 @@ public class TimeOutDecoratedTestSource {
   }
 
   private Function<TestInfo, Option<TestUnit>> testToTestUnit() {
-    return new Function<TestInfo, Option<TestUnit>>() {
-
-      @Override
-      public Option<TestUnit> apply(final TestInfo a) {
-        final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
-            .getName());
-        if (tu != null) {
-          return Option
-              .<TestUnit> some(new MutationTimeoutDecorator(tu,
-                  new TimeOutSystemExitSideEffect(
-                      TimeOutDecoratedTestSource.this.r),
-                      TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
-        }
-        return Option.none();
+    return a -> {
+      final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
+          .getName());
+      if (tu != null) {
+        return Option
+            .<TestUnit> some(new MutationTimeoutDecorator(tu,
+                new TimeOutSystemExitSideEffect(
+                    TimeOutDecoratedTestSource.this.r),
+                    TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
       }
-
+      return Option.none();
     };
   }
 

@@ -94,8 +94,8 @@ public class InstructionTrackingMethodVisitorTest {
         ClassName.fromClass(clazz).asJavaName()).value());
     final ClassNode tree = new ClassNode();
     reader.accept(tree, 0);
-    for (Object m : tree.methods) {
-      MethodNode mn = (MethodNode) m;
+    for (final Object m : tree.methods) {
+      final MethodNode mn = (MethodNode) m;
       if (mn.name.equals(name)) {
         return mn;
       }

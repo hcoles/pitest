@@ -34,7 +34,7 @@ import org.pitest.util.Unchecked;
 import sun.pitest.CodeCoverageStore;
 
 public final class JavassistCoverageInterceptor {
-  
+
   private static final Map<String, String> COMPUTE_CACHE = new ConcurrentHashMap<>();
 
   private JavassistCoverageInterceptor() {
@@ -46,13 +46,13 @@ public final class JavassistCoverageInterceptor {
 
     try {
       if (isInstrumentedClass(name)) {
-        byte[] bs = getOriginalBytes(classPath, name);
+        final byte[] bs = getOriginalBytes(classPath, name);
         return new ByteArrayInputStream(
             transformBytes(IsolationUtils.getContextClassLoader(), name, bs));
       } else {
         return returnNormalBytes(classPath, name);
       }
-    } catch (IOException ex) {
+    } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
 
@@ -61,24 +61,24 @@ public final class JavassistCoverageInterceptor {
   private static byte[] getOriginalBytes(final Object classPath,
       final String name) throws IOException {
     try (InputStream is = returnNormalBytes(classPath,name)) {
-      byte[] bs = StreamUtil.streamToByteArray(is);
+      final byte[] bs = StreamUtil.streamToByteArray(is);
       return bs;
     }
   }
-  
+
   private static byte[] transformBytes(final ClassLoader loader,
       final String className, final byte[] classfileBuffer) {
     final ClassReader reader = new ClassReader(classfileBuffer);
     final ClassWriter writer = new ComputeClassWriter(
         new ClassloaderByteArraySource(loader), COMPUTE_CACHE,
         FrameOptions.pickFlags(classfileBuffer));
-  
+
     // The transformed classes will be given a different id than the one already loaded.
     // Not clear if this is desirable or not. At the point of writing this comment
     // pitest will merge coverage of all classes with the same fully qualified name.
     // If this changes this might become a bug, however it would also probably not be possible
     // to support powermock if this assumption changed, so this code would most likely be deleted.
-    
+
     final int id = CodeCoverageStore.registerClass(className);
     reader.accept(new CoverageClassVisitor(id, writer),
         ClassReader.EXPAND_FRAMES);

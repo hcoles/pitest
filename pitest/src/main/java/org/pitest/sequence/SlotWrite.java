@@ -8,6 +8,6 @@ public class SlotWrite <T> {
   }
 
   Slot<T> slot() {
-    return slot;
+    return this.slot;
   }
 }

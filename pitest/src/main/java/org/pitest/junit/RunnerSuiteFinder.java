@@ -51,7 +51,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
 
       classes.remove(a);
       return new ArrayList<>(classes);
-    } catch (RuntimeException ex) {
+    } catch (final RuntimeException ex) {
       // some runners (looking at you spock) can throw a runtime exception
       // when the getDescription method is called.
       return Collections.emptyList();
@@ -68,39 +68,22 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
   }
 
   private static Predicate<Description> isSuiteMethodRunner(final Runner runner) {
-    return new Predicate<Description>() {
-      @Override
-      public boolean test(final Description a) {
-        return SuiteMethod.class.isAssignableFrom(runner.getClass());
-      }
-
-    };
+    return a -> SuiteMethod.class.isAssignableFrom(runner.getClass());
   }
 
   private static Function<Description, Option<Class<?>>> descriptionToTestClass() {
-    return new Function<Description, Option<Class<?>>>() {
-
-      @Override
-      public Option<Class<?>> apply(final Description a) {
-        final Class<?> clazz = a.getTestClass();
-        if (clazz != null) {
-          return Option.<Class<?>> some(clazz);
-        } else {
-          return Option.<Class<?>> none();
-        }
+    return a -> {
+      final Class<?> clazz = a.getTestClass();
+      if (clazz != null) {
+        return Option.<Class<?>> some(clazz);
+      } else {
+        return Option.<Class<?>> none();
       }
-
     };
   }
 
   private static Predicate<Description> isSuite() {
-    return new Predicate<Description>() {
-      @Override
-      public boolean test(final Description a) {
-        return a.isSuite();
-      }
-
-    };
+    return a -> a.isSuite();
   }
 
 }

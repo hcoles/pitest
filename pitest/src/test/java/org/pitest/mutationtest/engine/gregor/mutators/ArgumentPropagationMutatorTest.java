@@ -124,7 +124,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
   @Test
   public void continuesUntilMatchingArgumentTypeIsFound() throws Exception {
-    Mutant mutant = getFirstMutant(OnlyFirstArgumentHasMatchingType.class);
+    final Mutant mutant = getFirstMutant(OnlyFirstArgumentHasMatchingType.class);
     assertMutantCallableReturns(new OnlyFirstArgumentHasMatchingType("abc",
         new Object(), 3), mutant, "abc");
   }
@@ -153,7 +153,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
   @Test
   public void usesLastArgumentOfMatchingTypeToReplaceMethod() throws Exception {
-    Mutant mutant = getFirstMutant(HasSeveralArgumentWithMatchingType.class);
+    final Mutant mutant = getFirstMutant(HasSeveralArgumentWithMatchingType.class);
     assertMutantCallableReturns(new HasSeveralArgumentWithMatchingType(11, 22),
         mutant, "22");
   }
@@ -169,7 +169,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() throws Exception {
-      String anInt = "3";
+      final String anInt = "3";
       return String.valueOf(aMethod(this.int1, anInt, this.int2));
     }
 
@@ -181,7 +181,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   @Test
   public void alsoReplaceCallToMethodWhenReturnValueIsNotUsed()
       throws Exception {
-    Mutant mutant = getFirstMutant(ReturnValueNotUsed.class);
+    final Mutant mutant = getFirstMutant(ReturnValueNotUsed.class);
     assertMutantCallableReturns(new ReturnValueNotUsed(), mutant, false);
   }
 
@@ -200,8 +200,8 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   public void shouldReplaceMethodsReturningArraysMatchingArgumentType()
       throws Exception {
     final Mutant mutant = getFirstMutant(HasArrayMethod.class);
-    String[] expected = { "1", "2" };
-    String[] actual = mutateAndCall(new HasArrayMethod(), mutant);
+    final String[] expected = { "1", "2" };
+    final String[] actual = mutateAndCall(new HasArrayMethod(), mutant);
     assertThat(actual).containsExactly(expected);
   }
 
@@ -213,7 +213,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
     @Override
     public String[] call() throws Exception {
-      String[] s = { "1", "2" };
+      final String[] s = { "1", "2" };
       return delegate(s);
     }
   }
@@ -233,7 +233,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
     @Override
     public String[] call() throws Exception {
-      Integer[] s = { 1, 2 };
+      final Integer[] s = { 1, 2 };
       return delegate(s);
     }
   }
@@ -242,8 +242,8 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   public void willSubstituteCollectionsOfDifferentTypesDueToTypeErasure()
       throws Exception {
     final Mutant mutant = getFirstMutant(HasListMethod.class);
-    List<String> expected = Collections.emptyList();
-    List<String> actual = mutateAndCall(new HasListMethod(), mutant);
+    final List<String> expected = Collections.emptyList();
+    final List<String> actual = mutateAndCall(new HasListMethod(), mutant);
     assertThat(actual).isEqualTo(expected);
   }
 
@@ -255,7 +255,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
     @Override
     public List<String> call() throws Exception {
-      List<Integer> s = Collections.emptyList();
+      final List<Integer> s = Collections.emptyList();
       return delegate(s);
     }
   }
@@ -264,7 +264,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   public void shouldReplaceInstanceMethodCallThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
     final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfInstanceMethod.class);
-    MyListener listener = new MyListener();
+    final MyListener listener = new MyListener();
     assertMutantCallableReturns(new CallsOtherObjectWithResultOfInstanceMethod(
         "lowercase", listener), mutant, "lowercase");
   }
@@ -295,7 +295,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   public void shouldReplaceStaticMethodCallThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
     final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfStaticMethod.class);
-    MyListener listener = new MyListener();
+    final MyListener listener = new MyListener();
     assertMutantCallableReturns(new CallsOtherObjectWithResultOfStaticMethod(
         "lowercase", listener), mutant, "lowercase");
   }
@@ -326,7 +326,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   public void shouldReplaceInstanceMethodCallWithSeveralArgumentsThatIsUsedAsArgumentForCallToOtherObject()
       throws Exception {
     final Mutant mutant = getFirstMutant(CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments.class);
-    MyListener listener = new MyListener();
+    final MyListener listener = new MyListener();
     assertMutantCallableReturns(
         new CallsOtherObjectWithResultOfInstanceMethodHavingSeveralArguments(
             "lowercase", listener), mutant, "lowercase");

@@ -16,7 +16,6 @@
 package org.pitest.testapi;
 
 import java.util.List;
-
 import java.util.function.Function;
 
 public interface TestSuiteFinder extends Function<Class<?>, List<Class<?>>> {

@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import java.util.function.Predicate;
 
 public class ClassInfo {
 
@@ -74,7 +74,7 @@ public class ClassInfo {
   public boolean isAbstract() {
     return (this.access & Opcodes.ACC_ABSTRACT) != 0;
   }
-  
+
   public boolean isSynthetic() {
     return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
@@ -153,13 +153,7 @@ public class ClassInfo {
   }
 
   public static Predicate<ClassInfo> matchIfAbstract() {
-    return new Predicate<ClassInfo>() {
-      @Override
-      public boolean test(final ClassInfo a) {
-        return a.isAbstract();
-      }
-
-    };
+    return a -> a.isAbstract();
   }
 
   @Override
@@ -168,22 +162,10 @@ public class ClassInfo {
   }
 
   public static Function<ClassInfo, ClassName> toClassName() {
-    return new Function<ClassInfo, ClassName>() {
-      @Override
-      public ClassName apply(final ClassInfo a) {
-        return a.getName();
-      }
-
-    };
+    return a -> a.getName();
   }
 
   public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return new Function<ClassInfo, HierarchicalClassId>() {
-      @Override
-      public HierarchicalClassId apply(final ClassInfo a) {
-        return a.getHierarchicalId();
-      }
-
-    };
+    return a -> a.getHierarchicalId();
   }
 }

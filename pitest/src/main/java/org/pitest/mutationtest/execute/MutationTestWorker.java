@@ -157,7 +157,7 @@ public class MutationTestWorker {
     final Container c = new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
-        List<TestResult> results = new ArrayList<>();
+        final List<TestResult> results = new ArrayList<>();
         final ExitingResultCollector rc = new ExitingResultCollector(
             new ConcreteResultCollector(results));
         group.execute(rc);

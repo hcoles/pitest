@@ -216,11 +216,11 @@ public class MutableListTest {
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(MutableList.class).verify();
   }
-  
+
   @Test
   public void shouldImplementFindFirst() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
-    assertEquals(Option.some(1), testee.findFirst(i -> true));
-    assertEquals(Option.none(), testee.findFirst(False.<Integer>instance()));
+    assertEquals(Option.some(1), this.testee.findFirst(i -> true));
+    assertEquals(Option.none(), this.testee.findFirst(False.<Integer>instance()));
   }
 }

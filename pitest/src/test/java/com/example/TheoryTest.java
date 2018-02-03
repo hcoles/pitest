@@ -14,12 +14,12 @@
  */
 package com.example;
 
-import junit.framework.TestCase;
-
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+
+import junit.framework.TestCase;
 
 @RunWith(Theories.class)
 public class TheoryTest extends TestCase {

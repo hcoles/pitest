@@ -21,12 +21,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.MutationResult;
 
 public class MutationResultList implements FunctionalIterable<MutationResult> {
@@ -60,15 +60,8 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   private void sortMutationsIntoLineOrder() {
-    final Comparator<MutationResult> c = new Comparator<MutationResult>() {
-
-      @Override
-      public int compare(final MutationResult o1, final MutationResult o2) {
-        return o1.getDetails().getLineNumber()
-            - o2.getDetails().getLineNumber();
-      }
-
-    };
+    final Comparator<MutationResult> c = (o1, o2) -> o1.getDetails().getLineNumber()
+        - o2.getDetails().getLineNumber();
     Collections.sort(this.impl, c);
   }
 

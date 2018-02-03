@@ -17,12 +17,12 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.classinfo.ClassName;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodVisitor;
@@ -62,7 +62,7 @@ class MutatingClassVisitor extends ClassVisitor {
       final String methodDescriptor, final String signature,
       final String[] exceptions) {
 
-    MethodMutationContext methodContext = new MethodMutationContext(
+    final MethodMutationContext methodContext = new MethodMutationContext(
         this.context, Location.location(
             ClassName.fromString(this.context.getClassInfo().getName()),
             MethodName.fromString(methodName), methodDescriptor));
@@ -113,7 +113,7 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {
-    return 
+    return
         wrapWithStringSwitchFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
   }
 
@@ -121,9 +121,9 @@ class MutatingClassVisitor extends ClassVisitor {
     MethodMutationContext methodContext,
     final MethodVisitor wrappedMethodVisitor) {
   return new AvoidStringSwitchedMethodAdapter(methodContext, wrappedMethodVisitor);
-    
+
   }
-  
+
   private static MethodVisitor wrapWithAssertFilter(
       MethodMutationContext methodContext,
       final MethodVisitor wrappedMethodVisitor) {

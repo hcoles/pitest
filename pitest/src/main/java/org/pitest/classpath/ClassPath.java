@@ -26,11 +26,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
@@ -52,7 +52,7 @@ public class ClassPath {
   public ClassPath(final Collection<File> files) {
     this(createRoots(FCollection.filter(files, exists())));
   }
-  
+
   public ClassPath(List<ClassPathRoot> roots) {
     this.root = new CompoundClassPathRoot(roots);
   }
@@ -139,7 +139,7 @@ public class ClassPath {
     return new ClassPath(FCollection.filter(this.root, predicate).toArray(
         new ClassPathRoot[0]));
   }
-  
+
   private static Predicate<File> exists() {
     return a -> a.exists() && a.canRead();
   }
@@ -166,5 +166,5 @@ public class ClassPath {
     }
 
   }
-  
+
 }
