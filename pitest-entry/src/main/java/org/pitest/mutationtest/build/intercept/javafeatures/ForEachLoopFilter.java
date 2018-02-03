@@ -166,13 +166,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
 
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-   return new Match<AbstractInsnNode>() {
-    @Override
-    public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-      return c.retrieve(found.read()).hasSome();
-    }
-
-   };
+   return (c, t) -> c.retrieve(found.read()).hasSome();
   }
 
 

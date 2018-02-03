@@ -19,7 +19,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
-import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotRead;
@@ -32,32 +31,17 @@ public class InstructionMatchers {
   }
 
   public static Match<AbstractInsnNode> opCode(final int opcode) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode a) {
-        return a.getOpcode() == opcode;
-      }
-    };
+    return (c, a) -> a.getOpcode() == opcode;
   }
 
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> isA(
       final Class<T> cls) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode>  c, AbstractInsnNode a) {
-        return a.getClass().isAssignableFrom(cls);
-      }
-    };
+    return (c, a) -> a.getClass().isAssignableFrom(cls);
   }
 
   public static Match<AbstractInsnNode> incrementsVariable(final SlotRead<Integer> counterVariable) {
-   return new Match<AbstractInsnNode>() {
-     @Override
-     public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-       return (a instanceof IincInsnNode)
-           && context.retrieve(counterVariable).contains(Prelude.isEqualTo(((IincInsnNode)a).var));
-     }
-   };
+   return (context, a) -> (a instanceof IincInsnNode)
+       && context.retrieve(counterVariable).contains(Prelude.isEqualTo(((IincInsnNode)a).var));
   }
 
   public static Match<AbstractInsnNode> anIStore(
@@ -67,12 +51,7 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> aVariableAccess(
       final SlotWrite<Integer> counterVariable) {
-    return new  Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        return (t instanceof VarInsnNode) && c.store(counterVariable, ((VarInsnNode) t).var);
-      }
-    };
+    return (c, t) -> (t instanceof VarInsnNode) && c.store(counterVariable, ((VarInsnNode) t).var);
   }
 
   public static Match<AbstractInsnNode> anIStoreTo(
@@ -87,13 +66,8 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> variableMatches(
       final SlotRead<Integer> counterVariable) {
-    return new  Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        return (t instanceof VarInsnNode)
-            && c.retrieve(counterVariable).contains(Prelude.isEqualTo(((VarInsnNode)t).var));
-      }
-    };
+    return (c, t) -> (t instanceof VarInsnNode)
+        && c.retrieve(counterVariable).contains(Prelude.isEqualTo(((VarInsnNode)t).var));
   }
 
 
@@ -116,14 +90,9 @@ public class InstructionMatchers {
   }
 
   public static Match<AbstractInsnNode> aConditionalJump() {
-    return new  Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        return (t instanceof JumpInsnNode)
-            && (t.getOpcode() != Opcodes.GOTO)
-            && (t.getOpcode() != Opcodes.JSR);
-      }
-    };
+    return (c, t) -> (t instanceof JumpInsnNode)
+        && (t.getOpcode() != Opcodes.GOTO)
+        && (t.getOpcode() != Opcodes.JSR);
   }
 
   public static Match<AbstractInsnNode> aConditionalJumpTo(Slot<LabelNode> label) {
@@ -132,29 +101,21 @@ public class InstructionMatchers {
 
 
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> writeNodeToSlot(final SlotWrite<T> slot, final Class<T> clazz) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        if (clazz.isAssignableFrom(t.getClass()) ) {
-          c.store(slot, clazz.cast(t));
-          return true;
-        }
-        return false;
+    return (c, t) -> {
+      if (clazz.isAssignableFrom(t.getClass()) ) {
+        c.store(slot, clazz.cast(t));
+        return true;
       }
-
+      return false;
     };
   }
 
   public static  Match<AbstractInsnNode> methodCallThatReturns(final ClassName type) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        if ( t instanceof MethodInsnNode ) {
-          return ((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";");
-        }
-        return false;
+    return (c, t) -> {
+      if ( t instanceof MethodInsnNode ) {
+        return ((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";");
       }
-
+      return false;
     };
   }
 
@@ -163,71 +124,53 @@ public class InstructionMatchers {
   }
 
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        if ( t instanceof MethodInsnNode ) {
-          final MethodInsnNode call = (MethodInsnNode) t;
-          return call.name.equals(name) && call.owner.equals(owner.asInternalName());
-        }
-        return false;
+    return (c, t) -> {
+      if ( t instanceof MethodInsnNode ) {
+        final MethodInsnNode call = (MethodInsnNode) t;
+        return call.name.equals(name) && call.owner.equals(owner.asInternalName());
       }
+      return false;
     };
   }
 
 
   public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        return c.retrieve(target).value() == t;
-      }
-    };
+    return (c, t) -> c.retrieve(target).value() == t;
   }
 
   /**
    * Records if a instruction matches the target, but always returns true
    */
   public static  Match<AbstractInsnNode> recordTarget(final SlotRead<AbstractInsnNode> target, final SlotWrite<Boolean> found) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        if (c.retrieve(target).value() == t) {
-          c.store(found, true);
-        }
-        return true;
+    return (c, t) -> {
+      if (c.retrieve(target).value() == t) {
+        c.store(found, true);
       }
+      return true;
     };
   }
 
 
   private static Match<AbstractInsnNode> storeJumpTarget(
       final SlotWrite<LabelNode> label) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-        if (t instanceof JumpInsnNode ) {
-          c.store(label, ((JumpInsnNode) t).label);
-          return true;
-        }
-        return false;
+    return (c, t) -> {
+      if (t instanceof JumpInsnNode ) {
+        c.store(label, ((JumpInsnNode) t).label);
+        return true;
       }
-
+      return false;
     };
   }
 
   public static Match<AbstractInsnNode> jumpsTo(
       final SlotRead<LabelNode> loopStart) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        if (!(a instanceof JumpInsnNode)) {
-          return false;
-        }
-        final JumpInsnNode jump = (JumpInsnNode) a;
-
-        return context.retrieve(loopStart).contains(Prelude.isEqualTo(jump.label));
+    return (context, a) -> {
+      if (!(a instanceof JumpInsnNode)) {
+        return false;
       }
+      final JumpInsnNode jump = (JumpInsnNode) a;
+
+      return context.retrieve(loopStart).contains(Prelude.isEqualTo(jump.label));
     };
   }
 
@@ -243,28 +186,21 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> labelNode(
       final SlotRead<LabelNode> loopEnd) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> c, AbstractInsnNode t) {
-       if (!(t instanceof LabelNode)) {
-         return false;
-       }
+    return (c, t) -> {
+     if (!(t instanceof LabelNode)) {
+       return false;
+     }
 
-       final LabelNode l = (LabelNode) t;
-       return c.retrieve(loopEnd).contains(Prelude.isEqualTo(l));
-
-      }
+     final LabelNode l = (LabelNode) t;
+     return c.retrieve(loopEnd).contains(Prelude.isEqualTo(l));
 
     };
   }
 
   public static Match<AbstractInsnNode> debug(final String msg) {
-    return new Match<AbstractInsnNode>() {
-      @Override
-      public boolean test(Context<AbstractInsnNode> context, AbstractInsnNode a) {
-        context.debug(msg);
-        return true;
-      }
+    return (context, a) -> {
+      context.debug(msg);
+      return true;
     };
   }
 }
