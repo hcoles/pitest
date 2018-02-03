@@ -76,6 +76,16 @@
 	</prerequisites>
 
 	<profiles>
+			<profile>
+			<id>java8</id>
+			<!-- Groovy verifiation currently not working with java 9 -->
+			<activation>
+				<jdk>1.8</jdk>
+			</activation>
+			<modules>
+				<module>pitest-groovy-verification</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
