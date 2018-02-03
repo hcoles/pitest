@@ -39,12 +39,7 @@ public class ReceiveTest {
   }
 
   private SideEffect1<CoverageResult> stubHandler() {
-    return new SideEffect1<CoverageResult>() {
-      @Override
-      public void apply(final CoverageResult a) {
-        ReceiveTest.this.result = a;
-      }
-    };
+    return a -> ReceiveTest.this.result = a;
   }
 
   @Test

@@ -22,11 +22,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -94,7 +94,7 @@ public class MutationStatisticsPrecursorTest {
         makeResult(DetectionStatus.KILLED)));
     assertEquals(50, this.testee.toStatistics().getPercentageDetected());
   }
-  
+
   @Test
   public void shouldReportNumberOfSurvivingMutants() {
     this.testee.registerResults(Arrays.asList(
@@ -102,7 +102,7 @@ public class MutationStatisticsPrecursorTest {
         makeResult(DetectionStatus.SURVIVED)));
     assertEquals(2, this.testee.toStatistics().getTotalSurvivingMutations());
   }
-  
+
   @Test
   public void shouldReportNumberOfSurvivingMutantsWhenNoneSurvive() {
     this.testee.registerResults(Arrays.asList(
@@ -130,13 +130,7 @@ public class MutationStatisticsPrecursorTest {
   }
 
   private Predicate<Score> hasResultForMutator(final String mutator) {
-    return new Predicate<Score>() {
-
-      @Override
-      public boolean test(final Score a) {
-        return a.getMutatorName().equals(mutator);
-      }
-    };
+    return a -> a.getMutatorName().equals(mutator);
   }
 
   private MutationResult makeResult(final DetectionStatus status) {

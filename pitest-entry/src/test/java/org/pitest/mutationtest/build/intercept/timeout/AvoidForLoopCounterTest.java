@@ -17,51 +17,51 @@ public class AvoidForLoopCounterTest {
 
   AvoidForLoopCounterFilter testee = new AvoidForLoopCounterFilter();
   private static final String             PATH      = "forloops/{0}_{1}";
-  FilterTester verifier = new FilterTester(PATH, testee, IncrementsMutator.INCREMENTS_MUTATOR);    
-  
-  
+  FilterTester verifier = new FilterTester(PATH, this.testee, IncrementsMutator.INCREMENTS_MUTATOR);
+
+
   @Test
   public void shouldDeclareTypeAsFilter() {
-    assertThat(testee.type()).isEqualTo(InterceptorType.FILTER);
+    assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
   }
-  
+
   @Test
   public void shouldNotFilterMutantsWhenNoLoopPresent() {
-    FilterTester verifier = new FilterTester(PATH, testee, Mutator.all());  
+    final FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.all());
     verifier.assertFiltersNMutationFromSample(0, "IHaveNoLoops");
   }
-  
+
   @Test
   public void shouldNotFilterIncrementMutantsInConditions() {
-    FilterTester verifier = new FilterTester(PATH, testee, Mutator.all());  
+    final FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.all());
     verifier.assertFiltersNMutationFromClass(0, HasIncrementsInIfs.class);
   }
-  
+
   @Test
   public void shouldFilterMutationsThatRemoveForLoopIncrement() {
-    verifier.assertFiltersNMutationFromSample(1, "HasAForLoop");
+    this.verifier.assertFiltersNMutationFromSample(1, "HasAForLoop");
   }
-       
+
   @Test
   public void shouldNotFilterOtherIncrementMutationsInForLoop() {
-    verifier.assertFiltersNMutationFromSample(1, "HasAForLoopAndOtherIncrements");
+    this.verifier.assertFiltersNMutationFromSample(1, "HasAForLoopAndOtherIncrements");
   }
-  
+
   @Test
   public void shouldFilterIncrementMutantInListIterationByIndex() {
-    verifier.assertFiltersNMutationFromSample(1, "HasForLoopOverList");
+    this.verifier.assertFiltersNMutationFromSample(1, "HasForLoopOverList");
   }
-  
+
   @Test
   public void shouldFilterIncrementMutantsWhenLoopEndRetreivedFromFieldMethodCall() {
-    verifier.assertFiltersNMutationFromSample(1, "HasForLoopOverListStoredAsField");
+    this.verifier.assertFiltersNMutationFromSample(1, "HasForLoopOverListStoredAsField");
   }
-  
+
   @Test
   public void shouldFilterIncrementsInArrayLoop() {
-    verifier.assertFiltersNMutationFromSample(1, "HasArrayIteration");
+    this.verifier.assertFiltersNMutationFromSample(1, "HasArrayIteration");
   }
-  
+
   static class IHaveNoLoops {
     void foo(boolean b) {
       if ( b ) {
@@ -69,7 +69,7 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
   static class HasIncrementsInIfs {
     void foo(int i) {
       i = i ++;
@@ -78,7 +78,7 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
   static class HasAForLoopAndOtherIncrements {
     void foo() {
       int j = 0;
@@ -88,7 +88,7 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
   static class HasAForLoop {
     void foo() {
       for (int i = 0; i != 10; i++) {
@@ -96,7 +96,7 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
   static class HasForLoopOverList {
     void foo(List<Integer> is) {
       for (int i = 0; i != is.size(); i++) {
@@ -104,16 +104,16 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
   static class HasForLoopOverListStoredAsField {
     List<Integer> is;
     void foo() {
-      for (int i = 0; i != is.size(); i++) {
+      for (int i = 0; i != this.is.size(); i++) {
         System.out.println("" + i);
       }
     }
   }
-  
+
   static class HasArrayIteration {
     void foo(int[] is) {
       for (int i = 0; i != is.length; i++) {
@@ -121,7 +121,7 @@ public class AvoidForLoopCounterTest {
       }
     }
   }
-  
+
 }
 
 

@@ -23,29 +23,29 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
 
 public abstract class InfiniteLoopBaseTest {
-  
+
   ClassByteArraySource    source = ClassloaderByteArraySource.fromContext();
-  
+
   abstract InfiniteLoopFilter testee();
-  
+
   void checkNotFiltered(Class<?> clazz, String method) {
     checkNotFiltered(ClassName.fromClass(clazz), method);
   }
-  
+
   void checkFiltered(Class<?> clazz, String method) {
     checkFiltered(ClassName.fromClass(clazz), method);
   }
-  
+
   void checkNotFiltered(ClassName clazz, String method) {
     checkNotFiltered(clazz, named(method));
   }
-  
+
   void checkNotFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
-    for (Compiler each : Compiler.values()) {
-      Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+    for (final Compiler each : Compiler.values()) {
+      final Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
           method);
-      for (MethodTree m : mt) {
+      for (final MethodTree m : mt) {
         assertThat(testee().infiniteLoopMatcher()
             .matches(m.instructions()))
                 .describedAs("With " + each
@@ -59,17 +59,17 @@ public abstract class InfiniteLoopBaseTest {
       fail("No samples found for test");
     }
   }
-  
+
   void checkFiltered(ClassName clazz, String method) {
     checkFiltered(clazz, named(method));
   }
-  
+
   void checkFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
-    for (Compiler each : Compiler.values()) {
-      Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+    for (final Compiler each : Compiler.values()) {
+      final Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
           method);
-      for (MethodTree m : mt) {
+      for (final MethodTree m : mt) {
         assertThat(testee().infiniteLoopMatcher()
             .matches(m.instructions()))
                 .describedAs("With " + each
@@ -82,44 +82,44 @@ public abstract class InfiniteLoopBaseTest {
       fail("No samples found for test");
     }
   }
-  
-  private String toString(MethodTree mt) {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-    TraceMethodVisitor mv = new TraceMethodVisitor(new Textifier());
-    
+  private String toString(MethodTree mt) {
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+    final TraceMethodVisitor mv = new TraceMethodVisitor(new Textifier());
+
     mt.rawNode().accept(mv);
     try (PrintWriter pw = new PrintWriter(bos)) {
       mv.p.print(pw);
     }
-    
+
     return "Byte code is \n" + new String(bos.toByteArray());
   }
 
   private Option<MethodTree> parseMethodFromCompiledResource(ClassName clazz,
       Compiler compiler, Predicate<MethodTree> method) {
-    ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
-    Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
-    for (byte[] bytes : bs) {
-      ClassTree tree = ClassTree.fromBytes(bytes);     
-      return tree.methods().findFirst(method); 
+    final ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
+    final Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
+    for (final byte[] bytes : bs) {
+      final ClassTree tree = ClassTree.fromBytes(bytes);
+      return tree.methods().findFirst(method);
     }
     return Option.none();
   }
-  
+
   ClassTree forClass(Class<?> clazz) {
-    byte[] bs = source.getBytes(clazz.getName()).value();
+    final byte[] bs = this.source.getBytes(clazz.getName()).value();
     return ClassTree.fromBytes(bs);
   }
-  
+
   Collection<MethodMutatorFactory> asList(MethodMutatorFactory ...factories ) {
     return Arrays.asList(factories);
   }
-  
+
 
   GregorMutater createMutator(MethodMutatorFactory ...factories) {
-    Collection<MethodMutatorFactory> mutators = asList(factories);
-    return new GregorMutater(source, m -> true, mutators);
+    final Collection<MethodMutatorFactory> mutators = asList(factories);
+    return new GregorMutater(this.source, m -> true, mutators);
   }
 
 }

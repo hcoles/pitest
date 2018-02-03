@@ -51,7 +51,7 @@ public class DefaultGrouperTest {
   }
 
   public static MutationDetails createDetails(final String clazz) {
-    LocationBuilder lb = LocationMother.aLocation().withClass(
+    final LocationBuilder lb = LocationMother.aLocation().withClass(
         ClassName.fromString(clazz));
     return new MutationDetails(aMutationId().withLocation(lb).build(), "",
         "desc", 42, 0);

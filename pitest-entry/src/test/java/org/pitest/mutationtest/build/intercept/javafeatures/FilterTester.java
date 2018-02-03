@@ -28,105 +28,101 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
 
 public class FilterTester {
-  
+
   private static final Collection<String> COMPILERS = Arrays.asList("javac",
       "ecj", "aspectj");
- 
+
   private final String path;
   private final ClassByteArraySource source = new ResourceFolderByteArraySource();
   private final MutationInterceptor testee;
   private final Collection<MethodMutatorFactory> mutators;
-  
+
   public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
     this(path, testee, Arrays.asList(mutators));
   }
-   
+
   public FilterTester(String path, MutationInterceptor testee, Collection<MethodMutatorFactory> mutators) {
     this.mutators = mutators;
     this.testee = testee;
     this.path = path;
   }
-   
-  
+
+
   public void assertFiltersMutationAtNLocations(int n, Class<?> clazz) {
-    Sample s = makeSampleForCurrentCompiler(clazz);
+    final Sample s = makeSampleForCurrentCompiler(clazz);
     assertFiltersMutationAtNLocations(n, s, mutateFromClassLoader());
   }
-  
+
   public void assertFiltersMutationAtNLocations(int n, Sample s, GregorMutater mutator) {
-    List<MutationDetails> mutations = mutator.findMutations(s.className);
-    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
-   
-    Set<Loc> originalLocations = new LinkedHashSet<>();
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    final Set<Loc> originalLocations = new LinkedHashSet<>();
     FCollection.mapTo(mutations, toLocation(s.clazz), originalLocations);
-    
-    Set<Loc> filteredLocations = new LinkedHashSet<>();
+
+    final Set<Loc> filteredLocations = new LinkedHashSet<>();
     FCollection.mapTo(actual, toLocation(s.clazz), filteredLocations);
-    
+
     assertThat(filteredLocations)
     .describedAs("Expected to filter %d locations from the %d in %s", n, originalLocations.size(), s.clazz.toString())
     .hasSize(originalLocations.size() - n);
 
   }
-  
+
   private Function<MutationDetails, Loc> toLocation(final ClassTree tree) {
-    return new Function<MutationDetails, Loc>() {
-      @Override
-      public Loc apply(MutationDetails a) {
-        MethodTree method = tree.method(a.getId().getLocation()).value();
-        Loc l = new Loc();
-        l.index = a.getInstructionIndex();
-        l.node = method.instructions().get(a.getInstructionIndex());
-        return l;  
-      }
-      
+    return a -> {
+      final MethodTree method = tree.method(a.getId().getLocation()).value();
+      final Loc l = new Loc();
+      l.index = a.getInstructionIndex();
+      l.node = method.instructions().get(a.getInstructionIndex());
+      return l;
     };
   }
 
   public void assertLeavesNMutants(int n, String sample) {
-    GregorMutater mutator = mutateFromResourceDir();
+    final GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
-    
-    SoftAssertions softly = new SoftAssertions();
-    
-    for (Sample s : samples(sample)) {
-      List<MutationDetails> mutations = mutator.findMutations(s.className);
-      Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
-      
+
+    final SoftAssertions softly = new SoftAssertions();
+
+    for (final Sample s : samples(sample)) {
+      final List<MutationDetails> mutations = mutator.findMutations(s.className);
+      final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
       softly.assertThat(actual)
       .describedAs("Wrong number of mutants  with " + s.compiler)
       .hasSize(n);
     }
-    
+
     softly.assertAll();
   }
 
   public void assertFiltersNMutationFromSample(int n, String sample) {
-    GregorMutater mutator = mutateFromResourceDir();
+    final GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
-    
-    SoftAssertions softly = new SoftAssertions();
-    
-    for (Sample s : samples(sample)) {
+
+    final SoftAssertions softly = new SoftAssertions();
+
+    for (final Sample s : samples(sample)) {
       assertFiltersNMutants(n, mutator, s, softly);
     }
-    
+
     softly.assertAll();
   }
-  
+
   public void assertFiltersNMutationFromClass(int n, Class<?> clazz) {
-    Sample s = makeSampleForCurrentCompiler(clazz);
-    
-    SoftAssertions softly = new SoftAssertions();
-    
+    final Sample s = makeSampleForCurrentCompiler(clazz);
+
+    final SoftAssertions softly = new SoftAssertions();
+
     assertFiltersNMutants(n, mutateFromClassLoader(), s, softly);
-    
+
     softly.assertAll();
   }
 
   private Sample makeSampleForCurrentCompiler(Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Sample s = new Sample();
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final Sample s = new Sample();
     s.className = ClassName.fromClass(clazz);
     s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
     s.compiler = "current";
@@ -134,16 +130,16 @@ public class FilterTester {
   }
 
   public void assertFiltersMutationsFromMutator(String id, Class<?> clazz) {
-    Sample s = sampleForClass(clazz);
-    GregorMutater mutator = mutateFromClassLoader();
-    List<MutationDetails> mutations = mutator.findMutations(s.className);
-    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
-    
-    SoftAssertions softly = new SoftAssertions();
+    final Sample s = sampleForClass(clazz);
+    final GregorMutater mutator = mutateFromClassLoader();
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    final SoftAssertions softly = new SoftAssertions();
     checkHasNMutants(1, s, softly, mutations);
-    
-    List<MutationDetails> filteredOut = FCollection.filter(mutations, notIn(actual));
-    
+
+    final List<MutationDetails> filteredOut = FCollection.filter(mutations, notIn(actual));
+
     softly.assertThat(filteredOut).describedAs("No mutants filtered").isNotEmpty();
     softly.assertThat(filteredOut).have(mutatedBy(id));
     softly.assertAll();
@@ -156,31 +152,25 @@ public class FilterTester {
       public boolean matches(MutationDetails value) {
         return value.getId().getMutator().equals(id);
       }
-      
+
     };
   }
 
   private Predicate<MutationDetails> notIn(
       final Collection<MutationDetails> actual) {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        return !actual.contains(a);
-      }
-      
-    };
+    return a -> !actual.contains(a);
   }
 
   private void assertFiltersNMutants(int n, GregorMutater mutator, Sample s, SoftAssertions softly) {
-    List<MutationDetails> mutations = mutator.findMutations(s.className);
-    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
-    
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
     checkHasNMutants(n, s, softly, mutations);
-    
-    softly.assertThat(mutations.size() == 0 && n == 0)
+
+    softly.assertThat((mutations.size() == 0) && (n == 0))
     .describedAs("Expecting no mutations to be filtered, but none were produced")
     .isFalse();
-    
+
 
     softly.assertThat(actual)
     .describedAs("Expected to filter out " + n + " mutants but filtered "
@@ -191,69 +181,65 @@ public class FilterTester {
 
   private void checkHasNMutants(int n, Sample s, SoftAssertions softly,
       List<MutationDetails> mutations) {
-    softly.assertThat(mutations.size()) 
+    softly.assertThat(mutations.size())
     .describedAs("Fewer mutations produced than expected with " + s.compiler + ". This test has a bug in it.\n" + s.clazz)
     .isGreaterThanOrEqualTo(n);
   }
 
   private GregorMutater mutateFromResourceDir() {
-    return new GregorMutater(source, m -> true, mutators);
+    return new GregorMutater(this.source, m -> true, this.mutators);
   }
-  
+
   private GregorMutater mutateFromClassLoader() {
-    return new GregorMutater( ClassloaderByteArraySource.fromContext(), m -> true, mutators);
+    return new GregorMutater( ClassloaderByteArraySource.fromContext(), m -> true, this.mutators);
   }
-  
-  
+
+
   private String makeClassName(String sample, String compiler) {
-    String clazz = MessageFormat.format(path, sample, compiler);
+    final String clazz = MessageFormat.format(this.path, sample, compiler);
     return clazz;
   }
-  
-  
-  private List<Sample> samples(final String sample) {
-    Function<String, Option<Sample>> toPair = new Function<String, Option<Sample>>() {
-      @Override
-      public Option<Sample> apply(String compiler) {
-        String clazz = makeClassName(sample, compiler);
-        Option<byte[]> bs = source.getBytes(clazz);
-        if (bs.hasSome()) {
-          Sample p = new Sample();
-          p.className = ClassName.fromString(clazz);
-          p.clazz = ClassTree.fromBytes(bs.value());
-          p.compiler = compiler;
-          return Option.some(p);
-        }
-        return Option.none();
 
+
+  private List<Sample> samples(final String sample) {
+    final Function<String, Option<Sample>> toPair = compiler -> {
+      final String clazz = makeClassName(sample, compiler);
+      final Option<byte[]> bs = FilterTester.this.source.getBytes(clazz);
+      if (bs.hasSome()) {
+        final Sample p = new Sample();
+        p.className = ClassName.fromString(clazz);
+        p.clazz = ClassTree.fromBytes(bs.value());
+        p.compiler = compiler;
+        return Option.some(p);
       }
-      
+      return Option.none();
+
     };
     return FCollection.flatMap(COMPILERS, toPair);
   }
-  
+
   private boolean atLeastOneSampleExists(String sample) {
-    for (String compiler : COMPILERS) {
-      String clazz = makeClassName(sample, compiler);
-      if (source.getBytes(clazz).hasSome()) {
+    for (final String compiler : COMPILERS) {
+      final String clazz = makeClassName(sample, compiler);
+      if (this.source.getBytes(clazz).hasSome()) {
         return true;
       }
     }
     throw new RuntimeException("No samples found for any compiler for " + sample);
   }
-  
+
   private Collection<MutationDetails> filter(ClassTree clazz,
       List<MutationDetails> mutations, Mutater mutator) {
-    testee.begin(clazz);
-    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
-    testee.end();
+    this.testee.begin(clazz);
+    final Collection<MutationDetails> actual = this.testee.intercept(mutations, mutator);
+    this.testee.end();
     return actual;
   }
 
-  
+
   private Sample sampleForClass(Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Sample s = new Sample();
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final Sample s = new Sample();
     s.className = ClassName.fromClass(clazz);
     s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
     s.compiler = "current";

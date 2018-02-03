@@ -23,80 +23,80 @@ public class CompoundMutationInterceptorTest {
 
   @Mock
   MutationInterceptor modifyChild;
-  
-  @Mock 
+
+  @Mock
   MutationInterceptor filterChild;
-  
-  @Mock 
+
+  @Mock
   MutationInterceptor otherChild;
-  
-  @Mock 
+
+  @Mock
   MutationInterceptor reportChild;
-  
-  @Mock 
+
+  @Mock
   MutationInterceptor cosmeticChild;
-  
+
   @Mock
   Mutater mutater;
-  
-  CompoundMutationInterceptor testee; 
-  
+
+  CompoundMutationInterceptor testee;
+
   @Before
   public void setUp() {
-    when(modifyChild.type()).thenReturn(InterceptorType.MODIFY);
-    when(filterChild.type()).thenReturn(InterceptorType.FILTER);
-    when(otherChild.type()).thenReturn(InterceptorType.OTHER);
-    when(cosmeticChild.type()).thenReturn(InterceptorType.MODIFY_COSMETIC);
-    when(reportChild.type()).thenReturn(InterceptorType.REPORT);
+    when(this.modifyChild.type()).thenReturn(InterceptorType.MODIFY);
+    when(this.filterChild.type()).thenReturn(InterceptorType.FILTER);
+    when(this.otherChild.type()).thenReturn(InterceptorType.OTHER);
+    when(this.cosmeticChild.type()).thenReturn(InterceptorType.MODIFY_COSMETIC);
+    when(this.reportChild.type()).thenReturn(InterceptorType.REPORT);
   }
-  
+
   @Test
   public void shouldNotifyAllChildrenOfNewClass() {
-    testee = new CompoundMutationInterceptor(Arrays.asList(modifyChild,filterChild));
-    ClassTree aClass = new ClassTree(null);
+    this.testee = new CompoundMutationInterceptor(Arrays.asList(this.modifyChild,this.filterChild));
+    final ClassTree aClass = new ClassTree(null);
 
-    testee.begin(aClass);
-    verify(modifyChild).begin(aClass);    
-    verify(filterChild).begin(aClass);  
+    this.testee.begin(aClass);
+    verify(this.modifyChild).begin(aClass);
+    verify(this.filterChild).begin(aClass);
   }
-  
+
   @Test
   public void shouldChainModifiedMutantListsThroughChildrenInCorrectOrder() {
 
     // add out of order
-    testee = new CompoundMutationInterceptor(Arrays.asList(cosmeticChild, otherChild, modifyChild, reportChild, filterChild));
-    
-    Collection<MutationDetails> original = aMutationDetail().build(1);
-    Collection<MutationDetails> modifyResult =  aMutationDetail().build(2);
-    Collection<MutationDetails> filterResult =  aMutationDetail().build(3);
-    Collection<MutationDetails> reportResult =  aMutationDetail().build(3);
-    Collection<MutationDetails> cosmeticResult =  aMutationDetail().build(3);
-    Collection<MutationDetails> otherResult =  aMutationDetail().build(3);
-    
-    when(modifyChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(modifyResult);
-    when(filterChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(filterResult);
-    when(reportChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(reportResult);
-    when(cosmeticChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(cosmeticResult);
-    when(otherChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(otherResult);
-    
-    Collection<MutationDetails> actual = testee.intercept(original, mutater);
-    
+    this.testee = new CompoundMutationInterceptor(Arrays.asList(this.cosmeticChild, this.otherChild, this.modifyChild, this.reportChild, this.filterChild));
+
+    final Collection<MutationDetails> original = aMutationDetail().build(1);
+    final Collection<MutationDetails> modifyResult =  aMutationDetail().build(2);
+    final Collection<MutationDetails> filterResult =  aMutationDetail().build(3);
+    final Collection<MutationDetails> reportResult =  aMutationDetail().build(3);
+    final Collection<MutationDetails> cosmeticResult =  aMutationDetail().build(3);
+    final Collection<MutationDetails> otherResult =  aMutationDetail().build(3);
+
+    when(this.modifyChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(modifyResult);
+    when(this.filterChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(filterResult);
+    when(this.reportChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(reportResult);
+    when(this.cosmeticChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(cosmeticResult);
+    when(this.otherChild.intercept(any(Collection.class), any(Mutater.class))).thenReturn(otherResult);
+
+    final Collection<MutationDetails> actual = this.testee.intercept(original, this.mutater);
+
     assertThat(actual).isEqualTo(reportResult);
-    
-    verify(otherChild).intercept(original,mutater);  
-    verify(modifyChild).intercept(otherResult,mutater);
-    verify(filterChild).intercept(modifyResult,mutater);  
-    verify(cosmeticChild).intercept(cosmeticResult,mutater); 
-    verify(reportChild).intercept(cosmeticResult,mutater); 
+
+    verify(this.otherChild).intercept(original,this.mutater);
+    verify(this.modifyChild).intercept(otherResult,this.mutater);
+    verify(this.filterChild).intercept(modifyResult,this.mutater);
+    verify(this.cosmeticChild).intercept(cosmeticResult,this.mutater);
+    verify(this.reportChild).intercept(cosmeticResult,this.mutater);
   }
-  
+
   @Test
   public void shouldNotifyAllChildrenOfEnd() {
-    testee = new CompoundMutationInterceptor(Arrays.asList(modifyChild,filterChild));
-    testee.end();
-    
-    verify(modifyChild).end();    
-    verify(filterChild).end();  
+    this.testee = new CompoundMutationInterceptor(Arrays.asList(this.modifyChild,this.filterChild));
+    this.testee.end();
+
+    verify(this.modifyChild).end();
+    verify(this.filterChild).end();
   }
 
 }

@@ -10,7 +10,7 @@ public class LimitNumberOfMutationsPerClassFilterFactoryTest {
 
   @Test
   public void shouldBeOffByDefault() {
-    assertThat(testee.provides().isOnByDefault()).isFalse();
+    assertThat(this.testee.provides().isOnByDefault()).isFalse();
   }
-  
+
 }

@@ -17,80 +17,80 @@ public class InfiniteIteratorLoopFilterTest extends InfiniteLoopBaseTest {
 
   InfiniteIteratorLoopFilter testee = new InfiniteIteratorLoopFilter();
 
+  @Override
   InfiniteIteratorLoopFilter testee() {
-    return testee;
+    return this.testee;
   }
-    
+
   @Test
   public void shouldNotFilterMutationsInMethodsThatAppearToAlreadyHaveInfiniteLoops() {
-    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
+    final GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
     // our analysis incorrectly identifies some loops as infinite - must skip these
-    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(DontFilterMyAlreadyInfiniteLoop.class));
+    final List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(DontFilterMyAlreadyInfiniteLoop.class));
     assertThat(mutations).hasSize(1);
-    
-    testee.begin(forClass(DontFilterMyAlreadyInfiniteLoop.class));
-    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
-    testee.end();
-    
-    assertThat(actual).hasSize(1);   
+
+    this.testee.begin(forClass(DontFilterMyAlreadyInfiniteLoop.class));
+    final Collection<MutationDetails> actual = this.testee.intercept(mutations, mutator);
+    this.testee.end();
+
+    assertThat(actual).hasSize(1);
   }
-    
+
   @Test
   public void shouldFilterMutationsThatRemoveIteratorNextCalls() {
-    GregorMutater mutator = createMutator(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
-    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForEachLoop.class));
+    final GregorMutater mutator = createMutator(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    final List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForEachLoop.class));
     assertThat(mutations).hasSize(3);
-    
-    testee.begin(forClass(MutateMyForEachLoop.class));
-    Collection<MutationDetails> actual = testee.intercept(mutations, mutator);
-    testee.end();
-    
-    assertThat(actual).hasSize(2);   
+
+    this.testee.begin(forClass(MutateMyForEachLoop.class));
+    final Collection<MutationDetails> actual = this.testee.intercept(mutations, mutator);
+    this.testee.end();
+
+    assertThat(actual).hasSize(2);
   }
-  
-   
+
+
   @Test
   public void shouldNotFindInfiniteLoopInForEach() {
     checkNotFiltered(HasIteratorLoops.class, "forEach");
   }
-  
+
   @Test
   public void shouldNotFindInfiniteLoopInHandCodedInteratorLoop() {
     checkNotFiltered(HasIteratorLoops.class, "iteratorLoop");
   }
-  
+
   @Test
   public void shouldFindInfiniteLoopInIteratorLoopWithoutNext() {
     checkFiltered(HasIteratorLoops.class, "infiniteNoNextCall");
   }
-   
+
 }
 
 class HasIteratorLoops {
   public void forEach(List<String> ss) {
-    for (String each : ss) {
+    for (final String each : ss) {
       System.out.println(each);
     }
   }
-  
+
   public void iteratorLoop(List<String> ss) {
-    for(Iterator<String> it = ss.iterator(); it.hasNext(); ) {
-      String s = it.next();
+    for (final String s : ss) {
       System.out.println(s);
     }
   }
-  
+
   public void infiniteNoNextCall(List<String> ss) {
-    for(Iterator<String> it = ss.iterator(); it.hasNext(); ) {
+    for(final Iterator<String> it = ss.iterator(); it.hasNext(); ) {
       System.out.println(it);
     }
   }
-  
+
 }
 
 class MutateMyForEachLoop {
   public void forEach(List<String> ss) {
-    for (String each : ss) {
+    for (final String each : ss) {
       System.out.println(each);
     }
   }

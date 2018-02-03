@@ -1,8 +1,8 @@
 package org.pitest.mutationtest;
 
 import java.util.Collection;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -19,15 +19,8 @@ public class NullAnalyser implements MutationAnalyser {
   }
 
   private Function<MutationDetails, MutationResult> mutationToResult() {
-    return new Function<MutationDetails, MutationResult>() {
-
-      @Override
-      public MutationResult apply(final MutationDetails a) {
-        return new MutationResult(a, new MutationStatusTestPair(0,
-            DetectionStatus.NOT_STARTED));
-      }
-
-    };
+    return a -> new MutationResult(a, new MutationStatusTestPair(0,
+        DetectionStatus.NOT_STARTED));
   }
 
 }

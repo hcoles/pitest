@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.MutationConfig;
@@ -36,7 +36,7 @@ public class MutationSourceTest {
 
   private MutationConfig       config;
 
-  private ClassByteArraySource source = ClassloaderByteArraySource.fromContext();
+  private final ClassByteArraySource source = ClassloaderByteArraySource.fromContext();
 
   @Mock
   private Mutater              mutater;
@@ -82,12 +82,7 @@ public class MutationSourceTest {
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {
-    return new Function<Integer, TestInfo>() {
-      @Override
-      public TestInfo apply(final Integer a) {
-        return new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
-      }
-    };
+    return a -> new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
   }
 
   private List<MutationDetails> makeMutations(final String method) {
@@ -104,5 +99,5 @@ public class MutationSourceTest {
 }
 
 class Foo {
-  
+
 }

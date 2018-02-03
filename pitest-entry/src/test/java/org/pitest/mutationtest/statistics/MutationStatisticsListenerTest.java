@@ -16,10 +16,11 @@ package org.pitest.mutationtest.statistics;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.function.Predicate;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -55,13 +56,7 @@ public class MutationStatisticsListenerTest {
   }
 
   private Predicate<Score> hasResultForMutator(final String mutator) {
-    return new Predicate<Score>() {
-
-      @Override
-      public boolean test(final Score a) {
-        return a.getMutatorName().equals(mutator);
-      }
-    };
+    return a -> a.getMutatorName().equals(mutator);
   }
 
   private ClassMutationResults createMetaData(final MutationResult... mrs) {

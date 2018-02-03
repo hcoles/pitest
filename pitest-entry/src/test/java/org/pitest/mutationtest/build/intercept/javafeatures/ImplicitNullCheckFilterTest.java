@@ -9,28 +9,28 @@ import org.pitest.mutationtest.engine.gregor.config.Mutator;
 public class ImplicitNullCheckFilterTest {
 
   private static final String             PATH      = "implicitnullcheck/{0}_{1}";
-  
+
   ImplicitNullCheckFilter testee = new ImplicitNullCheckFilter();
-  FilterTester verifier = new FilterTester(PATH, testee, Mutator.all());  
-  
+  FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.all());
+
   @Test
   public void shouldDeclareTypeAsFilter() {
-    assertThat(testee.type()).isEqualTo(InterceptorType.FILTER);
+    assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
   }
-  
+
   @Test
   public void shouldFilterMutantsThatAlterGetClassCallsInALambda() {
-    verifier.assertFiltersNMutationFromSample(1, "RemovedCallBug");
+    this.verifier.assertFiltersNMutationFromSample(1, "RemovedCallBug");
   }
-  
+
   @Test
   public void flteraMutantsThatAlterGetClassInImplicitNullCheck() {
-    verifier.assertFiltersNMutationFromSample(1, "ImplicitNullCheck");
+    this.verifier.assertFiltersNMutationFromSample(1, "ImplicitNullCheck");
   }
-  
+
   @Test
   public void shouldNotFilterDeadCallsToGetClassInNonLambdaMethods() {
-    verifier.assertFiltersNMutationFromClass(0, HasDeadCode.class);
+    this.verifier.assertFiltersNMutationFromClass(0, HasDeadCode.class);
   }
 
 }

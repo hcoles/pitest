@@ -143,8 +143,8 @@ public class MutationCoverageReportTest {
 
   @Test
   public void shouldRecordClassPath() {
-    
-    ClassName clazz = ClassName.fromClass(Foo.class);
+
+    final ClassName clazz = ClassName.fromClass(Foo.class);
 
     final HierarchicalClassId fooId = new HierarchicalClassId(
         new ClassIdentifier(0, clazz), "0");
@@ -205,5 +205,5 @@ public class MutationCoverageReportTest {
 }
 
 class Foo {
-  
+
 }

@@ -33,7 +33,7 @@ public class KnownStatusMutationTestUnitTest {
             DetectionStatus.KILLED, "foo"));
     final List<MutationResult> mutations = Arrays.asList(mr);
     this.testee = new KnownStatusMutationTestUnit(mutations);
-    MutationMetaData actual = this.testee.call();
+    final MutationMetaData actual = this.testee.call();
 
     final MutationMetaData expected = new MutationMetaData(mutations);
     assertThat(actual).isEqualTo(expected);

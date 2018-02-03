@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 public class KotlinFilterFactoryTest {
-  
+
   KotlinFilterFactory testee = new KotlinFilterFactory();
 
   @Test
   public void shouldBeOnByDefault() {
-    assertThat(testee.provides().isOnByDefault()).isTrue();
+    assertThat(this.testee.provides().isOnByDefault()).isTrue();
   }
 
 }

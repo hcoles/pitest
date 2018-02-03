@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,7 +26,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
 import org.pitest.functional.SideEffect1;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -209,7 +209,7 @@ public class CoverageProcessSystemTest {
     assertTrue(coveredClasses
         .contains(coverageFor(CoveredBeforeExceptionTestee.class)));
 
-    ClassName throwsException = ClassName
+    final ClassName throwsException = ClassName
         .fromClass(ThrowsExceptionTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
@@ -226,7 +226,7 @@ public class CoverageProcessSystemTest {
       throws IOException, InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionInFinallyBlock.class);
 
-    ClassName clazz = ClassName
+    final ClassName clazz = ClassName
         .fromClass(ThrowsExceptionInFinallyBlockTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
@@ -241,7 +241,7 @@ public class CoverageProcessSystemTest {
       throws IOException, InterruptedException, ExecutionException {
     final FunctionalList<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionFromLargeMethodTestee.class);
 
-    ClassName clazz = ClassName
+    final ClassName clazz = ClassName
         .fromClass(ThrowsExceptionFromLargeMethodTestee.class);
 
     assertTrue(coveredClasses.contains(coverageFor(BlockLocation.blockLocation(
@@ -297,14 +297,11 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldFailWithExitCode() throws Exception {
-    final SideEffect1<CoverageResult> noOpHandler = new SideEffect1<CoverageResult>() {
-      @Override
-      public void apply(final CoverageResult a) { 
-      }
+    final SideEffect1<CoverageResult> noOpHandler = a -> {
     };
 
     final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
-        
+
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
     final SocketFinder sf = new SocketFinder();
@@ -319,26 +316,14 @@ public class CoverageProcessSystemTest {
   }
 
   private ClassPath classPathWithoutJUnit() {
-    FunctionalList<File> cpWithoutJUnit = FCollection.filter(
-        ClassPath.getClassPathElementsAsFiles(), new Predicate<File>() {
-          @Override
-          public boolean test(File file) {
-            return !file.getName().contains("junit");
-          }
-        });
+    final FunctionalList<File> cpWithoutJUnit = FCollection.filter(
+        ClassPath.getClassPathElementsAsFiles(), file -> !file.getName().contains("junit"));
 
     return new ClassPath(cpWithoutJUnit);
   }
 
   private Predicate<CoverageResult> failingTest() {
-    return new Predicate<CoverageResult>() {
-
-      @Override
-      public boolean test(final CoverageResult a) {
-        return !a.isGreenTest();
-      }
-
-    };
+    return a -> !a.isGreenTest();
   }
 
   private FunctionalList<CoverageResult> runCoverageForTest(final Class<?> test)
@@ -353,17 +338,10 @@ public class CoverageProcessSystemTest {
   private void runCoverageProcess(final Class<?> test,
       final FunctionalList<CoverageResult> coveredClasses) throws IOException,
       InterruptedException {
-    final SideEffect1<CoverageResult> handler = new SideEffect1<CoverageResult>() {
+    final SideEffect1<CoverageResult> handler = a -> coveredClasses.add(a);
 
-      @Override
-      public void apply(final CoverageResult a) {
-        coveredClasses.add(a);
-      }
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
 
-    };
-
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);  
-    
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
       final LaunchOptions lo = new LaunchOptions(agent);
@@ -390,47 +368,27 @@ public class CoverageProcessSystemTest {
       }
 
       private Predicate<BlockLocation> resultFor(final Class<?> class1) {
-        return new Predicate<BlockLocation>() {
-
-          @Override
-          public boolean test(final BlockLocation a) {
-
-            return a.isFor(ClassName.fromClass(class1));
-          }
-
-        };
+        return a -> a.isFor(ClassName.fromClass(class1));
       }
     };
   }
 
   private Predicate<CoverageResult> coverageFor(final BlockLocation location) {
-    return new Predicate<CoverageResult>() {
-      @Override
-      public boolean test(final CoverageResult a) {
-        return a.getCoverage().contains(location);
-      }
-    };
+    return a -> a.getCoverage().contains(location);
   }
 
   private List<String> coverOnlyTestees() {
     return Arrays.asList("*Testee*");
   }
-  
+
   private List<String> excludeTests() {
     return Arrays.asList("*Test");
   }
 
   private Predicate<CoverageResult> coverage(final String testName,
       final int numberOfBlocks) {
-    return new Predicate<CoverageResult>() {
-
-      @Override
-      public boolean test(final CoverageResult a) {
-        return a.getTestUnitDescription().getName().startsWith(testName)
-            && (a.getNumberOfCoveredBlocks() == numberOfBlocks);
-      }
-
-    };
+    return a -> a.getTestUnitDescription().getName().startsWith(testName)
+        && (a.getNumberOfCoveredBlocks() == numberOfBlocks);
   }
 
   private void assertCoverage(
@@ -455,13 +413,9 @@ public class CoverageProcessSystemTest {
       }
 
       private Predicate<BlockLocation> hasBlock(final int block) {
-        return new Predicate<BlockLocation>() {
-          @Override
-          public boolean test(BlockLocation a) {
-            System.out.println(a);
-            return a.getBlock() == block;
-          }
-
+        return a -> {
+          System.out.println(a);
+          return a.getBlock() == block;
         };
       }
 

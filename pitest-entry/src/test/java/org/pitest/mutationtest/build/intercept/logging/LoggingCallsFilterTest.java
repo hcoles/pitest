@@ -22,46 +22,46 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
 public class LoggingCallsFilterTest {
-  
+
   LoggingCallsFilter testee = new LoggingCallsFilter(Collections.singleton("java/util/logging"));
-  
+
   Mutater mutator;
-  
+
   @Before
   public void setUp() {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Collection<MethodMutatorFactory> mutators = Mutator.defaults();
-    mutator = new GregorMutater(source, m -> true, mutators);
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final Collection<MethodMutatorFactory> mutators = Mutator.defaults();
+    this.mutator = new GregorMutater(source, m -> true, mutators);
   }
 
   @Test
   public void shouldDeclareTypeAsFilter() {
-    assertThat(testee.type()).isEqualTo(InterceptorType.FILTER);
+    assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
   }
-  
+
   @Test
   public void shouldLeaveMutantsNotOnLoggingLinesUntouched() {
-    ClassName clazz = ClassName.fromClass(DoesNotLog.class);
-    List<MutationDetails> input = mutator.findMutations(clazz);
-    Collection<MutationDetails> actual = analyseWithTestee(DoesNotLog.class);
-    
+    final ClassName clazz = ClassName.fromClass(DoesNotLog.class);
+    final List<MutationDetails> input = this.mutator.findMutations(clazz);
+    final Collection<MutationDetails> actual = analyseWithTestee(DoesNotLog.class);
+
     assertThat(actual).containsExactlyElementsOf(input);
   }
-  
+
   @Test
   public void shouldFilterMutantsOnSameLineAsLoggingCall() {
-    Collection<MutationDetails> actual = analyseWithTestee(Logs.class);
+    final Collection<MutationDetails> actual = analyseWithTestee(Logs.class);
     assertThat(actual).isEmpty();
   }
-  
+
   @Test
   public void shouldNotFilterMutantsOnLinesOtherThanLoggingLine() {
-    Collection<MutationDetails> actual = analyseWithTestee(LogsAndDoesNot.class);
+    final Collection<MutationDetails> actual = analyseWithTestee(LogsAndDoesNot.class);
     assertThat(actual).doNotHave(mutantsIn("logs"));
     assertThat(actual).haveAtLeast(1, mutantsIn("noLog"));
     assertThat(actual).haveExactly(3, mutantsIn("both"));
   }
-  
+
   private Condition< MutationDetails> mutantsIn(final String name) {
   return new  Condition< MutationDetails>("mutants in the methed " + name) {
     @Override
@@ -72,17 +72,17 @@ public class LoggingCallsFilterTest {
   }
 
   private Collection<MutationDetails> analyseWithTestee(Class<?> clazz) {
-    ClassName name = ClassName.fromClass(clazz);
-    testee.begin(treeFor(clazz));
-    List<MutationDetails> input = mutator.findMutations(name);
-    return testee.intercept(input, mutator);
+    final ClassName name = ClassName.fromClass(clazz);
+    this.testee.begin(treeFor(clazz));
+    final List<MutationDetails> input = this.mutator.findMutations(name);
+    return this.testee.intercept(input, this.mutator);
   }
 
   ClassTree treeFor(Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     return ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
   }
-  
+
 }
 
 class DoesNotLog {
@@ -100,18 +100,18 @@ class Logs {
 
 class LogsAndDoesNot {
   private static final Logger LOGGER = Logger.getLogger(Logs.class.getName());
-  
+
   public void logs(int i) {
     LOGGER.log(Level.INFO, "lot " + " of " + "string " + "conact " + i);
   }
-  
+
   public int noLog(int i) {
     return i++;
   }
-  
+
   public int both(int i) {
     i = i + 42;
-    
+
     LOGGER.log(Level.INFO, "lot " + " of " + "string " + "conact " + i);
     return i++;
   }

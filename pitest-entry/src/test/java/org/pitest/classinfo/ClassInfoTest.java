@@ -69,7 +69,7 @@ public class ClassInfoTest {
         emptyClassPointer(), this.data);
     assertTrue(testee.isSynthetic());
   }
-  
+
   @Test
   public void shouldReportWhenClassIsNotSynthetic() {
     this.data.access = Opcodes.ACC_PUBLIC;
@@ -77,25 +77,13 @@ public class ClassInfoTest {
         emptyClassPointer(), this.data);
     assertFalse(testee.isSynthetic());
   }
-  
-  private ClassPointer emptyClassPointer() {
-    return new ClassPointer() {
-      @Override
-      public Option<ClassInfo> fetch() {
-        return Option.none();
-      }
 
-    };
+  private ClassPointer emptyClassPointer() {
+    return () -> Option.none();
   }
 
   private ClassPointer pointerTo(final ClassInfo ci) {
-    return new ClassPointer() {
-      @Override
-      public Option<ClassInfo> fetch() {
-        return Option.some(ci);
-      }
-
-    };
+    return () -> Option.some(ci);
   }
 
   @Test

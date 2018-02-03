@@ -9,31 +9,31 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 public class MutationMetaDataTest {
 
   @Test
   public void shouldPartitionResultsByMutatedClass() {
-    MutationResult a = makeResult("Foo", "a");
-    MutationResult b = makeResult("Bar", "a");
-    MutationResult c = makeResult("Foo", "b");
-    MutationResult d = makeResult("Foo", "c");
+    final MutationResult a = makeResult("Foo", "a");
+    final MutationResult b = makeResult("Bar", "a");
+    final MutationResult c = makeResult("Foo", "b");
+    final MutationResult d = makeResult("Foo", "c");
 
-    MutationMetaData testee = new MutationMetaData(Arrays.asList(a, b, c, d));
-    Collection<ClassMutationResults> actual = testee.toClassResults();
+    final MutationMetaData testee = new MutationMetaData(Arrays.asList(a, b, c, d));
+    final Collection<ClassMutationResults> actual = testee.toClassResults();
 
     assertThat(actual).hasSize(2);
 
-    Iterator<ClassMutationResults> it = actual.iterator();
-    ClassMutationResults first = it.next();
-    ClassMutationResults second = it.next();
+    final Iterator<ClassMutationResults> it = actual.iterator();
+    final ClassMutationResults first = it.next();
+    final ClassMutationResults second = it.next();
 
     assertThat(first.getMutatedClass()).isEqualTo(ClassName.fromString("Bar"));
     assertThat(first.getMutations()).hasSize(1);
@@ -45,7 +45,7 @@ public class MutationMetaDataTest {
 
   @Test
   public void shouldNotCreateEmptyClassResultsObjects() {
-    MutationMetaData testee = new MutationMetaData(
+    final MutationMetaData testee = new MutationMetaData(
         Collections.<MutationResult> emptyList());
     assertThat(testee.toClassResults()).isEmpty();
   }
@@ -56,9 +56,9 @@ public class MutationMetaDataTest {
   }
 
   private MutationResult makeResult(String clazz, String method) {
-    Location location = Location.location(ClassName.fromString(clazz),
+    final Location location = Location.location(ClassName.fromString(clazz),
         MethodName.fromString(method), "()V");
-    MutationDetails md = aMutationDetail().withId(
+    final MutationDetails md = aMutationDetail().withId(
         aMutationId().withLocation(location)).build();
     final MutationResult mr = new MutationResult(md,
         new MutationStatusTestPair(0, DetectionStatus.KILLED));

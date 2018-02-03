@@ -50,7 +50,7 @@ public abstract class ReportTestBase {
     this.plugins = PluginServices.makeForContextLoader();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    this.data.setGroupConfig(new TestGroupConfig());    
+    this.data.setGroupConfig(new TestGroupConfig());
     this.data.setTestPlugin("junit");
   }
 
@@ -95,7 +95,7 @@ public abstract class ReportTestBase {
   }
 
   protected void createAndRun() {
-    SettingsFactory settings = new SettingsFactory(this.data, this.plugins);
+    final SettingsFactory settings = new SettingsFactory(this.data, this.plugins);
     createAndRun(settings);
   }
 

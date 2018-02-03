@@ -21,12 +21,12 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.Reader;
 import java.util.Collections;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.function.Function;
 import org.pitest.functional.Option;
 
 public class DirectorySourceLocatorTest {
