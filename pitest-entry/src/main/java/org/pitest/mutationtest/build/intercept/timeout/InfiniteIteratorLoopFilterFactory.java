@@ -24,5 +24,5 @@ public class InfiniteIteratorLoopFilterFactory  implements MutationInterceptorFa
         .withDescription("Filters mutations that may cause infinite loops"
             + " by removing calls to iterator.next");
   }
-  
+
 }

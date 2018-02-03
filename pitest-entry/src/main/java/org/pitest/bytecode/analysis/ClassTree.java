@@ -18,71 +18,65 @@ import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.Location;
 
 public class ClassTree {
-  
+
   private final ClassNode rawNode;
-  private FunctionalList<MethodTree> lazyMethods; 
+  private FunctionalList<MethodTree> lazyMethods;
 
   public ClassTree(ClassNode rawNode) {
     this.rawNode = rawNode;
   }
-  
+
   public static ClassTree fromBytes(byte[] bytes) {
     final ClassReader cr = new ClassReader(bytes);
     final ClassNode classNode = new ClassNode();
     cr.accept(classNode, ClassReader.EXPAND_FRAMES);
     return new ClassTree(classNode);
   }
-  
+
 
   public FunctionalList<MethodTree> methods() {
-    if (lazyMethods != null) {
-      return lazyMethods;
+    if (this.lazyMethods != null) {
+      return this.lazyMethods;
     }
-    lazyMethods = FCollection.map(rawNode.methods, toTree(name()));
-    return lazyMethods;
+    this.lazyMethods = FCollection.map(this.rawNode.methods, toTree(name()));
+    return this.lazyMethods;
   }
-  
+
   public Option<MethodTree> method(Location loc) {
    return methods().findFirst(MethodMatchers.forLocation(loc));
   }
-  
+
   public FunctionalList<AnnotationNode> annotations() {
-    FunctionalList<AnnotationNode> annotaions = new MutableList<>();
-    if (rawNode.invisibleAnnotations != null) {
-      annotaions.addAll(rawNode.invisibleAnnotations);
+    final FunctionalList<AnnotationNode> annotaions = new MutableList<>();
+    if (this.rawNode.invisibleAnnotations != null) {
+      annotaions.addAll(this.rawNode.invisibleAnnotations);
     }
-    if (rawNode.visibleAnnotations != null) {
-      annotaions.addAll(rawNode.visibleAnnotations);
+    if (this.rawNode.visibleAnnotations != null) {
+      annotaions.addAll(this.rawNode.visibleAnnotations);
     }
     return annotaions;
   }
-  
+
   private static Function<MethodNode, MethodTree> toTree(final ClassName name) {
-    return new Function<MethodNode, MethodTree>() {
-      @Override
-      public MethodTree apply(MethodNode a) {
-        return new MethodTree(name,a);
-      }
-      
-    };
+    return a -> new MethodTree(name,a);
   }
 
   public ClassName name() {
-    return ClassName.fromString(rawNode.name);
+    return ClassName.fromString(this.rawNode.name);
   }
-  
+
   public ClassNode rawNode() {
-    return rawNode;
+    return this.rawNode;
   }
 
 
   @Override
   public String toString() {
-    StringWriter writer = new StringWriter();
-    rawNode.accept(new TraceClassVisitor(null, new Textifier(), new PrintWriter(
+    final StringWriter writer = new StringWriter();
+    this.rawNode.accept(new TraceClassVisitor(null, new Textifier(), new PrintWriter(
         writer)));
     return writer.toString();
 
   }
-  
+
 }

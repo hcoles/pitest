@@ -84,24 +84,11 @@ public class MutationTestBuilder {
   }
 
   private Comparator<MutationDetails> comparator() {
-    return new Comparator<MutationDetails>() {
-
-      @Override
-      public int compare(final MutationDetails arg0, final MutationDetails arg1) {
-        return arg0.getId().compareTo(arg1.getId());
-      }
-
-    };
+    return (arg0, arg1) -> arg0.getId().compareTo(arg1.getId());
   }
 
   private Function<ClassName, Iterable<MutationDetails>> classToMutations() {
-    return new Function<ClassName, Iterable<MutationDetails>>() {
-      @Override
-      public Iterable<MutationDetails> apply(final ClassName a) {
-        return MutationTestBuilder.this.mutationSource.createMutations(a);
-      }
-
-    };
+    return a -> MutationTestBuilder.this.mutationSource.createMutations(a);
   }
 
   private MutationAnalysisUnit makePreAnalysedUnit(
@@ -120,31 +107,16 @@ public class MutationTestBuilder {
   }
 
   private static Function<MutationResult, MutationDetails> resultToDetails() {
-    return new Function<MutationResult, MutationDetails>() {
-      @Override
-      public MutationDetails apply(final MutationResult a) {
-        return a.getDetails();
-      }
-    };
+    return a -> a.getDetails();
   }
 
   private static Predicate<MutationResult> statusNotKnown() {
-    return new Predicate<MutationResult>() {
-      @Override
-      public boolean test(final MutationResult a) {
-        return a.getStatus() == DetectionStatus.NOT_STARTED;
-      }
-    };
+    return a -> a.getStatus() == DetectionStatus.NOT_STARTED;
   }
 
   private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return new Function<MutationDetails, Iterable<ClassName>>() {
-      @Override
-      public Iterable<ClassName> apply(final MutationDetails a) {
-        return FCollection.map(a.getTestsInOrder(),
-            TestInfo.toDefiningClassName());
-      }
-    };
+    return a -> FCollection.map(a.getTestsInOrder(),
+        TestInfo.toDefiningClassName());
   }
 
 }

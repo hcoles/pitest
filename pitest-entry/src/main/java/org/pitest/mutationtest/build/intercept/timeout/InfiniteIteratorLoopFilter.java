@@ -30,7 +30,7 @@ import org.pitest.sequence.Slot;
 public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   private static final boolean DEBUG = false;
-  
+
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())
       .or(inifniteIteratorLoop())
@@ -39,7 +39,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
           .withIgnores(IGNORE)
           .withDebug(DEBUG)
           );
-      
+
   @Override
   SequenceMatcher<AbstractInsnNode> infiniteLoopMatcher() {
     return INFINITE_LOOP;
@@ -47,21 +47,21 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
     return isIteratorNext(instruction);
   }
-  
+
   private static SequenceQuery<AbstractInsnNode> doesNotBreakIteratorLoop() {
     return QueryStart.match(methodCallTo(ClassName.fromClass(Iterator.class), "next").negate());
-  }  
+  }
 
   private boolean isIteratorNext(AbstractInsnNode instruction) {
     return InstructionMatchers.methodCallTo(ClassName.fromClass(Iterator.class), "next").test(null, instruction);
   }
 
   private static SequenceQuery<AbstractInsnNode> inifniteIteratorLoop() {
-    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
-    
+    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
@@ -74,10 +74,10 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
         // can't currently deal with loops with conditionals that cause additional jumps back
         .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
   }
-  
+
   private static SequenceQuery<AbstractInsnNode> infiniteIteratorLoopJavac() {
-    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
-    
+    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+
     return  QueryStart
         .any(AbstractInsnNode.class)
         .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
@@ -86,9 +86,9 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
         .oneOrMore(doesNotBreakIteratorLoop())
         .then(jumpsTo(loopStart.read()))
         // can't currently deal with loops with conditionals that cause additional jumps back
-        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));   
+        .zeroOrMore(QueryStart.match(jumpsTo(loopStart.read()).negate()));
   }
 
 
-  
+
 }

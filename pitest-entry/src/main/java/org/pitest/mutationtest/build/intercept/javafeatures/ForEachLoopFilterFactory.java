@@ -16,7 +16,7 @@ public class ForEachLoopFilterFactory implements MutationInterceptorFactory {
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new ForEachLoopFilter();
   }
-  
+
   @Override
   public Feature provides() {
     return Feature.named("FFEACH")

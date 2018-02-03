@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
@@ -41,7 +40,7 @@ public class MutationAnalysisExecutor {
 
     signalRunStartToAllListeners();
 
-    List<Future<MutationMetaData>> results = new ArrayList<>(
+    final List<Future<MutationMetaData>> results = new ArrayList<>(
         testUnits.size());
 
     for (final MutationAnalysisUnit unit : testUnits) {
@@ -52,9 +51,9 @@ public class MutationAnalysisExecutor {
 
     try {
       processResult(results);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       throw Unchecked.translateCheckedException(e);
-    } catch (ExecutionException e) {
+    } catch (final ExecutionException e) {
       throw Unchecked.translateCheckedException(e);
     }
 
@@ -64,9 +63,9 @@ public class MutationAnalysisExecutor {
 
   private void processResult(List<Future<MutationMetaData>> results)
       throws InterruptedException, ExecutionException {
-    for (Future<MutationMetaData> f : results) {
-      MutationMetaData r = f.get();
-      for (MutationResultListener l : this.listeners) {
+    for (final Future<MutationMetaData> f : results) {
+      final MutationMetaData r = f.get();
+      for (final MutationResultListener l : this.listeners) {
         for (final ClassMutationResults cr : r.toClassResults()) {
           l.handleMutationResult(cr);
         }
@@ -76,22 +75,12 @@ public class MutationAnalysisExecutor {
 
   private void signalRunStartToAllListeners() {
     FCollection.forEach(this.listeners,
-        new SideEffect1<MutationResultListener>() {
-          @Override
-          public void apply(final MutationResultListener a) {
-            a.runStart();
-          }
-        });
+        a -> a.runStart());
   }
 
   private void signalRunEndToAllListeners() {
     FCollection.forEach(this.listeners,
-        new SideEffect1<MutationResultListener>() {
-          @Override
-          public void apply(final MutationResultListener a) {
-            a.runEnd();
-          }
-        });
+        a -> a.runEnd());
   }
 
 }

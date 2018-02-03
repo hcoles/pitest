@@ -20,15 +20,15 @@ import org.pitest.mutationtest.engine.MutationDetails;
 public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
   private final List<String> configuredAnnotations;
-  
+
   private boolean skipClass;
   private Predicate<MutationDetails> annotatedMethodMatcher;
-  
-  
+
+
   ExcludedAnnotationInterceptor(List<String> configuredAnnotations) {
     this.configuredAnnotations = configuredAnnotations;
   }
-  
+
   @Override
   public InterceptorType type() {
     return InterceptorType.FILTER;
@@ -36,51 +36,41 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    skipClass = clazz.annotations().contains(avoidedAnnotation());
-    if (!skipClass) {
-      FunctionalList<Predicate<MutationDetails>> methods = clazz.methods()
+    this.skipClass = clazz.annotations().contains(avoidedAnnotation());
+    if (!this.skipClass) {
+      final FunctionalList<Predicate<MutationDetails>> methods = clazz.methods()
           .filter(hasAvoidedAnnotation())
           .map(AnalysisFunctions.matchMutationsInMethod());
-      annotatedMethodMatcher = Prelude.or(methods);
+      this.annotatedMethodMatcher = Prelude.or(methods);
     }
   }
 
   private Predicate<MethodTree> hasAvoidedAnnotation() {
-    return new Predicate<MethodTree>() {
-      @Override
-      public boolean test(MethodTree a) {
-        return a.annotations().contains(avoidedAnnotation());
-      }
-    };
+    return a -> a.annotations().contains(avoidedAnnotation());
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {
-    return new Predicate<AnnotationNode>() {
-      @Override
-      public boolean test(AnnotationNode a) {
-        return shouldAvoid(a.desc);
-      }
-    };
+    return a -> shouldAvoid(a.desc);
   }
 
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    if (skipClass) {
+    if (this.skipClass) {
       return Collections.emptyList();
     }
-    
-    return FCollection.filter(mutations, Prelude.not(annotatedMethodMatcher));
+
+    return FCollection.filter(mutations, Prelude.not(this.annotatedMethodMatcher));
   }
 
   @Override
   public void end() {
-    
+
   }
-  
+
   boolean shouldAvoid(String desc) {
-    String matchAgainst = desc.replace(";", "");
-    for (String each : configuredAnnotations) {
+    final String matchAgainst = desc.replace(";", "");
+    for (final String each : this.configuredAnnotations) {
       if (matchAgainst.endsWith(each)) {
         return true;
       }

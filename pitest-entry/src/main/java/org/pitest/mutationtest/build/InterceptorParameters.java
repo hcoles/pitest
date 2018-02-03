@@ -10,11 +10,11 @@ import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
 
 public final class InterceptorParameters {
-  
+
   private final FeatureSetting conf;
   private final ReportOptions data;
   private final ClassByteArraySource source;
-  
+
 
   public InterceptorParameters(FeatureSetting conf, ReportOptions data,
       ClassByteArraySource source) {
@@ -24,38 +24,38 @@ public final class InterceptorParameters {
   }
 
   public ReportOptions data() {
-    return data;
+    return this.data;
   }
-  
+
   public Option<FeatureSetting> settings() {
-    return Option.some(conf);
+    return Option.some(this.conf);
   }
 
 
   public ClassByteArraySource source() {
-    return source;
+    return this.source;
   }
 
   public Option<String> getString(FeatureParameter limit) {
-    if (conf == null) {
+    if (this.conf == null) {
       return Option.none();
     }
-    return conf.getString(limit.name());
+    return this.conf.getString(limit.name());
   }
-  
+
   public List<String> getList(FeatureParameter key) {
-    if (conf == null) {
+    if (this.conf == null) {
       return Collections.emptyList();
     }
-    return conf.getList(key.name());
+    return this.conf.getList(key.name());
   }
-  
+
   public Option<Integer> getInteger(FeatureParameter key) {
-    Option<String> val = getString(key);
+    final Option<String> val = getString(key);
     if (val.hasSome()) {
       return Option.some(Integer.parseInt(val.value()));
     }
     return Option.none();
   }
-  
+
 }

@@ -30,9 +30,9 @@ public class JavaProcess {
 
     this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);
     this.err = new StreamMonitor(process.getErrorStream(), syserrHandler);
-    
-    out.requestStart();
-    err.requestStart();
+
+    this.out.requestStart();
+    this.err.requestStart();
   }
 
   public void destroy() {
@@ -42,7 +42,7 @@ public class JavaProcess {
   }
 
   public int waitToDie() throws InterruptedException {
-    int exitVal = this.process.waitFor();
+    final int exitVal = this.process.waitFor();
     this.out.requestStop();
     this.err.requestStop();
     return exitVal;
@@ -52,7 +52,7 @@ public class JavaProcess {
     try {
       this.process.exitValue();
       return false;
-    } catch (IllegalThreadStateException e) {
+    } catch (final IllegalThreadStateException e) {
       return true;
     }
   }

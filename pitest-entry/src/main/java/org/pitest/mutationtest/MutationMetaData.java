@@ -55,14 +55,7 @@ public final class MutationMetaData {
   }
 
   private static Comparator<MutationResult> comparator() {
-    return new Comparator<MutationResult>() {
-
-      @Override
-      public int compare(final MutationResult arg0, final MutationResult arg1) {
-        return arg0.getDetails().getId().compareTo(arg1.getDetails().getId());
-      }
-
-    };
+    return (arg0, arg1) -> arg0.getDetails().getId().compareTo(arg1.getDetails().getId());
   }
 
   @Override

@@ -57,7 +57,7 @@ public final class Score {
   }
 
   public long getTotalDetectedMutations() {
-    return totalDetected;
+    return this.totalDetected;
   }
 
   public int getPercentageDetected() {

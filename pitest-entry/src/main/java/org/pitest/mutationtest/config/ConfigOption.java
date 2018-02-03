@@ -19,7 +19,7 @@ import java.io.Serializable;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
-  
+
   /**
    * The test plugin to use
    */
@@ -102,11 +102,11 @@ public enum ConfigOption {
    * Filter defining classes to exclude from mutation
    */
   EXCLUDED_CLASSES("excludedClasses"),
-  
+
   /**
    * Filter defining test classes to excludd
    */
-  EXCLUDED_TEST_CLASSES("excludedTestClasses"),  
+  EXCLUDED_TEST_CLASSES("excludedTestClasses"),
   /**
    * Formats in which to output results
    */

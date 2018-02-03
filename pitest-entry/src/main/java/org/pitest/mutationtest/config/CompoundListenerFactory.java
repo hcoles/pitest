@@ -15,8 +15,8 @@
 package org.pitest.mutationtest.config;
 
 import java.util.Properties;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
@@ -40,14 +40,7 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
 
   private Function<MutationResultListenerFactory, MutationResultListener> factoryToListener(
       final Properties props, final ListenerArguments args) {
-    return new Function<MutationResultListenerFactory, MutationResultListener>() {
-
-      @Override
-      public MutationResultListener apply(final MutationResultListenerFactory a) {
-        return a.getListener(props, args);
-      }
-
-    };
+    return a -> a.getListener(props, args);
   }
 
   @Override

@@ -15,7 +15,7 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
 public class MethodTree {
-  
+
   private final ClassName owner;
   private final MethodNode rawNode;
   private FunctionalList<AbstractInsnNode> lazyInstructions;
@@ -24,46 +24,46 @@ public class MethodTree {
     this.owner = owner;
     this.rawNode = rawNode;
   }
-  
+
   public MethodNode rawNode() {
-    return rawNode;
+    return this.rawNode;
   }
 
   public Location asLocation() {
-    return Location.location(owner,MethodName.fromString(rawNode.name), rawNode.desc);
+    return Location.location(this.owner,MethodName.fromString(this.rawNode.name), this.rawNode.desc);
   }
-  
+
   public FunctionalList<AbstractInsnNode> instructions() {
-    if (lazyInstructions != null) {
-      return lazyInstructions;
+    if (this.lazyInstructions != null) {
+      return this.lazyInstructions;
     }
-    
+
     return createInstructionList();
   }
-  
+
   public boolean isSynthetic() {
-    return (rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
+    return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
-  
+
   public FunctionalList<AnnotationNode> annotations() {
-    FunctionalList<AnnotationNode> annotaions = new MutableList<>();
-    if (rawNode.invisibleAnnotations != null) {
-      annotaions.addAll(rawNode.invisibleAnnotations);
+    final FunctionalList<AnnotationNode> annotaions = new MutableList<>();
+    if (this.rawNode.invisibleAnnotations != null) {
+      annotaions.addAll(this.rawNode.invisibleAnnotations);
     }
-    if (rawNode.visibleAnnotations != null) {
-      annotaions.addAll(rawNode.visibleAnnotations);
+    if (this.rawNode.visibleAnnotations != null) {
+      annotaions.addAll(this.rawNode.visibleAnnotations);
     }
     return annotaions;
   }
 
   private FunctionalList<AbstractInsnNode> createInstructionList() {
-    List<AbstractInsnNode> list = new LinkedList<>();
-    ListIterator<AbstractInsnNode> it = rawNode.instructions.iterator();
+    final List<AbstractInsnNode> list = new LinkedList<>();
+    final ListIterator<AbstractInsnNode> it = this.rawNode.instructions.iterator();
     while (it.hasNext()) {
         list.add(it.next());
     }
-    lazyInstructions = new MutableList<>(list);
-    return lazyInstructions;
+    this.lazyInstructions = new MutableList<>(list);
+    return this.lazyInstructions;
   }
-  
+
 }

@@ -33,11 +33,11 @@ import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 
 public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
-  
+
   private static final boolean DEBUG = false;
-  
+
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
-  
+
   // Looks fairly specifically for a conditional mutated to a unconditional
   // rather than any always false condition
   static final SequenceMatcher<AbstractInsnNode> ALWAYS_FALSE = QueryStart
@@ -51,9 +51,9 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
           .withIgnores(IGNORE)
           .withDebug(DEBUG)
           );
-  
+
   private ClassTree currentClass;
-  
+
   @Override
   public InterceptorType type() {
     return InterceptorType.FILTER;
@@ -61,16 +61,16 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    currentClass = clazz;
+    this.currentClass = clazz;
   }
 
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-   FunctionalList<MutationDetails> doNotTouch = FCollection.filter(mutations, Prelude.not(inEqualsMethod()));
+   final FunctionalList<MutationDetails> doNotTouch = FCollection.filter(mutations, Prelude.not(inEqualsMethod()));
    if (doNotTouch.size() != mutations.size()) {
-     FunctionalList<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
-     List<MutationDetails> filtered = filter(inEquals, m);
+     final FunctionalList<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
+     final List<MutationDetails> filtered = filter(inEquals, m);
      doNotTouch.addAll(filtered);
    }
    return doNotTouch;
@@ -78,53 +78,45 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private List<MutationDetails> filter(
       FunctionalList<MutationDetails> inEquals, Mutater m) {
-    Location equalsMethod = inEquals.get(0).getId().getLocation();
-    
-    Option<MethodTree> maybeEquals = currentClass.methods()
+    final Location equalsMethod = inEquals.get(0).getId().getLocation();
+
+    final Option<MethodTree> maybeEquals = this.currentClass.methods()
         .findFirst(MethodMatchers.forLocation(equalsMethod));
-    
+
     return inEquals.filter(Prelude.not(isShortcutEquals(maybeEquals.value(), m)));
   }
 
   private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        return shortCutEquals(tree,a, m);
-      }
-    };
+    return a -> shortCutEquals(tree,a, m);
   }
 
   private Boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
     if (!mutatesAConditionalJump(tree, a.getInstructionIndex())) {
       return false;
     }
-    
-    ClassTree mutant = ClassTree.fromBytes(m.getMutation(a.getId()).getBytes());
-    MethodTree mutantEquals = mutant.methods().findFirst(MethodMatchers.forLocation(tree.asLocation())).value();
-    
+
+    final ClassTree mutant = ClassTree.fromBytes(m.getMutation(a.getId()).getBytes());
+    final MethodTree mutantEquals = mutant.methods().findFirst(MethodMatchers.forLocation(tree.asLocation())).value();
+
     return ALWAYS_FALSE.matches(mutantEquals.instructions());
   }
-  
+
   private boolean mutatesAConditionalJump(MethodTree tree, int index) {
-    AbstractInsnNode mutatedInsns = tree.instructions().get(index);
-    return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);   
+    final AbstractInsnNode mutatedInsns = tree.instructions().get(index);
+    return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);
   }
-  
+
   private Predicate<MutationDetails> inEqualsMethod() {
-    return new  Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        Location loc = a.getId().getLocation();
-        return loc.getMethodDesc().equals("(Ljava/lang/Object;)Z")
-            && loc.getMethodName().equals(MethodName.fromString("equals"));
-      }  
+    return a -> {
+      final Location loc = a.getId().getLocation();
+      return loc.getMethodDesc().equals("(Ljava/lang/Object;)Z")
+          && loc.getMethodName().equals(MethodName.fromString("equals"));
     };
   }
 
   @Override
   public void end() {
-    
+
   }
 
 }

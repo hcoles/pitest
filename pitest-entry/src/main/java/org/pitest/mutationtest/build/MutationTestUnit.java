@@ -56,7 +56,7 @@ public class MutationTestUnit implements MutationAnalysisUnit {
 
     return reportResults(mutations);
   }
-  
+
   @Override
   public int priority() {
     return this.availableMutations.size();
@@ -68,7 +68,7 @@ public class MutationTestUnit implements MutationAnalysisUnit {
       runTestInSeperateProcessForMutationRange(mutations);
     }
   }
-  
+
   private void runTestInSeperateProcessForMutationRange(
       final MutationStatusMap mutations) throws IOException,
       InterruptedException {

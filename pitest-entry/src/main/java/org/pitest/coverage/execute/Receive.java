@@ -55,7 +55,7 @@ final class Receive implements ReceiveStrategy {
     final String methodSig = is.readString();
     final int first = is.readInt();
     final int last = is.readInt();
-    Location loc = Location.location(this.classIdToName.get(classId),
+    final Location loc = Location.location(this.classIdToName.get(classId),
         MethodName.fromString(methodName), methodSig);
     for (int i = first; i != (last + 1); i++) {
       // nb, convert from classwide id to method scoped index within
@@ -81,7 +81,7 @@ final class Receive implements ReceiveStrategy {
   private void readProbeHit(final SafeDataInputStream is,
       final Set<BlockLocation> hits) {
     final long encoded = is.readLong();
-    BlockLocation location = probeToBlock(encoded);
+    final BlockLocation location = probeToBlock(encoded);
     hits.add(location);
   }
 

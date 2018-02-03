@@ -20,13 +20,13 @@ public class InlinedFinallyBlockFilterFactory  implements MutationInterceptorFac
     }
     return CompoundMutationInterceptor.nullInterceptor();
   }
-  
+
   @Override
   public Feature provides() {
     return Feature.named("FFBLOCK")
         .withOnByDefault(true)
         .withDescription("Filters mutations in code duplicated by finally block inlining");
   }
-  
+
 
 }

@@ -23,5 +23,5 @@ public class LoggingCallsFilterFactory  implements MutationInterceptorFactory {
         .withOnByDefault(true)
         .withDescription("Filters mutations in code that makes calls to logging frameworks");
   }
-  
+
 }

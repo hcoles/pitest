@@ -17,8 +17,8 @@ package org.pitest.mutationtest.tooling;
 import java.io.File;
 import java.io.Reader;
 import java.util.Collection;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
@@ -35,22 +35,12 @@ public class SmartSourceLocator implements SourceLocator {
         collectChildren(0));
     childDirs.addAll(roots);
 
-    final Function<File, SourceLocator> fileToSourceLocator = new Function<File, SourceLocator>() {
-      @Override
-      public SourceLocator apply(final File a) {
-        return new DirectorySourceLocator(a);
-      }
-    };
+    final Function<File, SourceLocator> fileToSourceLocator = a -> new DirectorySourceLocator(a);
     this.children = FCollection.map(childDirs, fileToSourceLocator);
   }
 
   private Function<File, Collection<File>> collectChildren(final int depth) {
-    return new Function<File, Collection<File>>() {
-      @Override
-      public Collection<File> apply(final File a) {
-        return collectDirectories(a, depth);
-      }
-    };
+    return a -> collectDirectories(a, depth);
   }
 
   private Collection<File> collectDirectories(final File root, final int depth) {

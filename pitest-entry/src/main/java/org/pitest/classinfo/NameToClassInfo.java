@@ -1,6 +1,7 @@
 package org.pitest.classinfo;
 
 import java.util.function.Function;
+
 import org.pitest.functional.Option;
 
 public class NameToClassInfo implements Function<ClassName, Option<ClassInfo>> {

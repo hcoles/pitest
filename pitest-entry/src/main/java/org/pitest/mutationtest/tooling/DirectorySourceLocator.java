@@ -20,8 +20,8 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-
 import java.util.function.Function;
+
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.SourceLocator;
@@ -71,18 +71,13 @@ public class DirectorySourceLocator implements SourceLocator {
 
   private Function<String, Iterable<Reader>> classNameToSourceFileReader(
       final String fileName) {
-    return new Function<String, Iterable<Reader>>() {
-
-      @Override
-      public Iterable<Reader> apply(final String className) {
-        if (className.contains(".")) {
-          final File f = new File(className.replace(".", File.separator));
-          return locate(f.getParent() + File.separator + fileName);
-        } else {
-          return locate(fileName);
-        }
+    return className -> {
+      if (className.contains(".")) {
+        final File f = new File(className.replace(".", File.separator));
+        return locate(f.getParent() + File.separator + fileName);
+      } else {
+        return locate(fileName);
       }
-
     };
   }
 

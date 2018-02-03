@@ -32,13 +32,13 @@ import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.Slot;
 
 public class ImplicitNullCheckFilter implements MutationInterceptor {
-  
+
   private static final boolean DEBUG = false;
-  
+
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-  
+
   static final SequenceMatcher<AbstractInsnNode> GET_CLASS_NULL_CHECK = QueryStart
       .any(AbstractInsnNode.class)
       .then(methodCallTo(ClassName.fromClass(Object.class), "getClass").and(isInstruction(MUTATED_INSTRUCTION.read())))
@@ -49,8 +49,8 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
           .withIgnores(IGNORE)
           .withDebug(DEBUG)
           );
-  
-  
+
+
   private ClassTree currentClass;
 
   @Override
@@ -60,7 +60,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    currentClass = clazz;
+    this.currentClass = clazz;
   }
 
   @Override
@@ -70,24 +70,21 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
   }
 
   private Predicate<MutationDetails> isAnImplicitNullCheck() {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        int instruction = a.getInstructionIndex();
-        MethodTree method = currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
- 
-        AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
+    return a -> {
+      final int instruction = a.getInstructionIndex();
+      final MethodTree method = ImplicitNullCheckFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
 
-        Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-        context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-        return GET_CLASS_NULL_CHECK.matches(method.instructions(), context); 
-      } 
+      final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
+
+      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
+      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      return GET_CLASS_NULL_CHECK.matches(method.instructions(), context);
     };
   }
-  
+
   @Override
   public void end() {
-    currentClass = null; 
+    this.currentClass = null;
   }
 
 }

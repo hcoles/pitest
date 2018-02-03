@@ -25,12 +25,7 @@ class StaticInitializerFilter implements MutationInterceptor {
   }
 
   private Predicate<MutationDetails> isInStaticInitCode() {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        return a.isInStaticInitializer();
-      }
-    };
+    return a -> a.isInStaticInitializer();
   }
 
   @Override

@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 public class MutationStatusMap {
@@ -74,40 +74,16 @@ public class MutationStatusMap {
   }
 
   private static Function<Entry<MutationDetails, MutationStatusTestPair>, MutationResult> detailsToMutationResults() {
-    return new Function<Entry<MutationDetails, MutationStatusTestPair>, MutationResult>() {
-
-      @Override
-      public MutationResult apply(
-          final Entry<MutationDetails, MutationStatusTestPair> a) {
-        return new MutationResult(a.getKey(), a.getValue());
-      }
-
-    };
+    return a -> new MutationResult(a.getKey(), a.getValue());
   }
 
   private static Function<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
-    return new Function<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails>() {
-
-      @Override
-      public MutationDetails apply(
-          final Entry<MutationDetails, MutationStatusTestPair> a) {
-        return a.getKey();
-      }
-
-    };
+    return a -> a.getKey();
   }
 
   private static Predicate<Entry<MutationDetails, MutationStatusTestPair>> hasStatus(
       final DetectionStatus status) {
-    return new Predicate<Entry<MutationDetails, MutationStatusTestPair>>() {
-
-      @Override
-      public boolean test(
-          final Entry<MutationDetails, MutationStatusTestPair> a) {
-        return a.getValue().getStatus().equals(status);
-      }
-
-    };
+    return a -> a.getValue().getStatus().equals(status);
   }
 
   public void markUncoveredMutations() {
@@ -118,14 +94,7 @@ public class MutationStatusMap {
   }
 
   private static Predicate<MutationDetails> hasNoCoverage() {
-    return new Predicate<MutationDetails>() {
-
-      @Override
-      public boolean test(final MutationDetails a) {
-        return a.getTestsInOrder().isEmpty();
-      }
-
-    };
+    return a -> a.getTestsInOrder().isEmpty();
   }
 
 }

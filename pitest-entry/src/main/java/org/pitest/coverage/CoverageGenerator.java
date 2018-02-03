@@ -23,7 +23,7 @@ public interface CoverageGenerator {
   CoverageDatabase calculateCoverage();
 
   TestPluginArguments getConfiguration();
-  
+
   LaunchOptions getLaunchOptions();
 
 }

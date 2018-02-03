@@ -33,7 +33,7 @@ public class WrappingProcess {
   public void start() throws IOException {
     final String[] args = { "" + this.port };
 
-    ProcessBuilder processBuilder = createProcessBuilder(
+    final ProcessBuilder processBuilder = createProcessBuilder(
         this.processArgs.getJavaExecutable(), this.processArgs.getJvmArgs(),
         this.minionClass, Arrays.asList(args),
         this.processArgs.getJavaAgentFinder());
@@ -42,7 +42,7 @@ public class WrappingProcess {
         this.processArgs.getLaunchClassPath(),
         this.processArgs.getEnvironmentVariables());
 
-    Process process = processBuilder.start();
+    final Process process = processBuilder.start();
     this.process = new JavaProcess(process, this.processArgs.getStdout(),
         this.processArgs.getStdErr());
   }
@@ -51,10 +51,10 @@ public class WrappingProcess {
       File workingDirectory, String initialClassPath,
       Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
-    Map<String, String> environment = processBuilder.environment();
+    final Map<String, String> environment = processBuilder.environment();
     environment.put("CLASSPATH", initialClassPath);
-    
-    for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
+
+    for (final Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       environment.put(entry.getKey(), entry.getValue());
     }
   }
@@ -66,7 +66,7 @@ public class WrappingProcess {
   private static ProcessBuilder createProcessBuilder(String javaProc,
       List<String> args, Class<?> mainClass, List<String> programArgs,
       JavaAgent javaAgent) {
-    List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
+    final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
         programArgs);
 
     // IBM jdk adds this, thereby breaking everything
@@ -87,7 +87,7 @@ public class WrappingProcess {
       JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
       List<String> programArgs) {
 
-    List<String> cmd = new ArrayList<>();
+    final List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
     cmd.addAll(args);
 
@@ -101,35 +101,25 @@ public class WrappingProcess {
 
   private static void addPITJavaAgent(JavaAgent agentJarLocator,
       List<String> cmd) {
-    Option<String> jarLocation = agentJarLocator.getJarLocation();
-    for (String each : jarLocation) {
+    final Option<String> jarLocation = agentJarLocator.getJarLocation();
+    for (final String each : jarLocation) {
       cmd.add("-javaagent:" + each);
     }
   }
 
   private static void addLaunchJavaAgents(List<String> cmd) {
-    RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-    FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(),
+    final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
+    final FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(),
         or(isJavaAgentParam(), isEnvironmentSetting()));
     cmd.addAll(agents);
   }
 
   private static Predicate<String> isEnvironmentSetting() {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(String a) {
-        return a.startsWith("-D");
-      }
-    };
+    return a -> a.startsWith("-D");
   }
 
   private static Predicate<String> isJavaAgentParam() {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(String a) {
-        return a.toLowerCase().startsWith("-javaagent");
-      }
-    };
+    return a -> a.toLowerCase().startsWith("-javaagent");
   }
 
   public JavaProcess getProcess() {

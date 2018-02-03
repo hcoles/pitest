@@ -16,12 +16,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -37,7 +37,7 @@ import org.pitest.util.Log;
  * Cannot be used with code that uses single line if statements
  */
 public class InlinedFinallyBlockFilter implements MutationInterceptor {
-  
+
   private static final Logger LOG = Log.getLogger();
 
   @Override
@@ -74,18 +74,11 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
   @Override
   public void end() {
-    // no-opp 
+    // no-opp
   }
-  
+
   private static Comparator<MutationDetails> compareLineNumbers() {
-    return new Comparator<MutationDetails>() {
-
-      @Override
-      public int compare(final MutationDetails arg0, final MutationDetails arg1) {
-        return arg0.getLineNumber() - arg1.getLineNumber();
-      }
-
-    };
+    return (arg0, arg1) -> arg0.getLineNumber() - arg1.getLineNumber();
   }
 
   private void checkForInlinedCode(final Collection<MutationDetails> combined,
@@ -123,13 +116,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   }
 
   private static Predicate<MutationDetails> isInFinallyHandler() {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(final MutationDetails a) {
-        return a.isInFinallyBlock();
-      }
-
-    };
+    return a -> a.isInFinallyBlock();
   }
 
   private static MutationDetails makeCombinedMutant(
@@ -146,31 +133,15 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   }
 
   private static Function<MutationDetails, Integer> mutationToIndex() {
-    return new Function<MutationDetails, Integer>() {
-      @Override
-      public Integer apply(final MutationDetails a) {
-        return a.getFirstIndex();
-      }
-    };
+    return a -> a.getFirstIndex();
   }
 
   private static Function<MutationDetails, Integer> mutationToBlock() {
-    return new Function<MutationDetails, Integer>() {
-      @Override
-      public Integer apply(final MutationDetails a) {
-        return a.getBlock();
-      }
-    };
+    return a -> a.getBlock();
   }
 
   private static Function<MutationDetails, LineMutatorPair> toLineMutatorPair() {
-    return new Function<MutationDetails, LineMutatorPair>() {
-      @Override
-      public LineMutatorPair apply(final MutationDetails a) {
-        return new LineMutatorPair(a.getLineNumber(), a.getMutator());
-      }
-
-    };
+    return a -> new LineMutatorPair(a.getLineNumber(), a.getMutator());
   }
 
 }

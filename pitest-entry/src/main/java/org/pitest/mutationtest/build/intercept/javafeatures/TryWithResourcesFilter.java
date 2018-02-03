@@ -17,7 +17,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 public class TryWithResourcesFilter implements MutationInterceptor {
 
   private Set<Integer> lines;
-  
+
   @Override
   public InterceptorType type() {
     return InterceptorType.FILTER;
@@ -25,14 +25,14 @@ public class TryWithResourcesFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    lines = new HashSet<>();
-    for (MethodTree each : clazz.methods()) {
-      checkMehod(each,lines);
+    this.lines = new HashSet<>();
+    for (final MethodTree each : clazz.methods()) {
+      checkMehod(each,this.lines);
     }
   }
 
   private void checkMehod(MethodTree each, Set<Integer> lines) {
-    each.rawNode().accept(new TryWithResourcesMethodVisitor(lines)); 
+    each.rawNode().accept(new TryWithResourcesMethodVisitor(lines));
   }
 
   @Override
@@ -40,19 +40,14 @@ public class TryWithResourcesFilter implements MutationInterceptor {
       Collection<MutationDetails> mutations, Mutater m) {
     return FCollection.filter(mutations, Prelude.not(isOnMarkedLine()));
   }
-  
+
   private Predicate<MutationDetails> isOnMarkedLine() {
-    return new  Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        return lines.contains(a.getClassLine().getLineNumber());
-      }  
-    };
+    return a -> TryWithResourcesFilter.this.lines.contains(a.getClassLine().getLineNumber());
   }
 
   @Override
   public void end() {
-    
+
   }
 
 }

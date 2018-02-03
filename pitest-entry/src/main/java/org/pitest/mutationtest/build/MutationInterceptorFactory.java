@@ -6,5 +6,5 @@ import org.pitest.plugin.ToolClasspathPlugin;
 public interface MutationInterceptorFactory extends ToolClasspathPlugin, ProvidesFeature {
 
   MutationInterceptor createInterceptor(InterceptorParameters params);
-    
+
 }

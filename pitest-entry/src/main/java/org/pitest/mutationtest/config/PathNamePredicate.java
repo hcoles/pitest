@@ -14,8 +14,9 @@
  */
 package org.pitest.mutationtest.config;
 
-import org.pitest.classpath.ClassPathRoot;
 import java.util.function.Predicate;
+
+import org.pitest.classpath.ClassPathRoot;
 
 public class PathNamePredicate implements Predicate<ClassPathRoot> {
 

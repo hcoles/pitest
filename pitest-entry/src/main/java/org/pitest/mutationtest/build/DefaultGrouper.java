@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -46,12 +46,7 @@ public class DefaultGrouper implements MutationGrouper {
   }
 
   private static Function<MutationDetails, ClassName> byClass() {
-    return new Function<MutationDetails, ClassName>() {
-      @Override
-      public ClassName apply(final MutationDetails a) {
-        return a.getClassName();
-      }
-    };
+    return a -> a.getClassName();
   }
 
 }

@@ -1,18 +1,5 @@
 package org.pitest.mutationtest.incremental;
 
-import org.apache.commons.codec.binary.Base64;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.HierarchicalClassId;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.Option;
-import org.pitest.mutationtest.ClassHistory;
-import org.pitest.mutationtest.HistoryStore;
-import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.MutationStatusTestPair;
-import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.util.Log;
-import org.pitest.util.Unchecked;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +13,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import org.apache.commons.codec.binary.Base64;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.coverage.CoverageDatabase;
+import org.pitest.functional.Option;
+import org.pitest.mutationtest.ClassHistory;
+import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.util.Log;
+import org.pitest.util.Unchecked;
 
 public class ObjectOutputStreamHistoryStore implements HistoryStore {
 
@@ -124,22 +124,22 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
     try {
       final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
           Base64.decodeBase64(string));
-      ObjectInputStream objectInputStream = new ObjectInputStream(
+      final ObjectInputStream objectInputStream = new ObjectInputStream(
           byteArrayInputStream);
       return clazz.cast(objectInputStream.readObject());
-    } catch (ClassNotFoundException e) {
+    } catch (final ClassNotFoundException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }
 
   private <T> String serialize(T t) {
     try {
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+      final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      final ObjectOutputStream objectOutputStream = new ObjectOutputStream(
           byteArrayOutputStream);
       objectOutputStream.writeObject(t);
       return Base64.encodeBase64String(byteArrayOutputStream.toByteArray());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
   }

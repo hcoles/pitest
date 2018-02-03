@@ -25,124 +25,95 @@ import org.pitest.mutationtest.engine.PoisonStatus;
 /**
  * Identifies and marks mutations in code that is active during class
  * Initialisation.
- * 
+ *
  * The analysis is simplistic and non-exhaustive. Code is considered to be
  * for static initialisation if it is
- * 
+ *
  * 1. In a static initializer (i.e <clinit>)
  * 2. In a private static method called directly from <clinit>
- * 
+ *
  * TODO A better analysis would include private static methods called indirectly from <clinit>
  * and would exclude methods called from location other than <clinit>.
- * 
+ *
  */
 class StaticInitializerInterceptor implements MutationInterceptor {
-  
+
   private static final MethodName CLINIT = MethodName.fromString("<clinit>");
-  
+
   private Predicate<MutationDetails> isStaticInitCode;
 
   @Override
   public void begin(ClassTree clazz) {
       analyseClass(clazz);
   }
-  
+
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    if (isStaticInitCode != null) {
-      FunctionalList<MutationDetails> altered = 
-          FCollection.filter(mutations, isStaticInitCode)
+    if (this.isStaticInitCode != null) {
+      final FunctionalList<MutationDetails> altered =
+          FCollection.filter(mutations, this.isStaticInitCode)
           .map(setStaticInitializerFlag());
-      
-      FunctionalList<MutationDetails> notAltered = 
-          FCollection.filter(mutations, Prelude.not(isStaticInitCode));
-      
+
+      final FunctionalList<MutationDetails> notAltered =
+          FCollection.filter(mutations, Prelude.not(this.isStaticInitCode));
+
       notAltered.addAll(altered);
       return notAltered;
     }
     return mutations;
   }
-  
+
   @Override
   public void end() {
-    isStaticInitCode = null;
+    this.isStaticInitCode = null;
   }
-  
+
   private void analyseClass(ClassTree tree) {
-    Option<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
-        
+    final Option<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
+
     if (clinit.hasSome()) {
-      FunctionalList<MethodInsnNode> selfCalls = 
+      final FunctionalList<MethodInsnNode> selfCalls =
           clinit.value().instructions()
         .flatMap(is(MethodInsnNode.class))
         .filter(calls(tree.name()));
-      
-      Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls.map(toPredicate()));
-      
-      Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods()
+
+      final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls.map(toPredicate()));
+
+      final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods()
       .filter(isPrivateStatic())
       .filter(matchingCalls)
       .map(AnalysisFunctions.matchMutationsInMethod())
       );
-      
-      isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);
+
+      this.isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);
     }
   }
 
 
   private static Predicate<MutationDetails> isInStaticInitializer() {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        return a.getId().getLocation().getMethodName().equals(CLINIT);
-      }
-      
-    };
+    return a -> a.getId().getLocation().getMethodName().equals(CLINIT);
   }
 
   private static Predicate<MethodTree> isPrivateStatic() {
-    return new  Predicate<MethodTree>() {
-      @Override
-      public boolean test(MethodTree a) {
-        return (a.rawNode().access & Opcodes.ACC_STATIC) != 0
-            && (a.rawNode().access & Opcodes.ACC_PRIVATE) != 0;
-      }
-      
-    };
+    return a -> ((a.rawNode().access & Opcodes.ACC_STATIC) != 0)
+        && ((a.rawNode().access & Opcodes.ACC_PRIVATE) != 0);
   }
 
 
-  
-  private static Function<MethodInsnNode, Predicate<MethodTree>> toPredicate() {   
-    return new Function<MethodInsnNode, Predicate<MethodTree>> () {
-      @Override
-      public Predicate<MethodTree> apply(MethodInsnNode a) {
-        return matchesCall(a);
-      }
-    };
+
+  private static Function<MethodInsnNode, Predicate<MethodTree>> toPredicate() {
+    return a -> matchesCall(a);
   }
 
-  
-  private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {   
-    return new Predicate<MethodTree> () {     
-      @Override
-      public boolean test(MethodTree a) {
-        return a.rawNode().name.equals(call.name) 
-            && a.rawNode().desc.equals(call.desc);
-      }
-      
-    };
+
+  private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {
+    return a -> a.rawNode().name.equals(call.name)
+        && a.rawNode().desc.equals(call.desc);
   }
 
   private Predicate<MethodInsnNode> calls(final ClassName self) {
-    return new Predicate<MethodInsnNode>() {
-      @Override
-      public boolean test(MethodInsnNode a) {
-        return a.owner.equals(self.asInternalName());
-      }
-      
-    };
+    return a -> a.owner.equals(self.asInternalName());
   }
 
   private <T extends AbstractInsnNode> Function<AbstractInsnNode,Option<T>> is(final Class<T> clazz) {
@@ -155,28 +126,18 @@ class StaticInitializerInterceptor implements MutationInterceptor {
         }
         return Option.none();
       }
-      
+
     };
-    
+
   }
-  
+
   private Predicate<MethodTree> nameEquals(final String name) {
-    return new Predicate<MethodTree>() {
-      @Override
-      public boolean test(MethodTree a) {
-        return a.rawNode().name.equals(name);
-      }  
-    };
+    return a -> a.rawNode().name.equals(name);
   }
 
 
   private Function<MutationDetails, MutationDetails> setStaticInitializerFlag() {
-    return new Function<MutationDetails, MutationDetails>() {
-      @Override
-      public MutationDetails apply(MutationDetails a) {
-        return a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
-      }
-    };
+    return a -> a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
   }
 
   @Override
