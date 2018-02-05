@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.And;
-import org.pitest.functional.predicate.Not;
 import org.pitest.functional.predicate.Or;
 
 /**
@@ -42,8 +41,8 @@ public abstract class Prelude {
     return new And<>(ps);
   }
 
-  public static final <A> Not<A> not(final Predicate<A> p) {
-    return new Not<>(p);
+  public static final <A> Predicate<A> not(final Predicate<A> p) {
+    return p.negate();
   }
 
   @SafeVarargs

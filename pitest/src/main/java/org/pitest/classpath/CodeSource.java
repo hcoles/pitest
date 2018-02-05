@@ -1,7 +1,6 @@
 package org.pitest.classpath;
 
 import static org.pitest.functional.FCollection.flatMap;
-import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ public class CodeSource implements ClassInfoSource {
 
   public List<ClassInfo> getTests() {
     return flatMap(this.classPath.test(), nameToClassInfo()).filter(
-                    not(ClassInfo.matchIfAbstract()));
+                    ClassInfo.matchIfAbstract().negate());
   }
 
   public ClassPath getClassPath() {

@@ -15,7 +15,6 @@
 package org.pitest.dependency;
 
 import static org.pitest.functional.prelude.Prelude.and;
-import static org.pitest.functional.prelude.Prelude.not;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -149,7 +148,7 @@ public class DependencyExtractor {
     final List<DependencyAccess> dependencies = new ArrayList<>();
 
     final SideEffect1<DependencyAccess> se = constructCollectingSideEffectForVisitor(
-        dependencies, and(not(nameIsEqual(clazz)), filter));
+        dependencies, and(nameIsEqual(clazz).negate(), filter));
     final DependencyClassVisitor dcv = new DependencyClassVisitor(
         new NullVisitor(), se);
     reader.accept(dcv, ClassReader.EXPAND_FRAMES);

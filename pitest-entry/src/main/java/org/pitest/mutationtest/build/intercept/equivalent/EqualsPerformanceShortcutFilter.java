@@ -20,7 +20,6 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.Option;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -67,7 +66,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-   final FunctionalList<MutationDetails> doNotTouch = FCollection.filter(mutations, Prelude.not(inEqualsMethod()));
+   final FunctionalList<MutationDetails> doNotTouch = FCollection.filter(mutations, inEqualsMethod().negate());
    if (doNotTouch.size() != mutations.size()) {
      final FunctionalList<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
      final List<MutationDetails> filtered = filter(inEquals, m);
@@ -83,7 +82,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     final Option<MethodTree> maybeEquals = this.currentClass.methods()
         .findFirst(MethodMatchers.forLocation(equalsMethod));
 
-    return inEquals.filter(Prelude.not(isShortcutEquals(maybeEquals.value(), m)));
+    return inEquals.filter(isShortcutEquals(maybeEquals.value(), m).negate());
   }
 
   private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {
