@@ -20,7 +20,7 @@ import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.PoisonStatus;
@@ -83,7 +83,7 @@ public class DefaultTestPrioritiserTest {
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {
-    return a -> new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
+    return a -> new TestInfo("foo", "bar", a, Optional.<ClassName> empty(), 0);
   }
 
   private MutationDetails makeMutation(final String method) {

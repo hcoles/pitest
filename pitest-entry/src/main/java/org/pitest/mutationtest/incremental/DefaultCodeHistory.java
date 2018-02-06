@@ -7,7 +7,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -34,9 +34,9 @@ public class DefaultCodeHistory implements CodeHistory {
   }
 
   @Override
-  public Option<MutationStatusTestPair> getPreviousResult(
+  public Optional<MutationStatusTestPair> getPreviousResult(
       final MutationIdentifier id) {
-    return Option.some(this.previousResults.get(id));
+    return Optional.ofNullable(this.previousResults.get(id));
   }
 
   @Override
@@ -46,8 +46,8 @@ public class DefaultCodeHistory implements CodeHistory {
       return true;
     }
 
-    final Option<ClassInfo> current = this.code.fetchClass(className);
-    return !current.value().getHierarchicalId().equals(historic.getId());
+    final Optional<ClassInfo> current = this.code.fetchClass(className);
+    return !current.get().getHierarchicalId().equals(historic.getId());
 
   }
 

@@ -80,7 +80,7 @@ public class ExcludedAnnotationInterceptorTest {
 
   ClassTree treeFor(Class<?> clazz) {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    return ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    return ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
   }
 
 

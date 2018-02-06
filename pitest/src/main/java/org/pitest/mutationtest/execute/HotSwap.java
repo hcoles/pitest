@@ -44,7 +44,7 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
     if ((this.lastMutatedClass == null)
         || !this.lastMutatedClass.equals(clazzName)) {
       this.lastClassPreMutation = byteSource.getBytes(clazzName.asJavaName())
-          .value();
+          .get();
     }
 
     this.lastMutatedClass = clazzName;

@@ -73,7 +73,7 @@ public class TestInfoTest {
   }
 
   private ClassInfo fetchClass(final Class<?> clazz) {
-    return this.repository.fetchClass(clazz).value();
+    return this.repository.fetchClass(clazz).get();
   }
 
 }

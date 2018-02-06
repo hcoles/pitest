@@ -17,7 +17,7 @@ package org.pitest.classpath;
 import java.io.IOException;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Unchecked;
 
@@ -34,9 +34,9 @@ public class ClassloaderByteArraySource implements ClassByteArraySource {
   }
 
   @Override
-  public Option<byte[]> getBytes(final String classname) {
+  public Optional<byte[]> getBytes(final String classname) {
     try {
-      return Option.some(this.cp.getClassData(classname));
+      return Optional.ofNullable(this.cp.getClassData(classname));
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }

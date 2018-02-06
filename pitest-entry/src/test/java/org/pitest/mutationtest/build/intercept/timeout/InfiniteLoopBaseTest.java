@@ -17,7 +17,7 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
@@ -43,13 +43,13 @@ public abstract class InfiniteLoopBaseTest {
   void checkNotFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
     for (final Compiler each : Compiler.values()) {
-      final Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+      final Optional<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
           method);
-      for (final MethodTree m : mt) {
+      if (mt.isPresent()) {
         assertThat(testee().infiniteLoopMatcher()
-            .matches(m.instructions()))
+            .matches(mt.get().instructions()))
                 .describedAs("With " + each
-                    + " compiler matched when it shouldn't " + toString(m))
+                    + " compiler matched when it shouldn't " + toString(mt.get()))
                 .isFalse();
         testedSomething = true;
       }
@@ -67,13 +67,13 @@ public abstract class InfiniteLoopBaseTest {
   void checkFiltered(ClassName clazz, Predicate<MethodTree> method) {
     boolean testedSomething = false;
     for (final Compiler each : Compiler.values()) {
-      final Option<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
+      final Optional<MethodTree> mt = parseMethodFromCompiledResource(clazz, each,
           method);
-      for (final MethodTree m : mt) {
+      if (mt.isPresent()) {
         assertThat(testee().infiniteLoopMatcher()
-            .matches(m.instructions()))
+            .matches(mt.get().instructions()))
                 .describedAs("With " + each
-                    + " compiler did not match as expected " + toString(m))
+                    + " compiler did not match as expected " + toString(mt.get()))
                 .isTrue();
         testedSomething = true;
       }
@@ -96,19 +96,19 @@ public abstract class InfiniteLoopBaseTest {
     return "Byte code is \n" + new String(bos.toByteArray());
   }
 
-  private Option<MethodTree> parseMethodFromCompiledResource(ClassName clazz,
+  private Optional<MethodTree> parseMethodFromCompiledResource(ClassName clazz,
       Compiler compiler, Predicate<MethodTree> method) {
     final ResourceFolderByteArraySource source = new ResourceFolderByteArraySource();
-    final Option<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
-    for (final byte[] bytes : bs) {
-      final ClassTree tree = ClassTree.fromBytes(bytes);
+    final Optional<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
+    if (bs.isPresent()) {
+      final ClassTree tree = ClassTree.fromBytes(bs.get());
       return tree.methods().findFirst(method);
     }
-    return Option.none();
+    return Optional.empty();
   }
 
   ClassTree forClass(Class<?> clazz) {
-    final byte[] bs = this.source.getBytes(clazz.getName()).value();
+    final byte[] bs = this.source.getBytes(clazz.getName()).get();
     return ClassTree.fromBytes(bs);
   }
 

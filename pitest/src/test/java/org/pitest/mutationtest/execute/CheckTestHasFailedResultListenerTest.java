@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.DescriptionMother;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
@@ -51,7 +51,7 @@ public class CheckTestHasFailedResultListenerTest {
   @Test
   public void shouldRecordDescriptionOfLastFailingTest() {
     this.testee.onTestFailure(new TestResult(this.description, null));
-    assertEquals(Option.some(this.description), this.testee.lastFailingTest());
+    assertEquals(Optional.ofNullable(this.description), this.testee.lastFailingTest());
   }
 
   @Test

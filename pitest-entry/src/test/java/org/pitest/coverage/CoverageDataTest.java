@@ -45,6 +45,7 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
 import org.pitest.functional.FCollection;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
@@ -67,6 +68,7 @@ public class CoverageDataTest {
     MockitoAnnotations.initMocks(this);
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<BlockLocation, Set<Integer>>());
+    when(this.code.findTestee(any())).thenReturn(Optional.empty());
     this.testee = new CoverageData(this.code, this.lm);
   }
 

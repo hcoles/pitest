@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 import org.pitest.functional.FArray;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.SourceLocator;
 
 public class SmartSourceLocator implements SourceLocator {
@@ -58,15 +58,15 @@ public class SmartSourceLocator implements SourceLocator {
   }
 
   @Override
-  public Option<Reader> locate(final Collection<String> classes,
+  public Optional<Reader> locate(final Collection<String> classes,
       final String fileName) {
     for (final SourceLocator each : this.children) {
-      final Option<Reader> reader = each.locate(classes, fileName);
-      if (reader.hasSome()) {
+      final Optional<Reader> reader = each.locate(classes, fileName);
+      if (reader.isPresent()) {
         return reader;
       }
     }
-    return Option.none();
+    return Optional.empty();
   }
 
 }

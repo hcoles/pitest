@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -61,7 +61,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
   private Collection<MutationDetails> findTimeoutMutants(Location location,
       Collection<MutationDetails> mutations, Mutater m) {
 
-    final MethodTree method = this.currentClass.methods().findFirst(forLocation(location)).value();
+    final MethodTree method = this.currentClass.methods().findFirst(forLocation(location)).get();
 
     //  give up if our matcher thinks loop is already infinite
     if (infiniteLoopMatcher().matches(method.instructions())) {
@@ -82,8 +82,8 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
 
   private boolean isInfiniteLoop(MutationDetails each, Mutater m) {
     final ClassTree mutantClass = ClassTree.fromBytes(m.getMutation(each.getId()).getBytes());
-    final Option<MethodTree> mutantMethod = mutantClass.methods().findFirst(forLocation(each.getId().getLocation()));
-    return infiniteLoopMatcher().matches(mutantMethod.value().instructions());
+    final Optional<MethodTree> mutantMethod = mutantClass.methods().findFirst(forLocation(each.getId().getLocation()));
+    return infiniteLoopMatcher().matches(mutantMethod.get().instructions());
   }
 
   private Function<MutationDetails, Location> mutationToLocation() {

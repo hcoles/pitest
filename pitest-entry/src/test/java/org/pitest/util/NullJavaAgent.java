@@ -14,7 +14,7 @@
  */
 package org.pitest.util;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.process.JavaAgent;
 
 public class NullJavaAgent implements JavaAgent {
@@ -24,8 +24,8 @@ public class NullJavaAgent implements JavaAgent {
   }
 
   @Override
-  public Option<String> getJarLocation() {
-    return Option.none();
+  public Optional<String> getJarLocation() {
+    return Optional.empty();
   }
 
   @Override

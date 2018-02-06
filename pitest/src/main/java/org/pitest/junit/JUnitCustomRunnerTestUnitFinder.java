@@ -36,7 +36,7 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -49,7 +49,7 @@ import org.pitest.util.Preconditions;
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   @SuppressWarnings("rawtypes")
-  private static final Option<Class> CLASS_RULE = findClassRuleClass();
+  private static final Optional<Class> CLASS_RULE = findClassRuleClass();
 
 
   private final TestGroupConfig config;
@@ -79,7 +79,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       return filterUnitsByMethod(filteredUnits);
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
-          clazz, Option.<Filter> none()));
+          clazz, Optional.<Filter> empty()));
     }
   }
 
@@ -165,12 +165,12 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
-    if (CLASS_RULE.hasNone()) {
+    if (!CLASS_RULE.isPresent()) {
       return false;
     }
 
-    return hasAnnotation(methods, CLASS_RULE.value())
-        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.value());
+    return hasAnnotation(methods, CLASS_RULE.get())
+        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.get());
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
@@ -221,7 +221,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
           IsolationUtils.getContextClassLoader(), description.getClassName());
     }
     return new AdaptedJUnitTestUnit(clazz,
-        Option.some(createFilterFor(description)));
+        Optional.ofNullable(createFilterFor(description)));
   }
 
   private Filter createFilterFor(final Description description) {
@@ -229,11 +229,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   @SuppressWarnings("rawtypes")
-  private static Option<Class> findClassRuleClass() {
+  private static Optional<Class> findClassRuleClass() {
     try {
-      return Option.<Class> some(Class.forName("org.junit.ClassRule"));
+      return Optional.<Class> ofNullable(Class.forName("org.junit.ClassRule"));
     } catch (final ClassNotFoundException ex) {
-      return Option.none();
+      return Optional.empty();
     }
   }
 

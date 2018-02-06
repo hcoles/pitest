@@ -47,11 +47,11 @@ public class LineStyle {
   }
 
   public String getMutation() {
-    if (this.line.detectionStatus().hasNone()) {
+    if (!this.line.detectionStatus().isPresent()) {
       return "";
     }
 
-    final DetectionStatus status = this.line.detectionStatus().value();
+    final DetectionStatus status = this.line.detectionStatus().get();
     if (!status.isDetected()) {
       return "survived";
     }

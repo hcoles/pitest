@@ -17,17 +17,17 @@ package org.pitest.junit;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.testapi.TestSuiteFinder;
@@ -42,12 +42,9 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       final List<Description> allChildren = new ArrayList<>();
       flattenChildren(allChildren, runner.getDescription());
 
-      final Set<Class<?>> classes = new LinkedHashSet<>(
-          runner.getDescription().getChildren().size());
-
       final List<Description> suites = FCollection.filter(allChildren,
           Prelude.or(isSuiteMethodRunner(runner), isSuite()));
-      FCollection.flatMapTo(suites, descriptionToTestClass(), classes);
+      final Set<Class<?>> classes = suites.stream().flatMap(descriptionToTestClass()).collect(Collectors.toSet());
 
       classes.remove(a);
       return new ArrayList<>(classes);
@@ -71,13 +68,13 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
     return a -> SuiteMethod.class.isAssignableFrom(runner.getClass());
   }
 
-  private static Function<Description, Option<Class<?>>> descriptionToTestClass() {
+  private static Function<Description, Stream<Class<?>>> descriptionToTestClass() {
     return a -> {
       final Class<?> clazz = a.getTestClass();
       if (clazz != null) {
-        return Option.<Class<?>> some(clazz);
+        return Stream.of(clazz);
       } else {
-        return Option.<Class<?>> none();
+        return Stream.empty();
       }
     };
   }

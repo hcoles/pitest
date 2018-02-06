@@ -12,7 +12,7 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
@@ -75,7 +75,7 @@ public class EntryPoint {
 
     final ClassPath cp = data.getClassPath();
 
-    final Option<Reader> reader = data.createHistoryReader();
+    final Optional<Reader> reader = data.createHistoryReader();
     final WriterFactory historyWriter = data.createHistoryWriter();
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
@@ -84,7 +84,7 @@ public class EntryPoint {
         new ClassPathByteArraySource(cp));
 
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
-        jac.getJarLocation().value());
+        jac.getJarLocation().get());
 
     final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 

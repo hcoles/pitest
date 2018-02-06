@@ -125,7 +125,7 @@ public class PitAggregationMojo extends PitReportMojo {
   private List<File> getProjectFilesByFilter(final File projectBaseDir,
       final String filter) throws IOException {
     final List<File> files = FileUtils.getFiles(projectBaseDir, filter, "");
-    return files == null ? new ArrayList<File>() : files;
+    return files == null ? new ArrayList<>() : files;
   }
 
   @SuppressWarnings("unchecked")

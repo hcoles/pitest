@@ -38,7 +38,7 @@ public class MutationCoverageReport {
 
     if (!pr.isOk()) {
       parser.printHelp();
-      System.out.println(">>>> " + pr.getErrorMessage().value());
+      System.out.println(">>>> " + pr.getErrorMessage().get());
     } else {
       final ReportOptions data = pr.getOptions();
 
@@ -86,10 +86,10 @@ public class MutationCoverageReport {
     final EntryPoint e = new EntryPoint();
     final AnalysisResult result = e.execute(null, data, plugins,
         new HashMap<String, String>());
-    if (result.getError().hasSome()) {
-      throw Unchecked.translateCheckedException(result.getError().value());
+    if (result.getError().isPresent()) {
+      throw Unchecked.translateCheckedException(result.getError().get());
     }
-    return result.getStatistics().value();
+    return result.getStatistics().get();
 
   }
 

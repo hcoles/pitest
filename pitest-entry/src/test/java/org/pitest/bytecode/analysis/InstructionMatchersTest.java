@@ -28,7 +28,7 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Slot;
 
@@ -77,7 +77,7 @@ public class InstructionMatchersTest {
     final Slot<Integer> slot = Slot.create(Integer.class);
     final VarInsnNode node = new VarInsnNode(Opcodes.ISTORE, 3);
     assertTrue(anIStore(slot.write()).test(this.context,node));
-    assertThat(this.context.retrieve(slot.read())).isEqualTo(Option.some(3));
+    assertThat(this.context.retrieve(slot.read())).isEqualTo(Optional.ofNullable(3));
   }
 
   @Test
@@ -120,7 +120,7 @@ public class InstructionMatchersTest {
     final LabelNode label = new LabelNode();
     assertFalse(aLabelNode(slot.write()).test(this.context,new InsnNode(Opcodes.NULL)));
     assertTrue(aLabelNode(slot.write()).test(this.context,label));
-    assertThat(this.context.retrieve(slot.read())).isEqualTo(Option.some(label));
+    assertThat(this.context.retrieve(slot.read())).isEqualTo(Optional.ofNullable(label));
   }
 
   @Test

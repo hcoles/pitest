@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class TestInfoPriorisationComparatorTest {
 
@@ -93,7 +93,7 @@ public class TestInfoPriorisationComparatorTest {
   private TestInfo testInfo(final int time, final String target,
       final int linesCovered) {
     return new TestInfo("", time + target + linesCovered, time,
-        Option.some(ClassName.fromString(target)), linesCovered);
+        Optional.ofNullable(ClassName.fromString(target)), linesCovered);
   }
 
 }

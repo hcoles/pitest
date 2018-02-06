@@ -33,7 +33,7 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
@@ -142,12 +142,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
           throws IOException {
     final Collection<ClassInfo> classes = this.coverage.getClassesForFile(
         sourceFile, packageName);
-    final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
+    final Optional<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
-    if (reader.hasSome()) {
+    if (reader.isPresent()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
           mutationsForThisFile, this.coverage, classes);
-      return alf.convert(reader.value());
+      return alf.convert(reader.get());
     }
     return Collections.emptyList();
   }
@@ -161,15 +161,15 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return a -> a.getName().asJavaName();
   }
 
-  private Option<Reader> findSourceFile(final Collection<String> classes,
+  private Optional<Reader> findSourceFile(final Collection<String> classes,
       final String fileName) {
     for (final SourceLocator each : this.sourceRoots) {
-      final Option<Reader> maybe = each.locate(classes, fileName);
-      if (maybe.hasSome()) {
+      final Optional<Reader> maybe = each.locate(classes, fileName);
+      if (maybe.isPresent()) {
         return maybe;
       }
     }
-    return Option.none();
+    return Optional.empty();
   }
 
   public void onRunEnd() {

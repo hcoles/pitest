@@ -36,7 +36,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.EngineArguments;
@@ -308,8 +308,8 @@ private int numberOfThreads() {
   private ClassByteArraySource fallbackToClassLoader(final ClassByteArraySource bas) {
     final ClassByteArraySource clSource = ClassloaderByteArraySource.fromContext();
     return clazz -> {
-      final Option<byte[]> maybeBytes = bas.getBytes(clazz);
-      if (maybeBytes.hasSome()) {
+      final Optional<byte[]> maybeBytes = bas.getBytes(clazz);
+      if (maybeBytes.isPresent()) {
         return maybeBytes;
       }
       LOG.log(Level.FINE, "Could not find " + clazz + " on classpath for analysis. Falling back to classloader");

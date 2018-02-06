@@ -35,7 +35,7 @@ import org.objectweb.asm.ClassReader;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.functional.SideEffect1;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
@@ -139,12 +139,12 @@ public class DependencyExtractor {
 
   private List<DependencyAccess> extract(final String clazz,
       final Predicate<DependencyAccess> filter) throws IOException {
-    final Option<byte[]> bytes = this.classToBytes.getBytes(clazz);
-    if (bytes.hasNone()) {
+    final Optional<byte[]> bytes = this.classToBytes.getBytes(clazz);
+    if (!bytes.isPresent()) {
       LOG.warning("No bytes found for " + clazz);
       return Collections.emptyList();
     }
-    final ClassReader reader = new ClassReader(bytes.value());
+    final ClassReader reader = new ClassReader(bytes.get());
     final List<DependencyAccess> dependencies = new ArrayList<>();
 
     final SideEffect1<DependencyAccess> se = constructCollectingSideEffectForVisitor(

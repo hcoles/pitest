@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class ClassInfo {
 
@@ -80,14 +80,14 @@ public class ClassInfo {
   }
 
   public boolean isTopLevelClass() {
-    return getOuterClass().hasNone();
+    return !getOuterClass().isPresent();
   }
 
-  public Option<ClassInfo> getOuterClass() {
+  public Optional<ClassInfo> getOuterClass() {
     return this.outerClass.fetch();
   }
 
-  public Option<ClassInfo> getSuperClass() {
+  public Optional<ClassInfo> getSuperClass() {
     return getParent();
   }
 
@@ -117,13 +117,13 @@ public class ClassInfo {
 
   public BigInteger getDeepHash() {
     BigInteger hash = getHash();
-    final Option<ClassInfo> parent = getParent();
-    if (parent.hasSome()) {
-      hash = hash.add(parent.value().getHash());
+    final Optional<ClassInfo> parent = getParent();
+    if (parent.isPresent()) {
+      hash = hash.add(parent.get().getHash());
     }
-    final Option<ClassInfo> outer = getOuterClass();
-    if (outer.hasSome()) {
-      hash = hash.add(outer.value().getHash());
+    final Optional<ClassInfo> outer = getOuterClass();
+    if (outer.isPresent()) {
+      hash = hash.add(outer.get().getHash());
     }
     return hash;
   }
@@ -132,24 +132,24 @@ public class ClassInfo {
     return BigInteger.valueOf(this.id.getHash());
   }
 
-  private Option<ClassInfo> getParent() {
+  private Optional<ClassInfo> getParent() {
     if (this.superClass == null) {
-      return Option.none();
+      return Optional.empty();
     }
     return this.superClass.fetch();
   }
 
   private boolean descendsFrom(final ClassName clazz) {
 
-    if (this.getSuperClass().hasNone()) {
+    if (!this.getSuperClass().isPresent()) {
       return false;
     }
 
-    if (this.getSuperClass().value().getName().equals(clazz)) {
+    if (this.getSuperClass().get().getName().equals(clazz)) {
       return true;
     }
 
-    return getSuperClass().value().descendsFrom(clazz);
+    return getSuperClass().get().descendsFrom(clazz);
   }
 
   public static Predicate<ClassInfo> matchIfAbstract() {

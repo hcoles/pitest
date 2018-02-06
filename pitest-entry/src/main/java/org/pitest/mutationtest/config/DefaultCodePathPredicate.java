@@ -22,9 +22,9 @@ public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
 
   @Override
   public boolean test(final ClassPathRoot a) {
-    return a.cacheLocation().hasSome()
-        && !isATestPath(a.cacheLocation().value())
-        && !isADependencyPath(a.cacheLocation().value());
+    return a.cacheLocation().isPresent()
+        && !isATestPath(a.cacheLocation().get())
+        && !isADependencyPath(a.cacheLocation().get());
   }
 
   private boolean isADependencyPath(final String path) {

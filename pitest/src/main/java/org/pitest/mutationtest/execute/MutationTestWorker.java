@@ -192,9 +192,9 @@ public class MutationTestWorker {
 
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
-    if (listener.lastFailingTest().hasSome()) {
+    if (listener.lastFailingTest().isPresent()) {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
-          listener.status(), listener.lastFailingTest().value()
+          listener.status(), listener.lastFailingTest().get()
               .getQualifiedName());
     } else {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),

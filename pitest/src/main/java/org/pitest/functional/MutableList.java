@@ -138,7 +138,7 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public Option<A> findFirst(Predicate<A> predicate) {
+  public java.util.Optional<A> findFirst(Predicate<A> predicate) {
     return FCollection.findFirst(this.impl, predicate);
   }
 

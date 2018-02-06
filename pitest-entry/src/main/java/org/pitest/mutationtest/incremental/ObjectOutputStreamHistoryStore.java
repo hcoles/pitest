@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResult;
@@ -37,14 +37,14 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   private final Map<ClassName, ClassHistory>                    previousClassPath = new HashMap<>();
 
   public ObjectOutputStreamHistoryStore(final WriterFactory output,
-      final Option<Reader> input) {
+      final Optional<Reader> input) {
     this.outputFactory = output;
     this.input = createReader(input);
   }
 
-  private BufferedReader createReader(Option<Reader> input) {
-    if (input.hasSome()) {
-      return new BufferedReader(input.value());
+  private BufferedReader createReader(Optional<Reader> input) {
+    if (input.isPresent()) {
+      return new BufferedReader(input.get());
     }
     return null;
   }

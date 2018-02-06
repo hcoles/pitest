@@ -90,14 +90,14 @@ public abstract class FCollection {
   }
 
 
-  public static <T> Option<T> findFirst(final Iterable<? extends T> xs,
+  public static <T> java.util.Optional<T> findFirst(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
     for (final T x : xs) {
       if (predicate.test(x)) {
-        return Option.some(x);
+        return java.util.Optional.ofNullable(x);
       }
     }
-    return Option.none();
+    return java.util.Optional.empty();
   }
 
 

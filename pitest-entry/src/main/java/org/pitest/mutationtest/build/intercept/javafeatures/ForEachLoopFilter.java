@@ -166,7 +166,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
 
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-   return (c, t) -> c.retrieve(found.read()).hasSome();
+   return (c, t) -> c.retrieve(found.read()).isPresent();
   }
 
 
@@ -189,7 +189,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private Predicate<MutationDetails> mutatesIteratorLoopPlumbing() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = ForEachLoopFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).value();
+      final MethodTree method = ForEachLoopFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
       final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
 
       final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);

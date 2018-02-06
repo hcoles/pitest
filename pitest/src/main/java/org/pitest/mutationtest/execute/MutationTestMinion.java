@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
@@ -31,7 +32,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.F3;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -149,8 +149,7 @@ public class MutationTestMinion {
   private static List<TestUnit> findTestsForTestClasses(
       final ClassLoader loader, final Collection<ClassName> testClasses,
       final Configuration pitConfig) {
-    final Collection<Class<?>> tcs = FCollection.flatMap(testClasses,
-        ClassName.nameToClass(loader));
+    final Collection<Class<?>> tcs = testClasses.stream().flatMap(ClassName.nameToClass(loader)).collect(Collectors.toList());
     final FindTestUnits finder = new FindTestUnits(pitConfig);
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }

@@ -14,6 +14,8 @@
  */
 package org.pitest.classpath;
 
+import java.util.Collection;
+
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 
@@ -30,14 +32,14 @@ public class ProjectClassPaths {
     this.pathFilter = pathFilter;
   }
 
-  public Iterable<ClassName> code() {
+  public Collection<ClassName> code() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getCodeFilter())
         .findClasses(this.classFilter.getCode()),
         this.classFilter.getCode()).map(ClassName.stringToClassName());
   }
 
-  public Iterable<ClassName> test() {
+  public Collection<ClassName> test() {
     return FCollection.filter(
         this.classPath.getComponent(this.pathFilter.getTestFilter())
         .findClasses(this.classFilter.getTest()),

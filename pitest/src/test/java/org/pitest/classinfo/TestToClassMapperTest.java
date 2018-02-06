@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class TestToClassMapperTest {
 
@@ -43,26 +43,26 @@ public class TestToClassMapperTest {
   public void shouldMapTestsPostfixedWithTestToTesteeWhenTesteeExists() {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
-        .thenReturn(Option.some(bytes));
+        .thenReturn(Optional.ofNullable(bytes));
     assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.FooTest").value());
+        this.testee.findTestee("com.example.FooTest").get());
   }
 
   @Test
   public void shouldMapTestsPrefixedWithTestToTesteeWhenTesteeExists() {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
-        .thenReturn(Option.some(bytes));
+        .thenReturn(Optional.ofNullable(bytes));
     assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.TestFoo").value());
+        this.testee.findTestee("com.example.TestFoo").get());
   }
 
   @Test
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
     final byte[] bytes = null;
     when(this.source.getBytes("com.example.Foo"))
-        .thenReturn(Option.some(bytes));
-    assertEquals(Option.none(), this.testee.findTestee("com.example.TestFoo"));
+        .thenReturn(Optional.ofNullable(bytes));
+    assertEquals(Optional.empty(), this.testee.findTestee("com.example.TestFoo"));
   }
 
 }

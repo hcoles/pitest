@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.Log;
 
 public class ClassPathByteArraySource implements ClassByteArraySource {
@@ -36,12 +36,12 @@ public class ClassPathByteArraySource implements ClassByteArraySource {
   }
 
   @Override
-  public Option<byte[]> getBytes(final String classname) {
+  public Optional<byte[]> getBytes(final String classname) {
     try {
-      return Option.some(this.classPath.getClassData(classname));
+      return Optional.ofNullable(this.classPath.getClassData(classname));
     } catch (final IOException e) {
       LOG.fine("Could not read class " + classname + ":" + e.getMessage());
-      return Option.none();
+      return Optional.empty();
     }
   }
 }

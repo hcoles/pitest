@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.functional.Option;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -144,14 +143,15 @@ public class ClassNameTest {
 
   @Test
   public void nameToClassShouldReturnClassWhenKnownToLoader() {
-    assertEquals(Option.some(String.class),
-        ClassName.nameToClass().apply(ClassName.fromString("java.lang.String")));
+    assertThat(ClassName.nameToClass().apply(ClassName.fromString("java.lang.String")))
+    .contains(String.class);
   }
 
   @Test
-  public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
-    assertEquals(Option.none(),
-        ClassName.nameToClass().apply(ClassName.fromString("org.unknown.Unknown")));
+  public void stringToClassShouldReturnEmptyWhenClassNotKnownToLoader() {
+    assertThat(ClassName.nameToClass()
+        .apply(ClassName.fromString("org.unknown.Unknown")))
+    .isEmpty();
   }
 
   @Test

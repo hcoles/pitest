@@ -25,7 +25,7 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.testapi.ResultCollector;
 
 public class AdaptedJUnitTestUnitTest {
@@ -89,7 +89,7 @@ public class AdaptedJUnitTestUnitTest {
         createFilter(clazz, method));
   }
 
-  private Option<Filter> createFilter(final Class<?> clazz, final String method) {
+  private Optional<Filter> createFilter(final Class<?> clazz, final String method) {
     final Description d = Description.createTestDescription(clazz, method);
     final Filter f = new Filter() {
 
@@ -104,7 +104,7 @@ public class AdaptedJUnitTestUnitTest {
       }
 
     };
-    return Option.some(f);
+    return Optional.ofNullable(f);
   }
 
 }

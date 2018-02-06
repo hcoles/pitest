@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,10 +33,8 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
-import java.util.function.Predicate;
+import java.util.Optional;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
@@ -110,14 +110,14 @@ public class ScmMojo extends AbstractPitMojo {
   }
 
   @Override
-  protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
+  protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
 
     this.targetClasses = makeConcreteList(findModifiedClassNames());
 
     if (this.targetClasses.isEmpty()) {
       this.getLog().info(
           "No modified files found - nothing to mutation test, analyseLastCommit=" + this.analyseLastCommit);
-      return Option.none();
+      return Optional.empty();
     }
 
     logClassNames();
@@ -126,7 +126,7 @@ public class ScmMojo extends AbstractPitMojo {
         new SurefireConfigConverter(), filter).convert();
     data.setFailWhenNoMutations(false);
 
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data,
+    return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         plugins, new HashMap<String, String>()));
 
   }

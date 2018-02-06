@@ -19,15 +19,15 @@ import java.util.function.Predicate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 abstract class TestInfo {
 
   public static boolean isWithinATestClass(final ClassInfo clazz) {
 
-    final Option<ClassInfo> outerClass = clazz.getOuterClass();
+    final Optional<ClassInfo> outerClass = clazz.getOuterClass();
     return isATest(clazz)
-        || (outerClass.hasSome() && isATest(outerClass.value()));
+        || (outerClass.isPresent() && isATest(outerClass.get()));
 
   }
 
@@ -36,9 +36,9 @@ abstract class TestInfo {
         || isATest(clazz.getSuperClass());
   }
 
-  private static boolean isATest(final Option<ClassInfo> clazz) {
-    if (clazz.hasSome()) {
-      return isATest(clazz.value());
+  private static boolean isATest(final Optional<ClassInfo> clazz) {
+    if (clazz.isPresent()) {
+      return isATest(clazz.get());
     }
     return false;
   }

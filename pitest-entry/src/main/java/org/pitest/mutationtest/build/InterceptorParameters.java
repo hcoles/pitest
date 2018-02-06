@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
@@ -27,8 +27,8 @@ public final class InterceptorParameters {
     return this.data;
   }
 
-  public Option<FeatureSetting> settings() {
-    return Option.some(this.conf);
+  public Optional<FeatureSetting> settings() {
+    return Optional.ofNullable(this.conf);
   }
 
 
@@ -36,9 +36,9 @@ public final class InterceptorParameters {
     return this.source;
   }
 
-  public Option<String> getString(FeatureParameter limit) {
+  public Optional<String> getString(FeatureParameter limit) {
     if (this.conf == null) {
-      return Option.none();
+      return Optional.empty();
     }
     return this.conf.getString(limit.name());
   }
@@ -50,12 +50,12 @@ public final class InterceptorParameters {
     return this.conf.getList(key.name());
   }
 
-  public Option<Integer> getInteger(FeatureParameter key) {
-    final Option<String> val = getString(key);
-    if (val.hasSome()) {
-      return Option.some(Integer.parseInt(val.value()));
+  public Optional<Integer> getInteger(FeatureParameter key) {
+    final Optional<String> val = getString(key);
+    if (val.isPresent()) {
+      return Optional.ofNullable(Integer.parseInt(val.get()));
     }
-    return Option.none();
+    return Optional.empty();
   }
 
 }

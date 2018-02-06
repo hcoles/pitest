@@ -34,7 +34,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.testapi.Description;
 import org.pitest.util.Log;
 
@@ -219,7 +219,7 @@ public class CoverageData implements CoverageDatabase {
 
   private TestInfo createTestInfo(final Description description,
       final int executionTime, final int linesCovered) {
-    final Option<ClassName> testee = this.code.findTestee(description
+    final Optional<ClassName> testee = this.code.findTestee(description
         .getFirstTestClass());
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), executionTime, testee, linesCovered);

@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class WrappingProcess {
 
@@ -101,10 +101,8 @@ public class WrappingProcess {
 
   private static void addPITJavaAgent(JavaAgent agentJarLocator,
       List<String> cmd) {
-    final Option<String> jarLocation = agentJarLocator.getJarLocation();
-    for (final String each : jarLocation) {
-      cmd.add("-javaagent:" + each);
-    }
+    final Optional<String> jarLocation = agentJarLocator.getJarLocation();
+    jarLocation.ifPresent(l -> cmd.add("-javaagent:" + l));
   }
 
   private static void addLaunchJavaAgents(List<String> cmd) {

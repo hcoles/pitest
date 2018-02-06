@@ -16,7 +16,7 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
@@ -112,7 +112,7 @@ public class LineMapperTest {
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
     when(this.source.fetchClassBytes(any(ClassName.class))).thenReturn(
-        Option.some(ClassUtils.classAsBytes(clazz)));
+        Optional.ofNullable(ClassUtils.classAsBytes(clazz)));
     final LineMap testee = new LineMapper(this.source);
     return testee.mapLines(ClassName.fromClass(clazz));
   }

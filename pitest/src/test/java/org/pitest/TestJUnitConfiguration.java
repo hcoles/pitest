@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.Description;
@@ -493,7 +493,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
-    assertEquals(Option.<PitHelpError> none(), this.testee.verifyEnvironment());
+    assertEquals(Optional.<PitHelpError> empty(), this.testee.verifyEnvironment());
   }
 
   public static class HasAssumptionFailure {

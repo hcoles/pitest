@@ -98,7 +98,7 @@ public class MutantExportInterceptorTest {
 
 
   private ClassTree tree(Class<?> clazz) {
-    return ClassTree.fromBytes(this.source.getBytes(clazz.getName()).value());
+    return ClassTree.fromBytes(this.source.getBytes(clazz.getName()).get());
   }
 
   private Path mutantBasePath(Class<?> clazz, int mutant) {

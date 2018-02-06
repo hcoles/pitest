@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -56,17 +55,16 @@ public class TestGregorMutater extends MutatorTestBase {
         InvertNegsMutator.INVERT_NEGS_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
 
-    final FunctionalList<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
+    final List<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
 
-    assertTrue(actualDetails
-        .contains(descriptionContaining("Replaced Shift Left with Shift Right")));
-    assertTrue(actualDetails
-        .contains(descriptionContaining("replaced return of integer")));
-    assertTrue(actualDetails
-        .contains(descriptionContaining("Changed increment")));
-    assertTrue(actualDetails
-        .contains(descriptionContaining("removed negation")));
-
+    assertTrue(actualDetails.stream()
+        .filter(descriptionContaining("Replaced Shift Left with Shift Right")).findFirst().isPresent());
+    assertTrue(actualDetails.stream()
+        .filter(descriptionContaining("replaced return of integer")).findFirst().isPresent());    
+    assertTrue(actualDetails.stream()
+        .filter(descriptionContaining("Changed increment")).findFirst().isPresent());  
+    assertTrue(actualDetails.stream()
+        .filter(descriptionContaining("removed negation")).findFirst().isPresent());  
   }
 
   @Test
@@ -83,7 +81,7 @@ public class TestGregorMutater extends MutatorTestBase {
       }
     }
     createTesteeWith();
-    final FunctionalList<MutationDetails> actualDetails = findMutationsFor(VeryMutable.class);
+    final List<MutationDetails> actualDetails = findMutationsFor(VeryMutable.class);
     assertTrue(actualDetails.isEmpty());
 
   }

@@ -31,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -91,7 +91,7 @@ public class MutationHtmlReportListenerTest {
         MutationTestResultMother.createDetails(fileName),
         new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
     when(this.sourceLocator.locate(any(Collection.class), any(String.class)))
-        .thenReturn(Option.<Reader> none());
+        .thenReturn(Optional.<Reader> empty());
     this.testee.handleMutationResult(MutationTestResultMother
         .createClassResults(mr));
     verify(this.sourceLocator).locate(any(Collection.class), eq(fileName));

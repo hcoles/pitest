@@ -49,12 +49,12 @@ public abstract class MutatorTestBase {
 
   protected GregorMutater engine;
 
-  protected FunctionalList<MutationDetails> findMutationsFor(
+  protected List<MutationDetails> findMutationsFor(
       final Class<?> clazz) {
     return this.engine.findMutations(ClassName.fromClass(clazz));
   }
 
-  protected FunctionalList<MutationDetails> findMutationsFor(final String clazz) {
+  protected List<MutationDetails> findMutationsFor(final String clazz) {
     return this.engine.findMutations(ClassName.fromString(clazz));
   }
 

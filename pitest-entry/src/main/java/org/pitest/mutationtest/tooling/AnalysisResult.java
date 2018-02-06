@@ -1,16 +1,16 @@
 package org.pitest.mutationtest.tooling;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public final class AnalysisResult {
 
-  private final Option<CombinedStatistics> statistics;
-  private final Option<Exception>          error;
+  private final Optional<CombinedStatistics> statistics;
+  private final Optional<Exception>          error;
 
   private AnalysisResult(final CombinedStatistics statistics,
       final Exception error) {
-    this.statistics = Option.some(statistics);
-    this.error = Option.some(error);
+    this.statistics = Optional.ofNullable(statistics);
+    this.error = Optional.ofNullable(error);
   }
 
   public static AnalysisResult success(final CombinedStatistics statistics) {
@@ -21,11 +21,11 @@ public final class AnalysisResult {
     return new AnalysisResult(null, error);
   }
 
-  public Option<CombinedStatistics> getStatistics() {
+  public Optional<CombinedStatistics> getStatistics() {
     return this.statistics;
   }
 
-  public Option<Exception> getError() {
+  public Optional<Exception> getError() {
     return this.error;
   }
 

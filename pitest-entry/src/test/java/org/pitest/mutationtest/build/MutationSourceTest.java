@@ -21,7 +21,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -82,7 +82,7 @@ public class MutationSourceTest {
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {
-    return a -> new TestInfo("foo", "bar", a, Option.<ClassName> none(), 0);
+    return a -> new TestInfo("foo", "bar", a, Optional.<ClassName> empty(), 0);
   }
 
   private List<MutationDetails> makeMutations(final String method) {

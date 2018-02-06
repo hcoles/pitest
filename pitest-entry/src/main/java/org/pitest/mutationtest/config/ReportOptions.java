@@ -38,7 +38,7 @@ import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -459,18 +459,18 @@ public class ReportOptions {
     return new FileWriterFactory(this.historyOutputLocation);
   }
 
-  public Option<Reader> createHistoryReader() {
+  public Optional<Reader> createHistoryReader() {
     if (this.historyInputLocation == null) {
-      return Option.none();
+      return Optional.empty();
     }
 
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Option.<Reader> some(new InputStreamReader(new FileInputStream(
+        return Optional.<Reader> ofNullable(new InputStreamReader(new FileInputStream(
             this.historyInputLocation), "UTF-8"));
       }
-      return Option.none();
+      return Optional.empty();
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }

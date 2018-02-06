@@ -27,7 +27,7 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.RunnerBuilder;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.util.Log;
@@ -37,20 +37,20 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   private static final Logger                LOG = Log.getLogger();
 
   private final Class<?>                     clazz;
-  private final Option<Filter>               filter;
+  private final Optional<Filter>               filter;
 
 
   public AdaptedJUnitTestUnit(
-      final Class<?> clazz, final Option<Filter> filter) {
+      final Class<?> clazz, final Optional<Filter> filter) {
     super(new org.pitest.testapi.Description(createName(clazz, filter), clazz));
     this.clazz = clazz;
     this.filter = filter;
   }
 
   private static String createName(final Class<?> clazz,
-      final Option<Filter> filter) {
-    if (filter.hasSome()) {
-      return filter.value().describe();
+      final Optional<Filter> filter) {
+    if (filter.isPresent()) {
+      return filter.get().describe();
     } else {
       return clazz.getName();
     }
@@ -85,7 +85,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
   }
 
   private void filterIfRequired(final ResultCollector rc, final Runner runner) {
-    if (this.filter.hasSome()) {
+    if (this.filter.isPresent()) {
       if (!(runner instanceof Filterable)) {
         LOG.warning("Not able to filter " + runner.getDescription()
             + ". Mutation may have prevented JUnit from constructing test");
@@ -93,7 +93,7 @@ public class AdaptedJUnitTestUnit extends AbstractTestUnit {
       }
       final Filterable f = (Filterable) runner;
       try {
-        f.filter(this.filter.value());
+        f.filter(this.filter.get());
       } catch (final NoTestsRemainException e1) {
         rc.notifySkipped(this.getDescription());
         return;

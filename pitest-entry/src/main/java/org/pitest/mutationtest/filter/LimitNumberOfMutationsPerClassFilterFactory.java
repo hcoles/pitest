@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.filter;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
@@ -26,11 +26,11 @@ public class LimitNumberOfMutationsPerClassFilterFactory implements MutationInte
 
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
-    final Option<Integer> max = params.getInteger(this.limit);
-    if (max.hasNone()) {
+    final Optional<Integer> max = params.getInteger(this.limit);
+    if (!max.isPresent()) {
       throw new IllegalArgumentException("Max mutation per class filter requires a limit parameter");
     }
-    return new LimitNumberOfMutationPerClassFilter(max.value());
+    return new LimitNumberOfMutationPerClassFilter(max.get());
   }
 
 }

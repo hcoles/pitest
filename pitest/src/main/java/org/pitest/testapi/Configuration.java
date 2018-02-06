@@ -15,7 +15,7 @@
 
 package org.pitest.testapi;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.PitHelpError;
 
 public interface Configuration {
@@ -24,6 +24,6 @@ public interface Configuration {
 
   TestSuiteFinder testSuiteFinder();
 
-  Option<PitHelpError> verifyEnvironment();
+  Optional<PitHelpError> verifyEnvironment();
 
 }

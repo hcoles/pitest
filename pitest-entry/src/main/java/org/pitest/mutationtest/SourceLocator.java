@@ -17,9 +17,9 @@ package org.pitest.mutationtest;
 import java.io.Reader;
 import java.util.Collection;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public interface SourceLocator {
-  Option<Reader> locate(Collection<String> classes, String fileName);
+  Optional<Reader> locate(Collection<String> classes, String fileName);
 
 }

@@ -19,7 +19,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
@@ -101,7 +101,7 @@ public final class ReportAggregator {
   }
 
   private Function<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
-    return a -> new TestInfo(null, a, 0, Option.some(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
+    return a -> new TestInfo(null, a, 0, Optional.ofNullable(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
   }
 
   public static Builder builder() {

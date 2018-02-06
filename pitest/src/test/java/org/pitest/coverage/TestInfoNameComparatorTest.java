@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class TestInfoNameComparatorTest {
 
@@ -16,8 +16,8 @@ public class TestInfoNameComparatorTest {
   @Before
   public void setUp() {
     this.testee = new TestInfoNameComparator();
-    this.lhs = new TestInfo("foo", "0name", 0, Option.<ClassName> none(), 0);
-    this.rhs = new TestInfo("foo", "1name", 0, Option.<ClassName> none(), 0);
+    this.lhs = new TestInfo("foo", "0name", 0, Optional.<ClassName> empty(), 0);
+    this.rhs = new TestInfo("foo", "1name", 0, Optional.<ClassName> empty(), 0);
   }
 
   @Test
@@ -29,7 +29,7 @@ public class TestInfoNameComparatorTest {
   @Test
   public void shouldTreatIdenticallyNamesTestsAsEqual() {
     final TestInfo sameName = new TestInfo("bar", "0name", 1000,
-        Option.<ClassName> none(), 0);
+        Optional.<ClassName> empty(), 0);
     assertEquals(0, this.testee.compare(this.lhs, sameName));
   }
 

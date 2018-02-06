@@ -1,8 +1,12 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -13,7 +17,6 @@ import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -70,15 +73,17 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private void analyseClass(ClassTree tree) {
-    final Option<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
+    final Optional<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
 
-    if (clinit.hasSome()) {
-      final FunctionalList<MethodInsnNode> selfCalls =
-          clinit.value().instructions()
+    if (clinit.isPresent()) {
+      final List<Predicate<MethodTree>> selfCalls =
+          clinit.get().instructions().stream()
         .flatMap(is(MethodInsnNode.class))
-        .filter(calls(tree.name()));
+        .filter(calls(tree.name()))
+        .map(toPredicate())
+        .collect(Collectors.toList());
 
-      final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls.map(toPredicate()));
+      final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
 
       final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods()
       .filter(isPrivateStatic())
@@ -116,19 +121,17 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     return a -> a.owner.equals(self.asInternalName());
   }
 
-  private <T extends AbstractInsnNode> Function<AbstractInsnNode,Option<T>> is(final Class<T> clazz) {
-    return new  Function<AbstractInsnNode,Option<T>>() {
+  private <T extends AbstractInsnNode> Function<AbstractInsnNode,Stream<T>> is(final Class<T> clazz) {
+    return new  Function<AbstractInsnNode,Stream<T>>() {
       @SuppressWarnings("unchecked")
       @Override
-      public Option<T> apply(AbstractInsnNode a) {
+      public Stream<T> apply(AbstractInsnNode a) {
         if (a.getClass().isAssignableFrom(clazz)) {
-          return Option.some((T)a);
+          return Stream.of((T)a);
         }
-        return Option.none();
+        return Stream.empty();
       }
-
     };
-
   }
 
   private Predicate<MethodTree> nameEquals(final String name) {

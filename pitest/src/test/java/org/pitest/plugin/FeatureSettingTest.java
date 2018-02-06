@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class FeatureSettingTest {
 
@@ -23,7 +23,7 @@ public class FeatureSettingTest {
   @Test
   public void shouldReturnNoneWhenNoneSupplied() {
     this.testee = new FeatureSetting("name", ToggleStatus.ACTIVATE,  this.values);
-    assertThat(this.testee.getString("foo")).isEqualTo(Option.none());
+    assertThat(this.testee.getString("foo")).isEqualTo(Optional.empty());
   }
 
 
@@ -31,7 +31,7 @@ public class FeatureSettingTest {
   public void shouldReturnSingleValuesWhenSupplied() {
     this.values.put("foo", Arrays.asList("1"));
     this.testee = new FeatureSetting("name", ToggleStatus.ACTIVATE,  this.values);
-    assertThat(this.testee.getString("foo")).isEqualTo(Option.some("1"));
+    assertThat(this.testee.getString("foo")).isEqualTo(Optional.ofNullable("1"));
   }
 
   @Test

@@ -14,7 +14,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 
 public class ClassTree {
@@ -42,7 +42,7 @@ public class ClassTree {
     return this.lazyMethods;
   }
 
-  public Option<MethodTree> method(Location loc) {
+  public Optional<MethodTree> method(Location loc) {
    return methods().findFirst(MethodMatchers.forLocation(loc));
   }
 

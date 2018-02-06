@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 /**
  * Caches the classes provided by the decorated
@@ -54,7 +54,7 @@ public class NameCachingRoot implements ClassPathRoot {
   }
 
   @Override
-  public Option<String> cacheLocation() {
+  public Optional<String> cacheLocation() {
     return this.child.cacheLocation();
   }
 

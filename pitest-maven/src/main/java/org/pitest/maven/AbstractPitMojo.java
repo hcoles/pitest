@@ -15,7 +15,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.pitest.coverage.CoverageSummary;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import java.util.function.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -374,11 +374,11 @@ public class AbstractPitMojo extends AbstractMojo {
             "Found shared classpath plugin : " + each.description());
       }
 
-      final Option<CombinedStatistics> result = analyse();
-      if (result.hasSome()) {
-        throwErrorIfScoreBelowThreshold(result.value().getMutationStatistics());
-        throwErrorIfMoreThanMaximumSurvivors(result.value().getMutationStatistics());
-        throwErrorIfCoverageBelowThreshold(result.value().getCoverageSummary());
+      final Optional<CombinedStatistics> result = analyse();
+      if (result.isPresent()) {
+        throwErrorIfScoreBelowThreshold(result.get().getMutationStatistics());
+        throwErrorIfMoreThanMaximumSurvivors(result.get().getMutationStatistics());
+        throwErrorIfCoverageBelowThreshold(result.get().getCoverageSummary());
       }
 
     } else {
@@ -430,10 +430,10 @@ public class AbstractPitMojo extends AbstractMojo {
     }
   }
 
-  protected Option<CombinedStatistics> analyse() throws MojoExecutionException {
+  protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(), this.filter).convert();
-    return Option.some(this.goalStrategy.execute(detectBaseDir(), data,
+    return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         this.plugins, this.environmentVariables));
   }
 

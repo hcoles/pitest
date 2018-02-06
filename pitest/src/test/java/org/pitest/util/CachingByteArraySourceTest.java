@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CachingByteArraySourceTest {
@@ -21,7 +21,7 @@ public class CachingByteArraySourceTest {
 
   @Test
   public void shouldReturnBytesFromChild() {
-    final Option<byte[]> childResult = Option.some(new byte[0]);
+    final Optional<byte[]> childResult = Optional.ofNullable(new byte[0]);
 
     when(this.source.getBytes("someClass")).thenReturn(childResult);
 
@@ -32,7 +32,7 @@ public class CachingByteArraySourceTest {
 
   @Test
   public void shouldCacheByteFromChild() {
-    when(this.source.getBytes("someClass")).thenReturn(Option.some(new byte[0]));
+    when(this.source.getBytes("someClass")).thenReturn(Optional.ofNullable(new byte[0]));
 
     final CachingByteArraySource testee = new CachingByteArraySource(this.source, 2);
 

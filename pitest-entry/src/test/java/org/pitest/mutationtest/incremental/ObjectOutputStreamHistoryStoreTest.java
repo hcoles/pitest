@@ -26,7 +26,7 @@ import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -78,7 +78,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
         final Reader reader = new StringReader(this.output.toString());
         this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
-            Option.some(reader));
+            Optional.ofNullable(reader));
         this.testee.initialize();
 
         final Map<ClassName, ClassHistory> expected = new HashMap<>();
@@ -101,7 +101,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
         final Reader reader = new StringReader(this.output.toString());
         this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
-            Option.some(reader));
+            Optional.ofNullable(reader));
         this.testee.initialize();
         final Map<MutationIdentifier, MutationStatusTestPair> expected = new HashMap<>();
         expected.put(mr.getDetails().getId(), mr.getStatusTestPair());
@@ -112,7 +112,7 @@ public class ObjectOutputStreamHistoryStoreTest {
     public void shouldNotAttemptToWriteToFileWhenNoneSupplied() {
         try {
             this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
-                Option.<Reader> none());
+                Optional.<Reader> empty());
             this.testee.initialize();
         } catch (final Exception ex) {
             fail(ex.getMessage());
@@ -134,7 +134,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
         final Reader reader = new StringReader(this.output.toString());
         this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
-            Option.some(reader));
+            Optional.ofNullable(reader));
         this.testee.initialize();
 
         assertFalse(this.testee.getHistoricResults().isEmpty());
@@ -143,7 +143,7 @@ public class ObjectOutputStreamHistoryStoreTest {
     private void recordClassPathWithTestee(
         final HierarchicalClassId... classIdentifiers) {
         this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
-            Option.<Reader> none());
+            Optional.<Reader> empty());
         final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
         this.testee.recordClassPath(ids, this.coverage);
     }

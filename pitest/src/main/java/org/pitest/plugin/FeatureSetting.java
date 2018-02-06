@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public final class FeatureSetting {
 
@@ -35,16 +35,16 @@ public final class FeatureSetting {
     return this.status == ToggleStatus.DEACTIVATE;
   }
 
-  public Option<String> getString(String key) {
+  public Optional<String> getString(String key) {
     if (this.settings.containsKey(key)) {
       final List<String> vals = getList(key);
       if (vals.size() > 1) {
         throw new IllegalArgumentException("More than one value supplied for " + key);
       }
 
-      return Option.some(vals.get(0));
+      return Optional.ofNullable(vals.get(0));
     }
-    return Option.none();
+    return Optional.empty();
   }
 
   public List<String> getList(String key) {

@@ -7,9 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
@@ -19,7 +22,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -71,7 +73,7 @@ public class FilterTester {
 
   private Function<MutationDetails, Loc> toLocation(final ClassTree tree) {
     return a -> {
-      final MethodTree method = tree.method(a.getId().getLocation()).value();
+      final MethodTree method = tree.method(a.getId().getLocation()).get();
       final Loc l = new Loc();
       l.index = a.getInstructionIndex();
       l.node = method.instructions().get(a.getInstructionIndex());
@@ -124,7 +126,7 @@ public class FilterTester {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     final Sample s = new Sample();
     s.className = ClassName.fromClass(clazz);
-    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
     s.compiler = "current";
     return s;
   }
@@ -202,26 +204,26 @@ public class FilterTester {
 
 
   private List<Sample> samples(final String sample) {
-    final Function<String, Option<Sample>> toPair = compiler -> {
+    final Function<String, Stream<Sample>> toPair = compiler -> {
       final String clazz = makeClassName(sample, compiler);
-      final Option<byte[]> bs = FilterTester.this.source.getBytes(clazz);
-      if (bs.hasSome()) {
+      final Optional<byte[]> bs = FilterTester.this.source.getBytes(clazz);
+      if (bs.isPresent()) {
         final Sample p = new Sample();
         p.className = ClassName.fromString(clazz);
-        p.clazz = ClassTree.fromBytes(bs.value());
+        p.clazz = ClassTree.fromBytes(bs.get());
         p.compiler = compiler;
-        return Option.some(p);
+        return Stream.of(p);
       }
-      return Option.none();
+      return Stream.empty();
 
     };
-    return FCollection.flatMap(COMPILERS, toPair);
+    return COMPILERS.stream().flatMap(toPair).collect(Collectors.toList());
   }
 
   private boolean atLeastOneSampleExists(String sample) {
     for (final String compiler : COMPILERS) {
       final String clazz = makeClassName(sample, compiler);
-      if (this.source.getBytes(clazz).hasSome()) {
+      if (this.source.getBytes(clazz).isPresent()) {
         return true;
       }
     }
@@ -241,7 +243,7 @@ public class FilterTester {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     final Sample s = new Sample();
     s.className = ClassName.fromClass(clazz);
-    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
     s.compiler = "current";
     return s;
   }

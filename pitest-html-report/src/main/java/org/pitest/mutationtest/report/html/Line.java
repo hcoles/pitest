@@ -17,7 +17,7 @@ package org.pitest.mutationtest.report.html;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 
@@ -52,11 +52,11 @@ public class Line {
     return this.mutations;
   }
 
-  public Option<DetectionStatus> detectionStatus() {
+  public Optional<DetectionStatus> detectionStatus() {
     if (this.mutations.isEmpty()) {
-      return Option.none();
+      return Optional.empty();
     }
-    return Option.some(this.mutations.get(0).getStatus());
+    return Optional.ofNullable(this.mutations.get(0).getStatus());
   }
 
   public int getNumberOfMutations() {

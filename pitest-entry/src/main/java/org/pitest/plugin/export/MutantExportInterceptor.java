@@ -55,7 +55,7 @@ public class MutantExportInterceptor implements MutationInterceptor {
     this.mutantsDir = classDir.resolve("mutants");
     try {
       Files.createDirectories(this.mutantsDir);
-      writeBytecodeToDisk(this.source.getBytes(clazz.name().asJavaName()).value(), classDir);
+      writeBytecodeToDisk(this.source.getBytes(clazz.name().asJavaName()).get(), classDir);
     } catch (final IOException e) {
       throw new RuntimeException("Couldn't create direectory for " + clazz, e);
     }

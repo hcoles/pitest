@@ -22,12 +22,12 @@ import static org.pitest.functional.prelude.Prelude.isEqualTo;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.Option;
 import org.pitest.functional.prelude.Prelude;
 
 public class InputStreamLineIterableTest {
@@ -74,12 +74,12 @@ public class InputStreamLineIterableTest {
     assertFalse(this.testee.contains(isEqualTo("10")));
   }
 
-  private Function<String, Option<String>> mapIfNotTwo() {
+  private Function<String, Iterable<String>> mapIfNotTwo() {
     return a -> {
       if (a.equals("2")) {
-        return Option.none();
+        return Collections.emptyList();
       }
-      return Option.some(a);
+      return Collections.singleton(a);
     };
   }
 

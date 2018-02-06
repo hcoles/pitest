@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class Context<T> {
 
@@ -34,8 +34,8 @@ public class Context<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public <S> Option<S> retrieve(SlotRead<S> slot) {
-    return (Option<S>) Option.some(this.slots.get(slot.slot()));
+  public <S> Optional<S> retrieve(SlotRead<S> slot) {
+    return (Optional<S>) Optional.ofNullable(this.slots.get(slot.slot()));
   }
 
 

@@ -19,7 +19,7 @@ import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -79,10 +79,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
       FunctionalList<MutationDetails> inEquals, Mutater m) {
     final Location equalsMethod = inEquals.get(0).getId().getLocation();
 
-    final Option<MethodTree> maybeEquals = this.currentClass.methods()
+    final Optional<MethodTree> maybeEquals = this.currentClass.methods()
         .findFirst(MethodMatchers.forLocation(equalsMethod));
 
-    return inEquals.filter(isShortcutEquals(maybeEquals.value(), m).negate());
+    return inEquals.filter(isShortcutEquals(maybeEquals.get(), m).negate());
   }
 
   private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {
@@ -95,7 +95,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     }
 
     final ClassTree mutant = ClassTree.fromBytes(m.getMutation(a.getId()).getBytes());
-    final MethodTree mutantEquals = mutant.methods().findFirst(MethodMatchers.forLocation(tree.asLocation())).value();
+    final MethodTree mutantEquals = mutant.methods().findFirst(MethodMatchers.forLocation(tree.asLocation())).get();
 
     return ALWAYS_FALSE.matches(mutantEquals.instructions());
   }

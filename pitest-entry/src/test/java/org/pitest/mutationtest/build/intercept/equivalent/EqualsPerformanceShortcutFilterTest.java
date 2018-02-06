@@ -90,7 +90,7 @@ public class EqualsPerformanceShortcutFilterTest {
   }
 
   ClassTree forClass(Class<?> clazz) {
-    final byte[] bs = this.source.getBytes(clazz.getName()).value();
+    final byte[] bs = this.source.getBytes(clazz.getName()).get();
     return ClassTree.fromBytes(bs);
   }
 }

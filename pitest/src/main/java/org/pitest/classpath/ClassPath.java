@@ -132,7 +132,7 @@ public class ClassPath {
   }
 
   public String getLocalClassPath() {
-    return this.root.cacheLocation().value();
+    return this.root.cacheLocation().get();
   }
 
   public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {

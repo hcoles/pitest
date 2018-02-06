@@ -68,7 +68,7 @@ public class CoverageTransformerTest {
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
-    final byte[] bs = this.bytes.getBytes(String.class.getName()).value();
+    final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
     assertFalse(Arrays.equals(bs,
         testee.transform(null, "anything", null, null, bs)));
   }
@@ -111,7 +111,7 @@ public class CoverageTransformerTest {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     final byte[] bs = testee.transform(this.loader, clazz.getName(), null,
-        null, this.bytes.getBytes(clazz.getName()).value());
+        null, this.bytes.getBytes(clazz.getName()).get());
     return bs;
   }
 

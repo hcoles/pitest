@@ -115,7 +115,7 @@ public class DefaultBuildVerifierTest {
       final String clazz) {
     final Repository repository = new Repository(source);
     final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz))
-        .value();
+        .get();
     when(this.code.getCode()).thenReturn(Collections.singletonList(ci));
   }
 

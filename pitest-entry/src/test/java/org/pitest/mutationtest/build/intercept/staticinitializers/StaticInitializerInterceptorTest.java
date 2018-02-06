@@ -5,13 +5,13 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -33,7 +33,7 @@ public class StaticInitializerInterceptorTest {
   @Test
   public void shouldNotMarkAnyMutationsInClassWithoutStaticInitializer() {
     final Class<?> clazz = NoStaticInializer.class;
-    final FunctionalList<MutationDetails> mutations = findMutationsFor(clazz);
+    final List<MutationDetails> mutations = findMutationsFor(clazz);
 
     this.testee.begin(treeFor(clazz));
     final Collection<MutationDetails> actual = this.testee.intercept(mutations, this.mutator);
@@ -80,8 +80,8 @@ public class StaticInitializerInterceptorTest {
     return actual;
   }
 
-  private FunctionalList<MutationDetails> findMutationsFor(Class<?> clazz) {
-    final FunctionalList<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(clazz));
+  private List<MutationDetails> findMutationsFor(Class<?> clazz) {
+    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(clazz));
     assertThat(mutations).isNotEmpty();
     return mutations;
   }
@@ -89,7 +89,7 @@ public class StaticInitializerInterceptorTest {
 
   private ClassTree treeFor(Class<?> clazz) {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    return ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    return ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
   }
 
 

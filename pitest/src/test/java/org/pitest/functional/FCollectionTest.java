@@ -91,8 +91,8 @@ public class FCollectionTest {
         FCollection.flatMap(null, objectToObjectIterable()));
   }
 
-  private Function<Object, Option<Object>> objectToObjectIterable() {
-    return a -> Option.some(a);
+  private Function<Object, Iterable<Object>> objectToObjectIterable() {
+    return a -> Collections.emptyList();
   }
 
   @Test

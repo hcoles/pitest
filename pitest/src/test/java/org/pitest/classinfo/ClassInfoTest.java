@@ -23,7 +23,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class ClassInfoTest {
 
@@ -79,11 +79,11 @@ public class ClassInfoTest {
   }
 
   private ClassPointer emptyClassPointer() {
-    return () -> Option.none();
+    return () -> Optional.empty();
   }
 
   private ClassPointer pointerTo(final ClassInfo ci) {
-    return () -> Option.some(ci);
+    return () -> Optional.ofNullable(ci);
   }
 
   @Test

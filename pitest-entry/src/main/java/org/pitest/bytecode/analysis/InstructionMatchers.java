@@ -41,7 +41,7 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> incrementsVariable(final SlotRead<Integer> counterVariable) {
    return (context, a) -> (a instanceof IincInsnNode)
-       && context.retrieve(counterVariable).contains(Prelude.isEqualTo(((IincInsnNode)a).var));
+       && context.retrieve(counterVariable).filter(Prelude.isEqualTo(((IincInsnNode)a).var)).isPresent();
   }
 
   public static Match<AbstractInsnNode> anIStore(
@@ -67,7 +67,7 @@ public class InstructionMatchers {
   public static Match<AbstractInsnNode> variableMatches(
       final SlotRead<Integer> counterVariable) {
     return (c, t) -> (t instanceof VarInsnNode)
-        && c.retrieve(counterVariable).contains(Prelude.isEqualTo(((VarInsnNode)t).var));
+        && c.retrieve(counterVariable).filter(Prelude.isEqualTo(((VarInsnNode)t).var)).isPresent();
   }
 
 
@@ -135,7 +135,7 @@ public class InstructionMatchers {
 
 
   public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
-    return (c, t) -> c.retrieve(target).value() == t;
+    return (c, t) -> c.retrieve(target).get() == t;
   }
 
   /**
@@ -143,7 +143,7 @@ public class InstructionMatchers {
    */
   public static  Match<AbstractInsnNode> recordTarget(final SlotRead<AbstractInsnNode> target, final SlotWrite<Boolean> found) {
     return (c, t) -> {
-      if (c.retrieve(target).value() == t) {
+      if (c.retrieve(target).get() == t) {
         c.store(found, true);
       }
       return true;
@@ -170,7 +170,7 @@ public class InstructionMatchers {
       }
       final JumpInsnNode jump = (JumpInsnNode) a;
 
-      return context.retrieve(loopStart).contains(Prelude.isEqualTo(jump.label));
+      return context.retrieve(loopStart).filter(Prelude.isEqualTo(jump.label)).isPresent();
     };
   }
 
@@ -192,7 +192,7 @@ public class InstructionMatchers {
      }
 
      final LabelNode l = (LabelNode) t;
-     return c.retrieve(loopEnd).contains(Prelude.isEqualTo(l));
+     return c.retrieve(loopEnd).filter(Prelude.isEqualTo(l)).isPresent();
 
     };
   }

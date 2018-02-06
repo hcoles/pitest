@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
 
@@ -19,25 +19,25 @@ public class InterceptorParametersTest {
   @Test
   public void shouldReturnStringParamsWhenPresent() {
     this.testee = makeFor("foo", "bar");
-    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.some("bar"));
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.ofNullable("bar"));
   }
 
   @Test
   public void shouldReturnNoneWhenValueAbsent() {
     this.testee = makeFor("nomatch", "bar");
-    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.none());
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
 
   @Test
   public void shouldReturnNoneWhenFeatureSettingsAbsent() {
     this.testee = new InterceptorParameters(null, null, null);
-    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.none());
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
 
   @Test
   public void shouldReturnIntegerWhenPresent() {
     this.testee = makeFor("foo", "11");
-    assertThat(this.testee.getInteger(FeatureParameter.named("foo"))).isEqualTo(Option.some(11));
+    assertThat(this.testee.getInteger(FeatureParameter.named("foo"))).isEqualTo(Optional.ofNullable(11));
   }
 
   @Test

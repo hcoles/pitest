@@ -14,11 +14,11 @@
  */
 package org.pitest.process;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public interface JavaAgent {
 
-  Option<String> getJarLocation();
+  Optional<String> getJarLocation();
 
   void close();
 

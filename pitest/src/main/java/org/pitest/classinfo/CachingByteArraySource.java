@@ -3,12 +3,12 @@ package org.pitest.classinfo;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class CachingByteArraySource implements ClassByteArraySource {
 
   private final ClassByteArraySource child;
-  private final Map<String,Option<byte[]>> cache;
+  private final Map<String,Optional<byte[]>> cache;
 
   public CachingByteArraySource(ClassByteArraySource child, int maxSize) {
     this.child = child;
@@ -16,8 +16,8 @@ public class CachingByteArraySource implements ClassByteArraySource {
   }
 
   @Override
-  public Option<byte[]> getBytes(String clazz) {
-    Option<byte[]> maybeBytes = this.cache.get(clazz);
+  public Optional<byte[]> getBytes(String clazz) {
+    Optional<byte[]> maybeBytes = this.cache.get(clazz);
     if (maybeBytes != null) {
       return maybeBytes;
     }

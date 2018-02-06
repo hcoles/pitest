@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class FeatureParserTest {
 
@@ -65,14 +65,14 @@ public class FeatureParserTest {
   @Test
   public void shouldParseSingleConfigValues() {
     final FeatureSetting actual = parse("+BAR(name[hello])");
-    assertThat(actual.getString("name")).isEqualTo(Option.some("hello"));
+    assertThat(actual.getString("name")).isEqualTo(Optional.ofNullable("hello"));
   }
 
   @Test
   public void shouldParseMultipleConfigValues() {
     final FeatureSetting actual = parse("+BAR(name[hello]size[42])");
-    assertThat(actual.getString("name")).isEqualTo(Option.some("hello"));
-    assertThat(actual.getString("size")).isEqualTo(Option.some("42"));
+    assertThat(actual.getString("name")).isEqualTo(Optional.ofNullable("hello"));
+    assertThat(actual.getString("size")).isEqualTo(Optional.ofNullable("42"));
   }
 
 

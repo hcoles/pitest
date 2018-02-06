@@ -31,7 +31,7 @@ public class ClassTreeTest {
   }
 
   byte[] bytesFor(Class<?> clazz) {
-    return this.source.getBytes(clazz.getName()).value();
+    return this.source.getBytes(clazz.getName()).get();
   }
 
  private static Function<MethodTree,String> toName() {

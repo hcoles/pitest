@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.tooling;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.process.JavaAgent;
 
 public class KnownLocationJavaAgentFinder implements JavaAgent {
@@ -12,8 +12,8 @@ public class KnownLocationJavaAgentFinder implements JavaAgent {
   }
 
   @Override
-  public Option<String> getJarLocation() {
-    return Option.some(this.location);
+  public Optional<String> getJarLocation() {
+    return Optional.ofNullable(this.location);
   }
 
   @Override

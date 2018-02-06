@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
@@ -60,14 +60,14 @@ public class TimeOutDecoratedTestSourceTest {
   @Test
   public void shouldReturnNoTestUnitWhenNonMatchingTestDetailSupplied() {
     assertTrue(this.testee.translateTests(
-        Arrays.asList(new TestInfo("foo", "bar", 42, Option.<ClassName> none(),
+        Arrays.asList(new TestInfo("foo", "bar", 42, Optional.<ClassName> empty(),
             0))).isEmpty());
   }
 
   @Test
   public void shouldReturnTestUnitWhenMatchingTestDetailSupplied() {
     final List<TestUnit> actual = this.testee.translateTests(Arrays
-        .asList(new TestInfo("foo", "one", 42, Option.<ClassName> none(), 0)));
+        .asList(new TestInfo("foo", "one", 42, Optional.<ClassName> empty(), 0)));
     assertEquals(1, actual.size());
   }
 

@@ -25,6 +25,7 @@ import static org.pitest.functional.prelude.Prelude.isGreaterThan;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -220,7 +221,7 @@ public class MutableListTest {
   @Test
   public void shouldImplementFindFirst() {
     this.testee.addAll(Arrays.asList(1, 2, 3));
-    assertEquals(Option.some(1), this.testee.findFirst(i -> true));
-    assertEquals(Option.none(), this.testee.findFirst(False.<Integer>instance()));
+    assertEquals(Optional.ofNullable(1), this.testee.findFirst(i -> true));
+    assertEquals(Optional.empty(), this.testee.findFirst(False.<Integer>instance()));
   }
 }

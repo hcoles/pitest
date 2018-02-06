@@ -58,7 +58,7 @@ public class MutationSource {
       return availableMutations;
     } else {
       final ClassTree tree = ClassTree
-          .fromBytes(this.source.getBytes(clazz.asJavaName()).value());
+          .fromBytes(this.source.getBytes(clazz.asJavaName()).get());
 
       this.interceptor.begin(tree);
       final Collection<MutationDetails> updatedMutations = this.interceptor

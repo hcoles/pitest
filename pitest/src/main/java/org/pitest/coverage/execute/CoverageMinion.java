@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
@@ -32,7 +33,6 @@ import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -154,8 +154,7 @@ public class CoverageMinion {
  final List<ClassName> classes) {
     final FindTestUnits finder = new FindTestUnits(testPlugin);
     final List<TestUnit> tus = finder
-        .findTestUnitsForAllSuppliedClasses(FCollection.flatMap(classes,
-            ClassName.nameToClass()));
+        .findTestUnitsForAllSuppliedClasses(classes.stream().flatMap(ClassName.nameToClass()).collect(Collectors.toList()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }
@@ -170,8 +169,8 @@ public class CoverageMinion {
 
   private static void verifyEnvironment(Configuration config) {
     LOG.info("Checking environment");
-    if (config.verifyEnvironment().hasSome()) {
-      throw config.verifyEnvironment().value();
+    if (config.verifyEnvironment().isPresent()) {
+      throw config.verifyEnvironment().get();
     }
   }
 

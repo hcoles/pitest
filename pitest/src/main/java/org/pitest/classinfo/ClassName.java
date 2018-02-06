@@ -17,8 +17,8 @@ package org.pitest.classinfo;
 import java.io.Serializable;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
-import org.pitest.functional.Option;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
@@ -97,31 +97,31 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
     return clazz -> ClassName.fromString(clazz);
   }
 
-  public static Function<ClassName, Option<Class<?>>> nameToClass() {
+  public static Function<ClassName, Stream<Class<?>>> nameToClass() {
     return nameToClass(IsolationUtils.getContextClassLoader());
   }
 
-  public static Function<ClassName, Option<Class<?>>> nameToClass(
+  public static Function<ClassName, Stream<Class<?>>> nameToClass(
       final ClassLoader loader) {
     return className -> {
       try {
         final Class<?> clazz = Class.forName(className.asJavaName(), false,
             loader);
-        return Option.<Class<?>> some(clazz);
+        return Stream.of(clazz);
       } catch (final ClassNotFoundException e1) {
         LOG.warning("Could not load " + className
             + " (ClassNotFoundException: " + e1.getMessage() + ")");
-        return Option.none();
+        return Stream.empty();
       } catch (final NoClassDefFoundError e2) {
         LOG.warning("Could not load " + className
             + " (NoClassDefFoundError: " + e2.getMessage() + ")");
-        return Option.none();
+        return Stream.empty();
       } catch (final LinkageError e3) {
         LOG.warning("Could not load " + className + " " + e3.getMessage());
-        return Option.none();
+        return Stream.empty();
       } catch (final SecurityException e4) {
         LOG.warning("Could not load " + className + " " + e4.getMessage());
-        return Option.none();
+        return Stream.empty();
       }
     };
   }

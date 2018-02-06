@@ -32,7 +32,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.codeassist.ClassUtils;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.IsolationUtils;
 
 public class RepositoryTest {
@@ -65,7 +65,7 @@ public class RepositoryTest {
   @Test
   public void shouldOnlyCheckSourceForUnknownClassesOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Optional.<byte[]> empty());
     this.testee.hasClass(ClassName.fromString("foo"));
     this.testee.hasClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
@@ -73,14 +73,14 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnNoneWhenAskedForUnknownClass() {
-    assertEquals(Option.none(),
+    assertEquals(Optional.empty(),
         this.testee.fetchClass(ClassName.fromString("never.heard.of.you")));
   }
 
   @Test
   public void shouldOnlyLookForUnknownClassesOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Optional.<byte[]> empty());
     this.testee.fetchClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
@@ -89,7 +89,7 @@ public class RepositoryTest {
   @Test
   public void shouldOnlyQuerySourceForAnUnknownClassOnce() {
     this.testee = new Repository(this.source);
-    when(this.source.getBytes(anyString())).thenReturn(Option.<byte[]> none());
+    when(this.source.getBytes(anyString())).thenReturn(Optional.<byte[]> empty());
     this.testee.hasClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
@@ -97,14 +97,14 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnInfoForClassOnClassPath() {
-    assertTrue(this.testee.fetchClass(Integer.class).hasSome());
+    assertTrue(this.testee.fetchClass(Integer.class).isPresent());
   }
 
   @Test
   public void shouldOnlyLookForKnownClassOnce() throws ClassNotFoundException {
     this.testee = new Repository(this.source);
     when(this.source.getBytes(anyString())).thenReturn(
-        Option.some(ClassUtils.classAsBytes(String.class)));
+        Optional.ofNullable(ClassUtils.classAsBytes(String.class)));
     this.testee.fetchClass(ClassName.fromString("foo"));
     this.testee.fetchClass(ClassName.fromString("foo"));
     verify(this.source, times(1)).getBytes("foo");
@@ -112,28 +112,28 @@ public class RepositoryTest {
 
   @Test
   public void shouldDetectInterfacesAsInterfaces() {
-    final Option<ClassInfo> anInterface = this.testee
+    final Optional<ClassInfo> anInterface = this.testee
         .fetchClass(Serializable.class);
-    assertTrue(anInterface.value().isInterface());
+    assertTrue(anInterface.get().isInterface());
   }
 
   @Test
   public void shouldDetectInterfacesAsAbstract() {
-    final Option<ClassInfo> anInterface = this.testee
+    final Optional<ClassInfo> anInterface = this.testee
         .fetchClass(Serializable.class);
-    assertTrue(anInterface.value().isAbstract());
+    assertTrue(anInterface.get().isAbstract());
   }
 
   @Test
   public void shouldDetectConcreteClassesAsNotInterfaces() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertFalse(aClass.value().isInterface());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
+    assertFalse(aClass.get().isInterface());
   }
 
   @Test
   public void shouldDetectConcreteClassesAsNotAbstract() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertFalse(aClass.value().isAbstract());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
+    assertFalse(aClass.get().isAbstract());
   }
 
   public static class SimpleInnerClass {
@@ -190,29 +190,29 @@ public class RepositoryTest {
 
   @Test
   public void shouldReportSuperClass() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Bar.class);
-    assertEquals(ClassName.fromClass(Foo.class), aClass.value().getSuperClass()
-        .value().getName());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Bar.class);
+    assertEquals(ClassName.fromClass(Foo.class), aClass.get().getSuperClass()
+        .get().getName());
   }
 
   @Test
   public void shouldReportSuperClassAsObjectWhenNoneDeclared() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Foo.class);
-    assertEquals(ClassName.fromClass(Object.class), aClass.value().getSuperClass()
-        .value().getName());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Foo.class);
+    assertEquals(ClassName.fromClass(Object.class), aClass.get().getSuperClass()
+        .get().getName());
   }
 
   @Test
   public void shouldReportNoSuperClassForObject() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Object.class);
-    assertEquals(Option.none(), aClass.value().getSuperClass());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Object.class);
+    assertEquals(Optional.empty(), aClass.get().getSuperClass());
   }
 
   @Test
   public void shouldReportCodeLines() {
-    final Option<ClassInfo> aClass = this.testee
+    final Optional<ClassInfo> aClass = this.testee
         .fetchClass(RepositoryTest.class);
-    aClass.value().isCodeLine(139); // flakey
+    aClass.get().isCodeLine(139); // flakey
   }
 
   @Ignore
@@ -222,8 +222,8 @@ public class RepositoryTest {
 
   @Test
   public void shouldRecordClassLevelAnnotations() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Annotated.class);
-    assertTrue(aClass.value().hasAnnotation(Ignore.class));
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Annotated.class);
+    assertTrue(aClass.get().hasAnnotation(Ignore.class));
   }
 
   static class HasAnnotatedMethod {
@@ -235,9 +235,9 @@ public class RepositoryTest {
 
   @Test
   public void shouldRecordMethodLevelAnnotations() {
-    final Option<ClassInfo> aClass = this.testee
+    final Optional<ClassInfo> aClass = this.testee
         .fetchClass(HasAnnotatedMethod.class);
-    assertTrue(aClass.value().hasAnnotation(Test.class));
+    assertTrue(aClass.get().hasAnnotation(Test.class));
   }
 
   static interface ITop {
@@ -258,23 +258,23 @@ public class RepositoryTest {
 
   @Test
   public void shouldCorrectlyNegotiateClassHierachies() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
-    assertTrue(aClass.value().descendsFrom(Middle.class));
-    assertTrue(aClass.value().descendsFrom(Top.class));
-    assertTrue(aClass.value().descendsFrom(Object.class));
-    assertFalse(aClass.value().descendsFrom(String.class));
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
+    assertTrue(aClass.get().descendsFrom(Middle.class));
+    assertTrue(aClass.get().descendsFrom(Top.class));
+    assertTrue(aClass.get().descendsFrom(Object.class));
+    assertFalse(aClass.get().descendsFrom(String.class));
   }
 
   @Test
   public void doesNotTreatInterfacesAsPartOfClassHierachy() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
-    assertFalse(aClass.value().descendsFrom(ITop.class));
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
+    assertFalse(aClass.get().descendsFrom(ITop.class));
   }
 
   @Test
   public void shouldRecordSourceFile() {
-    final Option<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertEquals("String.java", aClass.value().getSourceFileName());
+    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
+    assertEquals("String.java", aClass.get().getSourceFileName());
   }
 
   @Test
@@ -284,7 +284,7 @@ public class RepositoryTest {
   }
 
   private String getOuterClassNameFor(final Class<?> clazz) {
-    return this.testee.fetchClass(clazz).value().getOuterClass().value()
+    return this.testee.fetchClass(clazz).get().getOuterClass().get()
         .getName().asInternalName();
   }
 

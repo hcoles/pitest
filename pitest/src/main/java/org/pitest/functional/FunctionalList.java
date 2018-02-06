@@ -30,5 +30,5 @@ public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Ser
   @Override
   <B> FunctionalList<B> map(Function<T, B> f);
 
-  Option<T> findFirst(Predicate<T> predicate);
+  java.util.Optional<T> findFirst(Predicate<T> predicate);
 }

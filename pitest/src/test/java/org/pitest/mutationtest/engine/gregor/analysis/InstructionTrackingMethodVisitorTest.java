@@ -83,7 +83,7 @@ public class InstructionTrackingMethodVisitorTest {
   private InstructionTrackingMethodVisitor analyse(final Class<?> clazz,
       final String targetMethod) {
     final ClassReader reader = new ClassReader(this.byteSource.getBytes(
-        clazz.getName()).value());
+        clazz.getName()).get());
     final Analyser cv = new Analyser(targetMethod);
     reader.accept(cv, 0);
     return cv.testee;
@@ -91,7 +91,7 @@ public class InstructionTrackingMethodVisitorTest {
 
   private MethodNode makeTree(final Class<?> clazz, final String name) {
     final ClassReader reader = new ClassReader(this.byteSource.getBytes(
-        ClassName.fromClass(clazz).asJavaName()).value());
+        ClassName.fromClass(clazz).asJavaName()).get());
     final ClassNode tree = new ClassNode();
     reader.accept(tree, 0);
     for (final Object m : tree.methods) {

@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.pitest.extension.common.CompoundTestSuiteFinder;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
@@ -58,17 +58,17 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
 
   @Override
-  public Option<PitHelpError> verifyEnvironment() {
+  public Optional<PitHelpError> verifyEnvironment() {
     try {
       final String version = junit.runner.Version.id();
       if (isInvalidVersion(version)) {
-        return Option.some(new PitHelpError(Help.WRONG_JUNIT_VERSION, version));
+        return Optional.ofNullable(new PitHelpError(Help.WRONG_JUNIT_VERSION, version));
       }
     } catch (final NoClassDefFoundError er) {
-      return Option.some(new PitHelpError(Help.NO_JUNIT));
+      return Optional.ofNullable(new PitHelpError(Help.NO_JUNIT));
     }
 
-    return Option.none();
+    return Optional.empty();
   }
 
   boolean isInvalidVersion(final String version) {

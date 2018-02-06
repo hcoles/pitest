@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class OtherClassLoaderClassPathRoot implements ClassPathRoot {
 
@@ -47,8 +47,8 @@ public class OtherClassLoaderClassPathRoot implements ClassPathRoot {
   }
 
   @Override
-  public Option<String> cacheLocation() {
-    return Option.none();
+  public Optional<String> cacheLocation() {
+    return Optional.empty();
   }
 
 }
