@@ -46,7 +46,7 @@ public abstract class FCollection {
 
   public static <A, B> List<B> map(final Iterable<? extends A> as,
       final Function<A, B> f) {
-    final FunctionalList<B> bs = emptyList();
+    final List<B> bs = emptyList();
     mapTo(as, f, bs);
     return bs;
   }
@@ -62,20 +62,20 @@ public abstract class FCollection {
     }
   }
 
-  public static <A, B> FunctionalList<B> flatMap(
+  public static <A, B> List<B> flatMap(
       final Iterable<? extends A> as, final Function<A, ? extends Iterable<B>> f) {
-    final FunctionalList<B> bs = emptyList();
+    final List<B> bs = emptyList();
     flatMapTo(as, f, bs);
     return bs;
   }
 
-  private static <T> FunctionalList<T> emptyList() {
-    return new MutableList<>();
+  private static <T> List<T> emptyList() {
+    return new ArrayList<>();
   }
 
   public static <T> List<T> filter(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
-    final FunctionalList<T> dest = emptyList();
+    final List<T> dest = emptyList();
     filter(xs, predicate, dest);
     return dest;
   }
@@ -121,9 +121,9 @@ public abstract class FCollection {
     return p;
   }
 
-  public static <T> FunctionalCollection<T> flatten(
+  public static <T> Collection<T> flatten(
       final Iterable<? extends Iterable<? extends T>> ts) {
-    final MutableList<T> list = new MutableList<>();
+    final List<T> list = new ArrayList<>();
     for (final Iterable<? extends T> it : ts) {
       for (final T each : it) {
         list.add(each);
@@ -132,9 +132,9 @@ public abstract class FCollection {
     return list;
   }
 
-  public static <T> FunctionalList<List<T>> splitToLength(
+  public static <T> List<List<T>> splitToLength(
       final int targetLength, final Iterable<T> ts) {
-    final FunctionalList<List<T>> list = new MutableList<>();
+    final List<List<T>> list = new ArrayList<>();
     List<T> temp = new ArrayList<>();
     int i = 0;
     for (final T each : ts) {

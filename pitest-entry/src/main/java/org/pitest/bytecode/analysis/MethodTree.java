@@ -1,5 +1,6 @@
 package org.pitest.bytecode.analysis;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -9,8 +10,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.MutableList;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
@@ -18,7 +17,7 @@ public class MethodTree {
 
   private final ClassName owner;
   private final MethodNode rawNode;
-  private FunctionalList<AbstractInsnNode> lazyInstructions;
+  private List<AbstractInsnNode> lazyInstructions;
 
   public MethodTree(ClassName owner, MethodNode rawNode) {
     this.owner = owner;
@@ -33,7 +32,7 @@ public class MethodTree {
     return Location.location(this.owner,MethodName.fromString(this.rawNode.name), this.rawNode.desc);
   }
 
-  public FunctionalList<AbstractInsnNode> instructions() {
+  public List<AbstractInsnNode> instructions() {
     if (this.lazyInstructions != null) {
       return this.lazyInstructions;
     }
@@ -45,8 +44,8 @@ public class MethodTree {
     return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
-  public FunctionalList<AnnotationNode> annotations() {
-    final FunctionalList<AnnotationNode> annotaions = new MutableList<>();
+  public List<AnnotationNode> annotations() {
+    final List<AnnotationNode> annotaions = new ArrayList<>();
     if (this.rawNode.invisibleAnnotations != null) {
       annotaions.addAll(this.rawNode.invisibleAnnotations);
     }
@@ -56,13 +55,13 @@ public class MethodTree {
     return annotaions;
   }
 
-  private FunctionalList<AbstractInsnNode> createInstructionList() {
+  private List<AbstractInsnNode> createInstructionList() {
     final List<AbstractInsnNode> list = new LinkedList<>();
     final ListIterator<AbstractInsnNode> it = this.rawNode.instructions.iterator();
     while (it.hasNext()) {
         list.add(it.next());
     }
-    this.lazyInstructions = new MutableList<>(list);
+    this.lazyInstructions = new ArrayList<>(list);
     return this.lazyInstructions;
   }
 

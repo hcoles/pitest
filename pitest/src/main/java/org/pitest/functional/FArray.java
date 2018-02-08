@@ -63,15 +63,15 @@ public abstract class FArray {
     }
   }
 
-  public static <A, B> FunctionalList<B> flatMap(final A[] as,
+  public static <A, B> List<B> flatMap(final A[] as,
       final Function<A, ? extends Iterable<B>> f) {
-    final FunctionalList<B> bs = emptyList();
+    final List<B> bs = emptyList();
     flatMapTo(as, f, bs);
     return bs;
   }
 
-  private static <T> FunctionalList<T> emptyList() {
-    return new MutableList<>();
+  private static <T> List<T> emptyList() {
+    return new ArrayList<>();
   }
 
 }

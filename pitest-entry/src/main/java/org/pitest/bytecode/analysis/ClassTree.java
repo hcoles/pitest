@@ -2,6 +2,7 @@ package org.pitest.bytecode.analysis;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -14,8 +15,6 @@ import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.MutableList;
 import org.pitest.mutationtest.engine.Location;
 
 public class ClassTree {
@@ -47,8 +46,8 @@ public class ClassTree {
    return methods().stream().filter(MethodMatchers.forLocation(loc)).findFirst();
   }
 
-  public FunctionalList<AnnotationNode> annotations() {
-    final FunctionalList<AnnotationNode> annotaions = new MutableList<>();
+  public List<AnnotationNode> annotations() {
+    final List<AnnotationNode> annotaions = new ArrayList<>();
     if (this.rawNode.invisibleAnnotations != null) {
       annotaions.addAll(this.rawNode.invisibleAnnotations);
     }

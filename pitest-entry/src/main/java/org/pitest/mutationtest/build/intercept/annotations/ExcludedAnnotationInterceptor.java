@@ -36,7 +36,9 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    this.skipClass = clazz.annotations().contains(avoidedAnnotation());
+    this.skipClass = clazz.annotations().stream()
+        .filter(avoidedAnnotation())
+        .findFirst().isPresent();
     if (!this.skipClass) {
       final List<Predicate<MutationDetails>> methods = clazz.methods().stream()
           .filter(hasAvoidedAnnotation())
@@ -47,7 +49,9 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
   }
 
   private Predicate<MethodTree> hasAvoidedAnnotation() {
-    return a -> a.annotations().contains(avoidedAnnotation());
+    return a -> a.annotations().stream()
+        .filter(avoidedAnnotation())
+        .findFirst().isPresent();
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {

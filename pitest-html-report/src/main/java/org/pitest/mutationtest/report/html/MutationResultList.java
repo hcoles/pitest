@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationResult;
 
@@ -77,7 +76,7 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public <B> FunctionalList<B> flatMap(
+  public <B> List<B> flatMap(
       final Function<MutationResult, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -36,7 +37,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
@@ -139,8 +139,8 @@ public abstract class MutatorTestBase {
   }
 
   protected List<Mutant> getMutants(
-      final FunctionalList<MutationDetails> details) {
-    return details.map(createMutant());
+      final List<MutationDetails> details) {
+    return details.stream().map(createMutant()).collect(Collectors.toList());
   }
 
   private Function<MutationDetails, Mutant> createMutant() {
@@ -176,8 +176,7 @@ public abstract class MutatorTestBase {
   }
 
   protected void assertMutantsReturn(final Callable<String> mutee,
-
-      final FunctionalList<MutationDetails> details,
+      final List<MutationDetails> details,
       final String... expectedResults) {
 
     final List<Mutant> mutants = this.getMutants(details);
@@ -198,7 +197,7 @@ public abstract class MutatorTestBase {
   }
 
   protected void assertMutantsAreFrom(
-      final FunctionalList<MutationDetails> actualDetails,
+      final List<MutationDetails> actualDetails,
       final Class<?>... mutators) {
     assertEquals(mutators.length, actualDetails.size());
     int i = 0;

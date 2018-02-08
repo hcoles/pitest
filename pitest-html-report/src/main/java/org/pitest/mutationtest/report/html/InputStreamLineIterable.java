@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.SideEffect1;
 
 public class InputStreamLineIterable implements FunctionalIterable<String> {
@@ -95,7 +94,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public <B> FunctionalList<B> flatMap(final Function<String, ? extends Iterable<B>> f) {
+  public <B> List<B> flatMap(final Function<String, ? extends Iterable<B>> f) {
     return FCollection.flatMap(this, f);
   }
 
