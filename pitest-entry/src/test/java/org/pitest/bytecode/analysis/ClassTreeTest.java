@@ -21,7 +21,7 @@ public class ClassTreeTest {
   @Test
   public void shouldAllowAccesToAllMethods() {
     final ClassTree testee = ClassTree.fromBytes(bytesFor(ParseMe.class));
-    assertThat(testee.methods().map(toName())).containsExactly("<init>", "a", "b");
+    assertThat(testee.methods().stream().map(toName())).containsExactly("<init>", "a", "b");
   }
 
   @Test

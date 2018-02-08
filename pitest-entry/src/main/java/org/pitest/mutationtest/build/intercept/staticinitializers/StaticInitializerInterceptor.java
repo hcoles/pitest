@@ -54,9 +54,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
     if (this.isStaticInitCode != null) {
-      final FunctionalList<MutationDetails> altered =
-          FCollection.filter(mutations, this.isStaticInitCode)
-          .map(setStaticInitializerFlag());
+      final List<MutationDetails> altered =
+          mutations.stream()
+          .filter(this.isStaticInitCode)
+          .map(setStaticInitializerFlag())
+          .collect(Collectors.toList());
 
       final FunctionalList<MutationDetails> notAltered =
           FCollection.filter(mutations, Prelude.not(this.isStaticInitCode));
@@ -73,7 +75,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private void analyseClass(ClassTree tree) {
-    final Optional<MethodTree> clinit = tree.methods().findFirst(nameEquals(CLINIT.name()));
+    final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals(CLINIT.name())).findFirst();
 
     if (clinit.isPresent()) {
       final List<Predicate<MethodTree>> selfCalls =
@@ -85,10 +87,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
       final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
 
-      final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods()
+      final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods().stream()
       .filter(isPrivateStatic())
       .filter(matchingCalls)
       .map(AnalysisFunctions.matchMutationsInMethod())
+      .collect(Collectors.toList())
       );
 
       this.isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);

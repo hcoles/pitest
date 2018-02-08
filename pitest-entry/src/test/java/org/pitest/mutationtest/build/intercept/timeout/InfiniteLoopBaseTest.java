@@ -102,7 +102,7 @@ public abstract class InfiniteLoopBaseTest {
     final Optional<byte[]> bs = source.getBytes("loops/" + compiler.name() + "/" + clazz.getNameWithoutPackage().asJavaName());
     if (bs.isPresent()) {
       final ClassTree tree = ClassTree.fromBytes(bs.get());
-      return tree.methods().findFirst(method);
+      return tree.methods().stream().filter(method).findFirst();
     }
     return Optional.empty();
   }

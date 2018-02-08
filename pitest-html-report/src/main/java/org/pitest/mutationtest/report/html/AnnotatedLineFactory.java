@@ -26,7 +26,6 @@ import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
@@ -44,7 +43,7 @@ public class AnnotatedLineFactory {
     this.classesInFile = classes;
   }
 
-  public FunctionalList<Line> convert(final Reader source) throws IOException {
+  public List<Line> convert(final Reader source) throws IOException {
     try {
       final InputStreamLineIterable lines = new InputStreamLineIterable(source);
       return lines.map(stringToAnnotatedLine());

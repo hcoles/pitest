@@ -79,8 +79,9 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
       FunctionalList<MutationDetails> inEquals, Mutater m) {
     final Location equalsMethod = inEquals.get(0).getId().getLocation();
 
-    final Optional<MethodTree> maybeEquals = this.currentClass.methods()
-        .findFirst(MethodMatchers.forLocation(equalsMethod));
+    final Optional<MethodTree> maybeEquals = this.currentClass.methods().stream()
+        .filter(MethodMatchers.forLocation(equalsMethod))
+        .findFirst();
 
     return inEquals.filter(isShortcutEquals(maybeEquals.get(), m).negate());
   }
@@ -95,7 +96,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     }
 
     final ClassTree mutant = ClassTree.fromBytes(m.getMutation(a.getId()).getBytes());
-    final MethodTree mutantEquals = mutant.methods().findFirst(MethodMatchers.forLocation(tree.asLocation())).get();
+    final MethodTree mutantEquals = mutant.methods().stream()
+        .filter(MethodMatchers.forLocation(tree.asLocation()))
+        .findFirst()
+        .get();
 
     return ALWAYS_FALSE.matches(mutantEquals.instructions());
   }

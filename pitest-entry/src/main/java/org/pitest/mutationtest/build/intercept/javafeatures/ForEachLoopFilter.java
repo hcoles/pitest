@@ -189,7 +189,10 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private Predicate<MutationDetails> mutatesIteratorLoopPlumbing() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = ForEachLoopFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+      final MethodTree method = ForEachLoopFilter.this.currentClass.methods().stream()
+          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+          .findFirst()
+          .get();
       final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
 
       final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);

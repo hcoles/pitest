@@ -72,7 +72,10 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isAnImplicitNullCheck() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = ImplicitNullCheckFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+      final MethodTree method = ImplicitNullCheckFilter.this.currentClass.methods().stream()
+          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+          .findFirst()
+          .get();
 
       final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
 

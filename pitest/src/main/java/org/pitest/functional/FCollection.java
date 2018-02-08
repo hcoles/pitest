@@ -44,7 +44,7 @@ public abstract class FCollection {
     }
   }
 
-  public static <A, B> FunctionalList<B> map(final Iterable<? extends A> as,
+  public static <A, B> List<B> map(final Iterable<? extends A> as,
       final Function<A, B> f) {
     final FunctionalList<B> bs = emptyList();
     mapTo(as, f, bs);

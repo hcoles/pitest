@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -84,7 +85,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final Function<String, B> f) {
+  public <B> List<B> map(final Function<String, B> f) {
     return FCollection.map(this, f);
   }
 

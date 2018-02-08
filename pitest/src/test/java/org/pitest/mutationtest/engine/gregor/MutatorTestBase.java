@@ -183,7 +183,7 @@ public abstract class MutatorTestBase {
     final List<Mutant> mutants = this.getMutants(details);
     assertEquals("Should return one mutant for each request", details.size(),
         mutants.size());
-    final FunctionalList<String> results = FCollection.map(mutants,
+    final List<String> results = FCollection.map(mutants,
         mutantToStringReults(mutee));
 
     int i = 0;

@@ -97,8 +97,8 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     // check that we have at least on mutation in a different block
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
-    final FunctionalList<Integer> ids = map(each.getValue(), mutationToBlock());
-    if (ids.contains(not(isEqualTo(firstBlock)))) {
+    final List<Integer> ids = map(each.getValue(), mutationToBlock());
+    if (ids.stream().filter(not(isEqualTo(firstBlock))).findFirst().isPresent()) {
       combined.add(makeCombinedMutant(each.getValue()));
     } else {
       combined.addAll(each.getValue());

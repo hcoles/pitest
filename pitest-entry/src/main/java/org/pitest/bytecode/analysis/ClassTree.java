@@ -2,6 +2,8 @@ package org.pitest.bytecode.analysis;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.objectweb.asm.ClassReader;
@@ -14,13 +16,12 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.FunctionalList;
 import org.pitest.functional.MutableList;
-import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 
 public class ClassTree {
 
   private final ClassNode rawNode;
-  private FunctionalList<MethodTree> lazyMethods;
+  private List<MethodTree> lazyMethods;
 
   public ClassTree(ClassNode rawNode) {
     this.rawNode = rawNode;
@@ -34,7 +35,7 @@ public class ClassTree {
   }
 
 
-  public FunctionalList<MethodTree> methods() {
+  public List<MethodTree> methods() {
     if (this.lazyMethods != null) {
       return this.lazyMethods;
     }
@@ -43,7 +44,7 @@ public class ClassTree {
   }
 
   public Optional<MethodTree> method(Location loc) {
-   return methods().findFirst(MethodMatchers.forLocation(loc));
+   return methods().stream().filter(MethodMatchers.forLocation(loc)).findFirst();
   }
 
   public FunctionalList<AnnotationNode> annotations() {

@@ -93,7 +93,7 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final Function<MutationResult, B> f) {
+  public <B> List<B> map(final Function<MutationResult, B> f) {
     return FCollection.map(this, f);
   }
 

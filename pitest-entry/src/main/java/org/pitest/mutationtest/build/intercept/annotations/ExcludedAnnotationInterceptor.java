@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.tree.AnnotationNode;
 import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -38,9 +38,10 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
   public void begin(ClassTree clazz) {
     this.skipClass = clazz.annotations().contains(avoidedAnnotation());
     if (!this.skipClass) {
-      final FunctionalList<Predicate<MutationDetails>> methods = clazz.methods()
+      final List<Predicate<MutationDetails>> methods = clazz.methods().stream()
           .filter(hasAvoidedAnnotation())
-          .map(AnalysisFunctions.matchMutationsInMethod());
+          .map(AnalysisFunctions.matchMutationsInMethod())
+          .collect(Collectors.toList());
       this.annotatedMethodMatcher = Prelude.or(methods);
     }
   }

@@ -22,13 +22,13 @@ import java.util.function.Predicate;
 public interface FunctionalList<T> extends FunctionalCollection<T>, List<T>, Serializable {
 
   @Override
-  FunctionalList<T> filter(Predicate<T> predicate);
+  List<T> filter(Predicate<T> predicate);
 
   @Override
-  <B> FunctionalList<B> flatMap(Function<T, ? extends Iterable<B>> f);
+  <B> List<B> flatMap(Function<T, ? extends Iterable<B>> f);
 
   @Override
-  <B> FunctionalList<B> map(Function<T, B> f);
+  <B> List<B> map(Function<T, B> f);
 
   java.util.Optional<T> findFirst(Predicate<T> predicate);
 }

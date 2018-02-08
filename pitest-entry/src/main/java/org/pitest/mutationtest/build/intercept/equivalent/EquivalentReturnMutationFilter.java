@@ -102,7 +102,9 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
           return false;
         }
         final int instruction = a.getInstructionIndex();
-        final MethodTree method = HardCodedTrueEquivalentFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+        final MethodTree method = HardCodedTrueEquivalentFilter.this.currentClass.methods().stream()
+            .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+            .findFirst().get();
         return primitiveTrue(instruction, method) || boxedTrue(instruction, method);
       }
 
@@ -172,7 +174,10 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
         return false;
       }
       final int intructionBeforeReturn = a.getInstructionIndex() - 1;
-      final MethodTree method = PrimitiveEquivalentFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+      final MethodTree method = PrimitiveEquivalentFilter.this.currentClass.methods().stream()
+          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+          .findFirst()
+          .get();
       return ZERO_CONSTANTS.contains(method.instructions().get(intructionBeforeReturn).getOpcode());
     };
   }
@@ -225,7 +230,10 @@ class EmptyReturnsFilter implements MutationInterceptor {
           return false;
         }
 
-        final MethodTree method = EmptyReturnsFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+        final MethodTree method = EmptyReturnsFilter.this.currentClass.methods().stream()
+            .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+            .findFirst()
+            .get();
         final int mutatedInstruction = a.getInstructionIndex();
         return returnsZeroValue(method, mutatedInstruction)
             || returnsEmptyString(method, mutatedInstruction)
@@ -312,7 +320,10 @@ class NullReturnsFilter implements MutationInterceptor {
           return false;
         }
 
-        final MethodTree method = NullReturnsFilter.this.currentClass.methods().findFirst(MethodMatchers.forLocation(a.getId().getLocation())).get();
+        final MethodTree method = NullReturnsFilter.this.currentClass.methods().stream()
+            .filter(MethodMatchers.forLocation(a.getId().getLocation()))
+            .findFirst()
+            .get();
         final int mutatedInstruction = a.getInstructionIndex();
         return returnsNull(method, mutatedInstruction);
       }

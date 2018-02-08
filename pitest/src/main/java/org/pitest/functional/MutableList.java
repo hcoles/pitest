@@ -128,7 +128,7 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public <B> FunctionalList<B> map(final Function<A, B> f) {
+  public <B> List<B> map(final Function<A, B> f) {
     return FCollection.map(this, f);
   }
 
