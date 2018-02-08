@@ -17,17 +17,9 @@ package org.pitest.mutationtest.report.html;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.SideEffect1;
-
-public class InputStreamLineIterable implements FunctionalIterable<String> {
+public class InputStreamLineIterable implements Iterable<String> {
 
   private final BufferedReader reader;
   private String               next;
@@ -71,36 +63,6 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
       }
 
     };
-  }
-
-  @Override
-  public List<String> filter(final Predicate<String> predicate) {
-    return FCollection.filter(this, predicate);
-  }
-
-  @Override
-  public void forEach(final SideEffect1<String> e) {
-    FCollection.forEach(this, e);
-  }
-
-  @Override
-  public <B> List<B> map(final Function<String, B> f) {
-    return FCollection.map(this, f);
-  }
-
-  @Override
-  public <B> void mapTo(final Function<String, B> f, final Collection<? super B> bs) {
-    FCollection.mapTo(this, f, bs);
-  }
-
-  @Override
-  public <B> List<B> flatMap(final Function<String, ? extends Iterable<B>> f) {
-    return FCollection.flatMap(this, f);
-  }
-
-  @Override
-  public boolean contains(final Predicate<String> predicate) {
-    return FCollection.contains(this, predicate);
   }
 
 }

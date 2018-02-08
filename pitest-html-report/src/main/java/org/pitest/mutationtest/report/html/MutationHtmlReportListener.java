@@ -146,7 +146,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
         sourceFile);
     if (reader.isPresent()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
-          mutationsForThisFile, this.coverage, classes);
+          mutationsForThisFile.list(), this.coverage, classes);
       return alf.convert(reader.get());
     }
     return Collections.emptyList();

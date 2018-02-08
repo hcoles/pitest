@@ -20,23 +20,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalIterable;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
 public class AnnotatedLineFactory {
 
-  private final FunctionalIterable<MutationResult> mutations;
+  private final Collection<MutationResult>         mutations;
   private final CoverageDatabase                   statistics;
   private final Collection<ClassInfo>              classesInFile;
 
   public AnnotatedLineFactory(
-      final FunctionalIterable<MutationResult> mutations,
+      final Collection<MutationResult> mutations,
       final CoverageDatabase statistics, final Collection<ClassInfo> classes) {
     this.mutations = mutations;
     this.statistics = statistics;
@@ -46,7 +46,7 @@ public class AnnotatedLineFactory {
   public List<Line> convert(final Reader source) throws IOException {
     try {
       final InputStreamLineIterable lines = new InputStreamLineIterable(source);
-      return lines.map(stringToAnnotatedLine());
+      return FCollection.map(lines, stringToAnnotatedLine());
     } finally {
       source.close();
     }
@@ -70,7 +70,9 @@ public class AnnotatedLineFactory {
   }
 
   private List<MutationResult> getMutationsForLine(final int lineNumber) {
-    return this.mutations.filter(isAtLineNumber(lineNumber));
+    return this.mutations.stream()
+        .filter(isAtLineNumber(lineNumber))
+        .collect(Collectors.toList());
   }
 
   private Predicate<MutationResult> isAtLineNumber(final int lineNumber) {
