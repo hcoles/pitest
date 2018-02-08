@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -316,8 +317,10 @@ public class CoverageProcessSystemTest {
   }
 
   private ClassPath classPathWithoutJUnit() {
-    final FunctionalList<File> cpWithoutJUnit = FCollection.filter(
-        ClassPath.getClassPathElementsAsFiles(), file -> !file.getName().contains("junit"));
+    final List<File> cpWithoutJUnit = 
+        ClassPath.getClassPathElementsAsFiles().stream()
+        .filter(file -> !file.getName().contains("junit"))
+        .collect(Collectors.toList());
 
     return new ClassPath(cpWithoutJUnit);
   }

@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,7 +38,6 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -200,9 +201,10 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
-    return FCollection.filter(description.getChildren(), isTest()).map(
-        descriptionToTestUnit());
-
+    return description.getChildren().stream()
+        .filter(isTest())
+        .map(descriptionToTestUnit())
+        .collect(Collectors.toList());
   }
 
   private Function<Description, TestUnit> descriptionToTestUnit() {

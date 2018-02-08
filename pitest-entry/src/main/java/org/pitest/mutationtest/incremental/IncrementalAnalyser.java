@@ -6,14 +6,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
@@ -108,9 +108,10 @@ public class IncrementalAnalyser implements MutationAnalyser {
     final Collection<TestInfo> allTests = this.coverage.getTestsForClass(each
         .getClassName());
 
-    final List<ClassName> testClasses = FCollection.filter(allTests,
-        testIsCalled(mutationStatusTestPair.getKillingTest().get())).map(
-            TestInfo.toDefiningClassName());
+    final List<ClassName> testClasses = allTests.stream()
+        .filter(testIsCalled(mutationStatusTestPair.getKillingTest().get()))
+        .map(TestInfo.toDefiningClassName())
+        .collect(Collectors.toList());
 
     if (testClasses.isEmpty()) {
       return false;

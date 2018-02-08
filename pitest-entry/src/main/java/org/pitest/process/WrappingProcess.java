@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import java.util.Optional;
 
 public class WrappingProcess {
 
@@ -107,7 +106,7 @@ public class WrappingProcess {
 
   private static void addLaunchJavaAgents(List<String> cmd) {
     final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-    final FunctionalList<String> agents = FCollection.filter(rt.getInputArguments(),
+    final List<String> agents = FCollection.filter(rt.getInputArguments(),
         or(isJavaAgentParam(), isEnvironmentSetting()));
     cmd.addAll(agents);
   }

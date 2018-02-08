@@ -73,7 +73,7 @@ public abstract class FCollection {
     return new MutableList<>();
   }
 
-  public static <T> FunctionalList<T> filter(final Iterable<? extends T> xs,
+  public static <T> List<T> filter(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
     final FunctionalList<T> dest = emptyList();
     filter(xs, predicate, dest);

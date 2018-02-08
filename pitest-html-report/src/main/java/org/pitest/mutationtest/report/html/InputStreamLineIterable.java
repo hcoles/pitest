@@ -75,7 +75,7 @@ public class InputStreamLineIterable implements FunctionalIterable<String> {
   }
 
   @Override
-  public FunctionalList<String> filter(final Predicate<String> predicate) {
+  public List<String> filter(final Predicate<String> predicate) {
     return FCollection.filter(this, predicate);
   }
 

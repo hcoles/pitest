@@ -113,7 +113,7 @@ public final class MutableList<A> implements FunctionalList<A> {
   }
 
   @Override
-  public FunctionalList<A> filter(final Predicate<A> predicate) {
+  public List<A> filter(final Predicate<A> predicate) {
     return FCollection.filter(this, predicate);
   }
 

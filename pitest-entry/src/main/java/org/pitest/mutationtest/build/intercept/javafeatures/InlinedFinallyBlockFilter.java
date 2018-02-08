@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -84,7 +83,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   private void checkForInlinedCode(final Collection<MutationDetails> combined,
       final Entry<LineMutatorPair, Collection<MutationDetails>> each) {
 
-    final FunctionalList<MutationDetails> mutationsInHandlerBlock = FCollection
+    final List<MutationDetails> mutationsInHandlerBlock = FCollection
         .filter(each.getValue(), isInFinallyHandler());
     if (!isPossibleToCorrectInlining(mutationsInHandlerBlock)) {
       combined.addAll(each.getValue());

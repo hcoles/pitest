@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -60,13 +61,17 @@ public class MutationStatusMap {
   }
 
   public Collection<MutationDetails> getUnrunMutations() {
-    return FCollection.filter(this.mutationMap.entrySet(),
-        hasStatus(DetectionStatus.NOT_STARTED)).map(toMutationDetails());
+    return this.mutationMap.entrySet().stream()
+        .filter(hasStatus(DetectionStatus.NOT_STARTED))
+        .map(toMutationDetails())
+        .collect(Collectors.toList());
   }
 
   public Collection<MutationDetails> getUnfinishedRuns() {
-    return FCollection.filter(this.mutationMap.entrySet(),
-        hasStatus(DetectionStatus.STARTED)).map(toMutationDetails());
+    return this.mutationMap.entrySet().stream()
+        .filter(hasStatus(DetectionStatus.STARTED))
+        .map(toMutationDetails())
+        .collect(Collectors.toList());
   }
 
   public Set<MutationDetails> allMutations() {

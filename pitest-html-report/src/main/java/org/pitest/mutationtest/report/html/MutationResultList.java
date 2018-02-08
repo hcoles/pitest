@@ -71,7 +71,7 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   @Override
-  public FunctionalList<MutationResult> filter(
+  public List<MutationResult> filter(
       final Predicate<MutationResult> predicate) {
     return FCollection.filter(this, predicate);
   }

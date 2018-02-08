@@ -7,7 +7,9 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -18,8 +20,6 @@ import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import java.util.Optional;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -66,9 +66,9 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-   final FunctionalList<MutationDetails> doNotTouch = FCollection.filter(mutations, inEqualsMethod().negate());
+   final List<MutationDetails> doNotTouch = FCollection.filter(mutations, inEqualsMethod().negate());
    if (doNotTouch.size() != mutations.size()) {
-     final FunctionalList<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
+     final List<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
      final List<MutationDetails> filtered = filter(inEquals, m);
      doNotTouch.addAll(filtered);
    }
@@ -76,14 +76,16 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private List<MutationDetails> filter(
-      FunctionalList<MutationDetails> inEquals, Mutater m) {
+      List<MutationDetails> inEquals, Mutater m) {
     final Location equalsMethod = inEquals.get(0).getId().getLocation();
 
     final Optional<MethodTree> maybeEquals = this.currentClass.methods().stream()
         .filter(MethodMatchers.forLocation(equalsMethod))
         .findFirst();
 
-    return inEquals.filter(isShortcutEquals(maybeEquals.get(), m).negate());
+    return inEquals.stream()
+        .filter(isShortcutEquals(maybeEquals.get(), m).negate())
+        .collect(Collectors.toList());
   }
 
   private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
@@ -62,8 +63,10 @@ public class MutationTestBuilder {
     final Collection<MutationResult> analysedMutations = this.analyser
         .analyse(mutations);
 
-    final Collection<MutationDetails> needAnalysis = FCollection.filter(
-        analysedMutations, statusNotKnown()).map(resultToDetails());
+    final Collection<MutationDetails> needAnalysis = analysedMutations.stream()
+        .filter(statusNotKnown())
+        .map(resultToDetails())
+        .collect(Collectors.toList());
 
     final List<MutationResult> analysed = FCollection.filter(analysedMutations,
         Prelude.not(statusNotKnown()));
