@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.3.3-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #445 - Raise minimum supported java version to 8
 
 ### 1.3.2
 
