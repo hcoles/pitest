@@ -25,12 +25,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
@@ -52,7 +52,7 @@ public class ClassPath {
   public ClassPath(final Collection<File> files) {
     this(createRoots(FCollection.filter(files, exists())));
   }
-  
+
   public ClassPath(List<ClassPathRoot> roots) {
     this.root = new CompoundClassPathRoot(roots);
   }
@@ -114,7 +114,7 @@ public class ClassPath {
 
   public static Collection<String> getClassPathElementsAsPaths() {
     final Set<String> filesAsString = new LinkedHashSet<>();
-    FCollection.mapTo(getClassPathElementsAsFiles(), fileToString(),
+    FCollection.mapTo(getClassPathElementsAsFiles(), file -> file.getPath(),
         filesAsString);
     return filesAsString;
   }
@@ -132,44 +132,27 @@ public class ClassPath {
   }
 
   public String getLocalClassPath() {
-    return this.root.cacheLocation().value();
+    return this.root.cacheLocation().get();
   }
 
   public ClassPath getComponent(final Predicate<ClassPathRoot> predicate) {
     return new ClassPath(FCollection.filter(this.root, predicate).toArray(
         new ClassPathRoot[0]));
   }
-  
-  private static F<File, Boolean> exists() {
-    return new F<File, Boolean>() {
-      @Override
-      public Boolean apply(final File a) {
-        return a.exists() && a.canRead();
-      }
-    };
+
+  private static Predicate<File> exists() {
+    return a -> a.exists() && a.canRead();
   }
 
-  private static F<File, String> fileToString() {
-    return new F<File, String>() {
-      @Override
-      public String apply(File file) {
-        return file.getPath();
-      }
-    };
-  }
-  
-  private static F<String, File> stringToCanonicalFile() {
-    return new F<String, File>() {
-      @Override
-      public File apply(String fileAsString) {
+  private static Function<String, File> stringToCanonicalFile() {
+    return fileAsString -> {
         try {
           return new File(fileAsString).getCanonicalFile();
         } catch (final IOException ex) {
           throw new PitError("Error transforming classpath element "
               + fileAsString, ex);
         }
-      }
-    };
+      };
   }
 
   /** FIXME move somewhere common */
@@ -183,5 +166,5 @@ public class ClassPath {
     }
 
   }
-  
+
 }

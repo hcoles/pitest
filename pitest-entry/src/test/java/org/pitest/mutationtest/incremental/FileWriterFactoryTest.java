@@ -27,37 +27,37 @@ public class FileWriterFactoryTest {
 
   @Test
   public void writeToFile() throws IOException {
-    File file = this.testFolder.newFile();
-    FileWriterFactory writerFactory = new FileWriterFactory(file);
-    PrintWriter writer = writerFactory.create();
+    final File file = this.testFolder.newFile();
+    final FileWriterFactory writerFactory = new FileWriterFactory(file);
+    final PrintWriter writer = writerFactory.create();
     writer.write("test");
     writerFactory.close();
 
-    String content = FileUtil.readToString(new FileInputStream(file));
+    final String content = FileUtil.readToString(new FileInputStream(file));
     assertThat(content, equalTo("test"));
   }
 
   @Test
   public void writeToFolder() throws IOException {
     this.thrown.expect(PitError.class);
-    Matcher<? extends Throwable> causedBy = instanceOf(IOException.class);
+    final Matcher<? extends Throwable> causedBy = instanceOf(IOException.class);
     this.thrown.expectCause(causedBy);
 
-    File folder = this.testFolder.newFolder();
-    FileWriterFactory writerFactory = new FileWriterFactory(folder);
+    final File folder = this.testFolder.newFolder();
+    final FileWriterFactory writerFactory = new FileWriterFactory(folder);
     writerFactory.create();
   }
 
   @Test
   public void writeToFileWithinFolder() throws IOException {
-    File folder = this.testFolder.newFolder();
-    File file = new File(folder, "subfolder/file");
-    FileWriterFactory writerFactory = new FileWriterFactory(file);
-    PrintWriter writer = writerFactory.create();
+    final File folder = this.testFolder.newFolder();
+    final File file = new File(folder, "subfolder/file");
+    final FileWriterFactory writerFactory = new FileWriterFactory(file);
+    final PrintWriter writer = writerFactory.create();
     writer.write("test");
     writerFactory.close();
 
-    String content = FileUtil.readToString(new FileInputStream(file));
+    final String content = FileUtil.readToString(new FileInputStream(file));
     assertThat(content, equalTo("test"));
   }
 

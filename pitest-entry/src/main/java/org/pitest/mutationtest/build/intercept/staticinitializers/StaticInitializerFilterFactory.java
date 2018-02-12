@@ -23,5 +23,5 @@ public class StaticInitializerFilterFactory implements MutationInterceptorFactor
         .withOnByDefault(true)
         .withDescription("Filters mutations in static initializers and code called only from them");
   }
-  
+
 }

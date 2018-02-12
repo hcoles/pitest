@@ -2,8 +2,9 @@ package org.pitest.mutationtest.config;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.function.Predicate;
+
 import org.junit.Test;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory;
@@ -31,14 +32,8 @@ public class PluginServicesTest {
         theClass(LimitNumberOfMutationsPerClassFilterFactory.class)));
   }
 
-  private static F<Object, Boolean> theClass(final Class<?> clss) {
-    return new F<Object, Boolean>() {
-      @Override
-      public Boolean apply(Object a) {
-        return a.getClass().equals(clss);
-      }
-
-    };
+  private static Predicate<Object> theClass(final Class<?> clss) {
+    return a -> a.getClass().equals(clss);
   }
 
 }

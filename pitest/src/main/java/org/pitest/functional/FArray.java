@@ -17,32 +17,34 @@ package org.pitest.functional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Slightly functional style operations for arrays.
  */
 public abstract class FArray {
 
-  public static <T> void filter(final T[] xs, final F<T, Boolean> predicate,
+  public static <T> void filter(final T[] xs, final Predicate<T> predicate,
       final Collection<T> dest) {
     if (xs != null) {
       for (final T x : xs) {
-        if (predicate.apply(x)) {
+        if (predicate.test(x)) {
           dest.add(x);
         }
       }
     }
   }
 
-  public static <T> List<T> filter(final T[] xs, final F<T, Boolean> predicate) {
+  public static <T> List<T> filter(final T[] xs, final Predicate<T> predicate) {
     final List<T> dest = new ArrayList<>();
     filter(xs, predicate, dest);
     return dest;
   }
 
-  public static <T> boolean contains(final T[] xs, final F<T, Boolean> predicate) {
+  public static <T> boolean contains(final T[] xs, final Predicate<T> predicate) {
     for (final T x : xs) {
-      if (predicate.apply(x)) {
+      if (predicate.test(x)) {
         return true;
       }
     }
@@ -51,7 +53,7 @@ public abstract class FArray {
   }
 
   public static <A, B> void flatMapTo(final A[] as,
-      final F<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
+      final Function<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
     if (as != null) {
       for (final A a : as) {
         for (final B each : f.apply(a)) {
@@ -61,15 +63,15 @@ public abstract class FArray {
     }
   }
 
-  public static <A, B> FunctionalList<B> flatMap(final A[] as,
-      final F<A, ? extends Iterable<B>> f) {
-    final FunctionalList<B> bs = emptyList();
+  public static <A, B> List<B> flatMap(final A[] as,
+      final Function<A, ? extends Iterable<B>> f) {
+    final List<B> bs = emptyList();
     flatMapTo(as, f, bs);
     return bs;
   }
 
-  private static <T> FunctionalList<T> emptyList() {
-    return new MutableList<>();
+  private static <T> List<T> emptyList() {
+    return new ArrayList<>();
   }
 
 }

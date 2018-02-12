@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.3.3-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>pitest-entry</artifactId>
 	<name>pitest-entry</name>
@@ -133,11 +133,6 @@
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
 		</dependency>
 		<!-- for the xstream history store. cannot used shaded version -->
 		<dependency>

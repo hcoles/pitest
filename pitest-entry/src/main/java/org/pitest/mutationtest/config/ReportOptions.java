@@ -29,16 +29,16 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.Optional;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -75,9 +75,9 @@ public class ReportOptions {
 
   private Collection<String>             excludedClasses                = Collections
       .emptyList();
-  
+
   private Collection<Predicate<String>>  excludedTestClasses            = Collections
-      .emptyList();  
+      .emptyList();
 
   private Collection<String>             codePaths;
 
@@ -127,10 +127,10 @@ public class ReportOptions {
   private Properties                     properties;
 
   private int maxSurvivors;
-  
+
   private Collection<String>             excludedRunners                = new ArrayList<>();
   private Collection<String>             includedTestMethods            = new ArrayList<>();
-  
+
   private String                         testPlugin                     = "";
 
   public boolean isVerbose() {
@@ -190,9 +190,9 @@ public class ReportOptions {
     this.mutators = mutators;
   }
 
-    
+
   public Collection<String> getFeatures() {
-    return features;
+    return this.features;
   }
 
   public void setFeatures(Collection<String> features) {
@@ -236,22 +236,15 @@ public class ReportOptions {
         FCollection.map(this.classPathElements, stringToFile()));
   }
 
-  private static F<String, File> stringToFile() {
-    return new F<String, File>() {
-
-      @Override
-      public File apply(final String a) {
-        return new File(a);
-      }
-
-    };
+  private static Function<String, File> stringToFile() {
+    return a -> new File(a);
   }
 
   public Collection<String> getTargetClasses() {
     return this.targetClasses;
   }
 
-  
+
   public Predicate<String> getTargetClassesFilter() {
     final Predicate<String> filter = Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
         not(isBlackListed(Glob.toGlobPredicates(ReportOptions.this.excludedClasses))));
@@ -260,7 +253,7 @@ public class ReportOptions {
   }
 
   private void checkNotTryingToMutateSelf(final Predicate<String> filter) {
-    if (filter.apply(Pitest.class.getName())) {
+    if (filter.test(Pitest.class.getName())) {
       throw new PitHelpError(Help.BAD_FILTER);
     }
   }
@@ -306,14 +299,14 @@ public class ReportOptions {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the
       // target classes predicate covers both classes and tests
-      return Prelude.and(or(Glob.toGlobPredicates(targetClasses)),
-          not(isBlackListed(ReportOptions.this.excludedTestClasses)));      
+      return Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
+          not(isBlackListed(ReportOptions.this.excludedTestClasses)));
     } else {
       return Prelude.and(or(this.targetTests),
           not(isBlackListed(ReportOptions.this.excludedTestClasses)));
     }
   }
-  
+
   private static Predicate<String> isBlackListed(
       final Collection<Predicate<String>> excludedClasses) {
         return or(excludedClasses);
@@ -348,7 +341,7 @@ public class ReportOptions {
       final Collection<String> excludedClasses) {
     this.excludedClasses = excludedClasses;
   }
-  
+
   public void setExcludedTestClasses(
       final Collection<Predicate<String>> excludedClasses) {
     this.excludedTestClasses = excludedClasses;
@@ -366,11 +359,11 @@ public class ReportOptions {
   public Collection<String> getExcludedClasses() {
     return this.excludedClasses;
   }
-  
+
   public Collection<Predicate<String>> getExcludedTestClasses() {
     return this.excludedTestClasses;
   }
-  
+
   public boolean shouldFailWhenNoMutations() {
     return this.failWhenNoMutations;
   }
@@ -466,18 +459,18 @@ public class ReportOptions {
     return new FileWriterFactory(this.historyOutputLocation);
   }
 
-  public Option<Reader> createHistoryReader() {
+  public Optional<Reader> createHistoryReader() {
     if (this.historyInputLocation == null) {
-      return Option.none();
+      return Optional.empty();
     }
 
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Option.<Reader> some(new InputStreamReader(new FileInputStream(
+        return Optional.<Reader> ofNullable(new InputStreamReader(new FileInputStream(
             this.historyInputLocation), "UTF-8"));
       }
-      return Option.none();
+      return Optional.empty();
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
@@ -556,19 +549,19 @@ public class ReportOptions {
   }
 
   public int getMaximumAllowedSurvivors() {
-    return maxSurvivors;
+    return this.maxSurvivors;
   }
-  
+
   public void setMaximumAllowedSurvivors(int maxSurvivors) {
     this.maxSurvivors = maxSurvivors;
   }
-  
+
   public Collection<String> getExcludedRunners() {
-    return excludedRunners;
+    return this.excludedRunners;
   }
 
   public Collection<String> getIncludedTestMethods() {
-    return includedTestMethods;
+    return this.includedTestMethods;
   }
 
   public void setExcludedRunners(Collection<String> excludedRunners) {
@@ -588,7 +581,7 @@ public class ReportOptions {
   }
 
   public String getTestPlugin() {
-    return testPlugin;
+    return this.testPlugin;
   }
 
   public void setTestPlugin(String testPlugin) {
@@ -597,31 +590,31 @@ public class ReportOptions {
 
   @Override
   public String toString() {
-    return "ReportOptions [targetClasses=" + targetClasses
-        + ", excludedMethods=" + excludedMethods + ", excludedClasses="
-        + excludedClasses + ", excludedTestClasses=" + excludedTestClasses
-        + ", codePaths=" + codePaths + ", reportDir=" + reportDir
-        + ", historyInputLocation=" + historyInputLocation
-        + ", historyOutputLocation=" + historyOutputLocation + ", sourceDirs="
-        + sourceDirs + ", classPathElements=" + classPathElements
-        + ", mutators=" + mutators + ", features=" + features
-        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
-        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
-        + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
-        + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
-        + ", verbose=" + verbose + ", failWhenNoMutations="
-        + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
-        + groupConfig + ", mutationUnitSize=" + mutationUnitSize
-        + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
-        + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
-        + exportLineCoverage + ", mutationThreshold=" + mutationThreshold
-        + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
-        + mutationEngine + ", javaExecutable=" + javaExecutable
-        + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
-        + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
-        + excludedRunners + ", testPlugin=" + testPlugin + ", includedTestMethods="
-        + includedTestMethods + "]";
+    return "ReportOptions [targetClasses=" + this.targetClasses
+        + ", excludedMethods=" + this.excludedMethods + ", excludedClasses="
+        + this.excludedClasses + ", excludedTestClasses=" + this.excludedTestClasses
+        + ", codePaths=" + this.codePaths + ", reportDir=" + this.reportDir
+        + ", historyInputLocation=" + this.historyInputLocation
+        + ", historyOutputLocation=" + this.historyOutputLocation + ", sourceDirs="
+        + this.sourceDirs + ", classPathElements=" + this.classPathElements
+        + ", mutators=" + this.mutators + ", features=" + this.features
+        + ", dependencyAnalysisMaxDistance=" + this.dependencyAnalysisMaxDistance
+        + ", jvmArgs=" + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
+        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
+        + this.timeoutConstant + ", targetTests=" + this.targetTests + ", loggingClasses="
+        + this.loggingClasses + ", maxMutationsPerClass=" + this.maxMutationsPerClass
+        + ", verbose=" + this.verbose + ", failWhenNoMutations="
+        + this.failWhenNoMutations + ", outputs=" + this.outputs + ", groupConfig="
+        + this.groupConfig + ", mutationUnitSize=" + this.mutationUnitSize
+        + ", shouldCreateTimestampedReports=" + this.shouldCreateTimestampedReports
+        + ", detectInlinedCode=" + this.detectInlinedCode + ", exportLineCoverage="
+        + this.exportLineCoverage + ", mutationThreshold=" + this.mutationThreshold
+        + ", coverageThreshold=" + this.coverageThreshold + ", mutationEngine="
+        + this.mutationEngine + ", javaExecutable=" + this.javaExecutable
+        + ", includeLaunchClasspath=" + this.includeLaunchClasspath + ", properties="
+        + this.properties + ", maxSurvivors=" + this.maxSurvivors + ", excludedRunners="
+        + this.excludedRunners + ", testPlugin=" + this.testPlugin + ", includedTestMethods="
+        + this.includedTestMethods + "]";
   }
-  
+
 }

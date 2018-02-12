@@ -29,7 +29,7 @@ import static org.pitest.mutationtest.report.xml.Tag.sourceFile;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
@@ -109,9 +109,9 @@ public class XMLReportListener implements MutationResultListener {
     }
   }
 
-  private String createKillingTestDesc(final Option<String> killingTest) {
-    if (killingTest.hasSome()) {
-      return clean(killingTest.value());
+  private String createKillingTestDesc(final Optional<String> killingTest) {
+    if (killingTest.isPresent()) {
+      return clean(killingTest.get());
     } else {
       return null;
     }

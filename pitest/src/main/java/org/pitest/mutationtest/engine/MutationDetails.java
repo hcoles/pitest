@@ -29,7 +29,7 @@ import org.pitest.util.StringUtil;
  * Captures all data relating to a mutant.
  */
 public final class MutationDetails implements Serializable {
-  
+
   private static final long serialVersionUID = 1L;
 
   private final MutationIdentifier  id;
@@ -59,28 +59,28 @@ public final class MutationDetails implements Serializable {
   }
 
 
-  
+
   @Override
   public String toString() {
-    return "MutationDetails [id=" + id + ", filename=" + filename + ", block="
-        + block + ", lineNumber=" + lineNumber + ", description=" + description
-        + ", testsInOrder=" + testsInOrder + ", isInFinallyBlock="
-        + isInFinallyBlock + ", poison=" + poison + "]";
+    return "MutationDetails [id=" + this.id + ", filename=" + this.filename + ", block="
+        + this.block + ", lineNumber=" + this.lineNumber + ", description=" + this.description
+        + ", testsInOrder=" + this.testsInOrder + ", isInFinallyBlock="
+        + this.isInFinallyBlock + ", poison=" + this.poison + "]";
   }
 
   public MutationDetails withDescription(String desc) {
-    return new MutationDetails(id, filename, desc, lineNumber, block, isInFinallyBlock, poison);
+    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block, this.isInFinallyBlock, this.poison);
   }
 
   public MutationDetails withPoisonStatus(PoisonStatus poisonStatus) {
-    return new MutationDetails(id, filename, description, lineNumber, block, isInFinallyBlock, poisonStatus);
+    return new MutationDetails(this.id, this.filename, this.description, this.lineNumber, this.block, this.isInFinallyBlock, poisonStatus);
   }
-  
+
   /**
    * Returns the human readable description of the mutation. This may be a
    * constant string or may provide more contextual information depending on the
    * mutation operator.
-   * 
+   *
    * @return Human readable description of the mutation
    */
   public String getDescription() {
@@ -89,7 +89,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the mutation description with special characters escaped
-   * 
+   *
    * @return Escaped description string
    */
   @Deprecated
@@ -100,7 +100,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the method name in which this mutation is located as a string
-   * 
+   *
    * @return method name as string
    */
   @Deprecated
@@ -111,7 +111,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the class in which this mutation is located
-   * 
+   *
    * @return class in which mutation is located
    */
   public ClassName getClassName() {
@@ -120,7 +120,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the class in which this mutation is located
-   * 
+   *
    * @return class in which mutation is located
    */
   public MethodName getMethod() {
@@ -129,7 +129,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the file in which this mutation is located
-   * 
+   *
    * @return file in which mutation is located
    */
   public String getFilename() {
@@ -139,7 +139,7 @@ public final class MutationDetails implements Serializable {
   /**
    * Returns the line number on which the mutation occurs as reported within the
    * jvm bytecode
-   * 
+   *
    * @return The line number on which the mutation occurs.
    */
   public int getLineNumber() {
@@ -148,7 +148,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the ClassLine in which this mutation is located
-   * 
+   *
    * @return the ClassLine in which this mutation is located
    */
   public ClassLine getClassLine() {
@@ -157,7 +157,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the identified for this mutation
-   * 
+   *
    * @return a MutationIdentifier
    */
   public MutationIdentifier getId() {
@@ -166,7 +166,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the tests that cover this mutation in optimised order
-   * 
+   *
    * @return a list of TestInfo objects
    */
   public List<TestInfo> getTestsInOrder() {
@@ -175,7 +175,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Adds tests to the list of covering tests
-   * 
+   *
    * @param testNames
    *          The tests to add
    */
@@ -187,7 +187,7 @@ public final class MutationDetails implements Serializable {
   /**
    * Indicates if this mutation might poison state within the jvm (e.g affect
    * the values of static variable)
-   * 
+   *
    * @return true if the mutation might poison the jvm otherwise false
    */
   public boolean mayPoisonJVM() {
@@ -196,7 +196,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Indicates if this mutation is in a static initializer block
-   * 
+   *
    * @return true if in a static initializer otherwise false
    */
   public boolean isInStaticInitializer() {
@@ -207,7 +207,7 @@ public final class MutationDetails implements Serializable {
    * Returns the basic block in which this mutation occurs. See
    * https://github.com/hcoles/pitest/issues/131 for discussion on block
    * coverage
-   * 
+   *
    * @return the block within the method that this mutation is located in
    */
   public int getBlock() {
@@ -216,7 +216,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns true if this mutation has a matching identifier
-   * 
+   *
    * @param id
    *          the MutationIdentifier to match
    * @return true if the MutationIdentifier matches otherwise false
@@ -227,7 +227,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Returns the name of the mutator that created this mutation
-   * 
+   *
    * @return the mutator name
    */
   public String getMutator() {
@@ -243,7 +243,7 @@ public final class MutationDetails implements Serializable {
   public int getFirstIndex() {
     return this.id.getFirstIndex();
   }
-  
+
   /**
    * Zero based index to first affected ASM instruction
    * @return
@@ -254,7 +254,7 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Indicates if the mutation is within a finally block
-   * 
+   *
    * @return true if in finally block otherwise false
    */
   public boolean isInFinallyBlock() {

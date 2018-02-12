@@ -43,7 +43,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
   }
 
   private void writeLineCoverage(final BlockCoverage each, final Writer out) {
-    Location l = each.getBlock().getLocation();
+    final Location l = each.getBlock().getLocation();
     write(
         out,
         "<block classname='" + l.getClassName().asJavaName() + "'"

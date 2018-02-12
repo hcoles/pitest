@@ -8,8 +8,8 @@ public enum PoisonStatus {
   PoisonStatus(boolean mayPoison) {
     this.mayPoison = mayPoison;
   }
-  
+
   boolean mayPoison() {
-    return mayPoison;
+    return this.mayPoison;
   }
 }

@@ -31,21 +31,21 @@ public class NonEmptyProjectCheckIT {
   public void shouldTreatProjectWithCodeAndTestsAsNonEmpty() {
     when(project.getTestCompileSourceRoots()).thenReturn(Collections.singletonList(dirThatExists()));
     when(project.getCompileSourceRoots()).thenReturn(Collections.singletonList(dirThatExists()));
-    assertThat(testee.apply(project)).isTrue();
+    assertThat(testee.test(project)).isTrue();
   }
   
   @Test
   public void shouldTreatProjectWithNoTestsAsEmpty() {
     when(project.getTestCompileSourceRoots()).thenReturn(Collections.singletonList(dirThatExists()));
     when(project.getCompileSourceRoots()).thenReturn(Collections.singletonList(nonExistentDir()));
-    assertThat(testee.apply(project)).isFalse();
+    assertThat(testee.test(project)).isFalse();
   }
 
   @Test
   public void shouldTreatProjectWithNoCodeAsEmpty() {
     when(project.getTestCompileSourceRoots()).thenReturn(Collections.singletonList(nonExistentDir()));
     when(project.getCompileSourceRoots()).thenReturn(Collections.singletonList(dirThatExists()));
-    assertThat(testee.apply(project)).isFalse();
+    assertThat(testee.test(project)).isFalse();
   }
   
   private String dirThatExists() {

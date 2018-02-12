@@ -37,9 +37,9 @@ import org.pitest.sequence.Slot;
 public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   private static final boolean DEBUG = false;
-  
+
   private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
-  
+
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())
       .or(countingLoopWithoutWriteConditionalAtStart())
@@ -48,7 +48,7 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
           .withIgnores(IGNORE)
           .withDebug(DEBUG)
           );
-  
+
   @Override
   SequenceMatcher<AbstractInsnNode> infiniteLoopMatcher() {
     return INFINITE_LOOP;
@@ -56,13 +56,13 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
     return instruction.getOpcode() == Opcodes.IINC;
   }
-        
+
   private static SequenceQuery<AbstractInsnNode> countingLoopWithoutWriteConditionalAtStart() {
-    Slot<Integer> counterVariable = Slot.create(Integer.class);
-    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    final Slot<Integer> counterVariable = Slot.create(Integer.class);
+    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant().and(debug("constant")))
@@ -81,12 +81,12 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
         .then(jumpsTo(loopStart.read()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
-  
+
   private static SequenceQuery<AbstractInsnNode> countingLoopWithoutWriteConditionAtEnd() {
-    Slot<Integer> counterVariable = Slot.create(Integer.class);
-    Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
-    Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
-    
+    final Slot<Integer> counterVariable = Slot.create(Integer.class);
+    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
+
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant())
@@ -101,7 +101,7 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
         .then(jumpsTo(loopStart.read()).and(debug("jump")))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
-  
+
   private static SequenceQuery<AbstractInsnNode> doesNotBreakLoop(Slot<Integer> counterVariable) {
     return QueryStart
         .match(anIStoreTo(counterVariable.read()).and(debug("broken by store"))

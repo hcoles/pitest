@@ -4,13 +4,13 @@ import java.io.File;
 
 import org.apache.maven.project.MavenProject;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class NonEmptyProjectCheck implements Predicate<MavenProject> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public Boolean apply(MavenProject project) {
+  public boolean test(MavenProject project) {
     return FCollection.contains(project.getTestCompileSourceRoots(), exists()) 
         && FCollection.contains(project.getCompileSourceRoots(), exists());
   }
@@ -18,7 +18,7 @@ public class NonEmptyProjectCheck implements Predicate<MavenProject> {
   private Predicate<String> exists() {
     return new Predicate<String>() {
       @Override
-      public Boolean apply(String root) {
+      public boolean test(String root) {
         return new File(root).exists();
       }
     };

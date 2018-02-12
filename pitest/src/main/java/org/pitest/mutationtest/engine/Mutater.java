@@ -25,7 +25,7 @@ public interface Mutater {
 
   /**
    * Creates a mutant matching the given MutationIdentifier
-   * 
+   *
    * @param id
    *          the mutant to create
    * @return a Mutant
@@ -34,7 +34,7 @@ public interface Mutater {
 
   /**
    * Scans for possible mutants in the given class
-   * 
+   *
    * @param classToMutate
    *          the class to scan for mutants
    * @return a list of possible mutants

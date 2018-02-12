@@ -8,64 +8,32 @@ package org.pitest.sequence;
  *
  * @param <T> Type to match
  */
-public abstract class Match<T> {
+@FunctionalInterface
+public interface Match<T> {
 
-  public abstract boolean test(Context<T> c, T t);
+  boolean test(Context<T> c, T t);
 
-  public static <T> Match<T> always() {
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return true;
-      }
-    };
-  }
-  
-  public static <T> Match<T> never() {
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return false;
-      }
-    };
+  static <T> Match<T> always() {
+    return (c, t) -> true;
   }
 
-  public static <T> Match<T> isEqual(final Object targetRef) {
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return targetRef.equals(t);
-      }
-    };
-  }
-  
-  public Match<T> and(final Match<T> other) {
-      final Match<T> self = this;
-      return new Match<T>() {
-        @Override
-        public boolean test(Context<T> c, T t) {
-          return self.test(c,t) && other.test(c,t);
-        }
-      };
-  }
-  
-  public Match<T> negate() {
-    final Match<T> self = this;
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return !self.test(c,t);
-      }
-    };
+  static <T> Match<T> never() {
+    return (c, t) -> false;
   }
 
-  public Match<T> or(final Match<T> other) {
-    final Match<T> self = this;
-    return new Match<T>() {
-      @Override
-      public boolean test(Context<T> c, T t) {
-        return self.test(c,t) || other.test(c,t);
-      }
-    };
+  static <T> Match<T> isEqual(final Object targetRef) {
+    return (c, t) -> targetRef.equals(t);
+  }
+
+  default Match<T> and(final Match<T> other) {
+      return (c, t) -> this.test(c,t) && other.test(c,t);
+  }
+
+  default Match<T> negate() {
+    return (c, t) -> !this.test(c,t);
+  }
+
+  default Match<T> or(final Match<T> other) {
+    return (c, t) -> this.test(c,t) || other.test(c,t);
   }
 }

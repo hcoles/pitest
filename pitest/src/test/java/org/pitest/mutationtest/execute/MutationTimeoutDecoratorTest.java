@@ -24,8 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
@@ -69,12 +67,9 @@ public class MutationTimeoutDecoratorTest {
   public void shouldApplySideEffectWhenChildRunsForLongerThanAllowedTime() {
     when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(50l);
 
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(final InvocationOnMock invocation) throws Throwable {
-        Thread.sleep(100);
-        return null;
-      }
+    doAnswer(invocation -> {
+      Thread.sleep(100);
+      return null;
     }).when(this.child).execute(any(ResultCollector.class));
 
     this.testee.execute(this.rc);

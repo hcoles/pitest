@@ -11,37 +11,37 @@ public class OrTest {
   @Test
   public void shouldBeFalseWhenGivenNoPredicates() {
     final Or<Object> testee = or();
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenGivenTrue() {
-    final Or<Object> testee = or(True.all());
-    assertTrue(testee.apply(null));
+    final Or<Object> testee = or( i -> true);
+    assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeFalseWhenGivenFalse() {
     final Or<Object> testee = or(False.instance());
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenTrueOrTrue() {
-    final Or<Object> testee = or(True.all(), True.all());
-    assertTrue(testee.apply(null));
+    final Or<Object> testee = or( i -> true,  i -> true);
+    assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldBeTrueWhenTrueOrFalse() {
-    final Or<Object> testee = or(True.all(), False.instance());
-    assertTrue(testee.apply(null));
+    final Or<Object> testee = or( i -> true, False.instance());
+    assertTrue(testee.test(null));
   }
 
   @Test
   public void shouldeFalseWhenFalseOrFalse() {
     final Or<Object> testee = or(False.instance(), False.instance());
-    assertFalse(testee.apply(null));
+    assertFalse(testee.test(null));
   }
 
 }

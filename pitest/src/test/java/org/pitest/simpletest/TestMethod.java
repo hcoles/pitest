@@ -17,7 +17,7 @@ package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class TestMethod {
 
@@ -42,8 +42,8 @@ public class TestMethod {
     return this.method;
   }
 
-  public Option<Class<? extends Throwable>> getExpected() {
-    return Option.<Class<? extends Throwable>> some(this.expected);
+  public Optional<Class<? extends Throwable>> getExpected() {
+    return Optional.<Class<? extends Throwable>> ofNullable(this.expected);
   }
 
   @Override

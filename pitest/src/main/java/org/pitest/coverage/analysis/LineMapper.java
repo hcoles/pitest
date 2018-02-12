@@ -12,7 +12,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
@@ -29,11 +29,11 @@ public class LineMapper implements LineMap {
 
     final Map<BlockLocation, Set<Integer>> map = new HashMap<>();
 
-    final Option<byte[]> maybeBytes = this.source.fetchClassBytes(clazz);
+    final Optional<byte[]> maybeBytes = this.source.fetchClassBytes(clazz);
     // classes generated at runtime eg by mocking frameworks
     // will be instrumented but not available on the classpath
-    for (final byte[] bytes : maybeBytes) {
-      final ClassReader cr = new ClassReader(bytes);
+    if (maybeBytes.isPresent()) {
+      final ClassReader cr = new ClassReader(maybeBytes.get());
       final ClassNode classNode = new ClassNode();
 
       cr.accept(classNode, ClassReader.EXPAND_FRAMES);

@@ -10,7 +10,7 @@ import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
 
 public class ExcludedAnnotationInterceptorFactory implements MutationInterceptorFactory  {
-  
+
   private static final FeatureParameter ARGUMENT = FeatureParameter.named("annotation")
       .withDescription("Annotation to avoid (full package name not required)");
 
@@ -28,7 +28,7 @@ public class ExcludedAnnotationInterceptorFactory implements MutationInterceptor
     if (params.getList(ARGUMENT).isEmpty()) {
       return Arrays.asList("Generated", "DoNotMutate", "CoverageIgnore");
     }
-    return params.getList(ARGUMENT); 
+    return params.getList(ARGUMENT);
   }
 
   @Override

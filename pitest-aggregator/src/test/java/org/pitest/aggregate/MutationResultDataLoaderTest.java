@@ -24,12 +24,12 @@ public class MutationResultDataLoaderTest {
     final URL url = MutationResultDataLoaderTest.class.getResource("/full-data/mutations.xml");
     final File file = new File(url.toURI());
 
-    underTest = new MutationResultDataLoader(Arrays.asList(file));
+    this.underTest = new MutationResultDataLoader(Arrays.asList(file));
   }
 
   @Test
   public void testLoadData() throws Exception {
-    final Collection<MutationResult> results = underTest.loadData();
+    final Collection<MutationResult> results = this.underTest.loadData();
 
     assertNotNull(results);
     assertEquals(2, results.size());

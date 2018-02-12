@@ -50,11 +50,11 @@ public class DefaultBuildVerifierTest {
   private static class AClass {
 
   }
-  
+
   private static interface AnInterface {
-    
+
   }
-  
+
 
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
@@ -68,13 +68,13 @@ public class DefaultBuildVerifierTest {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
     this.testee.verify(this.code);
   }
-  
+
   @Test
   public void shouldNotThrowErrorForSyntheticClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "SyntheticNoSourceDebug");
     try {
       this.testee.verify(this.code);
-    } catch (PitHelpError ex) {
+    } catch (final PitHelpError ex) {
       fail();
     }
   }
@@ -94,7 +94,7 @@ public class DefaultBuildVerifierTest {
       fail();
     }
   }
-  
+
   @Test
   public void shouldNotThrowAnErrorWhenOnlyInterfacesPresent() {
     setupClassPath(AnInterface.class);
@@ -103,7 +103,7 @@ public class DefaultBuildVerifierTest {
     } catch (final PitHelpError e) {
       fail();
     }
-  }  
+  }
 
   private void setupClassPath(final Class<?> clazz) {
     this.setupClassPath(
@@ -115,7 +115,7 @@ public class DefaultBuildVerifierTest {
       final String clazz) {
     final Repository repository = new Repository(source);
     final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz))
-        .value();
+        .get();
     when(this.code.getCode()).thenReturn(Collections.singletonList(ci));
   }
 

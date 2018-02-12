@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class CompoundClassPathRoot implements ClassPathRoot,
     Iterable<ClassPathRoot> {
@@ -62,16 +62,16 @@ public class CompoundClassPathRoot implements ClassPathRoot,
   }
 
   @Override
-  public Option<String> cacheLocation() {
+  public Optional<String> cacheLocation() {
     StringBuilder classpath = new StringBuilder();
     for (final ClassPathRoot each : this.roots) {
-      final Option<String> additional = each.cacheLocation();
-      for (final String path : additional) {
-        classpath = classpath.append(File.pathSeparator + path);
+      final Optional<String> additional = each.cacheLocation();
+      if (additional.isPresent()) {
+        classpath = classpath.append(File.pathSeparator + additional.get());
       }
     }
 
-    return Option.some(classpath.toString());
+    return Optional.ofNullable(classpath.toString());
   }
 
   @Override
@@ -84,5 +84,5 @@ public class CompoundClassPathRoot implements ClassPathRoot,
     return FCollection.map(roots, NameCachingRoot.toCachingRoot());
   }
 
-  
+
 }

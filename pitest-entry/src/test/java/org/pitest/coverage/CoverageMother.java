@@ -64,24 +64,12 @@ public class CoverageMother {
   }
 
   private static Generator<BlockLocationBuilder, BlockLocation> blockLocationSeed() {
-    return new Generator<BlockLocationBuilder, BlockLocation>() {
-      @Override
-      public BlockLocation generate(BlockLocationBuilder b) {
-        return BlockLocation.blockLocation(b._Location(), b._Block());
-      }
-
-    };
+    return b -> BlockLocation.blockLocation(b._Location(), b._Block());
   }
 
   private static Generator<CoverageResultBuilder, CoverageResult> CoverageResultSeed() {
-    return new Generator<CoverageResultBuilder, CoverageResult>() {
-      @Override
-      public CoverageResult generate(CoverageResultBuilder b) {
-        return new CoverageResult(b._TestUnitDescription(), b._ExecutionTime(),
-            b._GreenSuite(), b._VisitedBlocks());
-      }
-
-    };
+    return b -> new CoverageResult(b._TestUnitDescription(), b._ExecutionTime(),
+        b._GreenSuite(), b._VisitedBlocks());
   }
 
 }

@@ -26,7 +26,7 @@ public class MutationStatusMapTest {
   @Before
   public void setUp() {
     this.testee = new MutationStatusMap();
-    MutationIdentifierBuilder id = aMutationId().withIndex(1);
+    final MutationIdentifierBuilder id = aMutationId().withIndex(1);
     this.details = aMutationDetail().withId(id.withIndex(1)).build();
     this.detailsTwo = aMutationDetail().withId(id.withIndex(2)).build();
   }

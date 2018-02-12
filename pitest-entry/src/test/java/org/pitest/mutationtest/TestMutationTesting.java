@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,7 +49,6 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.DefaultGrouper;
@@ -360,9 +360,9 @@ public class TestMutationTesting {
     final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
         ClassInfo.toClassName());
 
-    EngineArguments arguments = EngineArguments.arguments()
+    final EngineArguments arguments = EngineArguments.arguments()
         .withMutators(mutators);
-    
+
     final MutationEngine engine = new GregorEngineFactory().createEngine(arguments);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,
@@ -370,9 +370,9 @@ public class TestMutationTesting {
 
     final ClassloaderByteArraySource bas = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
-    
-    MutationInterceptor emptyIntercpetor = CompoundMutationInterceptor.nullInterceptor();
-    
+
+    final MutationInterceptor emptyIntercpetor = CompoundMutationInterceptor.nullInterceptor();
+
     final MutationSource source = new MutationSource(mutationConfig, new DefaultTestPrioritiser(
             coverageData), bas, emptyIntercpetor);
 
@@ -382,9 +382,9 @@ public class TestMutationTesting {
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
             data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
             .getLocalClassPath());
-    
-    
-    
+
+
+
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
         new NullAnalyser(), source, new DefaultGrouper(0));
@@ -399,7 +399,7 @@ public class TestMutationTesting {
     return new CoverageOptions(data.getTargetClasses(),data.getExcludedClasses(), this.config,
         data.isVerbose(), data.getDependencyAnalysisMaxDistance());
   }
-  
+
   protected void verifyResults(final DetectionStatus... detectionStatus) {
     final List<DetectionStatus> expected = Arrays.asList(detectionStatus);
     final List<DetectionStatus> actual = this.metaDataExtractor

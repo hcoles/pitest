@@ -17,13 +17,17 @@ package org.pitest.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
-
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -33,9 +37,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runners.Parameterized;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
@@ -48,7 +50,7 @@ import org.pitest.util.Preconditions;
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   @SuppressWarnings("rawtypes")
-  private static final Option<Class> CLASS_RULE = findClassRuleClass();
+  private static final Optional<Class> CLASS_RULE = findClassRuleClass();
 
 
   private final TestGroupConfig config;
@@ -74,11 +76,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
         && !shouldTreatAsOneUnit(clazz, runner)) {
-      List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
+      final List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
       return filterUnitsByMethod(filteredUnits);
     } else {
       return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
-          clazz, Option.<Filter> none()));
+          clazz, Optional.<Filter> empty()));
     }
   }
 
@@ -87,8 +89,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       return filteredUnits;
     }
 
-    List<TestUnit> units = new ArrayList<>();
-    for (TestUnit unit: filteredUnits) {
+    final List<TestUnit> units = new ArrayList<>();
+    for (final TestUnit unit: filteredUnits) {
       if (this.includedTestMethods.contains(unit.getDescription().getName().split("\\(")[0])) {
         units.add(unit);
       }
@@ -97,14 +99,14 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private boolean isExcluded(Runner runner) {
-    return excludedRunners.contains(runner.getClass().getName());
+    return this.excludedRunners.contains(runner.getClass().getName());
   }
-  
+
   private boolean isIncluded(final Class<?> a) {
     return isIncludedCategory(a) && !isExcludedCategory(a);
   }
 
-  
+
   private boolean isIncludedCategory(final Class<?> a) {
     final List<String> included = this.config.getIncludedGroups();
     return included.isEmpty() || !Collections.disjoint(included, getCategories(a));
@@ -113,33 +115,24 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean isExcludedCategory(final Class<?> a) {
     final List<String> excluded = this.config.getExcludedGroups();
     return !excluded.isEmpty() && !Collections.disjoint(excluded, getCategories(a));
-  }  
-  
-  private List<String> getCategories(final Class<?> a) {   
-    Category c = a.getAnnotation(Category.class);
+  }
+
+  private List<String> getCategories(final Class<?> a) {
+    final Category c = a.getAnnotation(Category.class);
     return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
   }
 
-  private F<Category, Iterable<String>> toCategoryNames() {
-    return new F<Category, Iterable<String>>() {
-      @Override
-      public Iterable<String> apply(Category a) {
-        if (a == null) {
-          return Collections.emptyList();
-        }
-        return FCollection.map(Arrays.asList(a.value()),toName());
+  private Function<Category, Iterable<String>> toCategoryNames() {
+    return a -> {
+      if (a == null) {
+        return Collections.emptyList();
       }
-      
+      return FCollection.map(Arrays.asList(a.value()),toName());
     };
   }
 
-  private F<Class<?>,String> toName() {
-    return new F<Class<?>,String>() {
-      @Override
-      public String apply(Class<?> a) {
-        return a.getName();
-      }    
-    };
+  private Function<Class<?>,String> toName() {
+    return a -> a.getName();
   }
 
   private boolean isNotARunnableTest(final Runner runner,
@@ -147,10 +140,10 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     try {
       return (runner == null)
           || runner.getClass().isAssignableFrom(ErrorReportingRunner.class)
-          || isParameterizedTest(runner) 
+          || isParameterizedTest(runner)
           || isAJUnitThreeErrorOrWarning(runner)
           || isJUnitThreeSuiteMethodNotForOwnClass(runner, className);
-    } catch (RuntimeException ex) {
+    } catch (final RuntimeException ex) {
       // some runners (looking at you spock) can throw a runtime exception
       // when the getDescription method is called
       return true;
@@ -173,12 +166,12 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
-    if (CLASS_RULE.hasNone()) {
+    if (!CLASS_RULE.isPresent()) {
       return false;
     }
 
-    return hasAnnotation(methods, CLASS_RULE.value())
-        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.value());
+    return hasAnnotation(methods, CLASS_RULE.get())
+        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.get());
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
@@ -208,31 +201,18 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
-    return FCollection.filter(description.getChildren(), isTest()).map(
-        descriptionToTestUnit());
-
+    return description.getChildren().stream()
+        .filter(isTest())
+        .map(descriptionToTestUnit())
+        .collect(Collectors.toList());
   }
 
-  private F<Description, TestUnit> descriptionToTestUnit() {
-    return new F<Description, TestUnit>() {
-
-      @Override
-      public TestUnit apply(final Description a) {
-        return descriptionToTest(a);
-      }
-
-    };
+  private Function<Description, TestUnit> descriptionToTestUnit() {
+    return a -> descriptionToTest(a);
   }
 
-  private F<Description, Boolean> isTest() {
-    return new F<Description, Boolean>() {
-
-      @Override
-      public Boolean apply(final Description a) {
-        return a.isTest();
-      }
-
-    };
+  private Predicate<Description> isTest() {
+    return a -> a.isTest();
   }
 
   private TestUnit descriptionToTest(final Description description) {
@@ -243,7 +223,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
           IsolationUtils.getContextClassLoader(), description.getClassName());
     }
     return new AdaptedJUnitTestUnit(clazz,
-        Option.some(createFilterFor(description)));
+        Optional.ofNullable(createFilterFor(description)));
   }
 
   private Filter createFilterFor(final Description description) {
@@ -251,11 +231,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   @SuppressWarnings("rawtypes")
-  private static Option<Class> findClassRuleClass() {
+  private static Optional<Class> findClassRuleClass() {
     try {
-      return Option.<Class> some(Class.forName("org.junit.ClassRule"));
+      return Optional.<Class> ofNullable(Class.forName("org.junit.ClassRule"));
     } catch (final ClassNotFoundException ex) {
-      return Option.none();
+      return Optional.empty();
     }
   }
 

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 /*
  * Copyright 2010 Henry Coles
@@ -83,8 +83,8 @@ public class DirectoryClassPathRoot implements ClassPathRoot, IOHeavyRoot {
   }
 
   @Override
-  public Option<String> cacheLocation() {
-    return Option.some(this.root.getAbsolutePath());
+  public Optional<String> cacheLocation() {
+    return Optional.ofNullable(this.root.getAbsolutePath());
   }
 
 }

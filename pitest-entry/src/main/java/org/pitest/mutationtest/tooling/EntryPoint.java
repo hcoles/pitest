@@ -12,7 +12,7 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
@@ -30,13 +30,13 @@ import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
 
 public class EntryPoint {
-  
+
   /**
    * Convenient entry point for tools to run mutation analysis.
    *
    * The big grab bag of config stored in ReportOptions must be setup correctly
    * first.
-   * 
+   *
    * @param baseDir
    *          directory from which analysis will be run
    * @param data
@@ -45,7 +45,7 @@ public class EntryPoint {
    */
   public AnalysisResult execute(File baseDir, ReportOptions data,
       PluginServices plugins, Map<String, String> environmentVariables) {
-    SettingsFactory settings = new SettingsFactory(data, plugins);
+    final SettingsFactory settings = new SettingsFactory(data, plugins);
     return execute(baseDir, data, settings, environmentVariables);
   }
 
@@ -68,14 +68,14 @@ public class EntryPoint {
       Log.getLogger().info("Enabled (+) and disabled (-) features.");
       Log.getLogger().info("-----------------------------------------");
       settings.describeFeatures(asInfo("+"), asInfo("-"));
-      Log.getLogger().info("---------------------------------------------------------------------------");      
+      Log.getLogger().info("---------------------------------------------------------------------------");
     }
-    
+
     selectTestPlugin(data);
-    
+
     final ClassPath cp = data.getClassPath();
 
-    final Option<Reader> reader = data.createHistoryReader();
+    final Optional<Reader> reader = data.createHistoryReader();
     final WriterFactory historyWriter = data.createHistoryWriter();
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
@@ -84,7 +84,7 @@ public class EntryPoint {
         new ClassPathByteArraySource(cp));
 
     final KnownLocationJavaAgentFinder ja = new KnownLocationJavaAgentFinder(
-        jac.getJarLocation().value());
+        jac.getJarLocation().get());
 
     final ResultOutputStrategy reportOutput = settings.getOutputStrategy();
 
@@ -125,7 +125,7 @@ public class EntryPoint {
   }
 
   private void selectTestPlugin(ReportOptions data) {
-    if (data.getTestPlugin() == null || data.getTestPlugin().equals("")) {
+    if ((data.getTestPlugin() == null) || data.getTestPlugin().equals("")) {
       if (junit5PluginIsOnClasspath()) {
         data.setTestPlugin("junit5");
       } else {
@@ -138,21 +138,17 @@ public class EntryPoint {
     try {
       Class.forName("org.pitest.junit5.JUnit5TestPluginFactory");
       return true;
-    } catch (ClassNotFoundException e) {
+    } catch (final ClassNotFoundException e) {
       return false;
     }
   }
 
   private SideEffect1<Feature> asInfo(final String leader) {
-    return new SideEffect1<Feature>() {
-      @Override
-      public void apply(Feature a) {
-        Log.getLogger().info(String.format("%1$-16s",leader + a.name()) + a.description());
-        for (FeatureParameter each : a.params()) {
-          Log.getLogger().info(String.format("%1$-18s", "  [" + each.name() + "]") + each.description());
-        }
+    return a -> {
+      Log.getLogger().info(String.format("%1$-16s",leader + a.name()) + a.description());
+      for (final FeatureParameter each : a.params()) {
+        Log.getLogger().info(String.format("%1$-18s", "  [" + each.name() + "]") + each.description());
       }
-      
     };
   }
 

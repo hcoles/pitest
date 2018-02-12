@@ -16,9 +16,10 @@ package org.pitest.mutationtest.statistics;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.function.Predicate;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.DetectionStatus;
@@ -54,14 +55,8 @@ public class MutationStatisticsListenerTest {
         hasResultForMutator(mutator));
   }
 
-  private F<Score, Boolean> hasResultForMutator(final String mutator) {
-    return new F<Score, Boolean>() {
-
-      @Override
-      public Boolean apply(final Score a) {
-        return a.getMutatorName().equals(mutator);
-      }
-    };
+  private Predicate<Score> hasResultForMutator(final String mutator) {
+    return a -> a.getMutatorName().equals(mutator);
   }
 
   private ClassMutationResults createMetaData(final MutationResult... mrs) {

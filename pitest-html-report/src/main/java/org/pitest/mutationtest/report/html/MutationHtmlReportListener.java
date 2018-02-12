@@ -25,15 +25,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
@@ -68,7 +68,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     try {
       return FileUtil.readToString(IsolationUtils.getContextClassLoader()
           .getResourceAsStream("templates/mutation/style.css"));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
     }
     return "";
@@ -142,12 +142,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
           throws IOException {
     final Collection<ClassInfo> classes = this.coverage.getClassesForFile(
         sourceFile, packageName);
-    final Option<Reader> reader = findSourceFile(classInfoToNames(classes),
+    final Optional<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
-    if (reader.hasSome()) {
+    if (reader.isPresent()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
-          mutationsForThisFile, this.coverage, classes);
-      return alf.convert(reader.value());
+          mutationsForThisFile.list(), this.coverage, classes);
+      return alf.convert(reader.get());
     }
     return Collections.emptyList();
   }
@@ -157,26 +157,19 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return FCollection.map(classes, classInfoToJavaName());
   }
 
-  private F<ClassInfo, String> classInfoToJavaName() {
-    return new F<ClassInfo, String>() {
-
-      @Override
-      public String apply(final ClassInfo a) {
-        return a.getName().asJavaName();
-      }
-
-    };
+  private Function<ClassInfo, String> classInfoToJavaName() {
+    return a -> a.getName().asJavaName();
   }
 
-  private Option<Reader> findSourceFile(final Collection<String> classes,
+  private Optional<Reader> findSourceFile(final Collection<String> classes,
       final String fileName) {
     for (final SourceLocator each : this.sourceRoots) {
-      final Option<Reader> maybe = each.locate(classes, fileName);
-      if (maybe.hasSome()) {
+      final Optional<Reader> maybe = each.locate(classes, fileName);
+      if (maybe.isPresent()) {
         return maybe;
       }
     }
-    return Option.none();
+    return Optional.empty();
   }
 
   public void onRunEnd() {
@@ -187,7 +180,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private void createCssFile() {
     final Writer cssWriter = this.outputStrategy.createWriterForFile("style.css");
     try {
-      cssWriter.write(css);
+      cssWriter.write(this.css);
       cssWriter.close();
     } catch (final IOException e) {
       e.printStackTrace();

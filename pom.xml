@@ -7,7 +7,7 @@
 	</organization>
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.3-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 	<name>pitest-parent</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
@@ -60,13 +60,14 @@
 	<modules>
 		<module>pitest-build-config</module>
 		<module>pitest</module>
-        <module>pitest-entry</module>
-        <module>pitest-maven</module>
-        <module>pitest-ant</module>
+                <module>pitest-entry</module>
+                <module>pitest-maven</module>
+                <module>pitest-ant</module>
 		<module>pitest-command-line</module>
 		<module>pitest-html-report</module>
 		<module>pitest-maven-verification</module>
 		<module>pitest-aggregator</module>
+		<module>pitest-java8-verification</module>
 	</modules>
 
 	<prerequisites>
@@ -74,24 +75,11 @@
 	</prerequisites>
 
 	<profiles>
-		<profile>
+			<profile>
 			<id>java8</id>
-			<!-- can only verify java 8 when running with java 8. Would be preferable 
-				to allways make this check using maven toolchains, but need to see if cloudbees 
-				can support this -->
+			<!-- Groovy verifiation currently not working with java 9 -->
 			<activation>
 				<jdk>1.8</jdk>
-			</activation>
-			<modules>
-				<module>pitest-java8-verification</module>
-				<module>pitest-groovy-verification</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>java7</id>
-			<!-- Exclude Groovy verification for 1.6 as it has 7+ dependencies -->
-			<activation>
-				<jdk>1.7</jdk>
 			</activation>
 			<modules>
 				<module>pitest-groovy-verification</module>
@@ -143,7 +131,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>2.8.0</version>
+			<version>3.9.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -180,7 +168,7 @@
 						<dependency>
 							<groupId>org.pitest</groupId>
 							<artifactId>pitest-build-config</artifactId>
-							<version>1.3.3-SNAPSHOT</version>
+							<version>1.4.0-SNAPSHOT</version>
 						</dependency>
 					</dependencies>
 					<executions>
@@ -204,8 +192,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.7.0</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
 				<plugin>

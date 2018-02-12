@@ -62,7 +62,7 @@ import com.example.MultipleMutations;
 public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   private static final int ONE_MINUTE = 60000;
-  
+
   @Before
   public void excludeTests() {
     this.data.setExcludedClasses(asList("*Test"));
@@ -216,7 +216,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       this.data.setTargetClasses(asList("com.outofclasspath.*Mutee*"));
       this.data.setTargetTests(predicateFor("com.outofclasspath.*"));
 
-      List<String> cp = new ArrayList<>();
+      final List<String> cp = new ArrayList<>();
       cp.addAll(ClassPath.getClassPathElementsAsPaths());
       cp.add(location);
 
@@ -336,76 +336,76 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     verifyResults(KILLED);
   }
 
-  
+
   @Test
   public void shouldNotMutateStaticMethodsOnlyCalledFromInitializer() {
     setMutators("VOID_METHOD_CALLS");
-    
+
     this.data
     .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledOnlyFromInitializer.class));
-    
+
     createAndRun();
 
     verifyResults();
   }
-  
+
   @Test
   public void willMutateStaticMethodsCalledFromInitializerAndElsewhere() {
     setMutators("VOID_METHOD_CALLS");
-    
+
     this.data
     .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledFromInitializerAndElseWhere.class));
-    
+
     createAndRun();
 
     // would prefer NO_COVERAGE here
     verifyResults();
   }
-  
+
   @Test
   public void shouldMutateNonPrivateStaticMethodsCalledFromInitializerOnly() {
     setMutators("VOID_METHOD_CALLS");
-    
+
     this.data
     .setTargetClasses(asGlobs(com.example.staticinitializers.NonPrivateMethodsCalledFromInitializerOnly.class));
-    
+
     createAndRun();
 
     verifyResults(NO_COVERAGE,NO_COVERAGE,NO_COVERAGE);
   }
-  
+
   @Test
   public void willMutatePriveMethodsCalledInChainFromInitializer() {
     setMutators("VOID_METHOD_CALLS");
-    
+
     this.data
     .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledInChainFromStaticInitializer.class));
-    
+
     createAndRun();
 
     // would prefer removed here
     verifyResults(NO_COVERAGE);
   }
-  
+
   @Test
   public void shouldNotMutateClassesAnnotatedWithGenerated() {
     setMutators("RETURN_VALS");
     this.data
     .setTargetClasses(asGlobs(AnnotatedToAvoidAtClassLevel.class));
-    
+
     createAndRun();
 
     verifyResults();
   }
-    
+
   @Generated
   public static class AnnotatedToAvoidAtClassLevel {
     public int mutateMe() {
       return 42;
     }
   }
-  
-  
+
+
   private static void copy(final InputStream in, final OutputStream out)
       throws IOException {
     // Read bytes and write to destination until eof
@@ -416,7 +416,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       out.write(buf, 0, len);
     }
   }
-  
+
   private static Collection<String> asGlobs(Class<?> clazz) {
     return Collections.singleton(clazz.getName());
   }

@@ -14,7 +14,7 @@
  */
 package org.pitest.classinfo;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class TestToClassMapper {
 
@@ -25,21 +25,21 @@ public class TestToClassMapper {
     this.repository = repository;
   }
 
-  public Option<ClassName> findTestee(final String className) {
+  public Optional<ClassName> findTestee(final String className) {
 
     final ClassName name = ClassName.fromString(className);
 
     if (name.asJavaName().endsWith("Test")
         && tryName(name.withoutSuffixChars(TEST_LENGTH))) {
-      return Option.some(name.withoutSuffixChars(TEST_LENGTH));
+      return Optional.ofNullable(name.withoutSuffixChars(TEST_LENGTH));
     }
 
     if (name.getNameWithoutPackage().asJavaName().startsWith("Test")
         && tryName(name.withoutPrefixChars(TEST_LENGTH))) {
-      return Option.some(name.withoutPrefixChars(TEST_LENGTH));
+      return Optional.ofNullable(name.withoutPrefixChars(TEST_LENGTH));
     }
 
-    return Option.none();
+    return Optional.empty();
   }
 
   private boolean tryName(final ClassName name) {

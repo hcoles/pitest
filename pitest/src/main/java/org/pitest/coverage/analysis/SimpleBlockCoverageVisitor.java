@@ -160,7 +160,7 @@ public class SimpleBlockCoverageVisitor extends MethodVisitor {
   }
 
   private boolean needsProbe(int currentInstructionCount) {
-    for (Block each : this.blocks) {
+    for (final Block each : this.blocks) {
       if (each.firstInstructionIs(currentInstructionCount - 1)) {
         return true;
       }

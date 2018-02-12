@@ -27,22 +27,22 @@ public class PreludeTest {
 
   @Test
   public void isNullShouldReturnsTrueWhenNull() {
-    assertTrue(Prelude.isNull().apply(null));
+    assertTrue(Prelude.isNull().test(null));
   }
 
   @Test
   public void isNullShouldReturnFalseWhenNotNull() {
-    assertFalse(Prelude.isNull().apply(1));
+    assertFalse(Prelude.isNull().test(1));
   }
 
   @Test
   public void isNotNullShouldReturnFalseWhenNull() {
-    assertFalse(Prelude.isNotNull().apply(null));
+    assertFalse(Prelude.isNotNull().test(null));
   }
 
   @Test
   public void isNotNullShouldReturnTrueWhenNotNull() {
-    assertTrue(Prelude.isNotNull().apply(1));
+    assertTrue(Prelude.isNotNull().test(1));
   }
 
   @Test

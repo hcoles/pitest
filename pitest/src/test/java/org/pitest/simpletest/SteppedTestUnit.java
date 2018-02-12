@@ -16,7 +16,7 @@ package org.pitest.simpletest;
 
 import java.util.Collection;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
@@ -28,11 +28,11 @@ import org.pitest.testapi.ResultCollector;
 public class SteppedTestUnit extends AbstractTestUnit {
 
   private final Collection<TestStep>               steps;
-  private final Option<Class<? extends Throwable>> expected;
+  private final Optional<Class<? extends Throwable>> expected;
 
   public SteppedTestUnit(final Description description,
       final Collection<TestStep> steps,
-      final Option<Class<? extends Throwable>> expected) {
+      final Optional<Class<? extends Throwable>> expected) {
     super(description);
     this.steps = steps;
     this.expected = expected;
@@ -68,11 +68,11 @@ public class SteppedTestUnit extends AbstractTestUnit {
   }
 
   private Throwable updateResultForExpectations(final Throwable tResult) {
-    if (this.expected.hasSome()) {
+    if (this.expected.isPresent()) {
       if (tResult == null) {
         return new java.lang.AssertionError("Expected exception "
             + this.expected);
-      } else if (this.expected.value().isAssignableFrom(tResult.getClass())) {
+      } else if (this.expected.get().isAssignableFrom(tResult.getClass())) {
         return null;
       }
     }

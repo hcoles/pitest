@@ -21,10 +21,12 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
@@ -61,8 +63,10 @@ public class MutationTestBuilder {
     final Collection<MutationResult> analysedMutations = this.analyser
         .analyse(mutations);
 
-    final Collection<MutationDetails> needAnalysis = FCollection.filter(
-        analysedMutations, statusNotKnown()).map(resultToDetails());
+    final Collection<MutationDetails> needAnalysis = analysedMutations.stream()
+        .filter(statusNotKnown())
+        .map(resultToDetails())
+        .collect(Collectors.toList());
 
     final List<MutationResult> analysed = FCollection.filter(analysedMutations,
         Prelude.not(statusNotKnown()));
@@ -83,24 +87,11 @@ public class MutationTestBuilder {
   }
 
   private Comparator<MutationDetails> comparator() {
-    return new Comparator<MutationDetails>() {
-
-      @Override
-      public int compare(final MutationDetails arg0, final MutationDetails arg1) {
-        return arg0.getId().compareTo(arg1.getId());
-      }
-
-    };
+    return (arg0, arg1) -> arg0.getId().compareTo(arg1.getId());
   }
 
-  private F<ClassName, Iterable<MutationDetails>> classToMutations() {
-    return new F<ClassName, Iterable<MutationDetails>>() {
-      @Override
-      public Iterable<MutationDetails> apply(final ClassName a) {
-        return MutationTestBuilder.this.mutationSource.createMutations(a);
-      }
-
-    };
+  private Function<ClassName, Iterable<MutationDetails>> classToMutations() {
+    return a -> MutationTestBuilder.this.mutationSource.createMutations(a);
   }
 
   private MutationAnalysisUnit makePreAnalysedUnit(
@@ -118,32 +109,17 @@ public class MutationTestBuilder {
         this.workerFactory);
   }
 
-  private static F<MutationResult, MutationDetails> resultToDetails() {
-    return new F<MutationResult, MutationDetails>() {
-      @Override
-      public MutationDetails apply(final MutationResult a) {
-        return a.getDetails();
-      }
-    };
+  private static Function<MutationResult, MutationDetails> resultToDetails() {
+    return a -> a.getDetails();
   }
 
-  private static F<MutationResult, Boolean> statusNotKnown() {
-    return new F<MutationResult, Boolean>() {
-      @Override
-      public Boolean apply(final MutationResult a) {
-        return a.getStatus() == DetectionStatus.NOT_STARTED;
-      }
-    };
+  private static Predicate<MutationResult> statusNotKnown() {
+    return a -> a.getStatus() == DetectionStatus.NOT_STARTED;
   }
 
-  private static F<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return new F<MutationDetails, Iterable<ClassName>>() {
-      @Override
-      public Iterable<ClassName> apply(final MutationDetails a) {
-        return FCollection.map(a.getTestsInOrder(),
-            TestInfo.toDefiningClassName());
-      }
-    };
+  private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
+    return a -> FCollection.map(a.getTestsInOrder(),
+        TestInfo.toDefiningClassName());
   }
 
 }

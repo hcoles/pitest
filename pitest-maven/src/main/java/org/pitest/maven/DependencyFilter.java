@@ -23,9 +23,9 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import org.apache.maven.artifact.Artifact;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.util.Log;
@@ -43,8 +43,8 @@ public class DependencyFilter implements Predicate<Artifact> {
     findVendorIdForGroups();
   }
 
-  private static F<ClientClasspathPlugin, GroupIdPair> artifactToPair() {
-    return new F<ClientClasspathPlugin, GroupIdPair>() {
+  private static Function<ClientClasspathPlugin, GroupIdPair> artifactToPair() {
+    return new Function<ClientClasspathPlugin, GroupIdPair>() {
 
       @Override
       public GroupIdPair apply(final ClientClasspathPlugin a) {
@@ -113,7 +113,7 @@ public class DependencyFilter implements Predicate<Artifact> {
   }
 
   @Override
-  public Boolean apply(final Artifact a) {
+  public boolean test(final Artifact a) {
     final GroupIdPair p = new GroupIdPair(a.getGroupId(), a.getArtifactId());
     return this.groups.contains(p);
   }

@@ -86,12 +86,12 @@ public class ClassInfoVisitorTest {
   @Test
   public void shouldRecordClassAnnotationValues() throws ClassNotFoundException {
     final String sampleName = HasSimpleValue.class.getName();
-    ClassInfoBuilder actual = getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
 
     assertEquals(1, actual.classAnnotationValues.size());
-    Object expectedValue = "blah";
-    Object actualValue = actual.classAnnotationValues.get(ClassName
+    final Object expectedValue = "blah";
+    final Object actualValue = actual.classAnnotationValues.get(ClassName
         .fromClass(SimpleValue.class));
     assertEquals(expectedValue, actualValue);
   }
@@ -100,12 +100,12 @@ public class ClassInfoVisitorTest {
   public void shouldRecordClassAnnotationArrayValues()
       throws ClassNotFoundException {
     final String sampleName = HasStringValues.class.getName();
-    ClassInfoBuilder actual = getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
 
     assertEquals(1, actual.classAnnotationValues.size());
-    Object[] expectedStrings = { "this", "that" };
-    Object[] actualStrings = (Object[]) actual.classAnnotationValues
+    final Object[] expectedStrings = { "this", "that" };
+    final Object[] actualStrings = (Object[]) actual.classAnnotationValues
         .get(ClassName.fromClass(StringValues.class));
     assertArrayEquals(expectedStrings, actualStrings);
   }
@@ -114,13 +114,13 @@ public class ClassInfoVisitorTest {
   public void shouldStoreTypeArrayValuesAsClassNames()
       throws ClassNotFoundException {
     final String sampleName = HasCategory.class.getName();
-    ClassInfoBuilder actual = getClassInfo(sampleName,
+    final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
 
     assertEquals(1, actual.classAnnotationValues.size());
-    Object[] expectedCategoryNames = { First.class.getName(),
+    final Object[] expectedCategoryNames = { First.class.getName(),
         Second.class.getName() };
-    Object[] actualCategoryNames = (Object[]) actual.classAnnotationValues
+    final Object[] actualCategoryNames = (Object[]) actual.classAnnotationValues
         .get(ClassName.fromClass(Category.class));
     assertArrayEquals(expectedCategoryNames, actualCategoryNames);
   }

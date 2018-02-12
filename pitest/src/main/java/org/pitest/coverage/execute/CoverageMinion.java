@@ -22,8 +22,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
@@ -31,8 +33,6 @@ import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -57,7 +57,7 @@ public class CoverageMinion {
   public static void main(final String[] args) {
 
     enablePowerMockSupport();
-    
+
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
     CoveragePipe invokeQueue = null;
@@ -65,17 +65,17 @@ public class CoverageMinion {
 
       final int port = Integer.parseInt(args[0]);
       s = new Socket("localhost", port);
-   
+
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
-      
+
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
-  
+
       Log.setVerbose(paramsFromParent.isVerbose());
-    
+
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
           s.getOutputStream()));
-      
+
       CodeCoverageStore.init(invokeQueue);
 
       HotSwapAgent.addTransformer(new CoverageTransformer(
@@ -117,19 +117,13 @@ public class CoverageMinion {
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*")), 
+        .or(new Glob("javassist/*")),
         JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistCoverageInterceptor.class)));
   }
 
   private static Predicate<String> convertToJVMClassFilter(
       final Predicate<String> child) {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(final String a) {
-        return child.apply(a.replace("/", "."));
-      }
-
-    };
+    return a -> child.test(a.replace("/", "."));
   }
 
   private static List<TestUnit> getTestsFromParent(
@@ -138,9 +132,9 @@ public class CoverageMinion {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 
-    Configuration testPlugin = createTestPlugin(paramsFromParent);
+    final Configuration testPlugin = createTestPlugin(paramsFromParent);
     verifyEnvironment(testPlugin);
-    
+
     final List<TestUnit> tus = discoverTests(testPlugin, classes);
 
     final DependencyFilter filter = new DependencyFilter(
@@ -160,25 +154,24 @@ public class CoverageMinion {
  final List<ClassName> classes) {
     final FindTestUnits finder = new FindTestUnits(testPlugin);
     final List<TestUnit> tus = finder
-        .findTestUnitsForAllSuppliedClasses(FCollection.flatMap(classes,
-            ClassName.nameToClass()));
+        .findTestUnitsForAllSuppliedClasses(classes.stream().flatMap(ClassName.nameToClass()).collect(Collectors.toList()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
   }
-  
+
   private static Configuration createTestPlugin(
       final CoverageOptions paramsFromParent) {
-    ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
-    MinionSettings factory = new MinionSettings(plugins);
-    Configuration testPlugin = factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
+    final ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+    final MinionSettings factory = new MinionSettings(plugins);
+    final Configuration testPlugin = factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
     return testPlugin;
   }
-  
+
   private static void verifyEnvironment(Configuration config) {
     LOG.info("Checking environment");
-    if (config.verifyEnvironment().hasSome()) {
-      throw config.verifyEnvironment().value();
-    } 
+    if (config.verifyEnvironment().isPresent()) {
+      throw config.verifyEnvironment().get();
+    }
   }
 
   private static List<ClassName> receiveTestClassesFromParent(

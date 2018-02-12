@@ -19,11 +19,12 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class ClassInfo {
 
@@ -73,20 +74,20 @@ public class ClassInfo {
   public boolean isAbstract() {
     return (this.access & Opcodes.ACC_ABSTRACT) != 0;
   }
-  
+
   public boolean isSynthetic() {
     return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
   public boolean isTopLevelClass() {
-    return getOuterClass().hasNone();
+    return !getOuterClass().isPresent();
   }
 
-  public Option<ClassInfo> getOuterClass() {
+  public Optional<ClassInfo> getOuterClass() {
     return this.outerClass.fetch();
   }
 
-  public Option<ClassInfo> getSuperClass() {
+  public Optional<ClassInfo> getSuperClass() {
     return getParent();
   }
 
@@ -116,13 +117,13 @@ public class ClassInfo {
 
   public BigInteger getDeepHash() {
     BigInteger hash = getHash();
-    final Option<ClassInfo> parent = getParent();
-    if (parent.hasSome()) {
-      hash = hash.add(parent.value().getHash());
+    final Optional<ClassInfo> parent = getParent();
+    if (parent.isPresent()) {
+      hash = hash.add(parent.get().getHash());
     }
-    final Option<ClassInfo> outer = getOuterClass();
-    if (outer.hasSome()) {
-      hash = hash.add(outer.value().getHash());
+    final Optional<ClassInfo> outer = getOuterClass();
+    if (outer.isPresent()) {
+      hash = hash.add(outer.get().getHash());
     }
     return hash;
   }
@@ -131,34 +132,28 @@ public class ClassInfo {
     return BigInteger.valueOf(this.id.getHash());
   }
 
-  private Option<ClassInfo> getParent() {
+  private Optional<ClassInfo> getParent() {
     if (this.superClass == null) {
-      return Option.none();
+      return Optional.empty();
     }
     return this.superClass.fetch();
   }
 
   private boolean descendsFrom(final ClassName clazz) {
 
-    if (this.getSuperClass().hasNone()) {
+    if (!this.getSuperClass().isPresent()) {
       return false;
     }
 
-    if (this.getSuperClass().value().getName().equals(clazz)) {
+    if (this.getSuperClass().get().getName().equals(clazz)) {
       return true;
     }
 
-    return getSuperClass().value().descendsFrom(clazz);
+    return getSuperClass().get().descendsFrom(clazz);
   }
 
-  public static F<ClassInfo, Boolean> matchIfAbstract() {
-    return new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return a.isAbstract();
-      }
-
-    };
+  public static Predicate<ClassInfo> matchIfAbstract() {
+    return a -> a.isAbstract();
   }
 
   @Override
@@ -166,23 +161,11 @@ public class ClassInfo {
     return this.id.getName().asJavaName();
   }
 
-  public static F<ClassInfo, ClassName> toClassName() {
-    return new F<ClassInfo, ClassName>() {
-      @Override
-      public ClassName apply(final ClassInfo a) {
-        return a.getName();
-      }
-
-    };
+  public static Function<ClassInfo, ClassName> toClassName() {
+    return a -> a.getName();
   }
 
-  public static F<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return new F<ClassInfo, HierarchicalClassId>() {
-      @Override
-      public HierarchicalClassId apply(final ClassInfo a) {
-        return a.getHierarchicalId();
-      }
-
-    };
+  public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
+    return a -> a.getHierarchicalId();
   }
 }

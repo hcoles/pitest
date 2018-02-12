@@ -17,9 +17,10 @@ package org.pitest.testng;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.testapi.TestGroupConfig;
 
 public class TestNGConfigurationTest {
@@ -33,7 +34,7 @@ public class TestNGConfigurationTest {
 
   @Test
   public void shouldVerifyEnvironmentWithoutError() {
-    assertEquals(Option.none(), this.testee.verifyEnvironment());
+    assertEquals(Optional.empty(), this.testee.verifyEnvironment());
   }
 
 }

@@ -41,7 +41,7 @@ public class LimitNumberOfMutationPerClassFilter implements MutationInterceptor 
       return createEvenlyDistributedSampling(mutations);
     }
   }
-  
+
   private Collection<MutationDetails> createEvenlyDistributedSampling(
       final Collection<MutationDetails> mutations) {
     final Collection<MutationDetails> filtered = new ArrayList<>(

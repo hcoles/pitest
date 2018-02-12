@@ -19,7 +19,7 @@ import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -46,9 +46,9 @@ public class DefaultCodeHistoryTest {
   @Test
   public void shouldReturnNoneWhenNoMatchingHistoricResultExists() {
     final MutationIdentifier id = aMutationId().build();
-    final Option<MutationStatusTestPair> actual = this.testee
+    final Optional<MutationStatusTestPair> actual = this.testee
         .getPreviousResult(id);
-    assertEquals(Option.none(), actual);
+    assertEquals(Optional.empty(), actual);
   }
 
   @Test
@@ -57,9 +57,9 @@ public class DefaultCodeHistoryTest {
     final MutationStatusTestPair expected = new MutationStatusTestPair(0,
         DetectionStatus.KILLED, "foo");
     this.results.put(id, expected);
-    final Option<MutationStatusTestPair> actual = this.testee
+    final Optional<MutationStatusTestPair> actual = this.testee
         .getPreviousResult(id);
-    assertEquals(Option.some(expected), actual);
+    assertEquals(Optional.ofNullable(expected), actual);
   }
 
   @Test
@@ -112,12 +112,12 @@ public class DefaultCodeHistoryTest {
   private void setCurrentClassPath(final HierarchicalClassId currentId) {
     final ClassInfo currentClass = ClassInfoMother.make(currentId.getId());
     when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
-    .thenReturn(Option.some(currentClass));
+    .thenReturn(Optional.ofNullable(currentClass));
   }
 
   private void setCurrentClassPath(final ClassInfo info) {
     when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
-    .thenReturn(Option.some(info));
+    .thenReturn(Optional.ofNullable(info));
   }
 
   private ClassHistory makeHistory(final HierarchicalClassId id) {

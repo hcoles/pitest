@@ -3,8 +3,6 @@ package org.pitest.coverage.execute;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.pitest.functional.F;
-
 /*
  * Copyright 2010 Henry Coles
  *
@@ -20,7 +18,8 @@ import org.pitest.functional.F;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
+
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.util.Glob;
@@ -29,9 +28,9 @@ import org.pitest.util.Preconditions;
 public class CoverageOptions implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final Collection<String>      include;
-  private final Collection<String>      exclude;  
+  private final Collection<String>      exclude;
   private final boolean           verbose;
   private final TestPluginArguments pitConfig;
   private final int               maxDependencyDistance;
@@ -48,8 +47,8 @@ public class CoverageOptions implements Serializable {
   }
 
   public Predicate<String> getFilter() {
-    return Prelude.and(Prelude.or(Glob.toGlobPredicates(include)), 
-        Prelude.not(Prelude.or(Glob.toGlobPredicates(exclude))), 
+    return Prelude.and(Prelude.or(Glob.toGlobPredicates(this.include)),
+        Prelude.not(Prelude.or(Glob.toGlobPredicates(this.exclude))),
         Prelude.not(commonClasses()));
   }
 
@@ -64,18 +63,18 @@ public class CoverageOptions implements Serializable {
   public int getDependencyAnalysisMaxDistance() {
     return this.maxDependencyDistance;
   }
-  
-  private static F<String, Boolean> commonClasses() {
+
+  private static Predicate<String> commonClasses() {
     return Prelude.or(
-        glob("java/*"), 
+        glob("java/*"),
         glob("sun/*"),
         glob("org/pitest/coverage/*"),
-        glob("org/pitest/reloc/*"), 
+        glob("org/pitest/reloc/*"),
         glob("org/pitest/boot/*"));
   }
 
   private static Glob glob(String match) {
     return new Glob(match);
-  } 
+  }
 
 }

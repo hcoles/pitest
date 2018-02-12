@@ -15,7 +15,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class CodeSourceTest {
 
@@ -50,7 +50,7 @@ public class CodeSourceTest {
   public void shouldIdentifyTestClassesOnTestPath() {
     when(this.classPath.test()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
-    assertThat(this.testee.getTests()).containsExactly(foo, bar);
+    assertThat(this.testee.getTests()).containsExactly(this.foo, this.bar);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class CodeSourceTest {
     when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(true);
     assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.FooTest").value());
+        this.testee.findTestee("com.example.FooTest").get());
   }
 
   @Test
@@ -77,23 +77,23 @@ public class CodeSourceTest {
     when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(true);
     assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.TestFoo").value());
+        this.testee.findTestee("com.example.TestFoo").get());
   }
 
   @Test
   public void shouldReturnNoneWhenNoTesteeExistsMatchingNamingConvention() {
     when(this.repository.hasClass(ClassName.fromString("com.example.Foo")))
     .thenReturn(false);
-    assertEquals(Option.<ClassName> none(),
+    assertEquals(Optional.<ClassName> empty(),
         this.testee.findTestee("com.example.TestFoo"));
   }
 
   @Test
   public void shouldProvideDetailsOfRequestedClasses() {
     when(this.repository.fetchClass(ClassName.fromString("Foo"))).thenReturn(
-        Option.some(this.foo));
+        Optional.ofNullable(this.foo));
     when(this.repository.fetchClass(ClassName.fromString("Unknown")))
-    .thenReturn(Option.<ClassInfo> none());
+    .thenReturn(Optional.<ClassInfo> empty());
     assertEquals(Arrays.asList(this.foo), this.testee.getClassInfo(Arrays
         .asList(ClassName.fromString("Foo"), ClassName.fromString("Unknown"))));
   }
@@ -107,7 +107,7 @@ public class CodeSourceTest {
   private ClassInfo makeClassInfo(final String name) {
     final ClassInfo ci = ClassInfoMother.make(name);
     when(this.repository.fetchClass(ClassName.fromString(name))).thenReturn(
-        Option.some(ci));
+        Optional.ofNullable(ci));
     return ci;
   }
 

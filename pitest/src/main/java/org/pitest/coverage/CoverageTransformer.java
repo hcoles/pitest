@@ -5,13 +5,13 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.Predicate;
 
 import sun.pitest.CodeCoverageStore;
 
@@ -57,7 +57,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   }
 
   private boolean shouldInclude(final String className) {
-    return this.filter.apply(className);
+    return this.filter.test(className);
   }
 
   private ClassLoader pickLoader(ClassLoader loader) {

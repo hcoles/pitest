@@ -14,14 +14,15 @@
  */
 package org.pitest.mutationtest.mocksupport;
 
+import java.util.function.Function;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.F;
 
 public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
-  
+
   private final String interceptorClass;
 
   public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0, Class<?> interceptor) {
@@ -29,23 +30,18 @@ public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
     this.interceptorClass = classToName(interceptor);
   }
 
-  public static F<ClassWriter, ClassVisitor> inputStreamAdapterSupplier(final Class<?> interceptor) {
-    return new F<ClassWriter, ClassVisitor>() {
-      @Override
-      public ClassVisitor apply(ClassWriter a) {
-        return new JavassistInputStreamInterceptorAdapater(a, interceptor);
-      }
-    };
+  public static Function<ClassWriter, ClassVisitor> inputStreamAdapterSupplier(final Class<?> interceptor) {
+    return a -> new JavassistInputStreamInterceptorAdapater(a, interceptor);
   }
-  
-  
+
+
   @Override
   public MethodVisitor visitMethod(final int access, final String name,
       final String desc, final String signature, final String[] exceptions) {
     return new JavassistInputStreamInterceptorMethodVisitor(
-        this.cv.visitMethod(access, name, desc, signature, exceptions), interceptorClass);
+        this.cv.visitMethod(access, name, desc, signature, exceptions), this.interceptorClass);
   }
-  
+
   private static String classToName(final Class<?> clazz) {
     return clazz.getName().replace(".", "/");
   }
@@ -58,7 +54,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
 
   JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv, String interceptor) {
     super(Opcodes.ASM6, mv);
-    interceptorClass = interceptor;
+    this.interceptorClass = interceptor;
   }
 
   @Override
@@ -66,7 +62,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
       final String name, final String desc, boolean itf) {
     if ((opcode == Opcodes.INVOKEINTERFACE)
         && owner.equals("javassist/ClassPath") && name.equals("openClassfile")) {
-      this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, interceptorClass, name,
+      this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, this.interceptorClass, name,
           "(Ljava/lang/Object;Ljava/lang/String;)Ljava/io/InputStream;", false);
     } else {
       this.mv.visitMethodInsn(opcode, owner, name, desc, itf);

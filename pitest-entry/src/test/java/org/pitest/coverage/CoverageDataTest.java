@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +44,8 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
@@ -67,6 +68,7 @@ public class CoverageDataTest {
     MockitoAnnotations.initMocks(this);
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<BlockLocation, Set<Integer>>());
+    when(this.code.findTestee(any())).thenReturn(Optional.empty());
     this.testee = new CoverageData(this.code, this.lm);
   }
 
@@ -82,15 +84,15 @@ public class CoverageDataTest {
   @Test
   public void shouldStoreExecutionTimesOfTests() {
 
-    int line = 1;
-    int time = 42;
+    final int line = 1;
+    final int time = 42;
 
-    BlockLocationBuilder block = aBlockLocation().withLocation(
+    final BlockLocationBuilder block = aBlockLocation().withLocation(
         aLocation().withClass(this.foo));
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         makeCoverageMapForBlock(block, line));
 
-    CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
+    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
         block.build(1)).withExecutionTime(time);
 
     this.testee.calculateClassCoverage(cr.build());
@@ -109,12 +111,12 @@ public class CoverageDataTest {
   @Test
   public void shouldReportNumberOfCoveredLinesWhenSomeCovered() {
 
-    BlockLocationBuilder block = aBlockLocation().withLocation(
+    final BlockLocationBuilder block = aBlockLocation().withLocation(
         aLocation().withClass(this.foo));
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         makeCoverageMapForBlock(block, 101, 300));
 
-    CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
+    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
         block.build(1));
 
     this.testee.calculateClassCoverage(cr.build());
@@ -178,9 +180,9 @@ public class CoverageDataTest {
     when(this.code.getClassInfo(any(Collection.class))).thenReturn(
         Collections.singletonList(ci));
 
-    BlockLocationBuilder block = aBlockLocation().withLocation(
+    final BlockLocationBuilder block = aBlockLocation().withLocation(
         aLocation().withClass(foo));
-    HashMap<BlockLocation, Set<Integer>> map = makeCoverageMapForBlock(block,
+    final HashMap<BlockLocation, Set<Integer>> map = makeCoverageMapForBlock(block,
         42);
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(map);
     this.testee.calculateClassCoverage(aCoverageResult().withVisitedBlocks(
@@ -199,9 +201,9 @@ public class CoverageDataTest {
   @Test
   public void shouldProvideCoverageListWhenCoverageRecorded() {
 
-    BlockLocationBuilder block = aBlockLocation().withLocation(
+    final BlockLocationBuilder block = aBlockLocation().withLocation(
         aLocation().withClass(this.foo));
-    CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
+    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
         block.build(1));
 
     this.testee.calculateClassCoverage(cr.build());
@@ -245,37 +247,27 @@ public class CoverageDataTest {
   @Test
   public void shouldIncludeAllCoveredLinesInCoverageSummary() {
 
-    BlockLocationBuilder block = aBlockLocation();
+    final BlockLocationBuilder block = aBlockLocation();
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(block.build().getLocation().getClassName()));
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         makeCoverageMapForBlock(block, 1, 2, 3, 4));
 
-    CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
+    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
         block.build(1));
 
     this.testee.calculateClassCoverage(cr.build());
 
-    CoverageSummary actual = this.testee.createSummary();
+    final CoverageSummary actual = this.testee.createSummary();
     assertEquals(4, actual.getNumberOfCoveredLines());
   }
 
-  private static F<TestInfo, Integer> testInfoToExecutionTime() {
-    return new F<TestInfo, Integer>() {
-      @Override
-      public Integer apply(final TestInfo a) {
-        return a.getTime();
-      }
-    };
+  private static Function<TestInfo, Integer> testInfoToExecutionTime() {
+    return a -> a.getTime();
   }
 
-  private static F<TestInfo, String> testInfoToString() {
-    return new F<TestInfo, String>() {
-      @Override
-      public String apply(final TestInfo a) {
-        return a.getName();
-      }
-    };
+  private static Function<TestInfo, String> testInfoToString() {
+    return a -> a.getName();
   }
 
   private CoverageResult makeCoverageResult(final String clazz,
@@ -301,8 +293,8 @@ public class CoverageDataTest {
 
   private HashMap<BlockLocation, Set<Integer>> makeCoverageMapForBlock(
       BlockLocationBuilder blocks, Integer... lines) {
-    HashMap<BlockLocation, Set<Integer>> map = new HashMap<>();
-    Set<Integer> s = new HashSet<>();
+    final HashMap<BlockLocation, Set<Integer>> map = new HashMap<>();
+    final Set<Integer> s = new HashSet<>();
     s.addAll(Arrays.asList(lines));
     map.put(blocks.build(), s);
     return map;

@@ -18,43 +18,43 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.util.StringUtil;
 
 public class AnnotatedLineFactory {
 
-  private final FunctionalIterable<MutationResult> mutations;
+  private final Collection<MutationResult>         mutations;
   private final CoverageDatabase                   statistics;
   private final Collection<ClassInfo>              classesInFile;
 
   public AnnotatedLineFactory(
-      final FunctionalIterable<MutationResult> mutations,
+      final Collection<MutationResult> mutations,
       final CoverageDatabase statistics, final Collection<ClassInfo> classes) {
     this.mutations = mutations;
     this.statistics = statistics;
     this.classesInFile = classes;
   }
 
-  public FunctionalList<Line> convert(final Reader source) throws IOException {
+  public List<Line> convert(final Reader source) throws IOException {
     try {
       final InputStreamLineIterable lines = new InputStreamLineIterable(source);
-      return lines.map(stringToAnnotatedLine());
+      return FCollection.map(lines, stringToAnnotatedLine());
     } finally {
       source.close();
     }
 
   }
 
-  private F<String, Line> stringToAnnotatedLine() {
-    return new F<String, Line>() {
+  private Function<String, Line> stringToAnnotatedLine() {
+    return new Function<String, Line>() {
       private int lineNumber = 1;
 
       @Override
@@ -70,18 +70,13 @@ public class AnnotatedLineFactory {
   }
 
   private List<MutationResult> getMutationsForLine(final int lineNumber) {
-    return this.mutations.filter(isAtLineNumber(lineNumber));
+    return this.mutations.stream()
+        .filter(isAtLineNumber(lineNumber))
+        .collect(Collectors.toList());
   }
 
-  private F<MutationResult, Boolean> isAtLineNumber(final int lineNumber) {
-    return new F<MutationResult, Boolean>() {
-
-      @Override
-      public Boolean apply(final MutationResult result) {
-        return result.getDetails().getLineNumber() == lineNumber;
-      }
-
-    };
+  private Predicate<MutationResult> isAtLineNumber(final int lineNumber) {
+    return result -> result.getDetails().getLineNumber() == lineNumber;
   }
 
   private LineStatus lineCovered(final int line) {
@@ -98,23 +93,12 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isCodeLine(final int line) {
-    final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return a.isCodeLine(line);
-      }
-    };
-    return FCollection.contains(this.classesInFile, predicate);
+    return FCollection.contains(this.classesInFile, a -> a.isCodeLine(line));
   }
 
   private boolean isLineCovered(final int line) {
-    final F<ClassInfo, Boolean> predicate = new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
-            new ClassLine(a.getName().asInternalName(), line)).isEmpty();
-      }
-    };
+    final Predicate<ClassInfo> predicate = a -> !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
+        new ClassLine(a.getName().asInternalName(), line)).isEmpty();
     return FCollection.contains(this.classesInFile, predicate);
 
   }

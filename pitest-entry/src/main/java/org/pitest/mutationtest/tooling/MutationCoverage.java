@@ -36,7 +36,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.EngineArguments;
@@ -111,7 +111,7 @@ public class MutationCoverage {
     verifyBuildSuitableForMutationTesting();
 
     checkExcludedRunners();
-    
+
     final CoverageDatabase coverageData = coverage().calculateCoverage();
 
     LOG.fine("Used memory after coverage calculation "
@@ -121,9 +121,9 @@ public class MutationCoverage {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
-    EngineArguments args = EngineArguments.arguments()
-        .withExcludedMethods(data.getExcludedMethods())
-        .withMutators(data.getMutators());
+    final EngineArguments args = EngineArguments.arguments()
+        .withExcludedMethods(this.data.getExcludedMethods())
+        .withMutators(this.data.getMutators());
     final MutationEngine engine = this.strategies.factory().createEngine(args);
 
     final List<MutationResultListener> config = createConfig(t0, coverageData,
@@ -162,12 +162,12 @@ public class MutationCoverage {
   }
 
   private void checkExcludedRunners() {
-    Collection<String> excludedRunners = this.data.getExcludedRunners();
+    final Collection<String> excludedRunners = this.data.getExcludedRunners();
     if (!excludedRunners.isEmpty()) {
       // Check whether JUnit4 is available or not
       try {
         Class.forName("org.junit.runner.RunWith");
-      } catch (ClassNotFoundException e) {
+      } catch (final ClassNotFoundException e) {
         // JUnit4 is not available on the classpath
         throw new PitHelpError(Help.NO_JUNIT_EXCLUDE_RUNNERS);
       }
@@ -250,16 +250,16 @@ private int numberOfThreads() {
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
 
-    ClassByteArraySource bas = fallbackToClassLoader(new ClassPathByteArraySource(
+    final ClassByteArraySource bas = fallbackToClassLoader(new ClassPathByteArraySource(
         this.data.getClassPath()));
 
-    TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
+    final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
         .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
             coverageData);
 
-    MutationInterceptor interceptor = this.settings.getInterceptor()
+    final MutationInterceptor interceptor = this.settings.getInterceptor()
         .createInterceptor(this.data, bas);
-    
+
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
     final MutationAnalyser analyser = new IncrementalAnalyser(
@@ -271,7 +271,7 @@ private int numberOfThreads() {
             this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
             .getClassPath().getLocalClassPath());
 
-    MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
+    final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,
         this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
     final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser,
@@ -307,19 +307,15 @@ private int numberOfThreads() {
   // a class not provided by project classpath
   private ClassByteArraySource fallbackToClassLoader(final ClassByteArraySource bas) {
     final ClassByteArraySource clSource = ClassloaderByteArraySource.fromContext();
-    return new ClassByteArraySource() {
-      @Override
-      public Option<byte[]> getBytes(String clazz) {
-        Option<byte[]> maybeBytes = bas.getBytes(clazz);
-        if (maybeBytes.hasSome()) {
-          return maybeBytes;
-        }
-        LOG.log(Level.FINE, "Could not find " + clazz + " on classpath for analysis. Falling back to classloader");
-        return clSource.getBytes(clazz);
+    return clazz -> {
+      final Optional<byte[]> maybeBytes = bas.getBytes(clazz);
+      if (maybeBytes.isPresent()) {
+        return maybeBytes;
       }
-      
+      LOG.log(Level.FINE, "Could not find " + clazz + " on classpath for analysis. Falling back to classloader");
+      return clSource.getBytes(clazz);
     };
   }
 
-  
+
 }

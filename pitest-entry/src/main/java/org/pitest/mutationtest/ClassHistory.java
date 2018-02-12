@@ -1,9 +1,9 @@
 package org.pitest.mutationtest;
 
+import java.io.Serializable;
+
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
-
-import java.io.Serializable;
 
 public class ClassHistory implements Serializable {
 

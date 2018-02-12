@@ -25,7 +25,7 @@ import java.util.zip.ZipEntry;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassPathByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.process.JavaAgent;
 import org.pitest.util.FileUtil;
 import org.pitest.util.PitError;
@@ -45,7 +45,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   private static final String        AGENT_CLASS_NAME      = HotSwapAgent.class
       .getName();
 
-  private Option<String>             location              = Option.none();
+  private Optional<String>             location              = Optional.empty();
 
   private final ClassByteArraySource classByteSource;
 
@@ -58,21 +58,21 @@ public class JarCreatingJarFinder implements JavaAgent {
   }
 
   @Override
-  public Option<String> getJarLocation() {
-    if (this.location.hasNone()) {
+  public Optional<String> getJarLocation() {
+    if (!this.location.isPresent()) {
       this.location = createJar();
     }
     return this.location;
   }
 
-  private Option<String> createJar() {
+  private Optional<String> createJar() {
     try {
 
       final File randomName = File.createTempFile(FileUtil.randomFilename(),
           ".jar");
       final FileOutputStream fos = new FileOutputStream(randomName);
       createJarFromClassPathResources(fos, randomName.getAbsolutePath());
-      return Option.some(randomName.getAbsolutePath());
+      return Optional.ofNullable(randomName.getAbsolutePath());
 
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
@@ -115,10 +115,10 @@ public class JarCreatingJarFinder implements JavaAgent {
   }
 
   private byte[] classBytes(final String className) {
-    final Option<byte[]> bytes = this.classByteSource.getBytes(className);
+    final Optional<byte[]> bytes = this.classByteSource.getBytes(className);
 
-    if (bytes.hasSome()) {
-      return bytes.value();
+    if (bytes.isPresent()) {
+      return bytes.get();
     }
 
     throw new PitError("Unable to load class content for " + className);
@@ -126,8 +126,8 @@ public class JarCreatingJarFinder implements JavaAgent {
 
   @Override
   public void close() {
-    if (this.location.hasSome()) {
-      final File f = new File(this.location.value());
+    if (this.location.isPresent()) {
+      final File f = new File(this.location.get());
       f.delete();
     }
   }

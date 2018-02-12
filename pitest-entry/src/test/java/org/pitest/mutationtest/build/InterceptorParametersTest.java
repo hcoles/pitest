@@ -8,49 +8,49 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
 
 public class InterceptorParametersTest {
-  
+
   InterceptorParameters testee;
-  
+
   @Test
   public void shouldReturnStringParamsWhenPresent() {
-    testee = makeFor("foo", "bar");
-    assertThat(testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.some("bar"));
+    this.testee = makeFor("foo", "bar");
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.ofNullable("bar"));
   }
-  
+
   @Test
   public void shouldReturnNoneWhenValueAbsent() {
-    testee = makeFor("nomatch", "bar");
-    assertThat(testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.none());
+    this.testee = makeFor("nomatch", "bar");
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
 
   @Test
   public void shouldReturnNoneWhenFeatureSettingsAbsent() {
-    testee = new InterceptorParameters(null, null, null);
-    assertThat(testee.getString(FeatureParameter.named("foo"))).isEqualTo(Option.none());
+    this.testee = new InterceptorParameters(null, null, null);
+    assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
-  
+
   @Test
   public void shouldReturnIntegerWhenPresent() {
-    testee = makeFor("foo", "11");
-    assertThat(testee.getInteger(FeatureParameter.named("foo"))).isEqualTo(Option.some(11));
+    this.testee = makeFor("foo", "11");
+    assertThat(this.testee.getInteger(FeatureParameter.named("foo"))).isEqualTo(Optional.ofNullable(11));
   }
-  
+
   @Test
   public void shouldReturnListsOfStringsWhenPresent() {
-    testee = makeFor("foo", "bar", "car");
-    assertThat(testee.getList(FeatureParameter.named("foo"))).contains("bar", "car");
+    this.testee = makeFor("foo", "bar", "car");
+    assertThat(this.testee.getList(FeatureParameter.named("foo"))).contains("bar", "car");
   }
-  
+
   private InterceptorParameters makeFor(String key, String ... vals) {
-    Map<String, List<String>> values = new HashMap<>();
+    final Map<String, List<String>> values = new HashMap<>();
     values.put(key, Arrays.asList(vals));
-    FeatureSetting fs = new FeatureSetting(null, null,values);
+    final FeatureSetting fs = new FeatureSetting(null, null,values);
     return new InterceptorParameters(fs, null, null);
   }
-  
+
 }

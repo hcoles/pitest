@@ -21,7 +21,7 @@ public abstract class IsolationUtils {
   public static ClassLoader getContextClassLoader() {
     return Thread.currentThread().getContextClassLoader();
   }
-  
+
   public static Class<?> convertForClassLoader(final ClassLoader loader,
       final String name) {
     try {

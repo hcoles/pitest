@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.PitError;
 
 public class JarCreatingJarFinderTest {
@@ -53,7 +53,7 @@ public class JarCreatingJarFinderTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     when(this.byteSource.getBytes(anyString())).thenReturn(
-        Option.some(new byte[1]));
+        Optional.ofNullable(new byte[1]));
     this.testee = new JarCreatingJarFinder(this.byteSource);
   }
 
@@ -78,15 +78,15 @@ public class JarCreatingJarFinderTest {
 
   @Test
   public void shouldCreateJarFile() {
-    final Option<String> actual = this.testee.getJarLocation();
-    assertTrue(actual.hasSome());
+    final Optional<String> actual = this.testee.getJarLocation();
+    assertTrue(actual.isPresent());
   }
 
   @Test
   public void shouldCreateJarFileInSystemTempDirectory() {
     final String tempDirLocation = System.getProperty("java.io.tmpdir");
-    final Option<String> actual = this.testee.getJarLocation();
-    assertTrue(actual.value().startsWith(tempDirLocation));
+    final Optional<String> actual = this.testee.getJarLocation();
+    assertTrue(actual.get().startsWith(tempDirLocation));
   }
 
   @Test
@@ -118,7 +118,7 @@ public class JarCreatingJarFinderTest {
     this.thrown.expect(PitError.class);
 
     when(this.byteSource.getBytes(anyString())).thenReturn(
-        Option.<byte[]> none());
+        Optional.<byte[]> empty());
 
     this.testee.getJarLocation();
   }
@@ -131,8 +131,8 @@ public class JarCreatingJarFinderTest {
 
   private String getGeneratedManifestAttribute(final String key)
       throws IOException, FileNotFoundException {
-    final Option<String> actual = this.testee.getJarLocation();
-    final File f = new File(actual.value());
+    final Optional<String> actual = this.testee.getJarLocation();
+    final File f = new File(actual.get());
     try (JarInputStream jis = new JarInputStream(new FileInputStream(f))) {
       final Manifest m = jis.getManifest();
       final Attributes a = m.getMainAttributes();

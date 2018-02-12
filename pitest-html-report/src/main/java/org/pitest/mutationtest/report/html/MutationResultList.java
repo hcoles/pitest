@@ -21,14 +21,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalIterable;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationResult;
 
-public class MutationResultList implements FunctionalIterable<MutationResult> {
+public class MutationResultList implements Iterable<MutationResult> {
 
   private final List<MutationResult> impl = new ArrayList<>();
 
@@ -59,38 +54,9 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
   }
 
   private void sortMutationsIntoLineOrder() {
-    final Comparator<MutationResult> c = new Comparator<MutationResult>() {
-
-      @Override
-      public int compare(final MutationResult o1, final MutationResult o2) {
-        return o1.getDetails().getLineNumber()
-            - o2.getDetails().getLineNumber();
-      }
-
-    };
+    final Comparator<MutationResult> c = (o1, o2) -> o1.getDetails().getLineNumber()
+        - o2.getDetails().getLineNumber();
     Collections.sort(this.impl, c);
-  }
-
-  @Override
-  public boolean contains(final F<MutationResult, Boolean> predicate) {
-    return FCollection.contains(this.impl, predicate);
-  }
-
-  @Override
-  public FunctionalList<MutationResult> filter(
-      final F<MutationResult, Boolean> predicate) {
-    return FCollection.filter(this, predicate);
-  }
-
-  @Override
-  public <B> FunctionalList<B> flatMap(
-      final F<MutationResult, ? extends Iterable<B>> f) {
-    return FCollection.flatMap(this, f);
-  }
-
-  @Override
-  public void forEach(final SideEffect1<MutationResult> e) {
-    FCollection.forEach(this, e);
   }
 
   @Override
@@ -98,15 +64,8 @@ public class MutationResultList implements FunctionalIterable<MutationResult> {
     return this.impl.iterator();
   }
 
-  @Override
-  public <B> FunctionalList<B> map(final F<MutationResult, B> f) {
-    return FCollection.map(this, f);
-  }
-
-  @Override
-  public <B> void mapTo(final F<MutationResult, B> f,
-      final Collection<? super B> bs) {
-    FCollection.mapTo(this, f, bs);
+  public List<MutationResult> list() {
+    return impl;
   }
 
 }

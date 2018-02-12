@@ -16,8 +16,8 @@ package org.pitest.dependency;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Predicate;
 
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.Glob;
 
@@ -35,9 +35,9 @@ public class IgnoreCoreClasses implements Predicate<DependencyAccess> {
   }
 
   @Override
-  public Boolean apply(final DependencyAccess a) {
+  public boolean test(final DependencyAccess a) {
     final String owner = a.getDest().getOwner().replace("/", ".");
-    return this.impl.apply(owner);
+    return this.impl.test(owner);
   }
 
 }

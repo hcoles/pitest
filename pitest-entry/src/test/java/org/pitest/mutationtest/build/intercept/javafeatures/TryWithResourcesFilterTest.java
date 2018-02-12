@@ -11,37 +11,37 @@ public class TryWithResourcesFilterTest {
   private static final String             PATH      = "trywithresources/{0}_{1}";
 
   TryWithResourcesFilter testee = new TryWithResourcesFilter();
-  
-  FilterTester verifier = new FilterTester(PATH, testee, Mutator.defaults());
-    
+
+  FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.defaults());
+
   @Test
   public void shouldDeclareTypeAsFilter() {
     assertEquals(InterceptorType.FILTER, this.testee.type());
   }
-  
+
   @Test
   public void shouldWorkWithTry() {
-    verifier.assertLeavesNMutants(1, "TryExample");
+    this.verifier.assertLeavesNMutants(1, "TryExample");
   }
-  
+
   @Test
   public void shouldWorkWithTryCatch() {
-    verifier.assertLeavesNMutants(2, "TryCatchExample");
+    this.verifier.assertLeavesNMutants(2, "TryCatchExample");
   }
-  
+
   @Test
   public void shouldWorkWithTryWithInterface() {
-    verifier.assertLeavesNMutants(1, "TryWithInterfaceExample");
+    this.verifier.assertLeavesNMutants(1, "TryWithInterfaceExample");
   }
-  
+
   @Test
   public void shouldWorkWithTryWithNestedTry() {
-    verifier.assertLeavesNMutants(1, "TryWithNestedTryExample");
+    this.verifier.assertLeavesNMutants(1, "TryWithNestedTryExample");
   }
-  
+
   @Test
   public void shouldWorkWithTwoClosables() {
-    verifier.assertLeavesNMutants(1, "TryWithTwoCloseableExample");
+    this.verifier.assertLeavesNMutants(1, "TryWithTwoCloseableExample");
   }
-  
+
 }

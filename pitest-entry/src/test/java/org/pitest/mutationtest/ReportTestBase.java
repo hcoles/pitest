@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.junit.Before;
-import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
@@ -20,8 +20,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
@@ -52,7 +50,7 @@ public abstract class ReportTestBase {
     this.plugins = PluginServices.makeForContextLoader();
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
-    this.data.setGroupConfig(new TestGroupConfig());    
+    this.data.setGroupConfig(new TestGroupConfig());
     this.data.setTestPlugin("junit");
   }
 
@@ -97,7 +95,7 @@ public abstract class ReportTestBase {
   }
 
   protected void createAndRun() {
-    SettingsFactory settings = new SettingsFactory(this.data, this.plugins);
+    final SettingsFactory settings = new SettingsFactory(this.data, this.plugins);
     createAndRun(settings);
   }
 
@@ -110,8 +108,7 @@ public abstract class ReportTestBase {
           new DefaultJavaExecutableLocator(), this.data.getJvmArgs(),
           new HashMap<String, String>());
 
-      final PathFilter pf = new PathFilter(new True<ClassPathRoot>(),
-          new True<ClassPathRoot>());
+      final PathFilter pf = new PathFilter(p -> true, p -> true);
       final ProjectClassPaths cps = new ProjectClassPaths(
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 

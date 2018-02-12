@@ -36,7 +36,7 @@ import java.util.Map;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.PitError;
 
 /**
@@ -185,10 +185,10 @@ public class ComputeClassWriter extends ClassWriter {
    * @return the ClassReader corresponding to 'type'.
    */
   private ClassReader typeInfo(final String type) {
-    Option<byte[]> maybeBytes = this.bytes.getBytes(type);
-    if (maybeBytes.hasNone()) {
+    final Optional<byte[]> maybeBytes = this.bytes.getBytes(type);
+    if (!maybeBytes.isPresent()) {
       throw new PitError("Could not find class defintiion for " + type);
     }
-    return new ClassReader(maybeBytes.value());
+    return new ClassReader(maybeBytes.get());
   }
 }

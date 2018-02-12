@@ -121,218 +121,113 @@ public class CodeCoverageStoreTest {
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation1() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0]);
     assertLineCombinations(1, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation2() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1]);
     assertLineCombinations(2, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation3() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2]);
     assertLineCombinations(3, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation4() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3]);
     assertLineCombinations(4, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation5() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4]);
     assertLineCombinations(5, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation6() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5]);
     assertLineCombinations(6, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation7() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6]);
     assertLineCombinations(7, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation8() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7]);
     assertLineCombinations(8, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation9() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8]);
     assertLineCombinations(9, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation10() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9]);
     assertLineCombinations(10, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation11() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9], probes[10]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9], probes[10]);
     assertLineCombinations(11, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation12() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9], probes[10], probes[11]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9], probes[10], probes[11]);
     assertLineCombinations(12, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation13() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9], probes[10], probes[11], probes[12]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9], probes[10], probes[11], probes[12]);
     assertLineCombinations(13, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation14() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9], probes[10], probes[11], probes[12],
-            probes[13]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9], probes[10], probes[11], probes[12],
+        probes[13]);
     assertLineCombinations(14, se);
   }
 
   @Test
   public void shouldReportCorrectCoverageForSpecialisation15() {
-    final SideEffect2<Integer, boolean[]> se = new SideEffect2<Integer, boolean[]>() {
-
-      @Override
-      public void apply(final Integer classId, final boolean[] probes) {
-        CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
-            probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
-            probes[8], probes[9], probes[10], probes[11], probes[12],
-            probes[13], probes[14]);
-      }
-
-    };
+    final SideEffect2<Integer, boolean[]> se = (classId, probes) -> CodeCoverageStore.visitProbes(classId, 0, probes[0], probes[1],
+        probes[2], probes[3], probes[4], probes[5], probes[6], probes[7],
+        probes[8], probes[9], probes[10], probes[11], probes[12],
+        probes[13], probes[14]);
     assertLineCombinations(15, se);
   }
 
@@ -429,18 +324,14 @@ public class CodeCoverageStoreTest {
   }
 
   private static Runnable makeWriter(final int sleepPeriod) {
-    final Runnable write = new Runnable() {
-
-      @Override
-      public void run() {
-        for (int i = 0; i != 1000; i++) {
-          try {
-            Thread.sleep(sleepPeriod);
-          } catch (final InterruptedException e) {
-          }
-          final boolean b[] = new boolean[1000];
-          CodeCoverageStore.visitProbes(0, 0, b);
+    final Runnable write = () -> {
+      for (int i = 0; i != 1000; i++) {
+        try {
+          Thread.sleep(sleepPeriod);
+        } catch (final InterruptedException e) {
         }
+        final boolean b[] = new boolean[1000];
+        CodeCoverageStore.visitProbes(0, 0, b);
       }
     };
     return write;

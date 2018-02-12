@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public final class FeatureSetting {
 
   private final String feature;
   private final ToggleStatus status;
   private final Map<String,List<String>> settings = new HashMap<>();
-  
+
   public FeatureSetting(String feature, ToggleStatus status, Map<String, List<String>> settings) {
     this.feature = feature;
     this.status = status;
@@ -19,36 +19,36 @@ public final class FeatureSetting {
   }
 
   public String feature() {
-    return feature;
+    return this.feature;
   }
 
   public ToggleStatus status() {
-    return status;
+    return this.status;
   }
 
-  
+
   public boolean addsFeature() {
-    return status == ToggleStatus.ACTIVATE;
+    return this.status == ToggleStatus.ACTIVATE;
   }
 
   public boolean removesFeature() {
-    return status == ToggleStatus.DEACTIVATE;
+    return this.status == ToggleStatus.DEACTIVATE;
   }
-  
-  public Option<String> getString(String key) {
-    if (settings.containsKey(key)) {
-      List<String> vals = getList(key);
+
+  public Optional<String> getString(String key) {
+    if (this.settings.containsKey(key)) {
+      final List<String> vals = getList(key);
       if (vals.size() > 1) {
         throw new IllegalArgumentException("More than one value supplied for " + key);
       }
-      
-      return Option.some(vals.get(0));
+
+      return Optional.ofNullable(vals.get(0));
     }
-    return Option.none();
+    return Optional.empty();
   }
-  
+
   public List<String> getList(String key) {
-    return settings.get(key);
+    return this.settings.get(key);
   }
-  
+
 }

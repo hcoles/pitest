@@ -18,11 +18,11 @@ package org.pitest.mutationtest.execute;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.TestUnit;
 
@@ -47,26 +47,21 @@ public class TimeOutDecoratedTestSource {
   }
 
   public List<TestUnit> translateTests(final List<TestInfo> testsInOrder) {
-    return FCollection.flatMap(testsInOrder, testToTestUnit());
+    return testsInOrder.stream().flatMap(testToTestUnit()).collect(Collectors.toList());
   }
 
-  private F<TestInfo, Option<TestUnit>> testToTestUnit() {
-    return new F<TestInfo, Option<TestUnit>>() {
-
-      @Override
-      public Option<TestUnit> apply(final TestInfo a) {
-        final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
-            .getName());
-        if (tu != null) {
-          return Option
-              .<TestUnit> some(new MutationTimeoutDecorator(tu,
-                  new TimeOutSystemExitSideEffect(
-                      TimeOutDecoratedTestSource.this.r),
-                      TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
-        }
-        return Option.none();
+  private Function<TestInfo, Stream<TestUnit>> testToTestUnit() {
+    return a -> {
+      final TestUnit tu = TimeOutDecoratedTestSource.this.allTests.get(a
+          .getName());
+      if (tu != null) {
+        return Stream
+            .<TestUnit> of(new MutationTimeoutDecorator(tu,
+                new TimeOutSystemExitSideEffect(
+                    TimeOutDecoratedTestSource.this.r),
+                    TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));
       }
-
+      return Stream.empty();
     };
   }
 

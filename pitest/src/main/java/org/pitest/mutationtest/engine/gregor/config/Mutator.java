@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
@@ -146,7 +146,7 @@ public final class Mutator {
     add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
     add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
     addGroup("RETURNS", betterReturns());
-    
+
     /**
      * Experimental mutator that removed assignments to member variables.
      */
@@ -191,7 +191,7 @@ public final class Mutator {
 
   private static Collection<MethodMutatorFactory> combine(
       Collection<MethodMutatorFactory> a, Collection<MethodMutatorFactory> b) {
-    List<MethodMutatorFactory> l = new ArrayList<>(a);
+    final List<MethodMutatorFactory> l = new ArrayList<>(a);
     l.addAll(b);
     return l;
   }
@@ -208,7 +208,7 @@ public final class Mutator {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
   }
-  
+
   /**
    * Proposed new defaults - replaced the RETURN_VALS mutator with the new more stable set
    */
@@ -220,8 +220,8 @@ public final class Mutator {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
   }
-  
-  
+
+
   public static Collection<MethodMutatorFactory> betterReturns() {
     return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
         BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
@@ -259,25 +259,16 @@ public final class Mutator {
   }
 
   private static Comparator<? super MethodMutatorFactory> compareId() {
-    return new Comparator<MethodMutatorFactory>() {
-      @Override
-      public int compare(final MethodMutatorFactory o1,
-          final MethodMutatorFactory o2) {
-        return o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
-      }
-    };
+    return (o1, o2) -> o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
   }
 
-  private static F<String, Iterable<MethodMutatorFactory>> fromString() {
-    return new F<String, Iterable<MethodMutatorFactory>>() {
-      @Override
-      public Iterable<MethodMutatorFactory> apply(final String a) {
-        Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
-        if (i == null) {
-          throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
-        }
-        return i;
+  private static Function<String, Iterable<MethodMutatorFactory>> fromString() {
+    return a -> {
+      final Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
+      if (i == null) {
+        throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
       }
+      return i;
     };
   }
 

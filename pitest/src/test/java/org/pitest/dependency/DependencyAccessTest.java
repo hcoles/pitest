@@ -1,8 +1,8 @@
 package org.pitest.dependency;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class DependencyAccessTest {
 

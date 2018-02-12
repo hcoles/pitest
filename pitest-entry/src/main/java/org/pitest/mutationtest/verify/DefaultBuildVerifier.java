@@ -16,10 +16,10 @@ package org.pitest.mutationtest.verify;
  */
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
@@ -40,7 +40,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
   private boolean hasMutableCode(Collection<ClassInfo> codeClasses ) {
     return !codeClasses.isEmpty() && hasAtLeastOneClass(codeClasses);
   }
-  
+
   private boolean hasAtLeastOneClass(final Collection<ClassInfo> codeClasses) {
     return FCollection.contains(codeClasses, aConcreteClass());
   }
@@ -54,43 +54,24 @@ public class DefaultBuildVerifier implements BuildVerifier {
     }
   }
 
-  private static F<ClassInfo, Boolean> aConcreteClass() {
-    return new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return !a.isInterface();
-      }
-    };
+  private static Predicate<ClassInfo> aConcreteClass() {
+    return a -> !a.isInterface();
   }
-  
-  private static F<ClassInfo, Boolean> aClassWithLineNumbers() {
-    return new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(final ClassInfo a) {
-        return a.getNumberOfCodeLines() != 0;
-      }
 
-    };
+  private static Predicate<ClassInfo> aClassWithLineNumbers() {
+    return a -> a.getNumberOfCodeLines() != 0;
   }
 
   private SideEffect1<ClassInfo> throwErrorIfHasNoSourceFile() {
-    return new SideEffect1<ClassInfo>() {
-      @Override
-      public void apply(final ClassInfo a) {
-        if (a.getSourceFileName() == null) {
-          throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());
-        }
+    return a -> {
+      if (a.getSourceFileName() == null) {
+        throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());
       }
     };
   }
-  
-  private static F<ClassInfo, Boolean> isNotSynthetic() {
-    return new F<ClassInfo, Boolean>() {
-      @Override
-      public Boolean apply(ClassInfo a) {
-        return !a.isSynthetic();
-      }
-    };
+
+  private static Predicate<ClassInfo> isNotSynthetic() {
+    return a -> !a.isSynthetic();
   }
 
 }

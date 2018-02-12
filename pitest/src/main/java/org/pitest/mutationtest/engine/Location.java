@@ -23,7 +23,7 @@ import org.pitest.classinfo.ClassName;
  *
  */
 public final class Location implements Comparable<Location>, Serializable  {
-  
+
   private static final long serialVersionUID = 1L;
 
   private final ClassName  clazz;

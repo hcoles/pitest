@@ -7,10 +7,10 @@ import org.objectweb.asm.Opcodes;
 /**
  * Disables mutations in the conditional statements generated
  * by java compilers when switching on a string value.
- * 
+ *
  * Disable logic looks for a call to hashcode followed immediately by
  * a tableswitch or lookupswitch.
- * 
+ *
  * Mutation is renabled when the switch block is complete or a new line of code
  * is encountered.
  *
@@ -20,12 +20,12 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
   private static final String   DISABLE_REASON = "STRING_SWITCH";
 
   private final MutationContext context;
-  
+
   // Set to indicate a call to hashcode has been encountered.
   // Unset when other instructions hit so that we can detect if
   // calls directly follow each other
   private boolean               hashCodeWasLastCall;
-  
+
   private Label                 end;
 
   public AvoidStringSwitchedMethodAdapter(final MutationContext context,
@@ -39,9 +39,9 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
       final String name, final String desc, boolean itf) {
     if ((opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/String".equals(owner)
         && "hashCode".equals(name)) {
-      hashCodeWasLastCall = true;
+      this.hashCodeWasLastCall = true;
     } else {
-      hashCodeWasLastCall = false;
+      this.hashCodeWasLastCall = false;
     }
     super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
@@ -53,7 +53,7 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
     // generated code
     enableMutation();
   }
-    
+
   @Override
   public void visitTableSwitchInsn(int min, int max, Label dflt,
       Label... labels) {
@@ -61,9 +61,9 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
     // delegate first so switch statements will be mutated
     super.visitTableSwitchInsn(min, max, dflt, labels);
 
-    if (hashCodeWasLastCall) {
+    if (this.hashCodeWasLastCall) {
       this.context.disableMutations(DISABLE_REASON);
-      end = dflt;
+      this.end = dflt;
     }
   }
 
@@ -72,9 +72,9 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
     // delegate first so switch statements will be mutated
     super.visitLookupSwitchInsn(dflt, keys, labels);
 
-    if (hashCodeWasLastCall) {
+    if (this.hashCodeWasLastCall) {
       this.context.disableMutations(DISABLE_REASON);
-      end = dflt;
+      this.end = dflt;
     }
   }
 
@@ -86,22 +86,22 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
       enableMutation();
     }
   }
-  
+
   @Override
   public void visitJumpInsn(int opcode, Label label) {
-    hashCodeWasLastCall = false;
+    this.hashCodeWasLastCall = false;
     super.visitJumpInsn(opcode, label);
   }
 
   @Override
   public void visitIntInsn(int opcode, int operand) {
-    hashCodeWasLastCall = false;
+    this.hashCodeWasLastCall = false;
     super.visitIntInsn(opcode, operand);
   }
-  
+
   @Override
   public void visitInsn(int opcode) {
-    hashCodeWasLastCall = false;
+    this.hashCodeWasLastCall = false;
     super.visitInsn(opcode);
   }
 
@@ -114,7 +114,7 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
   private void enableMutation() {
     this.context.enableMutatations(DISABLE_REASON);
     this.end = null;
-    hashCodeWasLastCall = false;
+    this.hashCodeWasLastCall = false;
   }
 
 }

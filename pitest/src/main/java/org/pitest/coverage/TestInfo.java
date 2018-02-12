@@ -15,28 +15,30 @@
 package org.pitest.coverage;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
-import org.pitest.functional.Option;
+import java.util.Optional;
+
 
 public final class TestInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final String            name;
   private final String            definingClass;
 
   private final int               time;
   private final int               blocks;
-  private final Option<ClassName> testee;
+
+  private final ClassName         testee;
 
   public TestInfo(final String definingClass, final String name,
-      final int time, final Option<ClassName> testee, final int blocksCovered) {
+      final int time, final Optional<ClassName> testee, final int blocksCovered) {
     this.definingClass = internIfNotNull(definingClass);
     this.name = name;
     this.time = time;
-    this.testee = testee;
+    this.testee = testee.orElse(null);
     this.blocks = blocksCovered;
   }
 
@@ -57,29 +59,16 @@ public final class TestInfo implements Serializable {
     return this.name;
   }
 
-  public static F<TestInfo, String> toName() {
-    return new F<TestInfo, String>() {
-      @Override
-      public String apply(final TestInfo a) {
-        return a.getName();
-      }
-
-    };
+  public static Function<TestInfo, String> toName() {
+    return a -> a.getName();
   }
 
-  public static F<TestInfo, ClassName> toDefiningClassName() {
-    return new F<TestInfo, ClassName>() {
-
-      @Override
-      public ClassName apply(final TestInfo a) {
-        return ClassName.fromString(a.definingClass);
-      }
-
-    };
+  public static Function<TestInfo, ClassName> toDefiningClassName() {
+    return a -> ClassName.fromString(a.definingClass);
   }
 
   public boolean directlyHits(final ClassName targetClass) {
-    return this.testee.hasSome() && this.testee.value().equals(targetClass);
+    return this.testee != null && this.testee.equals(targetClass);
   }
 
   @Override
@@ -121,7 +110,7 @@ public final class TestInfo implements Serializable {
     }
     return true;
   }
-  
+
   private static String internIfNotNull(final String string) {
     if (string == null) {
       return null;

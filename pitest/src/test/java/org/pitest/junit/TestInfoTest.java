@@ -16,8 +16,6 @@ package org.pitest.junit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +23,9 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.util.IsolationUtils;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestInfoTest {
 
@@ -41,7 +42,7 @@ public class TestInfoTest {
     class JU3Test extends TestCase {
 
     }
-    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(JU3Test.class)));
   }
 
   @Test
@@ -49,17 +50,17 @@ public class TestInfoTest {
     class JU3Test extends TestSuite {
 
     }
-    assertTrue(TestInfo.isATest().apply(fetchClass(JU3Test.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(JU3Test.class)));
   }
 
   @Test
   public void isATestShouldReturnTrueForJUnit4Tests() {
-    assertTrue(TestInfo.isATest().apply(fetchClass(TestInfoTest.class)));
+    assertTrue(TestInfo.isATest().test(fetchClass(TestInfoTest.class)));
   }
 
   @Test
   public void isATestShouldReturnFalseForNonTests() {
-    assertFalse(TestInfo.isATest().apply(fetchClass(String.class)));
+    assertFalse(TestInfo.isATest().test(fetchClass(String.class)));
   }
 
   static class Nested {
@@ -72,7 +73,7 @@ public class TestInfoTest {
   }
 
   private ClassInfo fetchClass(final Class<?> clazz) {
-    return this.repository.fetchClass(clazz).value();
+    return this.repository.fetchClass(clazz).get();
   }
 
 }

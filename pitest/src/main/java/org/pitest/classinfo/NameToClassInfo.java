@@ -1,9 +1,10 @@
 package org.pitest.classinfo;
 
-import org.pitest.functional.F;
-import org.pitest.functional.Option;
+import java.util.function.Function;
 
-public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
+import java.util.Optional;
+
+public class NameToClassInfo implements Function<ClassName, Optional<ClassInfo>> {
 
   private final ClassInfoSource repository;
 
@@ -12,7 +13,7 @@ public class NameToClassInfo implements F<ClassName, Option<ClassInfo>> {
   }
 
   @Override
-  public Option<ClassInfo> apply(final ClassName a) {
+  public Optional<ClassInfo> apply(final ClassName a) {
     return this.repository.fetchClass(a);
   }
 

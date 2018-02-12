@@ -17,7 +17,7 @@ import org.pitest.util.Log;
  * Assigns tests based on line coverage and order them by execution speed with a
  * weighting towards tests whose names imply they are intended to test the
  * mutated class
- * 
+ *
  * @author henry
  *
  */

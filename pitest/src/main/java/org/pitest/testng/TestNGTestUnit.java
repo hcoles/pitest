@@ -17,8 +17,8 @@ package org.pitest.testng;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
 import java.util.List;
+
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestGroupConfig;
@@ -50,7 +50,7 @@ public class TestNGTestUnit extends AbstractTestUnit {
     TESTNG.addListener(LISTENER);
     TESTNG.addInvokedMethodListener(new FailFast(LISTENER));
   }
-  
+
   private final Class<?>                     clazz;
   private final TestGroupConfig              config;
   private final Collection<String> includedTestMethods;
@@ -102,9 +102,9 @@ public class TestNGTestUnit extends AbstractTestUnit {
     test.setXmlClasses(Collections.singletonList(xclass));
 
     if (!this.includedTestMethods.isEmpty()) {
-      List<XmlInclude> xmlIncludedTestMethods = new ArrayList<>();
-      for (String includedTestMethod : includedTestMethods) {
-        XmlInclude includedMethod = new XmlInclude(includedTestMethod);
+      final List<XmlInclude> xmlIncludedTestMethods = new ArrayList<>();
+      for (final String includedTestMethod : this.includedTestMethods) {
+        final XmlInclude includedMethod = new XmlInclude(includedTestMethod);
         xmlIncludedTestMethods.add(includedMethod);
       }
       xclass.setIncludedMethods(xmlIncludedTestMethods);
@@ -124,63 +124,71 @@ public class TestNGTestUnit extends AbstractTestUnit {
 }
 
 class FailFast implements IInvokedMethodListener {
-  
+
   private final FailureTracker listener;
-  
+
   FailFast(FailureTracker listener) {
     this.listener = listener;
   }
 
   @Override
   public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-    if (listener.hasHadFailure()) {
+    if (this.listener.hasHadFailure()) {
       throw new SkipException("Skipping");
     }
   }
 
   @Override
   public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
- 
+
   }
-  
+
 }
 
 class MutableTestListenerWrapper implements ITestListener, FailureTracker {
   private TestNGAdapter child;
-  
+
   public void setChild(TestNGAdapter child) {
     this.child = child;
   }
 
+  @Override
   public boolean hasHadFailure() {
-    return child.hasHadFailure();
+    return this.child.hasHadFailure();
   }
 
+  @Override
   public void onTestStart(ITestResult result) {
-    child.onTestStart(result);
+    this.child.onTestStart(result);
   }
 
+  @Override
   public void onTestSuccess(ITestResult result) {
-    child.onTestSuccess(result);
+    this.child.onTestSuccess(result);
   }
 
+  @Override
   public void onTestFailure(ITestResult result) {
-    child.onTestFailure(result);
+    this.child.onTestFailure(result);
   }
 
+  @Override
   public void onTestSkipped(ITestResult result) {
-    child.onTestSkipped(result);
+    this.child.onTestSkipped(result);
   }
 
+  @Override
   public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-    child.onTestFailedButWithinSuccessPercentage(result);
+    this.child.onTestFailedButWithinSuccessPercentage(result);
   }
 
+  @Override
   public void onStart(ITestContext context) {
-    child.onStart(context);
+    this.child.onStart(context);
   }
 
+  @Override
   public void onFinish(ITestContext context) {
-    child.onFinish(context);
+    this.child.onFinish(context);
   }
 }

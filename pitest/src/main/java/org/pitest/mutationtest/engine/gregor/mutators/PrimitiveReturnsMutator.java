@@ -17,7 +17,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
-/** 
+/**
  * Replaces primitive return values with 0. Does not mutate boolean
  * returns as these are handled by the BooleanFalseReturn mutator
  */
@@ -28,7 +28,7 @@ public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-      
+
     if (!returnsBoolean(methodInfo)) {
       return new PrimitivesReturnValsMethodVisitor(this, methodInfo, context,
           methodVisitor);
@@ -39,7 +39,7 @@ public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
   }
 
   private boolean returnsBoolean(MethodInfo methodInfo) {
-    int sort = Type.getReturnType(methodInfo.getMethodDescriptor()).getSort();
+    final int sort = Type.getReturnType(methodInfo.getMethodDescriptor()).getSort();
     return sort == Type.BOOLEAN;
   }
 
@@ -60,7 +60,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
   PrimitivesReturnValsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer); 
+    super(factory, methodInfo, context, writer);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
@@ -143,10 +143,10 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       private String makeMessage(String methodDescriptor) {
-        int sort = Type.getReturnType(methodDescriptor).getSort();
+        final int sort = Type.getReturnType(methodDescriptor).getSort();
         switch (sort) {
         case Type.BYTE:
-          return "replaced byte return with 0";        
+          return "replaced byte return with 0";
         case Type.INT:
           return "replaced int return with 0";
         case Type.CHAR:

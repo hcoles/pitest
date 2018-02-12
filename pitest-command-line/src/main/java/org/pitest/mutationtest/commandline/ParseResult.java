@@ -14,28 +14,28 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.config.ReportOptions;
 
 public class ParseResult {
 
   private final ReportOptions  options;
-  private final Option<String> errorMessage;
+  private final Optional<String> errorMessage;
 
   public ParseResult(final ReportOptions options, final String errorMessage) {
     this.options = options;
-    this.errorMessage = Option.some(errorMessage);
+    this.errorMessage = Optional.ofNullable(errorMessage);
   }
 
   public boolean isOk() {
-    return this.errorMessage.hasNone();
+    return !this.errorMessage.isPresent();
   }
 
   public ReportOptions getOptions() {
     return this.options;
   }
 
-  public Option<String> getErrorMessage() {
+  public Optional<String> getErrorMessage() {
     return this.errorMessage;
   }
 

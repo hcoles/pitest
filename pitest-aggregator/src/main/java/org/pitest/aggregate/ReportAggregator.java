@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockCoverage;
@@ -17,9 +18,8 @@ import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
@@ -47,7 +47,7 @@ public final class ReportAggregator {
   }
 
   public void aggregateReport() throws ReportAggregationException {
-    final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(mutationLoader.loadData()));
+    final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(this.mutationLoader.loadData()));
 
     final MutationResultListener mutationResultListener = createResultListener(mutationMetaData);
 
@@ -60,33 +60,30 @@ public final class ReportAggregator {
   }
 
   private MutationResultListener createResultListener(final MutationMetaData mutationMetaData) throws ReportAggregationException {
-    final SourceLocator sourceLocator = new SmartSourceLocator(sourceCodeDirectories);
+    final SourceLocator sourceLocator = new SmartSourceLocator(this.sourceCodeDirectories);
 
-    final CodeSource codeSource = codeSourceAggregator.createCodeSource();
+    final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final CoverageDatabase coverageDatabase = calculateCoverage(codeSource, mutationMetaData);
     final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
 
-    return new MutationHtmlReportListener(coverageDatabase, resultOutputStrategy, mutatorNames, sourceLocator);
+    return new MutationHtmlReportListener(coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
   }
 
-  private static F<MutationResult, List<String>> resultToMutatorName() {
-    return new F<MutationResult, List<String>>() {
-      @Override
-      public List<String> apply(final MutationResult a) {
-        try {
-          final String mutatorName = MutatorUtil.loadMutator(a.getDetails().getMutator()).getName();
-          return Collections.singletonList(mutatorName);
-        } catch (final Exception e) {
-          throw new RuntimeException("Cannot convert to mutator: " + a.getDetails().getMutator(), e);
-        }
+  private static Function<MutationResult, List<String>> resultToMutatorName() {
+    return a -> {
+      try {
+        final String mutatorName = MutatorUtil.loadMutator(a.getDetails().getMutator()).getName();
+        return Collections.singletonList(mutatorName);
+      } catch (final Exception e) {
+        throw new RuntimeException("Cannot convert to mutator: " + a.getDetails().getMutator(), e);
       }
     };
   }
 
   private CoverageData calculateCoverage(final CodeSource codeSource, final MutationMetaData metadata) throws ReportAggregationException {
-    final Collection<BlockCoverage> coverageData = blockCoverageLoader.loadData();
+    final Collection<BlockCoverage> coverageData = this.blockCoverageLoader.loadData();
     try {
-      Map<BlockLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
+      final Map<BlockLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
       return new CoverageData(codeSource, new LineMapper(codeSource),blockCoverageMap);
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
@@ -103,13 +100,8 @@ public final class ReportAggregator {
     return blockCoverageMap;
   }
 
-  private F<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
-    return new F<String, TestInfo>() {
-      @Override
-      public TestInfo apply(final String a) {
-        return new TestInfo(null, a, 0, Option.some(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
-      }
-    };
+  private Function<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
+    return a -> new TestInfo(null, a, 0, Optional.ofNullable(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
   }
 
   public static Builder builder() {
@@ -185,31 +177,31 @@ public final class ReportAggregator {
     }
 
     public Set<File> getCompiledCodeDirectories() {
-      return compiledCodeDirectories;
+      return this.compiledCodeDirectories;
     }
 
     public Set<File> getLineCoverageFiles() {
-      return lineCoverageFiles;
+      return this.lineCoverageFiles;
     }
 
     public Set<File> getMutationResultsFiles() {
-      return mutationResultsFiles;
+      return this.mutationResultsFiles;
     }
 
     public Set<File> getSourceCodeDirectories() {
-      return sourceCodeDirectories;
+      return this.sourceCodeDirectories;
     }
 
     public ReportAggregator build() {
       validateState();
-      return new ReportAggregator(resultOutputStrategy, lineCoverageFiles, mutationResultsFiles, sourceCodeDirectories, compiledCodeDirectories);
+      return new ReportAggregator(this.resultOutputStrategy, this.lineCoverageFiles, this.mutationResultsFiles, this.sourceCodeDirectories, this.compiledCodeDirectories);
     }
 
     /*
      * Validators
      */
     private void validateState() {
-      if (resultOutputStrategy == null) {
+      if (this.resultOutputStrategy == null) {
         throw new IllegalStateException("Failed to build: the resultOutputStrategy has not been set");
       }
       if (this.lineCoverageFiles.isEmpty()) {

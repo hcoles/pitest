@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 public class SequenceQuery<T> {
-  
+
   private final Partial<T> token;
-  
+
   SequenceQuery(Partial<T> token) {
     this.token = token;
   }
@@ -37,19 +37,19 @@ public class SequenceQuery<T> {
     final Concat<T> concat = new Concat<>(this.token, new Repeat<>(next.token));
     return new SequenceQuery<>(concat);
   }
-  
+
   public SequenceQuery<T> oneOrMore(SequenceQuery<T> next) {
     final Concat<T> concat = new Concat<>(this.token, new Plus<>(next.token));
     return new SequenceQuery<>(concat);
   }
-  
+
   public SequenceMatcher<T> compile() {
     return compile(QueryParams.<T>params());
   }
 
   @SuppressWarnings("unchecked")
   public SequenceMatcher<T> compile(QueryParams<T> params) {
-    return new NFASequenceMatcher<>(params.ignoring(), 
+    return new NFASequenceMatcher<>(params.ignoring(),
         this.token.make(EndMatch.MATCH), params.isDebug());
   }
 
@@ -149,11 +149,11 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
     this.start = state;
     this.debug = debug;
   }
-  
+
 
   @Override
   public boolean matches(List<T> sequence) {
-    return matches(sequence, Context.start(sequence, debug));
+    return matches(sequence, Context.start(sequence, this.debug));
   }
 
   @Override
@@ -161,20 +161,20 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
     Set<State<T>> currentState = new HashSet<>();
     addstate(currentState, this.start);
 
-    for (T t : sequence) {      
+    for (final T t : sequence) {
       context.moveForward();
-      
-      if (ignore.test(context, t)) {
+
+      if (this.ignore.test(context, t)) {
         continue;
       }
-      
+
       final Set<State<T>> nextStates = step(context, currentState, t);
       currentState = nextStates;
     }
     return isMatch(currentState);
   }
 
-  
+
   private static <T> void addstate(Set<State<T>> set, State<T> state) {
     if (state == null) {
       return;
@@ -221,9 +221,9 @@ class Consume<T> implements State<T> {
     this.c = c;
     this.out = out;
   }
-  
+
   boolean matches(Context<T> context, T t) {
-    return c.test(context, t);
+    return this.c.test(context, t);
   }
 }
 

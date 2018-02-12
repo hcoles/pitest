@@ -15,12 +15,10 @@ import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
@@ -28,78 +26,78 @@ public class ExcludedAnnotationInterceptorTest {
 
   ExcludedAnnotationInterceptor testee = new ExcludedAnnotationInterceptor(Arrays.asList("TestGeneratedAnnotation", "AnotherTestAnnotation"));
   Mutater mutator;
-  
+
   @Before
   public void setUp() {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
-    mutator = new GregorMutater(source, True.<MethodInfo>all(), mutators);
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    this.mutator = new GregorMutater(source, m -> true, mutators);
   }
-    
-  
+
+
   @Test
   public void shouldDeclareSelfAsFilter() {
-    assertThat(testee.type()).isEqualTo(InterceptorType.FILTER);
+    assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
   }
-  
+
   @Test
   public void shouldNotFilterMutationsWhenNoAnnotations() {
-    Collection<MutationDetails> input = someMutations();
-    Collection<MutationDetails> actual = runWithTestee(input, UnAnnotated.class);
+    final Collection<MutationDetails> input = someMutations();
+    final Collection<MutationDetails> actual = runWithTestee(input, UnAnnotated.class);
     assertThat(actual).containsExactlyElementsOf(input);
   }
 
   @Test
   public void shouldFilterAllMutationsForClassesWithGeneratedAnnotation() {
-    Collection<MutationDetails> actual = runWithTestee(someMutations(), AnnotatedWithGenerated.class);
+    final Collection<MutationDetails> actual = runWithTestee(someMutations(), AnnotatedWithGenerated.class);
     assertThat(actual).isEmpty();
   }
-  
+
   @Test
   public void shouldFilterAllMutationsForClassesWithDoNoMutateAnnotation() {
-    Collection<MutationDetails> actual = runWithTestee(someMutations(), AnnotatedWithDoNotMutate.class);
+    final Collection<MutationDetails> actual = runWithTestee(someMutations(), AnnotatedWithDoNotMutate.class);
     assertThat(actual).isEmpty();
   }
-  
+
   @Test
   public void shouldFilterMethodsWithGeneratedAnnotation() {
-    List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MethodAnnotatedWithGenerated.class));
-    Collection<MutationDetails> actual = runWithTestee(mutations, MethodAnnotatedWithGenerated.class);
+    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(MethodAnnotatedWithGenerated.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, MethodAnnotatedWithGenerated.class);
     assertThat(actual).hasSize(1);
     assertThat(actual.iterator().next().getId().getLocation().getMethodName().name()).isEqualTo("bar");
   }
-  
+
   private Collection<MutationDetails> runWithTestee(
       Collection<MutationDetails> input, Class<?> clazz) {
-    testee.begin(treeFor(clazz));
-    Collection<MutationDetails> actual = testee.intercept(input, mutator);
+    this.testee.begin(treeFor(clazz));
+    final Collection<MutationDetails> actual = this.testee.intercept(input, this.mutator);
     return actual;
   }
-  
+
   private Collection<MutationDetails> someMutations() {
     return aMutationDetail().build(2);
   }
 
   ClassTree treeFor(Class<?> clazz) {
-    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    return ClassTree.fromBytes(source.getBytes(clazz.getName()).value());
+    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    return ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
   }
-  
-  
+
+
 }
 
 class UnAnnotated {
-  
+
 }
 
 @TestGeneratedAnnotation
 class AnnotatedWithGenerated {
-  
+
 }
 
 @AnotherTestAnnotation
 class AnnotatedWithDoNotMutate {
-  
+
 }
 
 class MethodAnnotatedWithGenerated {
@@ -107,20 +105,20 @@ class MethodAnnotatedWithGenerated {
   public void foo() {
     System.out.println("don't mutate me");
   }
-  
+
   public void bar() {
-    System.out.println("mutate me"); 
+    System.out.println("mutate me");
   }
 }
 
 @Retention(value=RetentionPolicy.RUNTIME)
 @interface TestGeneratedAnnotation {
-  
+
 }
 
 @Retention(value=RetentionPolicy.CLASS)
 @interface AnotherTestAnnotation {
-  
+
 }
 
 

@@ -16,7 +16,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
-/** 
+/**
  * Replaces primitive and boxed boolean return values with false
  */
 public enum BooleanFalseReturnValsMutator implements MethodMutatorFactory {
@@ -26,12 +26,12 @@ public enum BooleanFalseReturnValsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    
-    Type returnType = Type.getReturnType(methodInfo.getMethodDescriptor());
-    if (returnType.getSort() == Type.BOOLEAN 
+
+    final Type returnType = Type.getReturnType(methodInfo.getMethodDescriptor());
+    if ((returnType.getSort() == Type.BOOLEAN)
      || returnType.getClassName().equals("java.lang.Boolean")) {
       return new BooleanFalseMethodVisitor(this, methodInfo, context,
-          methodVisitor); 
+          methodVisitor);
     }
 
     return methodVisitor;
@@ -55,7 +55,7 @@ class BooleanFalseMethodVisitor extends AbstractInsnMutator {
   BooleanFalseMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer); 
+    super(factory, methodInfo, context, writer);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
@@ -81,7 +81,7 @@ class BooleanFalseMethodVisitor extends AbstractInsnMutator {
       }
     };
   }
-  
+
   private static ZeroOperandMutation areturnMutation() {
     return new ZeroOperandMutation() {
       @Override

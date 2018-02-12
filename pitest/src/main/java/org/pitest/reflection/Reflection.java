@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.pitest.functional.FArray;
-import org.pitest.functional.predicate.Predicate;
 
 /**
  * @author henry
@@ -64,13 +64,7 @@ public abstract class Reflection {
 
   public static Method publicMethod(final Class<? extends Object> clazz,
       final String name) {
-    final Predicate<Method> p = new Predicate<Method>() {
-      @Override
-      public Boolean apply(final Method a) {
-        return a.getName().equals(name);
-      }
-
-    };
+    final Predicate<Method> p = a -> a.getName().equals(name);
     return publicMethod(clazz, p);
 
   }

@@ -21,12 +21,12 @@ public class BlockCoverageDataLoaderTest {
     final URL url = MutationResultDataLoaderTest.class.getResource("/full-data/linecoverage.xml");
     final File file = new File(url.toURI());
 
-    underTest = new BlockCoverageDataLoader(Arrays.asList(file));
+    this.underTest = new BlockCoverageDataLoader(Arrays.asList(file));
   }
 
   @Test
   public void testLoadData() throws Exception {
-    final Collection<BlockCoverage> results = underTest.loadData();
+    final Collection<BlockCoverage> results = this.underTest.loadData();
 
     assertNotNull(results);
     assertEquals(5, results.size());

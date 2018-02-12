@@ -14,19 +14,18 @@
  */
 package org.pitest.classinfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import org.junit.Test;
-import org.pitest.functional.Option;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class ClassNameTest {
 
@@ -144,29 +143,30 @@ public class ClassNameTest {
 
   @Test
   public void nameToClassShouldReturnClassWhenKnownToLoader() {
-    assertEquals(Option.some(String.class),
-        ClassName.nameToClass().apply(ClassName.fromString("java.lang.String")));
+    assertThat(ClassName.nameToClass().apply(ClassName.fromString("java.lang.String")))
+    .contains(String.class);
   }
 
   @Test
-  public void stringToClassShouldReturnNoneWhenClassNotKnownToLoader() {
-    assertEquals(Option.none(),
-        ClassName.nameToClass().apply(ClassName.fromString("org.unknown.Unknown")));
+  public void stringToClassShouldReturnEmptyWhenClassNotKnownToLoader() {
+    assertThat(ClassName.nameToClass()
+        .apply(ClassName.fromString("org.unknown.Unknown")))
+    .isEmpty();
   }
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
     EqualsVerifier.forClass(ClassName.class).verify();
   }
-  
+
   @Test
   public void shouldUseCachedInstancesForObject() {
-    assertThat(ClassName.fromClass(Object.class)).isSameAs(ClassName.fromClass(Object.class));      
+    assertThat(ClassName.fromClass(Object.class)).isSameAs(ClassName.fromClass(Object.class));
   }
-  
+
   @Test
   public void shouldUseCachedInstancesForString() {
-    assertThat(ClassName.fromClass(String.class)).isSameAs(ClassName.fromClass(String.class));       
+    assertThat(ClassName.fromClass(String.class)).isSameAs(ClassName.fromClass(String.class));
   }
 
 }

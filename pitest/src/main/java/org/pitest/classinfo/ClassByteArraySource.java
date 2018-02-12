@@ -14,7 +14,7 @@
  */
 package org.pitest.classinfo;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public interface ClassByteArraySource {
 
@@ -23,6 +23,6 @@ public interface ClassByteArraySource {
    * @param clazz classname in com.example.Foo format
    * @return bytes option of byte[]
    */
-  Option<byte[]> getBytes(String clazz);
+  Optional<byte[]> getBytes(String clazz);
 
 }

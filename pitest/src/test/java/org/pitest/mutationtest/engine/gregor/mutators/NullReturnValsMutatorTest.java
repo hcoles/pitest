@@ -11,25 +11,25 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class NullReturnValsMutatorTest extends MutatorTestBase {
-  
+
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
     createTesteeWith(NullReturnValsMutator.NULL_RETURN_VALUES);
   }
-  
+
   @Test
   public void mutatesObjectReturnValuesToNull() throws Exception {
     assertMutantCallableReturns(new ObjectReturn(),
         createFirstMutant(ObjectReturn.class), null);
   }
-  
+
   @Test
   public void doesNotMutateMethodsAnnotatedWithNotNull() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(
         AnnotatedObjectReturn.class);
     assertThat(actual).isEmpty();
   }
-  
+
   @Test
   public void mutatesMethodsWithOtherAnnoations() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(
@@ -37,28 +37,28 @@ public class NullReturnValsMutatorTest extends MutatorTestBase {
     assertThat(actual).hasSize(1);
   }
 
-  
+
   @Test
   public void doesNotMutateMethodsAnnotatedWithNotNullAndOthers() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(
         MultipleAnnotatedObjectReturn.class);
     assertThat(actual).isEmpty();
-  } 
+  }
 
-  
+
   @Test
   public void describesMutationsToObject() {
     assertMutantDescriptionIncludes("replaced return value with null", ObjectReturn.class);
     assertMutantDescriptionIncludes("ObjectReturn::call", ObjectReturn.class);
   }
-  
+
   private static class ObjectReturn implements Callable<Object> {
     @Override
     public Object call() throws Exception {
       return "";
     }
   }
-  
+
   private static class AnnotatedObjectReturn implements Callable<Object> {
     @Override
     @NotNull
@@ -66,7 +66,7 @@ public class NullReturnValsMutatorTest extends MutatorTestBase {
       return "";
     }
   }
-  
+
   private static class HasOtherAnnotation implements Callable<Object> {
     @Override
     @SomethingElse
@@ -74,7 +74,7 @@ public class NullReturnValsMutatorTest extends MutatorTestBase {
       return "";
     }
   }
-  
+
   private static class MultipleAnnotatedObjectReturn implements Callable<Object> {
     @Override
     @NotNull
@@ -86,7 +86,7 @@ public class NullReturnValsMutatorTest extends MutatorTestBase {
 }
 
 @interface SomethingElse {
-  
+
 }
 
 @interface NotNull {

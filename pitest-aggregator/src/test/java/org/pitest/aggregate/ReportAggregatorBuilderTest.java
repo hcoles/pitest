@@ -27,96 +27,96 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testLineCoverageFiles_withNull() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().lineCoverageFiles(Arrays.asList(getCoverageFile(), null, getCoverageFile()));
   }
 
   @Test
   public void testLineCoverageFiles_withFake() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().lineCoverageFiles(Arrays.asList(new File("doesnotexist.xml")));
   }
 
   @Test
   public void testLineCoverageFiles_withDir() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().lineCoverageFiles(Arrays.asList(getSourceDirectory()));
   }
 
   @Test
   public void testMutationResultsFiles_withNull() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().mutationResultsFiles(Arrays.asList(getMutationFile(), null, getMutationFile()));
   }
 
   @Test
   public void testMutationResultsFiles_withFake() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().mutationResultsFiles(Arrays.asList(new File("doesnotexist.xml")));
   }
 
   @Test
   public void testMutationResultsFiles_withDir() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().mutationResultsFiles(Arrays.asList(getTestSourceDirectory()));
   }
 
   @Test
   public void testSourceCodeDirectories_withNull() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(getSourceDirectory(), null, getTestSourceDirectory()));
   }
 
   @Test
   public void testSourceCodeDirectories_withFake() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(new File("fakedirectory")));
   }
 
   @Test
   public void testSourceCodeDirectories_withFile() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(getCoverageFile()));
   }
 
   @Test
   public void testCompiledCodeDirectories_withNull() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(getCompiledDirectory(), null, getTestCompiledDirectory()));
   }
 
   @Test
   public void testCompiledCodeDirectories_withFake() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(new File("fakedirectory")));
   }
 
   @Test
   public void testCompiledCodeDirectories_withFile() {
-    expected.expect(IllegalArgumentException.class);
-    expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expect(IllegalArgumentException.class);
+    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(getMutationFile()));
   }
@@ -134,8 +134,8 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testBuild_missingOutputStrategy() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage(Matchers.containsString("resultOutputStrategy"));
+    this.expected.expect(IllegalStateException.class);
+    this.expected.expectMessage(Matchers.containsString("resultOutputStrategy"));
     ReportAggregator.builder() // create builder
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
@@ -146,8 +146,8 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testBuild_missingCoverageFiles() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage(Matchers.containsString("lineCoverageFiles"));
+    this.expected.expect(IllegalStateException.class);
+    this.expected.expectMessage(Matchers.containsString("lineCoverageFiles"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
@@ -158,8 +158,8 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testBuild_missingMutationResultsFiles() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage(Matchers.containsString("mutationResultsFiles"));
+    this.expected.expect(IllegalStateException.class);
+    this.expected.expectMessage(Matchers.containsString("mutationResultsFiles"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
@@ -170,8 +170,8 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testBuild_missingCompiledCodeDirectories() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage(Matchers.containsString("compiledCodeDirectories"));
+    this.expected.expect(IllegalStateException.class);
+    this.expected.expectMessage(Matchers.containsString("compiledCodeDirectories"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
@@ -182,8 +182,8 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testBuild_missingSourceCodeDirectories() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage(Matchers.containsString("sourceCodeDirectories"));
+    this.expected.expect(IllegalStateException.class);
+    this.expected.expectMessage(Matchers.containsString("sourceCodeDirectories"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles

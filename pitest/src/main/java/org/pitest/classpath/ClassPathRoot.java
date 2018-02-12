@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public interface ClassPathRoot {
 
@@ -30,6 +30,6 @@ public interface ClassPathRoot {
 
   Collection<String> classNames();
 
-  Option<String> cacheLocation();
+  Optional<String> cacheLocation();
 
 }

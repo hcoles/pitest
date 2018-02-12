@@ -21,13 +21,13 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.Reader;
 import java.util.Collections;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.F;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class DirectorySourceLocatorTest {
 
@@ -35,7 +35,7 @@ public class DirectorySourceLocatorTest {
   private File                   root;
 
   @Mock
-  F<File, Option<Reader>>        locator;
+  Function<File, Optional<Reader>>        locator;
 
   @Before
   public void setUp() {
@@ -43,7 +43,7 @@ public class DirectorySourceLocatorTest {
     this.root = new File(".");
     this.testee = new DirectorySourceLocator(this.root, this.locator);
     when(this.locator.apply(any(File.class)))
-    .thenReturn(Option.<Reader> none());
+    .thenReturn(Optional.<Reader> empty());
   }
 
   @Test

@@ -74,5 +74,5 @@ public class GlobTest {
     assertTrue(glob.matches("foo!!!bar!!!car"));
     assertFalse(glob.matches("foo!!!Bar!!!car"));
   }
-  
+
 }

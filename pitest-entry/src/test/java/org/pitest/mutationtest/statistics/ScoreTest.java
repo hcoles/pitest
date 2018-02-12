@@ -19,10 +19,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.util.StringUtil;
@@ -135,16 +135,9 @@ public class ScoreTest {
     }
   }
 
-  private F<StatusCount, Boolean> countFor(final DetectionStatus each,
+  private Predicate<StatusCount> countFor(final DetectionStatus each,
       final int count) {
-    return new F<StatusCount, Boolean>() {
-
-      @Override
-      public Boolean apply(final StatusCount a) {
-        return a.getStatus().equals(each) && (a.getCount() == count);
-      }
-
-    };
+    return a -> a.getStatus().equals(each) && (a.getCount() == count);
   }
 
 }

@@ -36,12 +36,12 @@ public final class JUnitVersion implements Comparable<JUnitVersion> {
             return 1;
         }
 
-        if (major != that.major) {
-            return major - that.major;
+        if (this.major != that.major) {
+            return this.major - that.major;
         }
 
-        if (minor != that.minor) {
-            return minor - that.minor;
+        if (this.minor != that.minor) {
+            return this.minor - that.minor;
         }
 
         return 0;
@@ -69,8 +69,8 @@ public final class JUnitVersion implements Comparable<JUnitVersion> {
 
     @Override
     public int hashCode() {
-        int result = major;
-        result = 31 * result + minor;
+        int result = this.major;
+        result = (31 * result) + this.minor;
         return result;
     }
 
@@ -85,12 +85,12 @@ public final class JUnitVersion implements Comparable<JUnitVersion> {
 
         final JUnitVersion that = (JUnitVersion) o;
 
-        return major == that.major && minor == that.minor;
+        return (this.major == that.major) && (this.minor == that.minor);
 
     }
 
     @Override
     public String toString() {
-        return major + "." + minor;
+        return this.major + "." + this.minor;
     }
 }

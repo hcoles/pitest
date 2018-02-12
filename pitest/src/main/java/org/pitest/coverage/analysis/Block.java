@@ -59,10 +59,10 @@ public final class Block {
   }
 
   public int getFirstInstruction() {
-    return firstInstruction;
+    return this.firstInstruction;
   }
 
   public int getLastInstruction() {
-    return lastInstruction;
+    return this.lastInstruction;
   }
 }

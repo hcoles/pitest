@@ -16,13 +16,13 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
 
   public CompoundMutationInterceptor(List<? extends MutationInterceptor> interceptors) {
     this.children.addAll(interceptors);
-    Collections.sort(children, sortByType());
+    Collections.sort(this.children, sortByType());
   }
 
   public static MutationInterceptor nullInterceptor() {
     return new CompoundMutationInterceptor(Collections.<MutationInterceptor>emptyList());
   }
-  
+
   @Override
   public void begin(ClassTree clazz) {
     for (final MutationInterceptor each : this.children) {
@@ -51,15 +51,9 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
   public InterceptorType type() {
     return InterceptorType.OTHER;
   }
-  
+
   private static Comparator<? super MutationInterceptor> sortByType() {
-    return new Comparator<MutationInterceptor>() {
-      @Override
-      public int compare(MutationInterceptor o1, MutationInterceptor o2) {
-        return o1.type().compareTo(o2.type());
-      }
-      
-    };
+    return (o1, o2) -> o1.type().compareTo(o2.type());
   }
 
 }

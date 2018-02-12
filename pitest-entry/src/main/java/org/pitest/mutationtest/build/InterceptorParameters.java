@@ -4,17 +4,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
 
 public final class InterceptorParameters {
-  
+
   private final FeatureSetting conf;
   private final ReportOptions data;
   private final ClassByteArraySource source;
-  
+
 
   public InterceptorParameters(FeatureSetting conf, ReportOptions data,
       ClassByteArraySource source) {
@@ -24,38 +24,38 @@ public final class InterceptorParameters {
   }
 
   public ReportOptions data() {
-    return data;
+    return this.data;
   }
-  
-  public Option<FeatureSetting> settings() {
-    return Option.some(conf);
+
+  public Optional<FeatureSetting> settings() {
+    return Optional.ofNullable(this.conf);
   }
 
 
   public ClassByteArraySource source() {
-    return source;
+    return this.source;
   }
 
-  public Option<String> getString(FeatureParameter limit) {
-    if (conf == null) {
-      return Option.none();
+  public Optional<String> getString(FeatureParameter limit) {
+    if (this.conf == null) {
+      return Optional.empty();
     }
-    return conf.getString(limit.name());
+    return this.conf.getString(limit.name());
   }
-  
+
   public List<String> getList(FeatureParameter key) {
-    if (conf == null) {
+    if (this.conf == null) {
       return Collections.emptyList();
     }
-    return conf.getList(key.name());
+    return this.conf.getList(key.name());
   }
-  
-  public Option<Integer> getInteger(FeatureParameter key) {
-    Option<String> val = getString(key);
-    if (val.hasSome()) {
-      return Option.some(Integer.parseInt(val.value()));
+
+  public Optional<Integer> getInteger(FeatureParameter key) {
+    final Optional<String> val = getString(key);
+    if (val.isPresent()) {
+      return Optional.ofNullable(Integer.parseInt(val.get()));
     }
-    return Option.none();
+    return Optional.empty();
   }
-  
+
 }

@@ -11,17 +11,17 @@ public class PartCoveredTest {
 
   @Before
   public void setUp() {
-    testee = new PartCovered();
+    this.testee = new PartCovered();
   }
 
   @Test
   public void fullyTestReturnsOne() {
-    assertEquals(1, testee.returnsOneProperlytestedByTest());
+    assertEquals(1, this.testee.returnsOneProperlytestedByTest());
   }
 
   @Test
   public void coverButDoNotTestReturnsThree() {
-    testee.returnsThreeCoveredButNotTestedByTest();
+    this.testee.returnsThreeCoveredButNotTestedByTest();
   }
 
 }

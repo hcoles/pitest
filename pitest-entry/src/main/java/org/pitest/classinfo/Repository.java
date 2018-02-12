@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class Repository implements ClassInfoSource {
 
@@ -38,49 +38,49 @@ public class Repository implements ClassInfoSource {
   }
 
   public boolean hasClass(final ClassName name) {
-    return this.knownClasses.containsKey(name) || querySource(name).hasSome();
+    return this.knownClasses.containsKey(name) || querySource(name).isPresent();
   }
 
-  public Option<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
+  public Optional<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
     // only)
     return fetchClass(clazz.getName());
   }
 
-  private Option<ClassInfo> fetchClass(final String name) {
+  private Optional<ClassInfo> fetchClass(final String name) {
     return fetchClass(ClassName.fromString(name));
   }
 
   @Override
-  public Option<ClassInfo> fetchClass(final ClassName name) {
+  public Optional<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
-      return Option.some(info);
+      return Optional.ofNullable(info);
     }
 
-    final Option<ClassInfo> maybeInfo = nameToClassInfo(name);
-    if (maybeInfo.hasSome()) {
-      this.knownClasses.put(name, maybeInfo.value());
+    final Optional<ClassInfo> maybeInfo = nameToClassInfo(name);
+    if (maybeInfo.isPresent()) {
+      this.knownClasses.put(name, maybeInfo.get());
     }
     return maybeInfo;
   }
 
-  private Option<ClassInfo> nameToClassInfo(final ClassName name) {
-    final Option<byte[]> bytes = querySource(name);
-    if (bytes.hasSome()) {
+  private Optional<ClassInfo> nameToClassInfo(final ClassName name) {
+    final Optional<byte[]> bytes = querySource(name);
+    if (bytes.isPresent()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
-          bytes.value(), this.hashFunction.hash(bytes.value()));
+          bytes.get(), this.hashFunction.hash(bytes.get()));
       return contructClassInfo(classData);
     } else {
-      return Option.none();
+      return Optional.empty();
     }
   }
 
-  public Option<byte[]> querySource(final ClassName name) {
+  public Optional<byte[]> querySource(final ClassName name) {
     if (this.unknownClasses.contains(name)) {
-      return Option.none();
+      return Optional.empty();
     }
-    final Option<byte[]> option = this.source.getBytes(name.asJavaName());
-    if (option.hasSome()) {
+    final Optional<byte[]> option = this.source.getBytes(name.asJavaName());
+    if (option.isPresent()) {
       return option;
     }
 
@@ -88,8 +88,8 @@ public class Repository implements ClassInfoSource {
     return option;
   }
 
-  private Option<ClassInfo> contructClassInfo(final ClassInfoBuilder classData) {
-    return Option.some(new ClassInfo(resolveClass(classData.superClass),
+  private Optional<ClassInfo> contructClassInfo(final ClassInfoBuilder classData) {
+    return Optional.ofNullable(new ClassInfo(resolveClass(classData.superClass),
         resolveClass(classData.outerClass), classData));
   }
 

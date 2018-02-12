@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.execute;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
@@ -22,12 +22,12 @@ import org.pitest.testapi.TestResult;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private Option<Description> lastFailingTest = Option.none();
+  private Optional<Description> lastFailingTest = Optional.empty();
   private int                 testsRun        = 0;
 
   @Override
   public void onTestFailure(final TestResult tr) {
-    this.lastFailingTest = Option.some(tr.getDescription());
+    this.lastFailingTest = Optional.ofNullable(tr.getDescription());
   }
 
   @Override
@@ -46,14 +46,14 @@ public class CheckTestHasFailedResultListener implements TestListener {
   }
 
   public DetectionStatus status() {
-    if (this.lastFailingTest.hasSome()) {
+    if (this.lastFailingTest.isPresent()) {
       return DetectionStatus.KILLED;
     } else {
       return DetectionStatus.SURVIVED;
     }
   }
 
-  public Option<Description> lastFailingTest() {
+  public Optional<Description> lastFailingTest() {
     return this.lastFailingTest;
   }
 

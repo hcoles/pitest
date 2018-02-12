@@ -36,7 +36,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
@@ -73,9 +73,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
     final ReportOptions actual = parseConfig(xml);
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   public void testUsesSourceDirectoriesFromProject() {
@@ -148,9 +148,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                  </targetTests>";
     final ReportOptions actual = parseConfig(xml);
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   public void testParsesListOfExcludedTestClassGlobs() {
@@ -163,8 +163,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                  </targetTests>";
     final ReportOptions actual = parseConfig(xml);
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
-    assertFalse(testPredicate.apply("foo_anything"));
-    assertTrue(testPredicate.apply("bar_anything"));
+    assertFalse(testPredicate.test("foo_anything"));
+    assertTrue(testPredicate.test("bar_anything"));
   }
 
   public void testParsesListOfExcludedClassGlobsAndApplyTheseToTargets() {
@@ -177,8 +177,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                  </targetClasses>";
     final ReportOptions actual = parseConfig(xml);
     final Predicate<String> targetPredicate = actual.getTargetClassesFilter();
-    assertFalse(targetPredicate.apply("foo_anything"));
-    assertTrue(targetPredicate.apply("bar_anything"));
+    assertFalse(targetPredicate.test("foo_anything"));
+    assertTrue(targetPredicate.test("bar_anything"));
   }
 
   public void testDefaultsLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {

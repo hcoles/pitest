@@ -29,7 +29,7 @@ public final class Mutant {
 
   /**
    * Returns a data relating to the mutant
-   * 
+   *
    * @return A MutationDetails object
    */
   public MutationDetails getDetails() {
@@ -38,7 +38,7 @@ public final class Mutant {
 
   /**
    * Returns a byte array containing the mutant class
-   * 
+   *
    * @return A byte array
    */
   public byte[] getBytes() {

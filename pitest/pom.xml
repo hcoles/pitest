@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.3.3-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
@@ -157,26 +157,6 @@
 									warnings on build and also as some classes not being updated on build. -->
 								<delete file="${project.build.directory}/${project.build.finalName}.${project.packaging}" />
 							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>classycle-maven-plugin</artifactId>
-				<version>0.4</version>
-				<executions>
-					<execution>
-						<id>verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<dependencyDefinition>
-								show allResults
-								check absenceOfPackageCycles &gt; 3 in org.pitest.*
-							</dependencyDefinition>
 						</configuration>
 					</execution>
 				</executions>

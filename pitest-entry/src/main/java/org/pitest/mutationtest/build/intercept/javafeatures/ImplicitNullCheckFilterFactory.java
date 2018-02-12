@@ -16,7 +16,7 @@ public class ImplicitNullCheckFilterFactory implements MutationInterceptorFactor
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new ImplicitNullCheckFilter();
   }
-  
+
   @Override
   public Feature provides() {
     return Feature.named("FINULL")

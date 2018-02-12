@@ -30,7 +30,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  *   int someInt = 3;
  *   return someOtherMethod(someInt);
  * }
- * 
+ *
  * private int someOtherMethod(int parameter) {
  *   return parameter + 1;
  * }

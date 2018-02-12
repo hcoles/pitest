@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
@@ -83,22 +83,22 @@ public class SettingsFactory {
         .findGroupers();
     return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
   }
-  
+
   public void describeFeatures(SideEffect1<Feature> enabled, SideEffect1<Feature> disabled) {
-    FeatureParser parser = new FeatureParser();
-    Collection<ProvidesFeature> available = new ArrayList<ProvidesFeature>(this.plugins.findInterceptors());
-    List<FeatureSetting> settings = parser.parseFeatures(options.getFeatures());
-    FeatureSelector<ProvidesFeature> selector = new FeatureSelector<>(settings, available);
-    
-    HashSet<Feature> enabledFeatures = new HashSet<>();
+    final FeatureParser parser = new FeatureParser();
+    final Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findInterceptors());
+    final List<FeatureSetting> settings = parser.parseFeatures(this.options.getFeatures());
+    final FeatureSelector<ProvidesFeature> selector = new FeatureSelector<>(settings, available);
+
+    final HashSet<Feature> enabledFeatures = new HashSet<>();
     FCollection.mapTo(selector.getActiveFeatures(), toFeature(), enabledFeatures);
-   
+
     FCollection.forEach(enabledFeatures, enabled);
-    
-    HashSet<Feature> disabledFeatures = new HashSet<>();
+
+    final HashSet<Feature> disabledFeatures = new HashSet<>();
     FCollection.mapTo(available, toFeature(), disabledFeatures);
     disabledFeatures.removeAll(enabledFeatures);
-    
+
     FCollection.forEach(disabledFeatures, disabled);
   }
 
@@ -108,29 +108,24 @@ public class SettingsFactory {
         .findTestPrioritisers();
     return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
   }
-  
+
   public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(
         this.options.getTargetClasses(), this.options.getExcludedClasses(),
         this.options.createMinionSettings(), this.options.isVerbose(),
         this.options.getDependencyAnalysisMaxDistance());
-  }  
+  }
 
   public CompoundInterceptorFactory getInterceptor() {
     final Collection<? extends MutationInterceptorFactory> interceptors = this.plugins
         .findInterceptors();
-    FeatureParser parser = new FeatureParser();
-    return new CompoundInterceptorFactory(parser.parseFeatures(options.getFeatures()), new ArrayList<>(interceptors));
+    final FeatureParser parser = new FeatureParser();
+    return new CompoundInterceptorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(interceptors));
   }
-  
-  private static F<MutationResultListenerFactory, Boolean> nameMatches(
+
+  private static Predicate<MutationResultListenerFactory> nameMatches(
       final Iterable<String> outputFormats) {
-    return new F<MutationResultListenerFactory, Boolean>() {
-      @Override
-      public Boolean apply(final MutationResultListenerFactory a) {
-        return FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
-      }
-    };
+    return a -> FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
   }
 
   private Iterable<MutationResultListenerFactory> findListeners() {
@@ -144,16 +139,11 @@ public class SettingsFactory {
     }
     return matches;
   }
-  
+
   private static Predicate<String> equalsIgnoreCase(final String other) {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(final String a) {
-        return a.equalsIgnoreCase(other);
-      }
-    };
+    return a -> a.equalsIgnoreCase(other);
   }
-  
+
   private static <T> T firstOrDefault(final Collection<? extends T> found,
       final T defaultInstance) {
     if (found.isEmpty()) {
@@ -166,17 +156,11 @@ public class SettingsFactory {
     return found.iterator().next();
   }
 
-  
 
-  private static F<ProvidesFeature, Feature> toFeature() {
-    return new F<ProvidesFeature, Feature>() {
-      @Override
-      public Feature apply(ProvidesFeature a) {
-        return a.provides();
-      }
-      
-    };
+
+  private static Function<ProvidesFeature, Feature> toFeature() {
+    return a -> a.provides();
   }
 
-  
+
 }

@@ -23,16 +23,16 @@ public class CodeSourceAggregatorTest {
         .getParentFile() // pitest
         .getParentFile() // org
         .getParentFile(); // classes
-    underTest = new CodeSourceAggregator(Arrays.asList(testDir, mainDir));
+    this.underTest = new CodeSourceAggregator(Arrays.asList(testDir, mainDir));
   }
 
   @Test
   public void testCreateCodeSource() {
-    final CodeSource source = underTest.createCodeSource();
+    final CodeSource source = this.underTest.createCodeSource();
     assertNotNull(source);
 
-    assertTrue(source.fetchClass(ClassName.fromClass(CodeSourceAggregator.class)).hasSome());
-    assertFalse(source.fetchClass(ClassName.fromString("com.doesnt.exist.Type")).hasSome());
+    assertTrue(source.fetchClass(ClassName.fromClass(CodeSourceAggregator.class)).isPresent());
+    assertFalse(source.fetchClass(ClassName.fromString("com.doesnt.exist.Type")).isPresent());
   }
 
 }

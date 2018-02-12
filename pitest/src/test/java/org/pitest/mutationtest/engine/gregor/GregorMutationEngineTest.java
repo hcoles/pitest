@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
@@ -35,7 +34,7 @@ public class GregorMutationEngineTest {
     final Collection<MethodMutatorFactory> mutators = Mutator
         .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH"));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
-        True.<MethodInfo> all(), mutators);
+        i -> true, mutators);
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),

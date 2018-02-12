@@ -33,7 +33,7 @@ public class SettingsFactoryTest {
   @Before
   public void setUp() {
     this.testee = new SettingsFactory(this.options, this.plugins);
-    options.setGroupConfig(new TestGroupConfig());
+    this.options.setGroupConfig(new TestGroupConfig());
   }
 
   @Test
@@ -92,7 +92,7 @@ public class SettingsFactoryTest {
     this.options.setTargetClasses(Collections
         .singleton("java/Integer"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("java/Integer"));
+    assertFalse(actual.getFilter().test("java/Integer"));
   }
 
   @Test
@@ -100,16 +100,16 @@ public class SettingsFactoryTest {
     this.options.setTargetClasses(Collections
         .singleton("/org/pitest/coverage"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().apply("org/pitest/coverage"));
+    assertFalse(actual.getFilter().test("org/pitest/coverage"));
   }
 
   @Test
   public void shouldDescribeActiveFeatures() {
-    SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
-    SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
-    
+    final SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
+    final SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
+
     this.options.setFeatures(Arrays.asList("+FSTATINIT"));
-    
+
     this.testee.describeFeatures(enabled, disabled);
     verify(enabled).apply(Feature.named("FSTATINIT"));
     verify(disabled, never()).apply(Feature.named("FSTATINIT"));
@@ -117,14 +117,14 @@ public class SettingsFactoryTest {
 
   @Test
   public void shouldDescribeDisabledFeatures() {
-    SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
-    SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
-    
+    final SideEffect1<Feature> disabled = Mockito.mock(SideEffect1.class);
+    final SideEffect1<Feature> enabled = Mockito.mock(SideEffect1.class);
+
     this.options.setFeatures(Arrays.asList("-FSTATINIT"));
-    
+
     this.testee.describeFeatures(enabled, disabled);
     verify(enabled, never()).apply(Feature.named("FSTATINIT"));
     verify(disabled).apply(Feature.named("FSTATINIT"));
   }
-  
+
 }

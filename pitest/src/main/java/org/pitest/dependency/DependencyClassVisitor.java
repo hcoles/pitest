@@ -33,13 +33,9 @@ class DependencyClassVisitor extends ClassVisitor {
 
   private SideEffect1<DependencyAccess> filterOutJavaLangObject(
       final SideEffect1<DependencyAccess> child) {
-    return new SideEffect1<DependencyAccess>() {
-      @Override
-      public void apply(final DependencyAccess a) {
-        if (!a.getDest().getOwner().equals("java/lang/Object")) {
-          child.apply(a);
-        }
-
+    return a -> {
+      if (!a.getDest().getOwner().equals("java/lang/Object")) {
+        child.apply(a);
       }
 
     };

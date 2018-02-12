@@ -23,7 +23,7 @@ import org.pitest.util.Preconditions;
  *
  */
 public class JUnitTestPlugin implements TestPluginFactory {
-  
+
   public static final String NAME = "junit";
 
   @Override

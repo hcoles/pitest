@@ -8,7 +8,7 @@ public class SlotRead<T> {
   }
 
   Slot<T> slot() {
-    return slot;
+    return this.slot;
   }
 }
 

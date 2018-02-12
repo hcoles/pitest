@@ -62,11 +62,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
@@ -85,9 +85,9 @@ import joptsimple.util.KeyValuePair;
 public class OptionsParser {
 
   private final Predicate<String>                    dependencyFilter;
-  
+
   private static final Logger LOG = Log.getLogger();
-  
+
   private final OptionParser                         parser;
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
   private final OptionSpec<String>                   targetClassesSpec;
@@ -106,7 +106,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedMethodsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
   private final OptionSpec<String>                   excludedClassesSpec;
-  private final OptionSpec<String>                   excludedTestClassesSpec;  
+  private final OptionSpec<String>                   excludedTestClassesSpec;
   private final OptionSpec<String>                   outputFormatSpec;
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final OptionSpec<File>                     classPathFile;
@@ -135,7 +135,7 @@ public class OptionsParser {
 
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
-    
+
     this.testPluginSpec = parserAccepts(TEST_PLUGIN)
         .withRequiredArg()
         .ofType(String.class)
@@ -188,10 +188,10 @@ public class OptionsParser {
     this.mutators = parserAccepts(MUTATIONS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("comma separated list of mutation operators");
-    
+
     this.features = parserAccepts(FEATURES).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
-        .describedAs("comma separated list of features to enable/disable.");    
+        .describedAs("comma separated list of features to enable/disable.");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .withValuesSeparatedBy(',')
@@ -231,7 +231,7 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma separated list of globs for classes to exclude when mutating");
-    
+
     this.excludedTestClassesSpec = parserAccepts(EXCLUDED_TEST_CLASSES)
         .withRequiredArg()
         .ofType(String.class)
@@ -311,7 +311,7 @@ public class OptionsParser {
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Mutation score below which to throw an error")
         .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
-    
+
     this.maxSurvivingSpec = parserAccepts(MAX_SURVIVING)
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Maximum number of surviving mutants to allow without throwing an error")
@@ -439,7 +439,7 @@ public class OptionsParser {
         while ((element = classPathFileBR.readLine()) != null) {
           elements.add(element);
         }
-      } catch (IOException ioe) {
+      } catch (final IOException ioe) {
         LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - "
                 + ioe.getMessage());
       }
@@ -457,8 +457,8 @@ public class OptionsParser {
   }
 
   private Properties listToProperties(List<KeyValuePair> kvps) {
-    Properties p = new Properties();
-    for (KeyValuePair kvp : kvps) {
+    final Properties p = new Properties();
+    for (final KeyValuePair kvp : kvps) {
       p.put(kvp.key, kvp.value);
     }
     return p;

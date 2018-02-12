@@ -15,8 +15,9 @@
 package org.pitest.testng;
 
 import java.util.Collection;
+
 import org.pitest.extension.common.NoTestSuiteFinder;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
@@ -44,8 +45,8 @@ public class TestNGConfiguration implements Configuration {
   }
 
   @Override
-  public Option<PitHelpError> verifyEnvironment() {
-    return Option.none();
+  public Optional<PitHelpError> verifyEnvironment() {
+    return Optional.empty();
   }
 
 }

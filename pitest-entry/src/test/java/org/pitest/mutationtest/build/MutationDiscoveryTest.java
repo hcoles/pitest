@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
@@ -32,162 +30,162 @@ import org.pitest.util.ResourceFolderByteArraySource;
  * Tests discovery of mutants - including the full default interceptor chain
  */
 public class MutationDiscoveryTest {
-  
+
   ReportOptions data = new ReportOptions();
   ClassByteArraySource cbas = new ResourceFolderByteArraySource();
-  
-  
+
+
   @Before
   public void setUp() {
-    data.setTargetClasses(Collections.singleton("com.example.*"));
+    this.data.setTargetClasses(Collections.singleton("com.example.*"));
   }
 
   @Test
   public void shouldFilterMutantsInTryCatchFinallyCompiledWithJavaC() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_javac");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_javac");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(3);
   }
-  
+
   @Test
   public void shouldFilterMutantsInTryCatchFinallyCompiledWithEcj() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_ecj");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_ecj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(3);
   }
-  
+
   @Test
   public void shouldFilterMutantsInTryCatchFinallyCompiledWithAspectJ() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_aspectj");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_aspectj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(3);
   }
- 
+
   @Test
   public void shouldFilterMutantsInTryFinallyCompiledWithJavaC() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_javac");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_javac");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(2);
   }
-  
+
   @Test
   public void shouldFilterMutantsInTryFinallyCompiledWithEcj() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_ecj");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_ecj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(2);
   }
-  
+
   @Test
   public void shouldFilterMutantsInTryFinallyCompiledWithAspectJ() {
-    data.setDetectInlinedCode(true);  
+    this.data.setDetectInlinedCode(true);
 
-    ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_aspectj");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryFinallyExample_aspectj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(2);
   }
-  
+
   @Test
   public void shouldNotFilterInlinedFinallyBlocksWhenFlagNotSet() {
-    ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_javac");
-    
-    data.setDetectInlinedCode(true);
-    Collection<MutationDetails> filtered = findMutants(clazz);
-    
-    data.setDetectInlinedCode(false);
-    Collection<MutationDetails> unfiltered = findMutants(clazz);
-    
+    final ClassName clazz = ClassName.fromString("trywithresources/TryCatchFinallyExample_javac");
+
+    this.data.setDetectInlinedCode(true);
+    final Collection<MutationDetails> filtered = findMutants(clazz);
+
+    this.data.setDetectInlinedCode(false);
+    final Collection<MutationDetails> unfiltered = findMutants(clazz);
+
     assertThat(filtered.size()).isLessThan(unfiltered.size());
   }
-  
+
   @Test
   public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithJavac() {
-    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_javac");
-    Collection<MutationDetails> actual = findMutants(clazz);
+    final ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_javac");
+    final Collection<MutationDetails> actual = findMutants(clazz);
     assertThat(actual).hasSize(1);
-  }
-  
-  @Test
-  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithEcj() {
-    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_ecj");
-    Collection<MutationDetails> actual = findMutants(clazz);
-    assertThat(actual).hasSize(1);
-  }
-  
-  @Test
-  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithApectj() {
-    ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_aspectj");
-    Collection<MutationDetails> actual = findMutants(clazz);
-    assertThat(actual).hasSize(1);
-  }
-  
-  @Test 
-  public void shouldFilterMutationsInLoggingCalls() {
-    data.setLoggingClasses(Collections.singleton("java.util.logging"));
-    Collection<MutationDetails>  actual = findMutants(HasLogger.class);
-    assertThat(actual).isEmpty();  
   }
 
-  
+  @Test
+  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithEcj() {
+    final ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_ecj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithApectj() {
+    final ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_aspectj");
+    final Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  public void shouldFilterMutationsInLoggingCalls() {
+    this.data.setLoggingClasses(Collections.singleton("java.util.logging"));
+    final Collection<MutationDetails>  actual = findMutants(HasLogger.class);
+    assertThat(actual).isEmpty();
+  }
+
+
   @Test
   public void shouldNotMutateMethodsAnnotatedWithGenerated() {
     final Collection<MutationDetails> actualDetails = findMutants(AnnotatedToAvoidMethod.class);
     // all but two methods are annotated to ignore
     assertEquals(2, actualDetails.size());
   }
-  
+
   @Test
   public void shouldFilterImplicitNullChecksInLambdas() {
-    ClassName clazz = ClassName.fromString("implicitnullcheck/RemovedCallBug_javac");
-    
-    data.setMutators(Collections.singletonList("ALL"));
-    
-    Collection<MutationDetails> foundByDefault = findMutants(clazz);
-    
-    data.setFeatures(Collections.singletonList("-FINULL"));
-    
-    Collection<MutationDetails> foundWhenDisabled = findMutants(clazz);
-    
+    final ClassName clazz = ClassName.fromString("implicitnullcheck/RemovedCallBug_javac");
+
+    this.data.setMutators(Collections.singletonList("ALL"));
+
+    final Collection<MutationDetails> foundByDefault = findMutants(clazz);
+
+    this.data.setFeatures(Collections.singletonList("-FINULL"));
+
+    final Collection<MutationDetails> foundWhenDisabled = findMutants(clazz);
+
     assertThat(foundWhenDisabled.size()).isGreaterThan(foundByDefault.size());
   }
-  
-  @Test 
+
+  @Test
   public void shouldFilterMutationsToForLoopIncrements() {
-    Collection<MutationDetails>  actual = findMutants(HasForLoop.class);
-    
-    data.setFeatures(Collections.singletonList("-FFLOOP"));
-    Collection<MutationDetails> actualWithoutFilter = findMutants(HasForLoop.class);
-        
+    final Collection<MutationDetails>  actual = findMutants(HasForLoop.class);
+
+    this.data.setFeatures(Collections.singletonList("-FFLOOP"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(HasForLoop.class);
+
     assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
   }
-  
-  @Test 
+
+  @Test
   public void shouldFilterMutationsToForEachLoops() {
-    Collection<MutationDetails>  actual = findMutants(HasForEachLoop.class);
-    
-    data.setFeatures(Collections.singletonList("-FFEACH"));
-    Collection<MutationDetails> actualWithoutFilter = findMutants(HasForEachLoop.class);
-        
+    final Collection<MutationDetails>  actual = findMutants(HasForEachLoop.class);
+
+    this.data.setFeatures(Collections.singletonList("-FFEACH"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(HasForEachLoop.class);
+
     assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
   }
 
 
   @Test
   public void filtersEquivalentReturnValsMutants() {
-    data.setMutators(Collections.singletonList("PRIMITIVE_RETURNS"));
-    Collection<MutationDetails>  actual = findMutants(AlreadyReturnsConstZero.class);
+    this.data.setMutators(Collections.singletonList("PRIMITIVE_RETURNS"));
+    final Collection<MutationDetails>  actual = findMutants(AlreadyReturnsConstZero.class);
     assertThat(actual).isEmpty();
   }
-  
+
   public static class AnnotatedToAvoidMethod {
     public int a() {
       return 1;
@@ -197,22 +195,22 @@ public class MutationDiscoveryTest {
     public int b() {
       return 1;
     }
-    
+
     @DoNotMutate
     public int c() {
       return 1;
     }
-    
+
     @CoverageIgnore
     public int d() {
       return 1;
     }
-    
+
     public int e() {
       return 1;
     }
   }
-  
+
   private static class HasLogger {
     private static Logger log = Logger.getLogger(HasLogger.class.getName());
 
@@ -222,28 +220,28 @@ public class MutationDiscoveryTest {
     }
   }
 
-  
+
   private Collection<MutationDetails> findMutants(Class<?> clazz) {
     this.data.setTargetClasses(Collections.singleton(clazz.getName()));
     this.cbas = ClassloaderByteArraySource.fromContext();
     return findMutants(ClassName.fromClass(clazz));
   }
-  
+
   private Collection<MutationDetails> findMutants(ClassName clazz) {
-    MutationSource source = createSource(cbas);
+    final MutationSource source = createSource(this.cbas);
     return source.createMutations(clazz);
   }
-  
+
   MutationSource createSource(ClassByteArraySource source) {
-    final SettingsFactory settings = new SettingsFactory(data,
+    final SettingsFactory settings = new SettingsFactory(this.data,
         PluginServices.makeForContextLoader());
     final MutationInterceptor interceptor = settings.getInterceptor()
-        .createInterceptor(data, source);
+        .createInterceptor(this.data, source);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
-        EngineArguments.arguments().withExcludedMethods(data.getExcludedMethods())
-        .withMutators(data.getMutators()));
-    
+        EngineArguments.arguments().withExcludedMethods(this.data.getExcludedMethods())
+        .withMutators(this.data.getMutators()));
+
     final MutationConfig config = new MutationConfig(engine, null);
 
     return new MutationSource(config, noTestPrioritisation(), source,
@@ -251,12 +249,7 @@ public class MutationDiscoveryTest {
   }
 
   private TestPrioritiser noTestPrioritisation() {
-    return new TestPrioritiser() {
-      @Override
-      public List<TestInfo> assignTests(MutationDetails mutation) {
-        return Collections.emptyList();
-      }
-    };
+    return mutation -> Collections.emptyList();
   }
 
   static class HasForLoop {

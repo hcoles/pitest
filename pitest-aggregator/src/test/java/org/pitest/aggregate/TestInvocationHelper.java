@@ -10,28 +10,21 @@ import org.pitest.util.Unchecked;
 public class TestInvocationHelper {
 
   public static ResultOutputStrategy getResultOutputStrategy() {
-    return new ResultOutputStrategy() {
+    return sourceFile -> new Writer() {
 
       @Override
-      public Writer createWriterForFile(final String sourceFile) {
-        // dev null writer
-        return new Writer() {
+      public void write(final char[] cbuf, final int off, final int len) throws IOException {
+        // ignore
+      }
 
-          @Override
-          public void write(final char[] cbuf, final int off, final int len) throws IOException {
-            // ignore
-          }
+      @Override
+      public void flush() throws IOException {
+        // ignore
+      }
 
-          @Override
-          public void flush() throws IOException {
-            // ignore
-          }
-
-          @Override
-          public void close() throws IOException {
-            // ignore
-          }
-        };
+      @Override
+      public void close() throws IOException {
+        // ignore
       }
     };
   }

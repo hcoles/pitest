@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.Description;
@@ -53,7 +53,7 @@ import junit.framework.TestSuite;
 public class TestJUnitConfiguration {
 
   private  JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
-                                                        new TestGroupConfig(), 
+                                                        new TestGroupConfig(),
                                                         Collections.<String>emptyList(),
                                                         Collections.<String>emptyList());
   private Pitest                             pitest;
@@ -493,7 +493,7 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
-    assertEquals(Option.<PitHelpError> none(), this.testee.verifyEnvironment());
+    assertEquals(Optional.<PitHelpError> empty(), this.testee.verifyEnvironment());
   }
 
   public static class HasAssumptionFailure {
@@ -612,11 +612,11 @@ public class TestJUnitConfiguration {
     run(HasExcludedCategory.class);
     verify(this.listener, never()).onTestStart(any(Description.class));
   }
-  
+
   @interface ExcludeMe {
-    
+
   }
-  
+
   @ExcludeMe
   public static class HasExcludedCategory {
     @Test
@@ -624,12 +624,12 @@ public class TestJUnitConfiguration {
 
     }
   }
-  
+
   private void exclude(Class<?> class1) {
-    List<String> exclude = Collections.singletonList(class1.getName());
-    List<String> include = Collections.emptyList();
-    testee = new JUnitCompatibleConfiguration(
-            new TestGroupConfig(include,exclude), 
+    final List<String> exclude = Collections.singletonList(class1.getName());
+    final List<String> include = Collections.emptyList();
+    this.testee = new JUnitCompatibleConfiguration(
+            new TestGroupConfig(include,exclude),
             Collections.<String>emptyList(), Collections.<String>emptyList());
   }
 
@@ -638,7 +638,7 @@ public class TestJUnitConfiguration {
   }
 
   private List<TestUnit> find(Class<?> clazz) {
-    FindTestUnits finder = new FindTestUnits(this.testee);
+    final FindTestUnits finder = new FindTestUnits(this.testee);
     return finder.findTestUnitsForAllSuppliedClasses(Arrays
         .<Class<?>> asList(clazz));
   }

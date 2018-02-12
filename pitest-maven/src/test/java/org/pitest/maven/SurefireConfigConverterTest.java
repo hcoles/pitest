@@ -10,7 +10,7 @@ import java.util.Collections;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.junit.Test;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -43,8 +43,8 @@ public class SurefireConfigConverterTest {
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
     Predicate<String> predicate = actual.getExcludedTestClasses().iterator().next();
-    assertThat(predicate.apply("com.example.FailingTest")).isTrue();
-    assertThat(predicate.apply("com.example.Test")).isFalse();
+    assertThat(predicate.test("com.example.FailingTest")).isTrue();
+    assertThat(predicate.test("com.example.Test")).isFalse();
   }
 
   @Test

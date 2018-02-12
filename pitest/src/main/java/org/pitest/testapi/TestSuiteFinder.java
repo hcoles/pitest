@@ -16,9 +16,8 @@
 package org.pitest.testapi;
 
 import java.util.List;
+import java.util.function.Function;
 
-import org.pitest.functional.F;
-
-public interface TestSuiteFinder extends F<Class<?>, List<Class<?>>> {
+public interface TestSuiteFinder extends Function<Class<?>, List<Class<?>>> {
 
 }

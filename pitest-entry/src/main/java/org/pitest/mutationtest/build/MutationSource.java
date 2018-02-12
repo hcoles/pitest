@@ -53,24 +53,24 @@ public class MutationSource {
 
     final Collection<MutationDetails> availableMutations = m
         .findMutations(clazz);
-    
+
     if (availableMutations.isEmpty()) {
       return availableMutations;
     } else {
-      ClassTree tree = ClassTree
-          .fromBytes(this.source.getBytes(clazz.asJavaName()).value());
+      final ClassTree tree = ClassTree
+          .fromBytes(this.source.getBytes(clazz.asJavaName()).get());
 
-      interceptor.begin(tree);
-      Collection<MutationDetails> updatedMutations = interceptor
+      this.interceptor.begin(tree);
+      final Collection<MutationDetails> updatedMutations = this.interceptor
           .intercept(availableMutations, m);
-      interceptor.end();
+      this.interceptor.end();
 
       assignTestsToMutations(updatedMutations);
 
       return updatedMutations;
     }
   }
-  
+
   private void assignTestsToMutations(
       final Collection<MutationDetails> availableMutations) {
     for (final MutationDetails mutation : availableMutations) {

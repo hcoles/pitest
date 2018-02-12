@@ -17,7 +17,7 @@ package org.pitest.mutationtest.report.csv;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
@@ -36,9 +36,9 @@ public class CSVReportListener implements MutationResultListener {
     this.out = out;
   }
 
-  private String createKillingTestDesc(final Option<String> killingTest) {
-    if (killingTest.hasSome()) {
-      return killingTest.value();
+  private String createKillingTestDesc(final Optional<String> killingTest) {
+    if (killingTest.isPresent()) {
+      return killingTest.get();
     } else {
       return "none";
     }

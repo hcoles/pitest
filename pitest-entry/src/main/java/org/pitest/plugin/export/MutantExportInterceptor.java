@@ -48,15 +48,15 @@ public class MutantExportInterceptor implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    currentClass = clazz.name();
-    String[] classLocation = ("export." + clazz.name().asJavaName())
+    this.currentClass = clazz.name();
+    final String[] classLocation = ("export." + clazz.name().asJavaName())
         .split("\\.");
-    Path classDir = fileSystem.getPath(outDir, classLocation);
-    mutantsDir = classDir.resolve("mutants");
+    final Path classDir = this.fileSystem.getPath(this.outDir, classLocation);
+    this.mutantsDir = classDir.resolve("mutants");
     try {
-      Files.createDirectories(mutantsDir);
-      writeBytecodeToDisk(source.getBytes(clazz.name().asJavaName()).value(), classDir);
-    } catch (IOException e) {
+      Files.createDirectories(this.mutantsDir);
+      writeBytecodeToDisk(this.source.getBytes(clazz.name().asJavaName()).get(), classDir);
+    } catch (final IOException e) {
       throw new RuntimeException("Couldn't create direectory for " + clazz, e);
     }
   }
@@ -65,13 +65,13 @@ public class MutantExportInterceptor implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
 
-    List<MutationDetails> indexable = new ArrayList<>(mutations);
+    final List<MutationDetails> indexable = new ArrayList<>(mutations);
 
     try {
       for (int i = 0; i != indexable.size(); i++) {
         exportMutantDetails(m, indexable, i);
       }
-    } catch (IOException ex) {
+    } catch (final IOException ex) {
       throw new RuntimeException("Error exporting mutants for report", ex);
     }
 
@@ -80,35 +80,35 @@ public class MutantExportInterceptor implements MutationInterceptor {
 
   private void exportMutantDetails(Mutater m, List<MutationDetails> indexable,
       int i) throws IOException {
-    MutationDetails md = indexable.get(i);
-    Path mutantFolder = mutantsDir.resolve("" + i);
+    final MutationDetails md = indexable.get(i);
+    final Path mutantFolder = this.mutantsDir.resolve("" + i);
     Files.createDirectories(mutantFolder);
-    
-    Mutant mutant = m.getMutation(md.getId());
-    
+
+    final Mutant mutant = m.getMutation(md.getId());
+
     writeMutantToDisk(mutant, mutantFolder);
     writeBytecodeToDisk(mutant.getBytes(), mutantFolder);
     writeDetailsToDisk(md, mutantFolder);
   }
 
   private void writeMutantToDisk(Mutant mutant, Path mutantFolder) throws IOException {
-    Path outFile = mutantFolder.resolve(currentClass.asJavaName() + ".class");
+    final Path outFile = mutantFolder.resolve(this.currentClass.asJavaName() + ".class");
     Files.write(outFile, mutant.getBytes(), StandardOpenOption.CREATE);
   }
-  
-  
-  private void writeBytecodeToDisk(final byte[] clazz, Path folder) throws IOException { 
+
+
+  private void writeBytecodeToDisk(final byte[] clazz, Path folder) throws IOException {
       final ClassReader reader = new ClassReader(clazz);
-      CharArrayWriter buffer = new CharArrayWriter();
+      final CharArrayWriter buffer = new CharArrayWriter();
       reader.accept(new TraceClassVisitor(null, new Textifier(), new PrintWriter(
           buffer)), ClassReader.EXPAND_FRAMES);
-      Path outFile = folder.resolve(currentClass.asJavaName() + ".txt");
+      final Path outFile = folder.resolve(this.currentClass.asJavaName() + ".txt");
       Files.write(outFile, Collections.singleton(buffer.toString()), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
   }
-  
+
   private void writeDetailsToDisk(MutationDetails md,
       Path mutantFolder) throws IOException  {
-    Path outFile = mutantFolder.resolve("details.txt");
+    final Path outFile = mutantFolder.resolve("details.txt");
     Files.write(outFile, Collections.singleton(md.toString()), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
   }
 

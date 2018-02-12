@@ -23,21 +23,21 @@ public final class Feature {
   }
 
   public Feature withOnByDefault(boolean onByDefault) {
-    return new Feature(onByDefault, this.name, this.description, params);
+    return new Feature(onByDefault, this.name, this.description, this.params);
   }
 
   public Feature withDescription(String description) {
-    return new Feature(this.onByDefault, this.name, description, params);
+    return new Feature(this.onByDefault, this.name, description, this.params);
   }
 
 
   public Feature withParameter(FeatureParameter param) {
-    List<FeatureParameter> params = new ArrayList<>();
+    final List<FeatureParameter> params = new ArrayList<>();
     params.addAll(this.params);
     params.add(param);
-    return new Feature(onByDefault, this.name, this.description, params);
+    return new Feature(this.onByDefault, this.name, this.description, params);
   }
-  
+
   public String name() {
     return this.name;
   }
@@ -49,7 +49,7 @@ public final class Feature {
   public boolean isOnByDefault() {
     return this.onByDefault;
   }
-  
+
   public List<FeatureParameter> params() {
     return this.params;
   }

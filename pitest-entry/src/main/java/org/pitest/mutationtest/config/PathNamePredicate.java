@@ -14,8 +14,9 @@
  */
 package org.pitest.mutationtest.config;
 
+import java.util.function.Predicate;
+
 import org.pitest.classpath.ClassPathRoot;
-import org.pitest.functional.predicate.Predicate;
 
 public class PathNamePredicate implements Predicate<ClassPathRoot> {
 
@@ -26,18 +27,18 @@ public class PathNamePredicate implements Predicate<ClassPathRoot> {
   }
 
   @Override
-  public Boolean apply(final ClassPathRoot classPathRoot) {
+  public boolean test(final ClassPathRoot classPathRoot) {
     return cacheLocationOptionExists(classPathRoot)
         && cacheLocationMatchesFilter(classPathRoot);
   }
 
   private Boolean cacheLocationMatchesFilter(final ClassPathRoot classPathRoot) {
-    final String cacheLocationValue = classPathRoot.cacheLocation().value();
-    return this.stringFilter.apply(cacheLocationValue);
+    final String cacheLocationValue = classPathRoot.cacheLocation().get();
+    return this.stringFilter.test(cacheLocationValue);
   }
 
   private boolean cacheLocationOptionExists(final ClassPathRoot a) {
-    return a.cacheLocation().hasSome();
+    return a.cacheLocation().isPresent();
   }
 
 }

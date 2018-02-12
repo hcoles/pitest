@@ -17,11 +17,11 @@ public class NotTest {
 
   @Test
   public void shouldInvertTrue() {
-    assertFalse(not(True.all()).apply(null));
+    assertFalse(not(i -> true).test(null));
   }
 
   @Test
   public void shouldInvertFalse() {
-    assertTrue(not(False.instance()).apply(null));
+    assertTrue(not(False.instance()).test(null));
   }
 }

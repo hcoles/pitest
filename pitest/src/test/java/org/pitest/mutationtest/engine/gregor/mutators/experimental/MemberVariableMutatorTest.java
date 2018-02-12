@@ -18,11 +18,11 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.FunctionalList;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
@@ -124,7 +124,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
   @Test
   public void shouldNotCreateMutationForNonInitializedVariable()
       throws Exception {
-    final FunctionalList<MutationDetails> mutations = findMutationsFor(NoInit.class);
+    final List<MutationDetails> mutations = findMutationsFor(NoInit.class);
     assertTrue("Expected no mutant created/available.", mutations.isEmpty());
   }
 

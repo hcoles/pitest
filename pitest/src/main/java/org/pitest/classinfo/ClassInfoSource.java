@@ -1,7 +1,7 @@
 package org.pitest.classinfo;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public interface ClassInfoSource {
-  Option<ClassInfo> fetchClass(ClassName name);
+  Optional<ClassInfo> fetchClass(ClassName name);
 }

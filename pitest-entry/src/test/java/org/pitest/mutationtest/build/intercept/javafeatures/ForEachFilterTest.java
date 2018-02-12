@@ -15,118 +15,118 @@ import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 
 public class ForEachFilterTest {
   private static final String             PATH      = "foreach/{0}_{1}";
-  
+
   ForEachLoopFilter testee = new ForEachLoopFilter();
-  FilterTester verifier = new FilterTester(PATH, testee, NullMutateEverything.asList());  
-  
+  FilterTester verifier = new FilterTester(PATH, this.testee, NullMutateEverything.asList());
+
   @Test
   public void declaresTypeAsFilter() {
-    assertThat(testee.type()).isEqualTo(InterceptorType.FILTER);
+    assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
   }
-  
+
   @Test
   public void filtersMutationsToForEachLoopJumps() {
-    verifier = new FilterTester(PATH, testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);  
-    verifier.assertFiltersNMutationFromSample(1, "HasForEachLoop");
+    this.verifier = new FilterTester(PATH, this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+    this.verifier.assertFiltersNMutationFromSample(1, "HasForEachLoop");
   }
-  
+
   @Test
   public void filtersMutationsToHasNextAndNext() {
-    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
     // can mutate calls to iterator, hasNext and next
-    verifier.assertFiltersNMutationFromSample(3, "HasForEachLoop");
+    this.verifier.assertFiltersNMutationFromSample(3, "HasForEachLoop");
   }
-  
+
   @Test
   public void filtersMutationsToForEachOverField() {
-    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
     // can mutate calls to iterator, hasNext and next
-    verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverField.class);
+    this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverField.class);
   }
-  
+
   @Test
   public void filtersMutationsToForEachOverMethodReturn() {
-    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
     // can mutate calls to iterator, hasNext and next
-    verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverMethodReturn.class);
+    this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverMethodReturn.class);
   }
-  
+
   @Test
   public void filtersMutationsToForEachOverCollections() {
-    verifier = new FilterTester(PATH, testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);  
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
     // can mutate calls to iterator, hasNext and next
-    verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverCollection.class);
+    this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverCollection.class);
   }
-  
+
   @Test
   public void filtersMutationsToForEachOverArrays() {
     // arrayLength, IConst, Jump, IINC
-    verifier.assertFiltersNMutationFromSample(4, "HasForEachLoopOverArray");
+    this.verifier.assertFiltersNMutationFromSample(4, "HasForEachLoopOverArray");
   }
-  
-  
+
+
   @Test
   public void doesNotFilterMutationsToIndexedForLoopJumps() {
-    verifier = new FilterTester("forloops/{0}_{1}", testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);       
-    verifier.assertFiltersNMutationFromSample(0, "HasAForLoop");    
-  }  
-  
+    this.verifier = new FilterTester("forloops/{0}_{1}", this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+    this.verifier.assertFiltersNMutationFromSample(0, "HasAForLoop");
+  }
+
   @Test
   public void doesNotFilterMutationsToHandRolledIteratorLoops() {
     // additional label nodes seem to be enough to prevent triggering
-    verifier.assertFiltersNMutationFromSample(0, "HandRolledIteratorLoop");    
-  }  
-    
+    this.verifier.assertFiltersNMutationFromSample(0, "HandRolledIteratorLoop");
+  }
+
   public static class HasForEachLoop {
     void foo(List<Integer> is) {
-      for (int each : is) {
+      for (final int each : is) {
         System.out.println(each);
       }
     }
   }
-  
+
   public static class HasForEachLoopOverField {
     List<Integer> is;
     void foo() {
-      for (int each : is) {
+      for (final int each : this.is) {
         System.out.println(each);
       }
     }
   }
-  
+
   public static class HasForEachLoopOverMethodReturn {
     void foo() {
-      for (int each : Collections.singletonList(1)) {
+      for (final int each : Collections.singletonList(1)) {
         System.out.println(each);
       }
     }
   }
-  
+
   public static class HasForEachLoopOverCollection {
     void foo(Collection<Integer> c) {
-      for (int each : c) {
+      for (final int each : c) {
         System.out.println(each);
       }
     }
   }
-  
+
   public static class HasForEachLoopOverArray {
     void foo(int[] is) {
-      for (int each : is) {
+      for (final int each : is) {
         System.out.println(each);
       }
     }
   }
-  
-  
+
+
   static class HandRolledIteratorLoop {
     void foo(List<Integer> is) {
-      Iterator<Integer> it = is.iterator();
+      final Iterator<Integer> it = is.iterator();
       while (it.hasNext()) {
-        Integer each = it.next();
+        final Integer each = it.next();
         System.out.println(each);
       }
     }
   }
-  
+
 }

@@ -57,14 +57,14 @@ public class MutationTestUnitTest {
     this.testee = new MutationTestUnit(this.mutations, this.tests,
         new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, EngineArguments.arguments(), this.timeout,
             false, null));
-    
+
   }
 
   @Test
   public void shouldReportWhenMutationsNotCoveredByAnyTest() throws Exception {
     addMutation();
     this.tests.add(ClassName.fromString("foo"));
-    MutationMetaData actual = this.testee.call();
+    final MutationMetaData actual = this.testee.call();
     final MutationResult expected = new MutationResult(this.mutations.get(0),
         new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
     assertThat(actual.getMutations()).contains(expected);

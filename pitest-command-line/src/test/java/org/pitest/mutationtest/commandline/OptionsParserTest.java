@@ -29,12 +29,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -56,10 +56,10 @@ public class OptionsParserTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    when(this.filter.apply(any(String.class))).thenReturn(true);
+    when(this.filter.test(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }
-  
+
   @Test
   public void shouldParseTestPlugin() {
     final String value = "foo";
@@ -79,9 +79,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -113,7 +113,7 @@ public class OptionsParserTest {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.name(),
         MathMutator.MATH_MUTATOR.name()), actual.getMutators());
   }
-  
+
   @Test
   public void shouldParseCommaSeparatedListOfFeatures() {
     final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
@@ -180,9 +180,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -190,13 +190,13 @@ public class OptionsParserTest {
     ReportOptions actual = parseAddingRequiredArgs("--targetTest",
             "~foo\\w*,~bar.*");
     Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
     actual = parseAddingRequiredArgs("--targetTest",
             "~.*?foo\\w*,~bar.*");
     actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -204,9 +204,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.apply("foo_anything"));
-    assertTrue(actualPredicate.apply("bar_anything"));
-    assertFalse(actualPredicate.apply("notfoobar"));
+    assertTrue(actualPredicate.test("foo_anything"));
+    assertTrue(actualPredicate.test("bar_anything"));
+    assertFalse(actualPredicate.test("notfoobar"));
   }
 
   @Test
@@ -214,8 +214,8 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
-    assertFalse(testPredicate.apply("foo_anything"));
-    assertTrue(testPredicate.apply("bar_anything"));
+    assertFalse(testPredicate.test("foo_anything"));
+    assertTrue(testPredicate.test("bar_anything"));
   }
 
   @Test
@@ -224,8 +224,8 @@ public class OptionsParserTest {
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
 
     final Predicate<String> targetPredicate = actual.getTargetClassesFilter();
-    assertFalse(targetPredicate.apply("foo_anything"));
-    assertTrue(targetPredicate.apply("bar_anything"));
+    assertFalse(targetPredicate.test("foo_anything"));
+    assertTrue(targetPredicate.test("bar_anything"));
   }
 
   @Test
@@ -283,15 +283,15 @@ public class OptionsParserTest {
 
   @Test
   public void shouldAcceptFileWithListOfAdditionalClassPathElements() {
-    ClassLoader classLoader = getClass().getClassLoader();
-    File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
+    final ClassLoader classLoader = getClass().getClassLoader();
+    final File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
     final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
 	    classPathFile.getAbsolutePath());
     final Collection<String> actual = ro.getClassPathElements();
     assertTrue(actual.contains("C:/foo"));
     assertTrue(actual.contains("/etc/bar"));
   }
-  
+
   @Test
   public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
     assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
@@ -299,7 +299,7 @@ public class OptionsParserTest {
     assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
         .shouldFailWhenNoMutations());
   }
-  
+
   @Test
   public void shouldFailWhenNoMutationsSetByDefault() {
     assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
@@ -378,7 +378,7 @@ public class OptionsParserTest {
         "42");
     assertEquals(42, actual.getMutationThreshold());
   }
-  
+
   @Test
   public void shouldParseMaximumAllowedSurvivingMutants() {
     final ReportOptions actual = parseAddingRequiredArgs("--maxSurviving",
@@ -498,12 +498,7 @@ public class OptionsParserTest {
   }
 
   private Predicate<String> gregorClass() {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(String s) {
-        return GregorMutationEngine.class.getName().equals(s);
-      }
-    };
+    return s -> GregorMutationEngine.class.getName().equals(s);
   }
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {

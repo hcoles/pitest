@@ -16,7 +16,7 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 
@@ -33,11 +33,11 @@ public class LineMapperTest {
 
   @Test
   public void shouldMapAllLinesWhenMethodContainsSingleBlock() throws Exception {
-    Map<BlockLocation, Set<Integer>> actual = analyse(OneBlock.class);
+    final Map<BlockLocation, Set<Integer>> actual = analyse(OneBlock.class);
 
-    Location l = Location.location(ClassName.fromClass(OneBlock.class),
+    final Location l = Location.location(ClassName.fromClass(OneBlock.class),
         MethodName.fromString("foo"), "()I");
-    BlockLocation bl = new BlockLocation(l, 0);
+    final BlockLocation bl = new BlockLocation(l, 0);
 
     assertThat(actual.get(bl)).containsOnly(5);
 
@@ -45,9 +45,9 @@ public class LineMapperTest {
 
   @Test
   public void shouldMapAllLinesWhenMethodContainsThreeBlocks() throws Exception {
-    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks.class);
+    final Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks.class);
 
-    Location l = Location.location(ClassName.fromClass(ThreeBlocks.class),
+    final Location l = Location.location(ClassName.fromClass(ThreeBlocks.class),
         MethodName.fromString("foo"), "(I)I");
 
     assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(5);
@@ -58,9 +58,9 @@ public class LineMapperTest {
   @Test
   public void shouldMapAllLinesWhenMethodContainsThreeMultiLineBlocks()
       throws Exception {
-    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeMultiLineBlocks.class);
+    final Map<BlockLocation, Set<Integer>> actual = analyse(ThreeMultiLineBlocks.class);
 
-    Location l = Location.location(
+    final Location l = Location.location(
         ClassName.fromClass(ThreeMultiLineBlocks.class),
         MethodName.fromString("foo"), "(I)I");
 
@@ -72,8 +72,8 @@ public class LineMapperTest {
   @Test
   public void shouldMapLinesWhenLinesSpanBlocks() throws Exception {
 
-    Map<BlockLocation, Set<Integer>> actual = analyse(com.example.LineNumbersSpanBlocks.class);
-    Location l = Location.location(
+    final Map<BlockLocation, Set<Integer>> actual = analyse(com.example.LineNumbersSpanBlocks.class);
+    final Location l = Location.location(
         ClassName.fromClass(com.example.LineNumbersSpanBlocks.class),
         MethodName.fromString("foo"), "(I)I");
 
@@ -82,8 +82,8 @@ public class LineMapperTest {
 
   @Test
   public void shouldIncludeLastLinesConstructorsInBlock() throws Exception {
-    Map<BlockLocation, Set<Integer>> actual = analyse(LastLineOfContructorCheck.class);
-    Location l = Location.location(
+    final Map<BlockLocation, Set<Integer>> actual = analyse(LastLineOfContructorCheck.class);
+    final Location l = Location.location(
         ClassName.fromClass(LastLineOfContructorCheck.class),
         MethodName.fromString("<init>"), "()V");
 
@@ -92,8 +92,8 @@ public class LineMapperTest {
 
   @Test
   public void shouldI() throws Exception {
-    Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks2.class);
-    Location l = Location.location(ClassName.fromClass(ThreeBlocks2.class),
+    final Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks2.class);
+    final Location l = Location.location(ClassName.fromClass(ThreeBlocks2.class),
         MethodName.fromString("foo"), "(I)I");
     assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(105);
     assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(106);
@@ -112,8 +112,8 @@ public class LineMapperTest {
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
     when(this.source.fetchClassBytes(any(ClassName.class))).thenReturn(
-        Option.some(ClassUtils.classAsBytes(clazz)));
-    LineMap testee = new LineMapper(this.source);
+        Optional.ofNullable(ClassUtils.classAsBytes(clazz)));
+    final LineMap testee = new LineMapper(this.source);
     return testee.mapLines(ClassName.fromClass(clazz));
   }
 

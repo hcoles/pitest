@@ -15,8 +15,9 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
+import java.util.function.BiFunction;
+
 import org.objectweb.asm.MethodVisitor;
-import org.pitest.functional.F2;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -37,15 +38,8 @@ public enum ConstructorCallMutator implements MethodMutatorFactory {
     return this.getClass().getName();
   }
 
-  private static F2<String, String, Boolean> constructors() {
-    return new F2<String, String, Boolean>() {
-
-      @Override
-      public Boolean apply(final String name, final String desc) {
-        return MethodInfo.isConstructor(name);
-      }
-
-    };
+  private static BiFunction<String, String, Boolean> constructors() {
+    return (name, desc) -> MethodInfo.isConstructor(name);
   }
 
   @Override

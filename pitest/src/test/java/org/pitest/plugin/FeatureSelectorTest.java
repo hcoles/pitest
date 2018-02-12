@@ -14,72 +14,72 @@ import org.junit.rules.ExpectedException;
 public class FeatureSelectorTest {
 
   FeatureSelector<AFeature> testee;
-  
+
   ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
   ProvidesBarOptionally offByDefault = new ProvidesBarOptionally();
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
-  
+
   @Test
   public void shouldSelectFeaturesThatAreOnByDefault() {
-    ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
-    testee = new FeatureSelector<>(noSettings(), features(onByDefault));
-    
-    assertThat(testee.getActiveFeatures()).contains(onByDefault);
+    final ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
+    this.testee = new FeatureSelector<>(noSettings(), features(onByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).contains(onByDefault);
   }
 
   @Test
   public void shouldSelectFeaturesThatAreOffByDefault() {
-    testee = new FeatureSelector<>(noSettings(), features(onByDefault, offByDefault));
-    
-    assertThat(testee.getActiveFeatures()).containsOnly(onByDefault);
+    this.testee = new FeatureSelector<>(noSettings(), features(this.onByDefault, this.offByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).containsOnly(this.onByDefault);
   }
-  
+
   @Test
   public void shouldEnableFeaturesWhenRequested() {
-    FeatureSetting enableBar = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<>(Arrays.asList(enableBar), features(onByDefault, offByDefault));
-    
-    assertThat(testee.getActiveFeatures()).containsOnly(offByDefault, onByDefault);
+    final FeatureSetting enableBar = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<String, List<String>>());
+    this.testee = new FeatureSelector<>(Arrays.asList(enableBar), features(this.onByDefault, this.offByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).containsOnly(this.offByDefault, this.onByDefault);
   }
-  
+
   @Test
   public void shouldDisableFeaturesWhenRequested() {
-    FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(onByDefault));
-    
-    assertThat(testee.getActiveFeatures()).isEmpty();
+    final FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+    this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.onByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).isEmpty();
   }
-  
+
   @Test
   public void shouldThrowErrorWhenConfigForUnknownFeatureProvided() {
-    FeatureSetting wrong = new FeatureSetting("unknown", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-   
-    thrown.expect(IllegalArgumentException.class);
-    testee = new FeatureSelector<>(Arrays.asList(wrong), features(onByDefault));
+    final FeatureSetting wrong = new FeatureSetting("unknown", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+
+    this.thrown.expect(IllegalArgumentException.class);
+    this.testee = new FeatureSelector<>(Arrays.asList(wrong), features(this.onByDefault));
   }
-  
+
   @Test
   public void shouldProvideConfigurationForFeatureWhenProvided() {
-    FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-    testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(onByDefault));
-    
-    assertThat(testee.getSettingForFeature("foo")).isEqualTo(fooConfig);
-    assertThat(testee.getSettingForFeature("bar")).isNull();
+    final FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.onByDefault));
+
+    assertThat(this.testee.getSettingForFeature("foo")).isEqualTo(fooConfig);
+    assertThat(this.testee.getSettingForFeature("bar")).isNull();
   }
-  
+
   private List<FeatureSetting> noSettings() {
     return Collections.emptyList();
   }
-  
+
   private List<AFeature> features(AFeature ...features) {
     return Arrays.asList(features);
   }
 }
 
 interface AFeature extends ProvidesFeature {
-  
+
 }
 
 class ProvidesFooByDefault implements AFeature {
@@ -88,7 +88,7 @@ class ProvidesFooByDefault implements AFeature {
   public Feature provides() {
     return Feature.named("foo").withOnByDefault(true);
   }
-  
+
 }
 
 class ProvidesBarOptionally implements AFeature {
@@ -97,5 +97,5 @@ class ProvidesBarOptionally implements AFeature {
   public Feature provides() {
     return Feature.named("bar").withOnByDefault(false);
   }
-  
+
 }

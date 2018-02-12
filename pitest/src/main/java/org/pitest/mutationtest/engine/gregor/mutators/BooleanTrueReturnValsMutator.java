@@ -23,12 +23,12 @@ public enum BooleanTrueReturnValsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    
-    Type returnType = Type.getReturnType(methodInfo.getMethodDescriptor());
-    if (returnType.getSort() == Type.BOOLEAN 
+
+    final Type returnType = Type.getReturnType(methodInfo.getMethodDescriptor());
+    if ((returnType.getSort() == Type.BOOLEAN)
      || returnType.getClassName().equals("java.lang.Boolean")) {
       return new BooleanTrueMethodVisitor(this, methodInfo, context,
-          methodVisitor); 
+          methodVisitor);
     }
 
     return methodVisitor;
@@ -52,7 +52,7 @@ class BooleanTrueMethodVisitor extends AbstractInsnMutator {
   BooleanTrueMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer); 
+    super(factory, methodInfo, context, writer);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
@@ -78,7 +78,7 @@ class BooleanTrueMethodVisitor extends AbstractInsnMutator {
       }
     };
   }
-  
+
   private static ZeroOperandMutation areturnMutation() {
     return new ZeroOperandMutation() {
       @Override

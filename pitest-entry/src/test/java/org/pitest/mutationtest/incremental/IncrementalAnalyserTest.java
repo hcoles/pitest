@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -44,7 +44,7 @@ public class IncrementalAnalyserTest {
   public void shouldStartNewMutationsAtAStatusOfNotStarted() {
     final MutationDetails md = makeMutation("foo");
     when(this.history.getPreviousResult(any(MutationIdentifier.class)))
-    .thenReturn(Option.<MutationStatusTestPair> none());
+    .thenReturn(Optional.<MutationStatusTestPair> empty());
 
     final Collection<MutationResult> actual = this.testee.analyse(Collections
         .singletonList(md));
@@ -109,7 +109,7 @@ public class IncrementalAnalyserTest {
     setHistoryForAllMutationsTo(DetectionStatus.KILLED, killingTest);
 
     final Collection<TestInfo> tests = Collections.singleton(new TestInfo(
-        "TEST_CLASS", killingTest, 0, Option.<ClassName> none(), 0));
+        "TEST_CLASS", killingTest, 0, Optional.<ClassName> empty(), 0));
     when(this.coverage.getTestsForClass(any(ClassName.class)))
     .thenReturn(tests);
     when(this.history.hasClassChanged(any(ClassName.class))).thenReturn(false);
@@ -117,7 +117,7 @@ public class IncrementalAnalyserTest {
         .analyse(Collections.singletonList(md)).iterator().next();
 
     assertEquals(DetectionStatus.KILLED, actual.getStatus());
-    assertEquals(Option.some(killingTest), actual.getKillingTest());
+    assertEquals(Optional.ofNullable(killingTest), actual.getKillingTest());
   }
 
   @Test
@@ -127,7 +127,7 @@ public class IncrementalAnalyserTest {
     setHistoryForAllMutationsTo(DetectionStatus.KILLED, killingTest);
 
     final Collection<TestInfo> tests = Collections.singleton(new TestInfo(
-        "TEST_CLASS", killingTest, 0, Option.<ClassName> none(), 0));
+        "TEST_CLASS", killingTest, 0, Optional.<ClassName> empty(), 0));
     when(this.coverage.getTestsForClass(any(ClassName.class)))
     .thenReturn(tests);
     when(this.history.hasClassChanged(ClassName.fromString("foo"))).thenReturn(
@@ -153,7 +153,7 @@ public class IncrementalAnalyserTest {
   private void setHistoryForAllMutationsTo(final DetectionStatus status,
       final String test) {
     when(this.history.getPreviousResult(any(MutationIdentifier.class)))
-    .thenReturn(Option.some(new MutationStatusTestPair(0, status, test)));
+    .thenReturn(Optional.ofNullable(new MutationStatusTestPair(0, status, test)));
   }
 
 }

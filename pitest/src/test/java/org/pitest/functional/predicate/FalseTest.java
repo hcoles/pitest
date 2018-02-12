@@ -12,7 +12,7 @@ public class FalseTest {
 
   @Test
   public void shouldAlwaysBeFalse() {
-    assertFalse(False.instance().apply(null));
+    assertFalse(False.instance().test(null));
   }
 
 }

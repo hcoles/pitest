@@ -14,7 +14,7 @@
  */
 package org.pitest.classpath;
 
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 
 public class ClassFilter {
   private final Predicate<String> test;

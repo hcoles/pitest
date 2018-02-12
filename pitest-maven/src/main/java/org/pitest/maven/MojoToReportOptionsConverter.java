@@ -32,9 +32,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.DirectoryClassPathRoot;
-import org.pitest.functional.F;
+import java.util.function.Function;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -198,10 +198,10 @@ public class MojoToReportOptionsConverter {
     return FCollection.filter(plugins, hasKey(key));
   }
 
-  private static F<Plugin, Boolean> hasKey(final String key) {
-    return new F<Plugin, Boolean>() {
+  private static Predicate<Plugin> hasKey(final String key) {
+    return new Predicate<Plugin>() {
       @Override
-      public Boolean apply(Plugin a) {
+      public boolean test(Plugin a) {
         return a.getKey().equals(key);
       }
     };
@@ -284,8 +284,8 @@ public class MojoToReportOptionsConverter {
     return Collections.emptyList();
   }
   
-  private static F<String,String> classToPackageGlob() {
-    return new F<String,String>() {
+  private static Function<String,String> classToPackageGlob() {
+    return new Function<String,String>() {
       @Override
       public String apply(String a) {
         return ClassName.fromString(a).getPackage().asJavaName() + ".*";
@@ -297,8 +297,8 @@ public class MojoToReportOptionsConverter {
     return FCollection.map(sourceRoots, stringToFile());
   }
 
-  private F<String, File> stringToFile() {
-    return new F<String, File>() {
+  private Function<String, File> stringToFile() {
+    return new Function<String, File>() {
       @Override
       public File apply(final String a) {
         return new File(a);

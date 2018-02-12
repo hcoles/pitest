@@ -21,6 +21,7 @@ import java.net.ServerSocket;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassInfo;
@@ -30,7 +31,6 @@ import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
@@ -130,7 +130,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     process.start();
 
-    ExitCode exitCode = process.waitToDie();
+    final ExitCode exitCode = process.waitToDie();
 
     if (exitCode == ExitCode.JUNIT_ISSUE) {
       LOG.severe("Error generating coverage. Please check that your classpath contains JUnit 4.6 or above.");
@@ -145,14 +145,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private static F<ClassInfo, String> classInfoToName() {
-    return new F<ClassInfo, String>() {
-      @Override
-      public String apply(final ClassInfo a) {
-        return a.getName().asInternalName();
-      }
-
-    };
+  private static Function<ClassInfo, String> classInfoToName() {
+    return a -> a.getName().asInternalName();
   }
 
   private SideEffect1<String> captureStandardOutIfVerbose() {
@@ -164,21 +158,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   private static SideEffect1<String> logInfo() {
-    return new SideEffect1<String>() {
-      @Override
-      public void apply(final String a) {
-        LOG.info("MINION : " + a);
-      }
-    };
+    return a -> LOG.info("MINION : " + a);
   }
 
   private static SideEffect1<String> log() {
-    return new SideEffect1<String>() {
-      @Override
-      public void apply(final String a) {
-        LOG.fine("MINION : " + a);
-      }
-    };
+    return a -> LOG.fine("MINION : " + a);
   }
 
   private SideEffect1<CoverageResult> resultProcessor(
@@ -204,7 +188,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   public TestPluginArguments getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }
-  
+
   @Override
   public LaunchOptions getLaunchOptions() {
     return this.launchOptions;

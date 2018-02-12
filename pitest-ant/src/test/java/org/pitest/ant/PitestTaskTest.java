@@ -1,22 +1,22 @@
 /*
  * Copyright 2012 Nicolas Rusconi
- * 
- * Licensed under the Apache License, Version 2.0 ("the "License""); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 ("the "License"");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.ant;
 
-import static org.mockito.Matchers.startsWith;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -86,7 +86,7 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--excludedClasses=String");
   }
-  
+
   @Test
   public void shouldPassExcludedTestClassesOptionToJavaTask() {
     this.pitestTask.setExcludedTestClasses("String");
@@ -127,27 +127,27 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--detectInlinedCode=true");
   }
-  
+
   @Test
   public void shouldNotPassInlinedCodeOptionToJavaTaskWhenNoValueSet() {
     this.pitestTask.execute(this.java);
     verify(this.arg, never()).setValue("--detectInlinedCode=true");
   }
-  
+
   @Test
   public void shouldPassMutateInlinedCodeOptionToJavaTaskWhenValueIsFalse() {
     this.pitestTask.setDetectInlinedCode("false");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--detectInlinedCode=false");
   }
-  
+
   @Test
   public void shouldPassMutatorsOptionToJavaTask() {
     this.pitestTask.setMutators("a,b");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutators=a,b");
   }
-  
+
   @Test
   public void shouldPassFeaturesOptionToJavaTask() {
     this.pitestTask.setFeatures("FOO,BAR(a[1] a[2])");
@@ -348,7 +348,7 @@ public class PitestTaskTest {
 
     verify(this.java).setClasspath(argThat(new PathMatcher(classpath)));
   }
-  
+
   @Test
   public void shouldPassAnalysisClassPathToPit() throws Exception {
     this.pitestTask.setClasspath("Foo" + File.pathSeparator + "Bar");
@@ -384,7 +384,7 @@ public class PitestTaskTest {
     verify(this.java).setClasspath(
         argThat(new PathMatcher(reference.toString())));
   }
-  
+
 
   @Test
   public void shouldPassClasspathAntReferenceToPit() throws Exception {
@@ -404,56 +404,56 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--historyInputLocation=foo");
   }
-  
+
   @Test
   public void shouldPassHistoryOutputLocationToJavaTask() {
     this.pitestTask.setHistoryOutputLocation("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--historyOutputLocation=foo");
   }
-  
+
   @Test
   public void shouldIgnoreEmptyListOfExcludedClasses() {
     this.pitestTask.setExcludedClasses("");
     this.pitestTask.execute(this.java);
     verify(this.arg, never()).setValue("--excludedClasses=");
   }
-  
+
   @Test
   public void shouldPassMutationThresholdToJavaTask() {
     this.pitestTask.setMutationThreshold("42");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutationThreshold=42");
   }
-  
+
   @Test
   public void shouldPassMaxSurvivorsToJavaTask() {
     this.pitestTask.setMaxSurviving("42");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--maxSurviving=42");
   }
-  
+
   @Test
   public void shouldPassCoverageThresholdToJavaTask() {
     this.pitestTask.setCoverageThreshold("42");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--coverageThreshold=42");
   }
-  
+
   @Test
   public void shouldPassMutationEngineToJavaTask() {
     this.pitestTask.setMutationEngine("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutationEngine=foo");
   }
-  
+
   @Test
   public void shouldPassJVMToJavaTask() {
     this.pitestTask.setJVM("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--jvmPath=foo");
   }
-  
+
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

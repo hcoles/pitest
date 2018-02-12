@@ -30,12 +30,12 @@ public class FunctionsTest {
 
   @Test
   public void startWithShouldReturnTrueIfGivenStringStartsWithParameter() {
-    assertTrue(Functions.startsWith("foo").apply("foobar"));
+    assertTrue(Functions.startsWith("foo").test("foobar"));
   }
 
   @Test
   public void startWithShouldReturnFalseIfGivenStringDoesNotStartsWithParameter() {
-    assertFalse(Functions.startsWith("foo").apply("barfoo"));
+    assertFalse(Functions.startsWith("foo").test("barfoo"));
   }
 
   static enum Foo {

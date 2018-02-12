@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
 
@@ -104,15 +104,8 @@ public class MutationTestSummaryData {
     return FCollection.fold(accumulateCodeLines(), 0, this.classes);
   }
 
-  private F2<Integer, ClassInfo, Integer> accumulateCodeLines() {
-    return new F2<Integer, ClassInfo, Integer>() {
-
-      @Override
-      public Integer apply(final Integer a, final ClassInfo b) {
-        return a + b.getNumberOfCodeLines();
-      }
-
-    };
+  private BiFunction<Integer, ClassInfo, Integer> accumulateCodeLines() {
+    return (a, b) -> a + b.getNumberOfCodeLines();
   }
 
   private long getNumberOfMutations() {
@@ -129,15 +122,8 @@ public class MutationTestSummaryData {
     return count;
   }
 
-  private F<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
-    return new F<MutationResult, Iterable<TestInfo>>() {
-
-      @Override
-      public Iterable<TestInfo> apply(final MutationResult a) {
-        return a.getDetails().getTestsInOrder();
-      }
-
-    };
+  private Function<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
+    return a -> a.getDetails().getTestsInOrder();
   }
 
 }

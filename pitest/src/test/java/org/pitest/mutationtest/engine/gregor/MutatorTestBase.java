@@ -25,6 +25,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
@@ -33,11 +36,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.FunctionalList;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
@@ -50,12 +49,12 @@ public abstract class MutatorTestBase {
 
   protected GregorMutater engine;
 
-  protected FunctionalList<MutationDetails> findMutationsFor(
+  protected List<MutationDetails> findMutationsFor(
       final Class<?> clazz) {
     return this.engine.findMutations(ClassName.fromClass(clazz));
   }
 
-  protected FunctionalList<MutationDetails> findMutationsFor(final String clazz) {
+  protected List<MutationDetails> findMutationsFor(final String clazz) {
     return this.engine.findMutations(ClassName.fromString(clazz));
   }
 
@@ -85,11 +84,11 @@ public abstract class MutatorTestBase {
 
   protected void createTesteeWith(
       final Collection<MethodMutatorFactory> mutators) {
-    createTesteeWith(True.<MethodInfo> all(), mutators);
+    createTesteeWith(i -> true, mutators);
   }
 
   protected void createTesteeWith(final MethodMutatorFactory... mutators) {
-    createTesteeWith(True.<MethodInfo> all(), mutators);
+    createTesteeWith(i -> true, mutators);
   }
 
   protected <T> void assertMutantCallableReturns(final Callable<T> unmutated,
@@ -121,17 +120,12 @@ public abstract class MutatorTestBase {
   }
 
   private Transformation createTransformation(final Mutant mutant) {
-    return new Transformation() {
-
-      @Override
-      public byte[] transform(final String name, final byte[] bytes) {
-        if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
-          return mutant.getBytes();
-        } else {
-          return bytes;
-        }
+    return (name, bytes) -> {
+      if (name.equals(mutant.getDetails().getClassName().asJavaName())) {
+        return mutant.getBytes();
+      } else {
+        return bytes;
       }
-
     };
   }
 
@@ -145,19 +139,12 @@ public abstract class MutatorTestBase {
   }
 
   protected List<Mutant> getMutants(
-      final FunctionalList<MutationDetails> details) {
-    return details.map(createMutant());
+      final List<MutationDetails> details) {
+    return details.stream().map(createMutant()).collect(Collectors.toList());
   }
 
-  private F<MutationDetails, Mutant> createMutant() {
-    return new F<MutationDetails, Mutant>() {
-
-      @Override
-      public Mutant apply(final MutationDetails a) {
-        return MutatorTestBase.this.engine.getMutation(a.getId());
-      }
-
-    };
+  private Function<MutationDetails, Mutant> createMutant() {
+    return a -> MutatorTestBase.this.engine.getMutation(a.getId());
   }
 
   protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
@@ -182,21 +169,20 @@ public abstract class MutatorTestBase {
 
   }
 
-  protected void printMutant(final Mutant mutant) {    
+  protected void printMutant(final Mutant mutant) {
      final ClassReader reader = new ClassReader(mutant.getBytes());
      reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(
          System.out)), ClassReader.EXPAND_FRAMES);
   }
 
   protected void assertMutantsReturn(final Callable<String> mutee,
-
-      final FunctionalList<MutationDetails> details,
+      final List<MutationDetails> details,
       final String... expectedResults) {
 
     final List<Mutant> mutants = this.getMutants(details);
     assertEquals("Should return one mutant for each request", details.size(),
         mutants.size());
-    final FunctionalList<String> results = FCollection.map(mutants,
+    final List<String> results = FCollection.map(mutants,
         mutantToStringReults(mutee));
 
     int i = 0;
@@ -206,19 +192,12 @@ public abstract class MutatorTestBase {
     }
   }
 
-  private F<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
-    return new F<Mutant, String>() {
-
-      @Override
-      public String apply(final Mutant mutant) {
-        return mutateAndCall(mutee, mutant);
-      }
-
-    };
+  private Function<Mutant, String> mutantToStringReults(final Callable<String> mutee) {
+    return mutant -> mutateAndCall(mutee, mutant);
   }
 
   protected void assertMutantsAreFrom(
-      final FunctionalList<MutationDetails> actualDetails,
+      final List<MutationDetails> actualDetails,
       final Class<?>... mutators) {
     assertEquals(mutators.length, actualDetails.size());
     int i = 0;
@@ -235,25 +214,13 @@ public abstract class MutatorTestBase {
   }
 
   protected Predicate<MethodInfo> mutateOnlyCallMethod() {
-    return new Predicate<MethodInfo>() {
-
-      @Override
-      public Boolean apply(final MethodInfo a) {
-        return a.getName().equals("call");
-      }
-
-    };
+    return a -> a.getName().equals("call");
   }
 
-  protected F<MutationDetails, Boolean> descriptionContaining(final String value) {
-    return new F<MutationDetails, Boolean>() {
-      @Override
-      public Boolean apply(final MutationDetails a) {
-        return a.getDescription().contains(value);
-      }
-    };
+  protected Predicate<MutationDetails> descriptionContaining(final String value) {
+    return a -> a.getDescription().contains(value);
   }
-  
+
   protected void assertMutantDescriptionIncludes(String string, Class<?> clazz) {
     final Collection<MutationDetails> actual = findMutationsFor(clazz);
     assertThat(actual.iterator().next().getDescription()).contains(string);

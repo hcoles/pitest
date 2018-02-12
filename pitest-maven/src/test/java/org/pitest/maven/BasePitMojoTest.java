@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
@@ -33,10 +35,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.mutationtest.config.PluginServices;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -77,8 +76,8 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         Collections.emptyList());
   }
 
-  private F<File, String> fileToString() {
-    return new F<File, String>() {
+  private Function<File, String> fileToString() {
+    return new Function<File, String>() {
 
       @Override
       public String apply(final File a) {
@@ -106,7 +105,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   protected AbstractPitMojo createPITMojo(final String config) throws Exception {
     final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy, this.filter,
-        this.plugins, True.<MavenProject>all());
+        this.plugins, p -> true);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }

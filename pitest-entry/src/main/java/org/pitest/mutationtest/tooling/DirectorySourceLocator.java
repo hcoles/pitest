@@ -19,36 +19,36 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
+import org.pitest.functional.Streams;
 import org.pitest.mutationtest.SourceLocator;
 
 public class DirectorySourceLocator implements SourceLocator {
 
   private final File                    root;
-  private final F<File, Option<Reader>> fileToReader;
+  private final Function<File, Optional<Reader>> fileToReader;
 
-  private static class FileToReader implements F<File, Option<Reader>> {
+  private static class FileToReader implements Function<File, Optional<Reader>> {
 
     @Override
-    public Option<Reader> apply(final File f) {
+    public Optional<Reader> apply(final File f) {
       if (f.exists()) {
         try {
-          return Option.<Reader> some(new FileReader(f));
+          return Optional.<Reader> ofNullable(new FileReader(f));
         } catch (final FileNotFoundException e) {
-          return Option.none();
+          return Optional.empty();
         }
       }
-      return Option.none();
+      return Optional.empty();
     }
 
   };
 
   DirectorySourceLocator(final File root,
-      final F<File, Option<Reader>> fileToReader) {
+      final Function<File, Optional<Reader>> fileToReader) {
     this.root = root;
     this.fileToReader = fileToReader;
   }
@@ -58,37 +58,27 @@ public class DirectorySourceLocator implements SourceLocator {
   }
 
   @Override
-  public Option<Reader> locate(final Collection<String> classes,
+  public Optional<Reader> locate(final Collection<String> classes,
       final String fileName) {
-    final List<Reader> matches = FCollection.flatMap(classes,
-        classNameToSourceFileReader(fileName));
-    if (matches.isEmpty()) {
-      return Option.none();
-    } else {
-      return Option.some(matches.iterator().next());
-    }
+    final Stream<Reader> matches = classes.stream().flatMap(classNameToSourceFileReader(fileName));
+    return matches.findFirst();
   }
 
-  private F<String, Iterable<Reader>> classNameToSourceFileReader(
+  private Function<String, Stream<Reader>> classNameToSourceFileReader(
       final String fileName) {
-    return new F<String, Iterable<Reader>>() {
-
-      @Override
-      public Iterable<Reader> apply(final String className) {
-        if (className.contains(".")) {
-          final File f = new File(className.replace(".", File.separator));
-          return locate(f.getParent() + File.separator + fileName);
-        } else {
-          return locate(fileName);
-        }
+    return className -> {
+      if (className.contains(".")) {
+        final File f = new File(className.replace(".", File.separator));
+        return locate(f.getParent() + File.separator + fileName);
+      } else {
+        return locate(fileName);
       }
-
     };
   }
 
-  private Option<Reader> locate(final String fileName) {
+  private Stream<Reader> locate(final String fileName) {
     final File f = new File(this.root + File.separator + fileName);
-    return this.fileToReader.apply(f);
+    return Streams.fromOptional(this.fileToReader.apply(f));
   }
 
 }

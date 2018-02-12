@@ -27,7 +27,7 @@ public interface MutationEngine {
   /**
    * Create a mutator using the given ClassByteArraySource as the source of
    * unmated classes
-   * 
+   *
    * @param source
    *          the source to use to retrieve unmated classes
    * @return a Mutater
@@ -36,11 +36,11 @@ public interface MutationEngine {
 
   /**
    * Returns a list of mutation operations this engine can perform
-   * 
+   *
    * @return a list of mutator names
    */
   Collection<String> getMutatorNames();
-  
+
   /**
    * Returns the name of this engine
    * @return The engine name

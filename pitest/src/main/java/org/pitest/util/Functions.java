@@ -14,61 +14,30 @@
  */
 package org.pitest.util;
 
-import org.pitest.functional.F;
-import org.pitest.functional.predicate.Predicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public abstract class Functions {
 
-  public static F<String, String> classNameToJVMClassName() {
-    return new F<String, String>() {
-
-      @Override
-      public String apply(final String a) {
-        return a.replace(".", "/");
-      }
-
-    };
+  public static Function<String, String> classNameToJVMClassName() {
+    return a -> a.replace(".", "/");
   }
 
-  public static F<String, String> jvmClassToClassName() {
-    return new F<String, String>() {
-
-      @Override
-      public String apply(final String a) {
-        return a.replace("/", ".");
-      }
-
-    };
+  public static Function<String, String> jvmClassToClassName() {
+    return a -> a.replace("/", ".");
   }
 
-  public static F<Class<?>, String> classToName() {
-    return new F<Class<?>, String>() {
-      @Override
-      public String apply(final Class<?> clazz) {
-        return clazz.getName();
-      }
-    };
+  public static Function<Class<?>, String> classToName() {
+    return clazz -> clazz.getName();
 
   }
 
   public static Predicate<String> startsWith(final String filter) {
-    return new Predicate<String>() {
-      @Override
-      public Boolean apply(final String a) {
-        return a.startsWith(filter);
-      }
-
-    };
+    return a -> a.startsWith(filter);
   }
 
-  public static <T extends Enum<T>> F<String, T> stringToEnum(
+  public static <T extends Enum<T>> Function<String, T> stringToEnum(
       final Class<T> clazz) {
-    return new F<String, T>() {
-      @Override
-      public T apply(final String name) {
-        return Enum.valueOf(clazz, name);
-      }
-
-    };
+    return name -> Enum.valueOf(clazz, name);
   }
 }

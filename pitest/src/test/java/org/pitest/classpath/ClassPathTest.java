@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.Optional;
 import org.pitest.functional.prelude.Prelude;
 
 public class ClassPathTest {
@@ -48,10 +48,10 @@ public class ClassPathTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.testee = new ClassPath(this.firstComponent, this.secondComponent);
-    when(this.firstComponent.cacheLocation()).thenReturn(Option.some("foo"));
+    when(this.firstComponent.cacheLocation()).thenReturn(Optional.ofNullable("foo"));
     when(this.firstComponent.classNames()).thenReturn(
         Collections.singletonList("FooClass"));
-    when(this.secondComponent.cacheLocation()).thenReturn(Option.some("bar"));
+    when(this.secondComponent.cacheLocation()).thenReturn(Optional.ofNullable("bar"));
     when(this.secondComponent.classNames()).thenReturn(
         Collections.singletonList("BarClass"));
   }
@@ -85,14 +85,7 @@ public class ClassPathTest {
   }
 
   private Predicate<ClassPathRoot> rootIsEqualTo(final String value) {
-    return new Predicate<ClassPathRoot>() {
-
-      @Override
-      public Boolean apply(final ClassPathRoot a) {
-        return a.cacheLocation().value().equals(value);
-      }
-
-    };
+    return a -> a.cacheLocation().get().equals(value);
   }
 
 }

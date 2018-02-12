@@ -157,7 +157,7 @@ public class MutationTestWorker {
     final Container c = new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
-        List<TestResult> results = new ArrayList<>();
+        final List<TestResult> results = new ArrayList<>();
         final ExitingResultCollector rc = new ExitingResultCollector(
             new ConcreteResultCollector(results));
         group.execute(rc);
@@ -192,9 +192,9 @@ public class MutationTestWorker {
 
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
-    if (listener.lastFailingTest().hasSome()) {
+    if (listener.lastFailingTest().isPresent()) {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
-          listener.status(), listener.lastFailingTest().value()
+          listener.status(), listener.lastFailingTest().get()
               .getQualifiedName());
     } else {
       return new MutationStatusTestPair(listener.getNumberOfTestsRun(),

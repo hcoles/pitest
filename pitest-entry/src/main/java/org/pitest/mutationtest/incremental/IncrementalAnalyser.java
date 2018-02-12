@@ -6,14 +6,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.F;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.Option;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
@@ -50,12 +50,12 @@ public class IncrementalAnalyser implements MutationAnalyser {
     final List<MutationResult> mrs = new ArrayList<>(
         mutation.size());
     for (final MutationDetails each : mutation) {
-      final Option<MutationStatusTestPair> maybeResult = this.history
+      final Optional<MutationStatusTestPair> maybeResult = this.history
           .getPreviousResult(each.getId());
-      if (maybeResult.hasNone()) {
+      if (!maybeResult.isPresent()) {
         mrs.add(analyseFromScratch(each));
       } else {
-        mrs.add(analyseFromHistory(each, maybeResult.value()));
+        mrs.add(analyseFromHistory(each, maybeResult.get()));
       }
     }
 
@@ -91,7 +91,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.KILLED)
         && killingTestHasNotChanged(each, mutationStatusTestPair)) {
       return makeResult(each, DetectionStatus.KILLED, mutationStatusTestPair
-          .getKillingTest().value());
+          .getKillingTest().get());
     }
 
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.SURVIVED)
@@ -108,9 +108,10 @@ public class IncrementalAnalyser implements MutationAnalyser {
     final Collection<TestInfo> allTests = this.coverage.getTestsForClass(each
         .getClassName());
 
-    final List<ClassName> testClasses = FCollection.filter(allTests,
-        testIsCalled(mutationStatusTestPair.getKillingTest().value())).map(
-            TestInfo.toDefiningClassName());
+    final List<ClassName> testClasses = allTests.stream()
+        .filter(testIsCalled(mutationStatusTestPair.getKillingTest().get()))
+        .map(TestInfo.toDefiningClassName())
+        .collect(Collectors.toList());
 
     if (testClasses.isEmpty()) {
       return false;
@@ -120,14 +121,8 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   }
 
-  private static F<TestInfo, Boolean> testIsCalled(final String testName) {
-    return new F<TestInfo, Boolean>() {
-      @Override
-      public Boolean apply(final TestInfo a) {
-        return a.getName().equals(testName);
-      }
-
-    };
+  private static Predicate<TestInfo> testIsCalled(final String testName) {
+    return a -> a.getName().equals(testName);
   }
 
   private MutationResult analyseFromScratch(final MutationDetails mutation) {

@@ -10,23 +10,23 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class StaticInitializerFilterTest {
-  
-  StaticInitializerFilter testee  = new StaticInitializerFilter();  
-  
+
+  StaticInitializerFilter testee  = new StaticInitializerFilter();
+
   @Test
   public void shouldRemoveMutationsInStaticInitCode() {
-    Collection<MutationDetails> marked = aMutationDetail()
+    final Collection<MutationDetails> marked = aMutationDetail()
         .withPoison(PoisonStatus.IS_STATIC_INITIALIZER_CODE)
         .build(2);
-    
-    assertThat(testee.intercept(marked, null)).isEmpty();
+
+    assertThat(this.testee.intercept(marked, null)).isEmpty();
   }
 
   @Test
   public void shouldNotFilterNotStaticMutants() {
-    Collection<MutationDetails> unmarked = aMutationDetail()
-        .build(2);    
-    assertThat(testee.intercept(unmarked, null)).containsAll(unmarked);
+    final Collection<MutationDetails> unmarked = aMutationDetail()
+        .build(2);
+    assertThat(this.testee.intercept(unmarked, null)).containsAll(unmarked);
   }
-  
+
 }

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.pitest.testapi.TestGroupConfig.*;
+import static org.pitest.testapi.TestGroupConfig.emptyConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +69,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Test
   public void shouldFindTheoryTestViaMethodNameTest() {
-    List<String> includedMethods = new ArrayList<>();
+    final List<String> includedMethods = new ArrayList<>();
     includedMethods.add("testTheory1");
     includedMethods.add("testTheory3");
     setIncludedTestMethods(includedMethods);
@@ -362,17 +362,17 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     final Collection<TestUnit> actual = findWithTestee(JUnitParamsTest.class);
     assertEquals(1, actual.size());
   }
-  
+
   @Test
   public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
     try {
-      findWithTestee(ThrowsOnDiscoverySuite.class); 
+      findWithTestee(ThrowsOnDiscoverySuite.class);
       // pass
-    } catch(RuntimeException ex) {
+    } catch(final RuntimeException ex) {
       fail();
     }
   }
-  
+
   @Test
   public void includesSuppliedCategories() {
     setConfig(emptyConfig()
@@ -380,7 +380,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     final Collection<TestUnit> actual = findWithTestee(Tagged.class);
     assertThat(actual).hasSize(1);
   }
-  
+
   @Test
   public void excludesSuppliedCategories() {
     setConfig(emptyConfig()
@@ -405,13 +405,13 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     final Collection<TestUnit> actual = findWithTestee(HasExplicitRunner.class);
     assertThat(actual).isEmpty();
   }
-  
+
   static interface ACategory {
-    
+
   }
-  
+
   static interface AnotherCategory {
-    
+
   }
 
   @Category({ACategory.class, AnotherCategory.class})
@@ -420,43 +420,43 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     public void testTwo() {
     }
   }
-  
+
   public static class IndirectlyTagged extends Tagged {
     @Test
     public void test() {
     }
   }
-  
-  
+
+
   @RunWith(BlockJUnit4ClassRunner.class)
   public static class HasExplicitRunner {
     @Test
     public void foo() {
-      
+
     }
   }
-  
-  
+
+
   private void setConfig(TestGroupConfig config) {
-    testee = new JUnitCustomRunnerTestUnitFinder(
+    this.testee = new JUnitCustomRunnerTestUnitFinder(
         config, Collections.<String>emptyList(), Collections.<String>emptyList());
   }
 
-  
+
   private void excludeRunner(Class<? extends Runner> class1) {
-    List<String> include = Collections.<String>emptyList();
-    List<String> exclude = Collections.<String>emptyList();
-    testee = new JUnitCustomRunnerTestUnitFinder(
+    final List<String> include = Collections.<String>emptyList();
+    final List<String> exclude = Collections.<String>emptyList();
+    this.testee = new JUnitCustomRunnerTestUnitFinder(
             new TestGroupConfig(include,exclude), Collections.singletonList(class1.getName()),
             Collections.<String>emptyList());
   }
 
   private void setIncludedTestMethods(Collection<String> includedTestMethods) {
-    List<String> include = Collections.<String>emptyList();
-    List<String> exclude = Collections.<String>emptyList();
-    testee = new JUnitCustomRunnerTestUnitFinder(
+    final List<String> include = Collections.<String>emptyList();
+    final List<String> exclude = Collections.<String>emptyList();
+    this.testee = new JUnitCustomRunnerTestUnitFinder(
             new TestGroupConfig(include,exclude), Collections.<String>emptyList(), includedTestMethods);
   }
 
-  
+
 }

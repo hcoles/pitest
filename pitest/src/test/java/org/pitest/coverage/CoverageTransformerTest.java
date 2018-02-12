@@ -27,7 +27,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.OtherClassLoaderClassPathRoot;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.True;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
 
@@ -68,8 +67,8 @@ public class CoverageTransformerTest {
   public void shouldTransformClasseMatchingPredicate()
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
-        True.<String> all());
-    final byte[] bs = this.bytes.getBytes(String.class.getName()).value();
+        s -> true);
+    final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
     assertFalse(Arrays.equals(bs,
         testee.transform(null, "anything", null, null, bs)));
   }
@@ -96,7 +95,7 @@ public class CoverageTransformerTest {
   }
 
   protected void printRaw(final Class<?> clazz) throws IOException {
-    OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(
+    final OtherClassLoaderClassPathRoot r = new OtherClassLoaderClassPathRoot(
         IsolationUtils.getContextClassLoader());
     printClass(StreamUtil.streamToByteArray(r.getData(clazz.getName())));
   }
@@ -110,9 +109,9 @@ public class CoverageTransformerTest {
   private byte[] transform(final Class<?> clazz)
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
-        True.<String> all());
+        s -> true);
     final byte[] bs = testee.transform(this.loader, clazz.getName(), null,
-        null, this.bytes.getBytes(clazz.getName()).value());
+        null, this.bytes.getBytes(clazz.getName()).get());
     return bs;
   }
 

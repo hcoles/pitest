@@ -23,7 +23,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 public class ClassInfoTest {
 
@@ -69,7 +69,7 @@ public class ClassInfoTest {
         emptyClassPointer(), this.data);
     assertTrue(testee.isSynthetic());
   }
-  
+
   @Test
   public void shouldReportWhenClassIsNotSynthetic() {
     this.data.access = Opcodes.ACC_PUBLIC;
@@ -77,25 +77,13 @@ public class ClassInfoTest {
         emptyClassPointer(), this.data);
     assertFalse(testee.isSynthetic());
   }
-  
-  private ClassPointer emptyClassPointer() {
-    return new ClassPointer() {
-      @Override
-      public Option<ClassInfo> fetch() {
-        return Option.none();
-      }
 
-    };
+  private ClassPointer emptyClassPointer() {
+    return () -> Optional.empty();
   }
 
   private ClassPointer pointerTo(final ClassInfo ci) {
-    return new ClassPointer() {
-      @Override
-      public Option<ClassInfo> fetch() {
-        return Option.some(ci);
-      }
-
-    };
+    return () -> Optional.ofNullable(ci);
   }
 
   @Test
@@ -120,7 +108,7 @@ public class ClassInfoTest {
   public void matchIfAbstractShouldReturnTrueForAbstractClasses() {
     this.data.access = Opcodes.ACC_ABSTRACT;
     makeTestee();
-    assertTrue(ClassInfo.matchIfAbstract().apply(this.testee));
+    assertTrue(ClassInfo.matchIfAbstract().test(this.testee));
   }
 
   private void makeTestee() {

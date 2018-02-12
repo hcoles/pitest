@@ -16,7 +16,7 @@ public class TryWithResourcesFilterFactory implements MutationInterceptorFactory
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new TryWithResourcesFilter();
   }
-  
+
   @Override
   public Feature provides() {
     return Feature.named("FTRYWR")

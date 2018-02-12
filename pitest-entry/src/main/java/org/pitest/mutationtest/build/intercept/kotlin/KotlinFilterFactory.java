@@ -16,7 +16,7 @@ public class KotlinFilterFactory implements MutationInterceptorFactory {
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
     return new KotlinFilter();
   }
-  
+
   @Override
   public Feature provides() {
     return Feature.named("FKOTLIN")

@@ -1,16 +1,16 @@
 /*
  * Copyright 2012 Nicolas Rusconi
- * 
- * Licensed under the Apache License, Version 2.0 ("the "License""); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 ("the "License"");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package org.pitest.ant;
@@ -32,14 +32,14 @@ public class PitestTask extends Task { // NO_UCD (test only)
       ConfigOption.TARGET_CLASSES.getParamName(),
       ConfigOption.REPORT_DIR.getParamName(),
       ConfigOption.SOURCE_DIR.getParamName()        };
-  
+
   private final Map<String, String> options          = new HashMap<>();
-  
+
   /**
    * Classpath to analyse
    */
   private String                    classpath;
-  
+
   /**
    * Classpath to pitest and plugins
    */
@@ -55,10 +55,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
   }
 
   void execute(final Java java) {
-        
+
     this.setOption(ConfigOption.INCLUDE_LAUNCH_CLASSPATH, "false");
     this.setOption(ConfigOption.CLASSPATH, generateAnalysisClasspath());
-    
+
     java.setClasspath(generateLaunchClasspath());
     java.setClassname(MutationCoverageReport.class.getCanonicalName());
     java.setFailonerror(true);
@@ -72,7 +72,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
 
     java.execute();
   }
-  
+
   private Path generateLaunchClasspath() {
     if (this.pitClasspath == null) {
       throw new BuildException("You must specify the classpath for pitest and its plugins.");
@@ -107,9 +107,9 @@ public class PitestTask extends Task { // NO_UCD (test only)
     if (reference != null) {
       this.classpath = reference.toString();
     }
-    
-    return classpath.replaceAll(File.pathSeparator, ",");
-    
+
+    return this.classpath.replaceAll(File.pathSeparator, ",");
+
   }
 
   public void setReportDir(final String value) {
@@ -147,7 +147,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setFeatures(final String value) {
     this.setOption(ConfigOption.FEATURES, value);
   }
-  
+
   public void setExcludedMethods(final String value) {
     this.setOption(ConfigOption.EXCLUDED_METHOD, value);
   }
@@ -159,7 +159,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setExcludedTestClasses(final String value) {
     this.setOption(ConfigOption.EXCLUDED_TEST_CLASSES, value);
   }
-  
+
   public void setAvoidCallsTo(final String value) {
     this.setOption(ConfigOption.AVOID_CALLS, value);
   }
@@ -195,7 +195,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setClasspath(final String classpath) {
     this.classpath = classpath;
   }
-  
+
   public void setPitClasspath(final String classpath) {
     this.pitClasspath = classpath;
   }
@@ -227,23 +227,23 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setMutationThreshold(final String value) {
     this.setOption(ConfigOption.MUTATION_THRESHOLD, value);
   }
-  
+
   public void setMaxSurviving(final String value) {
     this.setOption(ConfigOption.MAX_SURVIVING, value);
   }
-  
+
   public void setCoverageThreshold(final String value) {
     this.setOption(ConfigOption.COVERAGE_THRESHOLD, value);
   }
-  
+
   public void setMutationEngine(String value) {
-    this.setOption(ConfigOption.MUTATION_ENGINE, value);  
+    this.setOption(ConfigOption.MUTATION_ENGINE, value);
   }
-  
+
   public void setJVM(String value) {
-    this.setOption(ConfigOption.JVM_PATH, value);  
+    this.setOption(ConfigOption.JVM_PATH, value);
   }
-  
+
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);

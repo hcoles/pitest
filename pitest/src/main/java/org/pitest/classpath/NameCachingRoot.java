@@ -6,10 +6,10 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F;
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 /**
  * Caches the classes provided by the decorated
@@ -17,9 +17,9 @@ import org.pitest.functional.Option;
  * cost of higher memory consumption
  */
 public class NameCachingRoot implements ClassPathRoot {
-  
+
   private final ClassPathRoot child;
-  
+
   private SoftReference<Collection<String>> cache;
 
   public NameCachingRoot(ClassPathRoot child) {
@@ -28,47 +28,44 @@ public class NameCachingRoot implements ClassPathRoot {
 
   @Override
   public URL getResource(String name) throws MalformedURLException {
-    return child.getResource(name);
+    return this.child.getResource(name);
   }
 
   @Override
   public InputStream getData(String name) throws IOException {
-    Collection<String> names = classNames();
+    final Collection<String> names = classNames();
     if (!names.contains(ClassName.fromString(name).asJavaName())) {
       return null;
     }
-    return child.getData(name);
+    return this.child.getData(name);
   }
 
   @Override
   public Collection<String> classNames() {
-    if (cache != null) {
-      Collection<String> cachedNames = cache.get();
+    if (this.cache != null) {
+      final Collection<String> cachedNames = this.cache.get();
       if (cachedNames != null) {
         return cachedNames;
       }
     }
-    Collection<String> names = child.classNames();
-    cache = new SoftReference<>(names);
+    final Collection<String> names = this.child.classNames();
+    this.cache = new SoftReference<>(names);
     return  names;
   }
 
   @Override
-  public Option<String> cacheLocation() {
-    return child.cacheLocation();
+  public Optional<String> cacheLocation() {
+    return this.child.cacheLocation();
   }
 
-  public static F<ClassPathRoot, ClassPathRoot> toCachingRoot() {
-     return new F<ClassPathRoot, ClassPathRoot>() {
-      @Override
-      public ClassPathRoot apply(ClassPathRoot a) {
-        // ugly hack to determine where caching will be useful
-        if (a instanceof IOHeavyRoot ) {
-          return new NameCachingRoot(a);
-        }
-        return a;
+  public static Function<ClassPathRoot, ClassPathRoot> toCachingRoot() {
+     return a -> {
+      // ugly hack to determine where caching will be useful
+      if (a instanceof IOHeavyRoot ) {
+        return new NameCachingRoot(a);
       }
-     };
+      return a;
+    };
   }
 
 }

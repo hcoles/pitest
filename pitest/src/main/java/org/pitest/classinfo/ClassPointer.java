@@ -14,10 +14,10 @@
  */
 package org.pitest.classinfo;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 
 interface ClassPointer {
-  Option<ClassInfo> fetch();
+  Optional<ClassInfo> fetch();
 }
 
 class DefaultClassPointer implements ClassPointer {
@@ -29,8 +29,8 @@ class DefaultClassPointer implements ClassPointer {
   }
 
   @Override
-  public Option<ClassInfo> fetch() {
-    return Option.some(this.clazz);
+  public Optional<ClassInfo> fetch() {
+    return Optional.ofNullable(this.clazz);
   }
 
 }
@@ -45,7 +45,7 @@ class DeferredClassPointer implements ClassPointer {
   }
 
   @Override
-  public Option<ClassInfo> fetch() {
+  public Optional<ClassInfo> fetch() {
     return this.repository.fetchClass(this.name);
   }
 

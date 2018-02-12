@@ -31,7 +31,7 @@ abstract class DataLoader<T> {
   private final Set<File>     filesToLoad;
 
   protected DataLoader(final Collection<File> filesToLoad) {
-    if (filesToLoad == null || filesToLoad.isEmpty()) {
+    if ((filesToLoad == null) || filesToLoad.isEmpty()) {
       throw new IllegalArgumentException("Null or empty filesToLoad");
     }
 
@@ -41,7 +41,7 @@ abstract class DataLoader<T> {
   public Set<T> loadData() throws ReportAggregationException {
     final Set<T> data = new HashSet<>();
 
-    for (final File file : filesToLoad) {
+    for (final File file : this.filesToLoad) {
       data.addAll(loadData(file));
     }
     return data;

@@ -12,8 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,6 +28,8 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
+
+import junit.framework.AssertionFailedError;
 
 public class MutationTestWorkerTest {
 
@@ -162,7 +162,7 @@ public class MutationTestWorkerTest {
   }
 
   public MutationDetails makeMutant(final String clazz, final int index) {
-    MutationIdentifier id = aMutationId()
+    final MutationIdentifier id = aMutationId()
         .withLocation(aLocation().withClass(ClassName.fromString(clazz)))
         .withIndex(index).withMutator("mutator").build();
     final MutationDetails md = new MutationDetails(id, "sourceFile", "desc",

@@ -34,10 +34,10 @@ public class RunPitStrategy implements GoalStrategy {
     EntryPoint e = new EntryPoint();
     AnalysisResult result = e.execute(baseDir, data, plugins,
         environmentVariables);
-    if (result.getError().hasSome()) {
-      throw new MojoExecutionException("fail", result.getError().value());
+    if (result.getError().isPresent()) {
+      throw new MojoExecutionException("fail", result.getError().get());
     }
-    return result.getStatistics().value();
+    return result.getStatistics().get();
   }
 
 }

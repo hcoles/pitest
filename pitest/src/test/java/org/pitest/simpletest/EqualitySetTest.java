@@ -17,12 +17,7 @@ public class EqualitySetTest {
 
   @Before
   public void createTestee() {
-    final EqualityStrategy<String> e = new EqualityStrategy<String>() {
-      @Override
-      public boolean isEqual(final String lhs, final String rhs) {
-        return lhs.equals(rhs);
-      }
-    };
+    final EqualityStrategy<String> e = (lhs, rhs) -> lhs.equals(rhs);
     this.testee = new EqualitySet<>(e);
   }
 

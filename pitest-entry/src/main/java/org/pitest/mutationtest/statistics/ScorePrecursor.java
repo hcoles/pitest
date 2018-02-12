@@ -2,9 +2,9 @@ package org.pitest.mutationtest.statistics;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
-import org.pitest.functional.F;
-import org.pitest.functional.F2;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 
@@ -36,26 +36,12 @@ class ScorePrecursor {
         FCollection.filter(this.counts.values(), isDetected()));
   }
 
-  private static F<StatusCount, Boolean> isDetected() {
-    return new F<StatusCount, Boolean>() {
-
-      @Override
-      public Boolean apply(final StatusCount a) {
-        return a.getStatus().isDetected();
-      }
-
-    };
+  private static Predicate<StatusCount> isDetected() {
+    return a -> a.getStatus().isDetected();
   }
 
-  private F2<Long, StatusCount, Long> addTotals() {
-    return new F2<Long, StatusCount, Long>() {
-
-      @Override
-      public Long apply(final Long a, final StatusCount b) {
-        return a + b.getCount();
-      }
-
-    };
+  private BiFunction<Long, StatusCount, Long> addTotals() {
+    return (a, b) -> a + b.getCount();
   }
 
   private static Map<DetectionStatus, StatusCount> createMap() {
@@ -67,7 +53,7 @@ class ScorePrecursor {
   }
 
   Score toScore() {
-    return new Score(mutatorName, this.getCounts(), this.getTotalMutations(),
+    return new Score(this.mutatorName, this.getCounts(), this.getTotalMutations(),
         this.getTotalDetectedMutations());
   }
 }

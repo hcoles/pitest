@@ -14,19 +14,20 @@
  */
 package org.pitest.junit;
 
+import java.util.function.Predicate;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.functional.Option;
-import org.pitest.functional.predicate.Predicate;
+import java.util.Optional;
 
 abstract class TestInfo {
 
   public static boolean isWithinATestClass(final ClassInfo clazz) {
 
-    final Option<ClassInfo> outerClass = clazz.getOuterClass();
+    final Optional<ClassInfo> outerClass = clazz.getOuterClass();
     return isATest(clazz)
-        || (outerClass.hasSome() && isATest(outerClass.value()));
+        || (outerClass.isPresent() && isATest(outerClass.get()));
 
   }
 
@@ -35,21 +36,15 @@ abstract class TestInfo {
         || isATest(clazz.getSuperClass());
   }
 
-  private static boolean isATest(final Option<ClassInfo> clazz) {
-    if (clazz.hasSome()) {
-      return isATest(clazz.value());
+  private static boolean isATest(final Optional<ClassInfo> clazz) {
+    if (clazz.isPresent()) {
+      return isATest(clazz.get());
     }
     return false;
   }
 
   public static Predicate<ClassInfo> isATest() {
-    return new Predicate<ClassInfo>() {
-      @Override
-      public Boolean apply(final ClassInfo clazz) {
-        return isATest(clazz);
-      }
-
-    };
+    return clazz -> isATest(clazz);
   }
 
   private static boolean isJUnit3Test(final ClassInfo clazz) {

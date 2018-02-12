@@ -32,31 +32,27 @@ public class WrappingProcessTest {
   public void waitToDieShouldReturnProcessExitCode() throws IOException,
   InterruptedException {
 
-    LaunchOptions launchOptions = new LaunchOptions(NullJavaAgent.instance(),
+    final LaunchOptions launchOptions = new LaunchOptions(NullJavaAgent.instance(),
         new DefaultJavaExecutableLocator(), Collections.<String> emptyList(),
         new HashMap<String, String>());
 
-    ProcessArgs processArgs = ProcessArgs
+    final ProcessArgs processArgs = ProcessArgs
         .withClassPath(new ClassPath().getLocalClassPath())
         .andBaseDir(new File(System.getProperty("user.dir")))
         .andLaunchOptions(launchOptions).andStdout(nullHandler())
         .andStderr(nullHandler());
 
-    WrappingProcess wrappingProcess = new WrappingProcess(-1, processArgs,
+    final WrappingProcess wrappingProcess = new WrappingProcess(-1, processArgs,
         getClass());
     wrappingProcess.start();
-    JavaProcess process = wrappingProcess.getProcess();
+    final JavaProcess process = wrappingProcess.getProcess();
 
     assertTrue(process.isAlive());
     assertEquals(EXIT_CODE, process.waitToDie());
   }
 
   private SideEffect1<String> nullHandler() {
-    return new SideEffect1<String>() {
-      @Override
-      public void apply(final String a) {
-
-      }
+    return a -> {
 
     };
   }

@@ -64,13 +64,7 @@ public class TestContainersSendCorrectNotifications {
   }
 
   private static Object uncontainerFactory() {
-    return new ContainerFactory() {
-      @Override
-      public Container getContainer() {
-        return new UnContainer();
-      }
-
-    };
+    return (ContainerFactory) () -> new UnContainer();
   }
 
   @Before

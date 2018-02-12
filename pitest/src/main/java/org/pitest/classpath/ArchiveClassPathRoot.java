@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.pitest.functional.Option;
+import java.util.Optional;
 import org.pitest.util.StreamUtil;
 import org.pitest.util.Unchecked;
 
@@ -106,8 +106,8 @@ public class ArchiveClassPathRoot implements ClassPathRoot, IOHeavyRoot {
   }
 
   @Override
-  public Option<String> cacheLocation() {
-    return Option.some(this.file.getAbsolutePath());
+  public Optional<String> cacheLocation() {
+    return Optional.ofNullable(this.file.getAbsolutePath());
   }
 
   private ZipFile getRoot() {

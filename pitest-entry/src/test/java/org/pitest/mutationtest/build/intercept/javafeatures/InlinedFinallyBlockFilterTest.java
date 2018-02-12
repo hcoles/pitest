@@ -18,10 +18,10 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class InlinedFinallyBlockFilterTest {
-  
+
   InlinedFinallyBlockFilter testee = new InlinedFinallyBlockFilter();
   Mutater unused;
-  
+
   @Test
   public void shouldDeclareTypeAsFilter() {
     assertEquals(InterceptorType.FILTER, this.testee.type());
@@ -34,7 +34,7 @@ public class InlinedFinallyBlockFilterTest {
     final List<MutationDetails> mutations = Arrays.asList(
         makeMutant(line, block, "Foo", 0),
         makeMutant(line, block + 1, "NotFoo", 1));
-    assertEquals(mutations, this.testee.intercept(mutations, unused));
+    assertEquals(mutations, this.testee.intercept(mutations, this.unused));
   }
 
   @Test
@@ -45,7 +45,7 @@ public class InlinedFinallyBlockFilterTest {
     final List<MutationDetails> mutations = Arrays.asList(
         makeMutant(line, block, mutator, 0),
         makeMutant(line, block, mutator, 1));
-    assertEquals(mutations, this.testee.intercept(mutations, unused));
+    assertEquals(mutations, this.testee.intercept(mutations, this.unused));
   }
 
   @Test
@@ -58,7 +58,7 @@ public class InlinedFinallyBlockFilterTest {
         makeMutant(line, block + 1, mutator, 1));
     assertEquals(
         Arrays.asList(makeMutantInHandlerBlock(line, block, mutator,
-            Arrays.asList(0, 1))), this.testee.intercept(mutations, unused));
+            Arrays.asList(0, 1))), this.testee.intercept(mutations, this.unused));
   }
 
   @Test
@@ -70,7 +70,7 @@ public class InlinedFinallyBlockFilterTest {
         makeMutantInHandlerBlock(line, block, mutator, 0),
         makeMutantInHandlerBlock(line, block, mutator, 2),
         makeMutant(line, block + 1, mutator, 1));
-    final Collection<MutationDetails> actual = this.testee.intercept(mutations, unused);
+    final Collection<MutationDetails> actual = this.testee.intercept(mutations, this.unused);
     assertEquals(mutations, actual);
   }
 

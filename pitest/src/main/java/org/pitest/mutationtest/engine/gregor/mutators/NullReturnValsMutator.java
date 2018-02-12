@@ -15,7 +15,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 /**
  * Mutates object return values to always return null
- * 
+ *
  * Does not mutate return types for which a more stable return value
  * mutation exists.
  *
@@ -28,7 +28,7 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    
+
     if (!moreStableMutationExits(methodInfo)) {
       return new NullReturnMethodVisitor(this, methodInfo, context,
           methodVisitor);
@@ -38,8 +38,8 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
   }
 
   private boolean moreStableMutationExits(MethodInfo methodInfo) {
-    Type type = Type.getReturnType(methodInfo.getMethodDescriptor());
-    return type.getClassName().equals("java.lang.Boolean") 
+    final Type type = Type.getReturnType(methodInfo.getMethodDescriptor());
+    return type.getClassName().equals("java.lang.Boolean")
         || AReturnMethodVisitor.NON_NULL_MUTATIONS.keySet().contains(type.getClassName());
   }
 
@@ -56,32 +56,32 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
 }
 
 class NullReturnMethodVisitor extends AbstractInsnMutator {
-     
+
   private boolean hasNotNullAnnotation;
 
-  
+
   NullReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer); 
+    super(factory, methodInfo, context, writer);
   }
-  
+
   @Override
   public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-    hasNotNullAnnotation |= desc.endsWith("NotNull;");
+    this.hasNotNullAnnotation |= desc.endsWith("NotNull;");
     return super.visitAnnotation(desc, visible);
   }
-  
+
   @Override
   protected boolean canMutate(final int opcode) {
-    return super.canMutate(opcode) && (!hasNotNullAnnotation);
+    return super.canMutate(opcode) && (!this.hasNotNullAnnotation);
   }
-  
+
   @Override
   protected Map<Integer, ZeroOperandMutation> getMutations() {
     return Collections.singletonMap(Opcodes.ARETURN, nullReturn());
   }
-  
+
   private static ZeroOperandMutation nullReturn() {
     return new ZeroOperandMutation() {
       @Override
@@ -98,5 +98,5 @@ class NullReturnMethodVisitor extends AbstractInsnMutator {
 
     };
   }
-  
+
 }

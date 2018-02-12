@@ -15,12 +15,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.predicate.True;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.PitError;
 
@@ -40,7 +41,7 @@ public class FCollectionTest {
   @Test
   public void shouldReturnsAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = this.is;
-    assertEquals(expected, FCollection.filter(this.is, True.all()));
+    assertEquals(expected, FCollection.filter(this.is,  i -> true));
   }
 
   @Test
@@ -51,12 +52,7 @@ public class FCollectionTest {
 
   @Test
   public void shouldReturnOnlyMatchesToPredicate() {
-    final Predicate<Integer> p = new Predicate<Integer>() {
-      @Override
-      public Boolean apply(final Integer a) {
-        return a <= 2;
-      }
-    };
+    final Predicate<Integer> p = a -> a <= 2;
     final List<Integer> expected = Arrays.asList(1, 2);
     assertEquals(expected, FCollection.filter(this.is, p));
   }
@@ -64,13 +60,7 @@ public class FCollectionTest {
   @Test
   public void shouldApplyForEachToAllItems() {
     final List<Integer> actual = new ArrayList<>();
-    final SideEffect1<Integer> e = new SideEffect1<Integer>() {
-      @Override
-      public void apply(final Integer a) {
-        actual.add(a);
-      }
-
-    };
+    final SideEffect1<Integer> e = a -> actual.add(a);
 
     FCollection.forEach(this.is, e);
 
@@ -89,12 +79,7 @@ public class FCollectionTest {
 
   @Test
   public void shouldApplyFlatMapToAllItems() {
-    final F<Integer, Collection<Integer>> f = new F<Integer, Collection<Integer>>() {
-      @Override
-      public List<Integer> apply(final Integer a) {
-        return Arrays.asList(a, a);
-      }
-    };
+    final Function<Integer, Collection<Integer>> f = a -> Arrays.asList(a, a);
     final Collection<Integer> expected = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4,
         5, 5);
     assertEquals(expected, FCollection.flatMap(this.is, f));
@@ -106,14 +91,8 @@ public class FCollectionTest {
         FCollection.flatMap(null, objectToObjectIterable()));
   }
 
-  private F<Object, Option<Object>> objectToObjectIterable() {
-    return new F<Object, Option<Object>>() {
-      @Override
-      public Option<Object> apply(final Object a) {
-        return Option.some(a);
-      }
-
-    };
+  private Function<Object, Iterable<Object>> objectToObjectIterable() {
+    return a -> Collections.emptyList();
   }
 
   @Test
@@ -125,22 +104,17 @@ public class FCollectionTest {
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    assertTrue(FCollection.contains(xs, True.all()));
+    assertTrue(FCollection.contains(xs,  i -> true));
   }
 
   @Test
   public void containsShouldStopProcessingOnFirstMatch() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    final Predicate<Integer> predicate = new Predicate<Integer>() {
-
-      @Override
-      public Boolean apply(final Integer a) {
-        if (a == 2) {
-          throw new PitError("Did not shortcut");
-        }
-        return a == 1;
+    final Predicate<Integer> predicate = a -> {
+      if (a == 2) {
+        throw new PitError("Did not shortcut");
       }
-
+      return a == 1;
     };
     FCollection.contains(xs, predicate);
     // pass
@@ -149,14 +123,7 @@ public class FCollectionTest {
   @Test
   public void foldShouldFoldValues() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    final F2<Integer, Integer, Integer> f = new F2<Integer, Integer, Integer>() {
-
-      @Override
-      public Integer apply(final Integer a, final Integer b) {
-        return a + b;
-      }
-
-    };
+    final BiFunction<Integer, Integer, Integer> f = (a, b) -> a + b;
 
     final int actual = FCollection.fold(f, 2, xs);
     assertEquals(8, actual);
@@ -221,14 +188,8 @@ public class FCollectionTest {
     assertEquals(expected, actual);
   }
 
-  private F<Integer, Integer> fortyTwo() {
-    return new F<Integer, Integer>() {
-      @Override
-      public Integer apply(final Integer a) {
-        return 42;
-      }
-
-    };
+  private Function<Integer, Integer> fortyTwo() {
+    return a -> 42;
   }
 
 }

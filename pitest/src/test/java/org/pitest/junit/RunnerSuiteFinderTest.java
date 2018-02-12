@@ -86,7 +86,7 @@ public class RunnerSuiteFinderTest {
         Two.class);
     assertContains(expected, actual);
   }
-  
+
   public static class JUnit3SuiteMethod extends TestCase {
     public JUnit3SuiteMethod(final String testName) {
       super(testName);
@@ -120,33 +120,33 @@ public class RunnerSuiteFinderTest {
   @Test
   public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
     try {
-      findWithTestee(ThrowsOnDiscoverySuite.class); 
+      findWithTestee(ThrowsOnDiscoverySuite.class);
       // pass
-    } catch(RuntimeException ex) {
+    } catch(final RuntimeException ex) {
       fail();
     }
   }
-  
+
   @RunWith(ThrowsOnDiscoveryRunner.class)
   @SuiteClasses({ One.class, Two.class })
   static class ThrowsOnDiscoverySuite {
 
   }
-  
+
   public static class ThrowsOnDiscoveryRunner extends Suite {
 
     public ThrowsOnDiscoveryRunner(final Class<?> klass, final RunnerBuilder rb)
         throws InitializationError {
       super(klass, rb);
     }
-    
+
     @Override
     public Description getDescription() {
       throw new RuntimeException();
     }
 
   }
-  
+
   private Collection<Class<?>> findWithTestee(final Class<?> clazz) {
     return this.testee.apply(clazz);
   }

@@ -77,12 +77,7 @@ public class MutantStarterTest {
 
     @Override
     protected Callable<Integer> constructMutee() throws Exception {
-      return new Callable<Integer>() {
-        @Override
-        public Integer call() throws Exception {
-          return MutantStarterSubclass.this.number;
-        }
-      };
+      return () -> MutantStarterSubclass.this.number;
     }
   }
 

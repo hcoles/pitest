@@ -4,10 +4,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.reflection.Reflection;
 
 public class SignatureEqualityStrategyTest {
@@ -33,19 +33,9 @@ public class SignatureEqualityStrategyTest {
 
   @Test
   public void shouldConsiderMethodsWithSameNameButDifferentSignaturesNotEqual() {
-    final Predicate<Method> noargs = new Predicate<Method>() {
-      @Override
-      public Boolean apply(final Method a) {
-        return a.getName().equals("foo") && (a.getParameterTypes().length == 0);
-      }
-    };
+    final Predicate<Method> noargs = a -> a.getName().equals("foo") && (a.getParameterTypes().length == 0);
 
-    final Predicate<Method> onearg = new Predicate<Method>() {
-      @Override
-      public Boolean apply(final Method a) {
-        return a.getName().equals("foo") && (a.getParameterTypes().length == 1);
-      }
-    };
+    final Predicate<Method> onearg = a -> a.getName().equals("foo") && (a.getParameterTypes().length == 1);
 
     assertFalse(this.testee.isEqual(createTestMethod(noargs),
         createTestMethod(onearg)));
@@ -68,13 +58,7 @@ public class SignatureEqualityStrategyTest {
   }
 
   private TestMethod createTestMethod(final String name) {
-    final Predicate<Method> p = new Predicate<Method>() {
-      @Override
-      public Boolean apply(final Method a) {
-        return a.getName().equals(name);
-      }
-
-    };
+    final Predicate<Method> p = a -> a.getName().equals(name);
     return createTestMethod(p);
   }
 

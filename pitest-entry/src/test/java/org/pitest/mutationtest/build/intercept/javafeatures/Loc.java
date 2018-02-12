@@ -7,33 +7,39 @@ class Loc {
   AbstractInsnNode node;
   @Override
   public String toString() {
-    return "[" + index + "] " + node;
+    return "[" + this.index + "] " + this.node;
   }
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + index;
-    result = prime * result + ((node == null) ? 0 : node.hashCode());
+    result = (prime * result) + this.index;
+    result = (prime * result) + ((this.node == null) ? 0 : this.node.hashCode());
     return result;
   }
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    Loc other = (Loc) obj;
-    if (index != other.index)
+    }
+    final Loc other = (Loc) obj;
+    if (this.index != other.index) {
       return false;
-    if (node == null) {
-      if (other.node != null)
+    }
+    if (this.node == null) {
+      if (other.node != null) {
         return false;
-    } else if (!node.equals(other.node))
+      }
+    } else if (!this.node.equals(other.node)) {
       return false;
+    }
     return true;
   }
-  
+
 }
