@@ -7,7 +7,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.3.3-SNAPSHOT
+### 1.4.0-SNAPSHOT
 
 * #445 - Raise minimum supported java version to 8
 
