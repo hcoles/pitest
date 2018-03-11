@@ -5,7 +5,7 @@
 	<artifactId>pit-parent-module</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>pit #33 setUserDir</name>
+	<name>pit-parent-module</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
