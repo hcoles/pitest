@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
-
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
@@ -35,12 +34,22 @@ import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator1;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator2;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator3;
+import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator4;
+import org.pitest.mutationtest.engine.gregor.mutators.OperatorReplacement;
+import org.pitest.mutationtest.engine.gregor.mutators.OperatorReplacement1;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator1;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator2;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator3;
+import org.pitest.mutationtest.engine.gregor.mutators.MathMutator4;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
@@ -81,6 +90,10 @@ public final class Mutator {
      * Default mutator that mutates binary arithmetic operations.
      */
     add("MATH", MathMutator.MATH_MUTATOR);
+      add("MATH1", MathMutator1.MATH_MUTATOR1);
+      add("MATH2", MathMutator2.MATH_MUTATOR2);
+      add("MATH3", MathMutator3.MATH_MUTATOR3);
+      add("MATH4", MathMutator4.MATH_MUTATOR4);
 
     /**
      * Default mutator that removes method calls to void methods.
@@ -100,6 +113,21 @@ public final class Mutator {
      */
     add("CONDITIONALS_BOUNDARY",
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
+      add("CONDITIONALS_BOUNDARY1",
+              ConditionalsBoundaryMutator1.CONDITIONALS_BOUNDARY_MUTATOR1);
+
+      add("CONDITIONALS_BOUNDARY2",
+              ConditionalsBoundaryMutator2.CONDITIONALS_BOUNDARY_MUTATOR2);
+
+      add("CONDITIONALS_BOUNDARY3",
+              ConditionalsBoundaryMutator3.CONDITIONALS_BOUNDARY_MUTATOR3);
+
+      add("CONDITIONALS_BOUNDARY4",
+              ConditionalsBoundaryMutator4.CONDITIONALS_BOUNDARY_MUTATOR4);
+
+    add("OPERATOR_REPLACEMENT_MUTATOR",OperatorReplacement.OPERATOR_REPLACEMENT_MUTATOR);
+    add("OPERATOR_REPLACEMENT_MUTATOR",OperatorReplacement1.OPERATOR_REPLACEMENT_MUTATOR1);
+
 
     /**
      * Default mutator that mutates increments, decrements and assignment
@@ -202,10 +230,16 @@ public final class Mutator {
    */
   public static Collection<MethodMutatorFactory> defaults() {
     return group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,
+        ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,MathMutator1.MATH_MUTATOR1,
+            MathMutator2.MATH_MUTATOR2,MathMutator3.MATH_MUTATOR3, MathMutator4.MATH_MUTATOR4,
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+            ConditionalsBoundaryMutator1.CONDITIONALS_BOUNDARY_MUTATOR1,
+            ConditionalsBoundaryMutator2.CONDITIONALS_BOUNDARY_MUTATOR2,
+            ConditionalsBoundaryMutator3.CONDITIONALS_BOUNDARY_MUTATOR3,
+            ConditionalsBoundaryMutator4.CONDITIONALS_BOUNDARY_MUTATOR4,
+            OperatorReplacement.OPERATOR_REPLACEMENT_MUTATOR,OperatorReplacement1.OPERATOR_REPLACEMENT_MUTATOR1,
         IncrementsMutator.INCREMENTS_MUTATOR);
   }
 
@@ -214,11 +248,18 @@ public final class Mutator {
    */
   public static Collection<MethodMutatorFactory> newDefaults() {
     return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        MathMutator.MATH_MUTATOR,
+        MathMutator.MATH_MUTATOR,MathMutator1.MATH_MUTATOR1,MathMutator2.MATH_MUTATOR2,
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+
+            ConditionalsBoundaryMutator1.CONDITIONALS_BOUNDARY_MUTATOR1,
+            ConditionalsBoundaryMutator2.CONDITIONALS_BOUNDARY_MUTATOR2,
+            ConditionalsBoundaryMutator3.CONDITIONALS_BOUNDARY_MUTATOR3,
+            ConditionalsBoundaryMutator4.CONDITIONALS_BOUNDARY_MUTATOR4,
+            OperatorReplacement.OPERATOR_REPLACEMENT_MUTATOR,OperatorReplacement1.OPERATOR_REPLACEMENT_MUTATOR1,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+
   }
 
 
