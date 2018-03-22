@@ -23,7 +23,7 @@ Run PIT tool on your Maven project:
 
  RUN AUGMENT PIT TOOL:
  
- 1. Download or clone tejalbg/pitest from https://github.com/tejalbg/pitest
+ 1. Download or clone yatinprakash/pitest from https://github.com/yatinprakash/pitest
  2. Run the following commands to create .jar file with Maven
     mvn clean install -DskipTests
     mvn package -DskipTests
