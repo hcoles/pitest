@@ -13,21 +13,36 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.pitest.mutationtest.engine.gregor;
-
 import org.objectweb.asm.MethodVisitor;
 
-public class InsnSubstitution implements ZeroOperandMutation {
+public class InsnSubstitution implements ZeroOperandMutation  {
 
   private final int    replacementOpcode;
+  private final int    replacementOpcode1;
+  
   private final String message;
 
   public InsnSubstitution(final int replacementOpcode, final String message) {
+      super();
     this.replacementOpcode = replacementOpcode;
+    this.replacementOpcode1 = -1;
+    
+    this.message = message;
+  }
+  public InsnSubstitution(final int replacementOpcode1, final int replacementOpcode, final String message) {
+    this.replacementOpcode1 = replacementOpcode1;
+    this.replacementOpcode = replacementOpcode;
+     
+
     this.message = message;
   }
 
   @Override
   public void apply(final int opCode, final MethodVisitor mv) {
+    if (replacementOpcode1 != -1) {
+        mv.visitInsn(this.replacementOpcode1);
+    }
+
     mv.visitInsn(this.replacementOpcode);
   }
 
