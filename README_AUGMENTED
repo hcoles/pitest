@@ -20,10 +20,9 @@ Run PIT tool on your Maven project:
     
  6. Pit-reports folder will be created. You can view the .html for each class file.
  
- 
- 
- 
+
  RUN AUGMENT PIT TOOL:
+ 
  1. Download or clone tejalbg/pitest from https://github.com/tejalbg/pitest
  2. Run the following commands to create .jar file with Maven
     mvn clean install -DskipTests
