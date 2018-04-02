@@ -112,6 +112,7 @@ public class ScmMojo extends AbstractPitMojo {
   @Override
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
 
+    this.scmRootDir = findScmRootDir();
     this.targetClasses = makeConcreteList(findModifiedClassNames());
 
     if (this.targetClasses.isEmpty()) {
@@ -157,6 +158,14 @@ public class ScmMojo extends AbstractPitMojo {
 
   private Function<String,String> pathByScmDir() {
     return a -> scmRootDir.getAbsolutePath() + "/" + a;
+  }
+
+  private File findScmRootDir() {
+    MavenProject rootProject = this.project;
+    while (rootProject.hasParent() && rootProject.getParent().getBasedir() != null) {
+      rootProject = rootProject.getParent();
+    }
+    return rootProject.getBasedir();
   }
 
   private Set<String> findModifiedPaths() throws MojoExecutionException {
