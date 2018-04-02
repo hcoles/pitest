@@ -134,8 +134,9 @@ public class ScmTestMojo extends AbstractPitMojo {
 
   private File findScmRootDir() {
     MavenProject rootProject = this.project;
-    while (rootProject.hasParent() && rootProject.getParent().getBasedir() != null)
+    while (rootProject.hasParent() && rootProject.getParent().getBasedir() != null) {
       rootProject = rootProject.getParent();
+    }
     return rootProject.getBasedir();
   }
 
