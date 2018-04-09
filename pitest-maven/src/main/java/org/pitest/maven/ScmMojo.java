@@ -112,7 +112,10 @@ public class ScmMojo extends AbstractPitMojo {
   @Override
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
 
-    this.scmRootDir = findScmRootDir();
+    if (scmRootDir == null) {
+      this.scmRootDir = findScmRootDir();
+    }
+
     this.targetClasses = makeConcreteList(findModifiedClassNames());
 
     if (this.targetClasses.isEmpty()) {
@@ -156,8 +159,8 @@ public class ScmMojo extends AbstractPitMojo {
 
   }
 
-  private Function<String,String> pathByScmDir() {
-    return a -> scmRootDir.getAbsolutePath() + "/" + a;
+  private Function<String, String> pathByScmDir() {
+    return a -> scmRoot().getAbsolutePath() + "/" + a;
   }
 
   private File findScmRootDir() {
