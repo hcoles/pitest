@@ -54,7 +54,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
     final List<String> ts = new ArrayList<>(each.getTests());
     Collections.sort(ts);
     for (final String test : ts) {
-      write(out, "<test name='" + test + "'/>\n");
+      write(out, "<test name='" + StringUtil.escapeBasicHtmlChars(test) + "'/>\n");
     }
     write(out, "</tests>\n");
     write(out, "</block>\n");
