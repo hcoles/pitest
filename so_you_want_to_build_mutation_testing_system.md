@@ -10,9 +10,9 @@ It represents some of the things we learnt while creating pitest. The choices ma
 
 ## Things to consider
 
-Generating mutations is just one part of what a mutation testing system must do, but it is important to think about the borader picture.
+Generating mutations is just one part of what a mutation testing system must do, but it is important to think about the broader picture.
 
-Conceptually the main things a mutation testing system needs to do are :-
+Conceptually the main things a mutation testing system needs to do are:
 
 * Generate mutants
 * Insert the mutants into a running program
@@ -35,15 +35,15 @@ Part of pitest must share a JVM with the code under test within each minion. Thi
 
 ### Generating mutants
 
-Pitest generates mutants by manipulating the bytecode. This is very fast, but has some drawbacks. It can sometimes be hard to explain to the programmer that the mutation is, and occasionally the mutation doesn't map back to a msitake the programmer could actually make. We call these **junk** mutations.
+Pitest generates mutants by manipulating the bytecode. This is very fast, but has some drawbacks. It can sometimes be hard to explain to the programmer that the mutation is, and occasionally the mutation doesn't map back to a mistake the programmer could actually make. We call these **junk** mutations.
 
-When pitest mutates bytecode generated from Java source it doesn't generate many junk mutations as most bytecode instructions map back predicatably to a source code construct. If you feed it bytecode generated from Scala source it will produce a lot of junk becuase the Scala compiler generates lots of code to support the langauge features.
+When pitest mutates bytecode generated from Java source it doesn't generate many junk mutations as most bytecode instructions map back predicatably to a source code construct. If you feed it bytecode generated from Scala source it will produce a lot of junk because the Scala compiler generates lots of code to support the language features.
 
 Generating mutants is a two stage process.
 
 First the main process scans the bytecode passed to it and creates a list of the possible mutations it could create.
 
-Each mutant is identified by the combination of 
+Each mutant is identified by the combination of:
 
 * The mutation operator that could create it
 * The class + method signature
@@ -59,7 +59,7 @@ Each minion is given a list of mutation identifiers it must analyse (currently t
 
 The minion then generates the bytecode for the mutant (this is very quick) and inserts that bytecode into itself using Java's instrumentation api.
 
-This insertion scheme is very efficient because
+This insertion scheme is very efficient because:
 
 1. Nothing is written to disk (io is expensive)
 2. Multiple mutants can be analysed in one minion (process startup is expensive)
@@ -79,11 +79,11 @@ Pitest previously tried other selection schemes including
 
 But coverage based selection has proven to be much more efficient without requiring and conventions to be followed when writing tests.
 
-It does have one drawback however - code in static initializers (i.e that is run only when a class is loaded) will appear to be executed only by the first test to cause that class to load.
+It does have one drawback however - code in static initializers (i.e. that is run only when a class is loaded) will appear to be executed only by the first test to cause that class to load.
 
-### Infnite loop termination
+### Infinite loop termination
 
-If pitest detects that a mutants has created an infinite loop, or caused a minion to become unresponsive for any other reason (e.g memory exhaustion) it kills the child process into which it was inserted.
+If pitest detects that a mutants has created an infinite loop, or caused a minion to become unresponsive for any other reason (e.g. memory exhaustion) it kills the child process into which it was inserted.
 
 This is quite a heavy weight soloution, but since it is impossible to reliably kill a thread in Java it is the only one that works reliably. Earlier versions of pitest did try using threads and classloaders along with escape instructions added to the code under test, but this proved unreliable.
 
@@ -103,7 +103,7 @@ A better scheme is to insert probes into the code and count how many times they 
 
 A very basic 50% performance improvement is to make sure you stop analysing a mutation as soon as a test has failed.
 
-Accademic systems tend to keep running so that a matrix can be produced of which tests kills which mutant. Although this is nice to have it is expensive to produce - stopping early should at least be an option.
+Academic systems tend to keep running so that a matrix can be produced of which tests kills which mutant. Although this is nice to have it is expensive to produce - stopping early should at least be an option.
 
 ### Test splitting
 
@@ -168,7 +168,7 @@ class MutateMe {
 
 So all mutants are contained in a single version of the code.
 
-Schmeta have some nice properties
+Schemata have some nice properties
 
 1. Insertion is cheap (just toggle a flag)
 2. Only one compile cycle to produce many mutants (if you are mutating the AST)
