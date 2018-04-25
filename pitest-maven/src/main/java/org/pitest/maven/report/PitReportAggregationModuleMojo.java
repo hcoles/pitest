@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -17,7 +17,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.pitest.aggregate.ReportAggregator;
-import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import org.pitest.maven.DependencyFilter;
 import org.pitest.mutationtest.config.DirectoryResultOutputStrategy;
@@ -149,20 +148,4 @@ public class PitReportAggregationModuleMojo extends PitReportMojo {
             project.getBuild().getTestOutputDirectory()),
         sourceRoots);
   }
-
-
-
-  // this method comes from
-  // https://github.com/jacoco/jacoco/blob/master/jacoco-maven-plugin/src/org/jacoco/maven/ReportAggregateMojo.java
-  private MavenProject findProjectFromReactor(final Dependency d) {
-    for (final MavenProject p : reactorProjects) {
-      if (p.getGroupId().equals(d.getGroupId())
-          && p.getArtifactId().equals(d.getArtifactId())
-          && p.getVersion().equals(d.getVersion())) {
-        return p;
-      }
-    }
-    return null;
-  }
-
 }
