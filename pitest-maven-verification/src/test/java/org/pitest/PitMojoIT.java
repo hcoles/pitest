@@ -235,6 +235,40 @@ public class PitMojoIT {
   }
 
   /*
+   * Verifies that running PIT compute the result of the two sub-module
+   */
+  @Test
+  public void shouldComputeReportOfTheSubModule()
+      throws Exception {
+    //Given
+    File testDir = prepare("/pit-sub-module");
+
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+
+    //When
+    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
+
+    //Then
+    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
+    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+    String projectReportsHtmlContents = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
+                    "index.html"));
+
+    assertTrue("miss data of subModule 1",
+            projectReportsHtmlContents
+                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
+
+    assertTrue("miss data of subModule 2",
+
+            projectReportsHtmlContents
+                    .contains("<a href=\"./org.example2/index.html\">org.example2</a>"));
+
+  }
+
+  /*
    * Verifies that, when multiple timestamped PIT reports have been generated,
    * only the latest report is copied to the site reports directory. This test
    * sets the earlier directory (201503292032) as the last modified. This tests
@@ -360,6 +394,7 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("status='NO_COVERAGE'");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
+
 
   private static String readResults(File testDir) throws IOException {
     File mutationReport = new File(testDir.getAbsoluteFile() + File.separator
@@ -514,5 +549,6 @@ public class PitMojoIT {
         projectReportsHtmlContents
             .contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
   }
+
 
 }
