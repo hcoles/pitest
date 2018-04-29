@@ -39,8 +39,8 @@ import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
-import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.custom.ConditionalsBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.custom.MathMutator;
 
 public class OptionsParserTest {
 

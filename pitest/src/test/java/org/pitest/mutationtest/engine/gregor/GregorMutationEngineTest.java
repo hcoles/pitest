@@ -22,8 +22,8 @@ import java.util.Collection;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.custom.ConditionalsBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.custom.MathMutator;
 
 public class GregorMutationEngineTest {
 

@@ -27,7 +27,7 @@ public class DataLoaderTest {
     assertEquals("<init>", map.get("mutatedMethod"));
     assertEquals("(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V", map.get("methodDescription"));
     assertEquals("77", map.get("lineNumber"));
-    assertEquals("org.pitest.mutationtest.engine.gregor.mutators.MathMutator", map.get("mutator"));
+    assertEquals("org.pitest.mutationtest.engine.gregor.mutators.custom.MathMutator", map.get("mutator"));
     assertEquals("61", map.get("index"));
     assertEquals(
         "com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)",
