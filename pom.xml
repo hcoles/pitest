@@ -160,32 +160,7 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.15</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.pitest</groupId>
-							<artifactId>pitest-build-config</artifactId>
-							<version>1.4.0-SNAPSHOT</version>
-						</dependency>
-					</dependencies>
-					<executions>
-						<execution>
-							<id>checkstyle</id>
-							<phase>validate</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-							<configuration>
-								<failOnViolation>true</failOnViolation>
-								<configLocation>pitest/checkstyle.xml</configLocation>
-                                <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>	
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
+
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

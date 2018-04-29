@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.custom;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,18 +52,20 @@ class ConditionalsBoundaryMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<>();
 
   static {
-    MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFLT, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFGT, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFGE, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFLE, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPLT,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPGT,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPGE,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPLE,
-        DESCRIPTION));
+    MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFGE, "CHANGED LE TO GE"));
+    MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFGT, "CHANGED GE TO GT"));
+    MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFLT, "CHANGED GT TO LT"));
+    MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFEQ, "CHANGED LT TO EQ"));
+    MUTATIONS.put(Opcodes.IFEQ, new Substitution(Opcodes.IFNE, "CHANGED EQ TO NE"));
+    MUTATIONS.put(Opcodes.IFNE, new Substitution(Opcodes.IFLE, "CHANGED NE TO LE"));
+
+    MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPGE, "CHANGED LE TO GE"));
+    MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPGT, "CHANGED GE TO GT"));
+    MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPLT, "CHANGED GT TO LT"));
+    MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPEQ, "CHANGED LT TO EQ"));
+    MUTATIONS.put(Opcodes.IF_ICMPEQ, new Substitution(Opcodes.IF_ICMPNE, "CHANGED EQ TO NE"));
+    MUTATIONS.put(Opcodes.IF_ICMPNE, new Substitution(Opcodes.IF_ICMPLE, "CHANGED NE TO LE"));
+
   }
 
   ConditionalsBoundaryMethodVisitor(final MethodMutatorFactory factory,

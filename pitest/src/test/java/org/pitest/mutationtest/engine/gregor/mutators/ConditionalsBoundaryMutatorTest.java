@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.custom.ConditionalsBoundaryMutator;
 
 public class ConditionalsBoundaryMutatorTest extends MutatorTestBase {
 
