@@ -19,28 +19,45 @@ public class InsnSubstitution implements ZeroOperandMutation  {
 
   private final int    replacementOpcode;
   private final int    replacementOpcode1;
-  
+  private final int    replacementOpcode2;
+
   private final String message;
 
   public InsnSubstitution(final int replacementOpcode, final String message) {
-      super();
+    super();
     this.replacementOpcode = replacementOpcode;
     this.replacementOpcode1 = -1;
-    
+    this.replacementOpcode2 = -1;
+
     this.message = message;
   }
   public InsnSubstitution(final int replacementOpcode1, final int replacementOpcode, final String message) {
     this.replacementOpcode1 = replacementOpcode1;
     this.replacementOpcode = replacementOpcode;
-     
+    this.replacementOpcode2 = -1;
+
+    this.message = message;
+  }
+
+
+  public InsnSubstitution(final int replacementOpcode2, final int replacementOpcode1, final int replacementOpcode, final String message) {
+    this.replacementOpcode2 = replacementOpcode2;
+    this.replacementOpcode1 = replacementOpcode1;
+    this.replacementOpcode = replacementOpcode;
 
     this.message = message;
   }
 
   @Override
   public void apply(final int opCode, final MethodVisitor mv) {
+
+    if (replacementOpcode2 != -1) {
+      mv.visitInsn(this.replacementOpcode2);
+    }
+
+
     if (replacementOpcode1 != -1) {
-        mv.visitInsn(this.replacementOpcode1);
+      mv.visitInsn(this.replacementOpcode1);
     }
 
     mv.visitInsn(this.replacementOpcode);
