@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.custom;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -12,14 +12,14 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum OperatorReplacement implements MethodMutatorFactory {
+public enum OperandReplacement implements MethodMutatorFactory {
 
-    OPERATOR_REPLACEMENT_MUTATOR;
+    OPERAND_REPLACEMENT_MUTATOR;
 
     @Override
     public MethodVisitor create(final MutationContext context,
                                 final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-        return new OperatorReplacementMethodVisitor(this, methodInfo, context, methodVisitor);
+        return new OperandReplacementMethodVisitor(this, methodInfo, context, methodVisitor);
     }
 
     @Override
@@ -34,9 +34,9 @@ public enum OperatorReplacement implements MethodMutatorFactory {
 
 }
 
-class OperatorReplacementMethodVisitor extends AbstractInsnMutator {
+class OperandReplacementMethodVisitor extends AbstractInsnMutator {
 
-    OperatorReplacementMethodVisitor(final MethodMutatorFactory factory,
+    OperandReplacementMethodVisitor(final MethodMutatorFactory factory,
                      final MethodInfo methodInfo, final MutationContext context,
                      final MethodVisitor writer) {
         super(factory, methodInfo, context, writer);

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.custom;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -24,14 +24,14 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ConditionalsBoundaryMutator4 implements MethodMutatorFactory {
+public enum ConditionalsBoundaryMutator3 implements MethodMutatorFactory {
 
-  CONDITIONALS_BOUNDARY_MUTATOR4;
+  CONDITIONALS_BOUNDARY_MUTATOR3;
 
   @Override
   public MethodVisitor create(final MutationContext context,
                               final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ConditionalsBoundaryMethodVisitor4(this, context, methodVisitor);
+    return new ConditionalsBoundaryMethodVisitor3(this, context, methodVisitor);
   }
 
   @Override
@@ -46,28 +46,29 @@ public enum ConditionalsBoundaryMutator4 implements MethodMutatorFactory {
 
 }
 
-class ConditionalsBoundaryMethodVisitor4 extends AbstractJumpMutator {
+class ConditionalsBoundaryMethodVisitor3 extends AbstractJumpMutator {
 
   private static final String                     DESCRIPTION = "changed conditional boundary";
   private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<>();
 
   static {
-      MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFNE, "CHANGED LE TO NE"));
-      MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFLE, "CHANGED GE TO LE"));
-      MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFGE, "CHANGED GT TO GE"));
-      MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFGT, "CHANGED LT TO GT"));
-      MUTATIONS.put(Opcodes.IFEQ, new Substitution(Opcodes.IFLT, "CHANGED EQ TO LT"));
-      MUTATIONS.put(Opcodes.IFNE, new Substitution(Opcodes.IFEQ, "CHANGED NE TO EQ"));
+    MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFEQ, "CHANGED LE TO EQ"));
+    MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFNE, "CHANGED GE TO NE"));
+    MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFLE, "CHANGED GT TO LE"));
+    MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFGE, "CHANGED LT TO GE"));
+    MUTATIONS.put(Opcodes.IFEQ, new Substitution(Opcodes.IFGT, "CHANGED EQ TO GT"));
+    MUTATIONS.put(Opcodes.IFNE, new Substitution(Opcodes.IFLT, "CHANGED NE TO LT"));
 
-      MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPNE, "CHANGED LE TO NE"));
-      MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPLE, "CHANGED GE TO LE"));
-      MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPGE, "CHANGED GT TO GE"));
-      MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPGT, "CHANGED LT TO GT"));
-      MUTATIONS.put(Opcodes.IF_ICMPEQ, new Substitution(Opcodes.IF_ICMPLT, "CHANGED EQ TO LT"));
-      MUTATIONS.put(Opcodes.IF_ICMPNE, new Substitution(Opcodes.IF_ICMPEQ, "CHANGED NE TO EQ"));
+    MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPEQ, "CHANGED LE TO EQ"));
+    MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPNE, "CHANGED GE TO NE"));
+    MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPLE, "CHANGED GT TO LE"));
+    MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPGE, "CHANGED LT TO GE"));
+    MUTATIONS.put(Opcodes.IF_ICMPEQ, new Substitution(Opcodes.IF_ICMPGT, "CHANGED EQ TO GT"));
+    MUTATIONS.put(Opcodes.IF_ICMPNE, new Substitution(Opcodes.IF_ICMPLT, "CHANGED NE TO LT"));
+
   }
 
-      ConditionalsBoundaryMethodVisitor4(final MethodMutatorFactory factory,
+  ConditionalsBoundaryMethodVisitor3(final MethodMutatorFactory factory,
                                     final MutationContext context, final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }
