@@ -128,5 +128,8 @@ public class MethodInfo {
     return new MethodInfo(newOwnerClass, this.access, this.methodName,
         this.methodDescriptor);
   }
+  public int getAccess() {
+    return this.access;
+  }
 
 }
