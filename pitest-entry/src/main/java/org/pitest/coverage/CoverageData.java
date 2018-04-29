@@ -308,7 +308,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private void recordTestFailure() {
-    this.hasFailedTest = true;
+   // this.hasFailedTest = true;
   }
 
   private Function<Entry<BlockLocation, Set<TestInfo>>, Stream<TestInfo>> toTests() {

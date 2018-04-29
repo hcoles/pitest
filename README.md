@@ -1,34 +1,3 @@
-RUN AUGMENT PIT TOOL:
- 
-1. Download or clone yatinprakash/pitest from https://github.com/yatinprakash/pitest
- 
-2. Run the following commands to create .jar file with Maven
-    mvn clean install -DskipTests
-    mvn package -DskipTests
-
-3. Add the .jar file created in the Target folder to the lib folder of your project.
-
-4. Go to your pom.xml and add the following in Plugins
-
-<plugin>
-	<groupId>org.pitest</groupId>
-	<artifactId>pitest-maven</artifactId>
-	<version>1.4.0-SNAPSHOT</version>
-	<configuration>
-		<threads>4</threads>
-		<mutators>
-			<mutator>CUSTOM</mutator>
-		</mutators>
-	</configuration>
-</plugin>
-
-5. Use the terminal, change to the directory of your project and run the following commands:
-    mvn clean install
-    mvn org.pitest:pitest-maven:mutationCoverage
-
-6. Pit-reports folder will be created. You can view the .html for each class file.
-
-------------------------------------------------------------------------------------------------------------------------------------------
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
 [![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
 
