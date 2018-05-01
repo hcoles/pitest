@@ -7,9 +7,16 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.0-SNAPSHOT
+### 1.4.1-SNAPSHOT
+
+Nothing yet
+
+### 1.4.0
 
 * #445 - Raise minimum supported java version to 8
+* Switch to ASM 6.1.1
+* #448 Aggregate report based on module (thanks @sarahBuisson)
+* #462 Escape test names in coverage xml (thanks @maxgabut) 
 
 ### 1.3.2
 
