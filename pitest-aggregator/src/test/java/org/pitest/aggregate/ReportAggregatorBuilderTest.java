@@ -1,6 +1,7 @@
 package org.pitest.aggregate;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.pitest.aggregate.TestInvocationHelper.getCompiledDirectory;
 import static org.pitest.aggregate.TestInvocationHelper.getCoverageFile;
 import static org.pitest.aggregate.TestInvocationHelper.getMutationFile;
@@ -20,7 +21,7 @@ import org.junit.rules.ExpectedException;
 public class ReportAggregatorBuilderTest {
 
   private static final String NOT_A_FILE = "does not exist or is not a file";
-  private static final String NOT_A_DIR  = "does not exist or is not a directory";
+  private static final String NOT_A_DIR  = "is not a directory";
   private static final String IS_NULL    = "is null";
   @Rule
   public ExpectedException    expected   = ExpectedException.none();
@@ -83,10 +84,10 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testSourceCodeDirectories_withFake() {
-    this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    ReportAggregator.Builder builder = ReportAggregator.builder()
+        .sourceCodeDirectories(Arrays.asList(new File("fakedirectory")));
 
-    ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(new File("fakedirectory")));
+    assertTrue(builder.getSourceCodeDirectories().isEmpty());
   }
 
   @Test
@@ -107,10 +108,10 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testCompiledCodeDirectories_withFake() {
-    this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    ReportAggregator.Builder builder = ReportAggregator.builder()
+        .compiledCodeDirectories(Arrays.asList(new File("fakedirectory")));
 
-    ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(new File("fakedirectory")));
+    assertTrue(builder.getCompiledCodeDirectories().isEmpty());
   }
 
   @Test
