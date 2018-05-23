@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockCoverage;
@@ -27,6 +28,7 @@ import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
 import org.pitest.mutationtest.tooling.SmartSourceLocator;
+import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
 
 public final class ReportAggregator {
@@ -109,6 +111,9 @@ public final class ReportAggregator {
   }
 
   public static class Builder {
+
+    private static final Logger  LOG = Log.getLogger();
+
     private ResultOutputStrategy resultOutputStrategy;
     private final Set<File>      lineCoverageFiles       = new HashSet<>();
     private final Set<File>      mutationResultsFiles    = new HashSet<>();
@@ -158,7 +163,11 @@ public final class ReportAggregator {
 
     public Builder addSourceCodeDirectory(final File sourceCodeDirectory) {
       validateDirectory(sourceCodeDirectory);
-      this.sourceCodeDirectories.add(sourceCodeDirectory);
+      if (sourceCodeDirectory.exists()) {
+        this.sourceCodeDirectories.add(sourceCodeDirectory);
+      } else {
+        LOG.info("ignoring absent source code directory " + sourceCodeDirectory.getAbsolutePath());
+      }
       return this;
     }
 
@@ -172,7 +181,11 @@ public final class ReportAggregator {
 
     public Builder addCompiledCodeDirectory(final File compiledCodeDirectory) {
       validateDirectory(compiledCodeDirectory);
-      this.compiledCodeDirectories.add(compiledCodeDirectory);
+      if (compiledCodeDirectory.exists()) {
+        this.compiledCodeDirectories.add(compiledCodeDirectory);
+      } else {
+        LOG.info("ignoring absent compiled code directory " + compiledCodeDirectory.getAbsolutePath());
+      }
       return this;
     }
 
@@ -231,8 +244,10 @@ public final class ReportAggregator {
       if (directory == null) {
         throw new IllegalArgumentException("directory is null");
       }
-      if (!directory.exists() || !directory.isDirectory()) {
-        throw new IllegalArgumentException(directory.getAbsolutePath() + " does not exist or is not a directory");
+      // For this method, a non existing directory is valid.
+      // It probably needs some special treatment later, but it shouldn't prevent the aggregator to be built.
+      if (directory.exists() && !directory.isDirectory()) {
+        throw new IllegalArgumentException(directory.getAbsolutePath() + " is not a directory");
       }
     }
   }
