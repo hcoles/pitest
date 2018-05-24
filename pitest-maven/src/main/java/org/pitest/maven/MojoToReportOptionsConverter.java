@@ -274,8 +274,12 @@ public class MojoToReportOptionsConverter {
     String outputDirName = this.mojo.getProject().getBuild()
         .getOutputDirectory();
     File outputDir = new File(outputDirName);
-    if (outputDir.exists()) {
-      DirectoryClassPathRoot root = new DirectoryClassPathRoot(outputDir);
+    return findOccupiedPackagesIn(outputDir);
+  }
+  
+  public static Collection<String> findOccupiedPackagesIn(File dir) {
+    if (dir.exists()) {
+      DirectoryClassPathRoot root = new DirectoryClassPathRoot(dir);
       Set<String> occupiedPackages = new HashSet<>();
       FCollection.mapTo(root.classNames(), classToPackageGlob(),
           occupiedPackages);
@@ -285,12 +289,7 @@ public class MojoToReportOptionsConverter {
   }
   
   private static Function<String,String> classToPackageGlob() {
-    return new Function<String,String>() {
-      @Override
-      public String apply(String a) {
-        return ClassName.fromString(a).getPackage().asJavaName() + ".*";
-      }
-    };
+    return a -> ClassName.fromString(a).getPackage().asJavaName() + ".*";
   }
 
   private Collection<File> stringsTofiles(final List<String> sourceRoots) {
@@ -298,12 +297,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private Function<String, File> stringToFile() {
-    return new Function<String, File>() {
-      @Override
-      public File apply(final String a) {
-        return new File(a);
-      }
-    };
+    return a -> new File(a);
   }
 
   private Collection<String> determineOutputFormats() {

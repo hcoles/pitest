@@ -59,6 +59,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     when(this.project.getBasedir()).thenReturn(new File("."));
     when(this.build.getSourceDirectory()).thenReturn("foo");
     when(this.build.getOutputDirectory()).thenReturn("foo");
+    when(this.build.getTestOutputDirectory()).thenReturn("foo");
     when(this.project.getScm()).thenReturn(this.scm);
     when(this.manager.makeScmRepository(any(String.class))).thenReturn(
         this.repository);

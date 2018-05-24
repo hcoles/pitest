@@ -1,5 +1,17 @@
 package org.pitest.maven;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -25,19 +37,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Goal which runs a coverage mutation report only for files that have been
@@ -125,7 +124,7 @@ public class ScmMojo extends AbstractPitMojo {
     }
 
     logClassNames();
-    defaultTargetTestsToGroupNameIfNoValueSet();
+    defaultTargetTestsIfNoValueSet();
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(), filter).convert();
     data.setFailWhenNoMutations(false);
@@ -135,10 +134,12 @@ public class ScmMojo extends AbstractPitMojo {
 
   }
 
-  private void defaultTargetTestsToGroupNameIfNoValueSet() {
+  private void defaultTargetTestsIfNoValueSet() {
     if (this.getTargetTests() == null || this.getTargetTests().isEmpty()) {
-      this.targetTests = makeConcreteList(Collections.singletonList(this
-          .getProject().getGroupId() + "*"));
+      File tests = new File(this.getProject().getBuild()
+      .getTestOutputDirectory());
+      this.targetTests = new ArrayList<>(MojoToReportOptionsConverter
+          .findOccupiedPackagesIn(tests));
     }
   }
 
