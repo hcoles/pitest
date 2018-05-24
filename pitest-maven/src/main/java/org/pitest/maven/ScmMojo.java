@@ -1,17 +1,5 @@
 package org.pitest.maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -34,10 +22,22 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Goal which runs a coverage mutation report only for files that have been
@@ -67,7 +67,7 @@ public class ScmMojo extends AbstractPitMojo {
   /**
    * Analyze last commit. If set to true analyzes last commited change set.
    */
-  @Parameter(defaultValue = "false", property = "analyseLastCommit")
+  @Parameter(property = "analyseLastCommit", defaultValue = "false")
   private boolean analyseLastCommit;
 
 
@@ -94,7 +94,7 @@ public class ScmMojo extends AbstractPitMojo {
    * Base of scm root. For a multi module project this is probably the parent
    * project.
    */
-  @Parameter(property = "project.parent.basedir")
+  @Parameter(property = "scmRootDir", defaultValue = "${project.parent.basedir}")
   private File            scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
@@ -111,6 +111,10 @@ public class ScmMojo extends AbstractPitMojo {
 
   @Override
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
+
+    if (scmRootDir == null) {
+      this.scmRootDir = findScmRootDir();
+    }
 
     this.targetClasses = makeConcreteList(findModifiedClassNames());
 
@@ -155,15 +159,16 @@ public class ScmMojo extends AbstractPitMojo {
 
   }
 
-  private Function<String,String> pathByScmDir() {
-    return new Function<String, String>() {
+  private Function<String, String> pathByScmDir() {
+    return a -> scmRoot().getAbsolutePath() + "/" + a;
+  }
 
-      @Override
-      public String apply(final String a) {
-        return scmRootDir.getAbsolutePath() + "/" + a;
-      }
-
-    };
+  private File findScmRootDir() {
+    MavenProject rootProject = this.project;
+    while (rootProject.hasParent() && rootProject.getParent().getBasedir() != null) {
+      rootProject = rootProject.getParent();
+    }
+    return rootProject.getBasedir();
   }
 
   private Set<String> findModifiedPaths() throws MojoExecutionException {
@@ -250,13 +255,7 @@ public class ScmMojo extends AbstractPitMojo {
   }
 
   private static Function<String, ScmFileStatus> stringToMavenScmStatus() {
-    return new Function<String, ScmFileStatus>() {
-      @Override
-      public ScmFileStatus apply(final String a) {
-        return ScmStatus.valueOf(a.toUpperCase()).getStatus();
-      }
-
-    };
+    return a -> ScmStatus.valueOf(a.toUpperCase()).getStatus();
   }
 
   private File scmRoot() {
