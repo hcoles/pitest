@@ -9,7 +9,8 @@ Read all about it at http://pitest.org
 
 ### 1.4.1-SNAPSHOT
 
-Nothing yet
+* #446 - Ignore empty directories when aggregating report (thanks @maxgabut)
+* #457 - Fix base dir in multi module projects (thanks @sarahBuisson and @giggluigg)
 
 ### 1.4.0
 
