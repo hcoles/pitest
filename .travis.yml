@@ -2,9 +2,9 @@ sudo: false
 
 language: java
 
-jdk:
-  - oraclejdk8
-  - oraclejdk9
+# Get latest install-jdk.sh script
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 
 env:
   global:
@@ -12,14 +12,33 @@ env:
     - BASEURL=http://mirror.softaculous.com/apache/maven/maven-3/VERSION/binaries/apache-maven-VERSION-bin.tar.gz
     - FILE=apache-maven-VERSION-bin.tar.gz
     - DIR=apache-maven-VERSION/bin
-  matrix:
-    - VERSION=3.3.9
-    - VERSION=3.2.5
-    - VERSION=3.1.1
-    - VERSION=3.0.5
+
+matrix:
+  include:
+    # Open jdk 8 mvn 3.2.5
+    - jdk: openjdk8
+      env: MAVEN=3.3.9
+
+    # Java 8 mvn 3.3.9
+    - jdk: oraclejdk8
+      env: MAVEN=3.3.9
+    
+    # Java 9 mvn 3.5.3
+    - jdk: oraclejdk9
+      env: MAVEN=3.5.3
+
+    # Java 9 mvn 3.2.5
+    - env: JDK='JDK9' MAVEN=3.2.5
+      install: . ./install-jdk.sh -F 9 -L GPL
+    
+    # Java 10 mvn 3.5.3
+    - env: JDK='JDK 10' MAVEN=3.5.3
+      install: . ./install-jdk.sh -F 10 -L GPL
 
 script:
-  - wget $(echo -n $BASEURL | sed -e 's#VERSION#'$VERSION'#g')
-  - tar -xvzf $(echo -n $FILE | sed -e 's#VERSION#'$VERSION'#')
-  - export PATH=$(echo -n $DIR | sed -e 's#VERSION#'$VERSION'#'):$PATH
-  - mvn clean verify
+  - wget $(echo -n $BASEURL | sed -e 's#VERSION#'$MAVEN'#g')
+  - tar -xvzf $(echo -n $FILE | sed -e 's#VERSION#'$MAVEN'#')
+  - export PATH=$(echo -n $DIR | sed -e 's#VERSION#'$MAVEN'#'):$PATH
+  - java -version
+  - mvn -version
+  - mvn clean install 

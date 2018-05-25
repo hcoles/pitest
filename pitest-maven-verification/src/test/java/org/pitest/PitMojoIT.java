@@ -157,7 +157,7 @@ public class PitMojoIT {
   @Test
   //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
-    skipOnJava9();
+    skipIfJavaVersionNotSupportByThirdParty();
     File testDir = prepare("/pit-powermock");
     verifier.addCliOption("-DtimeoutConstant=10000");
     verifier.executeGoal("test");
@@ -362,7 +362,7 @@ public class PitMojoIT {
 
   @Test
   public void shouldWorkWithGWTMockito() throws Exception {
-    skipOnJava9();
+    skipIfJavaVersionNotSupportByThirdParty();
     File testDir = prepare("/pit-183-gwtmockito");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
@@ -377,8 +377,9 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
-  private void skipOnJava9() {
-    assumeFalse(System.getProperty("java.version").startsWith("9"));
+  private void skipIfJavaVersionNotSupportByThirdParty() {
+    String javaVersion = System.getProperty("java.version");
+    assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10"));
   }
 
   @Test
