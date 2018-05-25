@@ -41,4 +41,4 @@ script:
   - export PATH=$(echo -n $DIR | sed -e 's#VERSION#'$MAVEN'#'):$PATH
   - java -version
   - mvn -version
-  - mvn clean verify
+  - mvn clean install 
