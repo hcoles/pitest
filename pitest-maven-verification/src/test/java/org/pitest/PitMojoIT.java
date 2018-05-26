@@ -379,7 +379,7 @@ public class PitMojoIT {
 
   private void skipIfJavaVersionNotSupportByThirdParty() {
     String javaVersion = System.getProperty("java.version");
-    assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10"));
+    assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10") || javaVersion.startsWith("11"));
   }
 
   @Test
