@@ -55,6 +55,12 @@ public class StringUtil {
     for (int i = 0; i < s.length(); i++) {
       final char c = s.charAt(i);
       final int v = c;
+
+      if (v == 0) {
+        out.append("\\0");
+        continue;
+      }
+
       if ((v < 32) || (v > 127) || (v == 38) || (v == 39) || (v == 60)
           || (v == 62) || (v == 34)) {
         out.append('&');

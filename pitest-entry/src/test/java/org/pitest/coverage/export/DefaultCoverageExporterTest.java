@@ -70,18 +70,22 @@ public class DefaultCoverageExporterTest {
   public void shouldEscapeSpecialCharsInTestName() {
     final LocationBuilder loc = aLocation().withMethod("method");
     final BlockLocationBuilder block = aBlockLocation().withBlock(42);
-    final Collection<BlockCoverage> coverage = Collections
-        .singletonList(new BlockCoverage(
-            block.withLocation(loc.withClass(ClassName.fromString("Foo")))
-                .build(),
-            Collections.singletonList(
-                "ParameterizedTest[case='Not so simple quotes']")));
+    final Collection<BlockCoverage> coverage = Arrays.asList(
+        new BlockCoverage(
+            block.withLocation(loc.withClass(ClassName.fromString("Foo"))).build(),
+            Collections.singletonList("ParameterizedTest[case='Not so simple quotes']")),
+        new BlockCoverage(
+            block.withLocation(loc.withClass(ClassName.fromString("Foo"))).build(),
+            Collections.singletonList("ParameterizedTest[case=\0 Null-Byte]"))
+        );
 
     testee.recordCoverage(coverage);
 
     final String actual = this.out.toString();
     assertThat(actual).contains(
         "<tests>\n<test name='ParameterizedTest[case=&#39;Not so simple quotes&#39;]'/>\n</tests>");
+    assertThat(actual).contains(
+        "<tests>\n<test name='ParameterizedTest[case=\\0 Null-Byte]'/>\n</tests>");
   }
 
 }
