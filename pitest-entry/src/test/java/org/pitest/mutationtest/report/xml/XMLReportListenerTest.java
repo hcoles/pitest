@@ -65,6 +65,14 @@ public class XMLReportListenerTest {
     assertTrue(this.out.toString().contains("&#60;foo&#62;"));
   }
 
+  @Test
+  public void shouldEscapeNullBytes() {
+    final MutationResult mr = createdKilledMutationWithKillingTestOf("\0 Null-Byte");
+    this.testee
+            .handleMutationResult(MutationTestResultMother.createClassResults(mr));
+    assertTrue(this.out.toString().contains("\\0 Null-Byte"));
+  }
+
   private MutationResult createdKilledMutationWithKillingTestOf(
       final String killingTest) {
     final MutationResult mr = new MutationResult(
