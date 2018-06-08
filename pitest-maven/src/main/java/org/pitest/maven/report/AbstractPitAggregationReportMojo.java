@@ -26,14 +26,17 @@ import java.util.function.Function;
  */
 abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
 
-  private static final String MUTATION_RESULT_FILTER = "target/pit-reports/mutations.xml";
-  private static final String LINECOVERAGE_FILTER    = "target/pit-reports/linecoverage.xml";
+  private static final String REPORT_DIR_RELATIVE_TO_PROJECT = "target/pit-reports";
+  private static final String MUTATION_RESULT_FILTER = "mutations.xml";
+  private static final String LINECOVERAGE_FILTER = "linecoverage.xml";
 
   /**
    * The projects in the reactor.
    */
   @Parameter(property = "reactorProjects", readonly = true)
   List<MavenProject> reactorProjects;
+
+  private ReportSourceLocator reportSourceLocator = new ReportSourceLocator();
 
   /**
    * @return  projects to inspect for report files.
@@ -105,7 +108,15 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
 
   private List<File> getProjectFilesByFilter(final File projectBaseDir,
                                              final String filter) throws IOException {
-    final List<File> files = FileUtils.getFiles(projectBaseDir, filter, "");
+
+    File reportsDir = projectBaseDir.toPath().resolve(REPORT_DIR_RELATIVE_TO_PROJECT).toFile();
+    if (!reportsDir.exists()) {
+      return new ArrayList<>();
+    }
+
+    File latestReportDir = reportSourceLocator.locate(reportsDir, getLog());
+
+    final List<File> files = FileUtils.getFiles(latestReportDir, filter, "");
     return files == null ? new ArrayList<>() : files;
   }
 
