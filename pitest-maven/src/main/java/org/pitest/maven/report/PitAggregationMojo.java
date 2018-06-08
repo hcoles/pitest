@@ -46,12 +46,6 @@ import org.pitest.mutationtest.config.UndatedReportDirCreationStrategy;
 @Mojo(name = "report-aggregate", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class PitAggregationMojo extends AbstractPitAggregationReportMojo {
 
-  /**
-   * The projects in the reactor.
-   */
-  @Parameter(property = "reactorProjects", readonly = true)
-  private List<MavenProject>  reactorProjects;
-
   @Override
   public String getDescription(final Locale locale) {
     return getName(locale) + " Coverage Report.";
