@@ -46,8 +46,6 @@ import org.pitest.mutationtest.config.UndatedReportDirCreationStrategy;
 @Mojo(name = "report-aggregate", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class PitAggregationMojo extends AbstractPitAggregationReportMojo {
 
-  private static final String MUTATION_RESULT_FILTER = "target/pit-reports/mutations.xml";
-  private static final String LINECOVERAGE_FILTER    = "target/pit-reports/linecoverage.xml";
   /**
    * The projects in the reactor.
    */

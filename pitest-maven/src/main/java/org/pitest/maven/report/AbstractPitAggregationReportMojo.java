@@ -5,4 +5,7 @@ package org.pitest.maven.report;
  */
 abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
 
+  static final String MUTATION_RESULT_FILTER = "target/pit-reports/mutations.xml";
+  static final String LINECOVERAGE_FILTER    = "target/pit-reports/linecoverage.xml";
+
 }
