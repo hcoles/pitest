@@ -14,8 +14,11 @@
  */
 package org.pitest.mutationtest.report.html;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -37,7 +40,6 @@ import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
-import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
@@ -52,8 +54,6 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final CoverageDatabase          coverage;
   private final Set<String>               mutatorNames;
 
-  private final String                    css;
-
   public MutationHtmlReportListener(final CoverageDatabase coverage,
       final ResultOutputStrategy outputStrategy,
       Collection<String> mutatorNames, final SourceLocator... locators) {
@@ -61,17 +61,6 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.outputStrategy = outputStrategy;
     this.sourceRoots = new HashSet<>(Arrays.asList(locators));
     this.mutatorNames = new HashSet<>(mutatorNames);
-    this.css = loadCss();
-  }
-
-  private String loadCss() {
-    try {
-      return FileUtil.readToString(IsolationUtils.getContextClassLoader()
-          .getResourceAsStream("templates/mutation/style.css"));
-    } catch (final IOException e) {
-      Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
-    }
-    return "";
   }
 
   private void generateAnnotatedSourceFile(
@@ -86,7 +75,6 @@ public class MutationHtmlReportListener implements MutationResultListener {
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_report");
-      st.setAttribute("css", this.css);
 
       st.setAttribute("tests", mutationMetaData.getTests());
 
@@ -172,14 +160,25 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return Optional.empty();
   }
 
-  private void createCssFile() {
-    final Writer cssWriter = this.outputStrategy.createWriterForFile("style.css");
-    try {
-      cssWriter.write(this.css);
-      cssWriter.close();
-    } catch (final IOException e) {
-      e.printStackTrace();
+  private void copyFile(String source, String target) {
+    try (
+      Reader reader = createReaderForResource(source);
+      Writer writer = this.outputStrategy.createWriterForFile(target)
+    ) {
+
+      int c;
+      while ((c = reader.read()) != -1) {
+        writer.write(c);
+      }
+
+    } catch (IOException e) {
+      Log.getLogger().log(Level.SEVERE, "Error while copying " + source, e);
     }
+  }
+
+  private Reader createReaderForResource(String resourceName) {
+    InputStream inputStream = IsolationUtils.getContextClassLoader().getResourceAsStream(resourceName);
+    return new BufferedReader(new InputStreamReader(inputStream));
   }
 
   private void createIndexPages() {
@@ -235,7 +234,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   @Override
   public void runEnd() {
     createIndexPages();
-    createCssFile();
+    copyFile("templates/mutation/style.css", "style.css");
   }
 
   @Override
