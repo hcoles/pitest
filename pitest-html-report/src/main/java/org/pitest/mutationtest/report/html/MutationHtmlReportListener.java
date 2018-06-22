@@ -172,11 +172,6 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return Optional.empty();
   }
 
-  public void onRunEnd() {
-    createIndexPages();
-    createCssFile();
-  }
-
   private void createCssFile() {
     final Writer cssWriter = this.outputStrategy.createWriterForFile("style.css");
     try {
@@ -234,7 +229,6 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   @Override
   public void runStart() {
-    // TODO Auto-generated method stub
 
   }
 
