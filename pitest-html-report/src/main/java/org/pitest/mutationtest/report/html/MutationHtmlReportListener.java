@@ -235,6 +235,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public void runEnd() {
     createIndexPages();
     copyFile("templates/mutation/style.css", "style.css");
+    copyFile("templates/mutation/prettify.css", "prettify.css");
+    copyFile("templates/mutation/prettify.js", "prettify.js");
   }
 
   @Override

@@ -2,9 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="../style.css">
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <link rel="stylesheet" type="text/css" href="../prettify.css">
+    <script src="../prettify.js"></script>
 </head>
-<body>
+<body onload="PR.prettyPrint()">
 
 
 <h1>$sourceFile.fileName$</h1>
