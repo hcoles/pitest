@@ -34,6 +34,7 @@ import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.report.MutationTestResultMother;
@@ -41,7 +42,7 @@ import org.pitest.util.ResultOutputStrategy;
 
 public class MutationHtmlReportListenerTest {
 
-  private MutationHtmlReportListener testee;
+  private MutationResultListener testee;
 
   @Mock
   private CoverageDatabase           coverageDb;
@@ -74,13 +75,13 @@ public class MutationHtmlReportListenerTest {
 
   @Test
   public void shouldCreateAnIndexFile() {
-    this.testee.onRunEnd();
+    this.testee.runEnd();
     verify(this.outputStrategy).createWriterForFile("index.html");
   }
 
   @Test
   public void shouldCreateACssFile() {
-    this.testee.onRunEnd();
+    this.testee.runEnd();
     verify(this.outputStrategy).createWriterForFile("style.css");
   }
 

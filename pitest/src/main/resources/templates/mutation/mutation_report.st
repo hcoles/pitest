@@ -2,8 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="stylesheet" type="text/css" href="../prettify.css">
+    <script src="../prettify.js"></script>
 </head>
-<body>
+<body onload="PR.prettyPrint()">
 
 
 <h1>$sourceFile.fileName$</h1>
@@ -26,7 +28,7 @@ $i$. $mutation.details.location$ : $mutation.details.htmlSafeDescription$ &rarr;
 }$
 </span>
 </td>
-<td class='$line.styles.code$'><pre><span  class='$line.styles.mutation$'>$line.text$</span></pre></td></tr>
+<td class='$line.styles.code$'><pre class=prettyprint lang-java><span  class='$line.styles.mutation$'>$line.text$</span></pre></td></tr>
 }$
 
 
