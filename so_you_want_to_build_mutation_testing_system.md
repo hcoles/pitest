@@ -2,7 +2,7 @@
 
 ## Introduction
 
-There have been a lot mutation testing systems, but very few have them have seen succesful use in industry.
+There have been a lot mutation testing systems, but very few have them have seen successful use in industry.
 
 This document is a set of notes that might be helpful for anyone thinking of implementing a mutation testing system for another language.
 
@@ -37,7 +37,7 @@ Part of pitest must share a JVM with the code under test within each minion. Thi
 
 Pitest generates mutants by manipulating the bytecode. This is very fast, but has some drawbacks. It can sometimes be hard to explain to the programmer that the mutation is, and occasionally the mutation doesn't map back to a mistake the programmer could actually make. We call these **junk** mutations.
 
-When pitest mutates bytecode generated from Java source it doesn't generate many junk mutations as most bytecode instructions map back predicatably to a source code construct. If you feed it bytecode generated from Scala source it will produce a lot of junk because the Scala compiler generates lots of code to support the language features.
+When pitest mutates bytecode generated from Java source it doesn't generate many junk mutations as most bytecode instructions map back predictably to a source code construct. If you feed it bytecode generated from Scala source it will produce a lot of junk because the Scala compiler generates lots of code to support the language features.
 
 Generating mutants is a two stage process.
 
@@ -85,13 +85,13 @@ It does have one drawback however - code in static initializers (i.e. that is ru
 
 If pitest detects that a mutants has created an infinite loop, or caused a minion to become unresponsive for any other reason (e.g. memory exhaustion) it kills the child process into which it was inserted.
 
-This is quite a heavy weight soloution, but since it is impossible to reliably kill a thread in Java it is the only one that works reliably. Earlier versions of pitest did try using threads and classloaders along with escape instructions added to the code under test, but this proved unreliable.
+This is quite a heavy weight solution, but since it is impossible to reliably kill a thread in Java it is the only one that works reliably. Earlier versions of pitest did try using threads and classloaders along with escape instructions added to the code under test, but this proved unreliable.
 
-The seperate JVM processes also robustly ensure that any state in the JVM (e.g. static variables) cannot cause one mutation to effect the result of a different mutation that was analysed in a different JVM.
+The separate JVM processes also robustly ensure that any state in the JVM (e.g. static variables) cannot cause one mutation to effect the result of a different mutation that was analysed in a different JVM.
 
-In order to kill a process pitest must first decide if an infinite loop has occured.
+In order to kill a process pitest must first decide if an infinite loop has occurred.
 
-This is done based on timings. The normal execution time of each test is recorded during the coverage stage. If the test takes x times as long (plus a fudge factor) then the mutant is considered to have caused an infnite loop.
+This is done based on timings. The normal execution time of each test is recorded during the coverage stage. If the test takes x times as long (plus a fudge factor) then the mutant is considered to have caused an infinite loop.
 
 This scheme introduces a certain degree of non-determinism as timings might be affected by other processes running on the same machine.
 
@@ -111,7 +111,7 @@ There is a lot of complicated code in pitest that splits tests up into the small
 
 If pitest did not split tests in this way then it would have to keep executing tests even if the first test method in a class failed. Whether they extra complexity is worth it depends very much on how the tests are written and how fast each test runs.
 
-## Other soloutions
+## Other solutions
 
 ### Naive implementations
 
@@ -122,7 +122,7 @@ The simplest implementation of a mutation testing system solves the generation a
 
 For Java this approach is unworkable as starting a new JVM and loading the required classes for anything but a toy program takes several seconds. Disk space can also become an issue if a binary of the entire program must be generated.
 
-Most mutation testing system that have been abandonded after a few months or years of work have taken this approach.
+Most mutation testing system that have been abandoned after a few months or years of work have taken this approach.
 
 ### AST manipulation
 
@@ -131,7 +131,7 @@ Manipulating an AST would be a sensible way to create mutations with several adv
 1. The mutants can be easily described to the user via diffs etc
 2. No junk mutations will be created
 
-Depending on the tech stack the cost of creating the mutants from the AST is likely to be higher than manipulating bytecode. Whether this different in cost is significant is probably language dependent, but generally the cost of generating mutants is less significant than the cost of analysing them.
+Depending on the tech stack the cost of creating the mutants from the AST is likely to be higher than manipulating bytecode. Whether this difference in cost is significant is probably language dependent, but generally the cost of generating mutants is less significant than the cost of analysing them.
 
 For this approach to work well it is probably highly desirable that your tech stack can compile from memory to memory (ie no need to write the mutated AST to disk or the compiled program to disk).
 
