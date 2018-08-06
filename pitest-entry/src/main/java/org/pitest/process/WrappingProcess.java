@@ -1,6 +1,7 @@
 package org.pitest.process;
 
 import static org.pitest.functional.prelude.Prelude.or;
+import org.pitest.mutationtest.tooling.MutationCoverage;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.jar.Manifest;
 
 import org.pitest.functional.FCollection;
+import org.pitest.util.CommandLineUtils;
 
 public class WrappingProcess {
 
@@ -35,7 +38,8 @@ public class WrappingProcess {
     final ProcessBuilder processBuilder = createProcessBuilder(
         this.processArgs.getJavaExecutable(), this.processArgs.getJvmArgs(),
         this.minionClass, Arrays.asList(args),
-        this.processArgs.getJavaAgentFinder());
+        this.processArgs.getJavaAgentFinder(),
+        this.processArgs.getLaunchClassPath());
 
     configureProcessBuilder(processBuilder, this.processArgs.getWorkingDir(),
         this.processArgs.getLaunchClassPath(),
@@ -51,8 +55,9 @@ public class WrappingProcess {
       Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
     final Map<String, String> environment = processBuilder.environment();
-    environment.put("CLASSPATH", initialClassPath);
-
+    if (!MutationCoverage.shouldUseClassPathJar()) {
+      environment.put("CLASSPATH", initialClassPath);
+    }
     for (final Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       environment.put(entry.getKey(), entry.getValue());
     }
@@ -64,9 +69,9 @@ public class WrappingProcess {
 
   private static ProcessBuilder createProcessBuilder(String javaProc,
       List<String> args, Class<?> mainClass, List<String> programArgs,
-      JavaAgent javaAgent) {
+      JavaAgent javaAgent, String classPath) {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
-        programArgs);
+        programArgs, classPath);
 
     // IBM jdk adds this, thereby breaking everything
     removeClassPathProperties(cmd);
@@ -84,10 +89,20 @@ public class WrappingProcess {
 
   private static List<String> createLaunchArgs(String javaProcess,
       JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
-      List<String> programArgs) {
+      List<String> programArgs, String classPath) {
 
     final List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
+
+    if (MutationCoverage.shouldUseClassPathJar()) {
+      try {
+        cmd.add("-classpath");
+        cmd.add(CommandLineUtils.createClasspathJarFile(new Manifest(), classPath).getAbsolutePath());
+      } catch (Exception e) {
+        System.err.println("Could not create classpath jar");
+      }
+    }
+
     cmd.addAll(args);
 
     addPITJavaAgent(agentJarLocator, cmd);
