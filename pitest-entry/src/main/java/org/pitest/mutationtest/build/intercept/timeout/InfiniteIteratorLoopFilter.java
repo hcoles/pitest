@@ -48,7 +48,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
     return isIteratorNext(instruction);
   }
 

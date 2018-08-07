@@ -76,7 +76,7 @@ public class FilterTester {
       final MethodTree method = tree.method(a.getId().getLocation()).get();
       final Loc l = new Loc();
       l.index = a.getInstructionIndex();
-      l.node = method.instructions().get(a.getInstructionIndex());
+      l.node = method.instruction(a.getInstructionIndex());
       return l;
     };
   }

@@ -53,7 +53,7 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
     return instruction.getOpcode() == Opcodes.IINC;
   }
 

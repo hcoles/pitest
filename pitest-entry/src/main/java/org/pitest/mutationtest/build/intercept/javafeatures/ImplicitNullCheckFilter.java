@@ -73,7 +73,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
           .findFirst()
           .get();
 
-      final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
+      final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
       context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
