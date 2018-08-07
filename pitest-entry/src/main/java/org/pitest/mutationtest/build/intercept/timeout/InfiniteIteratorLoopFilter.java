@@ -6,6 +6,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Iterator;
@@ -36,7 +37,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
       .or(inifniteIteratorLoop())
       .or(infiniteIteratorLoopJavac())
       .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(IGNORE)
+          .withIgnores(notAnInstruction())
           .withDebug(DEBUG)
           );
 
@@ -47,7 +48,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
     return isIteratorNext(instruction);
   }
 

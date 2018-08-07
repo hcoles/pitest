@@ -2,7 +2,7 @@ package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
-import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodMatchers;
@@ -26,7 +24,6 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -34,8 +31,6 @@ import org.pitest.sequence.SequenceMatcher;
 public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
-
-  private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
 
   // Looks fairly specifically for a conditional mutated to a unconditional
   // rather than any always false condition
@@ -47,7 +42,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
       .then(opCode(Opcodes.GOTO).and(debug("goto")))
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(IGNORE)
+          .withIgnores(notAnInstruction())
           .withDebug(DEBUG)
           );
 
@@ -107,7 +102,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private boolean mutatesAConditionalJump(MethodTree tree, int index) {
-    final AbstractInsnNode mutatedInsns = tree.instructions().get(index);
+    final AbstractInsnNode mutatedInsns = tree.instruction(index);
     return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);
   }
 

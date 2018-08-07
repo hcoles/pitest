@@ -14,13 +14,12 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCall;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.Match;
@@ -38,14 +37,12 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   private static final boolean DEBUG = false;
 
-  private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
-
   static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
       .match(Match.<AbstractInsnNode>never())
       .or(countingLoopWithoutWriteConditionalAtStart())
       .or(countingLoopWithoutWriteConditionAtEnd())
       .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(IGNORE)
+          .withIgnores(notAnInstruction())
           .withDebug(DEBUG)
           );
 
@@ -56,7 +53,7 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instructions().get(each.getInstructionIndex());
+    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
     return instruction.getOpcode() == Opcodes.IINC;
   }
 

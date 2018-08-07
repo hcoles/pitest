@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
 import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Test;
@@ -47,6 +49,11 @@ public class EquivalentReturnMutationFilterTest {
   }
 
   @Test
+  public void filtersEquivalentPrimitiveIntMutantsInTryCatch() {
+    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsConstZeroInTryCatch.class);
+  }
+  
+  @Test
   public void filtersEquivalentPrimitiveBooleanMutants() {
     this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_FALSE_RETURN.getGloballyUniqueId()
         , AlreadyReturnsFalse.class);
@@ -56,6 +63,12 @@ public class EquivalentReturnMutationFilterTest {
   public void filtersEquivalentPrimitiveBooleanTrueMutants() {
     this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
         , ReturnsTrue.class);
+  }
+  
+  @Test
+  public void filtersEquivalentPrimitiveBooleanTrueMutantsInTryCatch() {
+    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+        , ReturnsTrueInTryCatch.class);
   }
 
   @Test
@@ -130,15 +143,20 @@ public class EquivalentReturnMutationFilterTest {
   }
 
   @Test
+  public void filtersEquivalentListMutantsInTryCatch() {
+    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyListInTryCatch.class);
+  }
+
+  
+  @Test
   public void filtersEquivalentSetMutants() {
     this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptySet.class);
   }
 
-// can't include test as must build on java 7
-//  @Test
-//  public void filtersEquivalentOptionalMutants() {
-//    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
-//  }
+  @Test
+  public void filtersEquivalentOptionalMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
+  }
 }
 
 class Widget{}
@@ -161,11 +179,40 @@ class ReturnsTrue {
   }
 }
 
+class ReturnsTrueInTryCatch {
+  public boolean a(String s) {
+    try {
+      Double.valueOf(s);
+      return true;
+    } catch (NumberFormatException ex) {
+      return HideConstant.hide(false);
+    }
+  }
+}
+
+class HideConstant {
+    public static boolean hide(boolean b) {
+        return b;
+    }
+}
+
 class AlreadyReturnsConstZero {
   public int a() {
     return 0;
   }
 }
+
+class AlreadyReturnsConstZeroInTryCatch {
+  public int a(String s) {
+    try {
+      Double.valueOf(s);
+      return 0;      
+    } catch(NumberFormatException ex) {
+      return 42;  
+    }
+  }
+}
+
 
 class AlreadyReturnsBoxedFalse {
   public Boolean a() {
@@ -264,14 +311,26 @@ class AlreadyReturnsEmptyList {
   }
 }
 
+
+class AlreadyReturnsEmptyListInTryCatch {
+  public List<Integer> a(String s) {
+    try {
+      Double.valueOf(s);
+      return Collections.emptyList();
+    } catch (NumberFormatException e) {
+      return new ArrayList<>();
+    }
+  }
+}
+
 class AlreadyReturnsEmptySet {
   public Set<Integer> a() {
     return Collections.emptySet();
   }
 }
 
-//class AlreadyReturnsEmptyOptional {
-//  public Optional<String> a() {
-//    return Optional.empty();
-//  }
-//}
+class AlreadyReturnsEmptyOptional {
+  public Optional<String> a() {
+    return Optional.empty();
+  }
+}

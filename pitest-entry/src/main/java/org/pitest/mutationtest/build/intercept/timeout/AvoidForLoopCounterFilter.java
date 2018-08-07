@@ -13,6 +13,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
@@ -20,9 +21,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
@@ -50,9 +49,8 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   private static final boolean DEBUG = false;
 
   // GETFIELDS are ignored so field access can be matched in the same way as  local variables
-  private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class)
-                                                        .or(isA(FrameNode.class)
-                                                        .or(opCode(Opcodes.GETFIELD))
+  private static final Match<AbstractInsnNode> IGNORE = notAnInstruction()
+                                                        .or(opCode(Opcodes.GETFIELD)
                                                         );
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
@@ -157,7 +155,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.methods().stream()
           .filter(MethodMatchers.forLocation(a.getId().getLocation()))
           .findFirst().get();
-      final AbstractInsnNode mutatedInstruction = method.instructions().get(instruction);
+      final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
       context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
