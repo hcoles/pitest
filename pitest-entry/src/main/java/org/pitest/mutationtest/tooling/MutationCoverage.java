@@ -225,6 +225,15 @@ private int numberOfThreads() {
 
   private void printStats(final MutationStatisticsListener stats) {
     final PrintStream ps = System.out;
+
+    ps.println(StringUtil.separatorLine('='));
+    ps.println("- Mutators");
+    ps.println(StringUtil.separatorLine('='));
+    for (final Score each : stats.getStatistics().getScores()) {
+      each.report(ps);
+      ps.println(StringUtil.separatorLine());
+    }
+
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Timings");
     ps.println(StringUtil.separatorLine('='));
@@ -234,14 +243,6 @@ private int numberOfThreads() {
     ps.println("- Statistics");
     ps.println(StringUtil.separatorLine('='));
     stats.getStatistics().report(ps);
-
-    ps.println(StringUtil.separatorLine('='));
-    ps.println("- Mutators");
-    ps.println(StringUtil.separatorLine('='));
-    for (final Score each : stats.getStatistics().getScores()) {
-      each.report(ps);
-      ps.println(StringUtil.separatorLine());
-    }
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(
