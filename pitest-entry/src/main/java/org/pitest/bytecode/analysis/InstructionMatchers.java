@@ -12,9 +12,11 @@ import static org.objectweb.asm.Opcodes.ISTORE;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.classinfo.ClassName;
@@ -30,6 +32,13 @@ public class InstructionMatchers {
     return Match.always();
   }
 
+  /**
+   * Matches nodes that do not represent an instruction or label
+   */
+  public static Match<AbstractInsnNode> notAnInstruction() {
+     return isA(LineNumberNode.class).or(isA(FrameNode.class));
+  }
+  
   public static Match<AbstractInsnNode> opCode(final int opcode) {
     return (c, a) -> a.getOpcode() == opcode;
   }
@@ -121,6 +130,16 @@ public class InstructionMatchers {
 
   public static  Match<AbstractInsnNode> methodCall() {
     return isA(MethodInsnNode.class);
+  }
+  
+  public static Match<AbstractInsnNode> methodCallNamed(String name) {
+    return (c, t) -> {
+      if ( t instanceof MethodInsnNode ) {
+        final MethodInsnNode call = (MethodInsnNode) t;
+        return call.name.equals(name);
+      }
+      return false;
+    };
   }
 
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {

@@ -31,7 +31,24 @@ public class MethodTree {
   public Location asLocation() {
     return Location.location(this.owner,MethodName.fromString(this.rawNode.name), this.rawNode.desc);
   }
-
+    
+  /**
+   * Looks backwards for the next real instruction node (i.e. not a label or line number)
+   * @param index index to work backwards from
+   * @return The previous instruction
+   */
+  public AbstractInsnNode realInstructionBefore(int index) {
+    AbstractInsnNode candidate = instructions().get(index - 1);
+    if (candidate.getOpcode() == -1) {
+      return realInstructionBefore(index - 1);
+    }
+    return candidate;
+  }
+  
+  public AbstractInsnNode instruction(int index) {
+      return instructions().get(index);
+  }
+  
   public List<AbstractInsnNode> instructions() {
     if (this.lazyInstructions != null) {
       return this.lazyInstructions;

@@ -4,6 +4,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
@@ -11,9 +12,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
@@ -25,7 +24,6 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.Context;
-import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -34,8 +32,6 @@ import org.pitest.sequence.Slot;
 public class ImplicitNullCheckFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
-
-  private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class).or(isA(FrameNode.class));
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
@@ -46,7 +42,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
       .then(isA(LabelNode.class).negate()) // use presence of a label to indicate this was a programmer call to getClass
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(IGNORE)
+          .withIgnores(notAnInstruction())
           .withDebug(DEBUG)
           );
 

@@ -8,11 +8,11 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
 import static org.pitest.bytecode.analysis.InstructionMatchers.incrementsVariable;
-import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
 
@@ -22,9 +22,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
@@ -47,10 +45,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
 
-  private static final Match<AbstractInsnNode> IGNORE = isA(LineNumberNode.class)
-      .or(isA(FrameNode.class)
-      );
-
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
   private static final Slot<Boolean> FOUND = Slot.create(Boolean.class);
 
@@ -63,7 +57,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
       .or(arrayConditionalAtStart())
       .then(containMutation(FOUND))
       .compile(QueryParams.params(AbstractInsnNode.class)
-        .withIgnores(IGNORE)
+        .withIgnores(notAnInstruction())
         .withDebug(DEBUG)
         );
 
