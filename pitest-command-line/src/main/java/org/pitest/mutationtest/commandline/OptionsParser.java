@@ -434,7 +434,6 @@ public class OptionsParser {
           ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
     }
     if (userArgs.has(this.classPathFile)) {
-      data.setShouldUseClassPathJar(true);
       try (BufferedReader classPathFileBR = new BufferedReader(new FileReader(userArgs.valueOf(this.classPathFile).getAbsoluteFile()))) {
         String element;
         while ((element = classPathFileBR.readLine()) != null) {

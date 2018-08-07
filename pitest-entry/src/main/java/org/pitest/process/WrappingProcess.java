@@ -1,7 +1,6 @@
 package org.pitest.process;
 
 import static org.pitest.functional.prelude.Prelude.or;
-import org.pitest.mutationtest.tooling.MutationCoverage;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.jar.Manifest;
 
 import org.pitest.functional.FCollection;
-import org.pitest.util.CommandLineUtils;
+import org.pitest.util.ManifestUtils;
 
 public class WrappingProcess {
 
@@ -42,7 +40,6 @@ public class WrappingProcess {
         this.processArgs.getLaunchClassPath());
 
     configureProcessBuilder(processBuilder, this.processArgs.getWorkingDir(),
-        this.processArgs.getLaunchClassPath(),
         this.processArgs.getEnvironmentVariables());
 
     final Process process = processBuilder.start();
@@ -51,13 +48,10 @@ public class WrappingProcess {
   }
 
   private void configureProcessBuilder(ProcessBuilder processBuilder,
-      File workingDirectory, String initialClassPath,
-      Map<String, String> environmentVariables) {
+      File workingDirectory, Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
     final Map<String, String> environment = processBuilder.environment();
-    if (!MutationCoverage.shouldUseClassPathJar()) {
-      environment.put("CLASSPATH", initialClassPath);
-    }
+
     for (final Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       environment.put(entry.getKey(), entry.getValue());
     }
@@ -94,13 +88,11 @@ public class WrappingProcess {
     final List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
 
-    if (MutationCoverage.shouldUseClassPathJar()) {
-      try {
-        cmd.add("-classpath");
-        cmd.add(CommandLineUtils.createClasspathJarFile(new Manifest(), classPath).getAbsolutePath());
-      } catch (Exception e) {
-        System.err.println("Could not create classpath jar");
-      }
+    try {
+      cmd.add("-classpath");
+      cmd.add(ManifestUtils.createClasspathJarFile(classPath).getAbsolutePath());
+    } catch (Exception e) {
+      throw new RuntimeException("Unable to create jar to contain classpath",e);
     }
 
     cmd.addAll(args);

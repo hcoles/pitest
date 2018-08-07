@@ -78,7 +78,6 @@ public class MutationCoverage {
   private final CodeSource         code;
   private final File               baseDir;
   private final SettingsFactory    settings;
-  private static boolean           shouldUseClassPathJar;
 
   public MutationCoverage(final MutationStrategies strategies,
       final File baseDir, final CodeSource code, final ReportOptions data,
@@ -89,7 +88,6 @@ public class MutationCoverage {
     this.timings = timings;
     this.code = code;
     this.baseDir = baseDir;
-    shouldUseClassPathJar = this.data.shouldUseClassPathJar();
   }
 
   public CombinedStatistics runReport() throws IOException {
@@ -319,9 +317,4 @@ private int numberOfThreads() {
       return clSource.getBytes(clazz);
     };
   }
-
-  public static boolean shouldUseClassPathJar() {
-    return shouldUseClassPathJar;
-  }
-
 }
