@@ -7,10 +7,19 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.1-SNAPSHOT
+### 1.4.2-SNAPSHOT
+
+Nothing yet
+
+### 1.4.1
 
 * #446 - Ignore empty directories when aggregating report (thanks @maxgabut)
 * #457 - Fix base dir in multi module projects (thanks @sarahBuisson and @giggluigg)
+* #471 - Basic Java 11 support
+* #477 - Null byte in xml (thanks @maxgabut)
+* #480 - Allow aggregation of timestamped reports (thanks @maxgabut)
+* #495 - Move summary to end of console output (thanks @pedrorijo91)
+* #499 - Fix for equivalent mutants in new return val mutators
 
 ### 1.4.0
 
