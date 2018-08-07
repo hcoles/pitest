@@ -106,6 +106,7 @@ public class ReportOptions {
 
   private boolean                        verbose                        = false;
   private boolean                        failWhenNoMutations            = false;
+  private boolean                        shouldUseClassPathJar          = false;
 
   private final Collection<String>       outputs                        = new LinkedHashSet<>();
 
@@ -135,6 +136,10 @@ public class ReportOptions {
 
   public boolean isVerbose() {
     return this.verbose;
+  }
+
+  public boolean shouldUseClassPathJar() {
+    return this.shouldUseClassPathJar;
   }
 
   /**
@@ -347,6 +352,9 @@ public class ReportOptions {
     this.excludedTestClasses = excludedClasses;
   }
 
+  public void setShouldUseClassPathJar(boolean shouldUseClassPathJar) {
+     this.shouldUseClassPathJar = shouldUseClassPathJar;
+  }
 
   public void addOutputFormats(final Collection<String> formats) {
     this.outputs.addAll(formats);
