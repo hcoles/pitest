@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.4.2-SNAPSHOT
 
-Nothing yet
+* #500 - Support for large classpaths with new `useClasspathJar` option (thanks @jqhan)
 
 ### 1.4.1
 
