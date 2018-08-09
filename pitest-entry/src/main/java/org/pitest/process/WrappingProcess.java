@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.pitest.functional.FCollection;
+import org.pitest.util.ManifestUtils;
 
 public class WrappingProcess {
 
@@ -35,10 +36,13 @@ public class WrappingProcess {
     final ProcessBuilder processBuilder = createProcessBuilder(
         this.processArgs.getJavaExecutable(), this.processArgs.getJvmArgs(),
         this.minionClass, Arrays.asList(args),
-        this.processArgs.getJavaAgentFinder());
+        this.processArgs.getJavaAgentFinder(),
+        this.processArgs.getLaunchClassPath());
 
+    
+    setClassPathInEnvironment(processBuilder);
+        
     configureProcessBuilder(processBuilder, this.processArgs.getWorkingDir(),
-        this.processArgs.getLaunchClassPath(),
         this.processArgs.getEnvironmentVariables());
 
     final Process process = processBuilder.start();
@@ -46,12 +50,19 @@ public class WrappingProcess {
         this.processArgs.getStdErr());
   }
 
+  
+   // Reportedly passing the classpath as an environment variable rather than on the command
+   // line increases the allowable size of the classpath, but this has not been confirmed
+  private void setClassPathInEnvironment(final ProcessBuilder processBuilder) {
+    if (!processArgs.useClasspathJar()) {
+      processBuilder.environment().put("CLASSPATH", this.processArgs.getLaunchClassPath());
+    }
+  }
+
   private void configureProcessBuilder(ProcessBuilder processBuilder,
-      File workingDirectory, String initialClassPath,
-      Map<String, String> environmentVariables) {
+      File workingDirectory, Map<String, String> environmentVariables) {
     processBuilder.directory(workingDirectory);
     final Map<String, String> environment = processBuilder.environment();
-    environment.put("CLASSPATH", initialClassPath);
 
     for (final Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       environment.put(entry.getKey(), entry.getValue());
@@ -62,11 +73,11 @@ public class WrappingProcess {
     this.process.destroy();
   }
 
-  private static ProcessBuilder createProcessBuilder(String javaProc,
+  private ProcessBuilder createProcessBuilder(String javaProc,
       List<String> args, Class<?> mainClass, List<String> programArgs,
-      JavaAgent javaAgent) {
+      JavaAgent javaAgent, String classPath) {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
-        programArgs);
+        programArgs, classPath);
 
     // IBM jdk adds this, thereby breaking everything
     removeClassPathProperties(cmd);
@@ -82,12 +93,15 @@ public class WrappingProcess {
     }
   }
 
-  private static List<String> createLaunchArgs(String javaProcess,
+  private List<String> createLaunchArgs(String javaProcess,
       JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
-      List<String> programArgs) {
+      List<String> programArgs, String classPath) {
 
     final List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
+
+    createClasspathJar(classPath, cmd);
+
     cmd.addAll(args);
 
     addPITJavaAgent(agentJarLocator, cmd);
@@ -96,6 +110,19 @@ public class WrappingProcess {
     cmd.add(mainClass.getName());
     cmd.addAll(programArgs);
     return cmd;
+  }
+
+  private void createClasspathJar(String classPath, final List<String> cmd) {
+    if (this.processArgs.useClasspathJar()) {
+      try {
+        cmd.add("-classpath");
+        cmd.add(
+            ManifestUtils.createClasspathJarFile(classPath).getAbsolutePath());
+      } catch (Exception e) {
+        throw new RuntimeException("Unable to create jar to contain classpath",
+            e);
+      }
+    }
   }
 
   private static void addPITJavaAgent(JavaAgent agentJarLocator,

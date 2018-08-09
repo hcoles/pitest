@@ -51,6 +51,7 @@ import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
 import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
+import static org.pitest.mutationtest.config.ConfigOption.USE_CLASSPATH_JAR;
 import static org.pitest.mutationtest.config.ConfigOption.USE_INLINED_CODE_DETECTION;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
 
@@ -126,9 +127,9 @@ public class OptionsParser {
   private final OptionSpec<String>                   javaExecutable;
   private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
   private final OptionSpec<String>                   testPluginSpec;
-
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
-
+  private final ArgumentAcceptingOptionSpec<Boolean> useClasspathJarSpec;
+  
   public OptionsParser(Predicate<String> dependencyFilter) {
 
     this.dependencyFilter = dependencyFilter;
@@ -250,9 +251,13 @@ public class OptionsParser {
         .describedAs(
             "whether or not to dump per test line coverage data to disk");
 
+    this.useClasspathJarSpec = parserAccepts(USE_CLASSPATH_JAR)
+        .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+        .describedAs("support large classpaths by creating a classpath jar");
+    
     this.includeLaunchClasspathSpec = parserAccepts(INCLUDE_LAUNCH_CLASSPATH)
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
-        .describedAs("whether or not to analyse launch classpath");
+        .describedAs("whether or not to analyse launch classpath");    
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
@@ -380,6 +385,8 @@ public class OptionsParser {
     data.setIncludeLaunchClasspath(userArgs
         .valueOf(this.includeLaunchClasspathSpec));
 
+    data.setUseClasspathJar(userArgs.valueOf(useClasspathJarSpec));
+    
     data.setShouldCreateTimestampedReports(userArgs
         .valueOf(this.timestampedReportsSpec));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));

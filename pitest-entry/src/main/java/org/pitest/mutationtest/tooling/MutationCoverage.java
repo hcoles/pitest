@@ -317,6 +317,4 @@ private int numberOfThreads() {
       return clSource.getBytes(clazz);
     };
   }
-
-
 }

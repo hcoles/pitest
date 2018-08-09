@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,6 +33,7 @@ import java.util.zip.ZipException;
 
 import org.pitest.functional.FCollection;
 import org.pitest.util.Log;
+import org.pitest.util.ManifestUtils;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
 
@@ -53,10 +55,9 @@ public class ClassPath {
     this(createRoots(FCollection.filter(files, exists())));
   }
 
-  public ClassPath(List<ClassPathRoot> roots) {
+  ClassPath(List<ClassPathRoot> roots) {
     this.root = new CompoundClassPathRoot(roots);
   }
-
 
   public Collection<String> classNames() {
     return this.root.classNames();
@@ -123,9 +124,24 @@ public class ClassPath {
   public static Collection<File> getClassPathElementsAsFiles() {
     final Set<File> us = new LinkedHashSet<>();
     FCollection.mapTo(getClassPathElementsAsAre(), stringToCanonicalFile(), us);
+    
+    addEntriesFromClasspathManifest(us);
     return us;
   }
 
+  /**
+   * Because classpaths can become longer than the OS supports pitest creates temporary jar files and places the classpath
+   * in the manifest where there is no size limit.
+   * 
+   * We must therefore parse them out again here. 
+   * 
+   * @param elements existing elements
+   */
+  private static void addEntriesFromClasspathManifest(final Set<File> elements) {
+    Optional<File> maybeJar = elements.stream().filter( f -> f.getName().startsWith("classpath") && f.getName().endsWith(".jar"))
+    .findFirst();
+    maybeJar.ifPresent(file -> elements.addAll(ManifestUtils.readClasspathManifest(file)));
+  }
 
   public Collection<String> findClasses(final Predicate<String> nameFilter) {
     return FCollection.filter(classNames(), nameFilter);

@@ -93,7 +93,8 @@ public class EntryPoint {
 
     final CoverageOptions coverageOptions = settings.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja,
-        settings.getJavaExecutable(), data.getJvmArgs(), environmentVariables);
+        settings.getJavaExecutable(), data.getJvmArgs(), environmentVariables)
+        .usingClassPathJar(data.useClasspathJar());
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = new CodeSource(cps);

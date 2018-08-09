@@ -250,4 +250,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
     }
   }
 
+  public void setUseClasspathJar(String value) {
+    this.setOption(ConfigOption.USE_CLASSPATH_JAR, value);
+  }
 }

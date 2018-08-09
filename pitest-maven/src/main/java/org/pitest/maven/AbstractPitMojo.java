@@ -338,6 +338,15 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "plugin.artifactMap", readonly = true, required = true)
   private Map<String, Artifact>       pluginArtifactMap;
+  
+  
+  /**
+   * Communicate the classpath using a temporary jar with a classpath
+   * manifest. This allows support of very large classpaths but may cause
+   * issues with certian libraries.
+   */
+  @Parameter(property = "useClasspathJar", defaultValue = "false")
+  private boolean                     useClasspathJar;
 
   protected final GoalStrategy        goalStrategy;
 
@@ -637,6 +646,10 @@ public class AbstractPitMojo extends AbstractMojo {
     return testPlugin;
   }
    
+  public boolean isUseClasspathJar() {
+    return this.useClasspathJar;
+  }
+
   static class RunDecision {
     private List<String> reasons = new ArrayList<>(4);
 
