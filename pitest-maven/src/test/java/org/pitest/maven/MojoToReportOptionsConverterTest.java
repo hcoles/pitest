@@ -375,6 +375,17 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
     assertEquals("testng", actual.getTestPlugin());
   }  
+  
+  public void testDoesNotUseClasspathJarByDefault() {
+    final ReportOptions actual = parseConfig("");
+    assertFalse(actual.useClasspathJar());
+  }  
+  
+  public void testParsesUseClasspathJar() {
+    final ReportOptions actual = parseConfig("<useClasspathJar>true</useClasspathJar>");
+    assertTrue(actual.useClasspathJar());
+  }  
+
 
   private ReportOptions parseConfig(final String xml) {
     try {

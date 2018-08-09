@@ -39,12 +39,24 @@ public class WrappingProcess {
         this.processArgs.getJavaAgentFinder(),
         this.processArgs.getLaunchClassPath());
 
+    
+    setClassPathInEnvironment(processBuilder);
+        
     configureProcessBuilder(processBuilder, this.processArgs.getWorkingDir(),
         this.processArgs.getEnvironmentVariables());
 
     final Process process = processBuilder.start();
     this.process = new JavaProcess(process, this.processArgs.getStdout(),
         this.processArgs.getStdErr());
+  }
+
+  
+   // Reportedly passing the classpath as an environment variable rather than on the command
+   // line increases the allowable size of the classpath, but this has not been confirmed
+  private void setClassPathInEnvironment(final ProcessBuilder processBuilder) {
+    if (!processArgs.useClasspathJar()) {
+      processBuilder.environment().put("CLASSPATH", this.processArgs.getLaunchClassPath());
+    }
   }
 
   private void configureProcessBuilder(ProcessBuilder processBuilder,
@@ -61,7 +73,7 @@ public class WrappingProcess {
     this.process.destroy();
   }
 
-  private static ProcessBuilder createProcessBuilder(String javaProc,
+  private ProcessBuilder createProcessBuilder(String javaProc,
       List<String> args, Class<?> mainClass, List<String> programArgs,
       JavaAgent javaAgent, String classPath) {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
@@ -81,19 +93,14 @@ public class WrappingProcess {
     }
   }
 
-  private static List<String> createLaunchArgs(String javaProcess,
+  private List<String> createLaunchArgs(String javaProcess,
       JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
       List<String> programArgs, String classPath) {
 
     final List<String> cmd = new ArrayList<>();
     cmd.add(javaProcess);
 
-    try {
-      cmd.add("-classpath");
-      cmd.add(ManifestUtils.createClasspathJarFile(classPath).getAbsolutePath());
-    } catch (Exception e) {
-      throw new RuntimeException("Unable to create jar to contain classpath",e);
-    }
+    createClasspathJar(classPath, cmd);
 
     cmd.addAll(args);
 
@@ -103,6 +110,19 @@ public class WrappingProcess {
     cmd.add(mainClass.getName());
     cmd.addAll(programArgs);
     return cmd;
+  }
+
+  private void createClasspathJar(String classPath, final List<String> cmd) {
+    if (this.processArgs.useClasspathJar()) {
+      try {
+        cmd.add("-classpath");
+        cmd.add(
+            ManifestUtils.createClasspathJarFile(classPath).getAbsolutePath());
+      } catch (Exception e) {
+        throw new RuntimeException("Unable to create jar to contain classpath",
+            e);
+      }
+    }
   }
 
   private static void addPITJavaAgent(JavaAgent agentJarLocator,

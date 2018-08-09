@@ -454,6 +454,13 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--jvmPath=foo");
   }
 
+  @Test
+  public void shouldPassClasspathJarFlagToJavaTask() {
+    this.pitestTask.setUseClasspathJar("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--useClasspathJar=true");
+  }
+  
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

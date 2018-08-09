@@ -132,6 +132,9 @@ public class ReportOptions {
   private Collection<String>             includedTestMethods            = new ArrayList<>();
 
   private String                         testPlugin                     = "";
+  
+  private boolean                        useClasspathJar;
+
 
   public boolean isVerbose() {
     return this.verbose;
@@ -587,33 +590,45 @@ public class ReportOptions {
     this.testPlugin = testPlugin;
   }
 
+  public boolean useClasspathJar() {
+    return useClasspathJar;
+  }
+
+  public void setUseClasspathJar(boolean useClasspathJar) {
+    this.useClasspathJar = useClasspathJar;
+  }
+
   @Override
   public String toString() {
-    return "ReportOptions [targetClasses=" + this.targetClasses
-        + ", excludedMethods=" + this.excludedMethods + ", excludedClasses="
-        + this.excludedClasses + ", excludedTestClasses=" + this.excludedTestClasses
-        + ", codePaths=" + this.codePaths + ", reportDir=" + this.reportDir
-        + ", historyInputLocation=" + this.historyInputLocation
-        + ", historyOutputLocation=" + this.historyOutputLocation + ", sourceDirs="
-        + this.sourceDirs + ", classPathElements=" + this.classPathElements
-        + ", mutators=" + this.mutators + ", features=" + this.features
-        + ", dependencyAnalysisMaxDistance=" + this.dependencyAnalysisMaxDistance
-        + ", jvmArgs=" + this.jvmArgs + ", numberOfThreads=" + this.numberOfThreads
-        + ", timeoutFactor=" + this.timeoutFactor + ", timeoutConstant="
-        + this.timeoutConstant + ", targetTests=" + this.targetTests + ", loggingClasses="
-        + this.loggingClasses + ", maxMutationsPerClass=" + this.maxMutationsPerClass
-        + ", verbose=" + this.verbose + ", failWhenNoMutations="
-        + this.failWhenNoMutations + ", outputs=" + this.outputs + ", groupConfig="
-        + this.groupConfig + ", mutationUnitSize=" + this.mutationUnitSize
-        + ", shouldCreateTimestampedReports=" + this.shouldCreateTimestampedReports
-        + ", detectInlinedCode=" + this.detectInlinedCode + ", exportLineCoverage="
-        + this.exportLineCoverage + ", mutationThreshold=" + this.mutationThreshold
-        + ", coverageThreshold=" + this.coverageThreshold + ", mutationEngine="
-        + this.mutationEngine + ", javaExecutable=" + this.javaExecutable
-        + ", includeLaunchClasspath=" + this.includeLaunchClasspath + ", properties="
-        + this.properties + ", maxSurvivors=" + this.maxSurvivors + ", excludedRunners="
-        + this.excludedRunners + ", testPlugin=" + this.testPlugin + ", includedTestMethods="
-        + this.includedTestMethods + "]";
+    return "ReportOptions [targetClasses=" + targetClasses
+        + ", excludedMethods=" + excludedMethods + ", excludedClasses="
+        + excludedClasses + ", excludedTestClasses=" + excludedTestClasses
+        + ", codePaths=" + codePaths + ", reportDir=" + reportDir
+        + ", historyInputLocation=" + historyInputLocation
+        + ", historyOutputLocation=" + historyOutputLocation + ", sourceDirs="
+        + sourceDirs + ", classPathElements=" + classPathElements
+        + ", mutators=" + mutators + ", features=" + features
+        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
+        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
+        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
+        + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
+        + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
+        + ", verbose=" + verbose + ", failWhenNoMutations="
+        + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
+        + groupConfig + ", mutationUnitSize=" + mutationUnitSize
+        + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
+        + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
+        + exportLineCoverage + ", mutationThreshold=" + mutationThreshold
+        + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
+        + mutationEngine + ", javaExecutable=" + javaExecutable
+        + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
+        + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
+        + excludedRunners + ", includedTestMethods=" + includedTestMethods
+        + ", testPlugin=" + testPlugin + ", useClasspathJar=" + useClasspathJar
+        + "]";
   }
+
+  
+
 
 }

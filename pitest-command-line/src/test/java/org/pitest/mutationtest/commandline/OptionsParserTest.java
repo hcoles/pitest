@@ -487,6 +487,19 @@ public class OptionsParserTest {
     assertEquals("2", actual.getFreeFormProperties().getProperty("bar"));
   }
 
+  @Test
+  public void shouldDefaultToNotUsingAClasspathJar() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertFalse(actual.useClasspathJar());
+  }
+  
+  @Test
+  public void shouldUseClasspathJarWhenFlagSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar=true");
+    assertTrue(actual.useClasspathJar());
+  }
+  
+  
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class
         .getProtectionDomain().getCodeSource().getLocation().getFile();

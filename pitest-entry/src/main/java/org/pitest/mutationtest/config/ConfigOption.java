@@ -202,7 +202,14 @@ public enum ConfigOption {
   /**
    * Custom properties for plugins
    */
-  PLUGIN_CONFIGURATION("pluginConfiguration");
+  PLUGIN_CONFIGURATION("pluginConfiguration"),
+  
+  /**
+   * Communicate classpath using a temporary jar with a classpath manifest.
+   * Allows very long classpaths that would otherwise exceed OS limits, but
+   * may cause problems with some third party libraries.
+   */
+  USE_CLASSPATH_JAR("useClasspathJar", false);
 
   private final String       text;
   private final Serializable defaultValue;
