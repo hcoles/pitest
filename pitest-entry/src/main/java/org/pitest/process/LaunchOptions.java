@@ -45,7 +45,7 @@ public class LaunchOptions {
     this.childJVMArgs = childJVMArgs;
     this.javaExecutable = javaExecutable;
     this.environmentVariables = environmentVariables;
-    this.usingClassPathJar = false;
+    this.usingClassPathJar = usingClassPathJar;
   }
 
   public JavaAgent getJavaAgentFinder() {
