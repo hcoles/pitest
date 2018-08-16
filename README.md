@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.2-SNAPSHOT
+### 1.4.3-SNAPSHOT
+
+Nothing yet why not contribute?
+
+### 1.4.2
 
 * #500 - Support for large classpaths with new `useClasspathJar` option (thanks @jqhan)
 
