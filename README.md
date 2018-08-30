@@ -1,5 +1,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
 [![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
+[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/hcoles/pitest.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hcoles/pitest/context:java)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/hcoles/pitest.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hcoles/pitest/alerts)
 
 Pitest (aka PIT) is a state of the art mutation testing system for Java and the JVM.
 
