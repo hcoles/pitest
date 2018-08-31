@@ -21,7 +21,7 @@ public enum Help {
   WRONG_JUNIT_VERSION(
       "Unsupported JUnit version %s. PIT requires JUnit 4.6 or above."), //
   FAILING_TESTS(
-      "All tests did not pass without mutation when calculating line coverage. Mutation testing requires a green suite."), //
+      "%s tests did not pass without mutation when calculating line coverage. Mutation testing requires a green suite."), //
   NO_JUNIT(
       "JUnit was not found on the classpath. PIT requires JUnit 4.6 or above."), //
   NO_SOURCE_FILE(
