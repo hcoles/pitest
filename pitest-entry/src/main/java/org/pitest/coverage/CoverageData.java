@@ -57,7 +57,7 @@ public class CoverageData implements CoverageDatabase {
 
   private final LineMap                                       lm;
 
-  private boolean                                             hasFailedTest = false;
+  private int                                                 countFailedTests = 0;
 
   public CoverageData(final CodeSource code, final LineMap lm) {
     this(code, lm, new LinkedHashMap<BlockLocation, Set<TestInfo>>());
@@ -84,7 +84,11 @@ public class CoverageData implements CoverageDatabase {
   }
 
   public boolean allTestsGreen() {
-    return !this.hasFailedTest;
+    return countFailedTests == 0;
+  }
+
+  public int getCountFailedTests() {
+    return countFailedTests;
   }
 
   @Override
@@ -308,7 +312,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private void recordTestFailure() {
-    this.hasFailedTest = true;
+    this.countFailedTests++;
   }
 
   private Function<Entry<BlockLocation, Set<TestInfo>>, Stream<TestInfo>> toTests() {
