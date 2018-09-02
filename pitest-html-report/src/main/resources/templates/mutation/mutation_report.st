@@ -25,6 +25,7 @@ $line.mutations:{ mutation |
 $i$. $mutation.details.location$ : $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$<br/>
 }$
 </span>
+</span>
 </td>
 <td class='$line.styles.code$'><pre><span  class='$line.styles.mutation$'>$line.text$</span></pre></td></tr>
 }$
