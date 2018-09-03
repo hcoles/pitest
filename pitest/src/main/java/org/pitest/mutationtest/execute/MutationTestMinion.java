@@ -89,7 +89,7 @@ public class MutationTestMinion {
 
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          engine.createMutator(byteSource), loader);
+          engine.createMutator(byteSource), loader, paramsFromParent.fullMutationMatrix);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, createTestPlugin(paramsFromParent.pitConfig));

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class XMLReportListenerTest {
   @Before
   public void setup() {
     this.out = new StringWriter();
-    this.testee = new XMLReportListener(this.out);
+    this.testee = new XMLReportListener(this.out, false);
   }
 
   @Test
@@ -54,6 +55,18 @@ public class XMLReportListenerTest {
     this.testee
         .handleMutationResult(MutationTestResultMother.createClassResults(mr));
     final String expected = "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><methodDescription>()I</methodDescription><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><block>0</block><killingTest>foo</killingTest><description>desc</description></mutation>\n";
+    assertEquals(expected, this.out.toString());
+  }
+
+  @Test
+  public void shouldOutputFullMutationMatrixWhenEnabled() throws IOException {
+    this.testee = new XMLReportListener(this.out, true);
+    final MutationResult mr = new MutationResult(
+            MutationTestResultMother.createDetails(),
+            new MutationStatusTestPair(3, DetectionStatus.KILLED, Arrays.asList("foo", "foo2"), Arrays.asList("bar")));
+    this.testee
+        .handleMutationResult(MutationTestResultMother.createClassResults(mr));
+    final String expected = "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>file</sourceFile><mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><methodDescription>()I</methodDescription><lineNumber>42</lineNumber><mutator>mutator</mutator><index>1</index><block>0</block><killingTests>foo|foo2</killingTests><succeedingTests>bar</succeedingTests><description>desc</description></mutation>\n";
     assertEquals(expected, this.out.toString());
   }
 

@@ -15,15 +15,17 @@ public class ListenerArguments {
   private final long                 startTime;
   private final SourceLocator        locator;
   private final MutationEngine       engine;
+  private final boolean              fullMutationMatrix;
 
   public ListenerArguments(final ResultOutputStrategy outputStrategy,
       final CoverageDatabase coverage, final SourceLocator locator,
-      final MutationEngine engine, final long startTime) {
+      final MutationEngine engine, final long startTime, final boolean fullMutationMatrix) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
     this.startTime = startTime;
     this.engine = engine;
+    this.fullMutationMatrix = fullMutationMatrix;
   }
 
   public ResultOutputStrategy getOutputStrategy() {
@@ -46,4 +48,7 @@ public class ListenerArguments {
     return this.engine;
   }
 
+  public boolean isFullMutationMatrix() {
+  return fullMutationMatrix;
+  }
 }

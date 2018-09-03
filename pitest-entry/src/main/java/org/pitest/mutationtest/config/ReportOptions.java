@@ -111,6 +111,8 @@ public class ReportOptions {
 
   private TestGroupConfig                groupConfig;
 
+  private boolean                        fullMutationMatrix            = false;
+
   private int                            mutationUnitSize;
   private boolean                        shouldCreateTimestampedReports = true;
   private boolean                        detectInlinedCode              = false;
@@ -415,6 +417,14 @@ public class ReportOptions {
     return this.groupConfig;
   }
 
+  public void setFullMutationMatrix(final boolean fullMutationMatrix) {
+    this.fullMutationMatrix = fullMutationMatrix;
+  }
+
+  public boolean isFullMutationMatrix() {
+    return fullMutationMatrix;
+  }
+
   public int getMutationUnitSize() {
     return this.mutationUnitSize;
   }
@@ -615,7 +625,7 @@ public class ReportOptions {
         + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
         + ", verbose=" + verbose + ", failWhenNoMutations="
         + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
-        + groupConfig + ", mutationUnitSize=" + mutationUnitSize
+        + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
         + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
         + exportLineCoverage + ", mutationThreshold=" + mutationThreshold

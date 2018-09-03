@@ -267,6 +267,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(this.classPath, actual.getClassPathElements());
   }
 
+  public void testParsesFullMutationMatrix() {
+    final ReportOptions actual = parseConfig("<fullMutationMatrix>true</fullMutationMatrix>");
+    assertEquals(true, actual.isFullMutationMatrix());
+  }
+
   public void testParsesMutationUnitSize() {
     final ReportOptions actual = parseConfig("<mutationUnitSize>50</mutationUnitSize>");
     assertEquals(50, actual.getMutationUnitSize());

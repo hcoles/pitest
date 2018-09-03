@@ -18,6 +18,7 @@ import static org.pitest.mutationtest.report.xml.Tag.block;
 import static org.pitest.mutationtest.report.xml.Tag.description;
 import static org.pitest.mutationtest.report.xml.Tag.index;
 import static org.pitest.mutationtest.report.xml.Tag.killingTest;
+import static org.pitest.mutationtest.report.xml.Tag.killingTests;
 import static org.pitest.mutationtest.report.xml.Tag.lineNumber;
 import static org.pitest.mutationtest.report.xml.Tag.methodDescription;
 import static org.pitest.mutationtest.report.xml.Tag.mutatedClass;
@@ -25,10 +26,12 @@ import static org.pitest.mutationtest.report.xml.Tag.mutatedMethod;
 import static org.pitest.mutationtest.report.xml.Tag.mutation;
 import static org.pitest.mutationtest.report.xml.Tag.mutator;
 import static org.pitest.mutationtest.report.xml.Tag.sourceFile;
+import static org.pitest.mutationtest.report.xml.Tag.succeedingTests;
 
 import java.io.IOException;
 import java.io.Writer;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
@@ -39,19 +42,23 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 enum Tag {
-  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, description, block;
+  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, killingTests, succeedingTests, description, block;
 }
 
 public class XMLReportListener implements MutationResultListener {
 
-  private final Writer out;
+  public static final String MUTATION_MATRIX_TEST_SEPARATOR = "|";
 
-  public XMLReportListener(final ResultOutputStrategy outputStrategy) {
-    this(outputStrategy.createWriterForFile("mutations.xml"));
+  private final Writer out;
+  private final boolean fullMutationMatrix;
+
+  public XMLReportListener(final ResultOutputStrategy outputStrategy, boolean fullMutationMatrix) {
+    this(outputStrategy.createWriterForFile("mutations.xml"), fullMutationMatrix);
   }
 
-  public XMLReportListener(final Writer out) {
+  public XMLReportListener(final Writer out, boolean fullMutationMatrix) {
     this.out = out;
+    this.fullMutationMatrix = fullMutationMatrix;
   }
 
   private void writeResult(final ClassMutationResults metaData) {
@@ -82,8 +89,12 @@ public class XMLReportListener implements MutationResultListener {
         + makeNode(clean(details.getMutator()), mutator)
         + makeNode("" + details.getFirstIndex(), index)
         + makeNode("" + details.getBlock(), block)
-        + makeNode(createKillingTestDesc(mutation.getKillingTest()),
-            killingTest)
+        + makeNodeWhenConditionSatisfied(!fullMutationMatrix,
+            createKillingTestDesc(mutation.getKillingTest()), killingTest)
+        + makeNodeWhenConditionSatisfied(fullMutationMatrix,
+            createTestDesc(mutation.getKillingTests()), killingTests)
+        + makeNodeWhenConditionSatisfied(fullMutationMatrix,
+            createTestDesc(mutation.getSucceedingTests()), succeedingTests)
         + makeNode(clean(details.getDescription()), description);
   }
 
@@ -101,6 +112,15 @@ public class XMLReportListener implements MutationResultListener {
 
   }
 
+  private String makeNodeWhenConditionSatisfied(final boolean condition, final String value,
+      final Tag tag) {
+    if (!condition) {
+      return "";
+    }
+    
+    return makeNode(value, tag);
+  }
+
   private String makeNode(final String value, final Tag tag) {
     if (value != null) {
       return "<" + tag + ">" + value + "</" + tag + ">";
@@ -111,10 +131,28 @@ public class XMLReportListener implements MutationResultListener {
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
     if (killingTest.isPresent()) {
-      return clean(killingTest.get());
+      return createTestDesc(Arrays.asList(killingTest.get()));
     } else {
       return null;
     }
+  }
+  
+  private String createTestDesc(final List<String> tests) {
+    if (tests.isEmpty()) {
+      return "";
+    }
+    
+    StringBuilder builder = new StringBuilder();
+    
+    for (String test : tests) {
+      builder.append(test);
+      builder.append(MUTATION_MATRIX_TEST_SEPARATOR);
+    }
+    
+    // remove last separator
+    builder.setLength(builder.length() - 1);
+    
+    return clean(builder.toString());
   }
 
   private void write(final String value) {

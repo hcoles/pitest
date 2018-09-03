@@ -14,7 +14,8 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestListener;
@@ -22,12 +23,13 @@ import org.pitest.testapi.TestResult;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private Optional<Description> lastFailingTest = Optional.empty();
+  private List<Description>   succeedingTests = new ArrayList<>();
+  private List<Description>   failingTests = new ArrayList<>();
   private int                 testsRun        = 0;
 
   @Override
   public void onTestFailure(final TestResult tr) {
-    this.lastFailingTest = Optional.ofNullable(tr.getDescription());
+    this.failingTests.add(tr.getDescription());
   }
 
   @Override
@@ -42,20 +44,24 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   @Override
   public void onTestSuccess(final TestResult tr) {
-
+    this.succeedingTests.add(tr.getDescription());
   }
 
   public DetectionStatus status() {
-    if (this.lastFailingTest.isPresent()) {
+    if (!this.failingTests.isEmpty()) {
       return DetectionStatus.KILLED;
     } else {
       return DetectionStatus.SURVIVED;
     }
   }
 
-  public Optional<Description> lastFailingTest() {
-    return this.lastFailingTest;
-  }
+  public List<Description> getSucceedingTests() {
+    return succeedingTests;
+}
+
+  public List<Description> getFailingTests() {
+    return failingTests;
+}
 
   public int getNumberOfTestsRun() {
     return this.testsRun;
