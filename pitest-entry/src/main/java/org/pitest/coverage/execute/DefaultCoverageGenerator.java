@@ -106,7 +106,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private static void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
     if (!coverage.allTestsGreen()) {
-      throw new PitHelpError(Help.FAILING_TESTS);
+      throw new PitHelpError(Help.FAILING_TESTS, coverage.getCountFailedTests());
     }
   }
 
