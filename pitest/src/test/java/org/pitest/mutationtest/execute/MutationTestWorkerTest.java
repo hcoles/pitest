@@ -7,6 +7,7 @@ import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,7 +92,7 @@ public class MutationTestWorkerTest {
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
-        new MutationStatusTestPair(1, DetectionStatus.SURVIVED));
+        new MutationStatusTestPair(1, DetectionStatus.SURVIVED, new ArrayList<>(), Arrays.asList("atest")));
 
   }
 
