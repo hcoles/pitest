@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import java.util.List;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -34,6 +35,14 @@ public final class MutationResult {
 
   public Optional<String> getKillingTest() {
     return this.status.getKillingTest();
+  }
+
+  public List<String> getKillingTests() {
+    return this.status.getKillingTests();
+  }
+
+  public List<String> getSucceedingTests() {
+    return this.status.getSucceedingTests();
   }
 
   public DetectionStatus getStatus() {

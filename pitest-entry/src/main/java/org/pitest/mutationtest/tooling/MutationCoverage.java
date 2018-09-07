@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,6 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.EngineArguments;
@@ -187,8 +187,8 @@ private int numberOfThreads() {
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            this.data.getSourceDirs()), engine, t0);
-
+            this.data.getSourceDirs()), engine, t0, this.data.isFullMutationMatrix());
+    
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(this.data.getFreeFormProperties(), args);
 
@@ -269,8 +269,8 @@ private int numberOfThreads() {
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
-            .getClassPath().getLocalClassPath());
+            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data.isFullMutationMatrix(),
+            this.data.getClassPath().getLocalClassPath());
 
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,

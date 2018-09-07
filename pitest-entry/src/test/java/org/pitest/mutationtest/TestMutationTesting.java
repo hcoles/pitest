@@ -380,7 +380,7 @@ public class TestMutationTesting {
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig, arguments,
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
-            data.getTimeoutConstant()), data.isVerbose(), data.getClassPath()
+            data.getTimeoutConstant()), data.isVerbose(), false, data.getClassPath()
             .getLocalClassPath());
 
 

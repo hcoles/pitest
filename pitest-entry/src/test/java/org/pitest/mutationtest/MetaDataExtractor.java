@@ -60,5 +60,9 @@ public class MetaDataExtractor implements MutationResultListener {
     // TODO Auto-generated method stub
 
   }
+  
+  public List<MutationResult> getData() {
+    return data;
+}
 
 }

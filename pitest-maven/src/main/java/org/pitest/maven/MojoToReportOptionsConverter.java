@@ -134,6 +134,8 @@ public class MojoToReportOptionsConverter {
 
     setTestGroups(data);
 
+    data.setFullMutationMatrix(this.mojo.isFullMutationMatrix());
+
     data.setMutationUnitSize(this.mojo.getMutationUnitSize());
     data.setShouldCreateTimestampedReports(this.mojo.isTimestampedReports());
     data.setDetectInlinedCode(this.mojo.isDetectInlinedCode());

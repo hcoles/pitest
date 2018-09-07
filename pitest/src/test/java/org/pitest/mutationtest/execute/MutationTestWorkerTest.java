@@ -7,6 +7,7 @@ import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class MutationTestWorkerTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     this.testee = new MutationTestWorker(this.hotswapper, this.mutater,
-        this.loader);
+        this.loader, false);
   }
 
   @Test
@@ -91,7 +92,7 @@ public class MutationTestWorkerTest {
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
-        new MutationStatusTestPair(1, DetectionStatus.SURVIVED));
+        new MutationStatusTestPair(1, DetectionStatus.SURVIVED, new ArrayList<>(),  new ArrayList<>()));
 
   }
 

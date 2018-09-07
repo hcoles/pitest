@@ -9,7 +9,7 @@ Read all about it at http://pitest.org
 
 ### 1.4.3-SNAPSHOT
 
-Nothing yet why not contribute?
+* #510 - Compute mutation test matric (thanks @nrainer)
 
 ### 1.4.2
 

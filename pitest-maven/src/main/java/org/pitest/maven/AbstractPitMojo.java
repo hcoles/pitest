@@ -215,6 +215,16 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "includedTestMethods")
   private ArrayList<String>           includedTestMethods;
+
+  /**
+   * Whether to create a full mutation matrix.
+   * 
+   * If set to true all tests covering a mutation will be executed,
+   * if set to false the test execution will stop after the first killing test.
+   */
+  @Parameter(property = "fullMutationMatrix", defaultValue = "false")
+
+  private boolean                     fullMutationMatrix;
   /**
    * Maximum number of mutations to include in a single analysis unit.
    * 
@@ -547,6 +557,14 @@ public class AbstractPitMojo extends AbstractMojo {
   public List<String> getIncludedTestMethods() {
     return this.includedTestMethods;
   }
+
+  public boolean isFullMutationMatrix() {
+    return fullMutationMatrix;
+  }
+  
+  public void setFullMutationMatrix(boolean fullMutationMatrix) {
+    this.fullMutationMatrix = fullMutationMatrix;
+}
 
   public int getMutationUnitSize() {
     return this.mutationUnitSize;

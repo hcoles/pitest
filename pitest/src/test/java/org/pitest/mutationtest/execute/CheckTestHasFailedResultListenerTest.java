@@ -15,11 +15,11 @@
 package org.pitest.mutationtest.execute;
 
 import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.DescriptionMother;
-import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
@@ -32,32 +32,51 @@ public class CheckTestHasFailedResultListenerTest {
 
   @Before
   public void setUp() {
-    this.testee = new CheckTestHasFailedResultListener();
     this.description = DescriptionMother.createEmptyDescription("foo");
   }
 
   @Test
   public void shouldReturnDetectionStatusOfSurvivedWhenNoFailuresOrErrors() {
+    this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestSuccess(new TestResult(this.description, null));
     assertEquals(DetectionStatus.SURVIVED, this.testee.status());
   }
 
   @Test
   public void shouldReturnDetectionStatusOfKilledWhenEncountersFailure() {
+    this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestFailure(new TestResult(this.description, null));
     assertEquals(DetectionStatus.KILLED, this.testee.status());
   }
 
   @Test
   public void shouldRecordDescriptionOfLastFailingTest() {
+    this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestFailure(new TestResult(this.description, null));
-    assertEquals(Optional.ofNullable(this.description), this.testee.lastFailingTest());
+    assertEquals(this.description, this.testee.getFailingTests().get(0));
   }
 
   @Test
   public void shouldRecordNumberOfTestsRun() {
+    this.testee = new CheckTestHasFailedResultListener(false);
     assertEquals(0, this.testee.getNumberOfTestsRun());
     this.testee.onTestStart(null);
     assertEquals(1, this.testee.getNumberOfTestsRun());
   }
+  
+  @Test
+  public void shouldNotRecordPassingTestsWhenFlagNotSet() {
+    this.testee = new CheckTestHasFailedResultListener(false);
+    this.testee.onTestSuccess(new TestResult(this.description, null));
+    assertThat(testee.getSucceedingTests()).isEmpty();
+  }
+
+  @Test
+  public void shouldRecordPassingTestsWhenFlagSet() {
+    this.testee = new CheckTestHasFailedResultListener(true);
+    this.testee.onTestSuccess(new TestResult(this.description, null));
+    assertThat(testee.getSucceedingTests()).hasSize(1);
+  }
+
 }
+

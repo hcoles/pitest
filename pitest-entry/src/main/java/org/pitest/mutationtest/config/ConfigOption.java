@@ -144,6 +144,12 @@ public enum ConfigOption {
    * TestNG groupsJUnit categories to exclude
    */
   EXCLUDED_GROUPS("excludedGroups"),
+
+  /**
+   * Whether to compute a full mutation matrix.
+   */
+  FULL_MUTATION_MATRIX("fullMutationMatrix", false),
+
   /**
    * Maximum number of mutations to include within a single unit of analysis.
    */
