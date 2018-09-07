@@ -56,7 +56,7 @@ public class MutationTestUnitTest {
     this.tests = new ArrayList<>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
         new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, EngineArguments.arguments(), this.timeout,
-            false, null));
+            false, false, null));
 
   }
 

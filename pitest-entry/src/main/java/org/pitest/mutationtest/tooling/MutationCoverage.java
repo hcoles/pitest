@@ -63,6 +63,7 @@ import org.pitest.mutationtest.incremental.IncrementalAnalyser;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
+import org.pitest.util.PitError;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
 
@@ -187,8 +188,12 @@ private int numberOfThreads() {
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            this.data.getSourceDirs()), engine, t0);
+            this.data.getSourceDirs()), engine, t0, this.data.isFullMutationMatrix());
 
+    if (this.data.isFullMutationMatrix() && !this.data.getOutputFormats().contains("XML")) {
+      throw new PitError("Full mutation matrix is only supported in the output format XML.");
+    }
+    
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(this.data.getFreeFormProperties(), args);
 
@@ -269,8 +274,8 @@ private int numberOfThreads() {
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data
-            .getClassPath().getLocalClassPath());
+            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data.isFullMutationMatrix(),
+            this.data.getClassPath().getLocalClassPath());
 
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,

@@ -57,6 +57,7 @@ import com.example.HasMutationsInFinallyBlock;
 import com.example.JUnitThreeSuite;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
+import com.example.coverage.execute.samples.mutationMatrix.TestsForSimpleCalculator;
 
 @Category(SystemTest.class)
 public class MutationCoverageReportSystemTest extends ReportTestBase {
@@ -191,6 +192,26 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data.setExcludedClasses(asGlobs(FullyCoveredTesteeTest.class));
     createAndRun();
     verifyResults(KILLED);
+  }
+  
+  @Test
+  public void computesFullMutationMatrix() {
+    this.data
+    .setTargetTests(predicateFor("com.example.coverage.execute.samples.mutationMatrix.*"));
+    this.data.setTargetClasses(asList("com.example.coverage.execute.samples.mutationMatrix.*"));
+    this.data.setExcludedClasses(asGlobs(TestsForSimpleCalculator.class));
+    this.data.setFullMutationMatrix(true);
+    this.data.addOutputFormats(Arrays.asList("XML"));
+    this.data.setMutators(Arrays.asList("MATH"));
+    createAndRun();
+    List<MutationResult> resultData = this.metaDataExtractor.getData();
+    assertEquals(1, resultData.size());
+    
+    MutationResult mutation = resultData.get(0);
+    assertEquals(KILLED, mutation.getStatus());
+    assertEquals(3, mutation.getNumberOfTestsRun());
+    assertEquals(2, mutation.getKillingTests().size());
+    assertEquals(1, mutation.getSucceedingTests().size());
   }
 
   @Test(expected = PitHelpError.class)

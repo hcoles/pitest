@@ -25,7 +25,7 @@ public class XMLReportFactory implements MutationResultListenerFactory {
   @Override
   public MutationResultListener getListener(Properties props,
       final ListenerArguments args) {
-    return new XMLReportListener(args.getOutputStrategy());
+    return new XMLReportListener(args.getOutputStrategy(), args.isFullMutationMatrix());
   }
 
   @Override

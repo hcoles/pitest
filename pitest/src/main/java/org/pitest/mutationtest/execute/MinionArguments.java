@@ -33,11 +33,12 @@ public class MinionArguments implements Serializable {
   final EngineArguments             engineArgs;
   final TimeoutLengthStrategy       timeoutStrategy;
   final boolean                     verbose;
+  final boolean                     fullMutationMatrix;
   final TestPluginArguments         pitConfig;
 
   public MinionArguments(final Collection<MutationDetails> mutations,
       final Collection<ClassName> tests, final String engine,   final EngineArguments engineArgs,
-      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose,
+      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose, final boolean fullMutationMatrix,
       final TestPluginArguments pitConfig) {
     this.mutations = mutations;
     this.testClasses = tests;
@@ -45,6 +46,7 @@ public class MinionArguments implements Serializable {
     this.engineArgs = engineArgs;
     this.timeoutStrategy = timeoutStrategy;
     this.verbose = verbose;
+    this.fullMutationMatrix = fullMutationMatrix;
     this.pitConfig = pitConfig;
   }
 
