@@ -92,7 +92,7 @@ public class MutationTestWorkerTest {
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
-        new MutationStatusTestPair(1, DetectionStatus.SURVIVED, new ArrayList<>(), Arrays.asList("atest")));
+        new MutationStatusTestPair(1, DetectionStatus.SURVIVED, new ArrayList<>(),  new ArrayList<>()));
 
   }
 

@@ -2,6 +2,7 @@ package org.pitest.mutationtest.incremental;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
   private MutationResult makeResult(final MutationDetails each,
       final DetectionStatus status) {
-    return makeResult(each, status, new ArrayList<>(), new ArrayList<>());
+    return makeResult(each, status, Collections.emptyList(), Collections.emptyList());
   }
 
   private MutationResult makeResult(final MutationDetails each,

@@ -181,7 +181,7 @@ public class MutationTestWorker {
   private MutationStatusTestPair doTestsDetectMutation(final Container c,
       final List<TestUnit> tests) {
     try {
-      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener();
+      final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener(fullMutationMatrix);
 
       final Pitest pit = new Pitest(listener);
       

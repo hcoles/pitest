@@ -499,6 +499,17 @@ public class OptionsParserTest {
     assertTrue(actual.useClasspathJar());
   }
   
+  @Test
+  public void shouldDefaultMatrixFlagToFalse() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertFalse(actual.isFullMutationMatrix());
+  }
+  
+  @Test
+  public void shouldParseMatrixFlag() {
+    final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=true");
+    assertTrue(actual.isFullMutationMatrix());
+  }
   
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class

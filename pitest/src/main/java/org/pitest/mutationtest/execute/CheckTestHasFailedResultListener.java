@@ -23,9 +23,14 @@ import org.pitest.testapi.TestResult;
 
 public class CheckTestHasFailedResultListener implements TestListener {
 
-  private List<Description>   succeedingTests = new ArrayList<>();
-  private List<Description>   failingTests = new ArrayList<>();
+  private final List<Description>   succeedingTests = new ArrayList<>();
+  private final List<Description>   failingTests = new ArrayList<>();
+  private final boolean       recordPassingTests;
   private int                 testsRun        = 0;
+
+  public CheckTestHasFailedResultListener(boolean recordPassingTests) {
+    this.recordPassingTests = recordPassingTests;
+  }
 
   @Override
   public void onTestFailure(final TestResult tr) {
@@ -44,7 +49,9 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   @Override
   public void onTestSuccess(final TestResult tr) {
-    this.succeedingTests.add(tr.getDescription());
+    if (recordPassingTests) {
+      this.succeedingTests.add(tr.getDescription());
+    }
   }
 
   public DetectionStatus status() {

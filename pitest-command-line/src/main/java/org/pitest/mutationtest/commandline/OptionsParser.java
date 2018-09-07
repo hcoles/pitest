@@ -346,7 +346,6 @@ public class OptionsParser {
     this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION)
         .withRequiredArg().ofType(KeyValuePair.class)
         .describedAs("custom plugin properties");
-
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -386,6 +385,8 @@ public class OptionsParser {
     data.setFeatures(this.features.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
     data.addChildJVMArgs(this.jvmArgs.values(userArgs));
+    
+    data.setFullMutationMatrix(this.fullMutationMatrixSpec.value(userArgs));
 
 
     data.setDetectInlinedCode(userArgs.has(this.detectInlinedCode)
