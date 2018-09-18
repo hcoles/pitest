@@ -316,7 +316,7 @@ public class CoverageData implements CoverageDatabase {
     this.blocksToLines.putAll(lines);
   }
 
-  private void recordTestFailure(Description testDescription) {
+  private void recordTestFailure(final Description testDescription) {
     this.failingTestDescriptions.add(testDescription);
   }
 
