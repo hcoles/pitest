@@ -1,13 +1,11 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import org.objectweb.asm.Handle;
+import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -37,34 +35,41 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
   private static final class BigIntegerMathMutator extends MethodVisitor {
 
-    private static final Map<String, String> REPLACEMENTS;
+    private static final List<Replacement> REPLACEMENTS;
 
     static {
-      Map<String, String> replacements = new HashMap<>();
-      replacements.put("add", "subtract");
-      replacements.put("subtract", "add");
-      replacements.put("multiply", "divide");
-      replacements.put("divide", "multiply");
-      replacements.put("mod", "divide");
+      String unary = "(Ljava/math/BigInteger;)Ljava/math/BigInteger;";
+      List<Replacement> list = new ArrayList<>();
+      list.add(new Replacement("add", "subtract", unary));
+      list.add(new Replacement("subtract", "add", unary));
+      list.add(new Replacement("multiply", "divide", unary));
+      list.add(new Replacement("divide", "multiply", unary));
+      list.add(new Replacement("mod", "divide", unary));
 
-      replacements.put("shiftLeft", "shiftRight");
-      replacements.put("shiftRight", "shiftLeft");
-      replacements.put("and", "or");
-      replacements.put("or", "and");
-      replacements.put("xor", "or");
+      list.add(new Replacement("shiftLeft", "shiftRight", unary));
+      list.add(new Replacement("shiftRight", "shiftLeft", unary));
+      list.add(new Replacement("and", "or", unary));
+      list.add(new Replacement("or", "and", unary));
+      list.add(new Replacement("xor", "or", unary));
 
-      replacements.put("max", "min");
-      replacements.put("min", "max");
+      list.add(new Replacement("max", "min", unary));
+      list.add(new Replacement("min", "max", unary));
 
-      // TODO not, negate, andNot, setBit, clearBit
-      REPLACEMENTS = Collections.unmodifiableMap(replacements);
+      String intAsParam = "(I)Ljava/math/BigInteger;";
+      list.add(new Replacement("setBit", "clearBit", intAsParam));
+      list.add(new Replacement("clearBit", "setBit", intAsParam));
+
+      String noParams = "(I)Ljava/math/BigInteger;";
+      list.add(new Replacement("abs", "negate", noParams));
+      list.add(new Replacement("not", "negate", noParams));
+      list.add(new Replacement("negate", "not", noParams));
+      list.add(new Replacement("andNot", "and", noParams));
+
+      REPLACEMENTS = Collections.unmodifiableList(list);
     }
-
 
     private final MethodMutatorFactory factory;
     private final MutationContext context;
-
-    private String descriptor;
 
     private BigIntegerMathMutator(MethodMutatorFactory factory, MutationContext context,
         MethodVisitor visitor) {
@@ -72,45 +77,54 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
       this.factory = factory;
       this.context = context;
-
-      init();
-    }
-
-    private void init() {
-      try {
-        Class<BigInteger> type = BigInteger.class;
-        descriptor = Type.getMethodDescriptor(type.getMethod("add", type));
-      } catch (NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    @Override
-    public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
-        Object... bootstrapMethodArguments) {
-      super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle,
-          bootstrapMethodArguments);
-      System.out.println(
-          "name = [" + name + "], descriptor = [" + descriptor + "], bootstrapMethodHandle = ["
-              + bootstrapMethodHandle + "], bootstrapMethodArguments = [" + bootstrapMethodArguments
-              + "]");
     }
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
         boolean isInterface) {
-      if (!owner.equals("java/math/BigInteger")) {
+      if (!owner.equals("java/math/BigInteger") || opcode != Opcodes.INVOKEVIRTUAL) {
         super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         return;
       }
 
-      String replacement = REPLACEMENTS.get(name);
-      if (replacement != null) {
-        context.registerMutation(factory, "Hello WOrlllld!");
-        this.mv.visitMethodInsn(opcode, owner, replacement,
-            "(Ljava/math/BigInteger;)Ljava/math/BigInteger;");
-      } else {
+      if (runReplacements(opcode, owner, name)) {
         super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+      }
+    }
+
+    private boolean runReplacements(int opcode, String owner, String name) {
+      for (Replacement replacement : REPLACEMENTS) {
+        if (replacement.sourceName.equals(name)) {
+          MutationIdentifier identifier = context.registerMutation(factory, replacement.toString());
+          if (context.shouldMutate(identifier)) {
+            this.mv.visitMethodInsn(
+                opcode,
+                owner,
+                replacement.destinationName,
+                replacement.descriptor);
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    private static final class Replacement {
+
+      private final String sourceName;
+      private final String destinationName;
+      private final String descriptor;
+
+      Replacement(String sourceName, String destinationName, String descriptor) {
+        this.sourceName = sourceName;
+        this.destinationName = destinationName;
+        this.descriptor = descriptor;
+      }
+
+      @Override
+      public String toString() {
+        String template = "Replaced BigInteger#%s with BigInteger#%s.";
+        return String.format(template, sourceName, destinationName);
       }
     }
   }
