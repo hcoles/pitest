@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -82,6 +83,17 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       } catch (NoSuchMethodException e) {
         throw new RuntimeException(e);
       }
+    }
+
+    @Override
+    public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
+        Object... bootstrapMethodArguments) {
+      super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle,
+          bootstrapMethodArguments);
+      System.out.println(
+          "name = [" + name + "], descriptor = [" + descriptor + "], bootstrapMethodHandle = ["
+              + bootstrapMethodHandle + "], bootstrapMethodArguments = [" + bootstrapMethodArguments
+              + "]");
     }
 
     @Override

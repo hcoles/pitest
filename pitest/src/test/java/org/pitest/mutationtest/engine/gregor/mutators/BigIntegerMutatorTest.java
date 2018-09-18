@@ -17,6 +17,7 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.function.BiFunction;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
@@ -64,6 +65,13 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     final Collection<MutationDetails> actual = findMutationsFor(Modulo.class);
     final Mutant mutant = getFirstMutant(actual);
     assertMutantCallableReturns(new Modulo(25, 6), mutant, "4");
+  }
+
+  @Test
+  public void moduloLambda() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(ModuloLambda.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new ModuloLambda(25, 6), mutant, "4");
   }
 
   private static abstract class AbstractMath implements Callable<String> {
@@ -141,6 +149,21 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     @Override
     BigInteger apply(BigInteger left, BigInteger right) {
       return left.mod(right);
+    }
+  }
+
+  private static class ModuloLambda extends AbstractMath {
+
+    private BiFunction<BigInteger, BigInteger, BigInteger> function;
+
+    public ModuloLambda(long v1, long v2) {
+      super(v1, v2);
+      this.function = BigInteger::mod;
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return function.apply(left, right);
     }
   }
 }
