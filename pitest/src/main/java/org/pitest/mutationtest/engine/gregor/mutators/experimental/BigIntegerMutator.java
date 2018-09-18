@@ -88,7 +88,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
         boolean isInterface) {
       if (!owner.equals("java/math/BigInteger") || opcode != Opcodes.INVOKEVIRTUAL) {
-        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+        this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         return;
       }
 
@@ -106,7 +106,8 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
                 opcode,
                 owner,
                 replacement.destinationName,
-                replacement.descriptor);
+                replacement.descriptor,
+                false);
             return false;
           }
         }
