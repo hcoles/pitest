@@ -64,7 +64,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       list.add(new Replacement("flipBit", "setBit", intAsParam));
       list.add(new Replacement("flipBit", "clearBit", intAsParam));
 
-      String noParams = "(I)Ljava/math/BigInteger;";
+      String noParams = "()Ljava/math/BigInteger;";
       list.add(new Replacement("abs", "negate", noParams));
       list.add(new Replacement("not", "negate", noParams));
       list.add(new Replacement("negate", "not", noParams));
