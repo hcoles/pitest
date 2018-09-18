@@ -3,6 +3,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -71,6 +72,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
     private final MethodMutatorFactory factory;
     private final MutationContext context;
+    private final String expectedOwner = "java/math/BigInteger";
 
     private BigIntegerMathMutator(MethodMutatorFactory factory, MutationContext context,
         MethodVisitor visitor) {
@@ -83,7 +85,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
         boolean isInterface) {
-      if (!owner.equals("java/math/BigInteger") || opcode != Opcodes.INVOKEVIRTUAL) {
+      if (!owner.equals(expectedOwner) || opcode != Opcodes.INVOKEVIRTUAL) {
         this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         return;
       }
@@ -91,6 +93,46 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       if (runReplacements(opcode, owner, name, descriptor)) {
         this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
       }
+    }
+
+    @Override
+    public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
+        Object... bootstrapMethodArguments) {
+      bootstrapMethodHandle = mutateHandle(bootstrapMethodHandle);
+      Object[] methodArgs = new Object[bootstrapMethodArguments.length];
+      for (int i = 0; i < bootstrapMethodArguments.length; i++) {
+        Object bootstrapMethodArgument = bootstrapMethodArguments[i];
+        if (bootstrapMethodArgument instanceof Handle) {
+          methodArgs[i] = mutateHandle((Handle) bootstrapMethodArgument);
+        } else {
+          methodArgs[i] = bootstrapMethodArgument;
+        }
+      }
+      super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, methodArgs);
+    }
+
+    private Handle mutateHandle(Handle handle) {
+      int opcode = handle.getTag();
+      String owner = handle.getOwner();
+      String name = handle.getName();
+      String descriptor = handle.getDesc();
+      if (owner.equals(expectedOwner) && opcode == Opcodes.H_INVOKEVIRTUAL) {
+        for (Replacement replacement : REPLACEMENTS) {
+          if (replacement.descriptor.equals(descriptor) && replacement.sourceName.equals(name)) {
+            MutationIdentifier identifier =
+                context.registerMutation(factory, replacement.toString());
+            if (context.shouldMutate(identifier)) {
+              return new Handle(
+                  opcode,
+                  owner,
+                  replacement.destinationName,
+                  descriptor,
+                  handle.isInterface());
+            }
+          }
+        }
+      }
+      return handle;
     }
 
     private boolean runReplacements(int opcode, String owner, String name, String descriptor) {
