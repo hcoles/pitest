@@ -18,9 +18,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -66,7 +64,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   public void modulo() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(Modulo.class);
     final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Modulo(25, 6), mutant, "4");
+    assertMutantCallableReturns(new Modulo(25, 5), mutant, "125");
   }
 
   @Test
@@ -90,7 +88,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   public void moduloLambda() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(ModuloLambda.class);
     final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new ModuloLambda(25, 6), mutant, "4");
+    assertMutantCallableReturns(new ModuloLambda(25, 6), mutant, "150");
   }
 
   private static abstract class AbstractMath implements Callable<String> {
