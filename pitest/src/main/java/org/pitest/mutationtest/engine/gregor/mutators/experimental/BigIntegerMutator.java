@@ -1,8 +1,8 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -36,38 +36,44 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
   private static final class BigIntegerMathMutator extends MethodVisitor {
 
-    private static final List<Replacement> REPLACEMENTS;
+    private static final Map<String, Replacement> REPLACEMENTS;
 
     static {
+      Map<String, Replacement> map = new HashMap<>();
+
       String unary = "(Ljava/math/BigInteger;)Ljava/math/BigInteger;";
-      List<Replacement> list = new ArrayList<>();
-      list.add(new Replacement("add", "subtract", unary));
-      list.add(new Replacement("subtract", "add", unary));
-      list.add(new Replacement("multiply", "divide", unary));
-      list.add(new Replacement("divide", "multiply", unary));
-      list.add(new Replacement("mod", "divide", unary));
+      put(map, new Replacement("add", "subtract", unary));
+      put(map, new Replacement("subtract", "add", unary));
+      put(map, new Replacement("multiply", "divide", unary));
+      put(map, new Replacement("divide", "multiply", unary));
+      put(map, new Replacement("mod", "divide", unary));
+      put(map, new Replacement("remainder", "divide", unary));
 
-      list.add(new Replacement("shiftLeft", "shiftRight", unary));
-      list.add(new Replacement("shiftRight", "shiftLeft", unary));
-      list.add(new Replacement("and", "or", unary));
-      list.add(new Replacement("or", "and", unary));
-      list.add(new Replacement("xor", "and", unary));
-      list.add(new Replacement("andNot", "and", unary));
+      put(map, new Replacement("shiftLeft", "shiftRight", unary));
+      put(map, new Replacement("shiftRight", "shiftLeft", unary));
+      put(map, new Replacement("and", "or", unary));
+      put(map, new Replacement("or", "and", unary));
+      put(map, new Replacement("xor", "and", unary));
+      put(map, new Replacement("andNot", "and", unary));
 
-      list.add(new Replacement("max", "min", unary));
-      list.add(new Replacement("min", "max", unary));
+      put(map, new Replacement("max", "min", unary));
+      put(map, new Replacement("min", "max", unary));
 
       String intAsParam = "(I)Ljava/math/BigInteger;";
-      list.add(new Replacement("setBit", "flipBit", intAsParam));
-      list.add(new Replacement("clearBit", "flipBit", intAsParam));
-      list.add(new Replacement("flipBit", "setBit", intAsParam));
+      put(map, new Replacement("setBit", "clearBit", intAsParam));
+      put(map, new Replacement("clearBit", "setBit", intAsParam));
+      put(map, new Replacement("flipBit", "setBit", intAsParam));
 
       String noParams = "()Ljava/math/BigInteger;";
-      list.add(new Replacement("abs", "negate", noParams));
-      list.add(new Replacement("not", "negate", noParams));
-      list.add(new Replacement("negate", "not", noParams));
+      put(map, new Replacement("not", "negate", noParams));
+      put(map, new Replacement("negate", "not", noParams));
+      put(map, new Replacement("abs", "negate", noParams));
 
-      REPLACEMENTS = Collections.unmodifiableList(list);
+      REPLACEMENTS = Collections.unmodifiableMap(map);
+    }
+
+    private static void put(Map<String, Replacement> map, Replacement replacement) {
+      map.put(replacement.sourceName, replacement);
     }
 
     private final MethodMutatorFactory factory;
@@ -90,9 +96,21 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
         return;
       }
 
-      if (runReplacements(opcode, owner, name, descriptor)) {
-        this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+      Replacement replacement = REPLACEMENTS.get(name);
+      if (replacement != null && replacement.descriptor.equals(descriptor)) {
+        MutationIdentifier identifier = context.registerMutation(factory, replacement.toString());
+        if (context.shouldMutate(identifier)) {
+          this.mv.visitMethodInsn(
+              opcode,
+              owner,
+              replacement.destinationName,
+              replacement.descriptor,
+              false);
+          return;
+        }
       }
+
+      this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
     }
 
     @Override
@@ -111,17 +129,21 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, methodArgs);
     }
 
+    /**
+     * Mutates a handle within an invoke virtual.
+     */
     private Handle mutateHandle(Handle handle) {
       int opcode = handle.getTag();
       String owner = handle.getOwner();
       String name = handle.getName();
       String descriptor = handle.getDesc();
+
       if (owner.equals(expectedOwner) && opcode == Opcodes.H_INVOKEVIRTUAL) {
-        for (Replacement replacement : REPLACEMENTS) {
-          if (replacement.descriptor.equals(descriptor) && replacement.sourceName.equals(name)) {
-            MutationIdentifier identifier =
-                context.registerMutation(factory, replacement.toString());
-            if (context.shouldMutate(identifier)) {
+        if (REPLACEMENTS.containsKey(name)) {
+          Replacement replacement = REPLACEMENTS.get(name);
+          if (replacement.descriptor.equals(descriptor)) {
+            MutationIdentifier id = context.registerMutation(factory, replacement.toString());
+            if (context.shouldMutate(id)) {
               return new Handle(
                   opcode,
                   owner,
@@ -133,24 +155,6 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
         }
       }
       return handle;
-    }
-
-    private boolean runReplacements(int opcode, String owner, String name, String descriptor) {
-      for (Replacement replacement : REPLACEMENTS) {
-        if (replacement.descriptor.equals(descriptor) && replacement.sourceName.equals(name)) {
-          MutationIdentifier identifier = context.registerMutation(factory, replacement.toString());
-          if (context.shouldMutate(identifier)) {
-            this.mv.visitMethodInsn(
-                opcode,
-                owner,
-                replacement.destinationName,
-                replacement.descriptor,
-                false);
-            return false;
-          }
-        }
-      }
-      return true;
     }
 
     private static final class Replacement {
