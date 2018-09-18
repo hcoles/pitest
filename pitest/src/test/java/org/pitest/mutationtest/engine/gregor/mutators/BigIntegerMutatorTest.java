@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
@@ -67,6 +68,24 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     final Mutant mutant = getFirstMutant(actual);
     assertMutantCallableReturns(new Modulo(25, 6), mutant, "4");
   }
+
+  @Test
+  public void abs() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Abs.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Abs(-25, 6), mutant, "25");
+    assertMutantCallableReturns(new Abs(25, 6), mutant, "-25");
+  }
+
+
+  @Test
+  public void setBit() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
+    for (Mutant mutant : getMutants(new ArrayList<>(actual))) {
+      assertMutantCallableReturns(new SetBit(25, 2), mutant, "2");
+    }
+  }
+
 
   @Test
   @Ignore
@@ -151,6 +170,30 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     @Override
     BigInteger apply(BigInteger left, BigInteger right) {
       return left.mod(right);
+    }
+  }
+
+  private static class Abs extends AbstractMath {
+
+    public Abs(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.abs();
+    }
+  }
+
+  private static class SetBit extends AbstractMath {
+
+    public SetBit(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.setBit(right.intValue());
     }
   }
 
