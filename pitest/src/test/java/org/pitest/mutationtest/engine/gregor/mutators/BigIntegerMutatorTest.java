@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
@@ -81,9 +80,8 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   @Test
   public void setBit() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
-    for (Mutant mutant : getMutants(new ArrayList<>(actual))) {
-      assertMutantCallableReturns(new SetBit(25, 2), mutant, "2");
-    }
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new SetBit(0b11101, 2), mutant, String.valueOf(0b11001));
   }
 
 
