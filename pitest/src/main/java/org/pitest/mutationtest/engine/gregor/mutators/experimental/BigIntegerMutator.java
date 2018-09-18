@@ -46,8 +46,8 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       put(map, new Replacement("subtract", "add", unary));
       put(map, new Replacement("multiply", "divide", unary));
       put(map, new Replacement("divide", "multiply", unary));
-      put(map, new Replacement("mod", "divide", unary));
-      put(map, new Replacement("remainder", "divide", unary));
+      put(map, new Replacement("mod", "multiply", unary));
+      put(map, new Replacement("remainder", "multiply", unary));
 
       put(map, new Replacement("shiftLeft", "shiftRight", unary));
       put(map, new Replacement("shiftRight", "shiftLeft", unary));
