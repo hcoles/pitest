@@ -92,14 +92,14 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
         return;
       }
 
-      if (runReplacements(opcode, owner, name)) {
-        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+      if (runReplacements(opcode, owner, name, descriptor)) {
+        this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
       }
     }
 
-    private boolean runReplacements(int opcode, String owner, String name) {
+    private boolean runReplacements(int opcode, String owner, String name, String descriptor) {
       for (Replacement replacement : REPLACEMENTS) {
-        if (replacement.sourceName.equals(name)) {
+        if (replacement.descriptor.equals(descriptor) && replacement.sourceName.equals(name)) {
           MutationIdentifier identifier = context.registerMutation(factory, replacement.toString());
           if (context.shouldMutate(identifier)) {
             this.mv.visitMethodInsn(
