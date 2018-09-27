@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
@@ -43,6 +44,7 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
@@ -106,6 +108,9 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private static void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
     if (!coverage.allTestsGreen()) {
+      LOG.severe("Tests failing without mutation: " + StringUtil.newLine()
+          + coverage.getFailingTestDescriptions().stream().map(test -> test.toString())
+          .collect(Collectors.joining(StringUtil.newLine())));
       throw new PitHelpError(Help.FAILING_TESTS, coverage.getCountFailedTests());
     }
   }

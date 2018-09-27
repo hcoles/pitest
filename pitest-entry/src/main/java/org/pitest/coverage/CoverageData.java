@@ -16,6 +16,7 @@
 package org.pitest.coverage;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,7 +58,7 @@ public class CoverageData implements CoverageDatabase {
 
   private final LineMap                                       lm;
 
-  private int                                                 countFailedTests = 0;
+  private final List<Description>                             failingTestDescriptions = new ArrayList<>();
 
   public CoverageData(final CodeSource code, final LineMap lm) {
     this(code, lm, new LinkedHashMap<BlockLocation, Set<TestInfo>>());
@@ -84,11 +85,15 @@ public class CoverageData implements CoverageDatabase {
   }
 
   public boolean allTestsGreen() {
-    return countFailedTests == 0;
+    return this.failingTestDescriptions.isEmpty();
   }
 
   public int getCountFailedTests() {
-    return countFailedTests;
+    return this.failingTestDescriptions.size();
+  }
+
+  public List<Description> getFailingTestDescriptions() {
+    return failingTestDescriptions;
   }
 
   @Override
@@ -219,7 +224,7 @@ public class CoverageData implements CoverageDatabase {
 
   private void checkForFailedTest(final CoverageResult cr) {
     if (!cr.isGreenTest()) {
-      recordTestFailure();
+      recordTestFailure(cr.getTestUnitDescription());
       LOG.severe(cr.getTestUnitDescription()
           + " did not pass without mutation.");
     }
@@ -311,8 +316,8 @@ public class CoverageData implements CoverageDatabase {
     this.blocksToLines.putAll(lines);
   }
 
-  private void recordTestFailure() {
-    this.countFailedTests++;
+  private void recordTestFailure(final Description testDescription) {
+    this.failingTestDescriptions.add(testDescription);
   }
 
   private Function<Entry<BlockLocation, Set<TestInfo>>, Stream<TestInfo>> toTests() {
