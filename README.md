@@ -10,6 +10,7 @@ Read all about it at http://pitest.org
 ### 1.4.3-SNAPSHOT
 
 * #510 - Compute mutation test matric (thanks @nrainer)
+* #519 - Java 11 support
 
 ### 1.4.2
 
