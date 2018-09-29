@@ -22,8 +22,8 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.bytecode.NullVisitor;
 
 public final class ClassInfoVisitor extends MethodFilteringAdapter {
@@ -101,7 +101,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 
     ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
         ClassName annotation) {
-      super(Opcodes.ASM6, null);
+      super(ASMVersion.ASM_VERSION, null);
       this.classInfo = classInfo;
       this.annotation = annotation;
     }
@@ -120,7 +120,7 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
       if (name.equals("value")) {
         final List<Object> arrayValue = new ArrayList<>();
 
-        return new AnnotationVisitor(Opcodes.ASM6, null) {
+        return new AnnotationVisitor(ASMVersion.ASM_VERSION, null) {
           @Override
           public void visit(String name, Object value) {
             arrayValue.add(simplify(value));
@@ -154,7 +154,7 @@ class InfoMethodVisitor extends MethodVisitor {
 
   InfoMethodVisitor(final ClassInfoBuilder classInfo,
       final MethodVisitor writer) {
-    super(Opcodes.ASM6, writer);
+    super(ASMVersion.ASM_VERSION, writer);
     this.classInfo = classInfo;
   }
 

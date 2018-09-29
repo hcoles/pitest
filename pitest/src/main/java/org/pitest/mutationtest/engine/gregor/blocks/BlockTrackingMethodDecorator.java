@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 
 public class BlockTrackingMethodDecorator extends MethodVisitor {
 
@@ -36,7 +36,7 @@ public class BlockTrackingMethodDecorator extends MethodVisitor {
 
   public BlockTrackingMethodDecorator(final BlockCounter blockCounter,
       final MethodVisitor mv) {
-    super(Opcodes.ASM6, mv);
+    super(ASMVersion.ASM_VERSION, mv);
     this.blockCounter = blockCounter;
   }
 

@@ -3,7 +3,7 @@ package org.pitest.mutationtest.engine.gregor.analysis;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 
 public class InstructionTrackingMethodVisitor extends MethodVisitor {
 
@@ -11,7 +11,7 @@ public class InstructionTrackingMethodVisitor extends MethodVisitor {
 
   public InstructionTrackingMethodVisitor(final MethodVisitor mv,
       final InstructionCounter count) {
-    super(Opcodes.ASM6, mv);
+    super(ASMVersion.ASM_VERSION, mv);
     this.count = count;
   }
 

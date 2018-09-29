@@ -16,7 +16,7 @@ package org.pitest.dependency;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.SideEffect1;
 
@@ -27,7 +27,7 @@ class DependencyClassVisitor extends ClassVisitor {
 
   protected DependencyClassVisitor(final ClassVisitor visitor,
       final SideEffect1<DependencyAccess> typeReceiver) {
-    super(Opcodes.ASM6, visitor);
+    super(ASMVersion.ASM_VERSION, visitor);
     this.typeReceiver = filterOutJavaLangObject(typeReceiver);
   }
 
@@ -66,7 +66,7 @@ class DependencyClassVisitor extends ClassVisitor {
     DependencyAnalysisMethodVisitor(final Member member,
         final MethodVisitor methodVisitor,
         final SideEffect1<DependencyAccess> typeReceiver) {
-      super(Opcodes.ASM6, methodVisitor);
+      super(ASMVersion.ASM_VERSION, methodVisitor);
       this.typeReceiver = typeReceiver;
       this.member = member;
     }

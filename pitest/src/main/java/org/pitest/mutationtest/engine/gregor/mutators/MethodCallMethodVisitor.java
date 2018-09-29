@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -58,7 +59,7 @@ class MethodCallMethodVisitor extends MethodVisitor {
       final MutationContext context, final MethodVisitor writer,
       final MethodMutatorFactory factory,
       final BiFunction<String, String, Boolean> filter) {
-    super(Opcodes.ASM6, writer);
+    super(ASMVersion.ASM_VERSION, writer);
     this.factory = factory;
     this.filter = filter;
     this.context = context;

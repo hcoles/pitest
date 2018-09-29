@@ -21,6 +21,7 @@ import static org.objectweb.asm.Opcodes.POP2;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -71,7 +72,7 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
 
     ReplaceMethodCallWithObjectVisitor(final MutationContext context,
         final MethodVisitor writer, final MethodMutatorFactory factory) {
-      super(Opcodes.ASM6, writer);
+      super(ASMVersion.ASM_VERSION, writer);
       this.factory = factory;
       this.context = context;
     }

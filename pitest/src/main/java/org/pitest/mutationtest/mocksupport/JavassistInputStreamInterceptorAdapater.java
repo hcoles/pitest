@@ -20,13 +20,14 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 
 public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
 
   private final String interceptorClass;
 
   public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0, Class<?> interceptor) {
-    super(Opcodes.ASM6, arg0);
+    super(ASMVersion.ASM_VERSION, arg0);
     this.interceptorClass = classToName(interceptor);
   }
 
@@ -53,7 +54,7 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
   private final String interceptorClass;
 
   JavassistInputStreamInterceptorMethodVisitor(final MethodVisitor mv, String interceptor) {
-    super(Opcodes.ASM6, mv);
+    super(ASMVersion.ASM_VERSION, mv);
     this.interceptorClass = interceptor;
   }
 

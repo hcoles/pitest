@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -37,7 +37,7 @@ class MutatingClassVisitor extends ClassVisitor {
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
       final ClassContext context, final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
-    super(Opcodes.ASM6, delegateClassVisitor);
+    super(ASMVersion.ASM_VERSION, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
     this.methodMutators.addAll(mutators);

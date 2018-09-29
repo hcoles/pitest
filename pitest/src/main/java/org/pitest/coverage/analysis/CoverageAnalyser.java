@@ -3,8 +3,8 @@ package org.pitest.coverage.analysis;
 import java.util.List;
 
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.MethodNode;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.coverage.CoverageClassVisitor;
 import org.pitest.mutationtest.engine.gregor.analysis.DefaultInstructionCounter;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodVisitor;
@@ -29,7 +29,7 @@ public class CoverageAnalyser extends MethodNode {
       final int probeOffset, final MethodVisitor mv, final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
-    super(Opcodes.ASM6, access, name, desc, signature, exceptions);
+    super(ASMVersion.ASM_VERSION, access, name, desc, signature, exceptions);
     this.mv = mv;
     this.parent = parent;
     this.classId = classId;
