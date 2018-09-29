@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
@@ -108,7 +108,7 @@ public class InstructionTrackingMethodVisitorTest {
     InstructionTrackingMethodVisitor testee;
 
     public Analyser(final String targetMethod) {
-      super(Opcodes.ASM6);
+      super(ASMVersion.ASM_VERSION);
       this.targetMethod = targetMethod;
     }
 

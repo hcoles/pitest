@@ -3,6 +3,7 @@ package org.pitest.mutationtest.engine.gregor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 
 /**
  * Disables mutations in the conditional statements generated
@@ -30,7 +31,7 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
 
   public AvoidStringSwitchedMethodAdapter(final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM6, delegateMethodVisitor);
+    super(ASMVersion.ASM_VERSION, delegateMethodVisitor);
     this.context = context;
   }
 

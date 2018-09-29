@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
@@ -72,7 +72,7 @@ class LoggingLineScanner extends MethodVisitor {
   private int                 currentLineNumber;
 
   LoggingLineScanner(final Set<Integer> lines, final Set<String> loggingClasses) {
-    super(Opcodes.ASM6);
+    super(ASMVersion.ASM_VERSION);
     this.lines = lines;
     this.loggingClasses = loggingClasses;
   }

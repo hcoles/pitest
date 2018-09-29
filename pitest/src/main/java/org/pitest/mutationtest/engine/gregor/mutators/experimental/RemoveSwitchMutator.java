@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -58,7 +58,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
 
     RemoveSwitchMethodVisitor(final MutationContext context,
         final MethodVisitor methodVisitor) {
-      super(Opcodes.ASM6, methodVisitor);
+      super(ASMVersion.ASM_VERSION, methodVisitor);
       this.context = context;
     }
 

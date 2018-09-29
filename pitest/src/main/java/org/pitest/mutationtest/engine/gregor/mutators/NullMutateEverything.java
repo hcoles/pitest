@@ -7,6 +7,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -49,7 +50,7 @@ class MutateEveryThing extends MethodVisitor {
   MutateEveryThing(final MethodMutatorFactory factory,
       final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
-    super(Opcodes.ASM6, delegateMethodVisitor);
+    super(ASMVersion.ASM_VERSION, delegateMethodVisitor);
     this.factory = factory;
     this.context = context;
   }

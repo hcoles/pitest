@@ -7,6 +7,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 abstract class AbstractCoverageStrategy extends AdviceAdapter {
@@ -33,7 +34,7 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
   AbstractCoverageStrategy(List<Block> blocks, InstructionCounter counter,
       final int classId, final MethodVisitor writer, final int access,
       final String name, final String desc, final int probeOffset) {
-    super(Opcodes.ASM6, writer, access, name, desc);
+    super(ASMVersion.ASM_VERSION, writer, access, name, desc);
 
     this.methodVisitor = writer;
     this.classId = classId;

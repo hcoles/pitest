@@ -16,7 +16,7 @@ package org.pitest.classinfo;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.functional.F5;
 
 public abstract class MethodFilteringAdapter extends ClassVisitor {
@@ -25,7 +25,7 @@ public abstract class MethodFilteringAdapter extends ClassVisitor {
 
   public MethodFilteringAdapter(final ClassVisitor writer,
       final F5<Integer, String, String, String, String[], Boolean> filter) {
-    super(Opcodes.ASM6, writer);
+    super(ASMVersion.ASM_VERSION, writer);
     this.filter = filter;
   }
 

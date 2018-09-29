@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 public abstract class AbstractJumpMutator extends MethodVisitor {
@@ -38,7 +38,7 @@ public abstract class AbstractJumpMutator extends MethodVisitor {
 
   public AbstractJumpMutator(final MethodMutatorFactory factory,
       final MutationContext context, final MethodVisitor writer) {
-    super(Opcodes.ASM6, writer);
+    super(ASMVersion.ASM_VERSION, writer);
     this.factory = factory;
     this.context = context;
   }
