@@ -34,7 +34,7 @@ matrix:
     # Java 10 mvn 3.5.4
     - env: JDK='JDK 10' MAVEN=3.5.4
       install: . ./install-jdk.sh -F 10 -L GPL
-  allow_failures:
+    
     # Java 11 mvn 3.5.4
     - env: JDK='JDK 11' MAVEN=3.5.4
       install: . ./install-jdk.sh -F 11 -L BCL 
