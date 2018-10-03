@@ -14,22 +14,19 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
 
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public class MutationTestSummaryData {
 
   private final String                     fileName;
-  private final Set<String>                mutators  = new HashSet<>();
+  private final Set<String>                mutators  = new TreeSet<>();
   private final Collection<MutationResult> mutations = new ArrayList<>();
   private final Set<ClassInfo>             classes   = new HashSet<>();
 

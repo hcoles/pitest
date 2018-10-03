@@ -1,16 +1,20 @@
 package org.pitest.mutationtest.report.html;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.config.Mutator;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class MutationTestSummaryDataTest {
 
@@ -90,6 +94,17 @@ public class MutationTestSummaryDataTest {
     assertEquals(300 + 100, this.testee.getTotals().getNumberOfLinesCovered());
   }
 
+  @Test
+  public void shouldReturnSortedListOfMutators() {
+    this.testee = buildSummaryDataMutators();
+
+    TreeSet<Object> sortedSet = Mutator.all().stream()
+            .map(MethodMutatorFactory::getName)
+            .collect(TreeSet::new, TreeSet::add, TreeSet::addAll);
+
+    assertEquals(sortedSet, this.testee.getMutators());
+  }
+
   private ClassInfo makeClass() {
     return makeClass(100);
   }
@@ -111,6 +126,15 @@ public class MutationTestSummaryDataTest {
     final Collection<String> mutators = Collections.emptyList();
     return new MutationTestSummaryData(FILE_NAME, results, mutators, classes,
         linesCovered);
+  }
+
+  private MutationTestSummaryData buildSummaryDataMutators() {
+    final Collection<ClassInfo> classes = Collections.emptyList();
+    final Collection<MutationResult> results = Collections.emptyList();
+    final Collection<String> mutators = Mutator.all().stream()
+            .map(MethodMutatorFactory::getName)
+            .collect(Collectors.toList());
+    return new MutationTestSummaryData(FILE_NAME, results, mutators, classes, 0);
   }
 
 }
