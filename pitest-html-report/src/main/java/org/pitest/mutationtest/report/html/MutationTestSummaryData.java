@@ -19,7 +19,11 @@ import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
