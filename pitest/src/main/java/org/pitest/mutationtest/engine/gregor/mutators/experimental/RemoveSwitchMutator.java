@@ -17,16 +17,26 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public class RemoveSwitchMutator implements MethodMutatorFactory {
   // EXPERIMENTAL_REMOVE_SWITCH_MUTATOR;
+  private static final String REMOVE_SWITCH_MUTATOR_NAME = "EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_";
+  private static final int GENERATE_FROM_INCLUDING = 0;
+  private static final int GENERATE_UPTO_EXCLUDING = 100;
+
   private final int key;
+  private final boolean isGeneratedAsCollection;
 
   public RemoveSwitchMutator(final int i) {
+    this(i, false);
+  }
+
+  private RemoveSwitchMutator(final int i, final boolean isGeneratedAsCollection) {
     this.key = i;
+    this.isGeneratedAsCollection = isGeneratedAsCollection;
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
     final List<MethodMutatorFactory> variations = new ArrayList<>();
-    for (int i = 0; i != 100; i++) {
-      variations.add(new RemoveSwitchMutator(i));
+    for (int i = GENERATE_FROM_INCLUDING; i != GENERATE_UPTO_EXCLUDING; i++) {
+      variations.add(new RemoveSwitchMutator(i, true));
     }
     return variations;
   }
@@ -44,12 +54,16 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
 
   @Override
   public String getName() {
-    return toString();
+    if (isGeneratedAsCollection) {
+      return REMOVE_SWITCH_MUTATOR_NAME + "[" + GENERATE_FROM_INCLUDING + "-" + (GENERATE_UPTO_EXCLUDING - 1) + "]";
+    } else {
+      return toString();
+    }
   }
 
   @Override
   public String toString() {
-    return "EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_" + this.key;
+    return REMOVE_SWITCH_MUTATOR_NAME + this.key;
   }
 
   private final class RemoveSwitchMethodVisitor extends MethodVisitor {
