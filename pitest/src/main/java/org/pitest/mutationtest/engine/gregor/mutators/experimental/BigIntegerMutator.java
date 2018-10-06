@@ -49,8 +49,6 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
       put(map, new Replacement("mod", "multiply", unary));
       put(map, new Replacement("remainder", "multiply", unary));
 
-      put(map, new Replacement("shiftLeft", "shiftRight", unary));
-      put(map, new Replacement("shiftRight", "shiftLeft", unary));
       put(map, new Replacement("and", "or", unary));
       put(map, new Replacement("or", "and", unary));
       put(map, new Replacement("xor", "and", unary));
@@ -58,6 +56,10 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
       put(map, new Replacement("max", "min", unary));
       put(map, new Replacement("min", "max", unary));
+
+      String unaryPrimitive = "(I)Ljava/math/BigInteger;";
+      put(map, new Replacement("shiftLeft", "shiftRight", unaryPrimitive));
+      put(map, new Replacement("shiftRight", "shiftLeft", unaryPrimitive));
 
       String intAsParam = "(I)Ljava/math/BigInteger;";
       put(map, new Replacement("setBit", "clearBit", intAsParam));

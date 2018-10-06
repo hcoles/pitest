@@ -75,7 +75,6 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new Abs(25, 6), mutant, "-25");
   }
 
-
   @Test
   public void setBit() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
@@ -100,6 +99,25 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new FlipBit(0b01101, 0), mutant, String.valueOf(0b01101));
   }
 
+  @Test
+  public void shiftLeft() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(ShiftLeft.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new ShiftLeft(1, 1), mutant, String.valueOf(1 >> 1));
+    assertMutantCallableReturns(new ShiftLeft(1, 2), mutant, String.valueOf(1 >> 2));
+    assertMutantCallableReturns(new ShiftLeft(1 << 8, 8), mutant, String.valueOf(1));
+    assertMutantCallableReturns(new ShiftLeft(1 << 8, 4), mutant, String.valueOf(1 << 8 >> 4));
+  }
+
+  @Test
+  public void shiftRight() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(ShiftRight.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new ShiftRight(1, 1), mutant, String.valueOf(1 << 1));
+    assertMutantCallableReturns(new ShiftRight(1, 2), mutant, String.valueOf(1 << 2));
+    assertMutantCallableReturns(new ShiftRight(1 << 8, 8), mutant, String.valueOf(1L << 16L));
+    assertMutantCallableReturns(new ShiftRight(1 << 8, 4), mutant, String.valueOf(1 << 8 << 4));
+  }
 
   @Test
   public void moduloLambda() throws Exception {
@@ -186,18 +204,6 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static class Abs extends AbstractMath {
-
-    Abs(long v1, long v2) {
-      super(v1, v2);
-    }
-
-    @Override
-    BigInteger apply(BigInteger left, BigInteger right) {
-      return left.abs();
-    }
-  }
-
   private static class SetBit extends AbstractMath {
 
     SetBit(long v1, long v2) {
@@ -231,6 +237,138 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     @Override
     BigInteger apply(BigInteger left, BigInteger right) {
       return left.flipBit(right.intValue());
+    }
+  }
+
+  private static class ShiftLeft extends AbstractMath {
+
+    ShiftLeft(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.shiftLeft(right.intValue());
+    }
+  }
+
+  private static class ShiftRight extends AbstractMath {
+
+    ShiftRight(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.shiftRight(right.intValue());
+    }
+  }
+
+  private static class And extends AbstractMath {
+
+    And(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.and(right);
+    }
+  }
+
+  private static class Or extends AbstractMath {
+
+    Or(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.or(right);
+    }
+  }
+
+  private static class Xor extends AbstractMath {
+
+    Xor(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.xor(right);
+    }
+  }
+
+  private static class AndNot extends AbstractMath {
+
+    AndNot(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.andNot(right);
+    }
+  }
+
+  private static class Max extends AbstractMath {
+
+    Max(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.max(right);
+    }
+  }
+
+  private static class Min extends AbstractMath {
+
+    Min(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.min(right);
+    }
+  }
+
+  private static class Not extends AbstractMath {
+
+    Not(long v1) {
+      super(v1, 0L);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.not();
+    }
+  }
+
+  private static class Negate extends AbstractMath {
+
+    Negate(long v1) {
+      super(v1, 0L);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.negate();
+    }
+  }
+
+  private static class Abs extends AbstractMath {
+
+    Abs(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.abs();
     }
   }
 
