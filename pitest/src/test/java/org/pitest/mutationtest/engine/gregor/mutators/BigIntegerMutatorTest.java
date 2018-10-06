@@ -76,6 +76,23 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   }
 
   @Test
+  public void not() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Not.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Not(0b1111), mutant, String.valueOf(-0b1111));
+    assertMutantCallableReturns(new Not(0b1111), mutant, String.valueOf(-0b1111));
+  }
+
+  @Test
+  public void negate() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Negate.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Negate(0xFFFFFF00), mutant, String.valueOf(0x000000FF));
+    assertMutantCallableReturns(new Negate(0), mutant, String.valueOf(0xFFFFFFFF));
+    assertMutantCallableReturns(new Negate(0xFF00FF00), mutant, String.valueOf(0x00FF00FF));
+  }
+
+  @Test
   public void setBit() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
     Mutant mutant = getFirstMutant(actual);
