@@ -81,6 +81,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
     Mutant mutant = getFirstMutant(actual);
     assertMutantCallableReturns(new SetBit(0b11101, 2), mutant, String.valueOf(0b11001));
+    assertMutantCallableReturns(new SetBit(0b11001, 2), mutant, String.valueOf(0b11001));
   }
 
   @Test
@@ -89,6 +90,14 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     Mutant mutant = getFirstMutant(actual);
     assertMutantCallableReturns(new ClearBit(0b11101, 2), mutant, String.valueOf(0b11101));
     assertMutantCallableReturns(new ClearBit(0b01101, 0), mutant, String.valueOf(0b01101));
+  }
+
+  @Test
+  public void flipBit() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(FlipBit.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new FlipBit(0b11101, 2), mutant, String.valueOf(0b11101));
+    assertMutantCallableReturns(new FlipBit(0b01101, 0), mutant, String.valueOf(0b01101));
   }
 
 
@@ -210,6 +219,18 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     @Override
     BigInteger apply(BigInteger left, BigInteger right) {
       return left.clearBit(right.intValue());
+    }
+  }
+
+  private static class FlipBit extends AbstractMath {
+
+    FlipBit(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.flipBit(right.intValue());
     }
   }
 
