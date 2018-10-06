@@ -104,7 +104,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     private final BigInteger value1;
     private final BigInteger value2;
 
-    public AbstractMath(long v1, long v2) {
+    AbstractMath(long v1, long v2) {
       this.value1 = BigInteger.valueOf(v1);
       this.value2 = BigInteger.valueOf(v2);
     }
@@ -119,7 +119,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Add extends AbstractMath {
 
-    public Add(long v1, long v2) {
+    Add(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -131,7 +131,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Subtract extends AbstractMath {
 
-    public Subtract(long v1, long v2) {
+    Subtract(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -143,7 +143,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Divide extends AbstractMath {
 
-    public Divide(long v1, long v2) {
+    Divide(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -155,7 +155,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Multiply extends AbstractMath {
 
-    public Multiply(long v1, long v2) {
+    Multiply(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -167,7 +167,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Modulo extends AbstractMath {
 
-    public Modulo(long v1, long v2) {
+    Modulo(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -179,7 +179,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class Abs extends AbstractMath {
 
-    public Abs(long v1, long v2) {
+    Abs(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -191,7 +191,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class SetBit extends AbstractMath {
 
-    public SetBit(long v1, long v2) {
+    SetBit(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -203,7 +203,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class ClearBit extends AbstractMath {
 
-    public ClearBit(long v1, long v2) {
+    ClearBit(long v1, long v2) {
       super(v1, v2);
     }
 
@@ -215,7 +215,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   private static class ModuloLambda extends AbstractMath {
 
-    public ModuloLambda(long v1, long v2) {
+    ModuloLambda(long v1, long v2) {
       super(v1, v2);
     }
 
