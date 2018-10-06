@@ -120,6 +120,42 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   }
 
   @Test
+  public void and() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(And.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new And(0b01, 0b10), mutant, String.valueOf(0b11));
+    assertMutantCallableReturns(new And(0b01, 0b01), mutant, String.valueOf(0b01));
+    assertMutantCallableReturns(new And(0b01, 0b00), mutant, String.valueOf(0b01));
+  }
+
+  @Test
+  public void or() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Or.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Or(0b01, 0b10), mutant, String.valueOf(0b00));
+    assertMutantCallableReturns(new Or(0b01, 0b01), mutant, String.valueOf(0b01));
+    assertMutantCallableReturns(new Or(0b11, 0b10), mutant, String.valueOf(0b10));
+  }
+
+  @Test
+  public void xor() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Xor.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Xor(0b01, 0b10), mutant, String.valueOf(0b00));
+    assertMutantCallableReturns(new Xor(0b01, 0b01), mutant, String.valueOf(0b01));
+    assertMutantCallableReturns(new Xor(0b11, 0b10), mutant, String.valueOf(0b10));
+  }
+
+  @Test
+  public void andNot() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(AndNot.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new AndNot(0b01, 0b10), mutant, String.valueOf(0b00));
+    assertMutantCallableReturns(new AndNot(0b01, 0b01), mutant, String.valueOf(0b01));
+    assertMutantCallableReturns(new AndNot(0b11, 0b10), mutant, String.valueOf(0b10));
+  }
+
+  @Test
   public void moduloLambda() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(ModuloLambda.class);
     final Mutant mutant = getFirstMutant(actual);
