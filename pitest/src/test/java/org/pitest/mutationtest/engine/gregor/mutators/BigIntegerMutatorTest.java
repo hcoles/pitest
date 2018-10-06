@@ -93,6 +93,22 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
   }
 
   @Test
+  public void min() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Min.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Min(-25, 6), mutant, "6");
+    assertMutantCallableReturns(new Min(25, 6), mutant, "25");
+  }
+
+  @Test
+  public void max() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(Max.class);
+    final Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new Max(-25, 6), mutant, "-25");
+    assertMutantCallableReturns(new Max(25, 6), mutant, "6");
+  }
+
+  @Test
   public void setBit() throws Exception {
     final Collection<MutationDetails> actual = findMutationsFor(SetBit.class);
     Mutant mutant = getFirstMutant(actual);
