@@ -83,6 +83,14 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new SetBit(0b11101, 2), mutant, String.valueOf(0b11001));
   }
 
+  @Test
+  public void clearBit() throws Exception {
+    final Collection<MutationDetails> actual = findMutationsFor(ClearBit.class);
+    Mutant mutant = getFirstMutant(actual);
+    assertMutantCallableReturns(new ClearBit(0b11101, 2), mutant, String.valueOf(0b11101));
+    assertMutantCallableReturns(new ClearBit(0b01101, 0), mutant, String.valueOf(0b01101));
+  }
+
 
   @Test
   public void moduloLambda() throws Exception {
@@ -190,6 +198,18 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
     @Override
     BigInteger apply(BigInteger left, BigInteger right) {
       return left.setBit(right.intValue());
+    }
+  }
+
+  private static class ClearBit extends AbstractMath {
+
+    public ClearBit(long v1, long v2) {
+      super(v1, v2);
+    }
+
+    @Override
+    BigInteger apply(BigInteger left, BigInteger right) {
+      return left.clearBit(right.intValue());
     }
   }
 
