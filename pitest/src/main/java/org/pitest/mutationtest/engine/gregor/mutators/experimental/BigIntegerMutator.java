@@ -26,7 +26,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
   @Override
   public String toString() {
-    return "EXPERIMENTAL_BIGINTEGER_MATH_MUTATOR";
+    return "EXPERIMENTAL_BIGINTEGER_MUTATOR";
   }
 
   @Override
