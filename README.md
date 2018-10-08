@@ -7,7 +7,12 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.3-SNAPSHOT
+### 1.4.4-SNAPSHOT
+ 
+* #518 - Experimental BigInteger mutator (thanks @ripdajacker)
+* #513 - Sort mutators in html report (thanks @ThLeu)
+
+### 1.4.3
 
 * #510 - Compute mutation test matrix (thanks @nrainer)
 * #519 - Java 11 support
