@@ -34,7 +34,7 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_2",
+    assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
         new RemoveSwitchMutator(2).getName());
   }
 

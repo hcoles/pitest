@@ -22,21 +22,15 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
   private static final int GENERATE_UPTO_EXCLUDING = 100;
 
   private final int key;
-  private final boolean isGeneratedAsCollection;
 
-  public RemoveSwitchMutator(final int i) {
-    this(i, false);
-  }
-
-  private RemoveSwitchMutator(final int i, final boolean isGeneratedAsCollection) {
+  RemoveSwitchMutator(final int i) {
     this.key = i;
-    this.isGeneratedAsCollection = isGeneratedAsCollection;
   }
 
   public static Iterable<MethodMutatorFactory> makeMutators() {
     final List<MethodMutatorFactory> variations = new ArrayList<>();
     for (int i = GENERATE_FROM_INCLUDING; i != GENERATE_UPTO_EXCLUDING; i++) {
-      variations.add(new RemoveSwitchMutator(i, true));
+      variations.add(new RemoveSwitchMutator(i));
     }
     return variations;
   }
@@ -54,11 +48,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
 
   @Override
   public String getName() {
-    if (isGeneratedAsCollection) {
-      return REMOVE_SWITCH_MUTATOR_NAME + "[" + GENERATE_FROM_INCLUDING + "-" + (GENERATE_UPTO_EXCLUDING - 1) + "]";
-    } else {
-      return toString();
-    }
+    return REMOVE_SWITCH_MUTATOR_NAME + "[" + GENERATE_FROM_INCLUDING + "-" + (GENERATE_UPTO_EXCLUDING - 1) + "]";
   }
 
   @Override
