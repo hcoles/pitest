@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 public class RemoveSwitchMutatorTest extends MutatorTestBase {
@@ -33,8 +34,17 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_2",
+    assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
         new RemoveSwitchMutator(2).getName());
+  }
+
+  @Test
+  public void shouldProvideAMeaningfulAggregatedName() {
+    Iterable<MethodMutatorFactory> mutators = RemoveSwitchMutator.makeMutators();
+    for (MethodMutatorFactory mutator : mutators) {
+      assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
+              mutator.getName());
+    }
   }
 
   private static class HasIntSwitchWithDefault implements Callable<Integer> {
