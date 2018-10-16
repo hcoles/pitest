@@ -24,6 +24,7 @@ public class SurefireConfigConverter {
     }
     convertExcludes(option, configuration);
     convertGroups(option, configuration);
+    convertTestFailureIgnore(option, configuration);
     return option;
   }
 
@@ -79,4 +80,11 @@ public class SurefireConfigConverter {
     return Collections.emptyList();
   }
 
+  private void convertTestFailureIgnore(ReportOptions option, Xpp3Dom configuration) {
+    List<String> testFailureIgnoreList = extractStrings("testFailureIgnore", configuration);
+    if (!testFailureIgnoreList.isEmpty()) {
+      String testFailureIgnore = testFailureIgnoreList.iterator().next();
+      option.setSkipFailingTests(Boolean.parseBoolean(testFailureIgnore));
+    }
+  }
 }

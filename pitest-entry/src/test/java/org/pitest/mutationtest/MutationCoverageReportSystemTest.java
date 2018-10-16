@@ -115,6 +115,18 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   @Test
+  public void shouldNotFailRunIfSkipFailedTests() {
+    setMutators("MATH");
+    this.data
+    .setTargetClasses(asList("com.example.FailsTestWhenEnvVariableSet*"));
+    this.data.addChildJVMArgs(Arrays.asList("-D"
+        + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
+    this.data.setSkipFailingTests(true);
+    createAndRun();
+    verifyResults(NO_COVERAGE);
+  }
+
+  @Test
   public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
     setMutators("RETURN_VALS");
     this.data

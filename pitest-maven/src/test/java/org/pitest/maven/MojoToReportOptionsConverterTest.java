@@ -244,6 +244,14 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         .shouldFailWhenNoMutations());
   }
 
+  public void testObeysSkipFailingTestsFlagWhenPackagingTypeIsNotPOM() {
+	    when(this.project.getModel()).thenReturn(new Model());
+	    assertTrue(parseConfig("<skipFailingTests>true</skipFailingTests>")
+	        .skipFailingTests());
+	    assertFalse(parseConfig("<skipFailingTests>false</skipFailingTests>")
+	        .skipFailingTests());
+	  }
+
   public void testParsesTestGroupsToExclude() {
     final ReportOptions actual = parseConfig("<excludedGroups><value>foo</value><value>bar</value></excludedGroups>");
     assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
