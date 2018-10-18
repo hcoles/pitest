@@ -81,10 +81,9 @@ public class SurefireConfigConverter {
   }
 
   private void convertTestFailureIgnore(ReportOptions option, Xpp3Dom configuration) {
-    List<String> testFailureIgnoreList = extractStrings("testFailureIgnore", configuration);
-    if (!testFailureIgnoreList.isEmpty()) {
-      String testFailureIgnore = testFailureIgnoreList.iterator().next();
-      option.setSkipFailingTests(Boolean.parseBoolean(testFailureIgnore));
+    Xpp3Dom testFailureIgnore = configuration.getChild("testFailureIgnore");
+    if (testFailureIgnore != null) {
+      option.setSkipFailingTests(Boolean.parseBoolean(testFailureIgnore.getValue()));
     }
   }
 }
