@@ -116,12 +116,11 @@ public class MutationTestWorker {
   private MutationStatusTestPair handleMutation(
       final MutationDetails mutationId, final Mutant mutatedClass,
       final List<TestUnit> relevantTests) {
-    MutationStatusTestPair mutationDetected;
+    final MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
       LOG.info("No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
-      mutationDetected = new MutationStatusTestPair(0,
-          DetectionStatus.RUN_ERROR);
+      mutationDetected =  MutationStatusTestPair.notAnalysed(0, DetectionStatus.RUN_ERROR);
     } else {
       mutationDetected = handleCoveredMutation(mutationId, mutatedClass,
           relevantTests);
@@ -133,7 +132,7 @@ public class MutationTestWorker {
   private MutationStatusTestPair handleCoveredMutation(
       final MutationDetails mutationId, final Mutant mutatedClass,
       final List<TestUnit> relevantTests) {
-    MutationStatusTestPair mutationDetected;
+    final MutationStatusTestPair mutationDetected;
     if (DEBUG) {
       LOG.fine("" + relevantTests.size() + " relevant test for "
           + mutatedClass.getDetails().getMethod());
@@ -150,7 +149,7 @@ public class MutationTestWorker {
       mutationDetected = doTestsDetectMutation(c, relevantTests);
     } else {
       LOG.warning("Mutation " + mutationId + " was not viable ");
-      mutationDetected = new MutationStatusTestPair(0,
+      mutationDetected = MutationStatusTestPair.notAnalysed(0,
           DetectionStatus.NON_VIABLE);
     }
     return mutationDetected;

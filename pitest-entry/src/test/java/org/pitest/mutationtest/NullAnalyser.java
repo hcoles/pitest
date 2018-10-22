@@ -19,7 +19,7 @@ public class NullAnalyser implements MutationAnalyser {
   }
 
   private Function<MutationDetails, MutationResult> mutationToResult() {
-    return a -> new MutationResult(a, new MutationStatusTestPair(0,
+    return a -> new MutationResult(a, MutationStatusTestPair.notAnalysed(0,
         DetectionStatus.NOT_STARTED));
   }
 

@@ -28,7 +28,7 @@ public class ResultComparatorTest {
   }
 
   private MutationResult make(final DetectionStatus status) {
-    return new MutationResult(null, new MutationStatusTestPair(0, status));
+    return new MutationResult(null, MutationStatusTestPair.notAnalysed(0, status));
   }
 
 }

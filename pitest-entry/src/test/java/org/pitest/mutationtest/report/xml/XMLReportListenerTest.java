@@ -106,7 +106,7 @@ public class XMLReportListenerTest {
   private MutationResult createSurvivingMutant() {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(),
-        new MutationStatusTestPair(1, DetectionStatus.SURVIVED));
+        MutationStatusTestPair.notAnalysed(1, DetectionStatus.SURVIVED));
     return mr;
   }
 

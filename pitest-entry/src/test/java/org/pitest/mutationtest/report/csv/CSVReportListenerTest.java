@@ -58,7 +58,7 @@ public class CSVReportListenerTest {
   @Test
   public void shouldOutputNoneWhenNoKillingTestFound() throws IOException {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
+        MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(1,
             DetectionStatus.SURVIVED));
     this.testee.handleMutationResult(MutationTestResultMother
         .createClassResults(mr));

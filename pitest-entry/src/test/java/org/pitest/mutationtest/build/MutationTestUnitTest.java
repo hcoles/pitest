@@ -66,7 +66,7 @@ public class MutationTestUnitTest {
     this.tests.add(ClassName.fromString("foo"));
     final MutationMetaData actual = this.testee.call();
     final MutationResult expected = new MutationResult(this.mutations.get(0),
-        new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
+        MutationStatusTestPair.notAnalysed(0, DetectionStatus.NO_COVERAGE));
     assertThat(actual.getMutations()).contains(expected);
   }
 

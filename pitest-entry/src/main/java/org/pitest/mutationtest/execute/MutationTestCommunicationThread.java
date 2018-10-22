@@ -77,7 +77,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
     private void handleDescribe(final SafeDataInputStream is) {
       final MutationIdentifier mutation = is.read(MutationIdentifier.class);
-      this.idMap.put(mutation, new MutationStatusTestPair(1,
+      this.idMap.put(mutation, MutationStatusTestPair.notAnalysed(1,
           DetectionStatus.STARTED));
     }
 

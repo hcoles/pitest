@@ -77,7 +77,7 @@ public class MutationTestWorkerTest {
     final Collection<MutationDetails> range = Arrays.asList(mutantOne);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
-        new MutationStatusTestPair(0, DetectionStatus.NO_COVERAGE));
+        MutationStatusTestPair.notAnalysed(0, DetectionStatus.NO_COVERAGE));
   }
 
   @Test
@@ -108,7 +108,7 @@ public class MutationTestWorkerTest {
             any(byte[].class))).thenReturn(false);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
-        new MutationStatusTestPair(0, DetectionStatus.NON_VIABLE));
+        MutationStatusTestPair.notAnalysed(0, DetectionStatus.NON_VIABLE));
   }
 
   @Test

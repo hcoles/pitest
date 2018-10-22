@@ -15,8 +15,6 @@
 package org.pitest.mutationtest;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,9 +29,8 @@ public final class MutationStatusTestPair implements Serializable {
   private final List<String>    killingTests;
   private final List<String>    succeedingTests;
 
-  public MutationStatusTestPair(final int numberOfTestsRun,
-      final DetectionStatus status) {
-    this(numberOfTestsRun, status, null);
+  public static MutationStatusTestPair notAnalysed(int testsRun, DetectionStatus status) {
+    return new MutationStatusTestPair(testsRun, status, Collections.emptyList(), Collections.emptyList());
   }
 
   public MutationStatusTestPair(final int numberOfTestsRun,
@@ -53,10 +50,10 @@ public final class MutationStatusTestPair implements Serializable {
   
   private static List<String> killingTestToList(String killingTest) {
     if (killingTest == null) {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
     
-    return Arrays.asList(killingTest);
+    return Collections.singletonList(killingTest);
   }
 
   public DetectionStatus getStatus() {

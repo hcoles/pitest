@@ -61,7 +61,7 @@ public class MutationMetaDataTest {
     final MutationDetails md = aMutationDetail().withId(
         aMutationId().withLocation(location)).build();
     final MutationResult mr = new MutationResult(md,
-        new MutationStatusTestPair(0, DetectionStatus.KILLED));
+        MutationStatusTestPair.notAnalysed(0, DetectionStatus.KILLED));
     return mr;
   }
 

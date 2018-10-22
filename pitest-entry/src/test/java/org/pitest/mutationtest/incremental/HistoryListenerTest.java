@@ -37,7 +37,7 @@ public class HistoryListenerTest {
 
   private MutationResult makeResult() {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails(), new MutationStatusTestPair(0,
+        MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(0,
             DetectionStatus.KILLED));
     return mr;
   }
