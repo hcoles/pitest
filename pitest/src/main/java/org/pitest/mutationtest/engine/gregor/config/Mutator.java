@@ -49,6 +49,10 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR4Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -177,11 +181,20 @@ public final class Mutator {
      */
     add("EXPERIMENTAL_BIG_INTEGER", BigIntegerMutator.INSTANCE);
 
+    /**
+     * Experimental mutators that mutate binary arithmetic operations.
+     */
+    add("EXPERIMENTAL_AOR_1", AOR1Mutator.AOR_1_MUTATOR);
+    add("EXPERIMENTAL_AOR_2", AOR2Mutator.AOR_2_MUTATOR);
+    add("EXPERIMENTAL_AOR_3", AOR3Mutator.AOR_3_MUTATOR);
+    add("EXPERIMENTAL_AOR_4", AOR4Mutator.AOR_4_MUTATOR);
+
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
     addGroup("ALL", all());
     addGroup("NEW_DEFAULTS", newDefaults());
+    addGroup("AOR", aor());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -234,6 +247,13 @@ public final class Mutator {
         PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
         EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
         NullReturnValsMutator.NULL_RETURN_VALUES);
+  }
+
+  public static Collection<MethodMutatorFactory> aor() {
+    return group(AOR1Mutator.AOR_1_MUTATOR,
+            AOR2Mutator.AOR_2_MUTATOR,
+            AOR3Mutator.AOR_3_MUTATOR,
+            AOR4Mutator.AOR_4_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
