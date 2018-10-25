@@ -49,6 +49,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ABSMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR1Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR2Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR3Mutator;
@@ -188,6 +189,11 @@ public final class Mutator {
     add("EXPERIMENTAL_AOR_2", AOR2Mutator.AOR_2_MUTATOR);
     add("EXPERIMENTAL_AOR_3", AOR3Mutator.AOR_3_MUTATOR);
     add("EXPERIMENTAL_AOR_4", AOR4Mutator.AOR_4_MUTATOR);
+
+    /**
+     * Experimental mutators that replaces a variable with its negation.
+     */
+    add("EXPERIEMTAL_ABS", ABSMutator.ABS_MUTATOR);
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
