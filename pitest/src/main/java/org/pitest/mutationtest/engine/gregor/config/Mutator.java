@@ -50,6 +50,8 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.C
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.ABSMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOD1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOD2Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR1Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR2Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR3Mutator;
@@ -191,9 +193,15 @@ public final class Mutator {
     add("EXPERIMENTAL_AOR_4", AOR4Mutator.AOR_4_MUTATOR);
 
     /**
-     * Experimental mutators that replaces a variable with its negation.
+     * Experimental mutator that replaces a variable with its negation.
      */
-    add("EXPERIEMTAL_ABS", ABSMutator.ABS_MUTATOR);
+    add("EXPERIMENTAL_ABS", ABSMutator.ABS_MUTATOR);
+
+    /**
+     * Experimental mutators that replace a binary arithmetic operations with one of its members.
+     */
+    add("EXPERIMENTAL_AOD1", AOD1Mutator.AOD_1_MUTATOR);
+    add("EXPERIMENTAL_AOD1", AOD2Mutator.AOD_2_MUTATOR);
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
@@ -201,6 +209,7 @@ public final class Mutator {
     addGroup("ALL", all());
     addGroup("NEW_DEFAULTS", newDefaults());
     addGroup("AOR", aor());
+    addGroup("AOD", aod());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -260,6 +269,11 @@ public final class Mutator {
             AOR2Mutator.AOR_2_MUTATOR,
             AOR3Mutator.AOR_3_MUTATOR,
             AOR4Mutator.AOR_4_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> aod() {
+    return group(AOD1Mutator.AOD_1_MUTATOR,
+            AOD2Mutator.AOD_2_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
