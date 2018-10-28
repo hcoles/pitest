@@ -57,6 +57,12 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR2Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR3Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.AOR4Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR4Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR5Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR6Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -203,6 +209,17 @@ public final class Mutator {
     add("EXPERIMENTAL_AOD1", AOD1Mutator.AOD_1_MUTATOR);
     add("EXPERIMENTAL_AOD1", AOD2Mutator.AOD_2_MUTATOR);
 
+
+    /**
+     * Experimental mutators that replace an inline constant a with 0, 1, -1, a+1 or a-1 .
+     */
+    add("EXPERIMENTAL_CRCR1", CRCR1Mutator.CRCR_1_MUTATOR);
+    add("EXPERIMENTAL_CRCR2", CRCR2Mutator.CRCR_2_MUTATOR);
+    add("EXPERIMENTAL_CRCR3", CRCR3Mutator.CRCR_3_MUTATOR);
+    add("EXPERIMENTAL_CRCR4", CRCR4Mutator.CRCR_4_MUTATOR);
+    add("EXPERIMENTAL_CRCR5", CRCR5Mutator.CRCR_5_MUTATOR);
+    add("EXPERIMENTAL_CRCR6", CRCR6Mutator.CRCR_6_MUTATOR);
+
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
@@ -210,6 +227,7 @@ public final class Mutator {
     addGroup("NEW_DEFAULTS", newDefaults());
     addGroup("AOR", aor());
     addGroup("AOD", aod());
+    addGroup("CRCR", crcr());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -274,6 +292,15 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> aod() {
     return group(AOD1Mutator.AOD_1_MUTATOR,
             AOD2Mutator.AOD_2_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> crcr() {
+    return group(CRCR1Mutator.CRCR_1_MUTATOR,
+            CRCR2Mutator.CRCR_2_MUTATOR,
+            CRCR3Mutator.CRCR_3_MUTATOR,
+            CRCR4Mutator.CRCR_4_MUTATOR,
+            CRCR5Mutator.CRCR_5_MUTATOR,
+            CRCR6Mutator.CRCR_6_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(

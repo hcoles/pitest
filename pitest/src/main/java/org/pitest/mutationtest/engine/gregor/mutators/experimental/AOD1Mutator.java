@@ -51,7 +51,6 @@ class AODMethodVisitor1 extends MethodVisitor  {
                     this.factory, "Replaced " + expression + " operation with first member");
             return this.context.shouldMutate(newId);
         }
-
     }
 
     @Override
