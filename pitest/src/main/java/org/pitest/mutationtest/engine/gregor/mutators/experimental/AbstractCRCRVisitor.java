@@ -3,6 +3,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -14,7 +15,7 @@ public abstract class AbstractCRCRVisitor extends MethodVisitor {
 
     AbstractCRCRVisitor(final MutationContext context,
                         final MethodVisitor delegateVisitor, final MethodMutatorFactory factory) {
-        super(Opcodes.ASM5, delegateVisitor);
+        super(ASMVersion.ASM_VERSION, delegateVisitor);
         this.context = context;
         this.factory = factory;
     }

@@ -2,6 +2,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -40,7 +41,7 @@ class ABSMethodVisitor extends MethodVisitor {
 
     ABSMethodVisitor(final MethodMutatorFactory factory, final MutationContext context, final MethodInfo info,
                      final MethodVisitor delegateMethodVisitor) {
-        super(Opcodes.ASM5, delegateMethodVisitor);
+        super(ASMVersion.ASM_VERSION, delegateMethodVisitor);
         this.factory = factory;
         this.context = context;
         this.info = info;

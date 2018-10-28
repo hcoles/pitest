@@ -4,6 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -38,7 +39,7 @@ class AODMethodVisitor2 extends LocalVariablesSorter {
 
     AODMethodVisitor2( final MethodMutatorFactory factory, final MutationContext context, final MethodInfo info,
                        final MethodVisitor delegateMethodVisitor) {
-        super(Opcodes.ASM5, info.getAccess(), info.getMethodDescriptor(), delegateMethodVisitor);
+        super(ASMVersion.ASM_VERSION, info.getAccess(), info.getMethodDescriptor(), delegateMethodVisitor);
         this.factory = factory;
         this.context = context;
         this.info = info;
