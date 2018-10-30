@@ -64,6 +64,9 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR4Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR5Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.CRCR6Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN3Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
@@ -220,6 +223,13 @@ public final class Mutator {
     add("EXPERIMENTAL_CRCR5", CRCR5Mutator.CRCR_5_MUTATOR);
     add("EXPERIMENTAL_CRCR6", CRCR6Mutator.CRCR_6_MUTATOR);
 
+    /**
+     * Experimental mutators that replace an bitwise ands and ors.
+     */
+    add("EXPERIMENTAL_OBBN1", OBBN1Mutator.OBBN_1_MUTATOR);
+    add("EXPERIMENTAL_OBBN2", OBBN2Mutator.OBBN_2_MUTATOR);
+    add("EXPERIMENTAL_OBBN3", OBBN3Mutator.OBBN_3_MUTATOR);
+
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
@@ -228,6 +238,7 @@ public final class Mutator {
     addGroup("AOR", aor());
     addGroup("AOD", aod());
     addGroup("CRCR", crcr());
+    addGroup("OBBN", obbn());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -301,6 +312,12 @@ public final class Mutator {
             CRCR4Mutator.CRCR_4_MUTATOR,
             CRCR5Mutator.CRCR_5_MUTATOR,
             CRCR6Mutator.CRCR_6_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> obbn() {
+    return group(OBBN1Mutator.OBBN_1_MUTATOR,
+            OBBN2Mutator.OBBN_2_MUTATOR,
+            OBBN3Mutator.OBBN_3_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
