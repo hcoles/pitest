@@ -67,6 +67,11 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiver
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN1Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN2Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.OBBN3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR4Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR5Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
@@ -230,6 +235,15 @@ public final class Mutator {
     add("EXPERIMENTAL_OBBN2", OBBN2Mutator.OBBN_2_MUTATOR);
     add("EXPERIMENTAL_OBBN3", OBBN3Mutator.OBBN_3_MUTATOR);
 
+    /**
+     * Experimental mutators that replace conditional operators.
+     */
+    add("EXPERIMENTAL_ROR1", ROR1Mutator.ROR_1_MUTATOR);
+    add("EXPERIMENTAL_ROR2", ROR2Mutator.ROR_2_MUTATOR);
+    add("EXPERIMENTAL_ROR3", ROR3Mutator.ROR_3_MUTATOR);
+    add("EXPERIMENTAL_ROR4", ROR4Mutator.ROR_4_MUTATOR);
+    add("EXPERIMENTAL_ROR3", ROR5Mutator.ROR_5_MUTATOR);
+
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
@@ -239,6 +253,7 @@ public final class Mutator {
     addGroup("AOD", aod());
     addGroup("CRCR", crcr());
     addGroup("OBBN", obbn());
+    addGroup("ROR", ror());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -318,6 +333,14 @@ public final class Mutator {
     return group(OBBN1Mutator.OBBN_1_MUTATOR,
             OBBN2Mutator.OBBN_2_MUTATOR,
             OBBN3Mutator.OBBN_3_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> ror() {
+    return group(ROR1Mutator.ROR_1_MUTATOR,
+            ROR2Mutator.ROR_2_MUTATOR,
+            ROR3Mutator.ROR_3_MUTATOR,
+            ROR4Mutator.ROR_4_MUTATOR,
+            ROR5Mutator.ROR_5_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
