@@ -75,6 +75,10 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.ROR5Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.UOI1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.UOI2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.UOI3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.UOI4Mutator;
 
 public final class Mutator {
 
@@ -244,6 +248,14 @@ public final class Mutator {
     add("EXPERIMENTAL_ROR4", ROR4Mutator.ROR_4_MUTATOR);
     add("EXPERIMENTAL_ROR3", ROR5Mutator.ROR_5_MUTATOR);
 
+    /**
+     * Experimental mutators that insert increments.
+     */
+    add("EXPERIMENTAL_UOI1", UOI1Mutator.UOI_1_MUTATOR);
+    add("EXPERIMENTAL_UOI2", UOI2Mutator.UOI_2_MUTATOR);
+    add("EXPERIMENTAL_UOI3", UOI3Mutator.UOI_3_MUTATOR);
+    add("EXPERIMENTAL_UOI4", UOI4Mutator.UOI_4_MUTATOR);
+
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
     addGroup("DEFAULTS", defaults());
     addGroup("STRONGER", stronger());
@@ -254,6 +266,8 @@ public final class Mutator {
     addGroup("CRCR", crcr());
     addGroup("OBBN", obbn());
     addGroup("ROR", ror());
+    addGroup("UOI", uoi());
+
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -341,6 +355,13 @@ public final class Mutator {
             ROR3Mutator.ROR_3_MUTATOR,
             ROR4Mutator.ROR_4_MUTATOR,
             ROR5Mutator.ROR_5_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> uoi() {
+    return group(UOI1Mutator.UOI_1_MUTATOR,
+            UOI2Mutator.UOI_2_MUTATOR,
+            UOI3Mutator.UOI_3_MUTATOR,
+            UOI4Mutator.UOI_4_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
