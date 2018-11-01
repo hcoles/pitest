@@ -289,7 +289,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<asm.version>7.0-beta</asm.version>
+		<asm.version>7.0</asm.version>
 		<ant.version>1.9.4</ant.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<junit.version>4.11</junit.version>
