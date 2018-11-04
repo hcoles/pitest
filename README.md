@@ -384,6 +384,10 @@ however disabled by default, and the generated errors are correctly handled by P
 * First public release
 </details>
 
+## Issues
+
+Issues management is described [here](ISSUES.md).
+
 ## Credits
 
 Pitest is mainly the work of [me](https://twitter.com/0hjc) but has benefited from contributions from many others. 
