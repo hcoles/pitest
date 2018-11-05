@@ -386,7 +386,7 @@ however disabled by default, and the generated errors are correctly handled by P
 
 ## Issues
 
-Issues management is described [here](ISSUES.md).
+Please consult our [issue management rules](ISSUES.md) before creating or working on issues. 
 
 ## Credits
 
