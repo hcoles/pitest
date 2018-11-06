@@ -11,8 +11,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 /**
- * Replaces a|b by b
- * and replaces a&b by b
+ * Replaces bitwise "and" and "or" by the second member
  */
 public enum OBBN3Mutator implements MethodMutatorFactory  {
 

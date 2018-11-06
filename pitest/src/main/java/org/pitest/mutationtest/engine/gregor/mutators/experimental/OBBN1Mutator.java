@@ -13,7 +13,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 /**
- * Replaces a&b by a|b and the opposite
+ * Replaces bitwise "and" and "or" with each other
  */
 public enum OBBN1Mutator implements MethodMutatorFactory {
 
