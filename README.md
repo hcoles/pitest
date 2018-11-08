@@ -17,6 +17,9 @@ Read all about it at http://pitest.org
 * #510 - Compute mutation test matrix (thanks @nrainer)
 * #519 - Java 11 support
 
+<details>
+    <summary>Older versions</summary>
+
 ### 1.4.2
 
 * #500 - Support for large classpaths with new `useClasspathJar` option (thanks @jqhan)
@@ -379,6 +382,11 @@ however disabled by default, and the generated errors are correctly handled by P
 ### 0.18
 
 * First public release
+</details>
+
+## Issues
+
+Please consult our [issue management rules](ISSUES.md) before creating or working on issues. 
 
 ## Credits
 
