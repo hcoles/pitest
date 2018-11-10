@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
@@ -41,7 +42,7 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
 
   private Collection<TestInfo> pickTests(MutationDetails mutation) {
     if (!mutation.isInStaticInitializer()) {
-      return this.coverage.getTestsForClassLine(mutation.getClassLine());
+      return this.coverage.getTestsForBlockLocation(new BlockLocation(mutation.getId().getLocation(), mutation.getBlock()));
     } else {
       LOG.warning("Using untargetted tests");
       return this.coverage.getTestsForClass(mutation.getClassName());

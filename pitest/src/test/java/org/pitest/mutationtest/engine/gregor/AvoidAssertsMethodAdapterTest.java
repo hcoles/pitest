@@ -28,6 +28,7 @@ public class AvoidAssertsMethodAdapterTest extends MethodDecoratorTest {
   public void setUp() {
     super.setUp();
     this.testee = new AvoidAssertsMethodAdapter(this.context, this.mv);
+    this.testee.visitCode();
   }
 
   @Test

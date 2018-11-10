@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
@@ -46,7 +47,7 @@ public class DefaultTestPrioritiserTest {
   @Test
   public void shouldAssignTestsForRelevantLineToGeneratedMutations() {
     final List<TestInfo> expected = makeTestInfos(0);
-    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
+    when(this.coverage.getTestsForBlockLocation(any(BlockLocation.class))).thenReturn(
         expected);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
     assertEquals(expected, actual);
@@ -65,7 +66,7 @@ public class DefaultTestPrioritiserTest {
   @Test
   public void shouldPrioritiseTestsByExecutionTime() {
     final List<TestInfo> unorderedTests = makeTestInfos(10000, 100, 1000, 1);
-    when(this.coverage.getTestsForClassLine(any(ClassLine.class))).thenReturn(
+    when(this.coverage.getTestsForBlockLocation(any(BlockLocation.class))).thenReturn(
         unorderedTests);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
 

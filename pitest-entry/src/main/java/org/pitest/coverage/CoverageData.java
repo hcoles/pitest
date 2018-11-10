@@ -74,6 +74,11 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
+  public Collection<TestInfo> getTestsForBlockLocation(BlockLocation location) {
+    return this.blockCoverage.get(location);
+  }
+
+  @Override
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
     final Collection<TestInfo> result = getTestsForClassName(
         classLine.getClassName()).get(classLine);
