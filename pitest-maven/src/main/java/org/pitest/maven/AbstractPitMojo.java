@@ -314,6 +314,14 @@ public class AbstractPitMojo extends AbstractMojo {
   private boolean                     skipTests;
 
   /**
+   * When set will ignore failing tests when computing coverage. Otherwise, the
+   * run will fail. If parseSurefireConfig is true, will be overridden from
+   * surefire configuration property testFailureIgnore
+   */
+  @Parameter(defaultValue = "false")
+  private boolean                     skipFailingTests;
+
+  /**
    * Use slf4j for logging
    */
   @Parameter(defaultValue = "false", property = "useSlf4j")
@@ -638,6 +646,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public boolean isParseSurefireConfig() {
     return this.parseSurefireConfig;
+  }
+
+  public boolean skipFailingTests() {
+    return this.skipFailingTests;
   }
 
   public Map<String, String> getPluginProperties() {

@@ -115,6 +115,36 @@ public class SurefireConfigConverterTest {
     assertThat(actual.getGroupConfig().getExcludedGroups()).containsOnly("bar");
   }
 
+  @Test
+  public void shouldConvertTestFailureIgnoreWhenTrue() throws Exception {
+    this.surefireConfig = makeConfig("<testFailureIgnore>true</testFailureIgnore>");
+
+    ReportOptions actual = this.testee
+        .update(this.options, this.surefireConfig);
+
+    assertThat(actual.skipFailingTests()).isTrue();
+  }
+
+  @Test
+  public void shouldConvertTestFailureIgnoreWhenFalse() throws Exception {
+    this.surefireConfig = makeConfig("<testFailureIgnore>false</testFailureIgnore>");
+
+    ReportOptions actual = this.testee
+        .update(this.options, this.surefireConfig);
+
+    assertThat(actual.skipFailingTests()).isFalse();
+  }
+
+  @Test
+  public void shouldConvertTestFailureIgnoreWhenAbsent() throws Exception {
+    this.surefireConfig = makeConfig("<testFailureIgnore></testFailureIgnore>");
+
+    ReportOptions actual = this.testee
+        .update(this.options, this.surefireConfig);
+
+    assertThat(actual.skipFailingTests()).isFalse();
+  }
+
   private Xpp3Dom makeConfig(String s) throws Exception {
     String xml = "<configuration>" + s + "</configuration>";
     InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));

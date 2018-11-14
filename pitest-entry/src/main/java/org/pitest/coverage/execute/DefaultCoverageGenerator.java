@@ -179,7 +179,9 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
       @Override
       public void apply(final CoverageResult cr) {
-        coverage.calculateClassCoverage(cr);
+        if (cr.isGreenTest() || !coverageOptions.getPitConfig().skipFailingTests()) {
+          coverage.calculateClassCoverage(cr);
+        }
         if (DefaultCoverageGenerator.this.showProgress) {
           System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
         }
