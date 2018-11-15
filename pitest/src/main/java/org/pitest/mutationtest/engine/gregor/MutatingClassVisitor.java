@@ -96,7 +96,7 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private static MethodVisitor wrapWithBlockTracker(
       MethodMutationContext methodContext, final MethodVisitor mv, final MethodInfo methodInfo) {
-    return new BlockTrackingMethodDecorator(methodContext, mv, methodInfo.getAccess(), methodInfo.getName(), methodInfo.getDescription(), null, null);
+    return new BlockTrackingMethodDecorator(methodContext, mv, methodInfo.getAccess(), methodInfo.getName(), methodInfo.getMethodDescriptor(), null, null);
   }
 
   private MethodVisitor visitMethodForMutation(
