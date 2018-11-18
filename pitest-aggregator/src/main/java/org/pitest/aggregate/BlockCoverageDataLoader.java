@@ -16,6 +16,8 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
   private static final String CLASSNAME  = "classname";
   private static final String NUMBER     = "number";
   private static final String TESTS      = "tests";
+  private static final String FIRST_INSN = "firstInstruction";
+  private static final String LAST_INSN  = "lastInstruction";
 
   private static final String OPEN_PAREN = "(";
 
@@ -29,7 +31,8 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
     final Location location = new Location(ClassName.fromString((String) map.get(CLASSNAME)),
         MethodName.fromString(method.substring(0, method.indexOf(OPEN_PAREN))), method.substring(method.indexOf(OPEN_PAREN)));
 
-    final BlockLocation blockLocation = new BlockLocation(location, Integer.parseInt((String) map.get(NUMBER)));
+    final BlockLocation blockLocation = new BlockLocation(location, Integer.parseInt((String) map.get(NUMBER)),
+        Integer.parseInt((String) map.get(FIRST_INSN)),Integer.parseInt((String) map.get(LAST_INSN)));
 
     @SuppressWarnings("unchecked")
     final Collection<String> tests = (Collection<String>) map.get(TESTS);

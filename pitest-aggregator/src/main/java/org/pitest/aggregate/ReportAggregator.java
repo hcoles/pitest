@@ -8,19 +8,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockCoverage;
-import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.InstructionLocation;
 import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
@@ -85,19 +85,24 @@ public final class ReportAggregator {
   private CoverageData calculateCoverage(final CodeSource codeSource, final MutationMetaData metadata) throws ReportAggregationException {
     final Collection<BlockCoverage> coverageData = this.blockCoverageLoader.loadData();
     try {
-      final Map<BlockLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
+      final Map<InstructionLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
       return new CoverageData(codeSource, new LineMapper(codeSource),blockCoverageMap);
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
     }
   }
 
-  private Map<BlockLocation, Set<TestInfo>> blocksToMap(
+  private Map<InstructionLocation, Set<TestInfo>> blocksToMap(
       final Collection<BlockCoverage> coverageData) {
-    final Map<BlockLocation, Set<TestInfo>> blockCoverageMap = new HashMap<>();
+    final Map<InstructionLocation, Set<TestInfo>> blockCoverageMap = new HashMap<>();
 
     for (final BlockCoverage blockData : coverageData) {
-      blockCoverageMap.put(blockData.getBlock(), new HashSet<>(FCollection.map(blockData.getTests(), toTestInfo(blockData))));
+      for (int i = blockData.getBlock().getFirstInsnInBlock();
+           i <= blockData.getBlock().getLastInsnInBlock(); i++) {
+        blockCoverageMap.put(new InstructionLocation(blockData.getBlock(), i),
+            new HashSet<>(
+                FCollection.map(blockData.getTests(), toTestInfo(blockData))));
+      }
     }
     return blockCoverageMap;
   }

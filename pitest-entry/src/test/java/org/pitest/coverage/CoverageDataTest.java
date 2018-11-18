@@ -286,7 +286,7 @@ public class CoverageDataTest {
   private Collection<BlockLocation> makeCoverage(final String clazz,
       final int block) {
     final BlockLocation cs = new BlockLocation(Location.location(
-        ClassName.fromString(clazz), MethodName.fromString("foo"), "V"), block);
+        ClassName.fromString(clazz), MethodName.fromString("foo"), "V"), block, -1, -1);
 
     return Collections.singleton(cs);
   }

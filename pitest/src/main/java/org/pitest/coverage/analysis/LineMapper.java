@@ -43,8 +43,10 @@ public class LineMapper implements LineMap {
             MethodName.fromString(mn.name), mn.desc);
         final List<Block> blocks = ControlFlowAnalyser.analyze(mn);
         for (int i = 0; i != blocks.size(); i++) {
-          final BlockLocation bl = new BlockLocation(l, i);
-          map.put(bl, blocks.get(i).getLines());
+          final Block each = blocks.get(i);
+          final BlockLocation bl = new BlockLocation(l, i,
+              each.getFirstInstruction(), each.getLastInstruction());
+          map.put(bl, each.getLines());
         }
 
       }

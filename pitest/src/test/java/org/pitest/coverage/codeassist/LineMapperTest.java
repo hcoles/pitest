@@ -37,7 +37,7 @@ public class LineMapperTest {
 
     final Location l = Location.location(ClassName.fromClass(OneBlock.class),
         MethodName.fromString("foo"), "()I");
-    final BlockLocation bl = new BlockLocation(l, 0);
+    final BlockLocation bl = new BlockLocation(l, 0, -1, -1);
 
     assertThat(actual.get(bl)).containsOnly(5);
 

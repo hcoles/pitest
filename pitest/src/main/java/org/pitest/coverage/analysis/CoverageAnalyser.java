@@ -43,7 +43,7 @@ public class CoverageAnalyser extends MethodNode {
     this.parent.registerProbes(blocks.size());
     final int blockCount = blocks.size();
     CodeCoverageStore.registerMethod(this.classId, this.name, this.desc,
-        this.probeOffset, (this.probeOffset + blocks.size()) - 1);
+        this.probeOffset, (this.probeOffset + blocks.size()) - 1, blocks);
 
     // according to the jvm spec
     // "There must never be an uninitialized class instance in a local variable in code protected by an exception handler"

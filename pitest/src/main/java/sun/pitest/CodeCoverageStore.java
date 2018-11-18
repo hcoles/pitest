@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.pitest.coverage.analysis.Block;
+
 /**
  * Store for line visit information.
  */
@@ -585,9 +587,10 @@ public final class CodeCoverageStore {
   }
 
   public static void registerMethod(final int clazz, final String methodName,
-      final String methodDesc, final int firstProbe, final int lastProbe) {
+      final String methodDesc, final int firstProbe, final int lastProbe,
+      Iterable<Block> blocks) {
     invokeQueue.registerProbes(clazz, methodName, methodDesc, firstProbe,
-        lastProbe);
+        lastProbe, blocks);
   }
 
   private static synchronized int nextId() {
