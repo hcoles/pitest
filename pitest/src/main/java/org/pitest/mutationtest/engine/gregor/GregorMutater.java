@@ -95,7 +95,7 @@ public class GregorMutater implements Mutater {
     context.setTargetMutation(Optional.ofNullable(id));
 
     final Optional<byte[]> bytes = this.byteSource.getBytes(id.getClassName()
-        .asJavaName());
+        .asInternalName()); // getBytes expects internal name of the class!
 
     final ClassReader reader = new ClassReader(bytes.get());
     final ClassWriter w = new ComputeClassWriter(this.byteSource,
