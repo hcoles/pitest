@@ -62,6 +62,16 @@ public class ControlFlowAnalyser {
 
     final Set<LabelNode> jumpTargets = findJumpTargets(mn.instructions);
 
+    /*
+     * Some projects/libraries have gigantic static initializer methods
+     * that load up huge constant arrays. These methods are nearly at the
+     * size limit - and adding a probe at each store blows it up.
+     *
+     * So, for methods with many instructions, we'll ignore array stores
+     * as ending a block.
+     */
+    final boolean ignoreArrayStores = mn.instructions.size() > 10000;
+
     // not managed to construct bytecode to show need for this
     // as try catch blocks usually have jumps at their boundaries anyway.
     // so possibly useless, but here for now. Because fear.
@@ -89,7 +99,7 @@ public class ControlFlowAnalyser {
         blocks.add(new Block(blockStart, i - 1, blockLines));
         blockStart = i;
         blockLines = smallSet();
-      } else if (endsBlock(ins)) {
+      } else if (endsBlock(ins, ignoreArrayStores)) {
         if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
             .get(blocks.size() - 1).getLines().isEmpty()) {
           blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
@@ -131,12 +141,13 @@ public class ControlFlowAnalyser {
     }
   }
 
-  private static boolean endsBlock(final AbstractInsnNode ins) {
+  private static boolean endsBlock(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
     return (ins instanceof JumpInsnNode) || isReturn(ins)
-        || isMightThrowException(ins);
+        || isMightThrowException(ins, ignoreArrayStores);
   }
 
-  private static boolean isMightThrowException(int opcode) {
+  private static boolean isMightThrowException(int opcode, final boolean ignoreArrayStores) {
     switch (opcode) {
     //division by 0
     case IDIV:
@@ -146,6 +157,7 @@ public class ControlFlowAnalyser {
       //NPE
     case MONITORENTER:
     case MONITOREXIT: //or illegalmonitor
+      return true;
       //ArrayIndexOutOfBounds or null pointer
     case IALOAD:
     case LALOAD:
@@ -163,6 +175,7 @@ public class ControlFlowAnalyser {
     case FASTORE:
     case CASTORE:
     case AASTORE:
+      return !ignoreArrayStores;
     case CHECKCAST: //incompatible cast
       //trigger class initialization
 //    case NEW: //will break powermock :(
@@ -177,14 +190,15 @@ public class ControlFlowAnalyser {
     }
   }
 
-  private static boolean isMightThrowException(AbstractInsnNode ins) {
+  private static boolean isMightThrowException(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
     switch (ins.getType()) {
     case AbstractInsnNode.MULTIANEWARRAY_INSN:
       return true;
     case AbstractInsnNode.INSN:
     case AbstractInsnNode.TYPE_INSN:
     case AbstractInsnNode.FIELD_INSN:
-      return isMightThrowException(ins.getOpcode());
+      return isMightThrowException(ins.getOpcode(), ignoreArrayStores);
     case AbstractInsnNode.METHOD_INSN:
       return true;
     default:
