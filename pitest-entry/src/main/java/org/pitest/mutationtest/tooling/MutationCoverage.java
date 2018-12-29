@@ -97,7 +97,7 @@ public class MutationCoverage {
     final Runtime runtime = Runtime.getRuntime();
 
     if (!this.data.isVerbose()) {
-      LOG.info("Verbose logging is disabled. If you encounter an problem please enable it before reporting an issue.");
+      LOG.info("Verbose logging is disabled. If you encounter a problem, please enable it before reporting an issue.");
     }
 
     LOG.fine("Running report with " + this.data);
