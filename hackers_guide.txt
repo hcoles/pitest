@@ -4,7 +4,7 @@ Pitest supports all version of Java back to Java 6.
 
 As long as the resulting binaries support Java 6 technically the build itself could be tied to higher versions of Java, but testing is currently tied into building so it must build with Java 6.
 
-It is reccomended to use Java 8 while developing, but be aware that it is not possible to use any Java 8 (or 7) features.
+It is recommended to use Java 8 while developing, but be aware that it is not possible to use any Java 8 (or 7) features.
 
 ## Structure
 
@@ -13,12 +13,12 @@ Pitest is split into several modules
 * pitest - Main mutation engine and other code that must share a JVM with the system under test
 * pitest-entry - The main entry point for build tools. Contains code that runs in main controller process.
 * pitest-html-report - Generates the html report
-* pitest-command-line - Command line tool for running pitet
+* pitest-command-line - Command line tool for running pitest
 * pitest-maven - Maven mojo for running pitest
 * pitest-ant - Ant task for running pitest
 * pitest-maven-verification - Integration tests that execute pitest via maven module
 * pitest-java8-verification - Integration tests that validate pitest against java 8 features
-* pitest-groovy-verification - Integration tests that validate pitets behaviour with groovy
+* pitest-groovy-verification - Integration tests that validate pitest behaviour with groovy
 * pitest-build-config - A minimal checkstyle configuration used in other modules.
 
 Care must be taken not to load the code under test into the JVM within the pitest-entry module (e.g by the use of reflection).
@@ -29,7 +29,7 @@ Dependencies may be introduced into the other modules, but are discouraged so st
 
 ## Eclipse users
 
-Import everything as an existing maven project. If you do not have groovy plugins installed the `pitest-groovy-verification` module will show errors. Unless you are working on something Groovy related it is easiest just to close the module rather than installing the Groovy dependencies into eclipse.
+Import everything as an existing maven project. If you do not have groovy plugins installed, the `pitest-groovy-verification` module will show errors. Unless you are working on something Groovy related it is easiest just to close the module rather than installing the Groovy dependencies into eclipse.
 
 ### Code format
 
@@ -39,4 +39,4 @@ Will create formatting and cleanup profiles named henry. Some aspects of these w
 
 ## InteliJ
 
-?
+Import everything as an existing maven project.
