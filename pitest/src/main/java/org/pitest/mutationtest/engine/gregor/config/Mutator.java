@@ -246,7 +246,7 @@ public final class Mutator {
     add("EXPERIMENTAL_ROR2", ROR2Mutator.ROR_2_MUTATOR);
     add("EXPERIMENTAL_ROR3", ROR3Mutator.ROR_3_MUTATOR);
     add("EXPERIMENTAL_ROR4", ROR4Mutator.ROR_4_MUTATOR);
-    add("EXPERIMENTAL_ROR3", ROR5Mutator.ROR_5_MUTATOR);
+    add("EXPERIMENTAL_ROR5", ROR5Mutator.ROR_5_MUTATOR);
 
     /**
      * Experimental mutators that insert increments.
