@@ -48,6 +48,10 @@ public class MethodInfo {
     return this.methodDescriptor;
   }
 
+  public int getAccess() {
+    return this.access;
+  }
+
   @Override
   public String toString() {
     return "MethodInfo [access=" + this.access + ", desc="
