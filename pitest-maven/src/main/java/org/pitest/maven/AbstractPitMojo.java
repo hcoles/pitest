@@ -31,9 +31,9 @@ public class AbstractPitMojo extends AbstractMojo {
 
   private final Predicate<MavenProject> notEmptyProject;
   
-  protected final Predicate<Artifact> filter;
+  private final Predicate<Artifact>   filter;
 
-  protected final PluginServices      plugins;
+  private final PluginServices        plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
   
@@ -47,13 +47,13 @@ public class AbstractPitMojo extends AbstractMojo {
    * Classes to include in mutation test
    */
   @Parameter(property = "targetClasses")
-  protected ArrayList<String>         targetClasses;
+  private ArrayList<String>           targetClasses;
 
   /**
    * Tests to run
    */
   @Parameter(property = "targetTests")
-  protected ArrayList<String>         targetTests;
+  private ArrayList<String>           targetTests;
 
   /**
    * Methods not to mutate
@@ -349,7 +349,7 @@ public class AbstractPitMojo extends AbstractMojo {
    *
    */
   @Parameter(property = "project", readonly = true, required = true)
-  protected MavenProject              project;
+  private MavenProject                project;
 
   /**
    * <i>Internal</i>: Map of plugin artifacts.
@@ -366,7 +366,7 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "useClasspathJar", defaultValue = "false")
   private boolean                     useClasspathJar;
 
-  protected final GoalStrategy        goalStrategy;
+  private final GoalStrategy          goalStrategy;
 
   public AbstractPitMojo() {
     this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
@@ -474,12 +474,32 @@ public class AbstractPitMojo extends AbstractMojo {
     return executionProject.getBasedir();
   }
 
+  protected Predicate<Artifact> getFilter() {
+    return filter;
+  }
+
+  protected GoalStrategy getGoalStrategy() {
+    return goalStrategy;
+  }
+
+  protected PluginServices getPlugins() {
+    return plugins;
+  }
+
   public List<String> getTargetClasses() {
     return this.targetClasses;
   }
 
+  public void setTargetClasses(ArrayList<String> targetClasses) {
+    this.targetClasses = targetClasses;
+  }
+
   public List<String> getTargetTests() {
     return this.targetTests;
+  }
+
+  public void setTargetTests(ArrayList<String> targetTests) {
+    this.targetTests = targetTests;
   }
 
   public List<String> getExcludedMethods() {
