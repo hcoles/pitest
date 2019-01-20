@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import org.apache.maven.artifact.Artifact;
@@ -17,6 +18,8 @@ import org.apache.maven.project.MavenProject;
 import org.pitest.coverage.CoverageSummary;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
@@ -487,7 +490,7 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getTargetClasses() {
-    return this.targetClasses;
+    return withoutNulls(this.targetClasses);
   }
 
   public void setTargetClasses(ArrayList<String> targetClasses) {
@@ -495,7 +498,7 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getTargetTests() {
-    return this.targetTests;
+    return withoutNulls(this.targetTests);
   }
 
   public void setTargetTests(ArrayList<String> targetTests) {
@@ -503,15 +506,15 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getExcludedMethods() {
-    return this.excludedMethods;
+    return withoutNulls(this.excludedMethods);
   }
 
   public List<String> getExcludedClasses() {
-    return this.excludedClasses;
+    return withoutNulls(this.excludedClasses);
   }
 
   public List<String> getAvoidCallsTo() {
-    return this.avoidCallsTo;
+    return withoutNulls(this.avoidCallsTo);
   }
 
   public File getReportsDirectory() {
@@ -531,7 +534,7 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getMutators() {
-    return this.mutators;
+    return withoutNulls(this.mutators);
   }
 
   public float getTimeoutFactor() {
@@ -543,7 +546,7 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public ArrayList<String> getExcludedTestClasses() {
-    return excludedTestClasses;
+    return withoutNulls(excludedTestClasses);
   }
 
   public int getMaxMutationsPerClass() {
@@ -551,11 +554,11 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getJvmArgs() {
-    return this.jvmArgs;
+    return withoutNulls(this.jvmArgs);
   }
 
   public List<String> getOutputFormats() {
-    return this.outputFormats;
+    return withoutNulls(this.outputFormats);
   }
 
   public boolean isVerbose() {
@@ -575,15 +578,15 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getExcludedGroups() {
-    return this.excludedGroups;
+    return withoutNulls(this.excludedGroups);
   }
 
   public List<String> getIncludedGroups() {
-    return this.includedGroups;
+    return withoutNulls(this.includedGroups);
   }
 
   public List<String> getIncludedTestMethods() {
-    return this.includedTestMethods;
+    return withoutNulls(this.includedTestMethods);
   }
 
   public boolean isFullMutationMatrix() {
@@ -657,11 +660,11 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public List<String> getAdditionalClasspathElements() {
-    return this.additionalClasspathElements;
+    return withoutNulls(this.additionalClasspathElements);
   }
 
   public List<String> getClasspathDependencyExcludes() {
-    return this.classpathDependencyExcludes;
+    return withoutNulls(this.classpathDependencyExcludes);
   }
 
   public boolean isParseSurefireConfig() {
@@ -685,11 +688,11 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public ArrayList<String> getExcludedRunners() {
-    return excludedRunners;
+    return withoutNulls(excludedRunners);
   }
   
   public ArrayList<String> getFeatures() {
-    return features;
+    return withoutNulls(features);
   }
 
   public String getTestPlugin() {
@@ -714,6 +717,16 @@ public class AbstractPitMojo extends AbstractMojo {
     public List<String> getReasons() {
       return Collections.unmodifiableList(reasons);
     }
+  }
+
+  private <X> ArrayList<X> withoutNulls(List<X> originalList) {
+    if (originalList == null) {
+      return null;
+    }
+
+    return originalList.stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
 }
