@@ -11,6 +11,7 @@ Read all about it at http://pitest.org
  
 * #518 - Experimental BigInteger mutator (thanks @ripdajacker)
 * #513 - Sort mutators in html report (thanks @ThLeu)
+* #553 - Classic mutators from literature (thanls @LaurentTho3)
 
 ### 1.4.3
 
