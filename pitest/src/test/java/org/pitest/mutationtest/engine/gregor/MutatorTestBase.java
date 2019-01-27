@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -158,6 +159,23 @@ public abstract class MutatorTestBase {
   protected Mutant getFirstMutant(final Class<?> mutee) {
     final Collection<MutationDetails> actual = findMutationsFor(mutee);
     return getFirstMutant(actual);
+  }
+
+  protected Mutant getNthMutant(final Class<?> mutee, int n) {
+    final Collection<MutationDetails> actual = findMutationsFor(mutee);
+    return getNthMutant(actual, n);
+  }
+
+  protected Mutant getNthMutant(final Collection<MutationDetails> actual, int n) {
+    assertFalse("There are less than " + (n + 1) +" mutants", actual.size() < n + 1 );
+    Iterator<MutationDetails> i = actual.iterator();
+    for (int j = 0; j < n && i.hasNext(); j++) {
+      i.next();
+    }
+    final Mutant mutant = this.engine.getMutation(i.next()
+            .getId());
+    verifyMutant(mutant);
+    return mutant;
   }
 
   private void verifyMutant(final Mutant mutant) {

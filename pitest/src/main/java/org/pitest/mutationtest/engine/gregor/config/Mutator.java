@@ -54,6 +54,31 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiver
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ABSMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOD1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOD2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR4Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR4Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR5Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR6Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR4Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR5Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI1Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI2Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI3Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI4Mutator;
 
 public final class Mutator {
 
@@ -148,6 +173,28 @@ public final class Mutator {
     add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
     addGroup("RETURNS", betterReturns());
 
+    experimentalMutators();
+    
+    researchMutators();
+
+    addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
+    addGroup("DEFAULTS", defaults());
+    addGroup("STRONGER", stronger());
+    addGroup("ALL", all());
+    addGroup("NEW_DEFAULTS", newDefaults());
+    addGroup("AOR", aor());
+    addGroup("AOD", aod());
+    addGroup("CRCR", crcr());
+    addGroup("OBBN", obbn());
+    addGroup("ROR", ror());
+    addGroup("UOI", uoi());
+
+  }
+  
+  /**
+   * Mutators that have not yet been battle tested
+   */
+  private static void experimentalMutators() {
     /**
      * Experimental mutator that removed assignments to member variables.
      */
@@ -176,12 +223,66 @@ public final class Mutator {
      * Experimental mutator that swaps big integer methods
      */
     add("EXPERIMENTAL_BIG_INTEGER", BigIntegerMutator.INSTANCE);
+  }
+  
+  /**
+   * "Research" mutators that makeup "PITrv" as described in
+   * https://researchrepository.ucd.ie/bitstream/10197/7748/4/ISSTA_2016_Demo_Camera_ready.pdf
+   */
+  private static void researchMutators() {
+    /**
+     * mutators that mutate binary arithmetic operations.
+     */
+    add("AOR_1", AOR1Mutator.AOR_1_MUTATOR);
+    add("AOR_2", AOR2Mutator.AOR_2_MUTATOR);
+    add("AOR_3", AOR3Mutator.AOR_3_MUTATOR);
+    add("AOR_4", AOR4Mutator.AOR_4_MUTATOR);
 
-    addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
-    addGroup("DEFAULTS", defaults());
-    addGroup("STRONGER", stronger());
-    addGroup("ALL", all());
-    addGroup("NEW_DEFAULTS", newDefaults());
+    /**
+     * mutator that replaces a variable with its negation.
+     */
+    add("ABS", ABSMutator.ABS_MUTATOR);
+
+    /**
+     * mutators that replace a binary arithmetic operations with one of its members.
+     */
+    add("AOD1", AOD1Mutator.AOD_1_MUTATOR);
+    add("AOD1", AOD2Mutator.AOD_2_MUTATOR);
+
+
+    /**
+     * mutators that replace an inline constant a with 0, 1, -1, a+1 or a-1 .
+     */
+    add("CRCR1", CRCR1Mutator.CRCR_1_MUTATOR);
+    add("CRCR2", CRCR2Mutator.CRCR_2_MUTATOR);
+    add("CRCR3", CRCR3Mutator.CRCR_3_MUTATOR);
+    add("CRCR4", CRCR4Mutator.CRCR_4_MUTATOR);
+    add("CRCR5", CRCR5Mutator.CRCR_5_MUTATOR);
+    add("CRCR6", CRCR6Mutator.CRCR_6_MUTATOR);
+
+    /**
+     * mutators that replace an bitwise ands and ors.
+     */
+    add("OBBN1", OBBN1Mutator.OBBN_1_MUTATOR);
+    add("OBBN2", OBBN2Mutator.OBBN_2_MUTATOR);
+    add("OBBN3", OBBN3Mutator.OBBN_3_MUTATOR);
+
+    /**
+     * mutators that replace conditional operators.
+     */
+    add("ROR1", ROR1Mutator.ROR_1_MUTATOR);
+    add("ROR2", ROR2Mutator.ROR_2_MUTATOR);
+    add("ROR3", ROR3Mutator.ROR_3_MUTATOR);
+    add("ROR4", ROR4Mutator.ROR_4_MUTATOR);
+    add("ROR5", ROR5Mutator.ROR_5_MUTATOR);
+
+    /**
+     * mutators that insert increments.
+     */
+    add("UOI1", UOI1Mutator.UOI_1_MUTATOR);
+    add("UOI2", UOI2Mutator.UOI_2_MUTATOR);
+    add("UOI3", UOI3Mutator.UOI_3_MUTATOR);
+    add("UOI4", UOI4Mutator.UOI_4_MUTATOR);
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -234,6 +335,48 @@ public final class Mutator {
         PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
         EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
         NullReturnValsMutator.NULL_RETURN_VALUES);
+  }
+
+  public static Collection<MethodMutatorFactory> aor() {
+    return group(AOR1Mutator.AOR_1_MUTATOR,
+            AOR2Mutator.AOR_2_MUTATOR,
+            AOR3Mutator.AOR_3_MUTATOR,
+            AOR4Mutator.AOR_4_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> aod() {
+    return group(AOD1Mutator.AOD_1_MUTATOR,
+            AOD2Mutator.AOD_2_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> crcr() {
+    return group(CRCR1Mutator.CRCR_1_MUTATOR,
+            CRCR2Mutator.CRCR_2_MUTATOR,
+            CRCR3Mutator.CRCR_3_MUTATOR,
+            CRCR4Mutator.CRCR_4_MUTATOR,
+            CRCR5Mutator.CRCR_5_MUTATOR,
+            CRCR6Mutator.CRCR_6_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> obbn() {
+    return group(OBBN1Mutator.OBBN_1_MUTATOR,
+            OBBN2Mutator.OBBN_2_MUTATOR,
+            OBBN3Mutator.OBBN_3_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> ror() {
+    return group(ROR1Mutator.ROR_1_MUTATOR,
+            ROR2Mutator.ROR_2_MUTATOR,
+            ROR3Mutator.ROR_3_MUTATOR,
+            ROR4Mutator.ROR_4_MUTATOR,
+            ROR5Mutator.ROR_5_MUTATOR);
+  }
+
+  public static Collection<MethodMutatorFactory> uoi() {
+    return group(UOI1Mutator.UOI_1_MUTATOR,
+            UOI2Mutator.UOI_2_MUTATOR,
+            UOI3Mutator.UOI_3_MUTATOR,
+            UOI4Mutator.UOI_4_MUTATOR);
   }
 
   private static Collection<MethodMutatorFactory> group(
