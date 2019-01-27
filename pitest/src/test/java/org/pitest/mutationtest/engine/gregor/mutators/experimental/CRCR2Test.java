@@ -15,15 +15,12 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import java.util.concurrent.Callable;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
-
-import java.util.concurrent.Callable;
-
-import static org.junit.Assert.assertEquals;
 
 public class CRCR2Test extends MutatorTestBase {
 

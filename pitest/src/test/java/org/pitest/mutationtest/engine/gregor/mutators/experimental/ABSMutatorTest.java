@@ -14,14 +14,12 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import java.util.concurrent.Callable;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-
-import java.util.Collection;
-import java.util.concurrent.Callable;
 
 public class ABSMutatorTest extends MutatorTestBase {
 
@@ -216,8 +214,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.i;
-      return "" + this.value;
+      value = this.i;
+      return "" + value;
     }
   }
 
@@ -238,8 +236,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.f;
-      return "" + this.value;
+      value = this.f;
+      return "" + value;
     }
   }
 
@@ -260,8 +258,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.l;
-      return "" + this.value;
+      value = this.l;
+      return "" + value;
     }
   }
 
@@ -282,8 +280,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.d;
-      return "" + this.value;
+      value = this.d;
+      return "" + value;
     }
   }
 
@@ -304,8 +302,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.b;
-      return "" + this.value;
+      value = this.b;
+      return "" + value;
     }
   }
 
@@ -326,8 +324,8 @@ public class ABSMutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.s;
-      return "" + this.value;
+      value = this.s;
+      return "" + value;
     }
   }
 

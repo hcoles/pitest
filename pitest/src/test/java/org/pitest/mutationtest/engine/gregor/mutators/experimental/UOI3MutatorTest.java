@@ -214,8 +214,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.i;
-      return "" + this.value;
+      value = this.i;
+      return "" + value;
     }
   }
 
@@ -236,8 +236,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.f;
-      return "" + this.value;
+      value = this.f;
+      return "" + value;
     }
   }
 
@@ -258,8 +258,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.l;
-      return "" + this.value;
+      value = this.l;
+      return "" + value;
     }
   }
 
@@ -280,8 +280,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.d;
-      return "" + this.value;
+      value = this.d;
+      return "" + value;
     }
   }
 
@@ -302,8 +302,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.b;
-      return "" + this.value;
+      value = this.b;
+      return "" + value;
     }
   }
 
@@ -324,8 +324,8 @@ public class UOI3MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.s;
-      return "" + this.value;
+      value = this.s;
+      return "" + value;
     }
   }
 

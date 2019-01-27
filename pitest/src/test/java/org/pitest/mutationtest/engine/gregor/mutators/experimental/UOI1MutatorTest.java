@@ -32,7 +32,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       int i = 20;
-      int j = i;
+      consume(i);
       return "" + i;
     }
   }
@@ -47,7 +47,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       float f = 20;
-      float g = f;
+      consume(f);
       return "" + f;
     }
   }
@@ -62,7 +62,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       long l = 20;
-      long m = l;
+      consume(l);
       return "" + l;
     }
   }
@@ -77,7 +77,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       double d = 20;
-      double e = d;
+      consume(d);
       return "" + d;
     }
   }
@@ -97,7 +97,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      int j = this.i;
+      consume(this.i);
       return "" + this.i;
     }
   }
@@ -118,7 +118,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      float g = this.f;
+      consume(this.f);
       return "" + this.f;
     }
   }
@@ -139,7 +139,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      float m = this.l;
+      consume(this.l);
       return "" + this.l;
     }
   }
@@ -160,7 +160,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      double e =this.d;
+      consume(this.d);
       return "" + this.d;
     }
   }
@@ -181,7 +181,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      byte c = this.b;
+      consume(this.b);
       return "" + this.b;
     }
   }
@@ -202,7 +202,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      short t = this.s;
+      consume(this.s);
       return "" + this.s;
     }
   }
@@ -224,9 +224,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.i;
-      this.i = this.value;
-      return "" + this.value;
+      value = this.i;
+      this.i = value;
+      return "" + value;
     }
   }
 
@@ -247,9 +247,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.f;
-      this.f = this.value;
-      return "" + this.value;
+      value = this.f;
+      this.f = value;
+      return "" + value;
     }
   }
 
@@ -270,9 +270,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.l;
-      this.l = this.value;
-      return "" + this.value;
+      value = this.l;
+      this.l = value;
+      return "" + value;
     }
   }
 
@@ -293,9 +293,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.d;
-      this.d = this.value;
-      return "" + this.value;
+      value = this.d;
+      this.d = value;
+      return "" + value;
     }
   }
 
@@ -316,9 +316,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.b;
-      this.b = this.value;
-      return "" + this.value;
+      value = this.b;
+      this.b = value;
+      return "" + value;
     }
   }
 
@@ -339,9 +339,9 @@ public class UOI1MutatorTest extends MutatorTestBase {
 
     @Override
     public String call() {
-      this.value = this.s;
-      this.s = this.value;
-      return "" + this.value;
+      value = this.s;
+      this.s = value;
+      return "" + value;
     }
   }
 
@@ -356,7 +356,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       int[] value = {20};
-      int i = value[0];
+      consume(value[0]);
       return "" + value[0];
     }
   }
@@ -371,7 +371,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       float[] value = {20};
-      float f = value[0];
+      consume(value[0]);
       return "" + value[0];
     }
   }
@@ -386,7 +386,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       long[] value = {20};
-      long l = value[0];
+      consume(value[0]);
       return "" + value[0];
     }
   }
@@ -402,7 +402,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       double[] value = {20};
-      double d = value[0];
+      consume(value[0]);
       return "" + value[0];
     }
   }
@@ -418,8 +418,8 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       byte[] value = {20};
-      byte b = value[0];
-      return "" + value[0];
+      consume(value[0]);
+      return "" + value[0]++;
     }
   }
 
@@ -433,7 +433,7 @@ public class UOI1MutatorTest extends MutatorTestBase {
     @Override
     public String call() {
       short[] value = {20};
-      short s = value[0];
+      consume(value[0]);
       return "" + value[0];
     }
   }
@@ -444,4 +444,12 @@ public class UOI1MutatorTest extends MutatorTestBase {
     assertMutantCallableReturns(new HasSGetSaload(), mutant, "21");
   }
 
+  
+  private static void consume(long value) {
+    
+  }
+  
+  private static void consume(double value) {
+    
+  }
 }
