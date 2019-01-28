@@ -7,19 +7,27 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.4-SNAPSHOT
+### 1.4.6-SNAPSHOT
+
+Nothing yet, why not contribute?
+
+### 1.4.5
+
+* #557 - Issues running on Java 8
+
+### 1.4.4
  
 * #518 - Experimental BigInteger mutator (thanks @ripdajacker)
 * #513 - Sort mutators in html report (thanks @ThLeu)
 * #553 - Classic mutators from literature (thanls @LaurentTho3)
 
+<details>
+    <summary>Older versions</summary>
+
 ### 1.4.3
 
 * #510 - Compute mutation test matrix (thanks @nrainer)
 * #519 - Java 11 support
-
-<details>
-    <summary>Older versions</summary>
 
 ### 1.4.2
 
