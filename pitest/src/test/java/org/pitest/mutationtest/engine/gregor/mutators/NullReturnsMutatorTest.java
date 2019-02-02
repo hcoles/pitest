@@ -10,11 +10,11 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-public class NullReturnValsMutatorTest extends MutatorTestBase {
+public class NullReturnsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(NullReturnValsMutator.NULL_RETURN_VALUES);
+    createTesteeWith(NullReturnsMutator.NULL_RETURNS_MUTATOR);
   }
 
   @Test

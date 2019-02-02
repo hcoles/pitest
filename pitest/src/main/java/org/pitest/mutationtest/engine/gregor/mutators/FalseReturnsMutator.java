@@ -19,9 +19,9 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 /**
  * Replaces primitive and boxed boolean return values with false
  */
-public enum BooleanFalseReturnValsMutator implements MethodMutatorFactory {
+public enum FalseReturnsMutator implements MethodMutatorFactory {
 
-  BOOLEAN_FALSE_RETURN;
+  FALSE_RETURNS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,

@@ -22,9 +22,9 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  * mutator.
  *
  */
-public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
+public enum EmptyReturnsMutator implements MethodMutatorFactory {
 
-  EMPTY_RETURN_VALUES;
+  EMPTY_RETURNS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,
