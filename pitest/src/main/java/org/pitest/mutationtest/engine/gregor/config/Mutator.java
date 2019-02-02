@@ -35,20 +35,20 @@ import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -112,7 +112,7 @@ public final class Mutator {
      * Default mutator that removes method calls to void methods.
      *
      */
-    add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    add("VOID_METHOD_CALLS", VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR);
 
     /**
      * Default mutator that negates conditionals.
@@ -143,12 +143,12 @@ public final class Mutator {
      * Optional mutator that removes method calls to non void methods.
      */
     add("NON_VOID_METHOD_CALLS",
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
 
     /**
      * Optional mutator that replaces constructor calls with null values.
      */
-    add("CONSTRUCTOR_CALLS", ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+    add("CONSTRUCTOR_CALLS", ConstructorCallsMutator.CONSTRUCTOR_CALLS_MUTATOR);
 
     /**
      * Removes conditional statements so that guarded statements always execute
@@ -310,7 +310,7 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> defaults() {
     return group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
         ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
@@ -322,7 +322,7 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> newDefaults() {
     return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
         MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());

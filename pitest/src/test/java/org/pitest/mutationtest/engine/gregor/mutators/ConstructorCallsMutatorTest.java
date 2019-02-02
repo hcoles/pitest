@@ -28,10 +28,10 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
-import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutatorTest.HasVoidMethodCall;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutatorTest.HasIntMethodCall;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutatorTest.HasVoidMethodCall;
 
-public class ConstructorCallMutatorTest extends MutatorTestBase {
+public class ConstructorCallsMutatorTest extends MutatorTestBase {
 
   static class HasConstructorCall implements Callable<String> {
     @Override
@@ -44,7 +44,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+        ConstructorCallsMutator.CONSTRUCTOR_CALLS_MUTATOR);
   }
 
   @Test
@@ -67,7 +67,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
   @Test
   public void shouldNotRemoveCallsToSuper() throws Exception {
     createTesteeWith(i -> true,
-        ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+        ConstructorCallsMutator.CONSTRUCTOR_CALLS_MUTATOR);
     assertDoesNotContain(findMutationsFor(HasConstructorCall.class),
         descriptionContaining("java/lang/Object::<init>"));
   }
@@ -95,7 +95,7 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
   @Test
   public void shouldNotRemoveCallsToDelegateContructor() throws Exception {
     createTesteeWith(i -> true,
-        ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+        ConstructorCallsMutator.CONSTRUCTOR_CALLS_MUTATOR);
     assertDoesNotContain(findMutationsFor(HasDelegateConstructorCall.class),
         descriptionContaining("HasDelegateConstructorCall::<init>"));
   }

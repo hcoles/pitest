@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 
 public class ForEachFilterTest {
@@ -32,28 +32,28 @@ public class ForEachFilterTest {
 
   @Test
   public void filtersMutationsToHasNextAndNext() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromSample(3, "HasForEachLoop");
   }
 
   @Test
   public void filtersMutationsToForEachOverField() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverField.class);
   }
 
   @Test
   public void filtersMutationsToForEachOverMethodReturn() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverMethodReturn.class);
   }
 
   @Test
   public void filtersMutationsToForEachOverCollections() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverCollection.class);
   }
