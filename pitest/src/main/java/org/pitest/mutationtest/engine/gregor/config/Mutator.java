@@ -45,8 +45,8 @@ import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NullReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalsMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
@@ -156,15 +156,15 @@ public final class Mutator {
      * ORDER version mutates only those.
      */
 
-    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL,
+    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalsMutator(Choice.EQUAL,
         true));
-    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalsMutator(
         Choice.EQUAL, false));
-    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalsMutator(
         Choice.ORDER, true));
-    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalsMutator(
         Choice.ORDER, false));
-    addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
+    addGroup("REMOVE_CONDITIONALS", RemoveConditionalsMutator.makeMutators());
 
     add("TRUE_RETURNS", TrueReturnsMutator.TRUE_RETURNS_MUTATOR);
     add("FALSE_RETURNS", FalseReturnsMutator.FALSE_RETURNS_MUTATOR);
@@ -292,7 +292,7 @@ public final class Mutator {
   private static Collection<MethodMutatorFactory> stronger() {
     return combine(
         defaults(),
-        group(new RemoveConditionalMutator(Choice.EQUAL, false),
+        group(new RemoveConditionalsMutator(Choice.EQUAL, false),
             new SwitchMutator()));
   }
 
