@@ -24,11 +24,11 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-public class InlineConstantMutatorTest extends MutatorTestBase {
+public class InlineConstsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyInlineConstants() {
-    createTesteeWith(new InlineConstantMutator());
+    createTesteeWith(new InlineConstsMutator());
   }
 
   private static class HasBooleanICONST0 implements Callable<Boolean> {
@@ -43,7 +43,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
   @Test
   public void shouldProvideAMeaningfulName() {
     assertEquals("INLINE_CONSTANT_MUTATOR",
-        new InlineConstantMutator().getName());
+        new InlineConstsMutator().getName());
   }
 
   @Test

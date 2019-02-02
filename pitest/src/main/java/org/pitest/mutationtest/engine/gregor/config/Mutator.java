@@ -34,11 +34,11 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.FalseReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.InlineConstsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.TrueReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
@@ -101,7 +101,7 @@ public final class Mutator {
      * Optional mutator that mutates integer and floating point inline
      * constants.
      */
-    add("INLINE_CONSTS", new InlineConstantMutator());
+    add("INLINE_CONSTS", new InlineConstsMutator());
 
     /**
      * Default mutator that mutates binary arithmetic operations.
