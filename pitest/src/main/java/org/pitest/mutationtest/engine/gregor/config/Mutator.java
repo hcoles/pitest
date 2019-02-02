@@ -50,6 +50,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalsMutator.
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -198,14 +199,12 @@ public final class Mutator {
     /**
      * Experimental mutator that removed assignments to member variables.
      */
-    add("EXPERIMENTAL_MEMBER_VARIABLE",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
+    add("EXPERIMENTAL_MEMBER_VARIABLE", new MemberVariableMutator());
 
     /**
      * Experimental mutator that swaps labels in switch statements
      */
-    add("EXPERIMENTAL_SWITCH",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
+    add("EXPERIMENTAL_SWITCH", new SwitchMutator());
 
     /**
      * Experimental mutator that replaces method call with one of its parameters
