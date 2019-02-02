@@ -171,7 +171,7 @@ public final class Mutator {
     add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURNS_MUTATOR);
     add("EMPTY_RETURNS", EmptyReturnsMutator.EMPTY_RETURNS_MUTATOR);
     add("NULL_RETURNS", NullReturnsMutator.NULL_RETURNS_MUTATOR);
-    addGroup("RETURNS", betterReturns());
+    addGroup("RETURNS", returns());
 
     experimentalMutators();
     
@@ -325,11 +325,11 @@ public final class Mutator {
         VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+        IncrementsMutator.INCREMENTS_MUTATOR), returns());
   }
 
 
-  public static Collection<MethodMutatorFactory> betterReturns() {
+  public static Collection<MethodMutatorFactory> returns() {
     return group(TrueReturnsMutator.TRUE_RETURNS_MUTATOR,
         FalseReturnsMutator.FALSE_RETURNS_MUTATOR,
         PrimitiveReturnsMutator.PRIMITIVE_RETURNS_MUTATOR,
