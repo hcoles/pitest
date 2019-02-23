@@ -415,6 +415,6 @@ The codebase is checked up on in a few places that give slower feedback than the
 
 [maven2 on IBM JDK check](https://hjc.ci.cloudbees.com/job/maven2_triangle_example/)
 
-[Sonarqube analysis](http://nemo.sonarqube.org/dashboard/index/793182)
+
 
 
