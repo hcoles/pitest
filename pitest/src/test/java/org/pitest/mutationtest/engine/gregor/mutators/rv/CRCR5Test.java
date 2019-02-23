@@ -184,7 +184,7 @@ public class CRCR5Test extends MutatorTestBase {
   }
 
 
-  private static class HasIntegerLdc implements Callable<Integer> {
+  private static class HasIntegerLDC2 implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
@@ -195,8 +195,8 @@ public class CRCR5Test extends MutatorTestBase {
 
   @Test
   public void shouldReplaceIntegerLdcWithConstantPlus1() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntegerLdc.class);
-    assertMutantCallableReturns(new HasIntegerLdc(), mutant,
+    final Mutant mutant = getFirstMutant(HasIntegerLDC2.class);
+    assertMutantCallableReturns(new HasIntegerLDC2(), mutant,
         2144568);
   }
 
