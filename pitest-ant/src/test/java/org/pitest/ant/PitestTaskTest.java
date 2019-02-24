@@ -163,6 +163,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassFailWhenNoMutationsToJavaTask() {
+    this.pitestTask.setFailWhenNoMutations("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--failWhenNoMutations=true");
+  }
+
+  @Test
   public void shouldPassReportDirOptionToJavaTask() {
     this.pitestTask.setReportDir("report/");
     this.pitestTask.execute(this.java);
@@ -244,6 +251,13 @@ public class PitestTaskTest {
     this.pitestTask.setMutableCodePaths("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutableCodePaths=foo");
+  }
+
+  @Test
+  public void shouldPassTestPluginToJavaTask() {
+    this.pitestTask.setTestPlugin("junit");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--testPlugin=junit");
   }
 
   @Test

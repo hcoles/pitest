@@ -188,6 +188,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.OUTPUT_FORMATS, value);
   }
 
+  public void setFailWhenNoMutations(final String value) {
+    this.setOption(ConfigOption.FAIL_WHEN_NOT_MUTATIONS, value);
+  }
+
   public void setSourceDir(final String value) {
     this.setOption(ConfigOption.SOURCE_DIR, value);
   }
@@ -202,6 +206,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
 
   public void setMutableCodePaths(final String glob) {
     setOption(ConfigOption.CODE_PATHS, glob);
+  }
+
+  public void setTestPlugin(final String value) {
+    this.setOption(ConfigOption.TEST_PLUGIN, value);
   }
 
   public void setIncludedGroups(final String value) {

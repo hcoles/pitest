@@ -115,9 +115,9 @@ public class ScmMojo extends AbstractPitMojo {
       this.scmRootDir = findScmRootDir();
     }
 
-    this.targetClasses = makeConcreteList(findModifiedClassNames());
+    setTargetClasses(makeConcreteList(findModifiedClassNames()));
 
-    if (this.targetClasses.isEmpty()) {
+    if (this.getTargetClasses().isEmpty()) {
       this.getLog().info(
           "No modified files found - nothing to mutation test, analyseLastCommit=" + this.analyseLastCommit);
       return Optional.empty();
@@ -126,11 +126,11 @@ public class ScmMojo extends AbstractPitMojo {
     logClassNames();
     defaultTargetTestsIfNoValueSet();
     final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), filter).convert();
+        new SurefireConfigConverter(), getFilter()).convert();
     data.setFailWhenNoMutations(false);
 
-    return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
-        plugins, new HashMap<String, String>()));
+    return Optional.ofNullable(this.getGoalStrategy().execute(detectBaseDir(), data,
+        getPlugins(), new HashMap<String, String>()));
 
   }
 
@@ -138,20 +138,20 @@ public class ScmMojo extends AbstractPitMojo {
     if (this.getTargetTests() == null || this.getTargetTests().isEmpty()) {
       File tests = new File(this.getProject().getBuild()
       .getTestOutputDirectory());
-      this.targetTests = new ArrayList<>(MojoToReportOptionsConverter
-          .findOccupiedPackagesIn(tests));
+      setTargetTests(new ArrayList<>(MojoToReportOptionsConverter
+          .findOccupiedPackagesIn(tests)));
     }
   }
 
   private void logClassNames() {
-    for (final String each : this.targetClasses) {
+    for (final String each : this.getTargetClasses()) {
       this.getLog().info("Will mutate changed class " + each);
     }
   }
 
   private List<String> findModifiedClassNames() throws MojoExecutionException {
 
-    final File sourceRoot = new File(this.project.getBuild()
+    final File sourceRoot = new File(this.getProject().getBuild()
         .getSourceDirectory());
 
     final List<String> modifiedPaths = FCollection.map(findModifiedPaths(), pathByScmDir());
@@ -165,7 +165,7 @@ public class ScmMojo extends AbstractPitMojo {
   }
 
   private File findScmRootDir() {
-    MavenProject rootProject = this.project;
+    MavenProject rootProject = this.getProject();
     while (rootProject.hasParent() && rootProject.getParent().getBasedir() != null) {
       rootProject = rootProject.getParent();
     }
@@ -268,17 +268,17 @@ public class ScmMojo extends AbstractPitMojo {
 
   private String getSCMConnection() throws MojoExecutionException {
 
-    if (this.project.getScm() == null) {
+    if (this.getProject().getScm() == null) {
       throw new MojoExecutionException("No SCM Connection configured.");
     }
 
-    final String scmConnection = this.project.getScm().getConnection();
+    final String scmConnection = this.getProject().getScm().getConnection();
     if ("connection".equalsIgnoreCase(this.connectionType)
         && StringUtils.isNotEmpty(scmConnection)) {
       return scmConnection;
     }
 
-    final String scmDeveloper = this.project.getScm().getDeveloperConnection();
+    final String scmDeveloper = this.getProject().getScm().getDeveloperConnection();
     if ("developerconnection".equalsIgnoreCase(this.connectionType)
         && StringUtils.isNotEmpty(scmDeveloper)) {
       return scmDeveloper;

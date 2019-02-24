@@ -165,7 +165,7 @@ public class MojoToReportOptionsConverter {
 
   private void useHistoryFileInTempDir(final ReportOptions data) {
     String tempDir = System.getProperty("java.io.tmpdir");
-    MavenProject project = this.mojo.project;
+    MavenProject project = this.mojo.getProject();
     String name = project.getGroupId() + "."
         + project.getArtifactId() + "."
         + project.getVersion() + "_pitest_history.bin";
