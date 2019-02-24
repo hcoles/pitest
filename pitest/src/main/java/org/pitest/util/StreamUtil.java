@@ -28,19 +28,18 @@ public abstract class StreamUtil {
   private static void copy(final InputStream input, final OutputStream output)
       throws IOException {
     try (final ReadableByteChannel src = Channels.newChannel(input);
-    	final WritableByteChannel dest = Channels.newChannel(output);) {
-    	
-	  final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
-	  
-	  while (src.read(buffer) != -1) {
-	    buffer.flip();
-	    dest.write(buffer);
-	    buffer.compact();
-	  }
-	  buffer.flip();
-	  while (buffer.hasRemaining()) {
-	      dest.write(buffer);
-	  }
+        final WritableByteChannel dest = Channels.newChannel(output);) {
+    
+      final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
+      while (src.read(buffer) != -1) {
+        buffer.flip();
+        dest.write(buffer);
+        buffer.compact();
+      }
+      buffer.flip();
+      while (buffer.hasRemaining()) {
+        dest.write(buffer);
+      }
     }
   }
 }

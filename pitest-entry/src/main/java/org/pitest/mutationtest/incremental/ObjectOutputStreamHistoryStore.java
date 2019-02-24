@@ -52,7 +52,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   @Override
   public void recordClassPath(final Collection<HierarchicalClassId> ids,
       final CoverageDatabase coverageInfo) {
-    try(final PrintWriter output = this.outputFactory.create();) {
+    try (final PrintWriter output = this.outputFactory.create();) {
       output.println(ids.size());
       for (final HierarchicalClassId each : ids) {
         final ClassHistory coverage = new ClassHistory(each,
@@ -65,7 +65,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
 
   @Override
   public void recordResult(final MutationResult result) {
-    try(final PrintWriter output = this.outputFactory.create();) {
+    try (final PrintWriter output = this.outputFactory.create();) {
       output.println(serialize(new ObjectOutputStreamHistoryStore.IdResult(
           result.getDetails().getId(), result.getStatusTestPair())));
       output.flush();

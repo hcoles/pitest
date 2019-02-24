@@ -19,6 +19,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.atLeast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +64,7 @@ public class ClassPathTest {
     when(stream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(-1);
     this.testee.getClassData("foo");
     verify(stream).read(any(byte[].class), anyInt(), anyInt());
-    verify(stream).close();
+    verify(stream, atLeast(1)).close();
   }
 
   @Test
