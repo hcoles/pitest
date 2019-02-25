@@ -20,6 +20,7 @@ Nothing yet, why not contribute?
 * #518 - Experimental BigInteger mutator (thanks @ripdajacker)
 * #513 - Sort mutators in html report (thanks @ThLeu)
 * #553 - Classic mutators from literature (thanls @LaurentTho3)
+* #528 - Added skipFailingTests option from maven plugin (thanks @nicerloop)
 
 <details>
     <summary>Older versions</summary>
