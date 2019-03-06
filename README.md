@@ -7,7 +7,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.6-SNAPSHOT
+### 1.4.7-SNAPSHOT
+
+Nothing yet, why not contribute?
+
+### 1.4.6
 
 * #580 - upgrade to ASM 7.1
 * #573 - Ant support for `testPlugin` and `failWhenNoMutations` (thanks @mduggan)
