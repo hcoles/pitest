@@ -9,7 +9,9 @@ Read all about it at http://pitest.org
 
 ### 1.4.6-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #580 - upgrade to ASM 7.1
+* #573 - Ant support for `testPlugin` and `failWhenNoMutations` (thanks @mduggan)
+* #555 - Allow empty elements in maven configuration (thanks @maxgabut)
 
 ### 1.4.5
 
