@@ -61,6 +61,8 @@ import org.pitest.util.Unchecked;
  */
 public class ReportOptions {
 
+  public static final List<String> DEFAULT_CHILD_JVM_ARGS = Collections.singletonList("-Djava.awt.headless=true");
+
   public static final Collection<String> LOGGING_CLASSES                = Arrays
       .asList(
           "java.util.logging",
@@ -93,7 +95,7 @@ public class ReportOptions {
 
   private int                            dependencyAnalysisMaxDistance;
 
-  private final List<String>             jvmArgs                        = new ArrayList<>();
+  private final List<String>             jvmArgs                        = new ArrayList<>(DEFAULT_CHILD_JVM_ARGS);
   private int                            numberOfThreads                = 0;
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                           timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.config.ReportOptions.DEFAULT_CHILD_JVM_ARGS;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -101,7 +102,12 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfJVMArgs() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
+
+    List<String> expected = new ArrayList<>();
+    expected.addAll(DEFAULT_CHILD_JVM_ARGS);
+    expected.add("foo");
+    expected.add("bar");
+    assertEquals(expected, actual.getJvmArgs());
   }
 
   @Test
