@@ -25,12 +25,12 @@ import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.coverage.AlreadyInstrumentedException;
 import org.pitest.coverage.CoverageClassVisitor;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
 import org.pitest.util.Unchecked;
-
 import sun.pitest.CodeCoverageStore;
 
 public final class JavassistCoverageInterceptor {
@@ -80,9 +80,13 @@ public final class JavassistCoverageInterceptor {
     // to support powermock if this assumption changed, so this code would most likely be deleted.
 
     final int id = CodeCoverageStore.registerClass(className);
-    reader.accept(new CoverageClassVisitor(id, writer),
-        ClassReader.EXPAND_FRAMES);
-    return writer.toByteArray();
+    try {
+      reader.accept(new CoverageClassVisitor(id, writer),
+          ClassReader.EXPAND_FRAMES);
+      return writer.toByteArray();
+    } catch (AlreadyInstrumentedException ex) {
+      return null;
+    }
   }
 
   private static InputStream returnNormalBytes(final Object classPath,

@@ -12,6 +12,7 @@ import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 abstract class AbstractCoverageStrategy extends AdviceAdapter {
 
+  protected final String           className;
   protected final MethodVisitor    methodVisitor;
   protected final int              classId;
   protected final int              probeOffset;
@@ -19,23 +20,15 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
 
   private final InstructionCounter counter;
 
-  /**
-   * label to mark start of try finally block that is added to each method
-   */
-  private final Label              before     = new Label();
-
-  /**
-   * label to mark handler block of try finally
-   */
-  private final Label              handler    = new Label();
-
   protected int                    probeCount = 0;
 
   AbstractCoverageStrategy(List<Block> blocks, InstructionCounter counter,
       final int classId, final MethodVisitor writer, final int access,
-      final String name, final String desc, final int probeOffset) {
+      final String className, final String name, final String desc, final int probeOffset) {
     super(ASMVersion.ASM_VERSION, writer, access, name, desc);
 
+
+    this.className = className;
     this.methodVisitor = writer;
     this.classId = classId;
     this.counter = counter;
@@ -54,22 +47,6 @@ abstract class AbstractCoverageStrategy extends AdviceAdapter {
     super.visitCode();
 
     prepare();
-
-    this.mv.visitLabel(this.before);
-  }
-
-  @Override
-  public void visitMaxs(final int maxStack, final int maxLocals) {
-
-    this.mv.visitTryCatchBlock(this.before, this.handler, this.handler, null);
-    this.mv.visitLabel(this.handler);
-
-    generateProbeReportCode();
-
-    this.mv.visitInsn(ATHROW);
-
-    // values actually unimportant as we're using compute max
-    this.mv.visitMaxs(maxStack, this.nextLocal);
   }
 
   @Override
