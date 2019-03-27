@@ -7,8 +7,6 @@ strategy:
       imageName: 'Ubuntu-16.04'
     mac:
       imageName: 'macos-10.13'
-    windows:
-      imageName: 'vs2017-win2016'
 
 pool:
   vmImage: $(imageName)
@@ -23,4 +21,4 @@ steps:
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
-    goals: 'verify'
+    goals: 'install'
