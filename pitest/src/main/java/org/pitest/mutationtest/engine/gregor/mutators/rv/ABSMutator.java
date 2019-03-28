@@ -21,7 +21,7 @@ public enum ABSMutator implements MethodMutatorFactory {
 
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
                                 final MethodVisitor methodVisitor) {
-        return new ABSMethodVisitor(this, context, methodInfo, methodVisitor);
+        return new ABSMethodVisitor(this, context, methodVisitor);
     }
 
     public String getGloballyUniqueId() {
@@ -37,14 +37,12 @@ class ABSMethodVisitor extends MethodVisitor {
 
     private final MethodMutatorFactory factory;
     private final MutationContext context;
-    private final MethodInfo info;
 
-    ABSMethodVisitor(final MethodMutatorFactory factory, final MutationContext context, final MethodInfo info,
+    ABSMethodVisitor(final MethodMutatorFactory factory, final MutationContext context,
                      final MethodVisitor delegateMethodVisitor) {
         super(ASMVersion.ASM_VERSION, delegateMethodVisitor);
         this.factory = factory;
         this.context = context;
-        this.info = info;
     }
 
     private boolean shouldMutate(String message) {
