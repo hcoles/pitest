@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -64,6 +65,7 @@ public class MutationTimeoutDecoratorTest {
   }
 
   @Test
+  @Ignore("flakey")
   public void shouldApplySideEffectWhenChildRunsForLongerThanAllowedTime() {
     when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(50l);
 
