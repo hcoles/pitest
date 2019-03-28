@@ -8,9 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.7-SNAPSHOT
+### 1.4.8-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.7
+
+* #545 - Faster coverage calculation (thanks @jon-bell)
 
 ### 1.4.6
 
