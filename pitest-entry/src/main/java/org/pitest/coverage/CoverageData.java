@@ -326,7 +326,7 @@ public class CoverageData implements CoverageDatabase {
 
   private Predicate<Entry<BlockLocation, Set<TestInfo>>> isFor(
       final ClassName clazz) {
-    return a -> a.getKey().isFor(clazz);
+    return a -> a.getKey() != null && a.getKey().isFor(clazz);
   }
 
 }
