@@ -15,35 +15,27 @@ env:
 
 matrix:
   include:
-    # Open jdk 8 mvn 3.2.5
     - jdk: openjdk8
       env: MAVEN=3.2.5
 
-    # Java 8 mvn 3.3.9
     - jdk: oraclejdk8
       env: MAVEN=3.3.9
     
-    # Java 9 mvn 3.5.4
-    - jdk: oraclejdk9
+    - jdk: openjdk9
+      env: MAVEN=3.5.4
+    
+    - jdk: openjdk10
+      env: MAVEN=3.5.4
+    
+    - jdk: openjdk11
       env: MAVEN=3.5.4
 
-    # Java 9 mvn 3.2.5
-    - env: JDK='JDK9' MAVEN=3.2.5
-      install: . ./install-jdk.sh -F 9 -L GPL
-    
-    # Java 10 mvn 3.5.4
-    - env: JDK='JDK 10' MAVEN=3.5.4
-      install: . ./install-jdk.sh -F 10 -L GPL
-    
-    # Java 11 mvn 3.5.4
-    - env: JDK='JDK 11' MAVEN=3.5.4
-      install: . ./install-jdk.sh -F 11 -L BCL 
+    - jdk: openjdk12
+      env: MAVEN=3.5.4
 
-    # OpenJ9 8 mvn 3.5.4
     - env: JDK='OpenJ9 8' MAVEN=3.5.4
       install: . ./install-jdk.sh --url "https://api.adoptopenjdk.net/v2/binary/releases/openjdk8?openjdk_impl=openj9&os=linux&arch=x64&release=latest&type=jdk&heap_size=normal"
 
-    # OpenJ9 11 mvn 3.5.4
     - env: JDK='OpenJ9 11' MAVEN=3.5.4
       install: . ./install-jdk.sh --url "https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&release=latest&type=jdk&heap_size=normal"
 
