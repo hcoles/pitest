@@ -109,7 +109,7 @@ Academic systems tend to keep running so that a matrix can be produced of which 
 
 There is a lot of complicated code in pitest that splits tests up into the smallest possible individually executable units. The default in Java is for all the tests defined in single test to be run as one (at least for JUnit and TestNG).
 
-If pitest did not split tests in this way then it would have to keep executing tests even if the first test method in a class failed. Whether the worthiness of such extra complexity strongly depends on how the tests are written and how fast each test runs.
+If pitest didn't split tests this way, it would have to execute all tests in a class even if the first of them failed. But the worthiness of such extra complexity strongly depends on how tests are written and how fast each test runs.
 
 ## Other solutions
 
