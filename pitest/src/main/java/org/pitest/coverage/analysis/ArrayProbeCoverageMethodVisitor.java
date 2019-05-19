@@ -87,7 +87,7 @@ public class ArrayProbeCoverageMethodVisitor extends AbstractCoverageStrategy {
   @Override
   void prepare() {
     if (getName().equals("<clinit>")) {
-        this.mv.visitIntInsn(Opcodes.SIPUSH, this.classId);
+        pushConstant(this.classId);
         this.mv.visitFieldInsn(Opcodes.GETSTATIC, this.className, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME,"I");
         this.mv
             .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,

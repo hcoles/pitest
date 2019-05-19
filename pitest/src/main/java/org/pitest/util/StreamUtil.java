@@ -27,6 +27,10 @@ public abstract class StreamUtil {
 
   private static void copy(final InputStream input, final OutputStream output)
       throws IOException {
+    //Ensure that this thread does not have the "interrupted" flag set, otherwise
+    //the NIO calls will throw an java.nio.channels.ClosedByInterruptException
+    Thread.interrupted();
+
     final ReadableByteChannel src = Channels.newChannel(input);
     final WritableByteChannel dest = Channels.newChannel(output);
     final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
