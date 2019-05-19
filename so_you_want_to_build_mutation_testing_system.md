@@ -2,7 +2,7 @@
 
 ## Introduction
 
-There have been a lot mutation testing systems, but very few have them have seen successful use in industry.
+There have been a lot mutation testing systems, but very few of them have seen successful use in industry.
 
 This document is a set of notes that might be helpful for anyone thinking of implementing a mutation testing system for another language.
 
@@ -109,7 +109,7 @@ Academic systems tend to keep running so that a matrix can be produced of which 
 
 There is a lot of complicated code in pitest that splits tests up into the smallest possible individually executable units. The default in Java is for all the tests defined in single test to be run as one (at least for JUnit and TestNG).
 
-If pitest did not split tests in this way then it would have to keep executing tests even if the first test method in a class failed. Whether they extra complexity is worth it depends very much on how the tests are written and how fast each test runs.
+If pitest didn't split tests this way, it would have to execute all tests in a class even if the first of them failed. But the worthiness of such extra complexity strongly depends on how tests are written and how fast each test runs.
 
 ## Other solutions
 
@@ -133,7 +133,7 @@ Manipulating an AST would be a sensible way to create mutations with several adv
 
 Depending on the tech stack the cost of creating the mutants from the AST is likely to be higher than manipulating bytecode. Whether this difference in cost is significant is probably language dependent, but generally the cost of generating mutants is less significant than the cost of analysing them.
 
-For this approach to work well it is probably highly desirable that your tech stack can compile from memory to memory (ie no need to write the mutated AST to disk or the compiled program to disk).
+For this approach to work well it is probably highly desirable that your tech stack can compile from memory to memory (i.e. no need to write the mutated AST or the compiled program to disk).
 
 This will of course depend on whether your insertion mechanism requires the executable code to be written to disk.
 
