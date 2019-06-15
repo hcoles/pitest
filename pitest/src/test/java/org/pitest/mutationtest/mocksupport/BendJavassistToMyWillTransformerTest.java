@@ -44,7 +44,7 @@ public class BendJavassistToMyWillTransformerTest {
   public void shouldTransformClassesMatchingFilter()
       throws IllegalClassFormatException {
     when(this.filter.test(any(String.class))).thenReturn(true);
-    assertFalse(null == this.testee.transform(null, "foo", null, null,
+    assertFalse(null == this.testee.transform(IsolationUtils.getContextClassLoader(), "foo", null, null,
         this.bytes));
   }
 
