@@ -17,9 +17,6 @@ matrix:
   include:
     - jdk: openjdk8
       env: MAVEN=3.2.5
-
-    - jdk: oraclejdk8
-      env: MAVEN=3.3.9
     
     - jdk: openjdk9
       env: MAVEN=3.5.4
