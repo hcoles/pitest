@@ -8,9 +8,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.9-SNAPSHOT
+### 1.4.10-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.9
+
+* #613 / #623 - Fix for powermock issues on (thanks @jon-bell)
+* #614 - Improved error message when no test plugin (thanks @szpak)
+* #620 - Support annotation processors such as Micronaut that do not set debug filename 
 
 ### 1.4.8
 
