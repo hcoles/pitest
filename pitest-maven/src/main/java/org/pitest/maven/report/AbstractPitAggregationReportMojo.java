@@ -131,7 +131,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
       final Artifact artifact = (Artifact) artifactObj;
       sourceRoots.add(artifact.getFile().getAbsolutePath());
     }
-    return convertToRootDirs(project.getTestClasspathElements(),
+    return convertToRootDirs(project.getTestCompileSourceRoots(),
         Arrays.asList(project.getBuild().getOutputDirectory(),
             project.getBuild().getTestOutputDirectory()),
         sourceRoots);
