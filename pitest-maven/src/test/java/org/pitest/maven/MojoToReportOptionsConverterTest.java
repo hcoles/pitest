@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Repository;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
 import java.util.function.Predicate;
@@ -104,7 +106,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>bar</param>" + //
         "                  </jvmArgs>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
+
+    List<String> expectedArgs = new ArrayList<>();
+    expectedArgs.addAll(ReportOptions.DEFAULT_CHILD_JVM_ARGS);
+    expectedArgs.add("foo");
+    expectedArgs.add("bar");
+
+    assertEquals(expectedArgs, actual.getJvmArgs());
   }
 
   public void testParsesListOfMutationOperators() {

@@ -1,5 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
 [![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
+[![Build Status](https://dev.azure.com/henrycoles/pitest/_apis/build/status/hcoles.pitest?branchName=master)](https://dev.azure.com/henrycoles/pitest/_build/latest?definitionId=3&branchName=master)
 
 Pitest (aka PIT) is a state of the art mutation testing system for Java and the JVM.
 
@@ -7,22 +8,44 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.6-SNAPSHOT
+### 1.4.10-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.9
+
+* #613 / #623 - Fix for powermock issues on (thanks @jon-bell)
+* #614 - Improved error message when no test plugin (thanks @szpak)
+* #620 - Support annotation processors such as Micronaut that do not set debug filename 
+
+### 1.4.8
+
+* #597 Fix for bug in coverage when large number of classes (thanks @jon-bell)
+* #601 Avoid stealing keyboard focus on macos (thanks @maxgabut)
+
+### 1.4.7
+
+* #545 - Faster coverage calculation (thanks @jon-bell)
+
+### 1.4.6
+
+* #580 - upgrade to ASM 7.1
+* #573 - Ant support for `testPlugin` and `failWhenNoMutations` (thanks @mduggan)
+* #555 - Allow empty elements in maven configuration (thanks @maxgabut)
 
 ### 1.4.5
 
 * #557 - Issues running on Java 8
+
+<details>
+    <summary>Older versions</summary>
 
 ### 1.4.4
  
 * #518 - Experimental BigInteger mutator (thanks @ripdajacker)
 * #513 - Sort mutators in html report (thanks @ThLeu)
 * #553 - Classic mutators from literature (thanls @LaurentTho3)
-
-<details>
-    <summary>Older versions</summary>
+* #528 - Added skipFailingTests option from maven plugin (thanks @nicerloop)
 
 ### 1.4.3
 

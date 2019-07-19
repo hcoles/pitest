@@ -33,6 +33,7 @@ import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -383,6 +384,7 @@ public class PitMojoIT {
   }
 
   @Test
+  @Ignore("yatspec is not available on maven central. Repo currently down")
   public void shouldWorkWithYatspec() throws Exception {
     File testDir = prepare("/pit-263-yatspec");
     verifier.executeGoal("test");
