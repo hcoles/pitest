@@ -14,16 +14,14 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import java.util.HashMap;
-
-import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
+
+import java.util.HashMap;
 
 /**
  * Entry point for command line interface
@@ -35,6 +33,7 @@ public class MutationCoverageReport {
     final PluginServices plugins = PluginServices.makeForContextLoader();
     final OptionsParser parser = new OptionsParser(new PluginFilter(plugins));
     final ParseResult pr = parser.parse(args);
+    final ThresholdValidator thresholdValidator = new ThresholdValidator();
 
     if (!pr.isOk()) {
       parser.printHelp();
@@ -44,40 +43,14 @@ public class MutationCoverageReport {
 
       final CombinedStatistics stats = runReport(data, plugins);
 
-      throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(),
+      thresholdValidator.throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(),
           data.getCoverageThreshold());
-      throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
+      thresholdValidator.throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
           data.getMutationThreshold());
-      throwErrorIfMoreThanMaxSuvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
+      thresholdValidator.throwErrorIfMoreThanMaxSurvivingMutants(stats.getMutationStatistics(),
+          data.getMaximumAllowedSurvivors());
     }
 
-  }
-
-  private static void throwErrorIfScoreBelowCoverageThreshold(
-      CoverageSummary stats, int threshold) {
-    if ((threshold != 0) && (stats.getCoverage() < threshold)) {
-      throw new RuntimeException("Line coverage of " + stats.getCoverage()
-          + " is below threshold of " + threshold);
-    }
-  }
-
-  private static void throwErrorIfScoreBelowMutationThreshold(
-      final MutationStatistics stats, final int threshold) {
-    if ((threshold != 0) && (stats.getPercentageDetected() < threshold)) {
-      throw new RuntimeException("Mutation score of "
-          + stats.getPercentageDetected() + " is below threshold of "
-          + threshold);
-    }
-  }
-
-  private static void throwErrorIfMoreThanMaxSuvivingMutants(
-      final MutationStatistics stats, final long threshold) {
-    if ((threshold > 0)
-        && (stats.getTotalSurvivingMutations() > threshold)) {
-      throw new RuntimeException("Had "
-          + stats.getTotalSurvivingMutations() + " surviving mutants, but only "
-          + threshold + " survivors allowed");
-    }
   }
 
   private static CombinedStatistics runReport(ReportOptions data,
