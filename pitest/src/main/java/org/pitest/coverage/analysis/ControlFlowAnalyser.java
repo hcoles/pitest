@@ -1,12 +1,40 @@
 package org.pitest.coverage.analysis;
 
+import static org.objectweb.asm.Opcodes.AALOAD;
+import static org.objectweb.asm.Opcodes.AASTORE;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.BALOAD;
+import static org.objectweb.asm.Opcodes.BASTORE;
+import static org.objectweb.asm.Opcodes.CALOAD;
+import static org.objectweb.asm.Opcodes.CASTORE;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
+import static org.objectweb.asm.Opcodes.DALOAD;
+import static org.objectweb.asm.Opcodes.DASTORE;
+import static org.objectweb.asm.Opcodes.DDIV;
 import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.FALOAD;
+import static org.objectweb.asm.Opcodes.FASTORE;
+import static org.objectweb.asm.Opcodes.FDIV;
 import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.IALOAD;
+import static org.objectweb.asm.Opcodes.IASTORE;
+import static org.objectweb.asm.Opcodes.IDIV;
 import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LALOAD;
+import static org.objectweb.asm.Opcodes.LASTORE;
+import static org.objectweb.asm.Opcodes.LDIV;
 import static org.objectweb.asm.Opcodes.LRETURN;
+import static org.objectweb.asm.Opcodes.MONITORENTER;
+import static org.objectweb.asm.Opcodes.MONITOREXIT;
+import static org.objectweb.asm.Opcodes.NEWARRAY;
+import static org.objectweb.asm.Opcodes.PUTFIELD;
+import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.SALOAD;
+import static org.objectweb.asm.Opcodes.SASTORE;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,7 +60,17 @@ public class ControlFlowAnalyser {
   public static List<Block> analyze(final MethodNode mn) {
     final List<Block> blocks = new ArrayList<>(mn.instructions.size());
 
-    final Set<AbstractInsnNode> jumpTargets = findJumpTargets(mn.instructions);
+    final Set<LabelNode> jumpTargets = findJumpTargets(mn.instructions);
+
+    /*
+     * Some projects/libraries have gigantic static initializer methods
+     * that load up huge constant arrays. These methods are nearly at the
+     * size limit - and adding a probe at each store blows it up.
+     *
+     * So, for methods with many instructions, we'll ignore array stores
+     * as ending a block.
+     */
+    final boolean ignoreArrayStores = mn.instructions.size() > 10000;
 
     // not managed to construct bytecode to show need for this
     // as try catch blocks usually have jumps at their boundaries anyway.
@@ -54,10 +92,18 @@ public class ControlFlowAnalyser {
         blockLines.add(lnn.line);
         lastLine = lnn.line;
       } else if (jumpTargets.contains(ins) && (blockStart != i)) {
+        if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
+            .get(blocks.size() - 1).getLines().isEmpty()) {
+          blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
+        }
         blocks.add(new Block(blockStart, i - 1, blockLines));
         blockStart = i;
         blockLines = smallSet();
-      } else if (endsBlock(ins)) {
+      } else if (endsBlock(ins, ignoreArrayStores)) {
+        if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
+            .get(blocks.size() - 1).getLines().isEmpty()) {
+          blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
+        }
         blocks.add(new Block(blockStart, i, blockLines));
         blockStart = i + 1;
         blockLines = smallSet();
@@ -88,15 +134,77 @@ public class ControlFlowAnalyser {
   }
 
   private static void addtryCatchBoundaries(final MethodNode mn,
-      final Set<AbstractInsnNode> jumpTargets) {
+      final Set<LabelNode> jumpTargets) {
     for (final Object each : mn.tryCatchBlocks) {
       final TryCatchBlockNode tcb = (TryCatchBlockNode) each;
       jumpTargets.add(tcb.handler);
     }
   }
 
-  private static boolean endsBlock(final AbstractInsnNode ins) {
-    return (ins instanceof JumpInsnNode) || isReturn(ins);
+  private static boolean endsBlock(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
+    return (ins instanceof JumpInsnNode) || isReturn(ins)
+        || isMightThrowException(ins, ignoreArrayStores);
+  }
+
+  private static boolean isMightThrowException(int opcode, final boolean ignoreArrayStores) {
+    switch (opcode) {
+    //division by 0
+    case IDIV:
+    case FDIV:
+    case LDIV:
+    case DDIV:
+      //NPE
+    case MONITORENTER:
+    case MONITOREXIT: //or illegalmonitor
+      return true;
+      //ArrayIndexOutOfBounds or null pointer
+    case IALOAD:
+    case LALOAD:
+    case SALOAD:
+    case DALOAD:
+    case BALOAD:
+    case FALOAD:
+    case CALOAD:
+    case AALOAD:
+    case IASTORE:
+    case LASTORE:
+    case SASTORE:
+    case DASTORE:
+    case BASTORE:
+    case FASTORE:
+    case CASTORE:
+    case AASTORE:
+      return !ignoreArrayStores;
+    case CHECKCAST: //incompatible cast
+      //trigger class initialization
+//    case NEW: //will break powermock :(
+    case NEWARRAY:
+    case GETSTATIC:
+    case PUTSTATIC:
+    case GETFIELD:
+    case PUTFIELD:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  private static boolean isMightThrowException(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
+    switch (ins.getType()) {
+    case AbstractInsnNode.MULTIANEWARRAY_INSN:
+      return true;
+    case AbstractInsnNode.INSN:
+    case AbstractInsnNode.TYPE_INSN:
+    case AbstractInsnNode.FIELD_INSN:
+      return isMightThrowException(ins.getOpcode(), ignoreArrayStores);
+    case AbstractInsnNode.METHOD_INSN:
+      return true;
+    default:
+      return false;
+    }
+
   }
 
   private static boolean isReturn(final AbstractInsnNode ins) {
@@ -116,8 +224,8 @@ public class ControlFlowAnalyser {
 
   }
 
-  private static Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
-    final Set<AbstractInsnNode> jumpTargets = new HashSet<>();
+  private static Set<LabelNode> findJumpTargets(final InsnList instructions) {
+    final Set<LabelNode> jumpTargets = new HashSet<>();
     final ListIterator<AbstractInsnNode> it = instructions.iterator();
     while (it.hasNext()) {
       final AbstractInsnNode o = it.next();

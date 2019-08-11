@@ -65,6 +65,11 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   }
 
   @Override
+  public void registerNewMethodStart() {
+    this.classContext.registerNewMethodStart();
+  }
+
+  @Override
   public void registerFinallyBlockStart() {
     this.classContext.registerFinallyBlockStart();
   }

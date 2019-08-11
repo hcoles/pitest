@@ -28,6 +28,7 @@ public class AvoidStringSwitchedMethodAdapterTest extends MethodDecoratorTest {
   public void setUp() {
     super.setUp();
     this.testee = new AvoidStringSwitchedMethodAdapter(this.context, this.mv);
+    this.testee.visitCode();
   }
 
   @Test

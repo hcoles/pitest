@@ -82,6 +82,23 @@ class MutatingClassVisitor extends ClassVisitor {
 
   }
 
+  private static MethodVisitor wrapWithDecorators(
+      MethodMutationContext methodContext, final MethodVisitor mv, final MethodInfo methodInfo) {
+    return wrapWithBlockTracker(methodContext,
+        wrapWithInstructionTracker(methodContext,
+            wrapWithLineTracker(methodContext, mv)), methodInfo);
+  }
+
+  private static MethodVisitor wrapWithInstructionTracker(
+      MethodMutationContext methodContext, final MethodVisitor mv) {
+    return new InstructionTrackingMethodVisitor(mv, methodContext);
+  }
+
+  private static MethodVisitor wrapWithBlockTracker(
+      MethodMutationContext methodContext, final MethodVisitor mv, final MethodInfo methodInfo) {
+    return new BlockTrackingMethodDecorator(methodContext, mv, methodInfo.getAccess(), methodInfo.getName(), methodInfo.getMethodDescriptor(), null, null);
+  }
+
   private MethodVisitor visitMethodForMutation(
       MethodMutationContext methodContext, final MethodInfo methodInfo,
       final MethodVisitor methodVisitor) {
@@ -91,19 +108,7 @@ class MutatingClassVisitor extends ClassVisitor {
       next = each.create(methodContext, methodInfo, next);
     }
 
-    return new InstructionTrackingMethodVisitor(wrapWithDecorators(
-        methodContext, wrapWithFilters(methodContext, next)), methodContext);
-  }
-
-  private static MethodVisitor wrapWithDecorators(MethodMutationContext methodContext,
-      final MethodVisitor mv) {
-    return wrapWithBlockTracker(methodContext,
-        wrapWithLineTracker(methodContext, mv));
-  }
-
-  private static MethodVisitor wrapWithBlockTracker(
-      MethodMutationContext methodContext, final MethodVisitor mv) {
-    return new BlockTrackingMethodDecorator(methodContext, mv);
+    return wrapWithDecorators(methodContext, wrapWithFilters(methodContext, next), methodInfo);
   }
 
   private static MethodVisitor wrapWithLineTracker(

@@ -14,6 +14,8 @@ public interface CoverageDatabase {
 
   Collection<TestInfo> getTestsForClass(ClassName clazz);
 
+  Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location);
+
   Collection<TestInfo> getTestsForClassLine(ClassLine classLine);
 
   BigInteger getCoverageIdForClass(ClassName clazz);

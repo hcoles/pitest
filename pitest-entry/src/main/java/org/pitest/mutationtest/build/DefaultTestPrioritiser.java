@@ -2,11 +2,14 @@ package org.pitest.mutationtest.build;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.InstructionLocation;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
@@ -41,7 +44,23 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
 
   private Collection<TestInfo> pickTests(MutationDetails mutation) {
     if (!mutation.isInStaticInitializer()) {
-      return this.coverage.getTestsForClassLine(mutation.getClassLine());
+      if (mutation.getId().getIndexes().size() > 1) {
+        HashSet<TestInfo> ret = new HashSet<>();
+        for (int each : mutation.getId().getIndexes()) {
+          Collection<TestInfo> r = this.coverage.getTestsForInstructionLocation(
+              new InstructionLocation(
+                  new BlockLocation(mutation.getId().getLocation(),
+                      mutation.getBlock(), -1, -1), each - 1));
+          if (r != null) {
+            ret.addAll(r);
+          }
+        }
+        return ret;
+      } else {
+        return this.coverage
+            .getTestsForInstructionLocation(new InstructionLocation(new BlockLocation(mutation.getId().getLocation(), mutation.getBlock(), -1, -1),
+                mutation.getId().getFirstIndex() - 1));
+      }
     } else {
       LOG.warning("Using untargetted tests");
       return this.coverage.getTestsForClass(mutation.getClassName());
