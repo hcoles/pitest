@@ -17,8 +17,6 @@ import sun.pitest.CodeCoverageStore;
  */
 public class CoverageAnalyser extends MethodNode {
 
-  private static final int           MAX_SUPPORTED_LOCAL_PROBES = 15;
-
   private final CoverageClassVisitor parent;
   private final int                  classId;
   private final MethodVisitor        mv;
@@ -40,7 +38,7 @@ public class CoverageAnalyser extends MethodNode {
     final List<Block> blocks = findRequriedProbeLocations();
 
     this.parent.registerProbes(blocks.size());
-    final int blockCount = blocks.size();
+
     CodeCoverageStore.registerMethod(this.classId, this.name, this.desc,
         this.probeOffset, (this.probeOffset + blocks.size()) - 1, blocks);
 

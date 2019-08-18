@@ -24,7 +24,6 @@ import static org.objectweb.asm.Opcodes.RETURN;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -37,7 +36,6 @@ import org.pitest.coverage.analysis.ControlFlowAnalyser;
 public class BlockTrackingMethodDecorator extends MethodNode {
 
   private final BlockCounter  blockCounter;
-  private final Set<Label>    handlers = new HashSet<>();
   private final MethodVisitor cmv;
 
   public BlockTrackingMethodDecorator(final BlockCounter blockCounter,

@@ -40,10 +40,6 @@ public class MethodInfo {
     return this.owningClass.getName() + "::" + getName();
   }
 
-  public int getAccess() {
-    return access;
-  }
-
   public String getName() {
     return this.methodName;
   }
