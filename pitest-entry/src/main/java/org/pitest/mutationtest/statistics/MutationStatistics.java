@@ -82,8 +82,12 @@ public final class MutationStatistics {
       return 0;
     }
 
-    return Math.round((100f / getTotalMutations())
-        * getTotalDetectedMutations());
+    if (getTotalMutations() == getTotalDetectedMutations()) {
+      return 100;
+    }
+
+    return Math.min(99, Math.round((100f / getTotalMutations())
+        * getTotalDetectedMutations()));
   }
 
   public void report(final PrintStream out) {
