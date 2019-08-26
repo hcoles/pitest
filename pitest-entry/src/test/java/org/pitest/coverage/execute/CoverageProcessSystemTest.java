@@ -94,8 +94,6 @@ public class CoverageProcessSystemTest {
     assertTrue(coversBlock(coveredClasses, "testHigh", 0));
     assertTrue(coversBlock(coveredClasses, "testHigh", 1));
     assertTrue(coversBlock(coveredClasses, "testHigh", 2));
-    assertTrue(coversBlock(coveredClasses, "testHigh", 3));
-    assertFalse(coversBlock(coveredClasses, "testHigh", 4));
 
     assertTrue(coversBlock(coveredClasses, "testLow", 0));
     assertTrue(coversBlock(coveredClasses, "testLow", 1));

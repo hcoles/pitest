@@ -24,6 +24,7 @@ import static org.objectweb.asm.Opcodes.RETURN;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -57,7 +58,7 @@ public class BlockTrackingMethodDecorator extends MethodNode {
     this.accept(new MethodVisitor(ASMVersion.ASM_VERSION, cmv) {
       Block curBlock = blocks.pop();
       int i;
-      private HashSet<Label> handlers = new HashSet<>();
+      private Set<Label> handlers = new HashSet<>();
 
       @Override
       public void visitTryCatchBlock(Label start, Label end, Label handler,
@@ -113,7 +114,6 @@ public class BlockTrackingMethodDecorator extends MethodNode {
         super.visitInsn(opcode);
         if (endsBlock(opcode)) {
           blockCounter.registerFinallyBlockEnd();
-          //          blockCounter.registerNewBlock();
         }
       }
 

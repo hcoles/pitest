@@ -179,6 +179,7 @@ public class BlockTrackingMethodDecoratorTest extends MethodDecoratorTest {
     this.testee.visitInsn(ICONST_0);
     verify(this.tracker, never()).registerFinallyBlockEnd();
   }
+  
 
   @Override
   protected MethodVisitor getTesteeVisitor() {

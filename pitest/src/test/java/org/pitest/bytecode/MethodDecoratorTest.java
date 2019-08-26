@@ -202,6 +202,7 @@ public abstract class MethodDecoratorTest {
 
   @Test
   public void shouldForwardVisitMultiANewArrayInsnToChild() {
+    getTesteeVisitor().visitMethodInsn(1, "a", "b", "c", false);
     getTesteeVisitor().visitMultiANewArrayInsn("foo", 1);
     getTesteeVisitor().visitEnd();
     verify(this.mv).visitMultiANewArrayInsn("foo", 1);

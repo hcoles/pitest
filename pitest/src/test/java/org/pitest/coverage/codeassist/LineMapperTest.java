@@ -65,14 +65,11 @@ public class LineMapperTest {
         MethodName.fromString("foo"), "(I)I");
 
     assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(5, 6);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(6);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).contains(7);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 3))).contains(8, 9);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 4))).contains(9);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 5))).contains(10);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 6))).contains(12, 13);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 7))).contains(13);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 8))).contains(14);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(7);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).contains(8,9);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 3))).contains(10);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 4))).contains(12,13);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 5))).contains(14);
   }
 
   @Test
@@ -101,9 +98,9 @@ public class LineMapperTest {
     final Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks2.class);
     final Location l = Location.location(ClassName.fromClass(ThreeBlocks2.class),
         MethodName.fromString("foo"), "(I)I");
-    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(111);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(112);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(114);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(108);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(109);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(111);
   }
 
   static class ThreeBlocks2 {

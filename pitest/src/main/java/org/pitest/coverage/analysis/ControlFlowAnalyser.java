@@ -1,40 +1,12 @@
 package org.pitest.coverage.analysis;
 
-import static org.objectweb.asm.Opcodes.AALOAD;
-import static org.objectweb.asm.Opcodes.AASTORE;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.BALOAD;
-import static org.objectweb.asm.Opcodes.BASTORE;
-import static org.objectweb.asm.Opcodes.CALOAD;
-import static org.objectweb.asm.Opcodes.CASTORE;
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.DALOAD;
-import static org.objectweb.asm.Opcodes.DASTORE;
-import static org.objectweb.asm.Opcodes.DDIV;
 import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FALOAD;
-import static org.objectweb.asm.Opcodes.FASTORE;
-import static org.objectweb.asm.Opcodes.FDIV;
 import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.IALOAD;
-import static org.objectweb.asm.Opcodes.IASTORE;
-import static org.objectweb.asm.Opcodes.IDIV;
 import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LALOAD;
-import static org.objectweb.asm.Opcodes.LASTORE;
-import static org.objectweb.asm.Opcodes.LDIV;
 import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.MONITORENTER;
-import static org.objectweb.asm.Opcodes.MONITOREXIT;
-import static org.objectweb.asm.Opcodes.NEWARRAY;
-import static org.objectweb.asm.Opcodes.PUTFIELD;
-import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.SALOAD;
-import static org.objectweb.asm.Opcodes.SASTORE;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -147,58 +119,9 @@ public class ControlFlowAnalyser {
         || isMightThrowException(ins, ignoreArrayStores);
   }
 
-  private static boolean isMightThrowException(int opcode, final boolean ignoreArrayStores) {
-    switch (opcode) {
-    //division by 0
-    case IDIV:
-    case FDIV:
-    case LDIV:
-    case DDIV:
-      //NPE
-    case MONITORENTER:
-    case MONITOREXIT: //or illegalmonitor
-      return true;
-      //ArrayIndexOutOfBounds or null pointer
-    case IALOAD:
-    case LALOAD:
-    case SALOAD:
-    case DALOAD:
-    case BALOAD:
-    case FALOAD:
-    case CALOAD:
-    case AALOAD:
-    case IASTORE:
-    case LASTORE:
-    case SASTORE:
-    case DASTORE:
-    case BASTORE:
-    case FASTORE:
-    case CASTORE:
-    case AASTORE:
-      return !ignoreArrayStores;
-    case CHECKCAST: //incompatible cast
-      //trigger class initialization
-//    case NEW: //will break powermock :(
-    case NEWARRAY:
-    case GETSTATIC:
-    case PUTSTATIC:
-    case GETFIELD:
-    case PUTFIELD:
-      return true;
-    default:
-      return false;
-    }
-  }
-
   private static boolean isMightThrowException(final AbstractInsnNode ins,
       final boolean ignoreArrayStores) {
     switch (ins.getType()) {
-    case AbstractInsnNode.MULTIANEWARRAY_INSN:
-      return true;
-    case AbstractInsnNode.INSN:
-    case AbstractInsnNode.TYPE_INSN:
-    case AbstractInsnNode.FIELD_INSN:
-      return isMightThrowException(ins.getOpcode(), ignoreArrayStores);
     case AbstractInsnNode.METHOD_INSN:
       return true;
     default:
