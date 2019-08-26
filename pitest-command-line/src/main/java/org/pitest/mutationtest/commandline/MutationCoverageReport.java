@@ -72,7 +72,7 @@ public class MutationCoverageReport {
 
   private static void throwErrorIfMoreThanMaxSuvivingMutants(
       final MutationStatistics stats, final long threshold) {
-    if ((threshold > 0)
+    if ((threshold >= 0)
         && (stats.getTotalSurvivingMutations() > threshold)) {
       throw new RuntimeException("Had "
           + stats.getTotalSurvivingMutations() + " surviving mutants, but only "
