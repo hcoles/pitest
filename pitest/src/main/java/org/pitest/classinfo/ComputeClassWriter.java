@@ -1,4 +1,4 @@
-/***
+/*
  * Extracted and modified from ASM 4 test suite. Original copyright notice preserved below
  *
  * ASM tests
