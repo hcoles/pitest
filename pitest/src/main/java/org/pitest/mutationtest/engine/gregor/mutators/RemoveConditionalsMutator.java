@@ -12,7 +12,7 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-public class RemoveConditionalMutator implements MethodMutatorFactory {
+public class RemoveConditionalsMutator implements MethodMutatorFactory {
 
   // REMOVE_CONDITIONALS_MUTATOR;
 
@@ -34,7 +34,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   private final Choice  kind;
   private final boolean replaceWith; // Default is true
 
-  public RemoveConditionalMutator(final Choice c, final boolean rc) {
+  public RemoveConditionalsMutator(final Choice c, final boolean rc) {
     this.kind = c;
     this.replaceWith = rc;
   }
@@ -45,7 +45,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
     final boolean[] arrWith = { true, false };
     for (final Choice c : allChoices) {
       for (final boolean b : arrWith) {
-        variations.add(new RemoveConditionalMutator(c, b));
+        variations.add(new RemoveConditionalsMutator(c, b));
       }
     }
     return variations;
@@ -95,7 +95,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
         if (this.context.shouldMutate(newId)) {
           emptyStack(opcode);
-          if (!RemoveConditionalMutator.this.replaceWith) {
+          if (!RemoveConditionalsMutator.this.replaceWith) {
             super.visitJumpInsn(Opcodes.GOTO, label);
           }
         } else {
@@ -137,7 +137,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
       case Opcodes.IF_ICMPGT:
       case Opcodes.IF_ICMPLE:
       case Opcodes.IF_ICMPLT:
-        return (RemoveConditionalMutator.this.kind == Choice.ORDER);
+        return (RemoveConditionalsMutator.this.kind == Choice.ORDER);
       case Opcodes.IFEQ:
       case Opcodes.IFNE:
       case Opcodes.IFNONNULL:
@@ -146,7 +146,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
       case Opcodes.IF_ICMPEQ:
       case Opcodes.IF_ACMPEQ:
       case Opcodes.IF_ACMPNE:
-        return (RemoveConditionalMutator.this.kind == Choice.EQUAL);
+        return (RemoveConditionalsMutator.this.kind == Choice.EQUAL);
       default:
         return false;
       }

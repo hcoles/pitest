@@ -16,9 +16,9 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
-public enum BooleanTrueReturnValsMutator implements MethodMutatorFactory {
+public enum TrueReturnsMutator implements MethodMutatorFactory {
 
-  BOOLEAN_TRUE_RETURN;
+  TRUE_RETURNS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,

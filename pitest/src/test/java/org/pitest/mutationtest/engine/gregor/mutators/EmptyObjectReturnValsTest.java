@@ -17,7 +17,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
+    createTesteeWith(EmptyReturnsMutator.EMPTY_RETURNS_MUTATOR);
   }
 
   @Test

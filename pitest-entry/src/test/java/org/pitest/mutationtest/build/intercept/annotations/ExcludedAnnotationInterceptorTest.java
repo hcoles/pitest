@@ -20,7 +20,7 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutator;
 
 public class ExcludedAnnotationInterceptorTest {
 
@@ -30,7 +30,7 @@ public class ExcludedAnnotationInterceptorTest {
   @Before
   public void setUp() {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory) VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR);
     this.mutator = new GregorMutater(source, m -> true, mutators);
   }
 

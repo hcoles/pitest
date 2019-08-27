@@ -22,15 +22,15 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-public enum VoidMethodCallMutator implements MethodMutatorFactory {
+public enum NonVoidMethodCallsMutator implements MethodMutatorFactory {
 
-  VOID_METHOD_CALL_MUTATOR;
+  NON_VOID_METHOD_CALLS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, voidMethods());
+        this, nonVoidMethods());
   }
 
   @Override
@@ -43,8 +43,8 @@ public enum VoidMethodCallMutator implements MethodMutatorFactory {
     return name();
   }
 
-  private static BiFunction<String, String, Boolean> voidMethods() {
-    return (name, desc) -> MethodInfo.isVoid(desc) && !MethodInfo.isConstructor(name);
+  private BiFunction<String, String, Boolean> nonVoidMethods() {
+    return (name, desc) -> !MethodInfo.isVoid(desc);
   }
 
 }

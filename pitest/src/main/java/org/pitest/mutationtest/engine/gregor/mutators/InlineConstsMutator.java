@@ -25,14 +25,14 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.util.PitError;
 
 /**
- * The <code>InlineConstantMutator</code> is a mutator that mutates integer
+ * The <code>InlineConstsMutator</code> is a mutator that mutates integer
  * inline constants (including short, byte, long) by adding 1 and that mutates
  * float inline constants (including double) by replacing them with 1.
  *
  *
  * @author Stefan Penndorf &lt;stefan.penndorf@gmail.com&gt;
  */
-public class InlineConstantMutator implements MethodMutatorFactory {
+public class InlineConstsMutator implements MethodMutatorFactory {
 
   private final class InlineConstantVisitor extends MethodVisitor {
     private final MutationContext context;
@@ -124,7 +124,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     private <T extends Number> boolean shouldMutate(final T constant,
         final T replacement) {
       final MutationIdentifier mutationId = this.context.registerMutation(
-          InlineConstantMutator.this, "Substituted " + constant + " with "
+          InlineConstsMutator.this, "Substituted " + constant + " with "
               + replacement);
 
       return this.context.shouldMutate(mutationId);

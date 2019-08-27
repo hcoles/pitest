@@ -14,7 +14,7 @@ public class PrimitiveReturnMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
+    createTesteeWith(PrimitiveReturnsMutator.PRIMITIVE_RETURNS_MUTATOR);
   }
 
   @Test

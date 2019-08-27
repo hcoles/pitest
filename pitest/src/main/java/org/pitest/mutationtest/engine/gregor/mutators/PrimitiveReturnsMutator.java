@@ -23,7 +23,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  */
 public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
 
-  PRIMITIVE_RETURN_VALS_MUTATOR;
+  PRIMITIVE_RETURNS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,

@@ -29,14 +29,14 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallsMutatorTest.HasConstructorCall;
 
-public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
+public class NonVoidMethodCallsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
   }
 
   @Test
@@ -246,7 +246,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Ignore("functionality moving to filter")
   public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
     createTesteeWith(i -> true,
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
 
   }

@@ -21,9 +21,9 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  *
  * Does not mutate methods annotated with NotNull
  */
-public enum NullReturnValsMutator implements MethodMutatorFactory {
+public enum NullReturnsMutator implements MethodMutatorFactory {
 
-  NULL_RETURN_VALUES;
+  NULL_RETURNS_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,

@@ -6,22 +6,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
-public class BooleanFalseReturnValsMutatorTest extends MutatorTestBase {
+public class TrueReturnsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);
+    createTesteeWith(TrueReturnsMutator.TRUE_RETURNS_MUTATOR);
   }
 
   @Test
-  public void mutatesReturnTrueToReturnFalse() throws Exception {
+  public void mutatesReturnFalseToReturnTrue() throws Exception {
     assertMutantCallableReturns(new BooleanReturn(),
-        createFirstMutant(BooleanReturn.class), "false");
+        createFirstMutant(BooleanReturn.class), "true");
   }
 
   @Test
   public void describesMutationsToPrimitiveBooleans() {
-    assertMutantDescriptionIncludes("replaced boolean return with false", BooleanReturn.class);
+    assertMutantDescriptionIncludes("replaced boolean return with true", BooleanReturn.class);
     assertMutantDescriptionIncludes("BooleanReturn::mutable", BooleanReturn.class);
   }
 
@@ -31,15 +31,15 @@ public class BooleanFalseReturnValsMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void mutatesBoxedTrueToFalse() throws Exception {
-    assertMutantCallableReturns(new BoxedTrue(),
-        createFirstMutant(BoxedTrue.class), false);
+  public void mutatesBoxedFalseToTrue() throws Exception {
+    assertMutantCallableReturns(new BoxedFalse(),
+        createFirstMutant(BoxedFalse.class), true);
   }
 
   @Test
   public void describesMutationsToBoxedBooleans() {
-    assertMutantDescriptionIncludes("replaced Boolean return with False", BoxedTrue.class);
-    assertMutantDescriptionIncludes("BoxedTrue::call", BoxedTrue.class);
+    assertMutantDescriptionIncludes("replaced Boolean return with True", BoxedFalse.class);
+    assertMutantDescriptionIncludes("BoxedFalse::call", BoxedFalse.class);
   }
 
   @Test
@@ -49,7 +49,7 @@ public class BooleanFalseReturnValsMutatorTest extends MutatorTestBase {
 
   private static class BooleanReturn implements Callable<String> {
     public boolean mutable() {
-      return true;
+      return false;
     }
 
     @Override
@@ -70,10 +70,10 @@ public class BooleanFalseReturnValsMutatorTest extends MutatorTestBase {
   }
 
 
-  private static class BoxedTrue implements Callable<Boolean> {
+  private static class BoxedFalse implements Callable<Boolean> {
     @Override
     public Boolean call() {
-      return Boolean.TRUE;
+      return false;
     }
   }
 

@@ -32,24 +32,25 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.EmptyReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.FalseReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.InlineConstsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.TrueReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.InlineConstantMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullReturnsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalsMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -101,7 +102,7 @@ public final class Mutator {
      * Optional mutator that mutates integer and floating point inline
      * constants.
      */
-    add("INLINE_CONSTS", new InlineConstantMutator());
+    add("INLINE_CONSTS", new InlineConstsMutator());
 
     /**
      * Default mutator that mutates binary arithmetic operations.
@@ -112,7 +113,7 @@ public final class Mutator {
      * Default mutator that removes method calls to void methods.
      *
      */
-    add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    add("VOID_METHOD_CALLS", VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR);
 
     /**
      * Default mutator that negates conditionals.
@@ -143,12 +144,12 @@ public final class Mutator {
      * Optional mutator that removes method calls to non void methods.
      */
     add("NON_VOID_METHOD_CALLS",
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
 
     /**
      * Optional mutator that replaces constructor calls with null values.
      */
-    add("CONSTRUCTOR_CALLS", ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+    add("CONSTRUCTOR_CALLS", ConstructorCallsMutator.CONSTRUCTOR_CALLS_MUTATOR);
 
     /**
      * Removes conditional statements so that guarded statements always execute
@@ -156,22 +157,22 @@ public final class Mutator {
      * ORDER version mutates only those.
      */
 
-    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL,
+    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalsMutator(Choice.EQUAL,
         true));
-    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalsMutator(
         Choice.EQUAL, false));
-    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalsMutator(
         Choice.ORDER, true));
-    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(
+    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalsMutator(
         Choice.ORDER, false));
-    addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
+    addGroup("REMOVE_CONDITIONALS", RemoveConditionalsMutator.makeMutators());
 
-    add("TRUE_RETURNS", BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN);
-    add("FALSE_RETURNS", BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);
-    add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
-    add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
-    add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
-    addGroup("RETURNS", betterReturns());
+    add("TRUE_RETURNS", TrueReturnsMutator.TRUE_RETURNS_MUTATOR);
+    add("FALSE_RETURNS", FalseReturnsMutator.FALSE_RETURNS_MUTATOR);
+    add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURNS_MUTATOR);
+    add("EMPTY_RETURNS", EmptyReturnsMutator.EMPTY_RETURNS_MUTATOR);
+    add("NULL_RETURNS", NullReturnsMutator.NULL_RETURNS_MUTATOR);
+    addGroup("RETURNS", returns());
 
     experimentalMutators();
     
@@ -198,14 +199,12 @@ public final class Mutator {
     /**
      * Experimental mutator that removed assignments to member variables.
      */
-    add("EXPERIMENTAL_MEMBER_VARIABLE",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
+    add("EXPERIMENTAL_MEMBER_VARIABLE", new MemberVariableMutator());
 
     /**
      * Experimental mutator that swaps labels in switch statements
      */
-    add("EXPERIMENTAL_SWITCH",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
+    add("EXPERIMENTAL_SWITCH", new SwitchMutator());
 
     /**
      * Experimental mutator that replaces method call with one of its parameters
@@ -292,7 +291,7 @@ public final class Mutator {
   private static Collection<MethodMutatorFactory> stronger() {
     return combine(
         defaults(),
-        group(new RemoveConditionalMutator(Choice.EQUAL, false),
+        group(new RemoveConditionalsMutator(Choice.EQUAL, false),
             new SwitchMutator()));
   }
 
@@ -310,7 +309,7 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> defaults() {
     return group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
         ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
@@ -322,19 +321,19 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> newDefaults() {
     return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
         MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+        VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+        IncrementsMutator.INCREMENTS_MUTATOR), returns());
   }
 
 
-  public static Collection<MethodMutatorFactory> betterReturns() {
-    return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
-        BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
-        PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
-        EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
-        NullReturnValsMutator.NULL_RETURN_VALUES);
+  public static Collection<MethodMutatorFactory> returns() {
+    return group(TrueReturnsMutator.TRUE_RETURNS_MUTATOR,
+        FalseReturnsMutator.FALSE_RETURNS_MUTATOR,
+        PrimitiveReturnsMutator.PRIMITIVE_RETURNS_MUTATOR,
+        EmptyReturnsMutator.EMPTY_RETURNS_MUTATOR,
+        NullReturnsMutator.NULL_RETURNS_MUTATOR);
   }
 
   public static Collection<MethodMutatorFactory> aor() {

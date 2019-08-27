@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 
 public class InfiniteIteratorLoopFilterTest extends InfiniteLoopBaseTest {
@@ -38,7 +38,7 @@ public class InfiniteIteratorLoopFilterTest extends InfiniteLoopBaseTest {
 
   @Test
   public void shouldFilterMutationsThatRemoveIteratorNextCalls() {
-    final GregorMutater mutator = createMutator(NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    final GregorMutater mutator = createMutator(NonVoidMethodCallsMutator.NON_VOID_METHOD_CALLS_MUTATOR);
     final List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForEachLoop.class));
     assertThat(mutations).hasSize(3);
 

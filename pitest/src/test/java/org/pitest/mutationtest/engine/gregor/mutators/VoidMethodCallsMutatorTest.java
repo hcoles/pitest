@@ -23,15 +23,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
-import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
+import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallsMutatorTest.HasConstructorCall;
+import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallsMutatorTest.HasIntMethodCall;
 
-public class VoidMethodCallMutatorTest extends MutatorTestBase {
+public class VoidMethodCallsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+        VoidMethodCallsMutator.VOID_METHOD_CALLS_MUTATOR);
   }
 
   static class HasVoidMethodCall implements Callable<String> {
