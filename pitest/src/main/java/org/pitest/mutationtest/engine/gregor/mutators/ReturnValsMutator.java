@@ -96,7 +96,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "mutated return of Object value for "
             + methodInfo.getDescription()
             + " to ( if (x != null) null else throw new RuntimeException )";
@@ -116,7 +116,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of long value with value + 1 for "
             + methodInfo.getDescription();
       }
@@ -148,7 +148,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of float value with -(x + 1) for "
             + methodInfo.getDescription();
       }
@@ -180,7 +180,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of double value with -(x + 1) for "
             + methodInfo.getDescription();
       }
@@ -203,7 +203,7 @@ class ReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return of integer sized value with (x == 0 ? 1 : 0)";
       }
 

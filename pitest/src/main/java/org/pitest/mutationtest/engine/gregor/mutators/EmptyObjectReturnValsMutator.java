@@ -112,7 +112,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return msg + " for " + methodInfo.getDescription();
       }
     };
@@ -129,7 +129,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced Long return value with 0L for " + methodInfo.getDescription();
       }
 
@@ -148,7 +148,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced Double return value with 0 for " + methodInfo.getDescription();
       }
     };
@@ -165,7 +165,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced Float return value with 0 for " + methodInfo.getDescription();
       }
     };
@@ -181,7 +181,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with \"\" for " + methodInfo.getDescription();
       }
     };
@@ -197,7 +197,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with Collections.emptyList for " + methodInfo.getDescription();
       }
     };
@@ -213,7 +213,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with Collections.emptyList for " + methodInfo.getDescription();
       }
     };
@@ -229,7 +229,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with Optional.empty for " + methodInfo.getDescription();
       }
     };

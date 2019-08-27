@@ -76,7 +76,7 @@ class BooleanFalseMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced boolean return with false for " + methodInfo.getDescription();
       }
     };
@@ -93,7 +93,7 @@ class BooleanFalseMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced Boolean return with False for " + methodInfo.getDescription();
       }
     };
