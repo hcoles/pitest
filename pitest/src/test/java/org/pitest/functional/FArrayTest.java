@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.pitest.functional;
 
 import static org.junit.Assert.assertEquals;

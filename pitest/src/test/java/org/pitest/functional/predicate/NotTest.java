@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.pitest.functional.predicate;
 
 import static org.junit.Assert.assertFalse;
