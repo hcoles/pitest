@@ -156,7 +156,7 @@ public class PitMojoIT {
   }
 
   @Test
-  //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
+  @Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
     skipIfJavaVersionNotSupportByThirdParty();
     File testDir = prepare("/pit-powermock");
@@ -430,11 +430,9 @@ public class PitMojoIT {
 
   private static String getVersion() {
     String path = "/version.prop";
-    InputStream stream = Pitest.class.getResourceAsStream(path);
-    Properties props = new Properties();
-    try {
+    try(InputStream stream = Pitest.class.getResourceAsStream(path)) {
+      Properties props = new Properties();
       props.load(stream);
-      stream.close();
       return (String) props.get("version");
     } catch (IOException e) {
       throw new RuntimeException(e);
