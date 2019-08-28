@@ -32,6 +32,12 @@
 	<!-- <module name="RegexpSingleline"> <property name="format" value="\s+$"/>
 		<property name="message" value="Line has trailing spaces."/> </module> -->
 
+	<!-- Only accept linux style end of line-->
+	<module name="RegexpMultiline">
+		<property name="format" value="(?s:(\r\n|\r).*)"/>
+		<property name="message" value="Only LF (linux style) end of line are accepted"/>
+	</module>
+
 	<module name="TreeWalker">
 
 		<property name="cacheFile" value="${checkstyle.cache.file}" />
