@@ -207,13 +207,6 @@ public class TestGregorMutater extends MutatorTestBase {
     }
   }
 
-  @Test
-  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentMethods() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(TwoMethods.class);
-    assertTwoMutationsInDifferentBlocks(actualDetails);
-  }
-
   public static class SwitchStatement {
     public void a(int i, final int b) {
       switch (b) {
@@ -252,12 +245,12 @@ public class TestGregorMutater extends MutatorTestBase {
   }
 
   @Test
-  public void shouldRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
+  public void shouldNotRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
     createTesteeWith(Mutator.byName("INCREMENTS"));
     final List<MutationDetails> actualDetails = findMutationsFor(FallThroughSwitch.class);
     assertEquals(2, actualDetails.size());
     final int firstMutationBlock = actualDetails.get(0).getBlock();
-    assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+    assertEquals(firstMutationBlock+1, actualDetails.get(1).getBlock());
   }
 
   public static class HasExceptionBlock {

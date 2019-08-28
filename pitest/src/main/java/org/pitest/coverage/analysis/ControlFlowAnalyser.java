@@ -32,7 +32,17 @@ public class ControlFlowAnalyser {
   public static List<Block> analyze(final MethodNode mn) {
     final List<Block> blocks = new ArrayList<>(mn.instructions.size());
 
-    final Set<AbstractInsnNode> jumpTargets = findJumpTargets(mn.instructions);
+    final Set<LabelNode> jumpTargets = findJumpTargets(mn.instructions);
+
+    /*
+     * Some projects/libraries have gigantic static initializer methods
+     * that load up huge constant arrays. These methods are nearly at the
+     * size limit - and adding a probe at each store blows it up.
+     *
+     * So, for methods with many instructions, we'll ignore array stores
+     * as ending a block.
+     */
+    final boolean ignoreArrayStores = mn.instructions.size() > 10000;
 
     // not managed to construct bytecode to show need for this
     // as try catch blocks usually have jumps at their boundaries anyway.
@@ -54,10 +64,18 @@ public class ControlFlowAnalyser {
         blockLines.add(lnn.line);
         lastLine = lnn.line;
       } else if (jumpTargets.contains(ins) && (blockStart != i)) {
+        if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
+            .get(blocks.size() - 1).getLines().isEmpty()) {
+          blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
+        }
         blocks.add(new Block(blockStart, i - 1, blockLines));
         blockStart = i;
         blockLines = smallSet();
-      } else if (endsBlock(ins)) {
+      } else if (endsBlock(ins, ignoreArrayStores)) {
+        if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
+            .get(blocks.size() - 1).getLines().isEmpty()) {
+          blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
+        }
         blocks.add(new Block(blockStart, i, blockLines));
         blockStart = i + 1;
         blockLines = smallSet();
@@ -88,15 +106,28 @@ public class ControlFlowAnalyser {
   }
 
   private static void addtryCatchBoundaries(final MethodNode mn,
-      final Set<AbstractInsnNode> jumpTargets) {
+      final Set<LabelNode> jumpTargets) {
     for (final Object each : mn.tryCatchBlocks) {
       final TryCatchBlockNode tcb = (TryCatchBlockNode) each;
       jumpTargets.add(tcb.handler);
     }
   }
 
-  private static boolean endsBlock(final AbstractInsnNode ins) {
-    return (ins instanceof JumpInsnNode) || isReturn(ins);
+  private static boolean endsBlock(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
+    return (ins instanceof JumpInsnNode) || isReturn(ins)
+        || isMightThrowException(ins, ignoreArrayStores);
+  }
+
+  private static boolean isMightThrowException(final AbstractInsnNode ins,
+      final boolean ignoreArrayStores) {
+    switch (ins.getType()) {
+    case AbstractInsnNode.METHOD_INSN:
+      return true;
+    default:
+      return false;
+    }
+
   }
 
   private static boolean isReturn(final AbstractInsnNode ins) {
@@ -116,8 +147,8 @@ public class ControlFlowAnalyser {
 
   }
 
-  private static Set<AbstractInsnNode> findJumpTargets(final InsnList instructions) {
-    final Set<AbstractInsnNode> jumpTargets = new HashSet<>();
+  private static Set<LabelNode> findJumpTargets(final InsnList instructions) {
+    final Set<LabelNode> jumpTargets = new HashSet<>();
     final ListIterator<AbstractInsnNode> it = instructions.iterator();
     while (it.hasNext()) {
       final AbstractInsnNode o = it.next();

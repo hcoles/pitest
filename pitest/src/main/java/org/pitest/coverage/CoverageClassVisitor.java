@@ -107,12 +107,9 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
           .visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
       clinitMv.visitCode();
 
-      clinitMv.visitIntInsn(
-          (this.classId <= Byte.MAX_VALUE ? Opcodes.BIPUSH : Opcodes.SIPUSH),
-          this.classId);
-      clinitMv.visitIntInsn(
-          (1 + this.probeCount <= Byte.MAX_VALUE ? Opcodes.BIPUSH : Opcodes.SIPUSH),
-          1 + this.probeCount);
+
+      pushConstant(clinitMv, this.classId);
+      pushConstant(clinitMv, this.probeCount);
       clinitMv
           .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,
               "getOrRegisterClassProbes", "(II)[Z", false);
@@ -122,6 +119,37 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       clinitMv.visitInsn(Opcodes.RETURN);
       clinitMv.visitMaxs(0, 0);
       clinitMv.visitEnd();
+    }
+  }
+
+  private void pushConstant(MethodVisitor mv, int value) {
+    switch (value) {
+      case 0:
+        mv.visitInsn(Opcodes.ICONST_0);
+        break;
+      case 1:
+        mv.visitInsn(Opcodes.ICONST_1);
+        break;
+      case 2:
+        mv.visitInsn(Opcodes.ICONST_2);
+        break;
+      case 3:
+        mv.visitInsn(Opcodes.ICONST_3);
+        break;
+      case 4:
+        mv.visitInsn(Opcodes.ICONST_4);
+        break;
+      case 5:
+        mv.visitInsn(Opcodes.ICONST_5);
+        break;
+      default:
+        if (value <= Byte.MAX_VALUE) {
+          mv.visitIntInsn(Opcodes.BIPUSH, value);
+        } else if (value <= Short.MAX_VALUE) {
+          mv.visitIntInsn(Opcodes.SIPUSH, value);
+        } else {
+          mv.visitLdcInsn(value);
+        }
     }
   }
 

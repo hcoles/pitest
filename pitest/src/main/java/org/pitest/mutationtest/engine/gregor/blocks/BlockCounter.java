@@ -8,4 +8,6 @@ public interface BlockCounter {
 
   void registerFinallyBlockEnd();
 
+  void registerNewMethodStart();
+
 }

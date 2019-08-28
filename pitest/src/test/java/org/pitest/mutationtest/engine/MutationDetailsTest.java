@@ -26,6 +26,15 @@ public class MutationDetailsTest {
     assertThat(actual).isNotSameAs(testee);
     assertThat(actual.mayPoisonJVM()).isTrue();
   }
+  
+  @Test
+  public void shouldDefaultFilenameWhenNoneKnown() {
+    final MutationDetails testee = MutationDetailsMother
+        .aMutationDetail()
+        .withFilename(null)
+        .build();
+    assertThat(testee.getFilename()).isEqualTo("unknown_source");
+  }
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {

@@ -93,11 +93,12 @@ public class CoverageProcessSystemTest {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TesteeWithComplexConstructorsTest.class);
     assertTrue(coversBlock(coveredClasses, "testHigh", 0));
     assertTrue(coversBlock(coveredClasses, "testHigh", 1));
-    assertFalse(coversBlock(coveredClasses, "testHigh", 2));
+    assertTrue(coversBlock(coveredClasses, "testHigh", 2));
 
     assertTrue(coversBlock(coveredClasses, "testLow", 0));
-    assertTrue(coversBlock(coveredClasses, "testLow", 2));
-    assertFalse(coversBlock(coveredClasses, "testLow", 1));
+    assertTrue(coversBlock(coveredClasses, "testLow", 1));
+    assertTrue(coversBlock(coveredClasses, "testLow", 4));
+    assertFalse(coversBlock(coveredClasses, "testLow", 2));
   }
 
   @Test
@@ -232,7 +233,7 @@ public class CoverageProcessSystemTest {
         Location.location(clazz, this.foo, "()V"), 0)));
 
         assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()V"), 1)));
+        Location.location(clazz, this.foo, "()V"), 4)));
   }
 
   @Test

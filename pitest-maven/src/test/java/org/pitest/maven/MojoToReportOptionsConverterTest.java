@@ -22,12 +22,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -36,7 +38,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
-import java.util.function.Predicate;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
@@ -104,7 +105,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>bar</param>" + //
         "                  </jvmArgs>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList("foo", "bar"), actual.getJvmArgs());
+
+    List<String> expectedArgs = new ArrayList<>();
+    expectedArgs.addAll(ReportOptions.DEFAULT_CHILD_JVM_ARGS);
+    expectedArgs.add("foo");
+    expectedArgs.add("bar");
+
+    assertEquals(expectedArgs, actual.getJvmArgs());
   }
 
   public void testParsesListOfMutationOperators() {

@@ -51,14 +51,12 @@ public final class MutationDetails implements Serializable {
       final boolean isInFinallyBlock, final PoisonStatus poison) {
     this.id = id;
     this.description = Preconditions.checkNotNull(description);
-    this.filename = Preconditions.checkNotNull(filename);
+    this.filename = defaultFilenameIfNotSupplued(filename);
     this.lineNumber = lineNumber;
     this.block = block;
     this.isInFinallyBlock = isInFinallyBlock;
     this.poison = poison;
   }
-
-
 
   @Override
   public String toString() {
@@ -259,6 +257,17 @@ public final class MutationDetails implements Serializable {
    */
   public boolean isInFinallyBlock() {
     return this.isInFinallyBlock;
+  }
+  
+  private String defaultFilenameIfNotSupplued(String filename) {
+    // the BuildVerifier should throw an error if classes are compiled 
+    // without filename debug info, however classes may be generated
+    // by annotation processors. These can be dealt with based on their
+    // bytecode, but they must have a non null source file. 
+    if (filename == null) {
+      return "unknown_source";
+    }
+    return filename;
   }
 
   @Override

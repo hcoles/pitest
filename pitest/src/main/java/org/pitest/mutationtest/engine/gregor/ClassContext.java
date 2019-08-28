@@ -107,7 +107,12 @@ class ClassContext implements BlockCounter {
   }
 
   public int getCurrentBlock() {
-    return this.blockCounter.getCurrentBlock();
+    return this.blockCounter.getCurrentBlockThisMethod();
+  }
+
+  @Override
+  public void registerNewMethodStart() {
+    this.blockCounter.registerNewMethodStart();
   }
 
   public boolean isWithinFinallyBlock() {

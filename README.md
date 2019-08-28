@@ -8,9 +8,20 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.8-SNAPSHOT
+### 1.4.10-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.9
+
+* #613 / #623 - Fix for powermock issues on (thanks @jon-bell)
+* #614 - Improved error message when no test plugin (thanks @szpak)
+* #620 - Support annotation processors such as Micronaut that do not set debug filename 
+
+### 1.4.8
+
+* #597 Fix for bug in coverage when large number of classes (thanks @jon-bell)
+* #601 Avoid stealing keyboard focus on macos (thanks @maxgabut)
 
 ### 1.4.7
 
@@ -26,15 +37,15 @@ Nothing yet, why not contribute?
 
 * #557 - Issues running on Java 8
 
+<details>
+    <summary>Older versions</summary>
+
 ### 1.4.4
  
 * #518 - Experimental BigInteger mutator (thanks @ripdajacker)
 * #513 - Sort mutators in html report (thanks @ThLeu)
 * #553 - Classic mutators from literature (thanls @LaurentTho3)
 * #528 - Added skipFailingTests option from maven plugin (thanks @nicerloop)
-
-<details>
-    <summary>Older versions</summary>
 
 ### 1.4.3
 

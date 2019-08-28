@@ -61,7 +61,7 @@ final class Receive implements ReceiveStrategy {
       // nb, convert from classwide id to method scoped index within
       // BlockLocation
       this.probeToBlock.put(CodeCoverageStore.encode(classId, i),
-          new BlockLocation(loc, i - first));
+          new BlockLocation(loc, i - first, is.readInt(), is.readInt()));
     }
   }
 

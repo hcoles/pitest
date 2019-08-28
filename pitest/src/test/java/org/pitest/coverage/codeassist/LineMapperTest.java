@@ -37,7 +37,7 @@ public class LineMapperTest {
 
     final Location l = Location.location(ClassName.fromClass(OneBlock.class),
         MethodName.fromString("foo"), "()I");
-    final BlockLocation bl = new BlockLocation(l, 0);
+    final BlockLocation bl = new BlockLocation(l, 0, -1, -1);
 
     assertThat(actual.get(bl)).containsOnly(5);
 
@@ -65,8 +65,11 @@ public class LineMapperTest {
         MethodName.fromString("foo"), "(I)I");
 
     assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(5, 6);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(7, 8);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).contains(10, 11);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(7);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).contains(8,9);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 3))).contains(10);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 4))).contains(12,13);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 5))).contains(14);
   }
 
   @Test
@@ -87,7 +90,7 @@ public class LineMapperTest {
         ClassName.fromClass(LastLineOfContructorCheck.class),
         MethodName.fromString("<init>"), "()V");
 
-    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).contains(6);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).contains(6);
   }
 
   @Test
@@ -95,9 +98,9 @@ public class LineMapperTest {
     final Map<BlockLocation, Set<Integer>> actual = analyse(ThreeBlocks2.class);
     final Location l = Location.location(ClassName.fromClass(ThreeBlocks2.class),
         MethodName.fromString("foo"), "(I)I");
-    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(105);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(106);
-    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(108);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 0))).containsOnly(108);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 1))).containsOnly(109);
+    assertThat(actual.get(BlockLocation.blockLocation(l, 2))).containsOnly(111);
   }
 
   static class ThreeBlocks2 {
