@@ -73,7 +73,7 @@ class BooleanTrueMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced boolean return with true for " + methodInfo.getDescription();
       }
     };
@@ -90,7 +90,7 @@ class BooleanTrueMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced Boolean return with True for " + methodInfo.getDescription();
       }
     };

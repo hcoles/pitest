@@ -54,7 +54,7 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
     final ZeroOperandMutation mutation = getMutations().get(opcode);
 
     final MutationIdentifier newId = this.context.registerMutation(
-        this.factory, mutation.decribe(opcode, this.methodInfo));
+        this.factory, mutation.describe(opcode, this.methodInfo));
 
     if (this.context.shouldMutate(newId)) {
       mutation.apply(opcode, this.mv);
