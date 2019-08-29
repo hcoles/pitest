@@ -6,6 +6,7 @@ org.pitest.mutationtest.build.intercept.annotations.ExcludedAnnotationIntercepto
 org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.TryWithResourcesFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.ImplicitNullCheckFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.MethodReferenceNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.ForEachLoopFilterFactory
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
