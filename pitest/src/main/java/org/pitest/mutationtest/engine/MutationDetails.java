@@ -104,7 +104,7 @@ public final class MutationDetails implements Serializable {
   @Deprecated
   public String getLocation() {
     // fixme this should not be here used in string template
-    return this.id.getLocation().describe();
+    return StringUtil.escapeBasicHtmlChars(this.id.getLocation().describe());
   }
 
   /**
