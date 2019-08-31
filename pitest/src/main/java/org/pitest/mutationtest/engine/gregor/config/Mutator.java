@@ -86,76 +86,74 @@ public final class Mutator {
 
   static {
 
-    /**
+    /*
      * Default mutator that inverts the negation of integer and floating point
      * numbers.
      */
     add("INVERT_NEGS", InvertNegsMutator.INVERT_NEGS_MUTATOR);
 
-    /**
+    /*
      * Default mutator that mutates the return values of methods.
      */
     add("RETURN_VALS", ReturnValsMutator.RETURN_VALS_MUTATOR);
 
-    /**
+    /*
      * Optional mutator that mutates integer and floating point inline
      * constants.
      */
     add("INLINE_CONSTS", new InlineConstantMutator());
 
-    /**
+    /*
      * Default mutator that mutates binary arithmetic operations.
      */
     add("MATH", MathMutator.MATH_MUTATOR);
 
-    /**
+    /*
      * Default mutator that removes method calls to void methods.
      *
      */
     add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
 
-    /**
+    /*
      * Default mutator that negates conditionals.
      */
     add("NEGATE_CONDITIONALS",
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
 
-    /**
+    /*
      * Default mutator that replaces the relational operators with their
      * boundary counterpart.
      */
     add("CONDITIONALS_BOUNDARY",
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
 
-    /**
+    /*
      * Default mutator that mutates increments, decrements and assignment
      * increments and decrements of local variables.
      */
     add("INCREMENTS", IncrementsMutator.INCREMENTS_MUTATOR);
 
-    /**
+    /*
      * Optional mutator that removes local variable increments.
      */
-
     add("REMOVE_INCREMENTS", RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
 
-    /**
+    /*
      * Optional mutator that removes method calls to non void methods.
      */
     add("NON_VOID_METHOD_CALLS",
         NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
 
-    /**
+    /*
      * Optional mutator that replaces constructor calls with null values.
      */
     add("CONSTRUCTOR_CALLS", ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
 
-    /**
+    /*
      * Removes conditional statements so that guarded statements always execute
      * The EQUAL version ignores LT,LE,GT,GE, which is the default behaviour,
      * ORDER version mutates only those.
      */
-
     add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL,
         true));
     add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(
@@ -174,7 +172,7 @@ public final class Mutator {
     addGroup("RETURNS", betterReturns());
 
     experimentalMutators();
-    
+
     researchMutators();
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
@@ -190,47 +188,47 @@ public final class Mutator {
     addGroup("UOI", uoi());
 
   }
-  
+
   /**
    * Mutators that have not yet been battle tested
    */
   private static void experimentalMutators() {
-    /**
+    /*
      * Experimental mutator that removed assignments to member variables.
      */
     add("EXPERIMENTAL_MEMBER_VARIABLE",
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
 
-    /**
+    /*
      * Experimental mutator that swaps labels in switch statements
      */
     add("EXPERIMENTAL_SWITCH",
         new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
 
-    /**
+    /*
      * Experimental mutator that replaces method call with one of its parameters
      * of matching type
      */
     add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
 
-    /**
+    /*
      * Experimental mutator that replaces method call with this
      */
     add("EXPERIMENTAL_NAKED_RECEIVER", NakedReceiverMutator.NAKED_RECEIVER);
-    
-    /**
+
+    /*
      * Experimental mutator that swaps big integer methods
      */
     add("EXPERIMENTAL_BIG_INTEGER", BigIntegerMutator.INSTANCE);
   }
-  
+
   /**
    * "Research" mutators that makeup "PITrv" as described in
    * https://researchrepository.ucd.ie/bitstream/10197/7748/4/ISSTA_2016_Demo_Camera_ready.pdf
    */
   private static void researchMutators() {
-    /**
+    /*
      * mutators that mutate binary arithmetic operations.
      */
     add("AOR_1", AOR1Mutator.AOR_1_MUTATOR);
@@ -238,19 +236,19 @@ public final class Mutator {
     add("AOR_3", AOR3Mutator.AOR_3_MUTATOR);
     add("AOR_4", AOR4Mutator.AOR_4_MUTATOR);
 
-    /**
+    /*
      * mutator that replaces a variable with its negation.
      */
     add("ABS", ABSMutator.ABS_MUTATOR);
 
-    /**
+    /*
      * mutators that replace a binary arithmetic operations with one of its members.
      */
     add("AOD1", AOD1Mutator.AOD_1_MUTATOR);
     add("AOD1", AOD2Mutator.AOD_2_MUTATOR);
 
 
-    /**
+    /*
      * mutators that replace an inline constant a with 0, 1, -1, a+1 or a-1 .
      */
     add("CRCR1", CRCR1Mutator.CRCR_1_MUTATOR);
@@ -260,14 +258,14 @@ public final class Mutator {
     add("CRCR5", CRCR5Mutator.CRCR_5_MUTATOR);
     add("CRCR6", CRCR6Mutator.CRCR_6_MUTATOR);
 
-    /**
+    /*
      * mutators that replace an bitwise ands and ors.
      */
     add("OBBN1", OBBN1Mutator.OBBN_1_MUTATOR);
     add("OBBN2", OBBN2Mutator.OBBN_2_MUTATOR);
     add("OBBN3", OBBN3Mutator.OBBN_3_MUTATOR);
 
-    /**
+    /*
      * mutators that replace conditional operators.
      */
     add("ROR1", ROR1Mutator.ROR_1_MUTATOR);
@@ -276,7 +274,7 @@ public final class Mutator {
     add("ROR4", ROR4Mutator.ROR_4_MUTATOR);
     add("ROR5", ROR5Mutator.ROR_5_MUTATOR);
 
-    /**
+    /*
      * mutators that insert increments.
      */
     add("UOI1", UOI1Mutator.UOI_1_MUTATOR);

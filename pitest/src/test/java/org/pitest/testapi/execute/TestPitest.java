@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.pitest.testapi.execute;
 
 import static org.mockito.Matchers.any;

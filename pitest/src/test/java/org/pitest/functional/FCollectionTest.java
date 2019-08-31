@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.pitest.functional;
 
 import static org.assertj.core.api.Assertions.assertThat;
