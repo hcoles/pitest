@@ -245,7 +245,7 @@ public final class Mutator {
      * mutators that replace a binary arithmetic operations with one of its members.
      */
     add("AOD1", AOD1Mutator.AOD_1_MUTATOR);
-    add("AOD1", AOD2Mutator.AOD_2_MUTATOR);
+    add("AOD2", AOD2Mutator.AOD_2_MUTATOR);
 
 
     /*
