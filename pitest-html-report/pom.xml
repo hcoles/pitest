@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.4.10-SNAPSHOT</version>
+		<version>1.4.10</version>
 	</parent>
 	<artifactId>pitest-html-report</artifactId>
 	<name>pitest-html-report</name>
