@@ -8,9 +8,16 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.10-SNAPSHOT
+### 1.4.11-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.10
+
+* #534 Smaller blocks for more precise test targeting (thanks @jon-bell) 
+* #664 Fix A0D2 map key (thanks @Vampire) 
+* #656 Escape characters in init methods for html report (thanks @Vampire) 
+* #404 Filter junk mutations to compiler generated Objects.requireNonNull calls
 
 ### 1.4.9
 
