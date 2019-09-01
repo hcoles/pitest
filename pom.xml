@@ -7,7 +7,7 @@
 	</organization>
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.4.10</version>
+	<version>1.4.11-SNAPSHOT</version>
 	<name>pitest-parent</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
@@ -15,7 +15,7 @@
 		<url>https://github.com/hcoles/pitest</url>
 		<connection>scm:git:git@github.com:hcoles/pitest.git</connection>
 		<developerConnection>scm:git:git@github.com:hcoles/pitest.git</developerConnection>
-		<tag>pitest-parent-1.4.10</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<licenses>
@@ -168,7 +168,7 @@
 						<dependency>
 							<groupId>org.pitest</groupId>
 							<artifactId>pitest-build-config</artifactId>
-							<version>1.4.10</version>
+							<version>1.4.11-SNAPSHOT</version>
 						</dependency>
 					</dependencies>
 					<executions>
