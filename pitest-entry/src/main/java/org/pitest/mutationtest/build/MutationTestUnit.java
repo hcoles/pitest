@@ -16,13 +16,17 @@ package org.pitest.mutationtest.build;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationStatusMap;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
@@ -75,17 +79,55 @@ public class MutationTestUnit implements MutationAnalysisUnit {
 
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
-    final MutationTestProcess worker = this.workerFactory.createWorker(
+
+    //First run mutants normally
+    MutationTestProcess worker = this.workerFactory.createWorker(
         remainingMutations, this.testClasses);
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(mutations,
         remainingMutations);
 
-    final ExitCode exitCode = waitForMinionToDie(worker);
+    ExitCode exitCode = waitForMinionToDie(worker);
     worker.results(mutations);
 
     correctResultForProcessExitCode(mutations, exitCode);
+
+    //rerun crashing mutants with isolation
+    if (this.workerFactory.isFullMutationMatrix() && !exitCode.isOk()) {
+        Collection<MutationDetails> crashedRuns = mutations.getCrashed();
+        //not rerun crashed from previous range
+        crashedRuns.retainAll(remainingMutations);
+
+        LOG.info("Rerunning " + crashedRuns.size() + " mutant(s) because of minion crash");
+        for (MutationDetails d : crashedRuns) {
+            MutationStatusTestPair result = null;
+            for (TestInfo t : d.getTestsInOrder()) {
+                MutationDetails singleTest = new MutationDetails(new MutationIdentifier(d.getId().getLocation(),
+                        d.getId().getIndexes(),d.getMutator()), d.getFilename(), d.getDescription(),
+                        d.getLineNumber(), d.getBlock());
+                singleTest.addTestsInOrder(Collections.singleton(t));
+                worker = this.workerFactory.createWorker(Collections.singleton(singleTest), this.testClasses);
+                worker.start();
+                exitCode = waitForMinionToDie(worker);
+                MutationStatusTestPair r = worker.results(singleTest);
+
+                if (exitCode != ExitCode.OK) {
+                    r.setErrorStatusAndName(DetectionStatus.getForErrorExitCode(exitCode), t.getName());
+                }
+
+                if (result == null) {
+                    result = r;
+                } else {
+                    result.accumulate(r, t.getName());
+                }
+            }
+
+            if (result != null) {
+                mutations.setStatusForMutation(d, result);
+            }
+        }
+    }
   }
 
   private static ExitCode waitForMinionToDie(final MutationTestProcess worker) {
@@ -123,7 +165,4 @@ public class MutationTestUnit implements MutationAnalysisUnit {
   private static MutationMetaData reportResults(final MutationStatusMap mutationsMap) {
     return new MutationMetaData(mutationsMap.createMutationResults());
   }
-
-
-
 }

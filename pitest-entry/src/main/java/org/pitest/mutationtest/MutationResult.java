@@ -45,6 +45,18 @@ public final class MutationResult {
     return this.status.getSucceedingTests();
   }
 
+  public List<String> getTimeoutTests() {
+    return this.status.getTimeOutTests();
+  }
+
+  public List<String> getMemoryErrorTests() {
+    return this.status.getMemoryErrorTests();
+  }
+
+  public List<String> getRunErrorTests() {
+    return this.status.getRunErrorTests();
+  }
+
   public DetectionStatus getStatus() {
     return this.status.getStatus();
   }

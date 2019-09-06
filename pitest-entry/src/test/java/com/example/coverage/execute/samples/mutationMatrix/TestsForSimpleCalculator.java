@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestsForSimpleCalculator {
 
   @Test
@@ -20,4 +23,38 @@ public class TestsForSimpleCalculator {
   public void pseudoTestSum() {
     SimpleCalculator.sum(2, 1);
   }
+
+  @Test
+  public void memoryErrorOnMutant() {
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    if (SimpleCalculator.sum(2,1) != 3) {
+      SimpleCalculator.crash(true);
+    } else {
+      SimpleCalculator.crash(false);
+    }
+  }
+
+  @Test
+  public void unknownErrorOnMutant() {
+    if (SimpleCalculator.sum(2,1) != 3) {
+      System.exit(13);
+    }
+  }
+
+  @Test
+  public void timeoutOnMutant() {
+    if (SimpleCalculator.sum(2,1) != 3) {
+//      System.exit(14);
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
 }
