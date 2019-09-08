@@ -67,7 +67,10 @@ public class CompoundClassPathRoot implements ClassPathRoot,
     for (final ClassPathRoot each : this.roots) {
       final Optional<String> additional = each.cacheLocation();
       if (additional.isPresent()) {
-        classpath = classpath.append(File.pathSeparator + additional.get());
+        if (classpath.length() != 0) {
+          classpath.append(File.pathSeparator);
+        }
+        classpath.append(additional.get());
       }
     }
 
