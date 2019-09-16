@@ -25,20 +25,6 @@ public class TestsForSimpleCalculator {
   }
 
   @Test
-  public void memoryErrorOnMutant() {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    if (SimpleCalculator.sum(2,1) != 3) {
-      SimpleCalculator.crash(true);
-    } else {
-      SimpleCalculator.crash(false);
-    }
-  }
-
-  @Test
   public void unknownErrorOnMutant() {
     if (SimpleCalculator.sum(2,1) != 3) {
       System.exit(13);

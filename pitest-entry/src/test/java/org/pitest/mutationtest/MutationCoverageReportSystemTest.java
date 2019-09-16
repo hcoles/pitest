@@ -225,10 +225,10 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     
     MutationResult mutation = resultData.get(0);
     assertEquals(KILLED, mutation.getStatus());
-    assertEquals(6, mutation.getNumberOfTestsRun());
+    assertEquals(5, mutation.getNumberOfTestsRun());
     assertEquals(2, mutation.getKillingTests().size());
     assertEquals(1, mutation.getSucceedingTests().size());
-    assertEquals(1, mutation.getMemoryErrorTests().size());
+    assertEquals(0, mutation.getMemoryErrorTests().size());
     assertEquals(1, mutation.getTimeoutTests().size());
     assertEquals(1, mutation.getRunErrorTests().size());
   }
