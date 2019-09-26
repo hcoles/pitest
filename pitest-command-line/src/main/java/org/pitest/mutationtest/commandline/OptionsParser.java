@@ -133,7 +133,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
   private final OptionSpec<String>                   includedTestMethodsSpec;
-  private final OptionSpec<Boolean>                  fullMutationMatrixSpec;
+  private final ArgumentAcceptingOptionSpec<Boolean> fullMutationMatrixSpec;
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
@@ -151,7 +151,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     projectBaseSpec;
   private final OptionSpec<String>                   inputEncoding;
   private final OptionSpec<String>                   outputEncoding;
-  
+
   public OptionsParser(Predicate<String> dependencyFilter) {
 
     this.dependencyFilter = dependencyFilter;
@@ -222,12 +222,14 @@ public class OptionsParser {
     this.detectInlinedCode = parserAccepts(USE_INLINED_CODE_DETECTION)
         .withOptionalArg()
         .ofType(Boolean.class)
-        .defaultsTo(true)
+        .defaultsTo(USE_INLINED_CODE_DETECTION.getDefault(Boolean.class))
         .describedAs(
             "whether or not to try and detect code inlined from finally blocks");
 
     this.timestampedReportsSpec = parserAccepts(TIME_STAMPED_REPORTS)
-        .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(TIME_STAMPED_REPORTS.getDefault(Boolean.class))
         .describedAs("whether or not to generated timestamped directories");
 
     this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
@@ -261,8 +263,10 @@ public class OptionsParser {
         .describedAs(
             "comma separated list of globs of test classes to exclude");
 
-    this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
-        .ofType(Boolean.class).defaultsTo(true)
+    this.verboseSpec = parserAccepts(VERBOSE)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(VERBOSE.getDefault(Boolean.class))
         .describedAs("whether or not to generate verbose output");
 
     this.verbositySpec = parserAccepts(VERBOSITY).withOptionalArg()
@@ -272,17 +276,21 @@ public class OptionsParser {
     this.exportLineCoverageSpec = parserAccepts(EXPORT_LINE_COVERAGE)
         .withOptionalArg()
         .ofType(Boolean.class)
-        .defaultsTo(true)
+        .defaultsTo(EXPORT_LINE_COVERAGE.getDefault(Boolean.class))
         .describedAs(
             "whether or not to dump per test line coverage data to disk");
 
     this.useClasspathJarSpec = parserAccepts(USE_CLASSPATH_JAR)
-        .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(USE_CLASSPATH_JAR.getDefault(Boolean.class))
         .describedAs("support large classpaths by creating a classpath jar");
-    
+
     this.includeLaunchClasspathSpec = parserAccepts(INCLUDE_LAUNCH_CLASSPATH)
-        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
-        .describedAs("whether or not to analyse launch classpath");    
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(INCLUDE_LAUNCH_CLASSPATH.getDefault(Boolean.class))
+        .describedAs("whether or not to analyse launch classpath");
 
     this.outputFormatSpec = parserAccepts(OUTPUT_FORMATS)
         .withRequiredArg()
@@ -300,12 +308,16 @@ public class OptionsParser {
         .ofType(File.class).describedAs("File with a list of additional classpath elements (one per line)");
 
     this.failWhenNoMutations = parserAccepts(FAIL_WHEN_NOT_MUTATIONS)
-        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(FAIL_WHEN_NOT_MUTATIONS.getDefault(Boolean.class))
         .describedAs("whether to throw error if no mutations found");
 
     this.skipFailingTests = parserAccepts(SKIP_FAILING_TESTS)
-            .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
-            .describedAs("whether to ignore failing tests when computing coverage");
+        .withOptionalArg()
+        .ofType(Boolean.class)
+        .defaultsTo(SKIP_FAILING_TESTS.getDefault(Boolean.class))
+        .describedAs("whether to ignore failing tests when computing coverage");
 
     this.codePaths = parserAccepts(CODE_PATHS)
         .withRequiredArg()
@@ -331,7 +343,7 @@ public class OptionsParser {
         .describedAs("TestNG groups/JUnit categories to include");
 
     this.fullMutationMatrixSpec = parserAccepts(FULL_MUTATION_MATRIX)
-        .withRequiredArg()
+        .withOptionalArg()
         .ofType(Boolean.class)
         .describedAs(
             "Whether to create a full mutation matrix")
@@ -423,7 +435,7 @@ public class OptionsParser {
    */
   private ParseResult parseCommandLine(final ReportOptions data,
       final OptionSet userArgs) {
-    data.setReportDir(userArgs.valueOf(this.reportDirSpec));
+    data.setReportDir(this.reportDirSpec.value(userArgs));
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
@@ -434,20 +446,21 @@ public class OptionsParser {
     data.setArgLine(this.argLine.value(userArgs));
 
     data.addChildJVMArgs(this.jvmArgsProcessor.values(userArgs));
-    
-    data.setFullMutationMatrix(this.fullMutationMatrixSpec.value(userArgs));
-
-
-    data.setDetectInlinedCode(userArgs.has(this.detectInlinedCode)
-        && userArgs.valueOf(this.detectInlinedCode));
-
-    data.setIncludeLaunchClasspath(userArgs
-        .valueOf(this.includeLaunchClasspathSpec));
-
-    data.setUseClasspathJar(userArgs.valueOf(useClasspathJarSpec));
-    
-    data.setShouldCreateTimestampedReports(userArgs
-        .valueOf(this.timestampedReportsSpec));
+    data.setFullMutationMatrix(
+            (userArgs.has(this.fullMutationMatrixSpec) && !userArgs.hasArgument(this.fullMutationMatrixSpec))
+                    || this.fullMutationMatrixSpec.value(userArgs));
+    data.setDetectInlinedCode(
+            (userArgs.has(this.detectInlinedCode) && !userArgs.hasArgument(this.detectInlinedCode))
+                    || this.detectInlinedCode.value(userArgs));
+    data.setIncludeLaunchClasspath(
+            (userArgs.has(this.includeLaunchClasspathSpec) && !userArgs.hasArgument(this.includeLaunchClasspathSpec))
+                    || this.includeLaunchClasspathSpec.value(userArgs));
+    data.setUseClasspathJar(
+            (userArgs.has(this.useClasspathJarSpec) && !userArgs.hasArgument(this.useClasspathJarSpec))
+                    || this.useClasspathJarSpec.value(userArgs));
+    data.setShouldCreateTimestampedReports(
+            (userArgs.has(this.timestampedReportsSpec) && !userArgs.hasArgument(this.timestampedReportsSpec))
+                    || this.timestampedReportsSpec.value(userArgs));
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
@@ -459,11 +472,14 @@ public class OptionsParser {
     configureVerbosity(data, userArgs);
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
-    data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
-    data.setSkipFailingTests(this.skipFailingTests.value(userArgs));
+    data.setFailWhenNoMutations(
+            (userArgs.has(this.failWhenNoMutations) && !userArgs.hasArgument(this.failWhenNoMutations))
+                    || this.failWhenNoMutations.value(userArgs));
+    data.setSkipFailingTests(
+            (userArgs.has(this.skipFailingTests) && !userArgs.hasArgument(this.skipFailingTests))
+                    || this.skipFailingTests.value(userArgs));
     data.setCodePaths(this.codePaths.values(userArgs));
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
-
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
@@ -471,11 +487,10 @@ public class OptionsParser {
     data.setMaximumAllowedSurvivors(this.maxSurvivingSpec.value(userArgs));
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
-    data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec
-        .values(userArgs)));
-
-    data.setExportLineCoverage(userArgs.has(this.exportLineCoverageSpec)
-        && userArgs.valueOf(this.exportLineCoverageSpec));
+    data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec.values(userArgs)));
+    data.setExportLineCoverage(
+            (userArgs.has(this.exportLineCoverageSpec) && !userArgs.hasArgument(this.exportLineCoverageSpec))
+                    || this.exportLineCoverageSpec.value(userArgs));
 
     setClassPath(userArgs, data);
 
@@ -505,8 +520,8 @@ public class OptionsParser {
   }
 
   private void configureVerbosity(ReportOptions data, OptionSet userArgs) {
-    boolean isVerbose = userArgs.has(this.verboseSpec)
-            && userArgs.valueOf(this.verboseSpec);
+    boolean isVerbose = (userArgs.has(this.verboseSpec) && !userArgs.hasArgument(this.verboseSpec))
+            || this.verboseSpec.value(userArgs);
     if (isVerbose) {
       data.setVerbosity(Verbosity.VERBOSE);
     } else {
@@ -525,18 +540,18 @@ public class OptionsParser {
           ClassPath.getClassPathElementsAsPaths(), this.dependencyFilter));
     }
     if (userArgs.has(this.classPathFile)) {
-      try (BufferedReader classPathFileBR = new BufferedReader(new FileReader(userArgs.valueOf(this.classPathFile).getAbsoluteFile()))) {
+      try (BufferedReader classPathFileBR = new BufferedReader(new FileReader(this.classPathFile.value(userArgs).getAbsoluteFile()))) {
         String element;
         while ((element = classPathFileBR.readLine()) != null) {
           elements.add(element);
         }
       } catch (final IOException ioe) {
-        LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - "
+        LOG.warning("Unable to read class path file:" + this.classPathFile.value(userArgs).getAbsolutePath() + " - "
                 + ioe.getMessage());
       }
       data.setUseClasspathJar(true);
     }
-    elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
+    elements.addAll(this.additionalClassPathSpec.values(userArgs));
     data.setClassPathElements(elements);
   }
 
