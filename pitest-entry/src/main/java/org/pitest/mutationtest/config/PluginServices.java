@@ -18,6 +18,7 @@ import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -75,6 +76,17 @@ public class PluginServices {
     return l;
   }
 
+  public Iterable<? extends File> findClientClasspathPluginDescriptors() {
+    final List<File> l = new ArrayList<>();
+    l.addAll(findMutationEngineDescriptors());
+    l.addAll(findMutationOperatorDescriptors());
+    l.addAll(findTestFrameworkPluginDescriptors());
+    l.addAll(nullPluginDescriptors());
+    l.addAll(loader.findPluginDescriptors(TransformationPlugin.class));
+    l.addAll(loader.findPluginDescriptors(EnvironmentResetPlugin.class));
+    return l;
+  }
+
   public Collection<? extends ConfigurationUpdater> findConfigurationUpdaters() {
     return load(ConfigurationUpdater.class);
   }
@@ -83,8 +95,16 @@ public class PluginServices {
     return load(MethodMutatorFactory.class);
   }
 
+  Collection<File> findMutationOperatorDescriptors() {
+    return loader.findPluginDescriptors(MethodMutatorFactory.class);
+  }
+
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return load(TestPluginFactory.class);
+  }
+
+  Collection<File> findTestFrameworkPluginDescriptors() {
+    return loader.findPluginDescriptors(TestPluginFactory.class);
   }
 
   Collection<? extends MutationGrouperFactory> findGroupers() {
@@ -99,12 +119,20 @@ public class PluginServices {
     return load(MutationEngineFactory.class);
   }
 
+  Collection<File> findMutationEngineDescriptors() {
+    return loader.findPluginDescriptors(MutationEngineFactory.class);
+  }
+
   Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
     return load(TestPrioritiserFactory.class);
   }
 
   private Collection<ClientClasspathPlugin> nullPlugins() {
     return load(ClientClasspathPlugin.class);
+  }
+
+  private Collection<File> nullPluginDescriptors() {
+    return loader.findPluginDescriptors(ClientClasspathPlugin.class);
   }
 
   public Collection<MutationInterceptorFactory> findInterceptors() {
