@@ -15,14 +15,14 @@
 package org.pitest.reflection;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.util.function.Predicate;
 
 /**
  * @author henry
  *
  */
-public class IsAnnotatedWith implements Predicate<AccessibleObject> {
+public class IsAnnotatedWith implements Predicate<AnnotatedElement> {
 
   private final Class<? extends Annotation> clazz;
 
@@ -35,7 +35,7 @@ public class IsAnnotatedWith implements Predicate<AccessibleObject> {
   }
 
   @Override
-  public boolean test(final AccessibleObject a) {
+  public boolean test(final AnnotatedElement a) {
     return a.isAnnotationPresent(this.clazz);
   }
 

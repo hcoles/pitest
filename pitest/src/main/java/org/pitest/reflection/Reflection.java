@@ -50,6 +50,15 @@ public abstract class Reflection {
     return fields;
   }
 
+  public static Set<Field> allFields(final Class<?> clazz) {
+    final Set<Field> fields = new LinkedHashSet<>();
+    if (clazz != null) {
+      fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+      fields.addAll(allFields(clazz.getSuperclass()));
+    }
+    return fields;
+  }
+
   public static Set<Method> allMethods(final Class<?> c) {
     final Set<Method> methods = new LinkedHashSet<>();
     if (c != null) {

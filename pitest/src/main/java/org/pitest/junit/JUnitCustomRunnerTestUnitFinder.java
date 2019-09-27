@@ -15,13 +15,15 @@
 package org.pitest.junit;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,13 +47,19 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.Preconditions;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
-  @SuppressWarnings("rawtypes")
-  private static final Optional<Class> CLASS_RULE = findClassRuleClass();
-
+  private static final Optional<Class<? extends Annotation>> CLASS_RULE =
+          findAnnotationClass("org.junit.ClassRule");
+  private static final Optional<Class<? extends Annotation>> SPUTNIK =
+          findAnnotationClass("org.spockframework.runtime.Sputnik");
+  private static final Optional<Class<? extends Annotation>> SHARED =
+          findAnnotationClass("spock.lang.Shared");
+  private static final Optional<Class<? extends Annotation>> STEPWISE =
+          findAnnotationClass("spock.lang.Stepwise");
+  private static final Optional<Class<? extends Annotation>> FEATURE_METADATA =
+          findAnnotationClass("org.spockframework.runtime.model.FeatureMetadata");
 
   private final TestGroupConfig config;
   private final Collection<String> excludedRunners;
@@ -59,8 +67,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners,
                                   final Collection<String> includedTestMethods) {
-    Preconditions.checkNotNull(config);
-    this.config = config;
+    this.config = Objects.requireNonNull(config, "config must not be null");
     this.excludedRunners = excludedRunners;
     this.includedTestMethods = includedTestMethods;
   }
@@ -76,11 +83,16 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
     if (Filterable.class.isAssignableFrom(runner.getClass())
         && !shouldTreatAsOneUnit(clazz, runner)) {
-      final List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
+      final List<TestUnit> filteredUnits;
+      if (SPUTNIK.map(sputnik -> sputnik.isInstance(runner)).orElse(Boolean.FALSE)) {
+        filteredUnits = splitSpockSpecificationIntoFilteredUnits(clazz);
+      } else {
+        filteredUnits = splitIntoFilteredUnits(runner.getDescription());
+      }
       return filterUnitsByMethod(filteredUnits);
     } else {
-      return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
-          clazz, Optional.<Filter> empty()));
+      return Collections.singletonList(new AdaptedJUnitTestUnit(
+          clazz, Optional.empty()));
     }
   }
 
@@ -119,7 +131,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private List<String> getCategories(final Class<?> a) {
     final Category c = a.getAnnotation(Category.class);
-    return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
+    return FCollection.flatMap(Collections.singletonList(c), toCategoryNames());
   }
 
   private Function<Category, Iterable<String>> toCategoryNames() {
@@ -132,7 +144,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private Function<Class<?>,String> toName() {
-    return a -> a.getName();
+    return Class::getName;
   }
 
   private boolean isNotARunnableTest(final Runner runner,
@@ -161,22 +173,43 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     return runnerCannotBeSplit(runner)
         || hasAnnotation(methods, BeforeClass.class)
         || hasAnnotation(methods, AfterClass.class)
-        || hasClassRuleAnnotations(clazz, methods);
+        || hasClassRuleAnnotations(clazz, methods)
+        || (SPUTNIK.map(sputnik -> sputnik.isInstance(runner)).orElse(Boolean.FALSE)
+          && (hasAnnotation(clazz, STEPWISE.orElseThrow(AssertionError::new))
+            || hasMethodNamed(methods, "setupSpec")
+            || hasMethodNamed(methods, "cleanupSpec")
+            || hasSharedField(clazz)));
   }
 
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
-    if (!CLASS_RULE.isPresent()) {
-      return false;
-    }
-
-    return hasAnnotation(methods, CLASS_RULE.get())
-        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.get());
+    return CLASS_RULE
+            .filter(aClass ->
+                    hasAnnotation(methods, aClass)
+                            || hasAnnotation(Reflection.publicFields(clazz), aClass))
+            .isPresent();
   }
 
-  private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
+  private boolean hasAnnotation(final AnnotatedElement annotatedElement,
+      final Class<? extends Annotation> annotation) {
+    return IsAnnotatedWith.instance(annotation).test(annotatedElement);
+  }
+
+  private boolean hasAnnotation(final Set<? extends AnnotatedElement> methods,
       final Class<? extends Annotation> annotation) {
     return FCollection.contains(methods, IsAnnotatedWith.instance(annotation));
+  }
+
+  private boolean hasMethodNamed(Set<Method> methods, String methodName) {
+    return FCollection.contains(methods, havingName(methodName));
+  }
+
+  private Predicate<Method> havingName(String methodName) {
+    return method -> method.getName().equals(methodName);
+  }
+
+  private boolean hasSharedField(Class<?> clazz) {
+    return hasAnnotation(Reflection.allFields(clazz), SHARED.orElseThrow(AssertionError::new));
   }
 
   private boolean isParameterizedTest(final Runner runner) {
@@ -186,7 +219,6 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   private boolean runnerCannotBeSplit(final Runner runner) {
     final String runnerName = runner.getClass().getName();
     return runnerName.equals("junitparams.JUnitParamsRunner")
-        || runnerName.startsWith("org.spockframework.runtime.Sputnik")
         || runnerName.startsWith("com.insightfullogic.lambdabehave")
         || runnerName.startsWith("com.googlecode.yatspec")
         || runnerName.startsWith("com.google.gwtmockito.GwtMockitoTestRunner");
@@ -200,6 +232,36 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
         && !runner.getDescription().getClassName().equals(className);
   }
 
+  private List<TestUnit> splitSpockSpecificationIntoFilteredUnits(Class<?> clazz) {
+    return Reflection.allMethods(clazz)
+            .stream()
+            .map(method -> method.getAnnotation(FEATURE_METADATA.orElseThrow(AssertionError::new)))
+            .filter(Objects::nonNull)
+            .map(featureMetadataToTestUnit(clazz))
+            .collect(Collectors.toList());
+  }
+
+  private Function<? super Annotation, TestUnit> featureMetadataToTestUnit(Class<?> clazz) {
+    return featureMetadata -> featureToTestUnit(clazz, featureMetadataToName(featureMetadata));
+  }
+
+  private TestUnit featureToTestUnit(Class<?> clazz, String featureName) {
+    return new AdaptedJUnitTestUnit(
+            clazz,
+            Optional.of(createFilterFor(Description.createTestDescription(clazz, featureName))));
+  }
+
+  private String featureMetadataToName(Annotation featureMetadata) {
+    try {
+      return Reflection
+              .publicMethod(featureMetadata.getClass(), "name")
+              .invoke(featureMetadata)
+              .toString();
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new AssertionError(e);
+    }
+  }
+
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
     return description.getChildren().stream()
         .filter(isTest())
@@ -208,11 +270,11 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private Function<Description, TestUnit> descriptionToTestUnit() {
-    return a -> descriptionToTest(a);
+    return this::descriptionToTest;
   }
 
   private Predicate<Description> isTest() {
-    return a -> a.isTest();
+    return Description::isTest;
   }
 
   private TestUnit descriptionToTest(final Description description) {
@@ -223,17 +285,17 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
           IsolationUtils.getContextClassLoader(), description.getClassName());
     }
     return new AdaptedJUnitTestUnit(clazz,
-        Optional.ofNullable(createFilterFor(description)));
+        Optional.of(createFilterFor(description)));
   }
 
   private Filter createFilterFor(final Description description) {
     return new DescriptionFilter(description.toString());
   }
 
-  @SuppressWarnings("rawtypes")
-  private static Optional<Class> findClassRuleClass() {
+  @SuppressWarnings("unchecked")
+  private static Optional<Class<? extends Annotation>> findAnnotationClass(String className) {
     try {
-      return Optional.<Class> ofNullable(Class.forName("org.junit.ClassRule"));
+      return Optional.of(((Class<? extends Annotation>) Class.forName(className)));
     } catch (final ClassNotFoundException ex) {
       return Optional.empty();
     }
