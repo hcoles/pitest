@@ -49,7 +49,7 @@ public final class Description implements Serializable {
   }
 
   public String getQualifiedName() {
-    if (this.testClass != null) {
+    if ((this.testClass != null) && !this.testClass.equals(this.getName())) {
       return this.getFirstTestClass() + "." + this.getName();
     } else {
       return this.getName();
