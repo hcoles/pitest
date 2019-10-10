@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
-
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -16,10 +18,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.pitest.coverage.CoverageSummary;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
@@ -27,7 +25,6 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 public class AbstractPitMojo extends AbstractMojo {
@@ -300,7 +297,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * When set indicates that analysis of this project should be skipped
    */
-  @Parameter(defaultValue = "false")
+  @Parameter(property = "skipPitest", defaultValue = "false")
   private boolean                     skip;
 
   /**
