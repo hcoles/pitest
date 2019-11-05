@@ -133,6 +133,10 @@ public enum ConfigOption {
    */
   CODE_PATHS("mutableCodePaths"),
   /**
+   * Filter defining paths that should be treated as containing test code
+   */
+  TEST_PATHS("testCodePaths"),
+  /**
    * TestNG groups/JUnit categories to include
    */
   INCLUDED_GROUPS("includedGroups"),

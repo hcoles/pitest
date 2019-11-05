@@ -319,6 +319,13 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldParseCommaSeparatedListOfTestPaths() {
+    final ReportOptions actual = parseAddingRequiredArgs("--testCodePaths",
+        "foo,bar");
+    assertEquals(Arrays.asList("foo", "bar"), actual.getTestPaths());
+  }
+
+  @Test
   public void shouldParseCommaSeparatedListOfExcludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedGroups",
         "foo,bar");

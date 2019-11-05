@@ -47,6 +47,7 @@ import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_PLUGIN;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
@@ -114,6 +115,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     classPathFile;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
+  private final ArgumentAcceptingOptionSpec<String>  testPaths;
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
   private final OptionSpec<String>                   includedTestMethodsSpec;
@@ -287,6 +289,14 @@ public class OptionsParser {
         .describedAs(
             "Globs identifying classpath roots containing mutable code");
 
+    this.testPaths = parserAccepts(TEST_PATHS)
+        .withRequiredArg()
+        .ofType(String.class)
+        .withValuesSeparatedBy(',')
+        .describedAs(
+            "Globs identifying classpath roots containing code with test classes");
+
+
     this.includedGroupsSpec = parserAccepts(INCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("TestNG groups/JUnit categories to include");
@@ -413,6 +423,7 @@ public class OptionsParser {
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
     data.setCodePaths(this.codePaths.values(userArgs));
+    data.setTestPaths(this.testPaths.values(userArgs));
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
 
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));

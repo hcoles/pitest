@@ -83,6 +83,8 @@ public class ReportOptions {
 
   private Collection<String>             codePaths;
 
+  private Collection<String>             testPaths;
+
   private String                         reportDir;
 
   private File                           historyInputLocation;
@@ -399,8 +401,16 @@ public class ReportOptions {
   }
 
   private PathFilter createPathFilter() {
-    return new PathFilter(createCodePathFilter(),
-        not(new DefaultDependencyPathPredicate()));
+    return new PathFilter(createCodePathFilter(), createTestPathFilter());
+  }
+
+  private Predicate<ClassPathRoot> createTestPathFilter() {
+    if ((this.testPaths != null) && !this.testPaths.isEmpty()) {
+      return new PathNamePredicate(Prelude.or(Glob
+          .toGlobPredicates(this.testPaths)));
+    } else {
+      return not(new DefaultDependencyPathPredicate());
+    }
   }
 
   private Predicate<ClassPathRoot> createCodePathFilter() {
@@ -418,6 +428,14 @@ public class ReportOptions {
 
   public void setCodePaths(final Collection<String> codePaths) {
     this.codePaths = codePaths;
+  }
+
+  public Collection<String> getTestPaths() {
+    return testPaths;
+  }
+
+  public void setTestPaths(Collection<String> testPaths) {
+    this.testPaths = testPaths;
   }
 
   public void setGroupConfig(final TestGroupConfig groupConfig) {
