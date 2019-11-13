@@ -185,7 +185,7 @@ public final class ReportAggregator {
     }
 
     public Builder addCompiledCodeDirectory(final File compiledCodeDirectory) {
-      validateDirectory(compiledCodeDirectory);
+      validateDirectoryOrArchive(compiledCodeDirectory);
       if (compiledCodeDirectory.exists()) {
         this.compiledCodeDirectories.add(compiledCodeDirectory);
       } else {
@@ -253,6 +253,17 @@ public final class ReportAggregator {
       // It probably needs some special treatment later, but it shouldn't prevent the aggregator to be built.
       if (directory.exists() && !directory.isDirectory()) {
         throw new IllegalArgumentException(directory.getAbsolutePath() + " is not a directory");
+      }
+    }
+
+    private void validateDirectoryOrArchive(final File file) {
+      if (file == null) {
+        throw new IllegalArgumentException("file is null");
+      }
+      if (file.exists() && !file.isDirectory() && !file.getPath().endsWith(".jar") && !file
+          .getPath()
+          .endsWith(".zip")) {
+        throw new IllegalArgumentException(file.getAbsolutePath() + " is not a directory nor an archive");
       }
     }
   }
