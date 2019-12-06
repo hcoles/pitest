@@ -176,10 +176,10 @@ public final class Mutator {
     researchMutators();
 
     addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
-    addGroup("DEFAULTS", defaults());
+    addGroup("OLD_DEFAULTS", oldDefaults());
     addGroup("STRONGER", stronger());
     addGroup("ALL", all());
-    addGroup("NEW_DEFAULTS", newDefaults());
+    addGroup("DEFAULTS", newDefaults());
     addGroup("AOR", aor());
     addGroup("AOD", aod());
     addGroup("CRCR", crcr());
@@ -289,7 +289,7 @@ public final class Mutator {
 
   private static Collection<MethodMutatorFactory> stronger() {
     return combine(
-        defaults(),
+        newDefaults(),
         group(new RemoveConditionalMutator(Choice.EQUAL, false),
             new SwitchMutator()));
   }
@@ -305,7 +305,7 @@ public final class Mutator {
    * Default set of mutators - designed to provide balance between strength and
    * performance
    */
-  public static Collection<MethodMutatorFactory> defaults() {
+  public static Collection<MethodMutatorFactory> oldDefaults() {
     return group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
         ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
