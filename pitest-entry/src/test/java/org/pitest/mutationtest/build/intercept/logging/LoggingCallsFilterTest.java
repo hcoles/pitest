@@ -30,7 +30,7 @@ public class LoggingCallsFilterTest {
   @Before
   public void setUp() {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    final Collection<MethodMutatorFactory> mutators = Mutator.defaults();
+    final Collection<MethodMutatorFactory> mutators = Mutator.oldDefaults();
     this.mutator = new GregorMutater(source, m -> true, mutators);
   }
 
