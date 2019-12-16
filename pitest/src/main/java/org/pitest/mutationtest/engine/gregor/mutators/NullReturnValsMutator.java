@@ -92,7 +92,7 @@ class NullReturnMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with null for " + methodInfo.getDescription();
       }
 

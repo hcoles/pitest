@@ -32,7 +32,7 @@ public class InsnSubstitution implements ZeroOperandMutation {
   }
 
   @Override
-  public String decribe(final int opCode, final MethodInfo methodInfo) {
+  public String describe(final int opCode, final MethodInfo methodInfo) {
     return this.message;
   }
 

@@ -66,7 +66,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
       }
     }
 
-    /** FIXME tests rely on order of returned mutants **/
+    /* FIXME tests rely on order of returned mutants */
     Collections.sort(combined, compareLineNumbers());
     return combined;
   }

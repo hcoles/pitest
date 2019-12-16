@@ -29,14 +29,9 @@ matrix:
 
     - jdk: openjdk12
       env: MAVEN=3.5.4
-
+    
     - env: JDK='OpenJ9 11' MAVEN=3.5.4
       install: . ./install-jdk.sh --url "https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&release=latest&type=jdk&heap_size=normal"
-
-  # Java 12 build fails
-  allow_failures:
-    - jdk: openjdk12
-      env: MAVEN=3.5.4
 
 script:
   - wget $(echo -n $BASEURL | sed -e 's#VERSION#'$MAVEN'#g')

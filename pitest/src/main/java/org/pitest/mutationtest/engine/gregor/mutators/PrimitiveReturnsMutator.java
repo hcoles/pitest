@@ -83,7 +83,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced long return with 0 for " + methodInfo.getDescription();
       }
 
@@ -101,7 +101,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced float return with 0.0f for " + methodInfo.getDescription();
       }
 
@@ -119,7 +119,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced double return with 0.0d for " + methodInfo.getDescription();
       }
 
@@ -138,7 +138,7 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
       }
 
       @Override
-      public String decribe(final int opCode, final MethodInfo methodInfo) {
+      public String describe(final int opCode, final MethodInfo methodInfo) {
         return makeMessage(methodInfo.getMethodDescriptor()) + " for " + methodInfo.getDescription();
       }
 

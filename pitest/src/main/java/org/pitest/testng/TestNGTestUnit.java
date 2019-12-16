@@ -26,6 +26,7 @@ import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestNG;
@@ -47,8 +48,9 @@ public class TestNGTestUnit extends AbstractTestUnit {
   private static final MutableTestListenerWrapper LISTENER = new MutableTestListenerWrapper();
 
   static {
-    TESTNG.addListener(LISTENER);
-    TESTNG.addInvokedMethodListener(new FailFast(LISTENER));
+    // force using TestNG.addListener(ITestNGListener) to be compatible with TestNG 7.x
+    TESTNG.addListener((ITestNGListener)LISTENER);
+    TESTNG.addListener((ITestNGListener)new FailFast(LISTENER));
   }
 
   private final Class<?>                     clazz;

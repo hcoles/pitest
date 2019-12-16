@@ -196,7 +196,7 @@ class UOI4MethodVisitor extends MethodVisitor {
         // GETFIELD I,F,L,D + B,S
         if ((opcode == Opcodes.GETFIELD)) {
             if (desc.equals("I")) {
-                if (this.shouldMutate("Decremented (--a) integer field")) {
+                if (this.shouldMutate("Decremented (--a) integer field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
@@ -207,7 +207,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("F")) {
-                if (this.shouldMutate("Decremented (--a) float field")) {
+                if (this.shouldMutate("Decremented (--a) float field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.FCONST_1);
@@ -218,7 +218,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("J")) {
-                if (this.shouldMutate("Decremented (--a) long field")) {
+                if (this.shouldMutate("Decremented (--a) long field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.LCONST_1);
@@ -229,7 +229,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("D")) {
-                if (this.shouldMutate("Decremented (--a) double field")) {
+                if (this.shouldMutate("Decremented (--a) double field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.DCONST_1);
@@ -240,7 +240,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("B")) {
-                if (this.shouldMutate("Decremented (--a) double field")) {
+                if (this.shouldMutate("Decremented (--a) double field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
@@ -252,7 +252,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("S")) {
-                if (this.shouldMutate("Decremented (--a) short field")) {
+                if (this.shouldMutate("Decremented (--a) short field" + name)) {
                     mv.visitInsn(Opcodes.DUP);
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
@@ -268,7 +268,7 @@ class UOI4MethodVisitor extends MethodVisitor {
         // GETSTATIC I,F,L,D + B,S
         if (opcode == Opcodes.GETSTATIC) {
             if (desc.equals("I")) {
-                if (this.shouldMutate("Decremented (--a) static integer field")) {
+                if (this.shouldMutate("Decremented (--a) static integer field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
                     mv.visitInsn(Opcodes.ISUB);
@@ -278,7 +278,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("F")) {
-                if (this.shouldMutate("Decremented (--a) static float field")) {
+                if (this.shouldMutate("Decremented (--a) static float field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.FCONST_1);
                     mv.visitInsn(Opcodes.FSUB);
@@ -288,7 +288,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("J")) {
-                if (this.shouldMutate("Decremented (--a) static long field")) {
+                if (this.shouldMutate("Decremented (--a) static long field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.LCONST_1);
                     mv.visitInsn(Opcodes.LSUB);
@@ -298,7 +298,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("D")) {
-                if (this.shouldMutate("Decremented (--a) static double field")) {
+                if (this.shouldMutate("Decremented (--a) static double field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.DCONST_1);
                     mv.visitInsn(Opcodes.DSUB);
@@ -308,7 +308,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("B")) {
-                if (this.shouldMutate("Decremented (--a) static byte field")) {
+                if (this.shouldMutate("Decremented (--a) static byte field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
                     mv.visitInsn(Opcodes.ISUB);
@@ -319,7 +319,7 @@ class UOI4MethodVisitor extends MethodVisitor {
                 }
             }
             if (desc.equals("S")) {
-                if (this.shouldMutate("Decremented (--a) static short field")) {
+                if (this.shouldMutate("Decremented (--a) static short field" + name)) {
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     mv.visitInsn(Opcodes.ICONST_1);
                     mv.visitInsn(Opcodes.ISUB);

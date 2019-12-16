@@ -157,6 +157,21 @@ public class MutationDiscoveryTest {
 
     assertThat(foundWhenDisabled.size()).isGreaterThan(foundByDefault.size());
   }
+  
+  @Test
+  public void shouldFilterObjectsRequireNonNullCallsForMethodReferences() {
+    final ClassName clazz = ClassName.fromString("requirenotnull/MethodReferenceNullChecks_javac");
+
+    this.data.setMutators(Collections.singletonList("ALL"));
+
+    final Collection<MutationDetails> foundByDefault = findMutants(clazz);
+
+    this.data.setFeatures(Collections.singletonList("-FMRNULL"));
+
+    final Collection<MutationDetails> foundWhenDisabled = findMutants(clazz);
+
+    assertThat(foundWhenDisabled.size()).isGreaterThan(foundByDefault.size());
+  }
 
   @Test
   public void shouldFilterMutationsToForLoopIncrements() {
