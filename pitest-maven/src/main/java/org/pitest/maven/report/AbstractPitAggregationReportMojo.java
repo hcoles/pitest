@@ -46,6 +46,11 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
   @Override
   protected void executeReport(final Locale locale)
       throws MavenReportException {
+    if (!canGenerateReport()) {
+      getLog().info("Skipping");
+      return;
+    }
+
     try {
       final Collection<MavenProject> allProjects = findDependencies();
 
