@@ -163,7 +163,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.15</version>
+					<version>3.1.0</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.pitest</groupId>
@@ -181,7 +181,9 @@
 							<configuration>
 								<failOnViolation>true</failOnViolation>
 								<configLocation>pitest/checkstyle.xml</configLocation>
-                                <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>	
+								<sourceDirectories>
+									<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+								</sourceDirectories>
 							</configuration>
 						</execution>
 					</executions>
