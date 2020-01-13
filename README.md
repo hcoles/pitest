@@ -8,9 +8,20 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.11-SNAPSHOT
+### 1.4.12-SNAPSHOT
 
 Nothing yet, why not contribute?
+
+### 1.4.11
+
+* #683 - Filter try-with-resources before filtering inlined code (thanks @Vampire)
+* #686 - Do not print the class name twice for unsplittable test units (thanks @Vampire)
+* #672 - Do not include the current directory to the minion class path (thanks @Vampire)
+* #692 - Add property='skipPitest' to skip attribute inn maven plugin (thanks @cjgwhite)
+* #697 - TestNG 7.0.0 compatibility (thanks @kris-scheibe)
+* #666 - UOI4 reports mutated field name (thanks @LaurentTho3)
+* #716 - Bump asm to 7.3.1
+* #710 - Use the new mutator set by default
 
 ### 1.4.10
 
