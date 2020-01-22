@@ -21,11 +21,6 @@ public class CoveragePipe implements CoverageReceiver {
   }
 
   @Override
-  public synchronized void newTest() {
-    CodeCoverageStore.reset();
-  }
-
-  @Override
   public synchronized void recordTestOutcome(final Description description,
       final boolean wasGreen, final int executionTime) {
     final Collection<Long> hits = CodeCoverageStore.getHits();
@@ -38,6 +33,8 @@ public class CoveragePipe implements CoverageReceiver {
     }
     this.dos.writeBoolean(wasGreen);
     this.dos.writeInt(executionTime);
+    
+    CodeCoverageStore.reset();
 
   }
 
