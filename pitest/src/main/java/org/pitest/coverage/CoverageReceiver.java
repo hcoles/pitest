@@ -6,8 +6,6 @@ import sun.pitest.InvokeReceiver;
 
 public interface CoverageReceiver extends InvokeReceiver {
 
-  void newTest();
-
   void recordTestOutcome(Description description, boolean wasGreen,
       int executionTime);
 
