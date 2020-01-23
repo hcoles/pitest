@@ -14,6 +14,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.build.intercept.javafeatures.AnEnum;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -193,6 +194,15 @@ public class MutationDiscoveryTest {
     assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
   }
 
+  @Test
+  public void shouldFilterMutationsToEnumConstructors() {
+    final Collection<MutationDetails>  actual = findMutants(AnEnum.class);
+
+    this.data.setFeatures(Collections.singletonList("-FENUM"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(AnEnum.class);
+
+    assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
+  }
 
   @Test
   public void filtersEquivalentReturnValsMutants() {

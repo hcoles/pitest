@@ -122,6 +122,63 @@ public class FilterTester {
     softly.assertAll();
   }
 
+  public void assertFiltersNoMutationsMatching(Predicate<MutationDetails> match, Class<?> clazz) {
+    final Sample s = makeSampleForCurrentCompiler(clazz);
+
+    final SoftAssertions softly = new SoftAssertions();
+    GregorMutater mutator = mutateFromClassLoader();
+
+    assertFiltersNoMatchingMutants(match, mutator, s, softly);
+
+    softly.assertAll();
+  }
+
+  public void assertFiltersMutationsMatching(Predicate<MutationDetails> match, Class<?> clazz) {
+    final Sample s = makeSampleForCurrentCompiler(clazz);
+
+    final SoftAssertions softly = new SoftAssertions();
+    GregorMutater mutator = mutateFromClassLoader();
+
+    assertFiltersMatchingMutants(match, mutator, s, softly);
+
+    softly.assertAll();
+  }
+
+  public void assertFiltersMutationsMatching(Predicate<MutationDetails> match, String sample) {
+    final GregorMutater mutator = mutateFromResourceDir();
+    atLeastOneSampleExists(sample);
+
+    final SoftAssertions softly = new SoftAssertions();
+
+    for (final Sample s : samples(sample)) {
+      assertFiltersMatchingMutants(match, mutator, s, softly);
+    }
+
+    softly.assertAll();
+  }
+
+  private void assertFiltersMatchingMutants(Predicate<MutationDetails> match, GregorMutater mutator, Sample s, SoftAssertions softly) {
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    checkHasMutantsMatching(match, s, softly, mutations);
+
+    softly.assertThat(actual)
+            .describedAs("Expected to filter out all matching mutants")
+            .noneMatch(match);
+  }
+
+  private void assertFiltersNoMatchingMutants(Predicate<MutationDetails> match, GregorMutater mutator, Sample s, SoftAssertions softly) {
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    checkHasMutantsMatching(match, s, softly, mutations);
+
+    softly.assertThat(actual)
+            .describedAs("Expected to filter no matching mutants")
+            .anyMatch(match);
+  }
+
   private Sample makeSampleForCurrentCompiler(Class<?> clazz) {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     final Sample s = new Sample();
@@ -163,6 +220,7 @@ public class FilterTester {
     return a -> !actual.contains(a);
   }
 
+
   private void assertFiltersNMutants(int n, GregorMutater mutator, Sample s, SoftAssertions softly) {
     final List<MutationDetails> mutations = mutator.findMutations(s.className);
     final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
@@ -188,6 +246,12 @@ public class FilterTester {
     .isGreaterThanOrEqualTo(n);
   }
 
+  private void checkHasMutantsMatching(Predicate<MutationDetails> match, Sample s, SoftAssertions softly,
+                                List<MutationDetails> mutations) {
+    softly.assertThat(mutations)
+            .describedAs("No matching mutations produced with " + s.compiler + " compiler. This test has a bug in it.\n" + s.clazz)
+            .anyMatch(match);
+  }
   private GregorMutater mutateFromResourceDir() {
     return new GregorMutater(this.source, m -> true, this.mutators);
   }
