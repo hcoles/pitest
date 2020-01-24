@@ -10,7 +10,8 @@ Read all about it at http://pitest.org
 
 ### 1.4.12-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #556 - Do not mutate enum constructors
+* #726 - Ensure static initializer coverage is recorded 
 
 ### 1.4.11
 
