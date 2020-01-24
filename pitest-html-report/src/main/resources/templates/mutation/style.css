@@ -99,11 +99,21 @@ body{
     position: relative;
 }
 
+.coverage_possibly_detected {
+    display: block;
+    height: 100%;
+    background: #dde7ef;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 .coverage_complete {
-    display: inline-block;
+    display: block;
     height: 100%;
     background: #DFD;
-    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .coverage_legend {
@@ -560,4 +570,29 @@ body{
 
 .width-100 {
     width: 100%;
+}
+
+.legend {
+    display: inline-block;
+    font-size: 0.8em;
+    vertical-align: middle;
+}
+.legend .killed,
+.legend .uncertain {
+    background: none;
+}
+.legend .killed:before,
+.legend .uncertain:before {
+    content: "";
+    width: 20px;
+    display: inline-block;
+    border: 1px solid #aaa;
+    margin-right: 5px;
+    height: 10px;
+}
+.legend .killed:before {
+    background: #DFD;
+}
+.legend .uncertain:before {
+    background: #dde7ef;
 }

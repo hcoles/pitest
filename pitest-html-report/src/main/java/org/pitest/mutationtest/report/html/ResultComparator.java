@@ -41,8 +41,17 @@ class ResultComparator implements Comparator<MutationResult>, Serializable {
 
   }
 
-  private int getRanking(DetectionStatus status) {
+  private static int getRanking(DetectionStatus status) {
     return RANK.get(status);
+  }
+  
+  public static class DetectionStatusComparator implements Comparator<DetectionStatus>, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public int compare(DetectionStatus o1, DetectionStatus o2) {
+      return getRanking(o1) - getRanking(o2);
+    }
   }
 
 }

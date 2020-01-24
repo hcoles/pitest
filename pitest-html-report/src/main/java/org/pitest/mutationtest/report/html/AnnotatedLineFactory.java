@@ -34,13 +34,16 @@ public class AnnotatedLineFactory {
   private final Collection<MutationResult>         mutations;
   private final CoverageDatabase                   statistics;
   private final Collection<ClassInfo>              classesInFile;
+  private final DetectionStatusCalculator          statusCalculator;
 
   public AnnotatedLineFactory(
       final Collection<MutationResult> mutations,
-      final CoverageDatabase statistics, final Collection<ClassInfo> classes) {
+      final CoverageDatabase statistics, final Collection<ClassInfo> classes,
+      final DetectionStatusCalculator statusCalculator) {
     this.mutations = mutations;
     this.statistics = statistics;
     this.classesInFile = classes;
+    this.statusCalculator = statusCalculator;
   }
 
   public List<Line> convert(final Reader source) throws IOException {
@@ -59,9 +62,10 @@ public class AnnotatedLineFactory {
 
       @Override
       public Line apply(final String a) {
+        List<MutationResult> mutationsForLine = getMutationsForLine(this.lineNumber);
         final Line l = new Line(this.lineNumber,
             StringUtil.escapeBasicHtmlChars(a), lineCovered(this.lineNumber),
-            getMutationsForLine(this.lineNumber));
+            mutationsForLine, statusCalculator.calculate(mutationsForLine));
         this.lineNumber++;
         return l;
       }
