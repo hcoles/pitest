@@ -102,6 +102,8 @@
 			<artifactId>maven-reporting-api</artifactId>
 			<version>${maven.version}</version>
 		</dependency>
+		<!-- commons-collections, commons-beanutils, and plexus-utils specified
+		 due to vulnerable versions used by maven-reporting-impl:2.0.4.3-->
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -137,6 +139,8 @@
 			<artifactId>maven-scm-manager-plexus</artifactId>
 			<version>${scm.version}</version>
 		</dependency>
+		<!-- Specifying groovy-all because maven-scm-providers-standard:1.9.4
+		 relies on a vulnerable version of groovy-all-->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
