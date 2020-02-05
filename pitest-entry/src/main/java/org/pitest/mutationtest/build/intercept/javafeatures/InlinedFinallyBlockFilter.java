@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
+import static java.util.stream.Collectors.joining;
 import static org.pitest.functional.FCollection.bucket;
 import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
@@ -107,7 +108,12 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   private boolean isPossibleToCorrectInlining(
       final List<MutationDetails> mutationsInHandlerBlock) {
     if (mutationsInHandlerBlock.size() > 1) {
-      LOG.warning("Found more than one mutation similar on same line in a finally block. Can't correct for inlining.");
+      LOG.warning("Found more than one mutation similar on same line in a finally block. "
+              + "Can't correct for inlining.\n\t"
+              + mutationsInHandlerBlock
+              .stream()
+              .map(Object::toString)
+              .collect(joining("\n\t")));
       return false;
     }
 
