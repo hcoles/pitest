@@ -127,14 +127,20 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldNotDetectInlinedCodeByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
-    assertFalse(actual.isDetectInlinedCode());
+  public void shouldDetectInlinedCodeByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertTrue(actual.isDetectInlinedCode());
   }
 
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode");
+    assertTrue(actual.isDetectInlinedCode());
+  }
+
+  @Test
+  public void shouldDetermineIfInlinedCodeFlagIsSetWhenTrueSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode=true");
     assertTrue(actual.isDetectInlinedCode());
   }
 
@@ -153,6 +159,12 @@ public class OptionsParserTest {
   @Test
   public void shouldDetermineIfSuppressTimestampedReportsFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports");
+    assertTrue(actual.shouldCreateTimeStampedReports());
+  }
+
+  @Test
+  public void shouldDetermineIfSuppressTimestampedReportsFlagIsSetWhenTrueSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports=true");
     assertTrue(actual.shouldCreateTimeStampedReports());
   }
 
@@ -258,9 +270,27 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseVerboseFlag() {
+  public void shouldNotBeVerboseByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertFalse(actual.isVerbose());
+  }
+
+  @Test
+  public void shouldDetermineIfVerboseFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--verbose");
     assertTrue(actual.isVerbose());
+  }
+
+  @Test
+  public void shouldDetermineIfVerboseFlagIsSetWhenTrueSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--verbose=true");
+    assertTrue(actual.isVerbose());
+  }
+
+  @Test
+  public void shouldDetermineIfVerboseFlagIsSetWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--verbose=false");
+    assertFalse(actual.isVerbose());
   }
 
   @Test
@@ -299,16 +329,27 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
-    assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
-        .shouldFailWhenNoMutations());
-    assertFalse(parseAddingRequiredArgs("--failWhenNoMutations", "false")
-        .shouldFailWhenNoMutations());
+  public void shouldFailWhenNoMutationsSetByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertTrue(actual.shouldFailWhenNoMutations());
   }
 
   @Test
-  public void shouldFailWhenNoMutationsSetByDefault() {
-    assertTrue(parseAddingRequiredArgs("").shouldFailWhenNoMutations());
+  public void shouldFailWhenNoMutationsWhenFlagIsSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations");
+    assertTrue(actual.shouldFailWhenNoMutations());
+  }
+
+  @Test
+  public void shouldFailWhenNoMutationsWhenTrueSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations=true");
+    assertTrue(actual.shouldFailWhenNoMutations());
+  }
+
+  @Test
+  public void shouldNotFailWhenNoMutationsWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations=false");
+    assertFalse(actual.shouldFailWhenNoMutations());
   }
 
   @Test
@@ -351,7 +392,7 @@ public class OptionsParserTest {
 
   @Test
   public void shouldDefaultMutationUnitSizeToCorrectValue() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertEquals(
         (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
         actual.getMutationUnitSize());
@@ -359,7 +400,7 @@ public class OptionsParserTest {
 
   @Test
   public void shouldDefaultToNoHistory() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertNull(actual.getHistoryInputLocation());
     assertNull(actual.getHistoryOutputLocation());
   }
@@ -425,33 +466,51 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseExportLineCoverageFlag() {
+  public void shouldNotExportLineCoverageByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertFalse(actual.shouldExportLineCoverage());
+  }
+
+  @Test
+  public void shouldDetermineIfExportLineCoverageFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage");
     assertTrue(actual.shouldExportLineCoverage());
   }
 
   @Test
-  public void shouldNotExportLineCoverageWhenFlagNotSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+  public void shouldDetermineIfExportLineCoverageFlagIsSetWhenTrueSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage=true");
+    assertTrue(actual.shouldExportLineCoverage());
+  }
+
+  @Test
+  public void shouldDetermineIfExportLineCoverageFlagIsSetWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage=false");
     assertFalse(actual.shouldExportLineCoverage());
   }
 
   @Test
   public void shouldIncludeLaunchClasspathByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertTrue(actual.isIncludeLaunchClasspath());
-  }
-
-  @Test
-  public void shouldNotIncludeLaunchClasspathWhenFlagUnset() {
-    final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=false");
-    assertFalse(actual.isIncludeLaunchClasspath());
   }
 
   @Test
   public void shouldIncludeLaunchClasspathWhenFlag() {
+    final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath");
+    assertTrue(actual.isIncludeLaunchClasspath());
+  }
+
+  @Test
+  public void shouldIncludeLaunchClasspathWhenFlagTrue() {
     final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=true");
     assertTrue(actual.isIncludeLaunchClasspath());
+  }
+
+  @Test
+  public void shouldNotIncludeLaunchClasspathWhenFlagFalse() {
+    final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=false");
+    assertFalse(actual.isIncludeLaunchClasspath());
   }
 
   @Test
@@ -475,7 +534,7 @@ public class OptionsParserTest {
 
   @Test
   public void shouldCreateEmptyPluginPropertiesWhenNoneSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertNotNull(actual.getFreeFormProperties());
   }
 
@@ -495,28 +554,52 @@ public class OptionsParserTest {
 
   @Test
   public void shouldDefaultToNotUsingAClasspathJar() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertFalse(actual.useClasspathJar());
   }
-  
+
   @Test
   public void shouldUseClasspathJarWhenFlagSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar");
+    assertTrue(actual.useClasspathJar());
+  }
+
+  @Test
+  public void shouldUseClasspathJarWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar=true");
     assertTrue(actual.useClasspathJar());
   }
-  
+
+  @Test
+  public void shouldNotUseClasspathJarWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar=false");
+    assertFalse(actual.useClasspathJar());
+  }
+
   @Test
   public void shouldDefaultMatrixFlagToFalse() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
+    final ReportOptions actual = parseAddingRequiredArgs();
     assertFalse(actual.isFullMutationMatrix());
   }
-  
+
   @Test
-  public void shouldParseMatrixFlag() {
+  public void shouldMatrixFlagWhenFlagIsSet() {
+    final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix");
+    assertTrue(actual.isFullMutationMatrix());
+  }
+
+  @Test
+  public void shouldMatrixFlagWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=true");
     assertTrue(actual.isFullMutationMatrix());
   }
-  
+
+  @Test
+  public void shouldNotMatrixFlagWhenFalseSupplied() {
+    final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=false");
+    assertFalse(actual.isFullMutationMatrix());
+  }
+
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class
         .getProtectionDomain().getCodeSource().getLocation().getFile();
