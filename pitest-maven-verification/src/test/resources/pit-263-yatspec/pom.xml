@@ -39,7 +39,7 @@
     <repositories>
         <repository>
             <id>repo.bodar.com</id>
-            <url>http://repo.bodar.com</url>
+            <url>https://repo.bodar.com</url>
         </repository>
     </repositories>
 
