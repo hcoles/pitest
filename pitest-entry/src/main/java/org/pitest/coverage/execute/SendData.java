@@ -1,13 +1,13 @@
 package org.pitest.coverage.execute;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import org.pitest.functional.SideEffect1;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataOutputStream;
 
-final class SendData implements SideEffect1<SafeDataOutputStream> {
+final class SendData implements Consumer<SafeDataOutputStream> {
   private static final Logger   LOG = Log.getLogger();
   private final CoverageOptions arguments;
   private final List<String>    testClasses;
@@ -18,7 +18,7 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
   }
 
   @Override
-  public void apply(final SafeDataOutputStream dos) {
+  public void accept(final SafeDataOutputStream dos) {
     sendArguments(dos);
     sendTests(dos);
   }

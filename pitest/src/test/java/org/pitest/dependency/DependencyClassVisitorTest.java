@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -30,7 +31,6 @@ import org.objectweb.asm.ClassWriter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.dependency.DependencyAccess.Member;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 
 public class DependencyClassVisitorTest {
 
@@ -41,7 +41,7 @@ public class DependencyClassVisitorTest {
 
   @Before
   public void setUp() {
-    final SideEffect1<DependencyAccess> se = a -> {
+    final Consumer<DependencyAccess> se = a -> {
       DependencyClassVisitorTest.this.gatheredAccess.add(a);
       DependencyClassVisitorTest.this.gatheredDependencies.add(a.getDest()
           .getOwner());

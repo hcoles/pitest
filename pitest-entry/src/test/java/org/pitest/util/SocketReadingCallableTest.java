@@ -13,12 +13,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.functional.SideEffect1;
 
 public class SocketReadingCallableTest {
 
@@ -28,7 +28,7 @@ public class SocketReadingCallableTest {
   private ServerSocket                      socket;
 
   @Mock
-  private SideEffect1<SafeDataOutputStream> sendDataSideEffect;
+  private Consumer<SafeDataOutputStream> sendDataSideEffect;
 
   @Mock
   private ReceiveStrategy                   receiveStrategy;
@@ -59,7 +59,7 @@ public class SocketReadingCallableTest {
   public void shouldSendInitialDataToMinion() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
     this.testee.call();
-    verify(this.sendDataSideEffect).apply(any(SafeDataOutputStream.class));
+    verify(this.sendDataSideEffect).accept(any(SafeDataOutputStream.class));
   }
 
   @Test

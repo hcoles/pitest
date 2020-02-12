@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageResult;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
@@ -24,9 +24,9 @@ final class Receive implements ReceiveStrategy {
   private final Map<Integer, ClassName>     classIdToName = new ConcurrentHashMap<>();
   private final Map<Long, BlockLocation>    probeToBlock  = new ConcurrentHashMap<>();
 
-  private final SideEffect1<CoverageResult> handler;
+  private final Consumer<CoverageResult> handler;
 
-  Receive(final SideEffect1<CoverageResult> handler) {
+  Receive(final Consumer<CoverageResult> handler) {
     this.handler = handler;
   }
 
@@ -75,7 +75,7 @@ final class Receive implements ReceiveStrategy {
       readProbeHit(is, hits);
     }
 
-    this.handler.apply(createCoverageResult(is, d, hits));
+    this.handler.accept(createCoverageResult(is, d, hits));
   }
 
   private void readProbeHit(final SafeDataInputStream is,

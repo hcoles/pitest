@@ -49,7 +49,7 @@ public class PreludeTest {
   public void printToShouldPrintValueToStream() {
     final Integer i = Integer.valueOf(42);
     final PrintStream stream = Mockito.mock(PrintStream.class);
-    Prelude.printTo(stream).apply(i);
+    Prelude.printTo(stream).accept(i);
     verify(stream).print(i);
   }
 

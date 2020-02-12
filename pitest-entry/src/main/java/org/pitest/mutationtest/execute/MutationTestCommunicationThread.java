@@ -16,9 +16,9 @@ package org.pitest.mutationtest.execute;
 
 import java.net.ServerSocket;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -33,7 +33,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
   private static final Logger LOG = Log.getLogger();
 
-  private static class SendData implements SideEffect1<SafeDataOutputStream> {
+  private static class SendData implements Consumer<SafeDataOutputStream> {
     private final MinionArguments arguments;
 
     SendData(final MinionArguments arguments) {
@@ -41,7 +41,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
     }
 
     @Override
-    public void apply(final SafeDataOutputStream dos) {
+    public void accept(final SafeDataOutputStream dos) {
       dos.write(this.arguments);
       dos.flush();
     }

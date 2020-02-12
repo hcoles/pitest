@@ -16,19 +16,18 @@ package org.pitest.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
-
-import org.pitest.functional.SideEffect1;
 
 public class StreamMonitor extends Thread implements Monitor {
   private static final Logger       LOG = Log.getLogger();
 
   private final byte[]              buf = new byte[256];
   private final InputStream         in;
-  private final SideEffect1<String> inputHandler;
+  private final Consumer<String> inputHandler;
 
   public StreamMonitor(final InputStream in,
-      final SideEffect1<String> inputHandler) {
+      final Consumer<String> inputHandler) {
     super("PIT Stream Monitor");
     this.in = in;
     this.inputHandler = inputHandler;
@@ -61,7 +60,7 @@ public class StreamMonitor extends Thread implements Monitor {
       int i;
       while ((i = this.in.read(this.buf, 0, this.buf.length)) != -1) {
         final String output = new String(this.buf, 0, i);
-        this.inputHandler.apply(output);
+        this.inputHandler.accept(output);
       }
 
     } catch (final IOException e) {

@@ -21,15 +21,15 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.SideEffect1;
 
 public final class ProcessArgs {
 
   private final String        launchClassPath;
-  private SideEffect1<String> stdout     = print(String.class);
-  private SideEffect1<String> stdErr     = printTo(String.class, System.err);
+  private Consumer<String> stdout     = print(String.class);
+  private Consumer<String> stdErr     = printTo(String.class, System.err);
   private List<String>        jvmArgs    = Collections.emptyList();
   private JavaAgent           javaAgentFinder;
   private File                workingDir = null;
@@ -54,12 +54,12 @@ public final class ProcessArgs {
     return this;
   }
 
-  public ProcessArgs andStdout(final SideEffect1<String> stdout) {
+  public ProcessArgs andStdout(final Consumer<String> stdout) {
     this.stdout = stdout;
     return this;
   }
 
-  public ProcessArgs andStderr(final SideEffect1<String> stderr) {
+  public ProcessArgs andStderr(final Consumer<String> stderr) {
     this.stdErr = stderr;
     return this;
   }
@@ -68,11 +68,11 @@ public final class ProcessArgs {
     return this.launchClassPath;
   }
 
-  public SideEffect1<String> getStdout() {
+  public Consumer<String> getStdout() {
     return this.stdout;
   }
 
-  public SideEffect1<String> getStdErr() {
+  public Consumer<String> getStdErr() {
     return this.stdErr;
   }
 
@@ -84,11 +84,11 @@ public final class ProcessArgs {
     return this.javaAgentFinder;
   }
 
-  public void setStdout(final SideEffect1<String> stdout) {
+  public void setStdout(final Consumer<String> stdout) {
     this.stdout = stdout;
   }
 
-  public void setStdErr(final SideEffect1<String> stdErr) {
+  public void setStdErr(final Consumer<String> stdErr) {
     this.stdErr = stdErr;
   }
 

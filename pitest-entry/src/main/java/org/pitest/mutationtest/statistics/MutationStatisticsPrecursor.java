@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationResult;
 
 class MutationStatisticsPrecursor {
@@ -18,7 +18,7 @@ class MutationStatisticsPrecursor {
     FCollection.forEach(results, register());
   }
 
-  private SideEffect1<MutationResult> register() {
+  private Consumer<MutationResult> register() {
     return mr -> {
       MutationStatisticsPrecursor.this.numberOfTestsRun = MutationStatisticsPrecursor.this.numberOfTestsRun
           + mr.getNumberOfTestsRun();

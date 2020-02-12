@@ -13,7 +13,8 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import java.util.Optional;
-import org.pitest.functional.SideEffect1;
+import java.util.function.Consumer;
+
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -153,7 +154,7 @@ public class EntryPoint {
     }
   }
 
-  private SideEffect1<Feature> asInfo(final String leader) {
+  private Consumer<Feature> asInfo(final String leader) {
     return a -> {
       Log.getLogger().info(String.format("%1$-16s",leader + a.name()) + a.description());
       for (final FeatureParameter each : a.params()) {

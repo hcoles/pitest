@@ -6,17 +6,16 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
-
-import org.pitest.functional.SideEffect1;
+import java.util.function.Consumer;
 
 class SocketReadingCallable implements Callable<ExitCode> {
 
-  private final SideEffect1<SafeDataOutputStream> sendInitialData;
+  private final Consumer<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
   private final ServerSocket                      socket;
 
   SocketReadingCallable(final ServerSocket socket,
-      final SideEffect1<SafeDataOutputStream> sendInitialData,
+      final Consumer<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
     this.socket = socket;
     this.sendInitialData = sendInitialData;
@@ -48,7 +47,7 @@ class SocketReadingCallable implements Callable<ExitCode> {
   private void sendDataToMinion(final Socket clientSocket) throws IOException {
     final OutputStream os = clientSocket.getOutputStream();
     final SafeDataOutputStream dos = new SafeDataOutputStream(os);
-    this.sendInitialData.apply(dos);
+    this.sendInitialData.accept(dos);
   }
 
   private ExitCode receiveResults(final SafeDataInputStream is) {

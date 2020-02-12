@@ -61,6 +61,6 @@ public class ResultTypeTest {
   }
 
   private void callListenerFunction(final ResultType testee) {
-    testee.getListenerFunction(this.result).apply(this.listener);
+    testee.getListenerFunction(this.result).accept(this.listener);
   }
 }

@@ -21,6 +21,7 @@ import java.net.ServerSocket;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -33,7 +34,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -122,7 +122,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     final List<String> filteredTests = FCollection
         .map(tests, classInfoToName());
 
-    final SideEffect1<CoverageResult> handler = resultProcessor(coverage);
+    final Consumer<CoverageResult> handler = resultProcessor(coverage);
 
     final SocketFinder sf = new SocketFinder();
     final ServerSocket socket = sf.getNextAvailableServerSocket();
@@ -154,7 +154,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return a -> a.getName().asInternalName();
   }
 
-  private SideEffect1<String> captureStandardOutIfVerbose() {
+  private Consumer<String> captureStandardOutIfVerbose() {
     if (this.coverageOptions.isVerbose()) {
       return log();
     } else {
@@ -162,23 +162,23 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private static SideEffect1<String> logInfo() {
+  private static Consumer<String> logInfo() {
     return a -> LOG.info("MINION : " + a);
   }
 
-  private static SideEffect1<String> log() {
+  private static Consumer<String> log() {
     return a -> LOG.fine("MINION : " + a);
   }
 
-  private SideEffect1<CoverageResult> resultProcessor(
+  private Consumer<CoverageResult> resultProcessor(
       final CoverageData coverage) {
-    return new SideEffect1<CoverageResult>() {
+    return new Consumer<CoverageResult>() {
       private final String[] spinner = new String[] { "\u0008/", "\u0008-",
           "\u0008\\", "\u0008|" };
       int i = 0;
 
       @Override
-      public void apply(final CoverageResult cr) {
+      public void accept(final CoverageResult cr) {
         if (cr.isGreenTest() || !coverageOptions.getPitConfig().skipFailingTests()) {
           coverage.calculateClassCoverage(cr);
         }

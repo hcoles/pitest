@@ -14,9 +14,9 @@
  */
 package org.pitest.testapi.execute;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 
@@ -35,32 +35,32 @@ public enum ResultType {
   STARTED(a -> started(a));
 
   private interface ResultToListenerSideEffect extends
-  Function<TestResult, SideEffect1<TestListener>> {
+  Function<TestResult, Consumer<TestListener>> {
   };
 
   ResultType(final ResultToListenerSideEffect f) {
     this.function = f;
   }
 
-  private final Function<TestResult, SideEffect1<TestListener>> function;
+  private final Function<TestResult, Consumer<TestListener>> function;
 
-  public SideEffect1<TestListener> getListenerFunction(final TestResult result) {
+  public Consumer<TestListener> getListenerFunction(final TestResult result) {
     return this.function.apply(result);
   };
 
-  public static SideEffect1<TestListener> success(final TestResult result) {
+  public static Consumer<TestListener> success(final TestResult result) {
     return a -> a.onTestSuccess(result);
   }
 
-  public static SideEffect1<TestListener> failure(final TestResult result) {
+  public static Consumer<TestListener> failure(final TestResult result) {
     return a -> a.onTestFailure(result);
   }
 
-  public static SideEffect1<TestListener> skipped(final TestResult result) {
+  public static Consumer<TestListener> skipped(final TestResult result) {
     return a -> a.onTestSkipped(result);
   }
 
-  public static SideEffect1<TestListener> started(final TestResult result) {
+  public static Consumer<TestListener> started(final TestResult result) {
     return a -> a.onTestStart(result.getDescription());
   }
 

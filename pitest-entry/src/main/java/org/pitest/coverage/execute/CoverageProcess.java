@@ -3,9 +3,9 @@ package org.pitest.coverage.execute;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.pitest.coverage.CoverageResult;
-import org.pitest.functional.SideEffect1;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
 import org.pitest.util.ExitCode;
@@ -17,7 +17,7 @@ public class CoverageProcess {
 
   public CoverageProcess(final ProcessArgs processArgs,
       final CoverageOptions arguments, final ServerSocket socket,
-      final List<String> testClases, final SideEffect1<CoverageResult> handler)
+      final List<String> testClases, final Consumer<CoverageResult> handler)
           throws IOException {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         CoverageMinion.class);

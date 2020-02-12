@@ -16,12 +16,12 @@ package org.pitest.mutationtest.verify;
  */
 
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.CodeSource;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 
@@ -62,7 +62,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
     return a -> a.getNumberOfCodeLines() != 0;
   }
 
-  private SideEffect1<ClassInfo> throwErrorIfHasNoSourceFile() {
+  private Consumer<ClassInfo> throwErrorIfHasNoSourceFile() {
     return a -> {
       if (a.getSourceFileName() == null) {
         throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());

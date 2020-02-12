@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -36,7 +37,6 @@ import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
-import org.pitest.functional.SideEffect1;
 import org.pitest.util.Functions;
 import org.pitest.util.Log;
 
@@ -147,7 +147,7 @@ public class DependencyExtractor {
     final ClassReader reader = new ClassReader(bytes.get());
     final List<DependencyAccess> dependencies = new ArrayList<>();
 
-    final SideEffect1<DependencyAccess> se = constructCollectingSideEffectForVisitor(
+    final Consumer<DependencyAccess> se = constructCollectingSideEffectForVisitor(
         dependencies, and(nameIsEqual(clazz).negate(), filter));
     final DependencyClassVisitor dcv = new DependencyClassVisitor(
         new NullVisitor(), se);
@@ -188,10 +188,10 @@ public class DependencyExtractor {
     return a -> a.getDest().getOwner().equals(clazz);
   }
 
-  private static SideEffect1<DependencyAccess> constructCollectingSideEffectForVisitor(
+  private static Consumer<DependencyAccess> constructCollectingSideEffectForVisitor(
       final List<DependencyAccess> dependencies,
       final Predicate<DependencyAccess> predicate) {
-    final SideEffect1<DependencyAccess> se = a -> {
+    final Consumer<DependencyAccess> se = a -> {
       if (predicate.test(a)) {
         dependencies.add(a);
       }

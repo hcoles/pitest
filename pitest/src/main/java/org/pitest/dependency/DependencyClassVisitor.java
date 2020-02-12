@@ -18,24 +18,25 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.dependency.DependencyAccess.Member;
-import org.pitest.functional.SideEffect1;
+
+import java.util.function.Consumer;
 
 class DependencyClassVisitor extends ClassVisitor {
 
-  private final SideEffect1<DependencyAccess> typeReceiver;
+  private final Consumer<DependencyAccess> typeReceiver;
   private String                              className;
 
   protected DependencyClassVisitor(final ClassVisitor visitor,
-      final SideEffect1<DependencyAccess> typeReceiver) {
+      final Consumer<DependencyAccess> typeReceiver) {
     super(ASMVersion.ASM_VERSION, visitor);
     this.typeReceiver = filterOutJavaLangObject(typeReceiver);
   }
 
-  private SideEffect1<DependencyAccess> filterOutJavaLangObject(
-      final SideEffect1<DependencyAccess> child) {
+  private Consumer<DependencyAccess> filterOutJavaLangObject(
+      final Consumer<DependencyAccess> child) {
     return a -> {
       if (!a.getDest().getOwner().equals("java/lang/Object")) {
-        child.apply(a);
+        child.accept(a);
       }
 
     };
@@ -61,11 +62,11 @@ class DependencyClassVisitor extends ClassVisitor {
   private static class DependencyAnalysisMethodVisitor extends MethodVisitor {
 
     private final Member                        member;
-    private final SideEffect1<DependencyAccess> typeReceiver;
+    private final Consumer<DependencyAccess> typeReceiver;
 
     DependencyAnalysisMethodVisitor(final Member member,
         final MethodVisitor methodVisitor,
-        final SideEffect1<DependencyAccess> typeReceiver) {
+        final Consumer<DependencyAccess> typeReceiver) {
       super(ASMVersion.ASM_VERSION, methodVisitor);
       this.typeReceiver = typeReceiver;
       this.member = member;
@@ -74,7 +75,7 @@ class DependencyClassVisitor extends ClassVisitor {
     @Override
     public void visitMethodInsn(final int opcode, final String owner,
         final String name, final String desc, boolean itf) {
-      this.typeReceiver.apply(new DependencyAccess(this.member, new Member(
+      this.typeReceiver.accept(new DependencyAccess(this.member, new Member(
           owner, name)));
       this.mv.visitMethodInsn(opcode, owner, name, desc, itf);
     }
@@ -82,7 +83,7 @@ class DependencyClassVisitor extends ClassVisitor {
     @Override
     public void visitFieldInsn(final int opcode, final String owner,
         final String name, final String desc) {
-      this.typeReceiver.apply(new DependencyAccess(this.member, new Member(
+      this.typeReceiver.accept(new DependencyAccess(this.member, new Member(
           owner, name)));
       this.mv.visitFieldInsn(opcode, owner, name, desc);
     }
