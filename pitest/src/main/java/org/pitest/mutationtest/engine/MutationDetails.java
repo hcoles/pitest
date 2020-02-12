@@ -18,11 +18,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.TestInfo;
-import org.pitest.util.Preconditions;
 import org.pitest.util.StringUtil;
 
 /**
@@ -50,7 +50,7 @@ public final class MutationDetails implements Serializable {
       final String description, final int lineNumber, final int block,
       final boolean isInFinallyBlock, final PoisonStatus poison) {
     this.id = id;
-    this.description = Preconditions.checkNotNull(description);
+    this.description = Objects.requireNonNull(description);
     this.filename = defaultFilenameIfNotSupplued(filename);
     this.lineNumber = lineNumber;
     this.block = block;

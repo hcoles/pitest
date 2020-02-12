@@ -18,12 +18,12 @@ import java.util.Collection;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.util.Glob;
-import org.pitest.util.Preconditions;
 
 public class CoverageOptions implements Serializable {
 
@@ -38,7 +38,7 @@ public class CoverageOptions implements Serializable {
   public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
       final TestPluginArguments pitConfig, final boolean verbose,
       final int maxDependencyDistance) {
-    Preconditions.checkNotNull(pitConfig);
+    Objects.requireNonNull(pitConfig);
     this.include = include;
     this.exclude = exclude;
     this.verbose = verbose;
