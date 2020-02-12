@@ -3,10 +3,10 @@ package org.pitest.mutationtest.config;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.pitest.junit.JUnitTestPlugin;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Preconditions;
 
 public class TestPluginArguments implements Serializable {
 
@@ -23,9 +23,9 @@ public class TestPluginArguments implements Serializable {
       Collection<String> excludedRunners,
       Collection<String> includedTestMethods,
       boolean skipFailingTests) {
-    Preconditions.checkNotNull(testPlugin);
-    Preconditions.checkNotNull(groupConfig);
-    Preconditions.checkNotNull(excludedRunners);
+    Objects.requireNonNull(testPlugin);
+    Objects.requireNonNull(groupConfig);
+    Objects.requireNonNull(excludedRunners);
     this.testPlugin = testPlugin;
     this.groupConfig = groupConfig;
     this.excludedRunners = excludedRunners;

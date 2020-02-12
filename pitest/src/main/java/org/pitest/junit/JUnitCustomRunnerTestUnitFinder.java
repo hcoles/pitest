@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,7 +46,6 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.Preconditions;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -59,7 +59,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   JUnitCustomRunnerTestUnitFinder(TestGroupConfig config, final Collection<String> excludedRunners,
                                   final Collection<String> includedTestMethods) {
-    Preconditions.checkNotNull(config);
+    Objects.requireNonNull(config);
     this.config = config;
     this.excludedRunners = excludedRunners;
     this.includedTestMethods = includedTestMethods;

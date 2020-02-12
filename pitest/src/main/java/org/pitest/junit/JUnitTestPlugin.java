@@ -1,12 +1,12 @@
 package org.pitest.junit;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestPluginFactory;
-import org.pitest.util.Preconditions;
 
 /**
  * Plugin that provides support for both JUnit 3, 4
@@ -34,7 +34,7 @@ public class JUnitTestPlugin implements TestPluginFactory {
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
       ClassByteArraySource source, Collection<String> excludedRunners, Collection<String> includedTestMethods) {
-    Preconditions.checkNotNull(config);
+    Objects.requireNonNull(config);
     return new JUnitCompatibleConfiguration(config, excludedRunners, includedTestMethods);
   }
 
